@@ -1,5 +1,3 @@
-// Better Auth가 `npx auth generate`로 만든 인증 테이블(user/session/account/verification).
-// Project/Menu/Screen/ButtonAction 등 도메인 테이블은 각각 필요한 스토리(1.4, 2.1, 3.1)에서 추가한다.
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
 
@@ -14,6 +12,7 @@ export const user = pgTable("user", {
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  plan: text("plan").default("free"),
 });
 
 export const session = pgTable(
