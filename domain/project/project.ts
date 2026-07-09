@@ -1,0 +1,13 @@
+export type DeviceMode = "responsive" | "device-split";
+
+export interface Project {
+  id: string;
+  ownerId: string;
+  concept: string;
+  overallStart: string;
+  overallEnd: string;
+  deviceMode: DeviceMode;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}

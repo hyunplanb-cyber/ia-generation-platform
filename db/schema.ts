@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index, uuid, date } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -74,9 +74,39 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
+export const project = pgTable(
+  "project",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    concept: text("concept").notNull(),
+    overallStart: date("overall_start").notNull(),
+    overallEnd: date("overall_end").notNull(),
+    deviceMode: text("device_mode").default("responsive").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    // FR-18(계정 삭제 30일 유예)을 위한 컬럼. 실제 소프트삭제 로직은 Story 1.6에서 구현.
+    deletedAt: timestamp("deleted_at"),
+  },
+  (table) => [index("project_ownerId_idx").on(table.ownerId)],
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  projects: many(project),
+}));
+
+export const projectRelations = relations(project, ({ one }) => ({
+  owner: one(user, {
+    fields: [project.ownerId],
+    references: [user.id],
+  }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
