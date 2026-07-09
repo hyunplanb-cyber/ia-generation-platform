@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -39,9 +39,30 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
+  /* DESIGN.md의 surface(#FFFFFF)는 shadcn --card와 동일 값이라 별도 변수 없이 별칭만 추가 */
+  --color-surface: var(--card);
+  /* DESIGN.md 브랜드 레이어 — primary-soft/on-soft, 파스텔 워시 3종, 시맨틱 상태색 4종 */
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-on-soft: var(--primary-on-soft);
+  --color-pastel-mint: var(--pastel-mint);
+  --color-pastel-mint-foreground: var(--pastel-mint-foreground);
+  --color-pastel-lavender: var(--pastel-lavender);
+  --color-pastel-lavender-foreground: var(--pastel-lavender-foreground);
+  --color-pastel-yellow: var(--pastel-yellow);
+  --color-pastel-yellow-foreground: var(--pastel-yellow-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-neutral-badge: var(--neutral-badge);
+  --color-neutral-badge-soft: var(--neutral-badge-soft);
+  /* DESIGN.md 라운드 스케일 — shadcn 기본 calc() 대신 고정값 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
@@ -49,24 +70,41 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #FAFAFA;
+  --foreground: #1F2024;
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: #1F2024;
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --popover-foreground: #1F2024;
+  --primary: #5B4FE5;
+  --primary-foreground: #FFFFFF;
   --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  --secondary-foreground: #1F2024;
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: #6B6F76;
   --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --accent-foreground: #1F2024;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #E7E7EA;
+  --input: #E7E7EA;
+  --ring: #5B4FE5;
+  /* DESIGN.md 브랜드 레이어 델타 */
+  --primary-soft: #EDE9FE;
+  --primary-on-soft: #4A3DD1;
+  --pastel-mint: #DFF5EC;
+  --pastel-mint-foreground: #0F6B4C;
+  --pastel-lavender: #EDE9FE;
+  --pastel-lavender-foreground: #4B3FA6;
+  --pastel-yellow: #FFF6D9;
+  --pastel-yellow-foreground: #8A6D00;
+  --success: #0B6B3D;
+  --success-soft: #E3F7EC;
+  --warning: #8A5A00;
+  --warning-soft: #FCEFD6;
+  --danger: #B42318;
+  --danger-soft: #FBE4E4;
+  --neutral-badge: #4B4F56;
+  --neutral-badge-soft: #EEEEF0;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);

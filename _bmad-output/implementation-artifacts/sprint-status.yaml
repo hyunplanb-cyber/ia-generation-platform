@@ -50,7 +50,7 @@ story_location: _bmad-output/implementation-artifacts
 development_status:
   epic-1: in-progress
   1-1-project-scaffold-and-deploy-pipeline: review
-  1-2-global-nav-footer-and-landing-page: backlog
+  1-2-global-nav-footer-and-landing-page: review
   1-3-signup-and-login: backlog
   1-4-create-project: backlog
   1-5-manage-project-list: backlog
