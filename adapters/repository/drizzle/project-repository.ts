@@ -1,8 +1,12 @@
-import { count, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { project } from "@/db/schema";
 import type { Project, DeviceMode } from "@/domain/project/project";
-import type { CreateProjectInput, ProjectRepository } from "@/domain/ports/project-repository";
+import type {
+  CreateProjectInput,
+  ProjectRepository,
+  UpdateProjectInput,
+} from "@/domain/ports/project-repository";
 
 function toDomain(row: typeof project.$inferSelect): Project {
   return {
@@ -33,11 +37,34 @@ export const drizzleProjectRepository: ProjectRepository = {
     return toDomain(row);
   },
 
-  async countByOwner(ownerId: string): Promise<number> {
-    const [row] = await db
-      .select({ value: count() })
+  async listByOwner(ownerId: string): Promise<Project[]> {
+    const rows = await db
+      .select()
       .from(project)
-      .where(eq(project.ownerId, ownerId));
-    return row?.value ?? 0;
+      .where(eq(project.ownerId, ownerId))
+      .orderBy(desc(project.updatedAt));
+    return rows.map(toDomain);
+  },
+
+  async findById(id: string): Promise<Project | null> {
+    const [row] = await db.select().from(project).where(eq(project.id, id));
+    return row ? toDomain(row) : null;
+  },
+
+  async update(id: string, input: UpdateProjectInput): Promise<Project> {
+    const [row] = await db
+      .update(project)
+      .set({
+        concept: input.concept,
+        overallStart: input.overallStart,
+        overallEnd: input.overallEnd,
+      })
+      .where(eq(project.id, id))
+      .returning();
+    return toDomain(row);
+  },
+
+  async delete(id: string): Promise<void> {
+    await db.delete(project).where(eq(project.id, id));
   },
 };

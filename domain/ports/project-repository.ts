@@ -8,7 +8,16 @@ export interface CreateProjectInput {
   deviceMode: DeviceMode;
 }
 
+export interface UpdateProjectInput {
+  concept: string;
+  overallStart: string;
+  overallEnd: string;
+}
+
 export interface ProjectRepository {
   create(input: CreateProjectInput): Promise<Project>;
-  countByOwner(ownerId: string): Promise<number>;
+  listByOwner(ownerId: string): Promise<Project[]>;
+  findById(id: string): Promise<Project | null>;
+  update(id: string, input: UpdateProjectInput): Promise<Project>;
+  delete(id: string): Promise<void>;
 }
