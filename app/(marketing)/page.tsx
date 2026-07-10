@@ -9,9 +9,18 @@ import {
   Wand2,
   ArrowRight,
   Check,
+  Star,
+  Heart,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { ScreenListMockup } from "./screen-list-mockup";
+
+const STEP_WASH_CLASSES = [
+  { bg: "bg-pastel-mint", fg: "text-pastel-mint-foreground" },
+  { bg: "bg-pastel-lavender", fg: "text-pastel-lavender-foreground" },
+  { bg: "bg-pastel-yellow", fg: "text-pastel-yellow-foreground" },
+  { bg: "bg-primary-soft", fg: "text-primary-on-soft" },
+];
 
 const painPoints = [
   "메뉴 하나 늘어날 때마다 화면 목록을 처음부터 다시 정리하고 있나요?",
@@ -103,16 +112,37 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-linear-to-br from-pastel-lavender via-background to-pastel-mint">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 py-20 sm:py-28 lg:grid-cols-2">
+      <section className="relative overflow-hidden bg-linear-to-br from-pastel-lavender via-pastel-yellow/70 to-pastel-mint">
+        {/* 장식용 반짝임 — 밝은 무드를 위한 요소, 데스크톱에서만 보여요 */}
+        <Star
+          className="animate-float absolute top-16 left-[8%] hidden size-6 text-pastel-yellow-foreground/50 lg:block"
+          style={{ animationDelay: "0.2s" }}
+          fill="currentColor"
+        />
+        <Sparkles
+          className="animate-float absolute top-40 left-[20%] hidden size-8 text-primary/40 lg:block"
+          style={{ animationDelay: "1s" }}
+        />
+        <Heart
+          className="animate-float absolute bottom-24 left-[12%] hidden size-6 text-pastel-lavender-foreground/40 lg:block"
+          style={{ animationDelay: "1.6s" }}
+          fill="currentColor"
+        />
+        <Sparkles
+          className="animate-float absolute right-[6%] bottom-16 hidden size-7 text-pastel-mint-foreground/40 lg:block"
+          style={{ animationDelay: "0.6s" }}
+        />
+
+        <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 py-20 sm:py-28 lg:grid-cols-2">
           <div className="flex flex-col items-start gap-6">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-sm font-medium text-primary-on-soft">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground shadow-sm">
               <Sparkles className="size-4" />
               웹기획자를 위한 AI 자동화
             </span>
             <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
-              사이트 컨셉과 메뉴만 입력하면 IA부터 AI 코딩 프롬프트까지 한 번에
-              만들어드려요.
+              사이트 컨셉과 메뉴만 입력하면{" "}
+              <span className="bg-pastel-yellow rounded-lg px-2 py-0.5">IA부터 AI 코딩 프롬프트까지</span>{" "}
+              한 번에 만들어드려요.
             </h1>
             <p className="max-w-xl text-lg leading-8 text-muted-foreground">
               메뉴를 입력하고 <span className="font-medium text-foreground">[실행: IA 생성]</span>을
@@ -121,7 +151,10 @@ export default function LandingPage() {
               공유하거나 Claude Code·Cursor 같은 AI 코딩 도구에 곧바로 활용할 수 있어요.
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <Link href="/signup" className={buttonVariants({ size: "lg" })}>
+              <Link
+                href="/signup"
+                className={`${buttonVariants({ size: "lg" })} shadow-primary/30 shadow-lg transition-transform hover:scale-105`}
+              >
                 무료로 시작하기
                 <ArrowRight className="size-4" />
               </Link>
@@ -138,7 +171,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pain points */}
-      <section className="border-t border-border bg-surface">
+      <section className="border-t border-border bg-pastel-yellow/25">
         <div className="mx-auto max-w-4xl px-6 py-20">
           <h2 className="text-center text-2xl font-bold text-foreground sm:text-3xl">
             혹시 이런 고민, 매번 반복하고 계신가요?
@@ -147,9 +180,9 @@ export default function LandingPage() {
             {painPoints.map((point) => (
               <div
                 key={point}
-                className="flex items-start gap-3 rounded-lg border border-border bg-background p-5"
+                className="flex items-start gap-3 rounded-lg border border-border bg-background p-5 shadow-sm"
               >
-                <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-danger-soft text-sm font-bold text-danger">
+                <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-pastel-yellow text-sm font-bold text-pastel-yellow-foreground">
                   !
                 </span>
                 <p className="text-foreground/90">{point}</p>
@@ -173,10 +206,14 @@ export default function LandingPage() {
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step, i) => {
               const Icon = step.icon;
+              const wash = STEP_WASH_CLASSES[i % STEP_WASH_CLASSES.length];
               return (
-                <div key={step.title} className="relative flex flex-col gap-3 rounded-lg border border-border p-6">
+                <div
+                  key={step.title}
+                  className="relative flex flex-col gap-3 rounded-lg border border-border bg-background p-6 shadow-sm transition-transform hover:-translate-y-1"
+                >
                   <div className="flex items-center gap-3">
-                    <span className="flex size-10 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
+                    <span className={`flex size-10 items-center justify-center rounded-full ${wash.bg} ${wash.fg}`}>
                       <Icon className="size-5" />
                     </span>
                     <span className="font-mono text-sm text-muted-foreground">
@@ -207,7 +244,10 @@ export default function LandingPage() {
             {features.map((feature) => {
               const Icon = feature.icon;
               return (
-                <div key={feature.title} className={`flex flex-col gap-4 rounded-lg p-6 ${feature.wash}`}>
+                <div
+                  key={feature.title}
+                  className={`flex flex-col gap-4 rounded-lg p-6 shadow-sm transition-transform hover:-translate-y-1 hover:rotate-1 ${feature.wash}`}
+                >
                   <span className={`flex size-10 items-center justify-center rounded-full bg-background/70 ${feature.fg}`}>
                     <Icon className="size-5" />
                   </span>
@@ -221,7 +261,7 @@ export default function LandingPage() {
       </section>
 
       {/* Audience */}
-      <section className="border-t border-border">
+      <section className="border-t border-border bg-pastel-mint/20">
         <div className="mx-auto max-w-4xl px-6 py-20">
           <h2 className="text-center text-2xl font-bold text-foreground sm:text-3xl">
             이런 분들께 잘 맞아요
@@ -240,8 +280,17 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="border-t border-border bg-primary">
-        <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 py-20 text-center">
+      <section className="relative overflow-hidden border-t border-border bg-primary">
+        <Sparkles
+          className="animate-float absolute top-10 left-[15%] hidden size-6 text-primary-foreground/30 sm:block"
+          style={{ animationDelay: "0.3s" }}
+        />
+        <Star
+          className="animate-float absolute right-[18%] bottom-10 hidden size-6 text-primary-foreground/30 sm:block"
+          style={{ animationDelay: "1.2s" }}
+          fill="currentColor"
+        />
+        <div className="relative mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 py-20 text-center">
           <h2 className="text-3xl font-bold text-primary-foreground">
             다음 프로젝트, IA부터 자동화해 보세요
           </h2>
@@ -250,7 +299,7 @@ export default function LandingPage() {
           </p>
           <Link
             href="/signup"
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
+            className={`${buttonVariants({ variant: "secondary", size: "lg" })} shadow-lg transition-transform hover:scale-105`}
           >
             지금 무료로 시작하기
             <ArrowRight className="size-4" />
