@@ -65,15 +65,13 @@ const providerConfig = {
 } as const;
 
 export function SocialLoginButtons({ enabled }: { enabled: EnabledSocialProviders }) {
-  const providers = (Object.keys(providerConfig) as (keyof typeof providerConfig)[]).filter(
-    (provider) => enabled[provider],
-  );
-
-  if (providers.length === 0) {
-    return null;
-  }
+  const providers = Object.keys(providerConfig) as (keyof typeof providerConfig)[];
 
   function handleClick(provider: keyof typeof providerConfig) {
+    if (!enabled[provider]) {
+      alert("이 로그인 방법은 준비 중이에요. 조금만 기다려 주세요.");
+      return;
+    }
     authClient.signIn.social({ provider, callbackURL: "/dashboard" });
   }
 
