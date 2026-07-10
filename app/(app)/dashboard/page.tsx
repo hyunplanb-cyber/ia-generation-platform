@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { listMyProjects } from "@/application/list-my-projects";
 import { DeleteProjectButton } from "./delete-project-button";
@@ -13,14 +14,7 @@ export default async function DashboardPage() {
   const projects = await listMyProjects();
 
   if (projects.length === 0) {
-    return (
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 py-24 text-center">
-        <p className="text-lg font-medium text-foreground">첫 프로젝트를 만들어 보세요</p>
-        <Link href="/dashboard/new" className={buttonVariants({ size: "lg" })}>
-          새 프로젝트 만들기
-        </Link>
-      </div>
-    );
+    redirect("/dashboard/new");
   }
 
   return (
