@@ -1,6 +1,8 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ProfileMenu } from "@/components/profile-menu";
-import { requireSession } from "@/application/require-session";
+import { auth } from "@/lib/auth";
 import { daysUntilAccountDeletion } from "@/lib/account-deletion";
 
 export default async function AppLayout({
@@ -8,7 +10,13 @@ export default async function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await requireSession();
+  // proxy.ts는 쿠키 존재 여부만 낙관적으로 확인한다 — 쿠키는 있지만 세션이
+  // 만료/무효화된 경우를 여기서 실제로 검증해 로그인 화면으로 보낸다.
+  // (requireSession()은 이 상황에서 에러를 던지기만 해 화면이 깨졌었다.)
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    redirect("/login");
+  }
   const deletedAt = session.user.deletedAt as Date | null;
 
   return (

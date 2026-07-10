@@ -1,6 +1,14 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { getEnabledSocialProviders } from "@/lib/social-providers";
 import { SignupForm } from "./signup-form";
 
-export default function SignupPage() {
+export default async function SignupPage() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return <SignupForm enabledSocialProviders={getEnabledSocialProviders()} />;
 }
