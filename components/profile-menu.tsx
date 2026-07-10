@@ -12,6 +12,11 @@ import { authClient } from "@/lib/auth-client";
 export function ProfileMenu() {
   const router = useRouter();
 
+  async function handleSignOut() {
+    await authClient.signOut();
+    router.push("/login");
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium text-foreground">
@@ -21,9 +26,7 @@ export function ProfileMenu() {
         <DropdownMenuItem onClick={() => router.push("/account")}>
           계정 설정
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => authClient.signOut()}>
-          로그아웃
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSignOut}>로그아웃</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

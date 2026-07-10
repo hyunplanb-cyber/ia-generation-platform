@@ -67,4 +67,12 @@ export const drizzleProjectRepository: ProjectRepository = {
   async delete(id: string): Promise<void> {
     await db.delete(project).where(eq(project.id, id));
   },
+
+  async softDeleteAllByOwner(ownerId: string, deletedAt: Date): Promise<void> {
+    await db.update(project).set({ deletedAt }).where(eq(project.ownerId, ownerId));
+  },
+
+  async restoreAllByOwner(ownerId: string): Promise<void> {
+    await db.update(project).set({ deletedAt: null }).where(eq(project.ownerId, ownerId));
+  },
 };

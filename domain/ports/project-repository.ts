@@ -20,4 +20,6 @@ export interface ProjectRepository {
   findById(id: string): Promise<Project | null>;
   update(id: string, input: UpdateProjectInput): Promise<Project>;
   delete(id: string): Promise<void>;
+  softDeleteAllByOwner(ownerId: string, deletedAt: Date): Promise<void>;
+  restoreAllByOwner(ownerId: string): Promise<void>;
 }

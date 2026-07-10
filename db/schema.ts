@@ -13,6 +13,8 @@ export const user = pgTable("user", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
   plan: text("plan").default("free"),
+  // FR-18: 계정 탈퇴 요청 시각. 채워지면 30일 유예 상태.
+  deletedAt: timestamp("deleted_at"),
 });
 
 export const session = pgTable(

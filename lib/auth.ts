@@ -19,6 +19,12 @@ export const auth = betterAuth({
         defaultValue: 'free',
         input: false,
       },
+      // FR-18: 계정 탈퇴 요청 시각. 채워지면 30일 유예 상태.
+      deletedAt: {
+        type: 'date',
+        required: false,
+        input: false,
+      },
     },
   },
 });
