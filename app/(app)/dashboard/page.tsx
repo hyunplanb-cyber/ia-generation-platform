@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { listMyProjects } from "@/application/list-my-projects";
+import { requireSession } from "@/application/require-session";
 import { DeleteProjectButton } from "./delete-project-button";
 
 const CARD_WASH_CLASSES = ["bg-pastel-mint", "bg-pastel-lavender", "bg-pastel-yellow"];
@@ -11,7 +12,7 @@ function formatDate(date: Date) {
 }
 
 export default async function DashboardPage() {
-  const projects = await listMyProjects();
+  const [session, projects] = await Promise.all([requireSession(), listMyProjects()]);
 
   if (projects.length === 0) {
     redirect("/dashboard/new");
@@ -20,7 +21,10 @@ export default async function DashboardPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-12">
       <div className="flex items-center justify-between">
-        <p className="text-muted-foreground">프로젝트 {projects.length}개가 있어요.</p>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">{session.user.name}님의 프로젝트</h1>
+          <p className="mt-1 text-muted-foreground">진행 중인 프로젝트 {projects.length}개가 있어요.</p>
+        </div>
         <Link href="/dashboard/new" className={buttonVariants()}>
           새 프로젝트 만들기
         </Link>
@@ -29,7 +33,7 @@ export default async function DashboardPage() {
         {projects.map((p, i) => (
           <div
             key={p.id}
-            className={`flex flex-col gap-3 rounded-lg p-5 ${CARD_WASH_CLASSES[i % CARD_WASH_CLASSES.length]}`}
+            className={`flex flex-col gap-3 rounded-lg p-5 shadow-sm transition-transform hover:-translate-y-1 ${CARD_WASH_CLASSES[i % CARD_WASH_CLASSES.length]}`}
           >
             <p className="line-clamp-2 font-semibold text-foreground">{p.concept}</p>
             <p className="text-sm text-foreground/80">

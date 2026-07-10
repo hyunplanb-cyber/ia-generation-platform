@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 
 export default function MarketingLayout({
   children,
@@ -11,7 +12,10 @@ export default function MarketingLayout({
     <>
       <header className="sticky top-0 z-10 border-b border-border bg-surface/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-lg font-bold text-foreground">
+          <Link href="/" className="flex items-center gap-1.5 text-lg font-bold text-foreground">
+            <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
+              <Sparkles className="size-3.5" />
+            </span>
             IA 자동생성 플랫폼
           </Link>
           <nav className="flex items-center gap-3">

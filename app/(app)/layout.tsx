@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { ProfileMenu } from "@/components/profile-menu";
 import { auth } from "@/lib/auth";
 import { daysUntilAccountDeletion } from "@/lib/account-deletion";
@@ -24,7 +25,10 @@ export default async function AppLayout({
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <div className="flex items-center gap-6">
-            <Link href="/dashboard" className="text-lg font-bold text-foreground">
+            <Link href="/dashboard" className="flex items-center gap-1.5 text-lg font-bold text-foreground">
+              <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
+                <Sparkles className="size-3.5" />
+              </span>
               IA 자동생성 플랫폼
             </Link>
             <Link
