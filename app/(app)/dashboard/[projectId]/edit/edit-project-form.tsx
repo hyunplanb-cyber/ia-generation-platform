@@ -23,6 +23,19 @@ export function EditProjectForm({ project }: { project: Project }) {
           <Textarea id="concept" name="concept" rows={4} defaultValue={project.concept} required />
         </div>
         <div className="flex flex-col gap-1.5">
+          <Label htmlFor="menuDraft">메뉴 구성 (선택)</Label>
+          <Textarea id="menuDraft" name="menuDraft" rows={4} defaultValue={project.menuDraft ?? ""} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="designConcept">디자인 컨셉 (선택)</Label>
+          <Textarea
+            id="designConcept"
+            name="designConcept"
+            rows={3}
+            defaultValue={project.designConcept ?? ""}
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
           <Label htmlFor="overallStart">전체 시작일</Label>
           <Input
             id="overallStart"

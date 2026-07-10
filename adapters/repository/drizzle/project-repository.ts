@@ -13,6 +13,8 @@ function toDomain(row: typeof project.$inferSelect): Project {
     id: row.id,
     ownerId: row.ownerId,
     concept: row.concept,
+    menuDraft: row.menuDraft,
+    designConcept: row.designConcept,
     overallStart: row.overallStart,
     overallEnd: row.overallEnd,
     deviceMode: row.deviceMode as DeviceMode,
@@ -29,6 +31,8 @@ export const drizzleProjectRepository: ProjectRepository = {
       .values({
         ownerId: input.ownerId,
         concept: input.concept,
+        menuDraft: input.menuDraft,
+        designConcept: input.designConcept,
         overallStart: input.overallStart,
         overallEnd: input.overallEnd,
         deviceMode: input.deviceMode,
@@ -56,6 +60,8 @@ export const drizzleProjectRepository: ProjectRepository = {
       .update(project)
       .set({
         concept: input.concept,
+        menuDraft: input.menuDraft,
+        designConcept: input.designConcept,
         overallStart: input.overallStart,
         overallEnd: input.overallEnd,
       })

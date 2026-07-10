@@ -3,6 +3,8 @@ import type { DeviceMode, Project } from "@/domain/project/project";
 export interface CreateProjectInput {
   ownerId: string;
   concept: string;
+  menuDraft: string | null;
+  designConcept: string | null;
   overallStart: string;
   overallEnd: string;
   deviceMode: DeviceMode;
@@ -10,6 +12,8 @@ export interface CreateProjectInput {
 
 export interface UpdateProjectInput {
   concept: string;
+  menuDraft: string | null;
+  designConcept: string | null;
   overallStart: string;
   overallEnd: string;
 }

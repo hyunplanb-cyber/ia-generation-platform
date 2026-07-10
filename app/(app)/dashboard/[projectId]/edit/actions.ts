@@ -13,6 +13,8 @@ export async function updateProjectAction(
   formData: FormData,
 ): Promise<UpdateProjectState> {
   const concept = String(formData.get("concept") ?? "").trim();
+  const menuDraft = String(formData.get("menuDraft") ?? "").trim();
+  const designConcept = String(formData.get("designConcept") ?? "").trim();
   const overallStart = String(formData.get("overallStart") ?? "");
   const overallEnd = String(formData.get("overallEnd") ?? "");
 
@@ -26,6 +28,12 @@ export async function updateProjectAction(
     return { error: "종료일은 시작일보다 빠를 수 없어요." };
   }
 
-  await updateProject(projectId, { concept, overallStart, overallEnd });
+  await updateProject(projectId, {
+    concept,
+    menuDraft: menuDraft || null,
+    designConcept: designConcept || null,
+    overallStart,
+    overallEnd,
+  });
   redirect("/dashboard");
 }

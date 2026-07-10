@@ -84,6 +84,10 @@ export const project = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     concept: text("concept").notNull(),
+    // 메뉴 관리(Epic 2)가 생기기 전까지의 임시 자유입력 — 프로젝트 생성 시점의 참고용 메모.
+    menuDraft: text("menu_draft"),
+    // 원하는 분위기/스타일에 대한 텍스트 설명. 이미지 업로드+AI 무드 분석은 추후 지원.
+    designConcept: text("design_concept"),
     overallStart: date("overall_start").notNull(),
     overallEnd: date("overall_end").notNull(),
     deviceMode: text("device_mode").default("responsive").notNull(),

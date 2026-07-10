@@ -4,6 +4,8 @@ export interface Project {
   id: string;
   ownerId: string;
   concept: string;
+  menuDraft: string | null;
+  designConcept: string | null;
   overallStart: string;
   overallEnd: string;
   deviceMode: DeviceMode;
