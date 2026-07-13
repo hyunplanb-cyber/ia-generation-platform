@@ -12,7 +12,6 @@ import {
   Loader2,
   ArrowLeft,
   ArrowRight,
-  Lightbulb,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,20 +33,8 @@ const STEPS = [
   { label: "전체 일정", icon: CalendarClock },
 ];
 
-const STEP_WASH_CLASSES = [
-  { bg: "bg-pastel-mint", fg: "text-pastel-mint-foreground", tint: "bg-pastel-mint/25 border-pastel-mint" },
-  {
-    bg: "bg-pastel-lavender",
-    fg: "text-pastel-lavender-foreground",
-    tint: "bg-pastel-lavender/25 border-pastel-lavender",
-  },
-  {
-    bg: "bg-pastel-yellow",
-    fg: "text-pastel-yellow-foreground",
-    tint: "bg-pastel-yellow/25 border-pastel-yellow",
-  },
-  { bg: "bg-primary-soft", fg: "text-primary-on-soft", tint: "bg-primary-soft/50 border-primary-soft" },
-];
+const softField =
+  "border-transparent bg-muted/40 focus-visible:bg-background focus-visible:border-ring";
 
 export function NewProjectWizard() {
   const [step, setStep] = useState(0);
@@ -117,32 +104,31 @@ export function NewProjectWizard() {
     });
   }
 
-  const wash = STEP_WASH_CLASSES[step];
-
   return (
-    <div className="bg-linear-to-br from-pastel-lavender/25 via-background to-pastel-mint/25 py-16">
-      <div className="mx-auto flex max-w-3xl flex-col gap-8 px-6">
-        <h1 className="text-2xl font-bold text-foreground">새 프로젝트 만들기</h1>
+    <div className="bg-linear-to-br from-pastel-lavender/20 via-background to-pastel-mint/20 py-20 sm:py-24">
+      <div className="mx-auto flex max-w-4xl flex-col gap-14 px-6">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+          새 프로젝트 만들기
+        </h1>
 
-        <div className="flex flex-col gap-6 rounded-xl border border-border bg-background p-6 shadow-sm sm:flex-row sm:gap-8 sm:p-8">
-          <div className="sm:w-44 sm:shrink-0">
+        <div className="flex flex-col gap-10 sm:flex-row sm:gap-16">
+          <div className="sm:w-48 sm:shrink-0">
             <StepIndicator steps={STEPS} currentStep={step} />
           </div>
 
-          <div key={step} className="animate-in fade-in-0 slide-in-from-right-4 flex flex-1 flex-col gap-5 duration-300">
+          <div key={step} className="animate-in fade-in-0 slide-in-from-right-4 flex flex-1 flex-col gap-8 duration-300">
             {step === 0 && (
               <>
-                <StepHeader title="어떤 사이트인가요?" />
-                <Callout
-                  wash={wash}
-                  text="사이트 컨셉과 목적을 설명해 주세요. 기획서나 소개 자료가 있다면 PDF로 올려서 텍스트를 자동으로 채울 수 있어요."
+                <StepHeader
+                  title="어떤 사이트인가요?"
+                  description="사이트 컨셉과 목적을 설명해 주세요. 기획서나 소개 자료가 있다면 PDF로 올려서 텍스트를 자동으로 채울 수 있어요."
                 />
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="concept">컨셉/설명</Label>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="concept" className="text-base">컨셉/설명</Label>
                   <Textarea
                     id="concept"
-                    rows={12}
-                    className="min-h-64"
+                    rows={14}
+                    className={`min-h-72 text-base ${softField}`}
                     value={concept}
                     onChange={(e) => setConcept(e.target.value)}
                     required
@@ -177,16 +163,17 @@ export function NewProjectWizard() {
 
             {step === 1 && (
               <>
-                <StepHeader title="어떤 메뉴가 필요한가요? (선택)" />
-                <Callout
-                  wash={wash}
-                  text="지금 몰라도 괜찮아요 — 나중에 메뉴 관리에서 추가할 수 있어요. 대략적인 메뉴 구성을 적어두면 다음 단계에 도움이 돼요."
+                <StepHeader
+                  title="어떤 메뉴가 필요한가요?"
+                  subtitle="선택"
+                  description="지금 몰라도 괜찮아요 — 나중에 메뉴 관리에서 추가할 수 있어요. 대략적인 메뉴 구성을 적어두면 다음 단계에 도움이 돼요."
                 />
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="menuDraft">메뉴 구성 (선택)</Label>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="menuDraft" className="text-base">메뉴 구성 (선택)</Label>
                   <Textarea
                     id="menuDraft"
-                    rows={8}
+                    rows={10}
+                    className={`text-base ${softField}`}
                     placeholder={"예)\n홈\n소개\n상품 목록\n문의하기"}
                     value={menuDraft}
                     onChange={(e) => setMenuDraft(e.target.value)}
@@ -197,32 +184,31 @@ export function NewProjectWizard() {
 
             {step === 2 && (
               <>
-                <StepHeader title="원하는 분위기가 있나요? (선택)" />
-                <Callout
-                  wash={wash}
-                  text="글로 설명해 주세요. 참고 이미지를 올리면 AI가 무드를 분석해 제작 프롬프트로 바꿔드리는 기능은 곧 추가될 예정이에요."
+                <StepHeader
+                  title="원하는 분위기가 있나요?"
+                  subtitle="선택"
+                  description="글로 설명해 주세요. 참고 이미지를 올리면 AI가 무드를 분석해 제작 프롬프트로 바꿔드리는 기능은 곧 추가될 예정이에요."
                 />
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="designConcept">디자인 컨셉 (선택)</Label>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="designConcept" className="text-base">디자인 컨셉 (선택)</Label>
                   <Textarea
                     id="designConcept"
-                    rows={6}
+                    rows={7}
+                    className={`text-base ${softField}`}
                     placeholder="예) 미니멀하고 차분한 톤, 파스텔 컬러, 신뢰감 있는 느낌"
                     value={designConcept}
                     onChange={(e) => setDesignConcept(e.target.value)}
                   />
                 </div>
-                <div className="flex flex-col gap-2 rounded-lg border border-dashed border-border bg-muted/30 p-5 text-center">
-                  <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
+                <div className="flex flex-col items-center gap-2 py-4 text-center">
+                  <span className="flex size-11 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
                     <Sparkles className="size-5" />
                   </span>
-                  <p className="text-sm font-medium text-foreground">
-                    이미지로 무드 전달하기
-                  </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="font-medium text-foreground">이미지로 무드 전달하기</p>
+                  <p className="max-w-sm text-sm text-muted-foreground">
                     참고 이미지를 올리면 AI가 분위기를 읽어 제작 프롬프트로 바꿔드려요. 준비 중이에요 — 곧 만나보실 수 있어요.
                   </p>
-                  <Button type="button" variant="outline" size="sm" disabled className="mx-auto mt-1">
+                  <Button type="button" variant="outline" size="sm" disabled className="mt-1">
                     <Upload className="size-4" />
                     이미지 업로드 (준비 중)
                   </Button>
@@ -232,23 +218,27 @@ export function NewProjectWizard() {
 
             {step === 3 && (
               <>
-                <StepHeader title="전체 일정을 알려주세요" />
-                <Callout wash={wash} text="시작일과 종료일을 입력하면 이후 화면별 일정이 자동으로 나뉘어요." />
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="overallStart">전체 시작일</Label>
+                <StepHeader
+                  title="전체 일정을 알려주세요"
+                  description="시작일과 종료일을 입력하면 이후 화면별 일정이 자동으로 나뉘어요."
+                />
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="overallStart" className="text-base">전체 시작일</Label>
                   <Input
                     id="overallStart"
                     type="date"
+                    className={softField}
                     value={overallStart}
                     onChange={(e) => setOverallStart(e.target.value)}
                     required
                   />
                 </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="overallEnd">전체 종료일</Label>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="overallEnd" className="text-base">전체 종료일</Label>
                   <Input
                     id="overallEnd"
                     type="date"
+                    className={softField}
                     value={overallEnd}
                     onChange={(e) => setOverallEnd(e.target.value)}
                     required
@@ -261,7 +251,7 @@ export function NewProjectWizard() {
               <p className="text-sm text-danger">{stepError ?? state.error}</p>
             )}
 
-            <div className="mt-2 flex items-center justify-between">
+            <div className="mt-4 flex items-center justify-between">
               <Button type="button" variant="ghost" onClick={goBack} disabled={step === 0}>
                 <ArrowLeft className="size-4" />
                 이전
@@ -284,21 +274,22 @@ export function NewProjectWizard() {
   );
 }
 
-function StepHeader({ title }: { title: string }) {
-  return <h2 className="text-xl font-semibold text-foreground">{title}</h2>;
-}
-
-function Callout({
-  wash,
-  text,
+function StepHeader({
+  title,
+  subtitle,
+  description,
 }: {
-  wash: { tint: string };
-  text: string;
+  title: string;
+  subtitle?: string;
+  description: string;
 }) {
   return (
-    <div className={`flex items-start gap-2.5 rounded-lg border p-3.5 text-sm text-foreground/80 ${wash.tint}`}>
-      <Lightbulb className="mt-0.5 size-4 shrink-0" />
-      <p>{text}</p>
+    <div className="flex flex-col gap-3">
+      <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        {title}
+        {subtitle && <span className="ml-2 text-lg font-normal whitespace-nowrap text-muted-foreground">({subtitle})</span>}
+      </h2>
+      <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">{description}</p>
     </div>
   );
 }
