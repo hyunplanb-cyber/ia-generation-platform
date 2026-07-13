@@ -1,5 +1,15 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index, uuid, date } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  index,
+  uniqueIndex,
+  uuid,
+  date,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -102,16 +112,49 @@ export const project = pgTable(
   (table) => [index("project_ownerId_idx").on(table.ownerId)],
 );
 
+export const menu = pgTable(
+  "menu",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => project.id, { onDelete: "cascade" }),
+    nameKo: text("name_ko").notNull(),
+    nameEn: text("name_en").notNull(),
+    menuCode: text("menu_code").notNull(),
+    description: text("description"),
+    desiredFeatures: text("desired_features"),
+    sortOrder: integer("sort_order").default(0).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("menu_projectId_idx").on(table.projectId),
+    uniqueIndex("menu_project_menu_code_idx").on(table.projectId, table.menuCode),
+  ],
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   projects: many(project),
 }));
 
-export const projectRelations = relations(project, ({ one }) => ({
+export const projectRelations = relations(project, ({ one, many }) => ({
   owner: one(user, {
     fields: [project.ownerId],
     references: [user.id],
+  }),
+  menus: many(menu),
+}));
+
+export const menuRelations = relations(menu, ({ one }) => ({
+  project: one(project, {
+    fields: [menu.projectId],
+    references: [project.id],
   }),
 }));
 

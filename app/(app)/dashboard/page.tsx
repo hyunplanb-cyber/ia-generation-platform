@@ -43,6 +43,12 @@ export default async function DashboardPage() {
             <p className="text-xs text-foreground/60">최근 수정: {formatDate(p.updatedAt)}</p>
             <div className="mt-2 flex items-center gap-2">
               <Link
+                href={`/dashboard/${p.id}/menus`}
+                className={buttonVariants({ variant: "secondary", size: "sm" })}
+              >
+                메뉴 관리
+              </Link>
+              <Link
                 href={`/dashboard/${p.id}/edit`}
                 className={buttonVariants({ variant: "secondary", size: "sm" })}
               >
