@@ -2,47 +2,54 @@
 
 import { Check } from "lucide-react";
 
+interface StepDef {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
 export function StepIndicator({
-  labels,
+  steps,
   currentStep,
 }: {
-  labels: string[];
+  steps: StepDef[];
   currentStep: number;
 }) {
   return (
-    <ol className="flex items-start">
-      {labels.map((label, i) => {
+    <ol className="flex flex-row gap-4 sm:flex-col sm:gap-0">
+      {steps.map((step, i) => {
+        const Icon = step.icon;
         const isCompleted = i < currentStep;
         const isCurrent = i === currentStep;
         return (
-          <li key={label} className="flex flex-1 items-center last:flex-none">
-            <div className="flex flex-col items-center gap-1.5">
+          <li key={step.label} className="flex flex-1 flex-col items-center sm:flex-none sm:flex-row sm:items-stretch">
+            <div className="flex flex-row items-center gap-3 sm:flex-col sm:items-center">
               <span
-                className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors duration-300 ${
+                className={`flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors duration-300 ${
                   isCompleted
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-success text-primary-foreground"
                     : isCurrent
-                      ? "bg-primary-soft text-primary-on-soft ring-2 ring-primary"
+                      ? "bg-primary text-primary-foreground shadow-sm"
                       : "bg-muted text-muted-foreground"
                 }`}
               >
-                {isCompleted ? <Check className="size-4" /> : i + 1}
+                {isCompleted ? <Check className="size-4" /> : <Icon className="size-4" />}
               </span>
-              <span
-                className={`w-20 text-center text-xs font-medium transition-colors duration-300 ${
-                  isCurrent ? "text-foreground" : "text-muted-foreground"
-                }`}
-              >
-                {label}
-              </span>
+              {i < steps.length - 1 && (
+                <div
+                  className={`hidden w-px flex-1 border-l-2 border-dashed sm:block ${
+                    isCompleted ? "border-success" : "border-border"
+                  }`}
+                  style={{ minHeight: "28px" }}
+                />
+              )}
             </div>
-            {i < labels.length - 1 && (
-              <div
-                className={`mx-2 h-0.5 flex-1 translate-y-[-10px] transition-colors duration-300 ${
-                  isCompleted ? "bg-primary" : "bg-border"
-                }`}
-              />
-            )}
+            <span
+              className={`mt-1.5 text-center text-xs font-medium transition-colors duration-300 sm:mt-0 sm:ml-3 sm:pb-7 sm:text-left sm:text-sm ${
+                isCurrent ? "text-foreground" : "text-muted-foreground"
+              }`}
+            >
+              {step.label}
+            </span>
           </li>
         );
       })}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
@@ -8,22 +8,45 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { SocialLoginButtons } from "@/components/social-login-buttons";
 import type { EnabledSocialProviders } from "@/lib/social-providers";
+
+const REMEMBERED_EMAIL_KEY = "ia-platform:remembered-email";
 
 export function LoginForm({ enabledSocialProviders }: { enabledSocialProviders: EnabledSocialProviders }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberEmail, setRememberEmail] = useState(false);
+  const [keepSignedIn, setKeepSignedIn] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // localStorage는 서버에 없는 브라우저 전용 저장소라 마운트 후 한 번만
+    // 읽어 초기값을 채운다 — 이 최초 동기화는 setState-in-effect 규칙의
+    // 의도된 예외 케이스다(외부 시스템에서 최초 상태를 가져오는 패턴).
+    const saved = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+    if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEmail(saved);
+      setRememberEmail(true);
+    }
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
 
+    if (rememberEmail) {
+      localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
+    } else {
+      localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+    }
+
     await authClient.signIn.email(
-      { email, password, callbackURL: "/dashboard" },
+      { email, password, callbackURL: "/dashboard", rememberMe: keepSignedIn },
       {
         onRequest: () => setLoading(true),
         onSuccess: () => {
@@ -70,6 +93,22 @@ export function LoginForm({ enabledSocialProviders }: { enabledSocialProviders: 
                 required
               />
               {error && <p className="text-sm text-danger">{error}</p>}
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Checkbox
+                  checked={rememberEmail}
+                  onCheckedChange={(checked) => setRememberEmail(checked === true)}
+                />
+                이메일 기억하기
+              </label>
+              <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Checkbox
+                  checked={keepSignedIn}
+                  onCheckedChange={(checked) => setKeepSignedIn(checked === true)}
+                />
+                로그인 상태 유지
+              </label>
             </div>
             <Button type="submit" disabled={loading}>
               {loading ? "로그인 중..." : "로그인"}
