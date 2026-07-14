@@ -2,6 +2,8 @@ import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { detectMixedDeviceMode } from "@/domain/screen/detect-mixed-device-mode";
+import { detectOutOfRangeScreens } from "@/domain/schedule/detect-out-of-range-screens";
+import { detectScheduleReversals } from "@/domain/schedule/detect-schedule-reversals";
 import { ScreensView } from "./screens-view";
 
 export default async function ScreensPage({
@@ -12,6 +14,10 @@ export default async function ScreensPage({
   const { projectId } = await params;
   const { project, screens, buttonActions } = await getProjectScreensDetail(projectId);
   const isMixed = detectMixedDeviceMode(project.deviceMode, screens);
+  const outOfRangeIds = [
+    ...detectOutOfRangeScreens(project.overallStart, project.overallEnd, screens),
+  ];
+  const reversedIds = [...detectScheduleReversals(screens)];
 
   return (
     <div className="flex flex-col gap-8">
@@ -38,7 +44,13 @@ export default async function ScreensPage({
           에서 [실행: IA 생성]을 눌러주세요.
         </p>
       ) : (
-        <ScreensView screens={screens} buttonActions={buttonActions} projectId={projectId} />
+        <ScreensView
+          screens={screens}
+          buttonActions={buttonActions}
+          projectId={projectId}
+          outOfRangeIds={outOfRangeIds}
+          reversedIds={reversedIds}
+        />
       )}
     </div>
   );

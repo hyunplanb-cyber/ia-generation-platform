@@ -10,13 +10,25 @@ export function ScreensView({
   screens,
   buttonActions,
   projectId,
+  outOfRangeIds,
+  reversedIds,
 }: {
   screens: Screen[];
   buttonActions: ButtonAction[];
   projectId: string;
+  outOfRangeIds: string[];
+  reversedIds: string[];
 }) {
   const [selectedScreenId, setSelectedScreenId] = useState<string | null>(null);
   const selectedScreen = screens.find((s) => s.id === selectedScreenId) ?? null;
+
+  const outOfRangeSet = new Set(outOfRangeIds);
+  const reversedSet = new Set(reversedIds);
+  const sortedScreens = [...screens].sort((a, b) => {
+    const aOut = outOfRangeSet.has(a.id) ? 0 : 1;
+    const bOut = outOfRangeSet.has(b.id) ? 0 : 1;
+    return aOut - bOut;
+  });
 
   return (
     <>
@@ -26,16 +38,19 @@ export function ScreensView({
             <tr>
               <th className="px-4 py-2 font-medium">페이지ID</th>
               <th className="px-4 py-2 font-medium">페이지명</th>
+              <th className="px-4 py-2 font-medium">일정</th>
               <th className="px-4 py-2 font-medium">상태</th>
             </tr>
           </thead>
           <tbody>
-            {screens.map((screen) => (
+            {sortedScreens.map((screen) => (
               <ScreenListItem
                 key={screen.id}
                 screen={screen}
                 projectId={projectId}
                 onOpenDetail={setSelectedScreenId}
+                isOutOfRange={outOfRangeSet.has(screen.id)}
+                isReversed={reversedSet.has(screen.id)}
               />
             ))}
           </tbody>

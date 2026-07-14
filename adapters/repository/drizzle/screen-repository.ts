@@ -4,6 +4,7 @@ import { screen } from "@/db/schema";
 import type { FieldSource, PromptFeedback, Screen, ScreenStatus } from "@/domain/screen/screen";
 import type {
   CreateScreenInput,
+  ScheduleUpdate,
   ScreenFieldsPatch,
   ScreenRepository,
 } from "@/domain/ports/screen-repository";
@@ -46,6 +47,8 @@ export const drizzleScreenRepository: ScreenRepository = {
           pageName: input.pageName,
           screenRole: input.screenRole,
           deviceCode: input.deviceCode,
+          scheduleStart: input.scheduleStart,
+          scheduleEnd: input.scheduleEnd,
         })),
       )
       .returning();
@@ -100,5 +103,15 @@ export const drizzleScreenRepository: ScreenRepository = {
       .update(screen)
       .set({ funcDefSource: "manual" })
       .where(and(eq(screen.id, id), eq(screen.projectId, projectId)));
+  },
+
+  async updateSchedules(projectId: string, updates: ScheduleUpdate[]): Promise<void> {
+    // neon-http 드라이버는 트랜잭션을 지원하지 않아 순차 UPDATE로 처리한다.
+    for (const update of updates) {
+      await db
+        .update(screen)
+        .set({ scheduleStart: update.scheduleStart, scheduleEnd: update.scheduleEnd })
+        .where(and(eq(screen.id, update.id), eq(screen.projectId, projectId)));
+    }
   },
 };

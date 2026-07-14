@@ -15,6 +15,7 @@ import { updateButtonActionAction } from "./update-button-action-action";
 import { deleteButtonActionAction } from "./delete-button-action-action";
 import { generatePromptAction } from "./generate-prompt-action";
 import { updatePromptAction, type UpdatePromptState } from "./update-prompt-action";
+import { updateScheduleAction, type UpdateScheduleState } from "./update-schedule-action";
 
 const selectClasses =
   "h-9 w-full rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
@@ -90,6 +91,8 @@ export function ScreenDetailPanel({
         </form>
 
         <PromptSection screen={screen} projectId={projectId} />
+
+        <ScheduleSection screen={screen} projectId={projectId} />
 
         <div className="flex flex-col gap-3">
           <h3 className="font-semibold text-foreground">버튼 - 이동 대상</h3>
@@ -196,6 +199,54 @@ function PromptSection({ screen, projectId }: { screen: Screen; projectId: strin
       {updateState.error && <p className="text-sm text-danger">{updateState.error}</p>}
       <Button type="submit" size="sm" disabled={updatePending} className="self-start">
         {updatePending ? "저장하는 중..." : "AI 프롬프트 저장"}
+      </Button>
+    </form>
+  );
+}
+
+function ScheduleSection({ screen, projectId }: { screen: Screen; projectId: string }) {
+  const initial: UpdateScheduleState = {
+    error: null,
+    values: { scheduleStart: screen.scheduleStart ?? "", scheduleEnd: screen.scheduleEnd ?? "" },
+  };
+  const boundAction = updateScheduleAction.bind(null, projectId, screen.id);
+  const [state, formAction, pending] = useActionState(boundAction, initial);
+
+  return (
+    <form action={formAction} className="flex flex-col gap-2">
+      <input type="hidden" name="updatedAt" value={screen.updatedAt.toISOString()} />
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-foreground">일정</h3>
+        <span className="rounded-full bg-neutral-badge-soft px-2 py-0.5 text-xs font-medium text-neutral-badge">
+          {screen.scheduleLocked ? "잠김" : "자동배분"}
+        </span>
+      </div>
+      <div className="flex gap-3">
+        <div className="flex flex-1 flex-col gap-1.5">
+          <Label htmlFor={`scheduleStart-${screen.id}`}>시작일</Label>
+          <Input
+            id={`scheduleStart-${screen.id}`}
+            name="scheduleStart"
+            type="date"
+            defaultValue={state.values.scheduleStart}
+          />
+        </div>
+        <div className="flex flex-1 flex-col gap-1.5">
+          <Label htmlFor={`scheduleEnd-${screen.id}`}>종료일</Label>
+          <Input
+            id={`scheduleEnd-${screen.id}`}
+            name="scheduleEnd"
+            type="date"
+            defaultValue={state.values.scheduleEnd}
+          />
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        일정을 직접 저장하면 이 화면은 &ldquo;잠김&rdquo; 상태가 되어, 전체 일정을 다시 계산해도 바뀌지 않아요.
+      </p>
+      {state.error && <p className="text-sm text-danger">{state.error}</p>}
+      <Button type="submit" size="sm" disabled={pending} className="self-start">
+        {pending ? "저장하는 중..." : "일정 저장"}
       </Button>
     </form>
   );

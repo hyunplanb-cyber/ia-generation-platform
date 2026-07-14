@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { updateProject } from "@/application/update-project";
+import { getProjectForEdit } from "@/application/get-project-for-edit";
+import { recalculateSchedule } from "@/application/recalculate-schedule";
 
 export interface UpdateProjectState {
   error: string | null;
@@ -30,6 +32,8 @@ export async function updateProjectAction(
     return { error: "종료일은 시작일보다 빠를 수 없어요." };
   }
 
+  const before = await getProjectForEdit(projectId);
+
   await updateProject(projectId, {
     concept,
     menuDraft: menuDraft || null,
@@ -38,5 +42,10 @@ export async function updateProjectAction(
     overallEnd,
     deviceMode,
   });
+
+  if (before.overallStart !== overallStart || before.overallEnd !== overallEnd) {
+    await recalculateSchedule(projectId, overallStart, overallEnd);
+  }
+
   redirect("/dashboard");
 }

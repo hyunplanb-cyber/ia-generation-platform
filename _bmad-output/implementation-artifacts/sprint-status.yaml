@@ -1,5 +1,5 @@
 # generated: 2026-07-09
-# last_updated: 2026-07-13
+# last_updated: 2026-07-14
 # project: IA 자동생성 플랫폼
 # project_key: NOKEY
 # tracking_system: file-system
@@ -41,7 +41,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-09
-last_updated: 2026-07-13
+last_updated: 2026-07-14
 project: IA 자동생성 플랫폼
 project_key: NOKEY
 tracking_system: file-system
@@ -69,7 +69,7 @@ development_status:
   3-2-edit-page-id-and-page-name: review
   3-3-define-screen-functions-and-button-links: review
   3-4-edit-ai-prompt: review
-  3-5-screen-schedule-and-recalculation: backlog
+  3-5-screen-schedule-and-recalculation: review
   3-6-preserve-manual-edits-on-regeneration: backlog
   3-7-menu-deletion-change-safety-for-screens: backlog
   3-8-ai-prompt-feedback: backlog

@@ -7,6 +7,8 @@ export interface CreateScreenInput {
   pageName: string;
   screenRole: string;
   deviceCode: string;
+  scheduleStart?: string;
+  scheduleEnd?: string;
 }
 
 export type ScreenFieldsPatch = Partial<
@@ -20,8 +22,17 @@ export type ScreenFieldsPatch = Partial<
     | "funcDefSource"
     | "prompt"
     | "promptSource"
+    | "scheduleStart"
+    | "scheduleEnd"
+    | "scheduleLocked"
   >
 >;
+
+export interface ScheduleUpdate {
+  id: string;
+  scheduleStart: string;
+  scheduleEnd: string;
+}
 
 export interface ScreenRepository {
   createMany(inputs: CreateScreenInput[]): Promise<Screen[]>;
@@ -35,4 +46,5 @@ export interface ScreenRepository {
     expectedUpdatedAt: Date,
   ): Promise<Screen | null>;
   setFuncDefSourceManual(id: string, projectId: string): Promise<void>;
+  updateSchedules(projectId: string, updates: ScheduleUpdate[]): Promise<void>;
 }

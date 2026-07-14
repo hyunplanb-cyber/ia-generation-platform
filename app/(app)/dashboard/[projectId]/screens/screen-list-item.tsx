@@ -11,10 +11,14 @@ export function ScreenListItem({
   screen,
   projectId,
   onOpenDetail,
+  isOutOfRange,
+  isReversed,
 }: {
   screen: Screen;
   projectId: string;
   onOpenDetail: (screenId: string) => void;
+  isOutOfRange: boolean;
+  isReversed: boolean;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const initialState: UpdateScreenState = {
@@ -37,12 +41,13 @@ export function ScreenListItem({
     screen.pageIdSource === "manual" ||
     screen.pageNameSource === "manual" ||
     screen.funcDefSource === "manual" ||
-    screen.promptSource === "manual";
+    screen.promptSource === "manual" ||
+    screen.scheduleLocked;
 
   if (isEditing) {
     return (
       <tr className="border-t border-border">
-        <td colSpan={3} className="px-4 py-3">
+        <td colSpan={4} className="px-4 py-3">
           <form action={formAction} className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <input type="hidden" name="updatedAt" value={screen.updatedAt.toISOString()} />
             <div className="flex flex-1 flex-col gap-1.5">
@@ -87,6 +92,25 @@ export function ScreenListItem({
         </span>
       </td>
       <td className="px-4 py-2 text-foreground">{screen.pageName}</td>
+      <td className="px-4 py-2">
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-foreground">
+            {screen.scheduleStart ?? "-"} ~ {screen.scheduleEnd ?? "-"}
+          </span>
+          <div className="flex flex-wrap gap-1">
+            {isOutOfRange && (
+              <span className="w-fit rounded-full bg-warning-soft px-2 py-0.5 text-xs font-medium text-warning">
+                범위 이탈
+              </span>
+            )}
+            {isReversed && (
+              <span className="w-fit rounded-full bg-warning-soft px-2 py-0.5 text-xs font-medium text-warning">
+                일정 역전
+              </span>
+            )}
+          </div>
+        </div>
+      </td>
       <td className="px-4 py-2">
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-neutral-badge-soft px-2 py-0.5 text-xs font-medium text-neutral-badge">

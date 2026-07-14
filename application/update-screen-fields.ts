@@ -9,11 +9,16 @@ export interface UpdateScreenFieldsRequest {
   pageName?: string;
   funcDef?: string;
   prompt?: string;
+  scheduleStart?: string;
+  scheduleEnd?: string;
 }
 
 export type UpdateScreenFieldsResult =
   | { ok: true; screen: Screen }
-  | { ok: false; reason: "not-found" | "empty" | "duplicate" | "conflict" | "too-long" };
+  | {
+      ok: false;
+      reason: "not-found" | "empty" | "duplicate" | "conflict" | "too-long" | "invalid-range";
+    };
 
 function isUniqueViolation(error: unknown): boolean {
   const code = (error as { code?: string; cause?: { code?: string } })?.code
@@ -70,6 +75,19 @@ export async function updateScreenFields(
       if (prompt !== (current.prompt ?? "")) {
         patch.prompt = prompt;
         patch.promptSource = "manual";
+      }
+    }
+
+    if (input.scheduleStart !== undefined || input.scheduleEnd !== undefined) {
+      const scheduleStart = input.scheduleStart ?? current.scheduleStart ?? "";
+      const scheduleEnd = input.scheduleEnd ?? current.scheduleEnd ?? "";
+      if (scheduleStart > scheduleEnd) {
+        return { ok: false, reason: "invalid-range" };
+      }
+      if (scheduleStart !== (current.scheduleStart ?? "") || scheduleEnd !== (current.scheduleEnd ?? "")) {
+        patch.scheduleStart = scheduleStart;
+        patch.scheduleEnd = scheduleEnd;
+        patch.scheduleLocked = true;
       }
     }
 

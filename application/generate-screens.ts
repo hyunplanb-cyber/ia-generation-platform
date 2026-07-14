@@ -2,6 +2,7 @@ import { drizzleMenuRepository } from "@/adapters/repository/drizzle/menu-reposi
 import { drizzleScreenRepository } from "@/adapters/repository/drizzle/screen-repository";
 import { rulePatternEngine } from "@/adapters/generation/rule-pattern/rule-pattern-engine";
 import { derivePageId } from "@/domain/screen/derive-page-id";
+import { distributeSchedule } from "@/domain/schedule/distribute-schedule";
 import type { CreateScreenInput } from "@/domain/ports/screen-repository";
 import { withProjectAuth } from "@/application/with-project-auth";
 
@@ -32,6 +33,13 @@ export async function generateScreens(projectId: string): Promise<void> {
       }
     }
 
-    await drizzleScreenRepository.createMany(inputs);
+    const slots = distributeSchedule(project.overallStart, project.overallEnd, inputs.length);
+    const inputsWithSchedule = inputs.map((input, index) => ({
+      ...input,
+      scheduleStart: slots[index]?.scheduleStart,
+      scheduleEnd: slots[index]?.scheduleEnd,
+    }));
+
+    await drizzleScreenRepository.createMany(inputsWithSchedule);
   });
 }

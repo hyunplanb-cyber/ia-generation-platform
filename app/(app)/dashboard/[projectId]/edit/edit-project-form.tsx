@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState, type FormEvent } from "react";
 import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +11,30 @@ import type { Project } from "@/domain/project/project";
 
 const initialState: UpdateProjectState = { error: null };
 
-export function EditProjectForm({ project }: { project: Project }) {
+export function EditProjectForm({
+  project,
+  hasScreens,
+}: {
+  project: Project;
+  hasScreens: boolean;
+}) {
   const boundAction = updateProjectAction.bind(null, project.id);
   const [state, formAction, pending] = useActionState(boundAction, initialState);
+  const [overallStart, setOverallStart] = useState(project.overallStart);
+  const [overallEnd, setOverallEnd] = useState(project.overallEnd);
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    const scheduleChanged = overallStart !== project.overallStart || overallEnd !== project.overallEnd;
+    if (
+      hasScreens &&
+      scheduleChanged &&
+      !confirm(
+        "수동으로 조정한 화면은 유지되고, 자동배분된 화면만 새로 계산됩니다. 계속할까요?",
+      )
+    ) {
+      e.preventDefault();
+    }
+  }
 
   return (
     <div className="bg-linear-to-br from-pastel-lavender/25 via-background to-pastel-yellow/20 py-16">
@@ -29,6 +50,7 @@ export function EditProjectForm({ project }: { project: Project }) {
         </div>
         <form
           action={formAction}
+          onSubmit={handleSubmit}
           className="flex flex-col gap-4 rounded-xl border border-border bg-background p-6 shadow-sm sm:p-8"
         >
           <div className="flex flex-col gap-1.5">
@@ -54,7 +76,8 @@ export function EditProjectForm({ project }: { project: Project }) {
               id="overallStart"
               name="overallStart"
               type="date"
-              defaultValue={project.overallStart}
+              value={overallStart}
+              onChange={(e) => setOverallStart(e.target.value)}
               required
             />
           </div>
@@ -64,7 +87,8 @@ export function EditProjectForm({ project }: { project: Project }) {
               id="overallEnd"
               name="overallEnd"
               type="date"
-              defaultValue={project.overallEnd}
+              value={overallEnd}
+              onChange={(e) => setOverallEnd(e.target.value)}
               required
             />
           </div>
