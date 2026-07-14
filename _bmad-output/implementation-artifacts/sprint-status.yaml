@@ -68,7 +68,7 @@ development_status:
   3-1-generate-screens-from-menus: review
   3-2-edit-page-id-and-page-name: review
   3-3-define-screen-functions-and-button-links: review
-  3-4-edit-ai-prompt: backlog
+  3-4-edit-ai-prompt: review
   3-5-screen-schedule-and-recalculation: backlog
   3-6-preserve-manual-edits-on-regeneration: backlog
   3-7-menu-deletion-change-safety-for-screens: backlog

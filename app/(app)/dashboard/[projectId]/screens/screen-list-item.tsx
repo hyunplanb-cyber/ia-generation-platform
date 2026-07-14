@@ -36,7 +36,8 @@ export function ScreenListItem({
   const isModified =
     screen.pageIdSource === "manual" ||
     screen.pageNameSource === "manual" ||
-    screen.funcDefSource === "manual";
+    screen.funcDefSource === "manual" ||
+    screen.promptSource === "manual";
 
   if (isEditing) {
     return (

@@ -13,6 +13,8 @@ import { updateFuncDefAction, type UpdateFuncDefState } from "./update-func-def-
 import { addButtonActionAction, type AddButtonActionState } from "./add-button-action-action";
 import { updateButtonActionAction } from "./update-button-action-action";
 import { deleteButtonActionAction } from "./delete-button-action-action";
+import { generatePromptAction } from "./generate-prompt-action";
+import { updatePromptAction, type UpdatePromptState } from "./update-prompt-action";
 
 const selectClasses =
   "h-9 w-full rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
@@ -87,6 +89,8 @@ export function ScreenDetailPanel({
           </Button>
         </form>
 
+        <PromptSection screen={screen} projectId={projectId} />
+
         <div className="flex flex-col gap-3">
           <h3 className="font-semibold text-foreground">버튼 - 이동 대상</h3>
           <ul className="flex flex-col gap-2">
@@ -104,6 +108,96 @@ export function ScreenDetailPanel({
         </div>
       </div>
     </div>
+  );
+}
+
+function PromptSection({ screen, projectId }: { screen: Screen; projectId: string }) {
+  const [promptValue, setPromptValue] = useState(screen.prompt ?? "");
+  const [hasPrompt, setHasPrompt] = useState(!!screen.prompt);
+  const [generating, setGenerating] = useState(!screen.prompt);
+  const [unavailable, setUnavailable] = useState(false);
+  const [generateFailed, setGenerateFailed] = useState(false);
+
+  useEffect(() => {
+    if (screen.prompt) return;
+    let cancelled = false;
+    generatePromptAction(projectId, screen.id).then((result) => {
+      if (cancelled) return;
+      setGenerating(false);
+      if (result.ok) {
+        setPromptValue(result.prompt ?? "");
+        setHasPrompt(true);
+      } else if (result.unavailable) {
+        setUnavailable(true);
+      } else {
+        setGenerateFailed(true);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen.id]);
+
+  const updateInitial: UpdatePromptState = { error: null, value: promptValue };
+  const boundUpdateAction = updatePromptAction.bind(null, projectId, screen.id);
+  const [updateState, updateFormAction, updatePending] = useActionState(
+    boundUpdateAction,
+    updateInitial,
+  );
+
+  const isModified = screen.promptSource === "manual";
+
+  if (generating) {
+    return (
+      <div className="flex flex-col gap-2">
+        <h3 className="font-semibold text-foreground">AI 프롬프트</h3>
+        <p className="text-sm text-muted-foreground">AI가 프롬프트를 만들고 있어요...</p>
+      </div>
+    );
+  }
+
+  if (unavailable) {
+    return (
+      <div className="flex flex-col gap-2">
+        <h3 className="font-semibold text-foreground">AI 프롬프트</h3>
+        <p className="text-sm text-muted-foreground">
+          AI 프롬프트 기능을 아직 사용할 수 없어요. 관리자 설정이 필요해요.
+        </p>
+      </div>
+    );
+  }
+
+  if (!hasPrompt || generateFailed) {
+    return (
+      <div className="flex flex-col gap-2">
+        <h3 className="font-semibold text-foreground">AI 프롬프트</h3>
+        <p className="text-sm text-danger">프롬프트를 생성하지 못했어요.</p>
+      </div>
+    );
+  }
+
+  return (
+    <form action={updateFormAction} className="flex flex-col gap-2">
+      <input type="hidden" name="updatedAt" value={screen.updatedAt.toISOString()} />
+      <div className="flex items-center justify-between">
+        <Label htmlFor="prompt">AI 프롬프트</Label>
+        <span className="rounded-full bg-neutral-badge-soft px-2 py-0.5 text-xs font-medium text-neutral-badge">
+          {isModified ? "수정됨" : "자동생성"}
+        </span>
+      </div>
+      <Textarea
+        id="prompt"
+        name="prompt"
+        rows={8}
+        value={promptValue}
+        onChange={(e) => setPromptValue(e.target.value)}
+      />
+      {updateState.error && <p className="text-sm text-danger">{updateState.error}</p>}
+      <Button type="submit" size="sm" disabled={updatePending} className="self-start">
+        {updatePending ? "저장하는 중..." : "AI 프롬프트 저장"}
+      </Button>
+    </form>
   );
 }
 

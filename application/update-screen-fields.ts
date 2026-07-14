@@ -8,6 +8,7 @@ export interface UpdateScreenFieldsRequest {
   pageId?: string;
   pageName?: string;
   funcDef?: string;
+  prompt?: string;
 }
 
 export type UpdateScreenFieldsResult =
@@ -61,6 +62,14 @@ export async function updateScreenFields(
       if (funcDef !== (current.funcDef ?? "")) {
         patch.funcDef = funcDef;
         patch.funcDefSource = "manual";
+      }
+    }
+
+    if (input.prompt !== undefined) {
+      const prompt = input.prompt;
+      if (prompt !== (current.prompt ?? "")) {
+        patch.prompt = prompt;
+        patch.promptSource = "manual";
       }
     }
 

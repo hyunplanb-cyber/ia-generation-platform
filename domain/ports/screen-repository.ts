@@ -12,7 +12,14 @@ export interface CreateScreenInput {
 export type ScreenFieldsPatch = Partial<
   Pick<
     Screen,
-    "pageId" | "pageName" | "pageIdSource" | "pageNameSource" | "funcDef" | "funcDefSource"
+    | "pageId"
+    | "pageName"
+    | "pageIdSource"
+    | "pageNameSource"
+    | "funcDef"
+    | "funcDefSource"
+    | "prompt"
+    | "promptSource"
   >
 >;
 
