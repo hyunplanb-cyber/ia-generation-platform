@@ -137,6 +137,51 @@ export const menu = pgTable(
   ],
 );
 
+export const screen = pgTable(
+  "screen",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => project.id, { onDelete: "cascade" }),
+    menuId: uuid("menu_id")
+      .notNull()
+      .references(() => menu.id, { onDelete: "cascade" }),
+    pageId: text("page_id").notNull(),
+    pageName: text("page_name").notNull(),
+    // 'active' | 'quarantined' — 격리는 Story 3.7
+    status: text("status").default("active").notNull(),
+    // 재실행 매칭키(AD-3), 예: list/detail/create/done — Story 3.6이 사용
+    screenRole: text("screen_role").notNull(),
+    // 'PC' | 'MO' — 반응형 프로젝트는 전부 'PC'
+    deviceCode: text("device_code").notNull(),
+    // 화면기능정의(Story 3.3), AI프롬프트(Story 3.4) — 지금은 채우지 않음
+    funcDef: text("func_def"),
+    prompt: text("prompt"),
+    // 'auto' | 'manual' — AD-5, 필드 그룹별 자동/수동 추적
+    pageIdSource: text("page_id_source").default("auto").notNull(),
+    pageNameSource: text("page_name_source").default("auto").notNull(),
+    funcDefSource: text("func_def_source").default("auto").notNull(),
+    promptSource: text("prompt_source").default("auto").notNull(),
+    // Story 3.5가 채움
+    scheduleStart: date("schedule_start"),
+    scheduleEnd: date("schedule_end"),
+    scheduleLocked: boolean("schedule_locked").default(false).notNull(),
+    // 'up' | 'down' | null — Story 3.8
+    promptFeedback: text("prompt_feedback"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("screen_projectId_idx").on(table.projectId),
+    index("screen_menuId_idx").on(table.menuId),
+    uniqueIndex("screen_project_page_id_idx").on(table.projectId, table.pageId),
+  ],
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -149,12 +194,25 @@ export const projectRelations = relations(project, ({ one, many }) => ({
     references: [user.id],
   }),
   menus: many(menu),
+  screens: many(screen),
 }));
 
-export const menuRelations = relations(menu, ({ one }) => ({
+export const menuRelations = relations(menu, ({ one, many }) => ({
   project: one(project, {
     fields: [menu.projectId],
     references: [project.id],
+  }),
+  screens: many(screen),
+}));
+
+export const screenRelations = relations(screen, ({ one }) => ({
+  project: one(project, {
+    fields: [screen.projectId],
+    references: [project.id],
+  }),
+  menu: one(menu, {
+    fields: [screen.menuId],
+    references: [menu.id],
   }),
 }));
 

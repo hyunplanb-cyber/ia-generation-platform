@@ -64,8 +64,8 @@ development_status:
   2-4-delete-menu: review
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-generate-screens-from-menus: backlog
+  epic-3: in-progress
+  3-1-generate-screens-from-menus: review
   3-2-edit-page-id-and-page-name: backlog
   3-3-define-screen-functions-and-button-links: backlog
   3-4-edit-ai-prompt: backlog

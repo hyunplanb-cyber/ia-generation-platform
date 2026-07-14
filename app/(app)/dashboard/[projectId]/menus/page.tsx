@@ -1,6 +1,5 @@
-import { Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { listMenus } from "@/application/list-menus";
+import { GenerateScreensButton } from "./generate-screens-button";
 import { MenuForm } from "./menu-form";
 import { MenuListItem } from "./menu-list-item";
 
@@ -21,10 +20,7 @@ export default async function MenusPage({
             사이트에 필요한 메뉴를 추가해 주세요. 메뉴별로 화면이 자동 생성돼요.
           </p>
         </div>
-        <Button type="button" disabled title="준비 중이에요 — 곧 만나보실 수 있어요">
-          <Sparkles className="size-4" />
-          실행: IA 생성
-        </Button>
+        <GenerateScreensButton projectId={projectId} disabled={menus.length === 0} />
       </div>
 
       {menus.length === 0 ? (

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
+import { countScreensByProject } from "@/application/count-screens-by-project";
 import { listMyProjects } from "@/application/list-my-projects";
 import { requireSession } from "@/application/require-session";
 import { DeleteProjectButton } from "./delete-project-button";
@@ -17,6 +18,8 @@ export default async function DashboardPage() {
   if (projects.length === 0) {
     redirect("/dashboard/new");
   }
+
+  const screenCounts = await countScreensByProject(projects.map((p) => p.id));
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-12">
@@ -39,7 +42,7 @@ export default async function DashboardPage() {
             <p className="text-sm text-foreground/80">
               {p.overallStart} ~ {p.overallEnd}
             </p>
-            <p className="text-sm text-foreground/80">화면 0개</p>
+            <p className="text-sm text-foreground/80">화면 {screenCounts[p.id] ?? 0}개</p>
             <p className="text-xs text-foreground/60">최근 수정: {formatDate(p.updatedAt)}</p>
             <div className="mt-2 flex items-center gap-2">
               <Link

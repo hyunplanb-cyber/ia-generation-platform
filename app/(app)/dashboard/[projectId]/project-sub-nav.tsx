@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Settings, ListChecks } from "lucide-react";
+import { Settings, ListChecks, LayoutList } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "edit", label: "설정", icon: Settings },
   { href: "menus", label: "메뉴 관리", icon: ListChecks },
+  { href: "screens", label: "화면 리스트", icon: LayoutList },
 ];
 
 export function ProjectSubNav({ projectId }: { projectId: string }) {
