@@ -22,4 +22,5 @@ export interface MenuRepository {
   listByProject(projectId: string): Promise<Menu[]>;
   update(projectId: string, menuId: string, input: UpdateMenuInput): Promise<Menu | null>;
   updateSortOrder(projectId: string, menuId: string, sortOrder: number): Promise<void>;
+  delete(projectId: string, menuId: string): Promise<void>;
 }

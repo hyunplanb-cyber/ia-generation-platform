@@ -69,4 +69,8 @@ export const drizzleMenuRepository: MenuRepository = {
       .set({ sortOrder })
       .where(and(eq(menu.id, menuId), eq(menu.projectId, projectId)));
   },
+
+  async delete(projectId: string, menuId: string): Promise<void> {
+    await db.delete(menu).where(and(eq(menu.id, menuId), eq(menu.projectId, projectId)));
+  },
 };

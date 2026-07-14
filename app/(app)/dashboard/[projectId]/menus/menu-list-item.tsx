@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Menu } from "@/domain/menu/menu";
+import { deleteMenuAction } from "./delete-menu-action";
 import { reorderMenuAction } from "./reorder-menu-action";
 import { updateMenuAction, type UpdateMenuState } from "./update-menu-action";
 
@@ -113,6 +114,18 @@ export function MenuListItem({
         <Button type="button" variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
           수정
         </Button>
+        <form
+          action={deleteMenuAction.bind(null, projectId, menu.id)}
+          onSubmit={(e) => {
+            if (!confirm("이 메뉴를 삭제하시겠어요?")) {
+              e.preventDefault();
+            }
+          }}
+        >
+          <Button type="submit" variant="destructive" size="sm">
+            삭제
+          </Button>
+        </form>
       </div>
     </li>
   );

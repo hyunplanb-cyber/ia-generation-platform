@@ -61,7 +61,7 @@ development_status:
   2-1-add-menu: review
   2-2-menu-code-auto-generation: review
   2-3-reorder-and-edit-menu: review
-  2-4-delete-menu: backlog
+  2-4-delete-menu: review
   epic-2-retrospective: optional
 
   epic-3: backlog
