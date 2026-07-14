@@ -185,6 +185,33 @@ export const screen = pgTable(
   ],
 );
 
+export const buttonAction = pgTable(
+  "button_action",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    screenId: uuid("screen_id")
+      .notNull()
+      .references(() => screen.id, { onDelete: "cascade" }),
+    label: text("label").notNull(),
+    // onDelete 지정 안 함(기본 RESTRICT) — AD-3: 참조가 남아있는 화면은 하드 삭제를 막아야 한다
+    targetScreenId: uuid("target_screen_id")
+      .notNull()
+      .references(() => screen.id),
+    // 연결 확정 시점의 대상 page_id 스냅샷(AD-4) — 대상의 page_id가 나중에 바뀌면
+    // 이 값과 비교해 "연결 대상 이름이 바뀌었어요" 경고를 파생 계산한다
+    targetPageIdSnapshot: text("target_page_id_snapshot").notNull(),
+    createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { precision: 3 })
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("button_action_screenId_idx").on(table.screenId),
+    index("button_action_targetScreenId_idx").on(table.targetScreenId),
+  ],
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -208,7 +235,7 @@ export const menuRelations = relations(menu, ({ one, many }) => ({
   screens: many(screen),
 }));
 
-export const screenRelations = relations(screen, ({ one }) => ({
+export const screenRelations = relations(screen, ({ one, many }) => ({
   project: one(project, {
     fields: [screen.projectId],
     references: [project.id],
@@ -216,6 +243,21 @@ export const screenRelations = relations(screen, ({ one }) => ({
   menu: one(menu, {
     fields: [screen.menuId],
     references: [menu.id],
+  }),
+  buttonActions: many(buttonAction, { relationName: "screenButtonActions" }),
+  incomingButtonActions: many(buttonAction, { relationName: "targetButtonActions" }),
+}));
+
+export const buttonActionRelations = relations(buttonAction, ({ one }) => ({
+  screen: one(screen, {
+    fields: [buttonAction.screenId],
+    references: [screen.id],
+    relationName: "screenButtonActions",
+  }),
+  targetScreen: one(screen, {
+    fields: [buttonAction.targetScreenId],
+    references: [screen.id],
+    relationName: "targetButtonActions",
   }),
 }));
 

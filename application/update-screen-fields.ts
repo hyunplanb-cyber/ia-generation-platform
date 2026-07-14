@@ -1,16 +1,18 @@
 import { drizzleScreenRepository } from "@/adapters/repository/drizzle/screen-repository";
 import type { ScreenFieldsPatch } from "@/domain/ports/screen-repository";
+import { MAX_FUNC_DEF_LENGTH } from "@/domain/screen/func-def-limit";
 import type { Screen } from "@/domain/screen/screen";
 import { withProjectAuth } from "@/application/with-project-auth";
 
 export interface UpdateScreenFieldsRequest {
   pageId?: string;
   pageName?: string;
+  funcDef?: string;
 }
 
 export type UpdateScreenFieldsResult =
   | { ok: true; screen: Screen }
-  | { ok: false; reason: "not-found" | "empty" | "duplicate" | "conflict" };
+  | { ok: false; reason: "not-found" | "empty" | "duplicate" | "conflict" | "too-long" };
 
 function isUniqueViolation(error: unknown): boolean {
   const code = (error as { code?: string; cause?: { code?: string } })?.code
@@ -48,6 +50,17 @@ export async function updateScreenFields(
       if (pageName !== current.pageName) {
         patch.pageName = pageName;
         patch.pageNameSource = "manual";
+      }
+    }
+
+    if (input.funcDef !== undefined) {
+      const funcDef = input.funcDef;
+      if (funcDef.length > MAX_FUNC_DEF_LENGTH) {
+        return { ok: false, reason: "too-long" };
+      }
+      if (funcDef !== (current.funcDef ?? "")) {
+        patch.funcDef = funcDef;
+        patch.funcDefSource = "manual";
       }
     }
 

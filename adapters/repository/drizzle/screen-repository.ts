@@ -94,4 +94,11 @@ export const drizzleScreenRepository: ScreenRepository = {
       .returning();
     return row ? toDomain(row) : null;
   },
+
+  async setFuncDefSourceManual(id: string, projectId: string): Promise<void> {
+    await db
+      .update(screen)
+      .set({ funcDefSource: "manual" })
+      .where(and(eq(screen.id, id), eq(screen.projectId, projectId)));
+  },
 };

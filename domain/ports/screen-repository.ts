@@ -10,7 +10,10 @@ export interface CreateScreenInput {
 }
 
 export type ScreenFieldsPatch = Partial<
-  Pick<Screen, "pageId" | "pageName" | "pageIdSource" | "pageNameSource">
+  Pick<
+    Screen,
+    "pageId" | "pageName" | "pageIdSource" | "pageNameSource" | "funcDef" | "funcDefSource"
+  >
 >;
 
 export interface ScreenRepository {
@@ -24,4 +27,5 @@ export interface ScreenRepository {
     patch: ScreenFieldsPatch,
     expectedUpdatedAt: Date,
   ): Promise<Screen | null>;
+  setFuncDefSourceManual(id: string, projectId: string): Promise<void>;
 }

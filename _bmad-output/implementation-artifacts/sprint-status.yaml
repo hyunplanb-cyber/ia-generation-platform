@@ -67,7 +67,7 @@ development_status:
   epic-3: in-progress
   3-1-generate-screens-from-menus: review
   3-2-edit-page-id-and-page-name: review
-  3-3-define-screen-functions-and-button-links: backlog
+  3-3-define-screen-functions-and-button-links: review
   3-4-edit-ai-prompt: backlog
   3-5-screen-schedule-and-recalculation: backlog
   3-6-preserve-manual-edits-on-regeneration: backlog

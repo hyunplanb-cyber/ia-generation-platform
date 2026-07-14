@@ -7,7 +7,15 @@ import { Label } from "@/components/ui/label";
 import type { Screen } from "@/domain/screen/screen";
 import { updateScreenAction, type UpdateScreenState } from "./update-screen-action";
 
-export function ScreenListItem({ screen, projectId }: { screen: Screen; projectId: string }) {
+export function ScreenListItem({
+  screen,
+  projectId,
+  onOpenDetail,
+}: {
+  screen: Screen;
+  projectId: string;
+  onOpenDetail: (screenId: string) => void;
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const initialState: UpdateScreenState = {
     error: null,
@@ -25,7 +33,10 @@ export function ScreenListItem({ screen, projectId }: { screen: Screen; projectI
     }
   }
 
-  const isModified = screen.pageIdSource === "manual" || screen.pageNameSource === "manual";
+  const isModified =
+    screen.pageIdSource === "manual" ||
+    screen.pageNameSource === "manual" ||
+    screen.funcDefSource === "manual";
 
   if (isEditing) {
     return (
@@ -82,6 +93,9 @@ export function ScreenListItem({ screen, projectId }: { screen: Screen; projectI
           </span>
           <Button type="button" variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
             수정
+          </Button>
+          <Button type="button" variant="ghost" size="sm" onClick={() => onOpenDetail(screen.id)}>
+            상세
           </Button>
         </div>
       </td>

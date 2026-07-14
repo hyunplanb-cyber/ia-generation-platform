@@ -57,6 +57,13 @@
       "when": 1783997461498,
       "tag": "0007_harsh_lake",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1784016111991,
+      "tag": "0008_many_mikhail_rasputin",
+      "breakpoints": true
     }
   ]
 }

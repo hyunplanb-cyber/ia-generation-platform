@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
-import { listScreens } from "@/application/list-screens";
+import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { detectMixedDeviceMode } from "@/domain/screen/detect-mixed-device-mode";
-import { ScreenListItem } from "./screen-list-item";
+import { ScreensView } from "./screens-view";
 
 export default async function ScreensPage({
   params,
@@ -10,7 +10,7 @@ export default async function ScreensPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const { project, screens } = await listScreens(projectId);
+  const { project, screens, buttonActions } = await getProjectScreensDetail(projectId);
   const isMixed = detectMixedDeviceMode(project.deviceMode, screens);
 
   return (
@@ -38,22 +38,7 @@ export default async function ScreensPage({
           에서 [실행: IA 생성]을 눌러주세요.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-muted/40 text-muted-foreground">
-              <tr>
-                <th className="px-4 py-2 font-medium">페이지ID</th>
-                <th className="px-4 py-2 font-medium">페이지명</th>
-                <th className="px-4 py-2 font-medium">상태</th>
-              </tr>
-            </thead>
-            <tbody>
-              {screens.map((screen) => (
-                <ScreenListItem key={screen.id} screen={screen} projectId={projectId} />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ScreensView screens={screens} buttonActions={buttonActions} projectId={projectId} />
       )}
     </div>
   );
