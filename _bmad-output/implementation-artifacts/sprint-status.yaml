@@ -72,7 +72,7 @@ development_status:
   3-5-screen-schedule-and-recalculation: review
   3-6-preserve-manual-edits-on-regeneration: review
   3-7-menu-deletion-change-safety-for-screens: review
-  3-8-ai-prompt-feedback: backlog
+  3-8-ai-prompt-feedback: review
   epic-3-retrospective: optional
 
   epic-4: backlog

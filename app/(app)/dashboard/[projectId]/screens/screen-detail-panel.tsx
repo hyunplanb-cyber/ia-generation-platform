@@ -1,12 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { Screen } from "@/domain/screen/screen";
+import type { PromptFeedback, Screen } from "@/domain/screen/screen";
 import type { ButtonAction } from "@/domain/screen/button-action";
 import { MAX_FUNC_DEF_LENGTH } from "@/domain/screen/func-def-limit";
 import { updateFuncDefAction, type UpdateFuncDefState } from "./update-func-def-action";
@@ -16,6 +16,7 @@ import { deleteButtonActionAction } from "./delete-button-action-action";
 import { generatePromptAction } from "./generate-prompt-action";
 import { updatePromptAction, type UpdatePromptState } from "./update-prompt-action";
 import { updateScheduleAction, type UpdateScheduleState } from "./update-schedule-action";
+import { setPromptFeedbackAction } from "./set-prompt-feedback-action";
 
 const selectClasses =
   "h-9 w-full rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
@@ -181,26 +182,74 @@ function PromptSection({ screen, projectId }: { screen: Screen; projectId: strin
   }
 
   return (
-    <form action={updateFormAction} className="flex flex-col gap-2">
-      <input type="hidden" name="updatedAt" value={screen.updatedAt.toISOString()} />
-      <div className="flex items-center justify-between">
-        <Label htmlFor="prompt">AI 프롬프트</Label>
-        <span className="rounded-full bg-neutral-badge-soft px-2 py-0.5 text-xs font-medium text-neutral-badge">
-          {isModified ? "수정됨" : "자동생성"}
-        </span>
-      </div>
-      <Textarea
-        id="prompt"
-        name="prompt"
-        rows={8}
-        value={promptValue}
-        onChange={(e) => setPromptValue(e.target.value)}
-      />
-      {updateState.error && <p className="text-sm text-danger">{updateState.error}</p>}
-      <Button type="submit" size="sm" disabled={updatePending} className="self-start">
-        {updatePending ? "저장하는 중..." : "AI 프롬프트 저장"}
+    <div className="flex flex-col gap-2">
+      <form action={updateFormAction} className="flex flex-col gap-2">
+        <input type="hidden" name="updatedAt" value={screen.updatedAt.toISOString()} />
+        <div className="flex items-center justify-between">
+          <Label htmlFor="prompt">AI 프롬프트</Label>
+          <span className="rounded-full bg-neutral-badge-soft px-2 py-0.5 text-xs font-medium text-neutral-badge">
+            {isModified ? "수정됨" : "자동생성"}
+          </span>
+        </div>
+        <Textarea
+          id="prompt"
+          name="prompt"
+          rows={8}
+          value={promptValue}
+          onChange={(e) => setPromptValue(e.target.value)}
+        />
+        {updateState.error && <p className="text-sm text-danger">{updateState.error}</p>}
+        <Button type="submit" size="sm" disabled={updatePending} className="self-start">
+          {updatePending ? "저장하는 중..." : "AI 프롬프트 저장"}
+        </Button>
+      </form>
+      <PromptFeedbackButtons screen={screen} projectId={projectId} />
+    </div>
+  );
+}
+
+function PromptFeedbackButtons({ screen, projectId }: { screen: Screen; projectId: string }) {
+  const [feedback, setFeedback] = useState<PromptFeedback>(screen.promptFeedback);
+  const [showThanks, setShowThanks] = useState(false);
+  const [, startTransition] = useTransition();
+
+  function handleClick(value: "up" | "down") {
+    const next: PromptFeedback = feedback === value ? null : value;
+    setFeedback(next);
+    if (next !== null) {
+      setShowThanks(true);
+      setTimeout(() => setShowThanks(false), 2000);
+    } else {
+      setShowThanks(false);
+    }
+    startTransition(() => {
+      setPromptFeedbackAction(projectId, screen.id, next);
+    });
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-muted-foreground">이 프롬프트, 쓸만한가요?</span>
+      <Button
+        type="button"
+        variant={feedback === "up" ? "secondary" : "ghost"}
+        size="sm"
+        aria-label="좋아요"
+        onClick={() => handleClick("up")}
+      >
+        👍
       </Button>
-    </form>
+      <Button
+        type="button"
+        variant={feedback === "down" ? "secondary" : "ghost"}
+        size="sm"
+        aria-label="싫어요"
+        onClick={() => handleClick("down")}
+      >
+        👎
+      </Button>
+      {showThanks && <span className="text-sm text-primary">피드백 감사해요!</span>}
+    </div>
   );
 }
 

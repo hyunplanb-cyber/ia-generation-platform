@@ -121,4 +121,11 @@ export const drizzleScreenRepository: ScreenRepository = {
       .set({ status: "quarantined" })
       .where(and(eq(screen.projectId, projectId), eq(screen.menuId, menuId)));
   },
+
+  async setPromptFeedback(id: string, projectId: string, feedback: PromptFeedback): Promise<void> {
+    await db
+      .update(screen)
+      .set({ promptFeedback: feedback })
+      .where(and(eq(screen.id, id), eq(screen.projectId, projectId)));
+  },
 };

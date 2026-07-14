@@ -1,4 +1,4 @@
-import type { Screen } from "@/domain/screen/screen";
+import type { PromptFeedback, Screen } from "@/domain/screen/screen";
 
 export interface CreateScreenInput {
   projectId: string;
@@ -48,4 +48,5 @@ export interface ScreenRepository {
   setFuncDefSourceManual(id: string, projectId: string): Promise<void>;
   updateSchedules(projectId: string, updates: ScheduleUpdate[]): Promise<void>;
   quarantineByMenu(projectId: string, menuId: string): Promise<void>;
+  setPromptFeedback(id: string, projectId: string, feedback: PromptFeedback): Promise<void>;
 }
