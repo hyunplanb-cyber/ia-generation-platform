@@ -28,7 +28,7 @@ FR-8: 재실행 시 수동 수정 화면은 보존, 신규 메뉴만 화면 추�
 FR-9: 페이지ID 규칙({디바이스코드}{메뉴코드}{일련번호}), 프로젝트 내 고유성, 디바이스 대응방식(반응형 단일/PC-MO 분리) 설정 및 사후 변경 시 소급 미변경 규칙.
 FR-10: 페이지명 규칙(메뉴명+상태/행위), 자동생성값 수정 가능.
 FR-11: 화면기능정의 — 버튼/액션별 이동 대상 페이지ID 매핑(드롭다운 선택), 깨진 링크 경고 배지 처리.
-FR-12: AI프롬프트 — MVP는 규칙기반 템플릿 조합, Phase 2는 LLM API 연동. 전체 텍스트 편집 가능.
+FR-12: AI프롬프트 — MVP부터 Claude API(`claude-haiku-4-5`) 실제 LLM 생성(`[2026-07-13 정정]`, 원래는 MVP 템플릿→Phase 2 LLM이었으나 원가 확인 후 앞당김). 전체 텍스트 편집 가능.
 FR-13: 일정 — 전체일정 기준 화면별 자동분배(균등, MVP), 수동수정 보호, 겹침/역전 경고, 전체일정 단축 시 범위이탈 충돌 처리.
 FR-14: 화면 리스트 전체를 엑셀(.xlsx)로 다운로드. 생성 중에는 다운로드 비활성화.
 FR-15: 엑셀 포맷은 업계 관행(1~5 Depth, 디바이스별 병행표기)과 정합.
@@ -51,7 +51,7 @@ NFR-8 (텍스트 길이 제한): 화면기능정의·AI프롬프트 필드는 �
 
 ### Additional Requirements
 
-- **스택/스캐폴드(Epic 1 Story 1에 영향)**: Next.js 16(App Router)+TypeScript, Tailwind CSS 4+shadcn/ui, Drizzle ORM, Neon(서버리스 Postgres), Better Auth, SheetJS(반드시 cdn.sheetjs.com tarball로 설치, npm 공개 패키지 금지), Vercel 호스팅.
+- **스택/스캐폴드(Epic 1 Story 1에 영향)**: Next.js 16(App Router)+TypeScript, Tailwind CSS 4+shadcn/ui, Drizzle ORM, Neon(서버리스 Postgres), Better Auth, SheetJS(반드시 cdn.sheetjs.com tarball로 설치, npm 공개 패키지 금지), Vercel 호스팅. `[2026-07-13 추가]` `@anthropic-ai/sdk`(Story 3.4 착수 시 설치, 모델 `claude-haiku-4-5`).
 - **아키텍처 경계**: 헥사고날(포트/어댑터) 구조 — `ScreenGenerationEngine`/`PromptGenerator`/`ExcelExporter`/`Repository` 포트를 도메인 계층에 정의하고 어댑터로 구현. `domain/`↔`adapters/` 경계는 CI에서 dependency-cruiser(또는 eslint-plugin-boundaries) 규칙으로 강제.
 - **데이터 모델(스키마 설계에 반영)**: User/Project/Menu/Screen/ButtonAction 엔티티. `screen.page_id`는 (project_id, page_id) 복합 유니크, `menu.menu_code`는 (project_id, menu_code) 복합 유니크. `screen.status`(active|quarantined), `screen.screen_role`(재실행 매칭키), 필드별 `*_source`(auto|manual), `schedule_locked`, `prompt_feedback`(up|down|null), `updated_at`(낙관적 동시성용). `button_action.target_screen_id`(UUID FK)+`target_page_id_snapshot`. `project.deleted_at`(계정삭제 유예 소프트삭제).
 - **인가/보안 구현**: 모든 Application Service 진입점은 공통 래퍼 `withProjectAuth`를 통해서만 export. Next.js `middleware.ts`는 인가 판단에 사용하지 않음. 데이터 변경은 Server Action을 기본 경로로.
@@ -89,7 +89,7 @@ FR-8: Epic 3 - 재실행 보존 로직
 FR-9: Epic 3 - 페이지ID 규칙/고유성/디바이스방식
 FR-10: Epic 3 - 페이지명 규칙
 FR-11: Epic 3 - 화면기능정의/버튼-이동/깨진링크
-FR-12: Epic 3 - AI프롬프트(템플릿, Phase2 확장 여지)
+FR-12: Epic 3 - AI프롬프트(Claude API 실제 생성, `[2026-07-13 정정]`)
 FR-13: Epic 3 - 일정 자동분배/보호/경고
 FR-14: Epic 4 - 엑셀 다운로드
 FR-15: Epic 4 - 엑셀 포맷(업계 관행 정합)
@@ -374,11 +374,13 @@ As a 화면을 검토하는 사용자,
 I want 각 화면에 자동으로 만들어진 AI 프롬프트를 읽고 필요하면 고치기를,
 So that 이 프롬프트를 그대로 AI 코딩 도구에 붙여넣어도 괜찮은 수준으로 만들 수 있다.
 
+`[2026-07-13 정정]` 이 스토리의 프롬프트 생성은 규칙기반 템플릿이 아니라 **Claude API(`claude-haiku-4-5`) 실제 호출**로 구현한다(Sprint Change Proposal 참조, `sprint-change-proposal-2026-07-13.md`). 페이지명·기능정의·소속 메뉴 설명뿐 아니라 같은 메뉴의 다른 화면·전체 사이트 컨셉까지 맥락으로 넘겨 더 자연스러운 문장을 생성한다.
+
 **Acceptance Criteria:**
 
 **Given** 화면 상세 패널
 **When** 프롬프트 칸을 보면
-**Then** 페이지명·기능정의·소속 메뉴 설명을 조합한 문장이 이미 채워져 있다("{페이지명} 화면을 만들어줘. ...").
+**Then** 페이지명·기능정의·소속 메뉴 설명(및 같은 메뉴의 다른 화면·사이트 컨셉 맥락)을 반영해 Claude API가 생성한 문장이 이미 채워져 있다.
 
 **Given** 자동으로 채워진 프롬프트
 **When** 전체 내용을 직접 고치면

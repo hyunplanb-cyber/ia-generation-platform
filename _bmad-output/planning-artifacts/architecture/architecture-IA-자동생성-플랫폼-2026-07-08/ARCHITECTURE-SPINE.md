@@ -23,10 +23,10 @@ companions: []
 **Hexagonal (Ports & Adapters).** 도메인 코어(프로젝트/메뉴/화면 규칙, 일정 로직)는 외부 기술에 의존하지 않고, 세 가지 교체 가능한 능력을 포트로 분리한다:
 
 - `ScreenGenerationEngine` — 메뉴의 "원하는 기능" 서술로부터 화면 목록을 만드는 능력(FR-7). MVP 어댑터는 규칙기반 패턴 매칭.
-- `PromptGenerator` — 화면별 AI 프롬프트를 만드는 능력(FR-12). MVP 어댑터는 템플릿 조합, Phase 2 어댑터는 LLM API 호출.
+- `PromptGenerator` — 화면별 AI 프롬프트를 만드는 능력(FR-12). `[2026-07-13 정정]` MVP 어댑터부터 **Claude API(모델: `claude-haiku-4-5`) 기반 실제 LLM 호출**로 구현한다 — 원래 계획(MVP는 템플릿 조합, Phase 2에 LLM 도입)은 원가 확인(프로젝트당 100~300원 수준) 후 폐기, 규칙기반 템플릿 어댑터는 만들지 않는다.
 - `ExcelExporter` — 화면/메뉴/프로젝트 데이터를 .xlsx로 직렬화하는 능력(FR-14~16).
 
-세 포트 모두 "지금은 단순 구현, 나중에 통째로 교체"가 PRD에 명시된 요구(FR-12 2단계 로드맵, FR-7 패턴 라이브러리 확장)이므로 포트/어댑터 경계는 장식이 아니라 실제 트레이드오프다. Next.js 앱 자체는 이 코어를 감싸는 하나의 어댑터(UI/Server Action 어댑터)로 취급한다. 모든 쓰기 경로(인라인 편집, 그리드 저장, 재실행, 재계산)는 반드시 Application Service의 단일 커맨드 함수를 통과한다 — 어댑터가 여러 개여도 도메인 진입점은 하나다.
+`PromptGenerator`가 처음부터 실제 LLM 어댑터라 해도 포트 경계는 여전히 유효하다 — 향후 모델 교체(예: 품질 이슈 시 Sonnet으로 승급)나 재시도/폴백 전략 변경이 호출부를 건드리지 않게 하기 위함이다. `ScreenGenerationEngine`은 여전히 MVP=규칙기반, Phase 2=패턴 라이브러리 확장 계획을 유지한다(FR-7). Next.js 앱 자체는 이 코어를 감싸는 하나의 어댑터(UI/Server Action 어댑터)로 취급한다. 모든 쓰기 경로(인라인 편집, 그리드 저장, 재실행, 재계산)는 반드시 Application Service의 단일 커맨드 함수를 통과한다 — 어댑터가 여러 개여도 도메인 진입점은 하나다.
 
 ```mermaid
 graph LR
@@ -37,8 +37,7 @@ graph LR
   DOMAIN --> P3[["Port: ExcelExporter"]]
   P1 --> A1[Adapter: RulePatternEngine]
   P1 -.Phase 2.-> A1b[Adapter: MLPatternEngine]
-  P2 --> A2[Adapter: TemplatePromptGenerator]
-  P2 -.Phase 2.-> A2b[Adapter: LLMPromptGenerator]
+  P2 --> A2[Adapter: ClaudePromptGenerator]
   P3 --> A3[Adapter: SheetJSExporter]
   DOMAIN --> REPO[["Port: Repository"]]
   REPO --> A4[Adapter: DrizzleRepository]
@@ -127,6 +126,7 @@ graph LR
 | Better Auth | 1.6.23 stable(2026-06 기준) — 웹검증됨. Next.js 16 App Router + Drizzle + Neon 조합이 2026년 사실상 표준 스타터 패턴 |
 | SheetJS (xlsx) | 0.20.3+ — **공개 npm 레지스트리의 `xlsx` 패키지명으로 설치 금지**(방치·취약점 다수 확인됨). `https://cdn.sheetjs.com/xlsx-<version>/xlsx-<version>.tgz` tarball을 package.json 의존성으로 고정 설치 |
 | Vercel | 배포 플랫폼 (Next.js 네이티브) |
+| `@anthropic-ai/sdk` | `[2026-07-13 추가]` `PromptGenerator`의 `ClaudePromptGenerator` 어댑터(FR-12)가 사용. 모델은 `claude-haiku-4-5`(짧고 구조화된 화면별 프롬프트 생성에 적합, 원가 최소). `ANTHROPIC_API_KEY`는 Vercel 환경변수로 주입, 코드에 하드코딩 금지. Story 3.4 착수 시 설치 |
 
 ## Structural Seed
 
@@ -232,7 +232,7 @@ graph TB
 | FR-4~6 메뉴 관리 | `app/projects/[id]/menus`, `domain/menu` | AD-2, AD-3, AD-8 |
 | FR-7~8 IA 생성/재생성 | `domain/screen`, `adapters/generation/rule-pattern`, `application/regenerateScreens` | AD-1, AD-3, AD-5 |
 | FR-9~11 화면 상세(페이지ID/명/기능정의) | `app/projects/[id]/screens`, `domain/screen` | AD-2, AD-4, AD-5, AD-6, AD-8 |
-| FR-12, FR-20 AI프롬프트·피드백 | `adapters/prompt/template`(Phase 2: `adapters/prompt/llm`), `SCREEN.prompt_feedback` | AD-1, AD-5 |
+| FR-12, FR-20 AI프롬프트·피드백 | `adapters/prompt/llm`(Claude API, `[2026-07-13]` MVP부터), `SCREEN.prompt_feedback` | AD-1, AD-5 |
 | FR-13 일정 산정 | `domain/schedule` | AD-5, AD-6, AD-9 |
 | FR-14~16 엑셀 내보내기 | `adapters/export/sheetjs` | AD-1 |
 | FR-17 GNB/Footer | `app/(dashboard)/layout.tsx` 등 공통 레이아웃 | — (UX 스파인 EXPERIENCE.md IA 참조) |
@@ -241,7 +241,7 @@ graph TB
 ## Deferred
 
 - **결제/구독 연동**: PRD가 명시적으로 이번 범위 밖으로 뒀다. `User.plan` 필드만 확장 가능하게 예약, 실제 결제 게이트웨이 연동은 별도 스파인에서.
-- **LLM 기반 PromptGenerator 구현 상세**: 포트 계약(AD-1)만 이번에 고정. 실제 프롬프트 엔지니어링, 비용 관리, Claude API 연동 세부는 Phase 2 착수 시.
+- ~~LLM 기반 PromptGenerator 구현 상세: 포트 계약(AD-1)만 이번에 고정~~ → `[2026-07-13]` **더 이상 Deferred 아님.** MVP부터 Claude API(`claude-haiku-4-5`) 실제 호출로 확정(프로젝트당 원가 100~300원 확인 완료). 남은 미정 사항: API 실패/장애 시 폴백 전략(재시도 vs 최소 안내 vs 규칙기반 대체 문구) — 이건 Story 3.4 착수 시 결정.
 - **ScreenGenerationEngine의 패턴 라이브러리 확장 범위**: 커머스/회원/게시판 외 도메인 패턴 추가 우선순위는 PRD Open Question대로 미정.
 - **동시 편집의 정교한 병합 UX**: AD-9로 MVP 감지(409 충돌)는 고정했으나, 충돌 시 화면단 병합/재시도 UX는 미정.
 - **일정 슬롯 부족 시 신규 화면 배정 알고리즘**: PRD Open Question 그대로 이관.

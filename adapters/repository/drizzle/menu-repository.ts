@@ -1,8 +1,12 @@
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { menu } from "@/db/schema";
 import type { Menu } from "@/domain/menu/menu";
-import type { CreateMenuInput, MenuRepository } from "@/domain/ports/menu-repository";
+import type {
+  CreateMenuInput,
+  MenuRepository,
+  UpdateMenuInput,
+} from "@/domain/ports/menu-repository";
 
 function toDomain(row: typeof menu.$inferSelect): Menu {
   return {
@@ -43,5 +47,26 @@ export const drizzleMenuRepository: MenuRepository = {
       .where(eq(menu.projectId, projectId))
       .orderBy(asc(menu.sortOrder));
     return rows.map(toDomain);
+  },
+
+  async update(projectId: string, menuId: string, input: UpdateMenuInput): Promise<Menu | null> {
+    const [row] = await db
+      .update(menu)
+      .set({
+        nameKo: input.nameKo,
+        nameEn: input.nameEn,
+        description: input.description,
+        desiredFeatures: input.desiredFeatures,
+      })
+      .where(and(eq(menu.id, menuId), eq(menu.projectId, projectId)))
+      .returning();
+    return row ? toDomain(row) : null;
+  },
+
+  async updateSortOrder(projectId: string, menuId: string, sortOrder: number): Promise<void> {
+    await db
+      .update(menu)
+      .set({ sortOrder })
+      .where(and(eq(menu.id, menuId), eq(menu.projectId, projectId)));
   },
 };
