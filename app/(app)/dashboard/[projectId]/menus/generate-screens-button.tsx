@@ -5,10 +5,28 @@ import { Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateScreensAction } from "./generate-screens-action";
 
-export function GenerateScreensButton({ projectId, disabled }: { projectId: string; disabled: boolean }) {
+export function GenerateScreensButton({
+  projectId,
+  disabled,
+  hasNewMenus,
+}: {
+  projectId: string;
+  disabled: boolean;
+  hasNewMenus: boolean;
+}) {
   const [pending, startTransition] = useTransition();
 
   function handleClick() {
+    if (!hasNewMenus) {
+      alert("새로 추가된 메뉴가 없어 변경사항이 없습니다.");
+      return;
+    }
+
+    const confirmed = confirm(
+      "기존에 직접 수정한 화면은 유지되고, 새로 추가된 메뉴에서만 화면이 생성됩니다. 계속할까요?",
+    );
+    if (!confirmed) return;
+
     startTransition(() => {
       generateScreensAction(projectId);
     });

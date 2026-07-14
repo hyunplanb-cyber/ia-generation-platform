@@ -1,4 +1,5 @@
 import { listMenus } from "@/application/list-menus";
+import { hasNewMenus } from "@/application/has-new-menus";
 import { GenerateScreensButton } from "./generate-screens-button";
 import { MenuForm } from "./menu-form";
 import { MenuListItem } from "./menu-list-item";
@@ -10,6 +11,7 @@ export default async function MenusPage({
 }) {
   const { projectId } = await params;
   const menus = await listMenus(projectId);
+  const canGenerate = menus.length > 0 && (await hasNewMenus(projectId));
 
   return (
     <div className="flex flex-col gap-8">
@@ -20,7 +22,11 @@ export default async function MenusPage({
             사이트에 필요한 메뉴를 추가해 주세요. 메뉴별로 화면이 자동 생성돼요.
           </p>
         </div>
-        <GenerateScreensButton projectId={projectId} disabled={menus.length === 0} />
+        <GenerateScreensButton
+          projectId={projectId}
+          disabled={menus.length === 0}
+          hasNewMenus={canGenerate}
+        />
       </div>
 
       {menus.length === 0 ? (
