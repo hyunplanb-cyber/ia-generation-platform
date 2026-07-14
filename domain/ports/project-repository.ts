@@ -16,6 +16,7 @@ export interface UpdateProjectInput {
   designConcept: string | null;
   overallStart: string;
   overallEnd: string;
+  deviceMode: DeviceMode;
 }
 
 export interface ProjectRepository {

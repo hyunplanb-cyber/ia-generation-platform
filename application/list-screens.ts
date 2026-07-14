@@ -2,5 +2,8 @@ import { drizzleScreenRepository } from "@/adapters/repository/drizzle/screen-re
 import { withProjectAuth } from "@/application/with-project-auth";
 
 export async function listScreens(projectId: string) {
-  return withProjectAuth(projectId, () => drizzleScreenRepository.listByProject(projectId));
+  return withProjectAuth(projectId, async (project) => ({
+    project,
+    screens: await drizzleScreenRepository.listByProject(projectId),
+  }));
 }

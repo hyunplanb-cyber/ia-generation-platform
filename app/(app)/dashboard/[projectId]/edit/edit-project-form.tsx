@@ -68,6 +68,27 @@ export function EditProjectForm({ project }: { project: Project }) {
               required
             />
           </div>
+          <div className="flex flex-col gap-2">
+            <Label>디바이스 대응 방식</Label>
+            <label className="flex items-center gap-2 text-sm text-foreground">
+              <input
+                type="radio"
+                name="deviceMode"
+                value="responsive"
+                defaultChecked={project.deviceMode === "responsive"}
+              />
+              반응형 하나로
+            </label>
+            <label className="flex items-center gap-2 text-sm text-foreground">
+              <input
+                type="radio"
+                name="deviceMode"
+                value="device-split"
+                defaultChecked={project.deviceMode === "device-split"}
+              />
+              PC·모바일 분리
+            </label>
+          </div>
           {state.error && <p className="text-sm text-danger">{state.error}</p>}
           <Button type="submit" disabled={pending}>
             {pending ? "저장 중..." : "저장"}

@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { TriangleAlert } from "lucide-react";
 import { listScreens } from "@/application/list-screens";
+import { detectMixedDeviceMode } from "@/domain/screen/detect-mixed-device-mode";
+import { ScreenListItem } from "./screen-list-item";
 
 export default async function ScreensPage({
   params,
@@ -7,7 +10,8 @@ export default async function ScreensPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const screens = await listScreens(projectId);
+  const { project, screens } = await listScreens(projectId);
+  const isMixed = detectMixedDeviceMode(project.deviceMode, screens);
 
   return (
     <div className="flex flex-col gap-8">
@@ -17,6 +21,13 @@ export default async function ScreensPage({
           메뉴별로 자동 생성된 화면 목록이에요.
         </p>
       </div>
+
+      {isMixed && (
+        <div className="flex items-center gap-2 rounded-lg bg-warning-soft px-4 py-3 text-sm font-medium text-warning">
+          <TriangleAlert className="size-4 shrink-0" />
+          디바이스 대응 방식이 혼재되어 있어요. 기존 화면의 페이지ID는 그대로 유지되고, 새로 생성되는 화면부터 현재 방식이 적용돼요.
+        </div>
+      )}
 
       {screens.length === 0 ? (
         <p className="text-muted-foreground">
@@ -38,19 +49,7 @@ export default async function ScreensPage({
             </thead>
             <tbody>
               {screens.map((screen) => (
-                <tr key={screen.id} className="border-t border-border">
-                  <td className="px-4 py-2">
-                    <span className="rounded-sm bg-pastel-lavender px-2 py-0.5 font-mono text-xs font-medium text-pastel-lavender-foreground">
-                      {screen.pageId}
-                    </span>
-                  </td>
-                  <td className="px-4 py-2 text-foreground">{screen.pageName}</td>
-                  <td className="px-4 py-2">
-                    <span className="rounded-full bg-neutral-badge-soft px-2 py-0.5 text-xs font-medium text-neutral-badge">
-                      자동생성
-                    </span>
-                  </td>
-                </tr>
+                <ScreenListItem key={screen.id} screen={screen} projectId={projectId} />
               ))}
             </tbody>
           </table>

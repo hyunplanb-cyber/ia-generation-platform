@@ -64,6 +64,7 @@ export const drizzleProjectRepository: ProjectRepository = {
         designConcept: input.designConcept,
         overallStart: input.overallStart,
         overallEnd: input.overallEnd,
+        deviceMode: input.deviceMode,
       })
       .where(eq(project.id, id))
       .returning();

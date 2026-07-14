@@ -169,8 +169,11 @@ export const screen = pgTable(
     scheduleLocked: boolean("schedule_locked").default(false).notNull(),
     // 'up' | 'down' | null — Story 3.8
     promptFeedback: text("prompt_feedback"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
+    // precision: 3(밀리초)로 고정 — JS Date는 밀리초 정밀도까지만 표현하므로,
+    // 컬럼이 마이크로초 정밀도를 유지하면 AD-9 낙관적 동시성 비교(updated_at 완전 일치)가
+    // 클라이언트 왕복 후 항상 불일치로 깨진다.
+    updatedAt: timestamp("updated_at", { precision: 3 })
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),

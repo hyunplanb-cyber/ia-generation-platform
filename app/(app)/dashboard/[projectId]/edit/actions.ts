@@ -17,6 +17,8 @@ export async function updateProjectAction(
   const designConcept = String(formData.get("designConcept") ?? "").trim();
   const overallStart = String(formData.get("overallStart") ?? "");
   const overallEnd = String(formData.get("overallEnd") ?? "");
+  const deviceModeRaw = String(formData.get("deviceMode") ?? "");
+  const deviceMode = deviceModeRaw === "device-split" ? "device-split" : "responsive";
 
   if (!concept) {
     return { error: "컨셉/설명을 입력해 주세요." };
@@ -34,6 +36,7 @@ export async function updateProjectAction(
     designConcept: designConcept || null,
     overallStart,
     overallEnd,
+    deviceMode,
   });
   redirect("/dashboard");
 }
