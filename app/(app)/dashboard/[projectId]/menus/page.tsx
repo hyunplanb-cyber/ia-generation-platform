@@ -2,6 +2,7 @@ import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { listMenus } from "@/application/list-menus";
 import { MenuForm } from "./menu-form";
+import { MenuListItem } from "./menu-list-item";
 
 export default async function MenusPage({
   params,
@@ -30,22 +31,14 @@ export default async function MenusPage({
         <p className="text-muted-foreground">첫 메뉴를 추가해 보세요.</p>
       ) : (
         <ul className="flex flex-col gap-2">
-          {menus.map((menu) => (
-            <li
+          {menus.map((menu, i) => (
+            <MenuListItem
               key={menu.id}
-              className="flex flex-col gap-1 rounded-lg border border-border bg-background p-4"
-            >
-              <div className="flex items-center gap-2">
-                <span className="rounded-sm bg-pastel-lavender px-2 py-0.5 font-mono text-xs font-medium text-pastel-lavender-foreground">
-                  {menu.menuCode}
-                </span>
-                <span className="font-semibold text-foreground">{menu.nameKo}</span>
-                <span className="text-sm text-muted-foreground">({menu.nameEn})</span>
-              </div>
-              {menu.description && (
-                <p className="text-sm text-muted-foreground">{menu.description}</p>
-              )}
-            </li>
+              menu={menu}
+              projectId={projectId}
+              isFirst={i === 0}
+              isLast={i === menus.length - 1}
+            />
           ))}
         </ul>
       )}
