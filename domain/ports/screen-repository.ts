@@ -47,4 +47,5 @@ export interface ScreenRepository {
   ): Promise<Screen | null>;
   setFuncDefSourceManual(id: string, projectId: string): Promise<void>;
   updateSchedules(projectId: string, updates: ScheduleUpdate[]): Promise<void>;
+  quarantineByMenu(projectId: string, menuId: string): Promise<void>;
 }

@@ -9,4 +9,5 @@ export interface Menu {
   sortOrder: number;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
 }

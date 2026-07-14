@@ -117,7 +117,7 @@ export function MenuListItem({
         <form
           action={deleteMenuAction.bind(null, projectId, menu.id)}
           onSubmit={(e) => {
-            if (!confirm("이 메뉴를 삭제하시겠어요?")) {
+            if (!confirm("이 메뉴를 삭제하시겠어요? 이미 생성된 화면은 삭제되지 않고 격리돼요.")) {
               e.preventDefault();
             }
           }}

@@ -266,7 +266,7 @@ function ButtonActionRow({
   const target = allScreens.find((s) => s.id === buttonAction.targetScreenId);
   const brokenLink = !target || target.status === "quarantined";
   const renamed = !brokenLink && target!.pageId !== buttonAction.targetPageIdSnapshot;
-  const options = allScreens.filter((s) => s.id !== screenId);
+  const options = allScreens.filter((s) => s.id !== screenId && s.status !== "quarantined");
 
   return (
     <li className="flex flex-col gap-1.5 rounded-lg border border-border p-3">

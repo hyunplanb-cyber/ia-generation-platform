@@ -13,6 +13,7 @@ export interface CreateMenuInput {
 export interface UpdateMenuInput {
   nameKo: string;
   nameEn: string;
+  menuCode: string;
   description: string | null;
   desiredFeatures: string | null;
 }

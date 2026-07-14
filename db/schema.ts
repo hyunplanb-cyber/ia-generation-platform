@@ -130,6 +130,9 @@ export const menu = pgTable(
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
+    // 메뉴 삭제 = 소프트 삭제(Story 3.7) — screen.menu_id FK를 건드리지 않기 위해
+    // project.deletedAt과 같은 패턴을 쓴다. listByProject()가 이 값이 null인 것만 반환한다.
+    deletedAt: timestamp("deleted_at"),
   },
   (table) => [
     index("menu_projectId_idx").on(table.projectId),

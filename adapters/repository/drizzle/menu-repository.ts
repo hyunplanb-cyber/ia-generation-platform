@@ -1,4 +1,4 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { db } from "@/db/client";
 import { menu } from "@/db/schema";
 import type { Menu } from "@/domain/menu/menu";
@@ -20,6 +20,7 @@ function toDomain(row: typeof menu.$inferSelect): Menu {
     sortOrder: row.sortOrder,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    deletedAt: row.deletedAt,
   };
 }
 
@@ -44,7 +45,7 @@ export const drizzleMenuRepository: MenuRepository = {
     const rows = await db
       .select()
       .from(menu)
-      .where(eq(menu.projectId, projectId))
+      .where(and(eq(menu.projectId, projectId), isNull(menu.deletedAt)))
       .orderBy(asc(menu.sortOrder));
     return rows.map(toDomain);
   },
@@ -55,6 +56,7 @@ export const drizzleMenuRepository: MenuRepository = {
       .set({
         nameKo: input.nameKo,
         nameEn: input.nameEn,
+        menuCode: input.menuCode,
         description: input.description,
         desiredFeatures: input.desiredFeatures,
       })
@@ -71,6 +73,9 @@ export const drizzleMenuRepository: MenuRepository = {
   },
 
   async delete(projectId: string, menuId: string): Promise<void> {
-    await db.delete(menu).where(and(eq(menu.id, menuId), eq(menu.projectId, projectId)));
+    await db
+      .update(menu)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(menu.id, menuId), eq(menu.projectId, projectId)));
   },
 };
