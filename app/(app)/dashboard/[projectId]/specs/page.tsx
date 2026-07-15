@@ -1,3 +1,4 @@
+import { FileText } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 
@@ -15,6 +16,8 @@ export default async function SpecsPage({
   return (
     <div className="flex flex-col gap-6">
       <DeliverableHeader
+        icon={FileText}
+        tone="lavender"
         title="기능정의서"
         description="화면(기능) 단위로 요구사항ID·화면명·기능정의를 정리해요. 실무에서 쓰는 요구사항 정의서 형식으로 내려받을 수 있어요."
         downloads={["엑셀로 다운로드"]}

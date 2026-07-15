@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { TriangleAlert } from "lucide-react";
+import { TriangleAlert, LayoutList } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { listMenus } from "@/application/list-menus";
 import { detectMixedDeviceMode } from "@/domain/screen/detect-mixed-device-mode";
 import { detectMixedMenuCodeMenuIds } from "@/domain/screen/detect-mixed-menu-code";
 import { detectOutOfRangeScreens } from "@/domain/schedule/detect-out-of-range-screens";
 import { detectScheduleReversals } from "@/domain/schedule/detect-schedule-reversals";
+import { DeliverableHeader, HeaderStat } from "../deliverable-header";
 import { ScreensView } from "./screens-view";
 import { QuarantinedScreensSection } from "./quarantined-screens-section";
 
@@ -29,13 +30,19 @@ export default async function ScreensPage({
   const reversedIds = [...detectScheduleReversals(activeScreens)];
 
   return (
-    <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">화면 리스트</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          메뉴별로 자동 생성된 화면 목록이에요.
-        </p>
-      </div>
+    <div className="flex flex-col gap-6">
+      <DeliverableHeader
+        icon={LayoutList}
+        tone="violet"
+        title="IA · 화면 목록"
+        description="메뉴별로 자동 생성된 화면 목록이에요. 각 화면의 페이지ID·일정·기능정의·이동 화면을 확인하고 수정할 수 있어요."
+        downloads={["엑셀로 다운로드"]}
+        meta={
+          activeScreens.length > 0 ? (
+            <HeaderStat label={`총 ${activeScreens.length}개 화면`} />
+          ) : undefined
+        }
+      />
 
       {isMixed && (
         <div className="flex items-center gap-2 rounded-lg bg-warning-soft px-4 py-3 text-sm font-medium text-warning">
@@ -65,6 +72,7 @@ export default async function ScreensPage({
       ) : (
         <ScreensView
           screens={activeScreens}
+          menus={menus}
           buttonActions={buttonActions}
           projectId={projectId}
           outOfRangeIds={outOfRangeIds}

@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Workflow } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { DiagramOrList } from "../diagram-or-list";
@@ -60,6 +60,8 @@ export default async function FlowPage({
   return (
     <div className="flex flex-col gap-6">
       <DeliverableHeader
+        icon={Workflow}
+        tone="mint"
         title="FLOW·흐름도"
         description="화면과 화면 사이의 이동 흐름이에요. 어느 화면의 어떤 버튼을 누르면 어디로 가는지 정리해요."
         downloads={["draw.io로 다운로드", "HTML로 다운로드"]}

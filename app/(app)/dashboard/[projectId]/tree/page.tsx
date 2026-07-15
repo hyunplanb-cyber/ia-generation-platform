@@ -1,3 +1,4 @@
+import { Network } from "lucide-react";
 import { listMenus } from "@/application/list-menus";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
@@ -60,6 +61,8 @@ export default async function TreePage({
   return (
     <div className="flex flex-col gap-6">
       <DeliverableHeader
+        icon={Network}
+        tone="violet"
         title="메뉴 구조"
         description="사이트 전체 메뉴를 트리로 정리해요. 메뉴 아래에 어떤 화면들이 들어가는지 한눈에 볼 수 있어요."
         downloads={["PPT로 다운로드", "엑셀로 다운로드"]}

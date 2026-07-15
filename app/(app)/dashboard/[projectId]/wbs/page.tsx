@@ -1,3 +1,4 @@
+import { CalendarRange } from "lucide-react";
 import { listMenus } from "@/application/list-menus";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
@@ -23,6 +24,8 @@ export default async function WbsPage({
   return (
     <div className="flex flex-col gap-6">
       <DeliverableHeader
+        icon={CalendarRange}
+        tone="yellow"
         title="WBS"
         description="화면(작업)별 제작 일정을 정리해요. 담당·산출물까지 붙인 간트차트 엑셀(.xlsm) 내보내기는 준비 중이에요."
         downloads={["간트 엑셀로 다운로드"]}

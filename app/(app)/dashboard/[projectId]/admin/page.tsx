@@ -11,6 +11,8 @@ export default async function AdminPage({
   return (
     <div className="flex flex-col gap-6">
       <DeliverableHeader
+        icon={ShieldCheck}
+        tone="mint"
         title="관리자 페이지"
         description="필요할 때만 만드는 선택 산출물이에요. 관리자용 메뉴 구조와 IA(화면 목록)를 한 벌 더 생성해요."
         downloads={["엑셀로 다운로드"]}
