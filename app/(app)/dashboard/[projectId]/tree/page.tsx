@@ -68,7 +68,9 @@ export default async function TreePage({
       {!hasContent ? (
         <DeliverableEmpty projectId={projectId} />
       ) : (
-        <DiagramOrList definition={treeDef}>{listView}</DiagramOrList>
+        <DiagramOrList definition={treeDef} title="메뉴 구조 다이어그램">
+          {listView}
+        </DiagramOrList>
       )}
     </div>
   );

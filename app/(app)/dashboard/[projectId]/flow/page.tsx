@@ -60,7 +60,9 @@ export default async function FlowPage({
       {!hasContent ? (
         <DeliverableEmpty projectId={projectId} />
       ) : (
-        <DiagramOrList definition={flowDef}>{listView}</DiagramOrList>
+        <DiagramOrList definition={flowDef} title="FLOW 다이어그램">
+          {listView}
+        </DiagramOrList>
       )}
     </div>
   );
