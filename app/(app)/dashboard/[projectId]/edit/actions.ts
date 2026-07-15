@@ -1,13 +1,17 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { updateProject } from "@/application/update-project";
 import { getProjectForEdit } from "@/application/get-project-for-edit";
 import { recalculateSchedule } from "@/application/recalculate-schedule";
+import type { DeviceMode } from "@/domain/project/project";
 
 export interface UpdateProjectState {
   error: string | null;
+  saved: boolean;
 }
+
+const DEVICE_MODES: DeviceMode[] = ["responsive", "pc", "mobile"];
 
 export async function updateProjectAction(
   projectId: string,
@@ -20,16 +24,18 @@ export async function updateProjectAction(
   const overallStart = String(formData.get("overallStart") ?? "");
   const overallEnd = String(formData.get("overallEnd") ?? "");
   const deviceModeRaw = String(formData.get("deviceMode") ?? "");
-  const deviceMode = deviceModeRaw === "device-split" ? "device-split" : "responsive";
+  const deviceMode: DeviceMode = DEVICE_MODES.includes(deviceModeRaw as DeviceMode)
+    ? (deviceModeRaw as DeviceMode)
+    : "responsive";
 
   if (!concept) {
-    return { error: "컨셉/설명을 입력해 주세요." };
+    return { error: "컨셉/설명을 입력해 주세요.", saved: false };
   }
   if (!overallStart || !overallEnd) {
-    return { error: "전체 시작일과 종료일을 입력해 주세요." };
+    return { error: "전체 시작일과 종료일을 입력해 주세요.", saved: false };
   }
   if (overallEnd < overallStart) {
-    return { error: "종료일은 시작일보다 빠를 수 없어요." };
+    return { error: "종료일은 시작일보다 빠를 수 없어요.", saved: false };
   }
 
   const before = await getProjectForEdit(projectId);
@@ -47,5 +53,8 @@ export async function updateProjectAction(
     await recalculateSchedule(projectId, overallStart, overallEnd);
   }
 
-  redirect("/dashboard");
+  revalidatePath(`/dashboard/${projectId}/edit`);
+  revalidatePath(`/dashboard/${projectId}/brief`);
+  revalidatePath(`/dashboard/${projectId}/screens`);
+  return { error: null, saved: true };
 }

@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { getProjectForEdit } from "@/application/get-project-for-edit";
-import { countScreensByProject } from "@/application/count-screens-by-project";
+import { listMenus } from "@/application/list-menus";
 import { ProjectNotFoundError } from "@/application/with-project-auth";
-import { ConceptForm } from "./concept-form";
+import { BriefForm } from "./brief-form";
 
-export default async function ConceptPage({
+export default async function BriefPage({
   params,
 }: {
   params: Promise<{ projectId: string }>;
@@ -18,8 +18,8 @@ export default async function ConceptPage({
     throw error;
   });
 
-  const counts = await countScreensByProject([projectId]);
-  const hasScreens = (counts[projectId] ?? 0) > 0;
+  const menus = await listMenus(projectId);
+  const hasMenus = menus.length > 0;
 
-  return <ConceptForm project={project} hasScreens={hasScreens} />;
+  return <BriefForm project={project} hasMenus={hasMenus} />;
 }

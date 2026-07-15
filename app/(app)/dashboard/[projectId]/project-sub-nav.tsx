@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  NotebookPen,
+  Lightbulb,
+  Palette,
   Network,
   LayoutList,
   FileText,
@@ -12,7 +13,10 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-const INPUT_ITEMS = [{ href: "edit", label: "입력", icon: NotebookPen }];
+const INPUT_ITEMS = [
+  { href: "edit", label: "컨셉 입력", icon: Lightbulb },
+  { href: "brief", label: "주요 메뉴·디자인 컨셉", icon: Palette },
+];
 
 const DELIVERABLE_ITEMS = [
   { href: "tree", label: "메뉴 구조", icon: Network },
@@ -33,7 +37,7 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
   }: {
     href: string;
     label: string;
-    icon: typeof NotebookPen;
+    icon: typeof Lightbulb;
   }) {
     const fullHref = `/dashboard/${projectId}/${href}`;
     const isActive = pathname.startsWith(fullHref);
@@ -57,7 +61,7 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
     <nav className="flex flex-col gap-4 sm:w-60 sm:shrink-0">
       <div className="flex flex-col gap-1">
         <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
-          입력
+          프로젝트 소개
         </p>
         {INPUT_ITEMS.map(renderItem)}
       </div>

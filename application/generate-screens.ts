@@ -19,7 +19,7 @@ export async function generateScreens(projectId: string): Promise<void> {
       existingCountByMenuDevice.set(key, (existingCountByMenuDevice.get(key) ?? 0) + 1);
     }
 
-    const deviceCodes = project.deviceMode === "responsive" ? ["PC"] : ["PC", "MO"];
+    const deviceCodes = project.deviceMode === "mobile" ? ["MO"] : ["PC"];
     const candidates: CreateScreenInput[] = [];
 
     for (const menu of menus) {

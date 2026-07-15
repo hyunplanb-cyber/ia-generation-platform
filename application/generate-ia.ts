@@ -63,7 +63,7 @@ export async function generateIa(projectId: string): Promise<GenerateIaResult> {
       throw error;
     }
 
-    const deviceCodes = project.deviceMode === "responsive" ? ["PC"] : ["PC", "MO"];
+    const deviceCodes = project.deviceMode === "mobile" ? ["MO"] : ["PC"];
     const usedCodes: string[] = [];
     const inputs: CreateScreenInput[] = [];
     // inputs와 1:1 순서로 대응하는 메타(버튼 연결 2차 패스에서 사용)

@@ -50,9 +50,13 @@ function buildUserMessage(input: IaGeneratorInput): string {
   if (input.designConcept) {
     lines.push(`\n디자인 컨셉:\n${input.designConcept}`);
   }
-  lines.push(
-    `\n디바이스 대응: ${input.deviceMode === "responsive" ? "반응형(PC 기준 1벌)" : "PC/모바일 분리"}`,
-  );
+  const deviceLabel =
+    input.deviceMode === "mobile"
+      ? "모바일 웹·앱 전용"
+      : input.deviceMode === "pc"
+        ? "PC 웹 전용"
+        : "반응형(하나의 화면이 기기에 맞춰 적응)";
+  lines.push(`\n디바이스 대응: ${deviceLabel}`);
   return lines.join("\n");
 }
 
