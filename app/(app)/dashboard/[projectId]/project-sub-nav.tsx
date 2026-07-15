@@ -46,23 +46,23 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
   const items = phase === "input" ? INPUT_ITEMS : DELIVERABLE_ITEMS;
 
   return (
-    <nav className="flex flex-col gap-4">
-      {/* 2단계 세그먼트 — 소개 / 산출물을 명확히 분리 */}
-      <div className="inline-flex w-fit rounded-full border border-border bg-muted/50 p-1">
+    <nav className="flex flex-col gap-3">
+      {/* 1순위 — 2단계 세그먼트(소개 / 산출물). 가장 크고 눈에 띄게. */}
+      <div className="inline-flex w-fit rounded-full border border-border bg-muted/50 p-1.5">
         {phases.map((p) => {
           const active = phase === p.key;
           return (
             <Link
               key={p.key}
               href={`${base}${p.entry}`}
-              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-2.5 rounded-full px-6 py-2.5 text-base font-bold transition-colors ${
                 active
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <span
-                className={`flex size-5 items-center justify-center rounded-full text-xs ${
+                className={`flex size-6 items-center justify-center rounded-full text-sm ${
                   active ? "bg-primary text-primary-foreground" : "bg-muted-foreground/20 text-muted-foreground"
                 }`}
               >
@@ -74,8 +74,8 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
         })}
       </div>
 
-      {/* 활성 단계의 세부 탭 */}
-      <div className="flex flex-wrap items-center gap-1.5">
+      {/* 2순위 — 활성 단계의 세부 탭 */}
+      <div className="flex flex-wrap items-center gap-1">
         {items.map(({ href, label, icon: Icon }) => {
           const fullHref = `${base}${href}`;
           const isActive = pathname.startsWith(fullHref);
@@ -83,7 +83,7 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
             <Link
               key={href}
               href={fullHref}
-              className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                 isActive
                   ? "bg-primary-soft text-primary-on-soft"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"

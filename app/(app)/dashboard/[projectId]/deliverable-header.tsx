@@ -7,7 +7,8 @@ const TONE: Record<string, string> = {
   lavender: "bg-pastel-lavender text-pastel-lavender-foreground",
 };
 
-// 산출물 페이지 공통 헤더 — 아이콘 칩 + 큰 타이틀 + 다운로드를 담은 카드형 배너.
+// 산출물 페이지 공통 헤더 — 상단 탭이 이미 페이지를 나타내므로, 여기서는
+// 작은 아이콘 + 설명 문구 + 다운로드만 컴팩트하게(세로 공간 최소화).
 export function DeliverableHeader({
   icon: Icon,
   tone = "violet",
@@ -26,50 +27,42 @@ export function DeliverableHeader({
   meta?: React.ReactNode;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary-soft/40 via-background to-background p-6">
-      <div className="pointer-events-none absolute -right-10 -top-12 size-40 rounded-full bg-primary/10 blur-3xl" />
-      <div className="relative flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex items-start gap-4">
+    <div className="flex flex-col gap-2 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
           <span
-            className={`flex size-12 shrink-0 items-center justify-center rounded-xl shadow-sm ${TONE[tone] ?? TONE.violet}`}
+            className={`flex size-6 shrink-0 items-center justify-center rounded-md ${TONE[tone] ?? TONE.violet}`}
           >
-            <Icon className="size-6" />
+            <Icon className="size-3.5" />
           </span>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              생성 산출물
-            </p>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>
-            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              {description}
-            </p>
-            {meta && <div className="mt-3 flex flex-wrap items-center gap-2">{meta}</div>}
-          </div>
+          <h1 className="text-sm font-semibold text-foreground">{title}</h1>
+          {meta}
         </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
-          {downloads.map((label) => (
-            <button
-              key={label}
-              type="button"
-              disabled
-              title="다운로드 기능은 준비 중이에요"
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/70 px-4 py-2 text-sm font-medium text-muted-foreground opacity-80 shadow-sm backdrop-blur"
-            >
-              <Download className="size-4" />
-              {label}
-              <span className="text-xs opacity-70">(준비 중)</span>
-            </button>
-          ))}
-        </div>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{description}</p>
+      </div>
+      <div className="flex shrink-0 flex-wrap gap-2">
+        {downloads.map((label) => (
+          <button
+            key={label}
+            type="button"
+            disabled
+            title="다운로드 기능은 준비 중이에요"
+            className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg bg-foreground px-4 py-2 text-sm font-semibold text-background shadow-sm transition-opacity hover:opacity-90"
+          >
+            <Download className="size-4" />
+            {label}
+            <span className="text-xs font-normal opacity-60">(준비 중)</span>
+          </button>
+        ))}
       </div>
     </div>
   );
 }
 
-// 개수 배지 — 헤더 meta 슬롯에 넣는 작은 칩.
+// 개수 배지 — 타이틀 옆에 붙는 작은 칩.
 export function HeaderStat({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-background/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
       {label}
     </span>
   );

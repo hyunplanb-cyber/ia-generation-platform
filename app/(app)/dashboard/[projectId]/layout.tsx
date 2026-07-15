@@ -20,9 +20,9 @@ export default async function ProjectLayout({
   });
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-6 py-6">
+    <div className="mx-auto w-full max-w-[1440px] px-6 py-5">
       <ProjectSubNav projectId={projectId} />
-      <div className="mt-6">{children}</div>
+      <div className="mt-5">{children}</div>
     </div>
   );
 }
