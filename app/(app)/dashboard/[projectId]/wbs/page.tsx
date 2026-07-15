@@ -25,7 +25,7 @@ export default async function WbsPage({
       <DeliverableHeader
         title="WBS"
         description="화면(작업)별 제작 일정을 정리해요. 담당·산출물까지 붙인 간트차트 엑셀(.xlsm) 내보내기는 준비 중이에요."
-        downloadLabel="간트 엑셀로 다운로드"
+        downloads={["간트 엑셀로 다운로드"]}
       />
 
       {!hasContent ? (

@@ -25,8 +25,8 @@ export default async function FlowPage({
     <div className="flex flex-col gap-6">
       <DeliverableHeader
         title="FLOW"
-        description="화면과 화면 사이의 이동 흐름이에요. 어느 화면의 어떤 버튼을 누르면 어디로 가는지 정리해요. 화면 이동 다이어그램(draw.io) 내보내기는 준비 중이에요."
-        downloadLabel="draw.io HTML로 다운로드"
+        description="화면과 화면 사이의 이동 흐름이에요. 어느 화면의 어떤 버튼을 누르면 어디로 가는지 정리해요."
+        downloads={["draw.io로 다운로드", "HTML로 다운로드"]}
       />
 
       {!hasContent ? (

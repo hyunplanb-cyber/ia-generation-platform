@@ -13,7 +13,7 @@ export default async function AdminPage({
       <DeliverableHeader
         title="관리자 페이지"
         description="필요할 때만 만드는 선택 산출물이에요. 관리자용 메뉴 구조와 IA(화면 목록)를 한 벌 더 생성해요."
-        downloadLabel="엑셀로 다운로드"
+        downloads={["엑셀로 다운로드"]}
       />
 
       <div className="flex flex-col items-start gap-4 rounded-lg border border-border bg-muted/30 px-6 py-8">

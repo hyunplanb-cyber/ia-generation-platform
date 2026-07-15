@@ -21,7 +21,7 @@ export default async function TreePage({
       <DeliverableHeader
         title="메뉴 구조"
         description="사이트 전체 메뉴를 트리로 정리해요. 메뉴 아래에 어떤 화면들이 들어가는지 한눈에 볼 수 있어요."
-        downloadLabel="엑셀로 다운로드"
+        downloads={["PPT로 다운로드", "엑셀로 다운로드"]}
       />
 
       {!hasContent ? (

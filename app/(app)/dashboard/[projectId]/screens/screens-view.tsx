@@ -40,6 +40,7 @@ export function ScreensView({
               <th className="px-4 py-2 font-medium">페이지명</th>
               <th className="px-4 py-2 font-medium">일정</th>
               <th className="px-4 py-2 font-medium">상태</th>
+              <th className="px-4 py-2 font-medium">관리</th>
             </tr>
           </thead>
           <tbody>
@@ -51,6 +52,8 @@ export function ScreensView({
                 onOpenDetail={setSelectedScreenId}
                 isOutOfRange={outOfRangeSet.has(screen.id)}
                 isReversed={reversedSet.has(screen.id)}
+                buttonActions={buttonActions.filter((ba) => ba.screenId === screen.id)}
+                allScreens={screens}
               />
             ))}
           </tbody>
