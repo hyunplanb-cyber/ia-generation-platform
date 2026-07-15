@@ -1,13 +1,24 @@
 "use client";
 
 import { useActionState, useState, type FormEvent } from "react";
-import { Check } from "lucide-react";
+import {
+  Check,
+  Lightbulb,
+  MonitorSmartphone,
+  CalendarRange,
+  Network,
+  LayoutList,
+  FileText,
+  Workflow,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { updateProjectAction, type UpdateProjectState } from "./actions";
-import { InputHint } from "../input-hint";
+import { FormHero, FieldCard } from "../form-shell";
 import type { DeviceMode, Project } from "@/domain/project/project";
 
 const initialState: UpdateProjectState = { error: null, saved: false };
@@ -16,6 +27,16 @@ const DEVICE_OPTIONS: { value: DeviceMode; label: string; desc: string }[] = [
   { value: "responsive", label: "반응형", desc: "하나의 화면이 PC·모바일에 맞춰 자동으로 조정돼요." },
   { value: "pc", label: "PC 웹", desc: "데스크톱 화면 위주로 만들어요." },
   { value: "mobile", label: "모바일 웹(앱)", desc: "모바일 화면 위주로 만들어요." },
+];
+
+// 이 입력으로 만들어지는 산출물 — 오른쪽 패널에서 "결과물 미리보기"로 동기부여.
+const DELIVERABLES = [
+  { icon: Network, label: "메뉴 구조" },
+  { icon: LayoutList, label: "IA · 화면 목록" },
+  { icon: FileText, label: "기능정의서" },
+  { icon: Workflow, label: "FLOW·흐름도" },
+  { icon: CalendarRange, label: "WBS 일정" },
+  { icon: ShieldCheck, label: "관리자 페이지" },
 ];
 
 export function ConceptForm({ project, hasScreens }: { project: Project; hasScreens: boolean }) {
@@ -37,105 +58,140 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="border-b border-border pb-5">
-        <h1 className="text-2xl font-bold text-foreground">컨셉 입력</h1>
-        <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-          어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을 바탕으로
-          산출물을 만들어요.
-        </p>
-      </div>
+      <FormHero
+        eyebrow="프로젝트 소개"
+        step={1}
+        totalSteps={2}
+        icon={Lightbulb}
+        title="컨셉 입력"
+        description="어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을 바탕으로 산출물을 만들어요."
+      />
 
-      <form
-        action={formAction}
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-6 rounded-xl border border-border bg-background p-6 shadow-sm"
-      >
-        {/* 다른 페이지 필드는 값 보존을 위해 숨겨서 함께 제출 */}
-        <input type="hidden" name="menuDraft" value={project.menuDraft ?? ""} />
-        <input type="hidden" name="designConcept" value={project.designConcept ?? ""} />
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-5">
+          {/* 다른 페이지 필드는 값 보존을 위해 숨겨서 함께 제출 */}
+          <input type="hidden" name="menuDraft" value={project.menuDraft ?? ""} />
+          <input type="hidden" name="designConcept" value={project.designConcept ?? ""} />
 
-        <div className="flex flex-col gap-2">
-          <Label>디바이스 대응 방식</Label>
-          <InputHint>
-            어떤 기기에 맞출지 정하면, 화면ID와 화면 구성이 그 기기 기준으로 생성돼요.
-          </InputHint>
-          <div className="mt-1 flex flex-col gap-2">
-            {DEVICE_OPTIONS.map((opt) => (
-              <label
-                key={opt.value}
-                className="flex items-start gap-2.5 rounded-lg border border-border p-3 text-sm has-[:checked]:border-primary has-[:checked]:bg-primary-soft/40"
-              >
-                <input
-                  type="radio"
-                  name="deviceMode"
-                  value={opt.value}
-                  defaultChecked={project.deviceMode === opt.value}
-                  className="mt-0.5"
+          <FieldCard
+            icon={MonitorSmartphone}
+            tone="violet"
+            title="디바이스 대응 방식"
+            hint="어떤 기기에 맞출지 정하면, 화면ID와 화면 구성이 그 기기 기준으로 생성돼요."
+          >
+            <div className="grid gap-2.5 sm:grid-cols-3">
+              {DEVICE_OPTIONS.map((opt) => (
+                <label
+                  key={opt.value}
+                  className="group flex cursor-pointer flex-col gap-1 rounded-lg border border-border p-3 text-sm transition-colors hover:border-primary/40 has-[:checked]:border-primary has-[:checked]:bg-primary-soft/40"
+                >
+                  <span className="flex items-center justify-between">
+                    <span className="font-semibold text-foreground">{opt.label}</span>
+                    <input
+                      type="radio"
+                      name="deviceMode"
+                      value={opt.value}
+                      defaultChecked={project.deviceMode === opt.value}
+                      className="accent-primary"
+                    />
+                  </span>
+                  <span className="text-xs leading-relaxed text-muted-foreground">{opt.desc}</span>
+                </label>
+              ))}
+            </div>
+          </FieldCard>
+
+          <FieldCard
+            icon={Lightbulb}
+            tone="yellow"
+            title="컨셉 / 설명"
+            hint="무엇을 만드는지 구체적으로 적을수록 AI가 더 정확한 메뉴·화면을 제안해요."
+          >
+            <Textarea
+              id="concept"
+              name="concept"
+              rows={5}
+              defaultValue={project.concept}
+              placeholder="예) 20~30대 여성을 위한 온라인 클래스 플랫폼. 클래스 탐색·수강·커뮤니티 기능이 필요해요."
+              required
+            />
+          </FieldCard>
+
+          <FieldCard
+            icon={CalendarRange}
+            tone="mint"
+            title="전체 일정"
+            hint="시작·종료일을 넣으면 생성된 화면마다 제작 일정이 자동으로 나뉘고 WBS로 정리돼요."
+          >
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="overallStart" className="text-xs text-muted-foreground">
+                  전체 시작일
+                </Label>
+                <Input
+                  id="overallStart"
+                  name="overallStart"
+                  type="date"
+                  value={overallStart}
+                  onChange={(e) => setOverallStart(e.target.value)}
+                  required
                 />
-                <span>
-                  <span className="font-medium text-foreground">{opt.label}</span>
-                  <span className="block text-xs text-muted-foreground">{opt.desc}</span>
-                </span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="concept">컨셉/설명</Label>
-          <InputHint>
-            무엇을 만드는지 구체적으로 적을수록 AI가 더 정확한 메뉴·화면을 제안해요.
-          </InputHint>
-          <Textarea id="concept" name="concept" rows={5} defaultValue={project.concept} required />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <Label>전체 일정</Label>
-          <InputHint>
-            시작·종료일을 넣으면 생성된 화면마다 제작 일정이 자동으로 나뉘고 WBS로 정리돼요.
-          </InputHint>
-          <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="overallStart" className="text-xs text-muted-foreground">
-                전체 시작일
-              </Label>
-              <Input
-                id="overallStart"
-                name="overallStart"
-                type="date"
-                value={overallStart}
-                onChange={(e) => setOverallStart(e.target.value)}
-                required
-              />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="overallEnd" className="text-xs text-muted-foreground">
+                  전체 종료일
+                </Label>
+                <Input
+                  id="overallEnd"
+                  name="overallEnd"
+                  type="date"
+                  value={overallEnd}
+                  onChange={(e) => setOverallEnd(e.target.value)}
+                  required
+                />
+              </div>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="overallEnd" className="text-xs text-muted-foreground">
-                전체 종료일
-              </Label>
-              <Input
-                id="overallEnd"
-                name="overallEnd"
-                type="date"
-                value={overallEnd}
-                onChange={(e) => setOverallEnd(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-        </div>
+          </FieldCard>
 
-        {state.error && <p className="text-sm text-danger">{state.error}</p>}
-        <div className="flex items-center gap-3">
-          <Button type="submit" disabled={pending}>
-            {pending ? "저장 중..." : "저장하고 계속"}
-          </Button>
-          {state.saved && !state.error && (
-            <span className="flex items-center gap-1 text-sm text-primary">
-              <Check className="size-4" /> 저장됐어요
-            </span>
-          )}
-        </div>
-      </form>
+          {state.error && <p className="text-sm text-danger">{state.error}</p>}
+          <div className="flex items-center gap-3">
+            <Button type="submit" disabled={pending}>
+              {pending ? "저장 중..." : "저장하고 계속"}
+            </Button>
+            {state.saved && !state.error && (
+              <span className="flex items-center gap-1 text-sm text-primary">
+                <Check className="size-4" /> 저장됐어요
+              </span>
+            )}
+          </div>
+        </form>
+
+        {/* 결과물 미리보기 패널 — 입력의 보상을 시각적으로 */}
+        <aside className="lg:sticky lg:top-6 lg:self-start">
+          <div className="overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-primary-soft/50 to-background p-5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">이 입력으로 만들어져요</h3>
+            </div>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              컨셉만 채우면 아래 6가지 산출물이 자동으로 완성돼요.
+            </p>
+            <ul className="mt-4 flex flex-col gap-2">
+              {DELIVERABLES.map(({ icon: Icon, label }) => (
+                <li
+                  key={label}
+                  className="flex items-center gap-2.5 rounded-lg bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm"
+                >
+                  <span className="flex size-7 items-center justify-center rounded-md bg-primary-soft text-primary-on-soft">
+                    <Icon className="size-3.5" />
+                  </span>
+                  {label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

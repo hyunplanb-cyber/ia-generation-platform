@@ -23,7 +23,7 @@ export default async function AppLayout({
   return (
     <>
       <header className="border-b border-border bg-surface">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-3">
           <div className="flex items-center gap-6">
             <Link href="/dashboard" className="flex items-center gap-1.5 text-lg font-bold text-foreground">
               <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">

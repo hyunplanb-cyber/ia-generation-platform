@@ -20,9 +20,9 @@ export default async function ProjectLayout({
   });
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6 px-6 py-8 sm:flex-row sm:gap-10">
+    <div className="mx-auto w-full max-w-[1440px] px-6 py-6">
       <ProjectSubNav projectId={projectId} />
-      <div className="flex-1">{children}</div>
+      <div className="mt-6">{children}</div>
     </div>
   );
 }
