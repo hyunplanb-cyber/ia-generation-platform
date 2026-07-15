@@ -82,7 +82,7 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
                   >
                     {state === "done" ? <Check className="size-7" /> : <Icon className="size-7" />}
                   </span>
-                  <span className="flex flex-col leading-tight">
+                  <span className="flex items-baseline gap-2 whitespace-nowrap">
                     <span className="text-2xl font-extrabold tracking-tight">{step.title}</span>
                     <span
                       className={`text-base font-bold ${
