@@ -1,6 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
+import { DiagramOrList } from "../diagram-or-list";
+import { buildFlowDef } from "../diagram-defs";
 
 export default async function FlowPage({
   params,
@@ -10,6 +12,7 @@ export default async function FlowPage({
   const { projectId } = await params;
   const { screens, buttonActions } = await getProjectScreensDetail(projectId);
 
+  const activeScreens = screens.filter((s) => s.status === "active");
   const screenById = new Map(screens.map((s) => [s.id, s]));
   const flows = buttonActions
     .map((ba) => {
@@ -20,6 +23,31 @@ export default async function FlowPage({
     .filter(({ from }) => from?.status === "active");
 
   const hasContent = flows.length > 0;
+  const flowDef = buildFlowDef(activeScreens, buttonActions);
+
+  const listView = (
+    <ul className="flex flex-col gap-2">
+      {flows.map(({ ba, from, to }) => (
+        <li
+          key={ba.id}
+          className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface px-4 py-3 text-sm"
+        >
+          <span className="font-medium text-foreground">{from?.pageName ?? "?"}</span>
+          <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-medium text-primary-on-soft">
+            {ba.label}
+          </span>
+          <ArrowRight className="size-4 text-muted-foreground" />
+          {to ? (
+            <span className="font-medium text-foreground">{to.pageName}</span>
+          ) : (
+            <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-medium text-danger">
+              깨진 링크
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -32,27 +60,7 @@ export default async function FlowPage({
       {!hasContent ? (
         <DeliverableEmpty projectId={projectId} />
       ) : (
-        <ul className="flex flex-col gap-2">
-          {flows.map(({ ba, from, to }) => (
-            <li
-              key={ba.id}
-              className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface px-4 py-3 text-sm"
-            >
-              <span className="font-medium text-foreground">{from?.pageName ?? "?"}</span>
-              <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-medium text-primary-on-soft">
-                {ba.label}
-              </span>
-              <ArrowRight className="size-4 text-muted-foreground" />
-              {to ? (
-                <span className="font-medium text-foreground">{to.pageName}</span>
-              ) : (
-                <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-medium text-danger">
-                  깨진 링크
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
+        <DiagramOrList definition={flowDef}>{listView}</DiagramOrList>
       )}
     </div>
   );
