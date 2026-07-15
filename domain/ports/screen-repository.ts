@@ -9,6 +9,9 @@ export interface CreateScreenInput {
   deviceCode: string;
   scheduleStart?: string;
   scheduleEnd?: string;
+  // AI 분석으로 함께 생성된 경우 채워진다(수동 추가 시엔 비움)
+  funcDef?: string;
+  prompt?: string;
 }
 
 export type ScreenFieldsPatch = Partial<

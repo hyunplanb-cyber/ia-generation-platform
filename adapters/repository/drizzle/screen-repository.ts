@@ -49,6 +49,8 @@ export const drizzleScreenRepository: ScreenRepository = {
           deviceCode: input.deviceCode,
           scheduleStart: input.scheduleStart,
           scheduleEnd: input.scheduleEnd,
+          funcDef: input.funcDef,
+          prompt: input.prompt,
         })),
       )
       .returning();
