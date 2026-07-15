@@ -7,9 +7,10 @@ function esc(text: string): string {
   return text.replace(/["#]/g, "").replace(/[\r\n]+/g, " ").trim();
 }
 
-// 메뉴 구조 → 위에서 아래로 내려가는 트리 다이어그램(graph TD)
+// 메뉴 구조 → 좌에서 우로 뻗는 트리 다이어그램(graph LR).
+// 화면이 많아도 가로 폭이 과하게 늘어나지 않도록 세로로 쌓이게 한다.
 export function buildMenuTreeDef(rootLabel: string, menus: Menu[], screens: Screen[]): string {
-  const lines = ["graph TD", `  root["${esc(rootLabel)}"]`];
+  const lines = ["graph LR", `  root["${esc(rootLabel)}"]`];
   menus.forEach((menu, mi) => {
     const mid = `m${mi}`;
     lines.push(`  root --> ${mid}["${esc(menu.nameKo)}"]`);
