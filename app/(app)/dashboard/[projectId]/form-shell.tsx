@@ -10,10 +10,13 @@ export function FormSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex flex-col gap-3.5">
-      <div className="border-b-2 border-border pb-2">
-        <h2 className="text-base font-bold text-foreground">{title}</h2>
-        {hint && <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{hint}</p>}
+    <section className="flex flex-col gap-4">
+      <div>
+        <div className="flex items-center gap-2.5 border-b-2 border-border pb-2.5">
+          <span className="h-6 w-1.5 shrink-0 rounded-full bg-primary" />
+          <h2 className="text-xl font-extrabold tracking-tight text-foreground">{title}</h2>
+        </div>
+        {hint && <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{hint}</p>}
       </div>
       <div>{children}</div>
     </section>

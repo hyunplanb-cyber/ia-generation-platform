@@ -52,27 +52,27 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
 
   return (
     <nav className="flex flex-col gap-5">
-      {/* 스텝퍼 */}
-      <ol className="flex flex-wrap items-center gap-2">
+      {/* 스텝퍼 — 가로 꽉 차게, 크게 */}
+      <ol className="flex w-full items-stretch gap-3">
         {STEPS.map((step, i) => {
           const state = i === activeIndex ? "active" : i < activeIndex ? "done" : "todo";
           const Icon = step.icon;
           return (
             <Fragment key={step.entry}>
-              <li>
+              <li className="flex-1">
                 <Link
                   href={`${base}${step.entry}`}
                   aria-current={state === "active" ? "step" : undefined}
-                  className={`flex items-center gap-3.5 rounded-2xl px-6 py-3.5 transition-colors ${
+                  className={`flex h-full items-center justify-center gap-4 rounded-2xl px-6 py-5 transition-colors ${
                     state === "active"
-                      ? "bg-primary text-primary-foreground shadow-md"
+                      ? "bg-primary text-primary-foreground shadow-lg"
                       : state === "done"
                         ? "bg-primary-soft text-primary-on-soft hover:bg-primary-soft/80"
-                        : "bg-muted text-muted-foreground hover:bg-muted/70"
+                        : "bg-muted text-foreground/70 hover:bg-muted/70"
                   }`}
                 >
                   <span
-                    className={`flex size-12 shrink-0 items-center justify-center rounded-full ${
+                    className={`flex size-14 shrink-0 items-center justify-center rounded-full ${
                       state === "active"
                         ? "bg-primary-foreground/20"
                         : state === "done"
@@ -80,19 +80,13 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
                           : "bg-background text-muted-foreground"
                     }`}
                   >
-                    {state === "done" ? <Check className="size-6" /> : <Icon className="size-6" />}
+                    {state === "done" ? <Check className="size-7" /> : <Icon className="size-7" />}
                   </span>
                   <span className="flex flex-col leading-tight">
+                    <span className="text-2xl font-extrabold tracking-tight">{step.title}</span>
                     <span
-                      className={`text-lg font-extrabold tracking-tight ${
-                        state === "active" ? "text-primary-foreground" : ""
-                      }`}
-                    >
-                      {step.title}
-                    </span>
-                    <span
-                      className={`text-sm font-medium ${
-                        state === "active" ? "text-primary-foreground/85" : "opacity-80"
+                      className={`text-base font-bold ${
+                        state === "active" ? "text-primary-foreground/90" : ""
                       }`}
                     >
                       {step.label}
@@ -101,7 +95,7 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
                 </Link>
               </li>
               {i < STEPS.length - 1 && (
-                <ChevronRight className="size-6 shrink-0 text-muted-foreground/50" />
+                <ChevronRight className="size-7 shrink-0 self-center text-muted-foreground/50" />
               )}
             </Fragment>
           );
