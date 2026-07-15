@@ -3,13 +3,11 @@
 import { useActionState, useState, type FormEvent } from "react";
 import {
   Check,
-  Lightbulb,
-  MonitorSmartphone,
-  CalendarRange,
   Network,
   LayoutList,
   FileText,
   Workflow,
+  CalendarRange,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -18,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { updateProjectAction, type UpdateProjectState } from "./actions";
-import { FormHero, FieldCard } from "../form-shell";
+import { FormSection } from "../form-shell";
 import type { DeviceMode, Project } from "@/domain/project/project";
 
 const initialState: UpdateProjectState = { error: null, saved: false };
@@ -57,25 +55,22 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <FormHero
-        eyebrow="프로젝트 소개"
-        step={1}
-        totalSteps={2}
-        icon={Lightbulb}
-        title="컨셉 입력"
-        description="어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을 바탕으로 산출물을 만들어요."
-      />
+    <div className="flex flex-col gap-5">
+      <div>
+        <h1 className="text-lg font-bold text-foreground">컨셉 입력</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을 바탕으로
+          산출물을 만들어요.
+        </p>
+      </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
+        <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* 다른 페이지 필드는 값 보존을 위해 숨겨서 함께 제출 */}
           <input type="hidden" name="menuDraft" value={project.menuDraft ?? ""} />
           <input type="hidden" name="designConcept" value={project.designConcept ?? ""} />
 
-          <FieldCard
-            icon={MonitorSmartphone}
-            tone="violet"
+          <FormSection
             title="디바이스 대응 방식"
             hint="어떤 기기에 맞출지 정하면, 화면ID와 화면 구성이 그 기기 기준으로 생성돼요."
           >
@@ -99,11 +94,9 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
                 </label>
               ))}
             </div>
-          </FieldCard>
+          </FormSection>
 
-          <FieldCard
-            icon={Lightbulb}
-            tone="yellow"
+          <FormSection
             title="컨셉 / 설명"
             hint="무엇을 만드는지 구체적으로 적을수록 AI가 더 정확한 메뉴·화면을 제안해요."
           >
@@ -115,11 +108,9 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
               placeholder="예) 20~30대 여성을 위한 온라인 클래스 플랫폼. 클래스 탐색·수강·커뮤니티 기능이 필요해요."
               required
             />
-          </FieldCard>
+          </FormSection>
 
-          <FieldCard
-            icon={CalendarRange}
-            tone="mint"
+          <FormSection
             title="전체 일정"
             hint="시작·종료일을 넣으면 생성된 화면마다 제작 일정이 자동으로 나뉘고 WBS로 정리돼요."
           >
@@ -151,7 +142,7 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
                 />
               </div>
             </div>
-          </FieldCard>
+          </FormSection>
 
           {state.error && <p className="text-sm text-danger">{state.error}</p>}
           <div className="flex items-center gap-3">
@@ -166,9 +157,9 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
           </div>
         </form>
 
-        {/* 결과물 미리보기 패널 — 입력의 보상을 시각적으로 */}
-        <aside className="lg:sticky lg:top-6 lg:self-start">
-          <div className="overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-primary-soft/50 to-background p-5">
+        {/* 결과물 미리보기 패널 */}
+        <aside className="lg:sticky lg:top-5 lg:self-start">
+          <div className="rounded-xl border border-border bg-muted/20 p-5">
             <div className="flex items-center gap-2">
               <Sparkles className="size-4 text-primary" />
               <h3 className="text-sm font-semibold text-foreground">이 입력으로 만들어져요</h3>
@@ -176,13 +167,13 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
               컨셉만 채우면 아래 6가지 산출물이 자동으로 완성돼요.
             </p>
-            <ul className="mt-4 flex flex-col gap-2">
+            <ul className="mt-4 flex flex-col gap-1.5">
               {DELIVERABLES.map(({ icon: Icon, label }) => (
                 <li
                   key={label}
-                  className="flex items-center gap-2.5 rounded-lg bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm"
+                  className="flex items-center gap-2.5 rounded-lg bg-background px-3 py-2 text-sm text-foreground shadow-sm"
                 >
-                  <span className="flex size-7 items-center justify-center rounded-md bg-primary-soft text-primary-on-soft">
+                  <span className="flex size-6 items-center justify-center rounded-md bg-primary-soft text-primary-on-soft">
                     <Icon className="size-3.5" />
                   </span>
                   {label}

@@ -1,10 +1,14 @@
 "use client";
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Lightbulb,
+  PencilLine,
   Palette,
+  Sparkles,
+  Check,
+  ChevronRight,
   Network,
   LayoutList,
   FileText,
@@ -16,9 +20,17 @@ import {
 
 type NavItem = { href: string; label: string; icon: LucideIcon };
 
-const INPUT_ITEMS: NavItem[] = [
-  { href: "edit", label: "컨셉 입력", icon: Lightbulb },
-  { href: "brief", label: "주요 메뉴·디자인 컨셉", icon: Palette },
+// 3단계 스텝퍼 — 컨셉 입력 → 메뉴·디자인 → 생성 산출물
+const STEPS: { entry: string; title: string; label: string; icon: LucideIcon; slugs: string[] }[] = [
+  { entry: "edit", title: "STEP 1", label: "컨셉 입력", icon: PencilLine, slugs: ["edit"] },
+  { entry: "brief", title: "STEP 2", label: "메뉴·디자인 컨셉", icon: Palette, slugs: ["brief", "menus"] },
+  {
+    entry: "tree",
+    title: "STEP 3",
+    label: "생성 산출물",
+    icon: Sparkles,
+    slugs: ["tree", "screens", "specs", "flow", "wbs", "admin"],
+  },
 ];
 
 const DELIVERABLE_ITEMS: NavItem[] = [
@@ -30,71 +42,95 @@ const DELIVERABLE_ITEMS: NavItem[] = [
   { href: "admin", label: "관리자 페이지", icon: ShieldCheck },
 ];
 
-// 입력(소개) 단계로 취급할 화면들 — 나머지는 산출물 단계.
-const INPUT_SLUGS = new Set(["edit", "brief", "menus"]);
-
 export function ProjectSubNav({ projectId }: { projectId: string }) {
   const pathname = usePathname();
   const base = `/dashboard/${projectId}/`;
   const slug = pathname.startsWith(base) ? pathname.slice(base.length).split("/")[0] : "";
-  const phase: "input" | "deliver" = INPUT_SLUGS.has(slug) ? "input" : "deliver";
 
-  const phases = [
-    { key: "input" as const, num: 1, label: "프로젝트 소개", entry: "edit" },
-    { key: "deliver" as const, num: 2, label: "생성 산출물", entry: "tree" },
-  ];
-  const items = phase === "input" ? INPUT_ITEMS : DELIVERABLE_ITEMS;
+  let activeIndex = STEPS.findIndex((s) => s.slugs.includes(slug));
+  if (activeIndex === -1) activeIndex = 2; // 알 수 없는 하위 경로는 산출물 단계로
 
   return (
-    <nav className="flex flex-col gap-3">
-      {/* 1순위 — 2단계 세그먼트(소개 / 산출물). 가장 크고 눈에 띄게. */}
-      <div className="inline-flex w-fit rounded-full border border-border bg-muted/50 p-1.5">
-        {phases.map((p) => {
-          const active = phase === p.key;
+    <nav className="flex flex-col gap-5">
+      {/* 스텝퍼 */}
+      <ol className="flex flex-wrap items-center gap-2">
+        {STEPS.map((step, i) => {
+          const state = i === activeIndex ? "active" : i < activeIndex ? "done" : "todo";
+          const Icon = step.icon;
           return (
-            <Link
-              key={p.key}
-              href={`${base}${p.entry}`}
-              className={`flex items-center gap-2.5 rounded-full px-6 py-2.5 text-base font-bold transition-colors ${
-                active
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <span
-                className={`flex size-6 items-center justify-center rounded-full text-sm ${
-                  active ? "bg-primary text-primary-foreground" : "bg-muted-foreground/20 text-muted-foreground"
+            <Fragment key={step.entry}>
+              <li>
+                <Link
+                  href={`${base}${step.entry}`}
+                  aria-current={state === "active" ? "step" : undefined}
+                  className={`flex items-center gap-3 rounded-2xl px-4 py-2.5 transition-colors ${
+                    state === "active"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : state === "done"
+                        ? "bg-primary-soft text-primary-on-soft hover:bg-primary-soft/80"
+                        : "bg-muted text-muted-foreground hover:bg-muted/70"
+                  }`}
+                >
+                  <span
+                    className={`flex size-9 shrink-0 items-center justify-center rounded-full ${
+                      state === "active"
+                        ? "bg-primary-foreground/20"
+                        : state === "done"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-background text-muted-foreground"
+                    }`}
+                  >
+                    {state === "done" ? <Check className="size-4" /> : <Icon className="size-4.5" />}
+                  </span>
+                  <span className="flex flex-col leading-tight">
+                    <span
+                      className={`text-sm font-bold ${
+                        state === "active" ? "text-primary-foreground" : ""
+                      }`}
+                    >
+                      {step.title}
+                    </span>
+                    <span
+                      className={`text-xs ${
+                        state === "active" ? "text-primary-foreground/80" : "opacity-80"
+                      }`}
+                    >
+                      {step.label}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+              {i < STEPS.length - 1 && (
+                <ChevronRight className="size-5 shrink-0 text-muted-foreground/50" />
+              )}
+            </Fragment>
+          );
+        })}
+      </ol>
+
+      {/* 산출물 단계에서만 세부 탭 노출 */}
+      {activeIndex === 2 && (
+        <div className="flex flex-wrap items-center gap-1 border-t border-border pt-3">
+          {DELIVERABLE_ITEMS.map(({ href, label, icon: Icon }) => {
+            const fullHref = `${base}${href}`;
+            const isActive = pathname.startsWith(fullHref);
+            return (
+              <Link
+                key={href}
+                href={fullHref}
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary-soft text-primary-on-soft"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
-                {p.num}
-              </span>
-              {p.label}
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* 2순위 — 활성 단계의 세부 탭 */}
-      <div className="flex flex-wrap items-center gap-1">
-        {items.map(({ href, label, icon: Icon }) => {
-          const fullHref = `${base}${href}`;
-          const isActive = pathname.startsWith(fullHref);
-          return (
-            <Link
-              key={href}
-              href={fullHref}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-primary-soft text-primary-on-soft"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              <Icon className="size-4 shrink-0" />
-              {label}
-            </Link>
-          );
-        })}
-      </div>
+                <Icon className="size-4 shrink-0" />
+                {label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </nav>
   );
 }
