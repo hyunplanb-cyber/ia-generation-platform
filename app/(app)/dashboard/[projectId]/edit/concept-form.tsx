@@ -56,13 +56,10 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
 
   return (
     <div className="flex flex-col gap-5">
-      <div>
-        <h1 className="text-lg font-bold text-foreground">컨셉 입력</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을 바탕으로
-          산출물을 만들어요.
-        </p>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을 바탕으로
+        산출물을 만들어요.
+      </p>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
         <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-8">

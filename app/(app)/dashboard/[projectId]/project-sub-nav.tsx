@@ -63,16 +63,16 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
                 <Link
                   href={`${base}${step.entry}`}
                   aria-current={state === "active" ? "step" : undefined}
-                  className={`flex items-center gap-3 rounded-2xl px-4 py-2.5 transition-colors ${
+                  className={`flex items-center gap-3.5 rounded-2xl px-6 py-3.5 transition-colors ${
                     state === "active"
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-primary text-primary-foreground shadow-md"
                       : state === "done"
                         ? "bg-primary-soft text-primary-on-soft hover:bg-primary-soft/80"
                         : "bg-muted text-muted-foreground hover:bg-muted/70"
                   }`}
                 >
                   <span
-                    className={`flex size-9 shrink-0 items-center justify-center rounded-full ${
+                    className={`flex size-12 shrink-0 items-center justify-center rounded-full ${
                       state === "active"
                         ? "bg-primary-foreground/20"
                         : state === "done"
@@ -80,19 +80,19 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
                           : "bg-background text-muted-foreground"
                     }`}
                   >
-                    {state === "done" ? <Check className="size-4" /> : <Icon className="size-4.5" />}
+                    {state === "done" ? <Check className="size-6" /> : <Icon className="size-6" />}
                   </span>
                   <span className="flex flex-col leading-tight">
                     <span
-                      className={`text-sm font-bold ${
+                      className={`text-lg font-extrabold tracking-tight ${
                         state === "active" ? "text-primary-foreground" : ""
                       }`}
                     >
                       {step.title}
                     </span>
                     <span
-                      className={`text-xs ${
-                        state === "active" ? "text-primary-foreground/80" : "opacity-80"
+                      className={`text-sm font-medium ${
+                        state === "active" ? "text-primary-foreground/85" : "opacity-80"
                       }`}
                     >
                       {step.label}
@@ -101,7 +101,7 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
                 </Link>
               </li>
               {i < STEPS.length - 1 && (
-                <ChevronRight className="size-5 shrink-0 text-muted-foreground/50" />
+                <ChevronRight className="size-6 shrink-0 text-muted-foreground/50" />
               )}
             </Fragment>
           );

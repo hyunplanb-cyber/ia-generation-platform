@@ -28,17 +28,16 @@ export function DeliverableHeader({
 }) {
   return (
     <div className="flex flex-col gap-2 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-      <div className="min-w-0">
-        <div className="flex items-center gap-2">
-          <span
-            className={`flex size-6 shrink-0 items-center justify-center rounded-md ${TONE[tone] ?? TONE.violet}`}
-          >
-            <Icon className="size-3.5" />
-          </span>
-          <h1 className="text-sm font-semibold text-foreground">{title}</h1>
-          {meta}
-        </div>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{description}</p>
+      {/* 페이지명은 상단 탭이 이미 강조하므로, 여기선 접근성용으로만 두고 설명 문구만 노출 */}
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <h1 className="sr-only">{title}</h1>
+        <span
+          className={`flex size-6 shrink-0 items-center justify-center rounded-md ${TONE[tone] ?? TONE.violet}`}
+        >
+          <Icon className="size-3.5" />
+        </span>
+        <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
+        {meta}
       </div>
       <div className="flex shrink-0 flex-wrap gap-2">
         {downloads.map((label) => (

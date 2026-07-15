@@ -18,13 +18,10 @@ export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: b
 
   return (
     <div className="flex flex-col gap-5">
-      <div>
-        <h1 className="text-lg font-bold text-foreground">주요 메뉴 · 디자인 컨셉</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          떠오르는 메뉴 구성과 원하는 디자인 분위기를 알려주세요. 다 적었다면 오른쪽에서 바로 산출물을
-          생성할 수 있어요.
-        </p>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        떠오르는 메뉴 구성과 원하는 디자인 분위기를 알려주세요. 다 적었다면 오른쪽에서 바로 산출물을
+        생성할 수 있어요.
+      </p>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
         <form action={formAction} className="flex flex-col gap-8">
