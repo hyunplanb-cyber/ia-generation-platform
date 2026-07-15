@@ -1,34 +1,9 @@
 import type { Screen } from "@/domain/screen/screen";
-import type { Menu } from "@/domain/menu/menu";
 import type { ButtonAction } from "@/domain/screen/button-action";
 
 // mermaid 라벨에 들어갈 텍스트를 안전하게 정리한다(따옴표·특수문자 제거).
 function esc(text: string): string {
   return text.replace(/["#]/g, "").replace(/[\r\n]+/g, " ").trim();
-}
-
-// 메뉴 구조 → 좌에서 우로 뻗는 트리 다이어그램(graph LR).
-// 화면이 많아도 가로 폭이 과하게 늘어나지 않도록 세로로 쌓이게 한다.
-export function buildMenuTreeDef(rootLabel: string, menus: Menu[], screens: Screen[]): string {
-  const lines = ["graph LR", `  root["${esc(rootLabel)}"]`];
-  menus.forEach((menu, mi) => {
-    const mid = `m${mi}`;
-    lines.push(`  root --> ${mid}["${esc(menu.nameKo)}"]`);
-    const menuScreens = screens.filter((s) => s.menuId === menu.id);
-    menuScreens.forEach((s, si) => {
-      const sid = `${mid}s${si}`;
-      lines.push(`  ${mid} --> ${sid}["${esc(s.pageName)}<br/>${esc(s.pageId)}"]`);
-    });
-  });
-  // 박스 스타일(메뉴는 진한 색, 화면은 옅은 색)
-  lines.push("  classDef menu fill:#ece9fd,stroke:#8b7dff,color:#3a2f7a;");
-  lines.push("  classDef screen fill:#ffffff,stroke:#c9c5e8,color:#333;");
-  menus.forEach((menu, mi) => {
-    lines.push(`  class m${mi} menu;`);
-    const menuScreens = screens.filter((s) => s.menuId === menu.id);
-    menuScreens.forEach((_, si) => lines.push(`  class m${mi}s${si} screen;`));
-  });
-  return lines.join("\n");
 }
 
 // FLOW → 화면 노드 + 버튼 클릭 이동 화살표(flowchart LR)

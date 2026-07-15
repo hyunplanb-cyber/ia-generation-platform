@@ -2,7 +2,7 @@ import { listMenus } from "@/application/list-menus";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { DiagramOrList } from "../diagram-or-list";
-import { buildMenuTreeDef } from "../diagram-defs";
+import { MenuTreeChart } from "../menu-tree-chart";
 
 export default async function TreePage({
   params,
@@ -17,7 +17,6 @@ export default async function TreePage({
 
   const activeScreens = screens.filter((s) => s.status === "active");
   const hasContent = menus.length > 0;
-  const treeDef = buildMenuTreeDef("사이트 전체", menus, activeScreens);
 
   const listView = (
     <div className="overflow-hidden rounded-lg border border-border">
@@ -68,7 +67,10 @@ export default async function TreePage({
       {!hasContent ? (
         <DeliverableEmpty projectId={projectId} />
       ) : (
-        <DiagramOrList definition={treeDef} title="메뉴 구조 다이어그램">
+        <DiagramOrList
+          diagram={<MenuTreeChart menus={menus} screens={activeScreens} />}
+          title="메뉴 구조 다이어그램"
+        >
           {listView}
         </DiagramOrList>
       )}

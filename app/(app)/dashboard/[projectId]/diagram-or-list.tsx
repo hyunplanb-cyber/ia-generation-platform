@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Network, X, ZoomIn, ZoomOut, Maximize } from "lucide-react";
-import { MermaidDiagram } from "./mermaid-diagram";
 
 const MIN_ZOOM = 0.4;
 const MAX_ZOOM = 2;
@@ -10,11 +9,11 @@ const ZOOM_STEP = 0.2;
 
 // 리스트를 기본으로 보여주고, [다이어그램으로 보기]를 누르면 큰 팝업(원본 크기, 스크롤)으로 다이어그램을 띄운다.
 export function DiagramOrList({
-  definition,
+  diagram,
   title,
   children,
 }: {
-  definition: string;
+  diagram: React.ReactNode;
   title: string;
   children: React.ReactNode;
 }) {
@@ -106,7 +105,7 @@ export function DiagramOrList({
             </div>
             <div className="min-h-0 flex-1 overflow-auto bg-white p-6">
               <div style={{ zoom }} className="w-fit">
-                <MermaidDiagram definition={definition} />
+                {diagram}
               </div>
             </div>
           </div>

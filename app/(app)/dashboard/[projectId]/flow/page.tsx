@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { DiagramOrList } from "../diagram-or-list";
+import { MermaidDiagram } from "../mermaid-diagram";
 import { buildFlowDef } from "../diagram-defs";
 
 export default async function FlowPage({
@@ -60,7 +61,10 @@ export default async function FlowPage({
       {!hasContent ? (
         <DeliverableEmpty projectId={projectId} />
       ) : (
-        <DiagramOrList definition={flowDef} title="FLOW 다이어그램">
+        <DiagramOrList
+          diagram={<MermaidDiagram definition={flowDef} />}
+          title="FLOW 다이어그램"
+        >
           {listView}
         </DiagramOrList>
       )}
