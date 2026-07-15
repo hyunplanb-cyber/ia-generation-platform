@@ -12,7 +12,7 @@ import { withProjectAuth } from "@/application/with-project-auth";
 
 export type GenerateIaResult =
   | { ok: true; menuCount: number; screenCount: number }
-  | { ok: false; reason: "unavailable" | "already-has-menus" | "failed" };
+  | { ok: false; reason: "unavailable" | "no-credit" | "already-has-menus" | "failed" };
 
 // nameEn에서 프로젝트 내 고유한 2글자 메뉴코드를 만든다.
 // 앞 2글자가 겹치거나 예약어면 다른 글자 조합 → A~Z 조합 순으로 대체한다.
@@ -57,10 +57,16 @@ export async function generateIa(projectId: string): Promise<GenerateIaResult> {
       if (error instanceof Error && error.message === "ANTHROPIC_API_KEY_MISSING") {
         return { ok: false, reason: "unavailable" };
       }
+      // 크레딧 부족 등 결제 관련 오류는 앱을 죽이지 않고 안내로 처리한다.
+      if (error instanceof Error && error.message.includes("credit balance")) {
+        return { ok: false, reason: "no-credit" };
+      }
       if (error instanceof Error && error.message === "IA_GENERATOR_BAD_OUTPUT") {
         return { ok: false, reason: "failed" };
       }
-      throw error;
+      // 그 밖의 API/네트워크 오류도 크래시 대신 실패로 저하한다.
+      console.error("generateIa failed:", error);
+      return { ok: false, reason: "failed" };
     }
 
     const deviceCodes = project.deviceMode === "mobile" ? ["MO"] : ["PC"];
