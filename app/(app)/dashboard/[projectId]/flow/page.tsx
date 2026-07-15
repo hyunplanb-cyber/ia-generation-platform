@@ -11,16 +11,15 @@ export default async function FlowPage({
   const { screens, buttonActions } = await getProjectScreensDetail(projectId);
 
   const screenById = new Map(screens.map((s) => [s.id, s]));
-  // PC 화면 기준의 이동만 대표로 보여준다(개념 흐름 1개당 한 줄).
-  const pcFlows = buttonActions
+  const flows = buttonActions
     .map((ba) => {
       const from = screenById.get(ba.screenId);
       const to = screenById.get(ba.targetScreenId);
       return { ba, from, to };
     })
-    .filter(({ from }) => from?.deviceCode === "PC");
+    .filter(({ from }) => from?.status === "active");
 
-  const hasContent = pcFlows.length > 0;
+  const hasContent = flows.length > 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -34,7 +33,7 @@ export default async function FlowPage({
         <DeliverableEmpty projectId={projectId} />
       ) : (
         <ul className="flex flex-col gap-2">
-          {pcFlows.map(({ ba, from, to }) => (
+          {flows.map(({ ba, from, to }) => (
             <li
               key={ba.id}
               className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface px-4 py-3 text-sm"

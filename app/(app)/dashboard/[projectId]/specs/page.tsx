@@ -9,8 +9,8 @@ export default async function SpecsPage({
   const { projectId } = await params;
   const { screens } = await getProjectScreensDetail(projectId);
 
-  const activePcScreens = screens.filter((s) => s.status === "active" && s.deviceCode === "PC");
-  const hasContent = activePcScreens.length > 0;
+  const activeScreens = screens.filter((s) => s.status === "active");
+  const hasContent = activeScreens.length > 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -33,7 +33,7 @@ export default async function SpecsPage({
               </tr>
             </thead>
             <tbody>
-              {activePcScreens.map((screen) => (
+              {activeScreens.map((screen) => (
                 <tr key={screen.id} className="border-t border-border align-top">
                   <td className="whitespace-nowrap px-4 py-3">
                     <span className="font-mono text-xs text-muted-foreground">{screen.pageId}</span>

@@ -14,11 +14,11 @@ export default async function WbsPage({
   ]);
 
   const menuById = new Map(menus.map((m) => [m.id, m]));
-  const activePcScreens = screens
-    .filter((s) => s.status === "active" && s.deviceCode === "PC")
+  const activeScreens = screens
+    .filter((s) => s.status === "active")
     .sort((a, b) => (a.scheduleStart ?? "").localeCompare(b.scheduleStart ?? ""));
 
-  const hasContent = activePcScreens.length > 0;
+  const hasContent = activeScreens.length > 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -43,7 +43,7 @@ export default async function WbsPage({
               </tr>
             </thead>
             <tbody>
-              {activePcScreens.map((screen) => (
+              {activeScreens.map((screen) => (
                 <tr key={screen.id} className="border-t border-border">
                   <td className="px-4 py-3">
                     <span className="font-medium text-foreground">{screen.pageName}</span>

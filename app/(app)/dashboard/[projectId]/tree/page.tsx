@@ -13,8 +13,7 @@ export default async function TreePage({
     getProjectScreensDetail(projectId),
   ]);
 
-  // 트리는 개념 화면 1개당 한 줄이면 되므로 PC 화면만 대표로 보여준다.
-  const activePcScreens = screens.filter((s) => s.status === "active" && s.deviceCode === "PC");
+  const activeScreens = screens.filter((s) => s.status === "active");
   const hasContent = menus.length > 0;
 
   return (
@@ -30,7 +29,7 @@ export default async function TreePage({
       ) : (
         <div className="overflow-hidden rounded-lg border border-border">
           {menus.map((menu, i) => {
-            const menuScreens = activePcScreens.filter((s) => s.menuId === menu.id);
+            const menuScreens = activeScreens.filter((s) => s.menuId === menu.id);
             return (
               <div key={menu.id} className={i > 0 ? "border-t border-border" : ""}>
                 <div className="flex items-center gap-2 bg-muted/40 px-4 py-2.5">
