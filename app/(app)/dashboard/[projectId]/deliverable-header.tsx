@@ -34,13 +34,13 @@ export function DeliverableEmpty({ projectId }: { projectId: string }) {
       <p className="text-sm text-muted-foreground">
         아직 생성된 산출물이 없어요.{" "}
         <a
-          href={`/dashboard/${projectId}/menus`}
+          href={`/dashboard/${projectId}/brief`}
           className="font-medium text-primary underline"
         >
-          메뉴 관리
-        </a>
-        에서 <b className="font-semibold text-foreground">[컨셉 분석해서 자동 생성]</b>을 실행하면
-        여기에 채워져요.
+          주요 메뉴·디자인 컨셉
+        </a>{" "}
+        화면에서 <b className="font-semibold text-foreground">[컨셉 분석해서 자동 생성]</b>을
+        실행하면 여기에 채워져요.
       </p>
     </div>
   );

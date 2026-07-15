@@ -57,10 +57,10 @@ export default async function ScreensPage({
       {activeScreens.length === 0 ? (
         <p className="text-muted-foreground">
           아직 생성된 화면이 없어요.{" "}
-          <Link href={`/dashboard/${projectId}/menus`} className="font-medium text-primary underline">
-            메뉴 관리
-          </Link>
-          에서 [실행: IA 생성]을 눌러주세요.
+          <Link href={`/dashboard/${projectId}/brief`} className="font-medium text-primary underline">
+            주요 메뉴·디자인 컨셉
+          </Link>{" "}
+          화면에서 [컨셉 분석해서 자동 생성]을 실행해 주세요.
         </p>
       ) : (
         <ScreensView
