@@ -22,7 +22,7 @@ const DELIVERABLE_ITEMS = [
   { href: "tree", label: "메뉴 구조", icon: Network },
   { href: "screens", label: "IA · 화면 목록", icon: LayoutList },
   { href: "specs", label: "기능정의서", icon: FileText },
-  { href: "flow", label: "FLOW", icon: Workflow },
+  { href: "flow", label: "FLOW·흐름도", icon: Workflow },
   { href: "wbs", label: "WBS", icon: CalendarRange },
   { href: "admin", label: "관리자 페이지", icon: ShieldCheck },
 ];

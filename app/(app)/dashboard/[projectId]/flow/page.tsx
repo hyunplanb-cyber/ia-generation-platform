@@ -2,8 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { DiagramOrList } from "../diagram-or-list";
-import { MermaidDiagram } from "../mermaid-diagram";
-import { buildFlowDef } from "../diagram-defs";
+import { FlowChart } from "../flow-chart";
 
 export default async function FlowPage({
   params,
@@ -24,7 +23,15 @@ export default async function FlowPage({
     .filter(({ from }) => from?.status === "active");
 
   const hasContent = flows.length > 0;
-  const flowDef = buildFlowDef(activeScreens, buttonActions);
+
+  const flowNodes = activeScreens.map((s) => ({
+    id: s.id,
+    pageName: s.pageName,
+    pageId: s.pageId,
+  }));
+  const flowEdges = flows
+    .filter(({ to }) => to?.status === "active")
+    .map(({ ba, to }) => ({ from: ba.screenId, to: to!.id, label: ba.label }));
 
   const listView = (
     <ul className="flex flex-col gap-2">
@@ -53,7 +60,7 @@ export default async function FlowPage({
   return (
     <div className="flex flex-col gap-6">
       <DeliverableHeader
-        title="FLOW"
+        title="FLOW·흐름도"
         description="화면과 화면 사이의 이동 흐름이에요. 어느 화면의 어떤 버튼을 누르면 어디로 가는지 정리해요."
         downloads={["draw.io로 다운로드", "HTML로 다운로드"]}
       />
@@ -62,8 +69,8 @@ export default async function FlowPage({
         <DeliverableEmpty projectId={projectId} />
       ) : (
         <DiagramOrList
-          diagram={<MermaidDiagram definition={flowDef} />}
-          title="FLOW 다이어그램"
+          diagram={<FlowChart nodes={flowNodes} edges={flowEdges} />}
+          title="흐름도 다이어그램"
         >
           {listView}
         </DiagramOrList>
