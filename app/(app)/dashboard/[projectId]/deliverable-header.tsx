@@ -16,15 +16,18 @@ export function DeliverableHeader({
   description,
   downloads,
   meta,
+  actions,
 }: {
   icon: LucideIcon;
   tone?: keyof typeof TONE | string;
   title: string;
   description: string;
-  // 형식마다 별도 버튼(예: ["PPT로 다운로드", "엑셀로 다운로드"])
+  // 아직 준비 중인 형식(비활성 버튼으로 표시). 예: ["PPT로 다운로드"]
   downloads: string[];
   // 개수·요약 배지 등 (선택)
   meta?: React.ReactNode;
+  // 실제로 동작하는 다운로드 버튼 등(선택) — 준비 중 버튼보다 앞에 노출
+  actions?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-2 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
@@ -40,6 +43,7 @@ export function DeliverableHeader({
         {meta}
       </div>
       <div className="flex shrink-0 flex-wrap gap-2">
+        {actions}
         {downloads.map((label) => (
           <button
             key={label}

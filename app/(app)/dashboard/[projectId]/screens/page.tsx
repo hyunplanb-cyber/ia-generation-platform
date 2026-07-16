@@ -7,8 +7,13 @@ import { detectMixedMenuCodeMenuIds } from "@/domain/screen/detect-mixed-menu-co
 import { detectOutOfRangeScreens } from "@/domain/schedule/detect-out-of-range-screens";
 import { detectScheduleReversals } from "@/domain/schedule/detect-schedule-reversals";
 import { DeliverableHeader, HeaderStat } from "../deliverable-header";
+import { ExcelDownloadButton } from "../excel-download-button";
 import { ScreensView } from "./screens-view";
 import { QuarantinedScreensSection } from "./quarantined-screens-section";
+
+function safeFileName(concept: string): string {
+  return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
+}
 
 export default async function ScreensPage({
   params,
@@ -29,6 +34,29 @@ export default async function ScreensPage({
   ];
   const reversedIds = [...detectScheduleReversals(activeScreens)];
 
+  // 엑셀 내보내기용 행 — 메뉴별·화면별 상세를 한 행으로.
+  const menuNameById = new Map(menus.map((m) => [m.id, m.nameKo]));
+  const screenNameById = new Map(activeScreens.map((s) => [s.id, s]));
+  const excelRows = activeScreens.map((s) => {
+    const links = buttonActions
+      .filter((ba) => ba.screenId === s.id)
+      .map((ba) => {
+        const target = screenNameById.get(ba.targetScreenId);
+        return `${ba.label} → ${target ? target.pageName : "(삭제됨)"}`;
+      })
+      .join("\n");
+    return {
+      메뉴: menuNameById.get(s.menuId) ?? "",
+      화면ID: s.pageId,
+      화면명: s.pageName,
+      "일정 시작": s.scheduleStart ?? "",
+      "일정 종료": s.scheduleEnd ?? "",
+      "설명·기능정의": s.funcDef ?? "",
+      "버튼 → 이동화면": links,
+      "생성 프롬프트": s.prompt ?? "",
+    };
+  });
+
   return (
     <div className="flex flex-col gap-6">
       <DeliverableHeader
@@ -36,7 +64,17 @@ export default async function ScreensPage({
         tone="violet"
         title="IA · 화면 목록"
         description="메뉴별로 자동 생성된 화면 목록이에요. 각 화면의 페이지ID·일정·기능정의·이동 화면을 확인하고 수정할 수 있어요."
-        downloads={["엑셀로 다운로드"]}
+        downloads={[]}
+        actions={
+          activeScreens.length > 0 ? (
+            <ExcelDownloadButton
+              filename={`IA_화면목록_${safeFileName(project.concept)}.xlsx`}
+              sheetName="화면목록"
+              rows={excelRows}
+              colWidths={[14, 14, 22, 12, 12, 40, 30, 44]}
+            />
+          ) : undefined
+        }
         meta={
           activeScreens.length > 0 ? (
             <HeaderStat label={`총 ${activeScreens.length}개 화면`} />

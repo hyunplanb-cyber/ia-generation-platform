@@ -1,6 +1,12 @@
 import { FileText } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
+import { ExcelDownloadButton } from "../excel-download-button";
+
+function safeFileName(concept: string): string {
+  const base = (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
+  return base;
+}
 
 export default async function SpecsPage({
   params,
@@ -8,10 +14,16 @@ export default async function SpecsPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const { screens } = await getProjectScreensDetail(projectId);
+  const { project, screens } = await getProjectScreensDetail(projectId);
 
   const activeScreens = screens.filter((s) => s.status === "active");
   const hasContent = activeScreens.length > 0;
+
+  const excelRows = activeScreens.map((s) => ({
+    요구사항ID: s.pageId,
+    화면명: s.pageName,
+    기능정의: s.funcDef ?? "",
+  }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -20,7 +32,17 @@ export default async function SpecsPage({
         tone="lavender"
         title="기능정의서"
         description="화면(기능) 단위로 요구사항ID·화면명·기능정의를 정리해요. 실무에서 쓰는 요구사항 정의서 형식으로 내려받을 수 있어요."
-        downloads={["엑셀로 다운로드"]}
+        downloads={[]}
+        actions={
+          hasContent ? (
+            <ExcelDownloadButton
+              filename={`기능정의서_${safeFileName(project.concept)}.xlsx`}
+              sheetName="기능정의서"
+              rows={excelRows}
+              colWidths={[16, 24, 60]}
+            />
+          ) : undefined
+        }
       />
 
       {!hasContent ? (
