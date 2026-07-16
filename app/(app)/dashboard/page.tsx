@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Plus, Sparkles, Download, CalendarRange, Monitor } from "lucide-react";
+import { Plus, Sparkles, CalendarRange, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { countScreensByProject } from "@/application/count-screens-by-project";
 import { listMyProjects } from "@/application/list-my-projects";
 import { requireSession } from "@/application/require-session";
 import { DeleteProjectButton } from "./delete-project-button";
+import { ZipAllButton } from "./zip-all-button";
 import { createDraftProjectAction } from "./actions";
 
 function formatDate(date: Date) {
@@ -113,30 +114,18 @@ export default async function DashboardPage() {
                     </span>
                   </div>
 
-                  {/* 생성 완료 프로젝트: 산출물 파일 + 다운로드 (내보내기 준비 중) */}
+                  {/* 생성 완료 프로젝트: 포함 산출물 + 전체 다운로드(zip) */}
                   {step.generated && (
                     <div className="relative z-20 mt-1 flex flex-wrap items-center gap-1.5">
                       {DELIVERABLE_FILES.map((file) => (
-                        <button
+                        <span
                           key={file}
-                          type="button"
-                          disabled
-                          title="다운로드 준비 중이에요"
-                          className="inline-flex cursor-not-allowed items-center gap-1 rounded-md border border-border bg-muted/50 px-2 py-1 text-xs font-medium text-muted-foreground"
+                          className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-1 text-xs font-medium text-muted-foreground"
                         >
-                          <Download className="size-3" />
                           {file}
-                        </button>
+                        </span>
                       ))}
-                      <button
-                        type="button"
-                        disabled
-                        title="다운로드 준비 중이에요"
-                        className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground opacity-90"
-                      >
-                        <Download className="size-3" />
-                        전체 다운로드
-                      </button>
+                      <ZipAllButton projectId={p.id} />
                     </div>
                   )}
                 </div>

@@ -3,6 +3,12 @@ import { getProjectScreensDetail } from "@/application/get-project-screens-detai
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { DiagramOrList } from "../diagram-or-list";
 import { FlowChart } from "../flow-chart";
+import { FileDownloadButton } from "../file-download-button";
+import { buildFlowHtml, buildDrawioXml } from "@/lib/export/flow-export";
+
+function safeFileName(concept: string): string {
+  return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
+}
 
 export default async function FlowPage({
   params,
@@ -10,7 +16,7 @@ export default async function FlowPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const { screens, buttonActions } = await getProjectScreensDetail(projectId);
+  const { project, screens, buttonActions } = await getProjectScreensDetail(projectId);
 
   const activeScreens = screens.filter((s) => s.status === "active");
   const screenById = new Map(screens.map((s) => [s.id, s]));
@@ -64,7 +70,25 @@ export default async function FlowPage({
         tone="mint"
         title="FLOW·흐름도"
         description="화면과 화면 사이의 이동 흐름이에요. 어느 화면의 어떤 버튼을 누르면 어디로 가는지 정리해요."
-        downloads={["draw.io로 다운로드", "HTML로 다운로드"]}
+        downloads={[]}
+        actions={
+          hasContent ? (
+            <>
+              <FileDownloadButton
+                filename={`FLOW_${safeFileName(project.concept)}.drawio`}
+                content={buildDrawioXml(flowNodes, flowEdges)}
+                mime="application/xml;charset=utf-8"
+                label="draw.io로 다운로드"
+              />
+              <FileDownloadButton
+                filename={`FLOW_${safeFileName(project.concept)}.html`}
+                content={buildFlowHtml(project.concept || "프로젝트", flowNodes, flowEdges)}
+                mime="text/html;charset=utf-8"
+                label="HTML로 다운로드"
+              />
+            </>
+          ) : undefined
+        }
       />
 
       {!hasContent ? (

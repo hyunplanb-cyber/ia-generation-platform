@@ -2,6 +2,12 @@ import { CalendarRange } from "lucide-react";
 import { listMenus } from "@/application/list-menus";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
+import { ExcelDownloadButton } from "../excel-download-button";
+import { buildWbsRows } from "@/lib/export/excel-rows";
+
+function safeFileName(concept: string): string {
+  return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
+}
 
 export default async function WbsPage({
   params,
@@ -9,7 +15,7 @@ export default async function WbsPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const [menus, { screens }] = await Promise.all([
+  const [menus, { project, screens }] = await Promise.all([
     listMenus(projectId),
     getProjectScreensDetail(projectId),
   ]);
@@ -27,8 +33,18 @@ export default async function WbsPage({
         icon={CalendarRange}
         tone="yellow"
         title="WBS"
-        description="화면(작업)별 제작 일정을 정리해요. 담당·산출물까지 붙인 간트차트 엑셀(.xlsm) 내보내기는 준비 중이에요."
-        downloads={["간트 엑셀로 다운로드"]}
+        description="화면(작업)별 제작 일정을 정리해요. 순번·소속 메뉴·시작/종료일·기간으로 엑셀 내보내기가 돼요."
+        downloads={[]}
+        actions={
+          hasContent ? (
+            <ExcelDownloadButton
+              filename={`WBS_${safeFileName(project.concept)}.xlsx`}
+              sheetName="WBS"
+              rows={buildWbsRows(menus, activeScreens)}
+              colWidths={[6, 16, 24, 14, 12, 12, 10]}
+            />
+          ) : undefined
+        }
       />
 
       {!hasContent ? (

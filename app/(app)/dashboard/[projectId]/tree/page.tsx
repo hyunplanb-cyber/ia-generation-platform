@@ -4,6 +4,13 @@ import { getProjectScreensDetail } from "@/application/get-project-screens-detai
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { DiagramOrList } from "../diagram-or-list";
 import { MenuTreeChart } from "../menu-tree-chart";
+import { ExcelDownloadButton } from "../excel-download-button";
+import { PptDownloadButton } from "../ppt-download-button";
+import { buildMenuTreeRows } from "@/lib/export/excel-rows";
+
+function safeFileName(concept: string): string {
+  return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
+}
 
 export default async function TreePage({
   params,
@@ -11,13 +18,22 @@ export default async function TreePage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const [menus, { screens }] = await Promise.all([
+  const [menus, { project, screens }] = await Promise.all([
     listMenus(projectId),
     getProjectScreensDetail(projectId),
   ]);
 
   const activeScreens = screens.filter((s) => s.status === "active");
   const hasContent = menus.length > 0;
+
+  const fileBase = safeFileName(project.concept);
+  const pptMenus = menus.map((m) => ({
+    code: m.menuCode,
+    name: m.nameKo,
+    screens: activeScreens
+      .filter((s) => s.menuId === m.id)
+      .map((s) => ({ pageId: s.pageId, pageName: s.pageName })),
+  }));
 
   const listView = (
     <div className="overflow-hidden rounded-lg border border-border">
@@ -65,7 +81,24 @@ export default async function TreePage({
         tone="violet"
         title="메뉴 구조"
         description="사이트 전체 메뉴를 트리로 정리해요. 메뉴 아래에 어떤 화면들이 들어가는지 한눈에 볼 수 있어요."
-        downloads={["PPT로 다운로드", "엑셀로 다운로드"]}
+        downloads={[]}
+        actions={
+          hasContent ? (
+            <>
+              <PptDownloadButton
+                filename={`메뉴구조_${fileBase}.pptx`}
+                rootLabel="사이트 전체"
+                menus={pptMenus}
+              />
+              <ExcelDownloadButton
+                filename={`메뉴구조_${fileBase}.xlsx`}
+                sheetName="메뉴구조"
+                rows={buildMenuTreeRows(menus, activeScreens)}
+                colWidths={[12, 20, 16, 24]}
+              />
+            </>
+          ) : undefined
+        }
       />
       {!hasContent ? (
         <DeliverableEmpty projectId={projectId} />
