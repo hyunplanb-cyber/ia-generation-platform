@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState, type FormEvent } from "react";
+import { useActionState, useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import {
   Check,
   Network,
@@ -38,10 +39,18 @@ const DELIVERABLES = [
 ];
 
 export function ConceptForm({ project, hasScreens }: { project: Project; hasScreens: boolean }) {
+  const router = useRouter();
   const boundAction = updateProjectAction.bind(null, project.id);
   const [state, formAction, pending] = useActionState(boundAction, initialState);
   const [overallStart, setOverallStart] = useState(project.overallStart);
   const [overallEnd, setOverallEnd] = useState(project.overallEnd);
+
+  // 저장 성공 시 다음 단계(STEP 2 · 주요 메뉴·디자인 컨셉)로 바로 이동
+  useEffect(() => {
+    if (state.saved && !state.error) {
+      router.push(`/dashboard/${project.id}/brief`);
+    }
+  }, [state.saved, state.error, project.id, router]);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     const scheduleChanged = overallStart !== project.overallStart || overallEnd !== project.overallEnd;
