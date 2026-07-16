@@ -24,7 +24,7 @@ export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: b
   const [state, formAction, pending] = useActionState(boundAction, initialState);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-5">
+    <div className="flex max-w-3xl flex-col gap-5">
       <p className="text-sm text-muted-foreground">
         떠오르는 메뉴 구성과 원하는 디자인 분위기를 알려주세요. 다 적었다면 아래에서 바로 산출물을
         생성할 수 있어요.

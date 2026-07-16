@@ -42,17 +42,25 @@ const DELIVERABLE_ITEMS: NavItem[] = [
   { href: "admin", label: "관리자 페이지", icon: ShieldCheck },
 ];
 
-export function ProjectSubNav({ projectId }: { projectId: string }) {
+// 상단 스텝퍼 + (산출물 단계에서만) 좌측 세로 탭 + 콘텐츠 레이아웃을 함께 그린다.
+export function ProjectShell({
+  projectId,
+  children,
+}: {
+  projectId: string;
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const base = `/dashboard/${projectId}/`;
   const slug = pathname.startsWith(base) ? pathname.slice(base.length).split("/")[0] : "";
 
   let activeIndex = STEPS.findIndex((s) => s.slugs.includes(slug));
-  if (activeIndex === -1) activeIndex = 2; // 알 수 없는 하위 경로는 산출물 단계로
+  if (activeIndex === -1) activeIndex = 2;
+  const isDeliver = activeIndex === 2;
 
   return (
-    <nav className="flex flex-col gap-5">
-      {/* 스텝퍼 — 가로 꽉 차게, 크게 */}
+    <div className="flex flex-col gap-5">
+      {/* 스텝퍼 — 상단 풀와이드 */}
       <ol className="flex w-full items-stretch gap-3">
         {STEPS.map((step, i) => {
           const state = i === activeIndex ? "active" : i < activeIndex ? "done" : "todo";
@@ -102,29 +110,34 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
         })}
       </ol>
 
-      {/* 산출물 단계에서만 세부 탭 노출 */}
-      {activeIndex === 2 && (
-        <div className="flex flex-wrap items-center gap-1 border-t border-border pt-3">
-          {DELIVERABLE_ITEMS.map(({ href, label, icon: Icon }) => {
-            const fullHref = `${base}${href}`;
-            const isActive = pathname.startsWith(fullHref);
-            return (
-              <Link
-                key={href}
-                href={fullHref}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary-soft text-primary-on-soft"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-              >
-                <Icon className="size-4 shrink-0" />
-                {label}
-              </Link>
-            );
-          })}
+      {isDeliver ? (
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+          {/* 좌측 산출물 세부 탭 (세로) */}
+          <nav className="flex gap-1 overflow-x-auto pb-1 lg:w-52 lg:shrink-0 lg:flex-col lg:overflow-visible lg:pb-0 lg:pt-1">
+            {DELIVERABLE_ITEMS.map(({ href, label, icon: Icon }) => {
+              const fullHref = `${base}${href}`;
+              const isActive = pathname.startsWith(fullHref);
+              return (
+                <Link
+                  key={href}
+                  href={fullHref}
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-primary-soft text-primary-on-soft"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="size-4 shrink-0" />
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="min-w-0 flex-1">{children}</div>
         </div>
+      ) : (
+        <div>{children}</div>
       )}
-    </nav>
+    </div>
   );
 }

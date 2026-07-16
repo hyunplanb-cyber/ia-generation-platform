@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getProjectForEdit } from "@/application/get-project-for-edit";
 import { ProjectNotFoundError } from "@/application/with-project-auth";
-import { ProjectSubNav } from "./project-sub-nav";
+import { ProjectShell } from "./project-sub-nav";
 
 export default async function ProjectLayout({
   children,
@@ -21,8 +21,7 @@ export default async function ProjectLayout({
 
   return (
     <div className="mx-auto w-full max-w-[1440px] px-6 py-5">
-      <ProjectSubNav projectId={projectId} />
-      <div className="mt-5">{children}</div>
+      <ProjectShell projectId={projectId}>{children}</ProjectShell>
     </div>
   );
 }
