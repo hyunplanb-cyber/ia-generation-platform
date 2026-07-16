@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { buttonVariants } from "@/components/ui/button";
+import { Plus, Sparkles } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { countScreensByProject } from "@/application/count-screens-by-project";
 import { listMyProjects } from "@/application/list-my-projects";
 import { requireSession } from "@/application/require-session";
 import { DeleteProjectButton } from "./delete-project-button";
+import { createDraftProjectAction } from "./actions";
 
 const CARD_WASH_CLASSES = ["bg-pastel-mint", "bg-pastel-lavender", "bg-pastel-yellow"];
 
@@ -16,7 +17,24 @@ export default async function DashboardPage() {
   const [session, projects] = await Promise.all([requireSession(), listMyProjects()]);
 
   if (projects.length === 0) {
-    redirect("/dashboard/new");
+    return (
+      <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-6 py-24 text-center">
+        <span className="flex size-16 items-center justify-center rounded-2xl bg-primary-soft text-primary-on-soft">
+          <Sparkles className="size-8" />
+        </span>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">첫 프로젝트를 시작해 볼까요?</h1>
+          <p className="mt-2 text-muted-foreground">
+            컨셉만 입력하면 AI가 메뉴 구조·화면 목록·기능정의서까지 자동으로 만들어드려요.
+          </p>
+        </div>
+        <form action={createDraftProjectAction}>
+          <Button type="submit" size="lg">
+            <Plus className="size-4" />새 프로젝트 만들기
+          </Button>
+        </form>
+      </div>
+    );
   }
 
   const screenCounts = await countScreensByProject(projects.map((p) => p.id));
@@ -28,9 +46,11 @@ export default async function DashboardPage() {
           <h1 className="text-2xl font-bold text-foreground">{session.user.name}님의 프로젝트</h1>
           <p className="mt-1 text-muted-foreground">진행 중인 프로젝트 {projects.length}개가 있어요.</p>
         </div>
-        <Link href="/dashboard/new" className={buttonVariants()}>
-          새 프로젝트 만들기
-        </Link>
+        <form action={createDraftProjectAction}>
+          <Button type="submit">
+            <Plus className="size-4" />새 프로젝트 만들기
+          </Button>
+        </form>
       </div>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((p, i) => (
