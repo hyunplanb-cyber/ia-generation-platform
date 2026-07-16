@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { ScreenListMockup } from "./screen-list-mockup";
+import { BuildDemoMockup } from "./build-demo-mockup";
 
 const STEP_WASH_CLASSES = [
   { bg: "bg-pastel-mint", fg: "text-pastel-mint-foreground" },
@@ -225,6 +226,69 @@ export default function LandingPage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Build demo — 컨셉 하나로 사이트까지 */}
+      <section className="border-t border-border bg-linear-to-b from-pastel-lavender/25 to-surface">
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-on-soft">
+              <Wand2 className="size-3.5" /> 실제 결과물
+            </span>
+            <h2 className="mt-4 text-2xl font-bold text-foreground sm:text-3xl">
+              컨셉 하나로, 사이트까지
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              메뉴·컨셉만 입력하면 <b className="font-semibold text-foreground">AI 빌드 스펙팩</b>이 나오고,
+              그 파일을 Claude Code·Cowork에 넘기면 이런 사이트가 완성돼요.
+            </p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,320px)_auto_minmax(0,1fr)]">
+            {/* 입력 */}
+            <div className="flex flex-col gap-4 rounded-2xl border border-border bg-background p-6 shadow-sm">
+              <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                입력
+              </span>
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground">컨셉</p>
+                <p className="mt-1 rounded-lg bg-muted/50 px-3 py-2 text-sm text-foreground">
+                  반려동물 용품 온라인 쇼핑몰
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground">주요 메뉴</p>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {["홈", "상품", "장바구니", "마이페이지"].map((menu) => (
+                    <span
+                      key={menu}
+                      className="rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-medium text-primary-on-soft"
+                    >
+                      {menu}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-1 flex items-center gap-2 rounded-lg bg-pastel-mint/40 px-3 py-2 text-xs text-pastel-mint-foreground">
+                <FileSpreadsheet className="size-4 shrink-0" /> 스펙팩 · 엑셀 · PPT · FLOW 자동 생성
+              </div>
+            </div>
+
+            {/* 화살표 */}
+            <div className="flex items-center justify-center">
+              <ArrowRight className="hidden size-8 text-primary/50 lg:block" />
+              <ArrowRight className="size-6 rotate-90 text-primary/50 lg:hidden" />
+            </div>
+
+            {/* 결과 미리보기 */}
+            <div className="flex flex-col gap-3">
+              <span className="text-center text-xs font-bold uppercase tracking-wide text-muted-foreground lg:text-left">
+                AI가 만든 사이트
+              </span>
+              <BuildDemoMockup />
+            </div>
           </div>
         </div>
       </section>
