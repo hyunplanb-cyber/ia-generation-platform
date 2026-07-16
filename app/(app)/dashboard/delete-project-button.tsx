@@ -1,7 +1,7 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 import { deleteProjectAction } from "./actions";
 
 export function DeleteProjectButton({ projectId }: { projectId: string }) {
@@ -13,9 +13,14 @@ export function DeleteProjectButton({ projectId }: { projectId: string }) {
 
   return (
     <form action={deleteProjectAction.bind(null, projectId)} onSubmit={handleSubmit}>
-      <Button type="submit" variant="destructive" size="sm">
-        삭제
-      </Button>
+      <button
+        type="submit"
+        aria-label="프로젝트 삭제"
+        title="삭제"
+        className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-danger-soft hover:text-danger"
+      >
+        <Trash2 className="size-4" />
+      </button>
     </form>
   );
 }
