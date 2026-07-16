@@ -21,12 +21,13 @@ export function ZipAllButton({ projectId }: { projectId: string }) {
       if (!res.ok) throw new Error("fetch failed");
       const data = await res.json();
 
-      const [{ default: JSZip }, XLSX, rowsLib, flowLib, pptLib] = await Promise.all([
+      const [{ default: JSZip }, XLSX, rowsLib, flowLib, pptLib, specLib] = await Promise.all([
         import("jszip"),
         import("xlsx"),
         import("@/lib/export/excel-rows"),
         import("@/lib/export/flow-export"),
         import("@/lib/export/ppt-export"),
+        import("@/lib/export/spec-pack"),
       ]);
 
       const { menus, screens, buttonActions, concept } = data;
@@ -80,6 +81,17 @@ export function ZipAllButton({ projectId }: { projectId: string }) {
       const pptx = pptLib.createMenuPptx("사이트 전체", pptMenus);
       const pptBuf = (await pptx.write({ outputType: "arraybuffer" })) as ArrayBuffer;
       zip.file(`메뉴구조_${base}.pptx`, pptBuf);
+
+      // AI 빌드용 스펙팩(마크다운 + JSON)
+      const specProject = data.project ?? { concept, designConcept: "", deviceMode: "responsive", overallStart: "", overallEnd: "" };
+      zip.file(
+        `스펙팩_${base}.md`,
+        specLib.buildSpecPackMarkdown(specProject, menus, screens, buttonActions),
+      );
+      zip.file(
+        `스펙팩_${base}.json`,
+        specLib.buildSpecPackJson(specProject, menus, screens, buttonActions),
+      );
 
       const blob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(blob);

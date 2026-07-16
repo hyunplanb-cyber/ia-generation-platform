@@ -16,8 +16,16 @@ export async function GET(
       getProjectScreensDetail(projectId),
     ]);
     const screens = detail.screens.filter((s) => s.status === "active");
+    const p = detail.project;
     return NextResponse.json({
-      concept: detail.project.concept,
+      project: {
+        concept: p.concept,
+        designConcept: p.designConcept,
+        deviceMode: p.deviceMode,
+        overallStart: p.overallStart,
+        overallEnd: p.overallEnd,
+      },
+      concept: p.concept,
       menus,
       screens,
       buttonActions: detail.buttonActions,

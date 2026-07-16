@@ -6,10 +6,13 @@ import { detectMixedDeviceMode } from "@/domain/screen/detect-mixed-device-mode"
 import { detectMixedMenuCodeMenuIds } from "@/domain/screen/detect-mixed-menu-code";
 import { detectOutOfRangeScreens } from "@/domain/schedule/detect-out-of-range-screens";
 import { detectScheduleReversals } from "@/domain/schedule/detect-schedule-reversals";
+import { Bot } from "lucide-react";
 import { DeliverableHeader, HeaderStat } from "../deliverable-header";
 import { ExcelDownloadButton } from "../excel-download-button";
+import { FileDownloadButton } from "../file-download-button";
 import { ScreensView } from "./screens-view";
 import { QuarantinedScreensSection } from "./quarantined-screens-section";
+import { buildSpecPackMarkdown, buildSpecPackJson } from "@/lib/export/spec-pack";
 
 function safeFileName(concept: string): string {
   return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
@@ -81,6 +84,37 @@ export default async function ScreensPage({
           ) : undefined
         }
       />
+
+      {activeScreens.length > 0 && (
+        <div className="flex flex-col gap-3 rounded-xl border border-primary/30 bg-primary-soft/30 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+              <Bot className="size-5" />
+            </span>
+            <div>
+              <h2 className="text-base font-bold text-foreground">AI 코딩 툴로 바로 빌드하기</h2>
+              <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
+                컨셉·메뉴·화면별 프롬프트·이동 흐름을 한 벌로 정리한 스펙팩이에요. 이 파일을 Claude
+                Code·Cowork에 그대로 주면 됩니다.
+              </p>
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <FileDownloadButton
+              filename={`스펙팩_${safeFileName(project.concept)}.md`}
+              content={buildSpecPackMarkdown(project, menus, activeScreens, buttonActions)}
+              mime="text/markdown;charset=utf-8"
+              label="마크다운"
+            />
+            <FileDownloadButton
+              filename={`스펙팩_${safeFileName(project.concept)}.json`}
+              content={buildSpecPackJson(project, menus, activeScreens, buttonActions)}
+              mime="application/json;charset=utf-8"
+              label="JSON"
+            />
+          </div>
+        </div>
+      )}
 
       {isMixed && (
         <div className="flex items-center gap-2 rounded-lg bg-warning-soft px-4 py-3 text-sm font-medium text-warning">

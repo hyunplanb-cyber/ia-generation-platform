@@ -19,7 +19,7 @@ const BADGE_TONE: Record<string, string> = {
 };
 
 // 생성 완료 시 내려받을 수 있는 산출물 파일들(실제 내보내기는 준비 중).
-const DELIVERABLE_FILES = ["메뉴 구조", "IA·화면목록", "기능정의서", "FLOW·흐름도", "WBS"];
+const DELIVERABLE_FILES = ["메뉴 구조", "IA·화면목록", "기능정의서", "FLOW·흐름도", "WBS", "AI 스펙팩"];
 
 // 프로젝트가 지금 어느 단계인지 → 뱃지 + 클릭 시 이동할 "마지막 입력 단계".
 function stepOf(concept: string, screenCount: number) {
