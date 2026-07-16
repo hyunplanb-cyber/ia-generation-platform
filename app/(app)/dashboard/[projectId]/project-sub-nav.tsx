@@ -83,14 +83,14 @@ export function ProjectSubNav({ projectId }: { projectId: string }) {
                     {state === "done" ? <Check className="size-7" /> : <Icon className="size-7" />}
                   </span>
                   <span className="flex items-baseline gap-2 whitespace-nowrap">
-                    <span className="text-2xl font-extrabold tracking-tight">{step.title}</span>
                     <span
-                      className={`text-base font-bold ${
-                        state === "active" ? "text-primary-foreground/90" : ""
+                      className={`text-sm font-bold ${
+                        state === "active" ? "text-primary-foreground/75" : "opacity-60"
                       }`}
                     >
-                      {step.label}
+                      {step.title}
                     </span>
+                    <span className="text-xl font-extrabold tracking-tight">{step.label}</span>
                   </span>
                 </Link>
               </li>

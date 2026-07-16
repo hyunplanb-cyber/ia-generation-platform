@@ -46,7 +46,7 @@ export function DeliverableHeader({
             type="button"
             disabled
             title="다운로드 기능은 준비 중이에요"
-            className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg bg-foreground px-4 py-2 text-sm font-semibold text-background shadow-sm transition-opacity hover:opacity-90"
+            className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
           >
             <Download className="size-4" />
             {label}
