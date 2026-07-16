@@ -1,9 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useActionState, useState, type FormEvent } from "react";
 import {
-  Check,
   Network,
   LayoutList,
   FileText,
@@ -16,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { updateProjectAction, type UpdateProjectState } from "./actions";
+import { saveConceptAndContinueAction, type UpdateProjectState } from "./actions";
 import { FormSection } from "../form-shell";
 import type { DeviceMode, Project } from "@/domain/project/project";
 
@@ -39,18 +37,10 @@ const DELIVERABLES = [
 ];
 
 export function ConceptForm({ project, hasScreens }: { project: Project; hasScreens: boolean }) {
-  const router = useRouter();
-  const boundAction = updateProjectAction.bind(null, project.id);
+  const boundAction = saveConceptAndContinueAction.bind(null, project.id);
   const [state, formAction, pending] = useActionState(boundAction, initialState);
   const [overallStart, setOverallStart] = useState(project.overallStart);
   const [overallEnd, setOverallEnd] = useState(project.overallEnd);
-
-  // 저장 성공 시 다음 단계(STEP 2 · 주요 메뉴·디자인 컨셉)로 바로 이동
-  useEffect(() => {
-    if (state.saved && !state.error) {
-      router.push(`/dashboard/${project.id}/brief`);
-    }
-  }, [state.saved, state.error, project.id, router]);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     const scheduleChanged = overallStart !== project.overallStart || overallEnd !== project.overallEnd;
@@ -75,6 +65,9 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
           {/* 다른 페이지 필드는 값 보존을 위해 숨겨서 함께 제출 */}
           <input type="hidden" name="menuDraft" value={project.menuDraft ?? ""} />
           <input type="hidden" name="designConcept" value={project.designConcept ?? ""} />
+          {/* 일정 변경 감지용 원래 값(서버가 재계산 여부를 DB 재조회 없이 판단) */}
+          <input type="hidden" name="origStart" value={project.overallStart} />
+          <input type="hidden" name="origEnd" value={project.overallEnd} />
 
           <FormSection
             title="디바이스 대응 방식"
@@ -155,11 +148,6 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
             <Button type="submit" disabled={pending}>
               {pending ? "저장 중..." : "저장하고 계속"}
             </Button>
-            {state.saved && !state.error && (
-              <span className="flex items-center gap-1 text-sm text-primary">
-                <Check className="size-4" /> 저장됐어요
-              </span>
-            )}
           </div>
         </form>
 

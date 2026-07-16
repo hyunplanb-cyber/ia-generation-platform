@@ -30,6 +30,9 @@ export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: b
           <input type="hidden" name="overallStart" value={project.overallStart} />
           <input type="hidden" name="overallEnd" value={project.overallEnd} />
           <input type="hidden" name="deviceMode" value={project.deviceMode} />
+          {/* 일정 변경 없음 — 원래 값 동일하게 전달 */}
+          <input type="hidden" name="origStart" value={project.overallStart} />
+          <input type="hidden" name="origEnd" value={project.overallEnd} />
 
           <FormSection
             title="주요 메뉴 구성"
