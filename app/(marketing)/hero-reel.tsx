@@ -105,9 +105,19 @@ function ReelAnimation() {
           76%  { transform: rotate(6deg) translateY(-1px); }
           100% { transform: rotate(0deg) translateY(0); }
         }
+        /* 물음표 — 고개와 같은 방향으로 좌우 이동 + 기울기(같은 타이밍) */
+        @keyframes reelQuestion {
+          0%   { transform: translateX(0) rotate(0deg); }
+          18%  { transform: translateX(-9px) rotate(-12deg); }
+          38%  { transform: translateX(-9px) rotate(-12deg); }
+          56%  { transform: translateX(8px) rotate(10deg); }
+          76%  { transform: translateX(8px) rotate(10deg); }
+          100% { transform: translateX(0) rotate(0deg); }
+        }
         .reel-scene { opacity: 0; animation: reelScene ${TOTAL}s infinite; }
         .reel-face { animation: reelFloat 2.4s ease-in-out infinite; }
         .reel-curious { transform-origin: bottom center; animation: reelCurious 3.6s ease-in-out infinite; }
+        .reel-question { animation: reelQuestion 3.6s ease-in-out infinite; }
       `}</style>
 
       {/* 배경에 녹아드는 부드러운 후광 (텍스트·마스코트 가독성) */}
@@ -121,14 +131,20 @@ function ReelAnimation() {
           style={{ animationDelay: `${i * 3}s` }}
         >
           {s.mascot ? (
-            <Image
-              src="/mascot.png"
-              alt="마스코트"
-              width={220}
-              height={270}
-              priority
-              className="reel-curious h-auto w-44 object-contain drop-shadow-xl"
-            />
+            <div className="relative">
+              {/* 머리 위 물음표 — 고개와 같은 방향으로 움직임 */}
+              <span className="reel-question absolute -top-4 left-1/2 z-10 -translate-x-1/2 text-4xl font-black text-primary drop-shadow-sm">
+                ?
+              </span>
+              <Image
+                src="/mascot.png"
+                alt="마스코트"
+                width={220}
+                height={270}
+                priority
+                className="reel-curious h-auto w-44 object-contain drop-shadow-xl"
+              />
+            </div>
           ) : (
             <div className="reel-face text-[84px] leading-none drop-shadow-sm">{s.face}</div>
           )}
