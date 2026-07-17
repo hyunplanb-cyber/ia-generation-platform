@@ -68,23 +68,22 @@ export default async function SpecsPage({
             </thead>
             <tbody>
               {requirements.map((r, i) => {
-                // 같은 업무·기능은 첫 행에만 표기해 계층이 보이게 한다.
+                // 상위 뎁스(업무·기능)는 모든 행에 채워 보여준다. 업무가 바뀌는 첫 행엔
+                // 조금 굵은 구분선을 넣어 그룹이 구분되게 한다.
                 const prev = requirements[i - 1];
-                const 업무Code = r.reqId.split("-")[0];
-                const 기능Code = r.reqId.split("-").slice(0, 2).join("-");
-                const showWork = !prev || prev.reqId.split("-")[0] !== 업무Code;
-                const showFn = !prev || prev.reqId.split("-").slice(0, 2).join("-") !== 기능Code;
+                const newWork = !prev || prev.reqId.split("-")[0] !== r.reqId.split("-")[0];
                 return (
-                  <tr key={r.reqId} className="border-t border-border align-top">
+                  <tr
+                    key={r.reqId}
+                    className={`align-top ${newWork ? "border-t-2 border-border" : "border-t border-border/60"}`}
+                  >
                     <td className="whitespace-nowrap px-4 py-3">
                       <span className="font-mono text-xs text-muted-foreground">{r.reqId}</span>
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 font-semibold text-foreground">
-                      {showWork ? r.업무 : ""}
+                      {r.업무}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-foreground">
-                      {showFn ? r.기능 : ""}
-                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-foreground">{r.기능}</td>
                     <td className="px-4 py-3 text-foreground">{r.구성}</td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <span
