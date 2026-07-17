@@ -96,8 +96,18 @@ function ReelAnimation() {
           0%,100% { transform: translateY(0); }
           50% { transform: translateY(-8px); }
         }
+        /* 궁금해 하는 모션 — 고개를 좌우로 천천히 갸웃 */
+        @keyframes reelCurious {
+          0%   { transform: rotate(0deg) translateY(0); }
+          18%  { transform: rotate(-7deg) translateY(-2px); }
+          38%  { transform: rotate(-7deg) translateY(-2px); }
+          56%  { transform: rotate(6deg) translateY(-1px); }
+          76%  { transform: rotate(6deg) translateY(-1px); }
+          100% { transform: rotate(0deg) translateY(0); }
+        }
         .reel-scene { opacity: 0; animation: reelScene ${TOTAL}s infinite; }
         .reel-face { animation: reelFloat 2.4s ease-in-out infinite; }
+        .reel-curious { transform-origin: bottom center; animation: reelCurious 3.6s ease-in-out infinite; }
       `}</style>
 
       {/* 배경에 녹아드는 부드러운 후광 (텍스트·마스코트 가독성) */}
@@ -117,7 +127,7 @@ function ReelAnimation() {
               width={220}
               height={270}
               priority
-              className="reel-face h-auto w-44 object-contain drop-shadow-xl"
+              className="reel-curious h-auto w-44 object-contain drop-shadow-xl"
             />
           ) : (
             <div className="reel-face text-[84px] leading-none drop-shadow-sm">{s.face}</div>
