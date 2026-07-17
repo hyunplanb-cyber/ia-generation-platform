@@ -15,6 +15,7 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { ScreenListMockup } from "./screen-list-mockup";
 import { BuildDemoMockup } from "./build-demo-mockup";
+import { MascotImage } from "./mascot-image";
 
 const STEP_WASH_CLASSES = [
   { bg: "bg-pastel-mint", fg: "text-pastel-mint-foreground" },
@@ -167,7 +168,57 @@ export default function LandingPage() {
 
           <div className="relative">
             <ScreenListMockup />
+            {/* 마스코트 — public/mascot.png 넣으면 표시(없으면 자동 숨김) */}
+            <MascotImage className="pointer-events-none absolute -bottom-10 -left-8 z-10 w-24 drop-shadow-xl sm:w-32 lg:-left-14 lg:w-40" />
           </div>
+        </div>
+      </section>
+
+      {/* Positioning — AI 웹빌더가 못 채우는 기획 계층 */}
+      <section className="border-t border-border bg-surface">
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-on-soft">
+              왜 필요할까요?
+            </span>
+            <h2 className="mt-4 text-2xl font-bold text-foreground sm:text-3xl">
+              AI 웹빌더가 못 채우는 <span className="bg-pastel-yellow rounded-lg px-2">‘그 사이’</span>를
+              채웁니다
+            </h2>
+            <p className="mt-4 leading-relaxed text-muted-foreground">
+              요즘 AI 웹빌더는 레이아웃과 콘텐츠를 자동 생성해 코딩 없이 ‘한 방에 완성’을 노려요. 하지만
+              그 전에 필요한 <b className="font-semibold text-foreground">사이트맵·메뉴·페이지별 프롬프트</b> 같은
+              <b className="font-semibold text-foreground"> 기획 산출물</b> 계층은 대부분 비어 있죠. 우리는{" "}
+              <b className="font-semibold text-foreground">vibe-coding 직전, 기획을 구조화</b>하는 그 빈틈을
+              채웁니다.
+            </p>
+          </div>
+
+          {/* 흐름 시각화 — 가운데(우리)가 그 빈틈 */}
+          <div className="mt-12 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center">
+            <div className="flex flex-1 flex-col gap-1 rounded-xl border border-border bg-background p-5 text-center">
+              <span className="text-2xl">💡</span>
+              <p className="font-semibold text-foreground">컨셉 · 아이디어</p>
+              <p className="text-xs text-muted-foreground">머릿속 구상</p>
+            </div>
+            <ArrowRight className="mx-auto size-5 shrink-0 rotate-90 text-muted-foreground/50 sm:rotate-0" />
+            <div className="flex flex-1 flex-col gap-1 rounded-xl border-2 border-primary bg-primary-soft/40 p-5 text-center shadow-md">
+              <span className="text-2xl">🧩</span>
+              <p className="font-bold text-primary-on-soft">기획 구조화</p>
+              <p className="text-xs font-medium text-primary-on-soft/80">
+                IA · 기능정의 · 화면별 프롬프트 · 스펙팩 <b>(← 우리)</b>
+              </p>
+            </div>
+            <ArrowRight className="mx-auto size-5 shrink-0 rotate-90 text-muted-foreground/50 sm:rotate-0" />
+            <div className="flex flex-1 flex-col gap-1 rounded-xl border border-border bg-background p-5 text-center">
+              <span className="text-2xl">🚀</span>
+              <p className="font-semibold text-foreground">AI 빌더 · 코딩툴</p>
+              <p className="text-xs text-muted-foreground">완성 사이트</p>
+            </div>
+          </div>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            잘 구조화된 기획을 넘기면, AI 빌더·코딩툴이 훨씬 정확하게 만들어요.
+          </p>
         </div>
       </section>
 
