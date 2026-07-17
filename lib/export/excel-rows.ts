@@ -58,15 +58,6 @@ export function buildScreenListRows(
   });
 }
 
-// 기능정의서 — 요구사항ID·화면명·기능정의.
-export function buildSpecRows(screens: Screen[]): Row[] {
-  return screens.map((s) => ({
-    요구사항ID: s.pageId,
-    화면명: s.pageName,
-    기능정의: s.funcDef ?? "",
-  }));
-}
-
 // WBS — 작업(화면)별 일정.
 export function buildWbsRows(menus: Menu[], screens: Screen[]): Row[] {
   const menuName = new Map(menus.map((m) => [m.id, m.nameKo]));

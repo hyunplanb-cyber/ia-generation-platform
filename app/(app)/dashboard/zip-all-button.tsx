@@ -21,13 +21,14 @@ export function ZipAllButton({ projectId }: { projectId: string }) {
       if (!res.ok) throw new Error("fetch failed");
       const data = await res.json();
 
-      const [{ default: JSZip }, XLSX, rowsLib, flowLib, pptLib, specLib] = await Promise.all([
+      const [{ default: JSZip }, XLSX, rowsLib, flowLib, pptLib, specLib, reqLib] = await Promise.all([
         import("jszip"),
         import("xlsx"),
         import("@/lib/export/excel-rows"),
         import("@/lib/export/flow-export"),
         import("@/lib/export/ppt-export"),
         import("@/lib/export/spec-pack"),
+        import("@/lib/export/requirements"),
       ]);
 
       const { menus, screens, buttonActions, concept } = data;
@@ -73,7 +74,10 @@ export function ZipAllButton({ projectId }: { projectId: string }) {
         `IA_화면목록_${base}.xlsx`,
         sheetBuf(rowsLib.buildScreenListRows(menus, screens, buttonActions), "화면목록"),
       );
-      zip.file(`기능정의서_${base}.xlsx`, sheetBuf(rowsLib.buildSpecRows(screens), "기능정의서"));
+      zip.file(
+        `기능정의서_${base}.xlsx`,
+        sheetBuf(reqLib.buildRequirementRows(menus, screens), "기능정의서"),
+      );
       zip.file(`WBS_${base}.xlsx`, sheetBuf(rowsLib.buildWbsRows(menus, screens), "WBS"));
       zip.file(`FLOW_${base}.html`, flowLib.buildFlowHtml(concept || "프로젝트", flowNodes, flowEdges));
       zip.file(`FLOW_${base}.drawio`, flowLib.buildDrawioXml(flowNodes, flowEdges));
