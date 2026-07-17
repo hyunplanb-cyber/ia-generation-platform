@@ -1,24 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 // 히어로용 9:16(릴스 비율) 소개 영상 슬롯.
-// public/intro.mp4(또는 .webm)를 넣으면 그 영상이 재생되고(실제 릴스),
-// 없으면 코드로 만든 애니메이션 릴스가 자동 재생된다.
+// 기본은 코드로 만든 애니메이션 릴스이고, public/intro.mp4가 실제로 존재하면
+// (HEAD 확인) 그 영상으로 자동 전환된다 — 파일이 없을 때 빈 영상이 뜨지 않도록.
 export function HeroReel() {
-  const [videoOk, setVideoOk] = useState(true);
+  const [showVideo, setShowVideo] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/intro.mp4", { method: "HEAD" })
+      .then((res) => {
+        if (alive && res.ok) setShowVideo(true);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="relative mx-auto aspect-[9/16] w-full max-w-[300px] overflow-hidden rounded-[2rem] border-4 border-white bg-foreground shadow-2xl">
-      {videoOk ? (
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          onError={() => setVideoOk(false)}
-          className="h-full w-full object-cover"
-        >
+      {showVideo ? (
+        <video autoPlay muted loop playsInline className="h-full w-full object-cover">
           <source src="/intro.mp4" type="video/mp4" />
           <source src="/intro.webm" type="video/webm" />
         </video>
@@ -29,10 +35,17 @@ export function HeroReel() {
   );
 }
 
-const SCENES = [
+type Scene = {
+  bg: string;
+  face?: string;
+  mascot?: boolean;
+  lines: { t: string; cls: string }[];
+};
+
+const SCENES: Scene[] = [
   {
     bg: "linear-gradient(160deg,#EDE9FE,#FFF3D6)",
-    face: "🐶",
+    mascot: true,
     lines: [
       { t: "웹기획,", cls: "text-2xl font-black text-foreground" },
       { t: "아직도 밤새 하세요?", cls: "text-2xl font-black text-foreground" },
@@ -65,7 +78,7 @@ const SCENES = [
   },
   {
     bg: "linear-gradient(160deg,#5B4FE5,#8B7DFF)",
-    face: "🐶",
+    mascot: true,
     lines: [
       { t: "IA 자동생성 플랫폼", cls: "text-xl font-black text-white" },
       { t: "지금, 무료로 시작", cls: "mt-1 text-sm font-bold text-white/85" },
@@ -119,7 +132,18 @@ function ReelAnimation() {
           className="reel-scene absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center"
           style={{ background: s.bg, animationDelay: `${i * 3}s` }}
         >
-          <div className="reel-face text-[72px] leading-none drop-shadow-sm">{s.face}</div>
+          {s.mascot ? (
+            <Image
+              src="/mascot.png"
+              alt="마스코트"
+              width={150}
+              height={185}
+              priority
+              className="reel-face h-auto w-[130px] object-contain drop-shadow-md"
+            />
+          ) : (
+            <div className="reel-face text-[72px] leading-none drop-shadow-sm">{s.face}</div>
+          )}
           <div>
             {s.lines.map((l, j) => (
               <p key={j} className={`leading-tight ${l.cls}`}>
