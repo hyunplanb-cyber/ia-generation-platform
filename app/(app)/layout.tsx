@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { Sparkles, LayoutGrid } from "lucide-react";
 import { ProfileMenu } from "@/components/profile-menu";
 import { auth } from "@/lib/auth";
 import { daysUntilAccountDeletion } from "@/lib/account-deletion";
@@ -24,18 +24,22 @@ export default async function AppLayout({
     <>
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-6">
-            <Link href="/dashboard" className="flex items-center gap-1.5 text-lg font-bold text-foreground">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* 로고 → 홈(랜딩) */}
+            <Link href="/" className="flex items-center gap-1.5 text-lg font-bold text-foreground">
               <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
                 <Sparkles className="size-3.5" />
               </span>
               IA 자동생성 플랫폼
             </Link>
+            <span className="hidden h-5 w-px bg-border sm:block" />
+            {/* 나의 프로젝트 → 대시보드 */}
             <Link
               href="/dashboard"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
             >
-              대시보드
+              <LayoutGrid className="size-4" />
+              나의 프로젝트
             </Link>
           </div>
           <ProfileMenu />
