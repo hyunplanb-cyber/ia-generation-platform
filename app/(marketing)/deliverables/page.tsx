@@ -1,0 +1,162 @@
+import Link from "next/link";
+import {
+  Network,
+  LayoutList,
+  FileText,
+  Workflow,
+  CalendarRange,
+  Bot,
+  ArrowRight,
+  type LucideIcon,
+} from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  MenuTreeMockup,
+  ScreenListMockup,
+  SpecMockup,
+  FlowMockup,
+  WbsMockup,
+  SpecPackMockup,
+} from "./deliverable-mockups";
+
+export const metadata = {
+  title: "산출물 소개 · IA 자동생성 플랫폼",
+  description: "컨셉·메뉴만 입력하면 나오는 6가지 산출물 — 역할과 샘플 화면 소개",
+};
+
+type Deliverable = {
+  icon: LucideIcon;
+  tone: string;
+  name: string;
+  role: string;
+  formats: string[];
+  mockup: React.ReactNode;
+};
+
+const DELIVERABLES: Deliverable[] = [
+  {
+    icon: Network,
+    tone: "bg-primary-soft text-primary-on-soft",
+    name: "메뉴 구조",
+    role: "사이트 전체 메뉴를 트리로 정리해 정보구조(IA)의 뼈대를 잡아요. 어떤 메뉴 아래 어떤 화면이 들어가는지 한눈에 확정할 수 있어, 기획의 출발점이 됩니다.",
+    formats: ["PPT", "엑셀"],
+    mockup: <MenuTreeMockup />,
+  },
+  {
+    icon: LayoutList,
+    tone: "bg-pastel-mint text-pastel-mint-foreground",
+    name: "IA · 화면 목록",
+    role: "메뉴별로 필요한 화면을 자동으로 뽑아 목록으로 정리해요. 화면ID·화면명·기능정의·버튼 이동·AI 생성 프롬프트까지 화면 단위로 담겨, ‘무엇을 만들지’가 확정돼요.",
+    formats: ["엑셀"],
+    mockup: <ScreenListMockup />,
+  },
+  {
+    icon: FileText,
+    tone: "bg-pastel-lavender text-pastel-lavender-foreground",
+    name: "기능정의서",
+    role: "사이트에 필요한 요건을 업무 · 기능 · 구성 계층으로 분해하고, 유형(기능·콘텐츠·UI/UX·정책)을 붙여 정리한 요구사항 정의서예요. 실무 문서 형식 그대로 내려받을 수 있어요.",
+    formats: ["엑셀"],
+    mockup: <SpecMockup />,
+  },
+  {
+    icon: Workflow,
+    tone: "bg-pastel-mint text-pastel-mint-foreground",
+    name: "FLOW · 흐름도",
+    role: "화면과 화면 사이의 이동을 다이어그램으로 그려요. 어느 화면의 어떤 버튼을 누르면 어디로 가는지, 사용자 동선을 한눈에 볼 수 있어요.",
+    formats: ["HTML", "draw.io"],
+    mockup: <FlowMockup />,
+  },
+  {
+    icon: CalendarRange,
+    tone: "bg-pastel-yellow text-pastel-yellow-foreground",
+    name: "WBS · 일정",
+    role: "화면(작업)별 제작 일정을 정리해요. 전체 일정을 입력하면 화면 수에 맞춰 일정 초안을 자동으로 나눠주고, 손으로 조정한 화면은 그대로 유지돼요.",
+    formats: ["엑셀"],
+    mockup: <WbsMockup />,
+  },
+  {
+    icon: Bot,
+    tone: "bg-primary-soft text-primary-on-soft",
+    name: "AI 빌드 스펙팩",
+    role: "위 모든 걸 한 벌로 정리한 마크다운·JSON이에요. 이 파일을 Claude Code·Cowork 같은 AI 코딩 도구에 그대로 넘기면, 화면 구성·이동·화면별 지시가 확정된 상태로 사이트가 만들어져요.",
+    formats: ["마크다운", "JSON"],
+    mockup: <SpecPackMockup />,
+  },
+];
+
+export default function DeliverablesPage() {
+  return (
+    <div className="flex flex-col">
+      {/* Hero */}
+      <section className="border-b border-border bg-linear-to-br from-pastel-lavender/40 via-pastel-yellow/30 to-pastel-mint/40">
+        <div className="mx-auto max-w-4xl px-6 py-20 text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-on-soft">
+            <LayoutList className="size-3.5" /> 산출물 소개
+          </span>
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            컨셉·메뉴만 입력하면
+            <br />이 6가지가 자동으로 나와요
+          </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+            각 산출물이 어떤 역할을 하는지, 실제로 어떻게 생겼는지 샘플과 함께 소개해요.
+          </p>
+        </div>
+      </section>
+
+      {/* 산출물별 소개 */}
+      {DELIVERABLES.map((d, i) => {
+        const Icon = d.icon;
+        const reversed = i % 2 === 1;
+        return (
+          <section
+            key={d.name}
+            className={`border-b border-border ${i % 2 === 1 ? "bg-surface" : ""}`}
+          >
+            <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 px-6 py-16 lg:grid-cols-2 lg:gap-16">
+              <div className={reversed ? "lg:order-2" : ""}>
+                <div className="flex items-center gap-3">
+                  <span className={`flex size-11 items-center justify-center rounded-xl ${d.tone}`}>
+                    <Icon className="size-5" />
+                  </span>
+                  <span className="font-mono text-sm text-muted-foreground">0{i + 1}</span>
+                </div>
+                <h2 className="mt-4 text-2xl font-bold text-foreground">{d.name}</h2>
+                <p className="mt-3 leading-relaxed text-muted-foreground">{d.role}</p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {d.formats.map((f) => (
+                    <span
+                      key={f}
+                      className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground"
+                    >
+                      {f} 다운로드
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className={reversed ? "lg:order-1" : ""}>{d.mockup}</div>
+            </div>
+          </section>
+        );
+      })}
+
+      {/* CTA */}
+      <section className="bg-primary">
+        <div className="mx-auto max-w-4xl px-6 py-16 text-center">
+          <h2 className="text-2xl font-bold text-primary-foreground sm:text-3xl">
+            내 프로젝트로 직접 만들어볼까요?
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-primary-foreground/80">
+            컨셉과 메뉴만 입력하면 이 6가지 산출물이 몇 분 만에 완성돼요.
+          </p>
+          <Link
+            href="/signup"
+            className={`${buttonVariants({ size: "lg" })} mt-8 bg-background text-primary hover:bg-background/90`}
+          >
+            무료로 시작하기
+            <ArrowRight className="size-4" />
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}

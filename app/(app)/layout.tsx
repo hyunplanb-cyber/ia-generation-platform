@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Sparkles, LayoutGrid } from "lucide-react";
+import { Sparkles, LayoutGrid, LayoutList } from "lucide-react";
 import { ProfileMenu } from "@/components/profile-menu";
 import { auth } from "@/lib/auth";
 import { daysUntilAccountDeletion } from "@/lib/account-deletion";
@@ -33,7 +33,17 @@ export default async function AppLayout({
               IA 자동생성 플랫폼
             </Link>
             <span className="hidden h-5 w-px bg-border sm:block" />
-            {/* 나의 프로젝트 → 대시보드 */}
+            {/* 산출물 소개 */}
+            <Link
+              href="/deliverables"
+              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <LayoutList className="size-4" />
+              산출물 소개
+            </Link>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* 나의 프로젝트 → 대시보드 (프로필 쪽으로 이동) */}
             <Link
               href="/dashboard"
               className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
@@ -41,8 +51,8 @@ export default async function AppLayout({
               <LayoutGrid className="size-4" />
               나의 프로젝트
             </Link>
+            <ProfileMenu email={session.user.email} />
           </div>
-          <ProfileMenu />
         </div>
       </header>
 

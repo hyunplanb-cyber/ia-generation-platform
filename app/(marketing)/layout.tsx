@@ -12,12 +12,21 @@ export default function MarketingLayout({
     <>
       <header className="sticky top-0 z-10 border-b border-border bg-surface/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-1.5 text-lg font-bold text-foreground">
-            <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
-              <Sparkles className="size-3.5" />
-            </span>
-            IA 자동생성 플랫폼
-          </Link>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/" className="flex items-center gap-1.5 text-lg font-bold text-foreground">
+              <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
+                <Sparkles className="size-3.5" />
+              </span>
+              IA 자동생성 플랫폼
+            </Link>
+            <span className="hidden h-5 w-px bg-border sm:block" />
+            <Link
+              href="/deliverables"
+              className="hidden rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground sm:block"
+            >
+              산출물 소개
+            </Link>
+          </div>
           <nav className="flex items-center gap-3">
             <Link
               href="/login"

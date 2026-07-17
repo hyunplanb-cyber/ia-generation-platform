@@ -1,0 +1,167 @@
+// 산출물 소개 페이지용 — 각 산출물의 "샘플 화면" 미니 목업(정적, 파스텔).
+import { ArrowRight } from "lucide-react";
+
+function Frame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-lg">
+      <div className="flex items-center gap-1.5 border-b border-border bg-muted/50 px-4 py-2.5">
+        <span className="size-2.5 rounded-full bg-danger/50" />
+        <span className="size-2.5 rounded-full bg-warning/50" />
+        <span className="size-2.5 rounded-full bg-success/50" />
+      </div>
+      <div className="p-4">{children}</div>
+    </div>
+  );
+}
+
+export function MenuTreeMockup() {
+  return (
+    <Frame>
+      <div className="flex flex-col items-center gap-2 py-2 text-xs">
+        <span className="rounded-md border border-border bg-muted px-4 py-1.5 font-bold">사이트 전체</span>
+        <div className="h-3 w-px bg-border" />
+        <div className="flex items-start gap-6">
+          {[
+            { name: "홈", screens: ["메인 홈"] },
+            { name: "상품", screens: ["상품 목록", "상품 상세"] },
+            { name: "마이", screens: ["로그인", "마이페이지"] },
+          ].map((m) => (
+            <div key={m.name} className="flex flex-col items-center gap-2">
+              <span className="whitespace-nowrap rounded-md bg-primary px-3 py-1.5 font-semibold text-primary-foreground">
+                {m.name}
+              </span>
+              <div className="h-2 w-px bg-border" />
+              <div className="flex flex-col items-center gap-1.5">
+                {m.screens.map((s) => (
+                  <span key={s} className="rounded-md border border-border bg-background px-2.5 py-1 text-[11px]">
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Frame>
+  );
+}
+
+export function ScreenListMockup() {
+  const rows = [
+    { id: "PCHOME0110", name: "메인 홈", tone: "bg-pastel-mint text-pastel-mint-foreground", t: "콘텐츠" },
+    { id: "PCPROD0110", name: "상품 목록", tone: "bg-pastel-lavender text-pastel-lavender-foreground", t: "UI/UX" },
+    { id: "PCPROD0210", name: "상품 상세", tone: "bg-primary-soft text-primary-on-soft", t: "기능" },
+  ];
+  return (
+    <Frame>
+      <div className="text-xs">
+        <div className="grid grid-cols-[auto_1fr_auto] gap-x-3 border-b border-border pb-1.5 font-semibold text-muted-foreground">
+          <span>화면ID</span>
+          <span>화면명</span>
+          <span>유형</span>
+        </div>
+        {rows.map((r) => (
+          <div key={r.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-3 border-b border-border/60 py-2">
+            <span className="font-mono text-[11px] text-muted-foreground">{r.id}</span>
+            <span className="font-medium">{r.name}</span>
+            <span className={`justify-self-end rounded-full px-2 py-0.5 text-[10px] font-medium ${r.tone}`}>{r.t}</span>
+          </div>
+        ))}
+      </div>
+    </Frame>
+  );
+}
+
+export function SpecMockup() {
+  const rows = [
+    { id: "01-01-01", work: "상품", fn: "상품 목록", item: "3열 그리드 표시", tone: "bg-pastel-lavender text-pastel-lavender-foreground", t: "UI/UX" },
+    { id: "01-01-02", work: "", fn: "", item: "카테고리 필터", tone: "bg-pastel-lavender text-pastel-lavender-foreground", t: "UI/UX" },
+    { id: "02-01-01", work: "회원", fn: "로그인", item: "약관 동의", tone: "bg-warning-soft text-warning", t: "정책" },
+  ];
+  return (
+    <Frame>
+      <div className="text-[11px]">
+        <div className="grid grid-cols-[auto_auto_auto_1fr_auto] gap-x-2 border-b border-border pb-1.5 font-semibold text-muted-foreground">
+          <span>ID</span>
+          <span>업무</span>
+          <span>기능</span>
+          <span>구성</span>
+          <span>유형</span>
+        </div>
+        {rows.map((r) => (
+          <div key={r.id} className="grid grid-cols-[auto_auto_auto_1fr_auto] items-center gap-x-2 border-b border-border/60 py-1.5">
+            <span className="font-mono text-muted-foreground">{r.id}</span>
+            <span className="font-semibold">{r.work}</span>
+            <span>{r.fn}</span>
+            <span className="text-foreground">{r.item}</span>
+            <span className={`justify-self-end rounded-full px-1.5 py-0.5 text-[10px] font-medium ${r.tone}`}>{r.t}</span>
+          </div>
+        ))}
+      </div>
+    </Frame>
+  );
+}
+
+export function FlowMockup() {
+  const nodes = ["메인 홈", "상품 목록", "상품 상세", "장바구니"];
+  return (
+    <Frame>
+      <div className="flex items-center justify-center gap-1.5 py-4 text-[11px]">
+        {nodes.map((n, i) => (
+          <div key={n} className="flex items-center gap-1.5">
+            <span
+              className={`whitespace-nowrap rounded-lg px-2.5 py-2 text-center ${
+                i === 0 ? "bg-primary font-semibold text-primary-foreground" : "border border-border bg-background"
+              }`}
+            >
+              {n}
+            </span>
+            {i < nodes.length - 1 && <ArrowRight className="size-3.5 shrink-0 text-muted-foreground/60" />}
+          </div>
+        ))}
+      </div>
+    </Frame>
+  );
+}
+
+export function WbsMockup() {
+  const rows = [
+    { name: "메인 홈", start: 0, len: 3 },
+    { name: "상품 목록", start: 2, len: 4 },
+    { name: "상품 상세", start: 5, len: 3 },
+  ];
+  return (
+    <Frame>
+      <div className="flex flex-col gap-2 text-[11px]">
+        {rows.map((r) => (
+          <div key={r.name} className="grid grid-cols-[70px_1fr] items-center gap-2">
+            <span className="truncate font-medium">{r.name}</span>
+            <div className="relative h-4 rounded bg-muted/60">
+              <div
+                className="absolute top-0 h-4 rounded bg-primary/70"
+                style={{ left: `${r.start * 11}%`, width: `${r.len * 11}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </Frame>
+  );
+}
+
+export function SpecPackMockup() {
+  return (
+    <Frame>
+      <pre className="overflow-x-auto rounded-lg bg-foreground/90 p-3 text-[10px] leading-relaxed text-background">
+        <code>{`# 반려동물 쇼핑몰 — AI 빌드 스펙팩
+
+## 화면별 스펙
+### PCPROD0110 · 상품 목록
+- 버튼 → 이동화면:
+  - \`상품 선택\` → \`PCPROD0210\`
+- 생성 프롬프트:
+  좌측 필터, 우측 3열 상품 그리드...`}</code>
+      </pre>
+    </Frame>
+  );
+}
