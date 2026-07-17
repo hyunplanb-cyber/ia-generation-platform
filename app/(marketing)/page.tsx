@@ -13,9 +13,8 @@ import {
   Heart,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { ScreenListMockup } from "./screen-list-mockup";
 import { BuildDemoMockup } from "./build-demo-mockup";
-import { MascotImage } from "./mascot-image";
+import { HeroReel } from "./hero-reel";
 
 const STEP_WASH_CLASSES = [
   { bg: "bg-pastel-mint", fg: "text-pastel-mint-foreground" },
@@ -167,9 +166,8 @@ export default function LandingPage() {
           </div>
 
           <div className="relative">
-            <ScreenListMockup />
-            {/* 마스코트 — public/mascot.png 넣으면 표시(없으면 자동 숨김) */}
-            <MascotImage className="pointer-events-none absolute -bottom-10 -left-8 z-10 w-24 drop-shadow-xl sm:w-32 lg:-left-14 lg:w-40" />
+            {/* 릴스(9:16) 소개 영상 — public/intro.mp4 넣으면 그 영상, 없으면 코드 애니메이션 */}
+            <HeroReel />
           </div>
         </div>
       </section>
