@@ -55,12 +55,32 @@ export default function MarketingLayout({
               만들어주는 웹기획 자동화 도구예요.
             </p>
           </div>
+          {/* 전자상거래법상 표시 의무 항목. 사업자등록·통신판매업 신고 후 실제 값으로 교체할 것. */}
+          <dl className="flex flex-wrap gap-x-4 gap-y-1 border-t border-border pt-6 text-xs">
+            {[
+              ["상호", "[상호명]"],
+              ["대표자", "[대표자명]"],
+              ["사업자등록번호", "[000-00-00000]"],
+              ["통신판매업 신고번호", "[제0000-지역0000호]"],
+              ["주소", "[주소]"],
+              ["문의", "[문의 이메일]"],
+            ].map(([label, value]) => (
+              <span key={label} className="flex gap-1.5">
+                <dt className="text-muted-foreground/70">{label}</dt>
+                <dd className="text-muted-foreground">{value}</dd>
+              </span>
+            ))}
+          </dl>
+
           <div className="flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
             <nav className="flex gap-4">
               <Link href="/terms" className="hover:text-foreground">
                 이용약관
               </Link>
-              <Link href="/privacy" className="hover:text-foreground">
+              <Link
+                href="/privacy"
+                className="font-semibold text-foreground/80 hover:text-foreground"
+              >
                 개인정보처리방침
               </Link>
               <Link href="/contact" className="hover:text-foreground">
