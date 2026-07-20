@@ -65,13 +65,15 @@ const providerConfig = {
 } as const;
 
 export function SocialLoginButtons({ enabled }: { enabled: EnabledSocialProviders }) {
-  const providers = Object.keys(providerConfig) as (keyof typeof providerConfig)[];
+  // 인증 키(클라이언트ID/시크릿)가 설정된 제공자만 노출한다.
+  // 키를 추가하면 그 버튼이 자동으로 나타나고, 하나도 없으면 영역 전체가 숨겨진다.
+  const providers = (Object.keys(providerConfig) as (keyof typeof providerConfig)[]).filter(
+    (p) => enabled[p],
+  );
+
+  if (providers.length === 0) return null;
 
   function handleClick(provider: keyof typeof providerConfig) {
-    if (!enabled[provider]) {
-      alert("이 로그인 방법은 준비 중이에요. 조금만 기다려 주세요.");
-      return;
-    }
     authClient.signIn.social({ provider, callbackURL: "/dashboard" });
   }
 
