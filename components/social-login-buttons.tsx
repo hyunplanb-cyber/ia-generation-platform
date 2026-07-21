@@ -68,9 +68,13 @@ export function SocialLoginButtons({
   enabled,
   // 소셜 로그인 후 돌아갈 경로(이메일 가입과 동일하게 맞춘다).
   callbackURL = "/dashboard",
+  // 위에 이메일 폼이 있을 때만 "또는" 구분선을 그린다.
+  // 가입 화면처럼 소셜 버튼만 있는 경우에는 끈다.
+  showDivider = true,
 }: {
   enabled: EnabledSocialProviders;
   callbackURL?: string;
+  showDivider?: boolean;
 }) {
   // 인증 키(클라이언트ID/시크릿)가 설정된 제공자만 노출한다.
   // 키를 추가하면 그 버튼이 자동으로 나타나고, 하나도 없으면 영역 전체가 숨겨진다.
@@ -86,11 +90,13 @@ export function SocialLoginButtons({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-        <div className="h-px flex-1 bg-border" />
-        또는
-        <div className="h-px flex-1 bg-border" />
-      </div>
+      {showDivider && (
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <div className="h-px flex-1 bg-border" />
+          또는
+          <div className="h-px flex-1 bg-border" />
+        </div>
+      )}
       <div className="flex flex-col gap-3">
         {providers.map((provider) => {
           const { label, icon: Icon, className } = providerConfig[provider];
