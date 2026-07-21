@@ -25,6 +25,7 @@ const MESSAGES: Record<string, string> = {
   "no-credit":
     "AI 사용 크레딧이 부족해요. Anthropic 콘솔의 Plans & Billing에서 크레딧을 충전하면 바로 사용할 수 있어요.",
   "already-has-menus": "이미 메뉴가 있어요. 자동 생성은 메뉴가 없는 새 프로젝트에서만 실행돼요.",
+  "too-large": "메뉴가 많아 생성 결과가 한 번에 담기지 못했어요. 메뉴 구성을 조금 줄이거나 다시 시도해 주세요.",
   failed: "자동 생성에 실패했어요. 잠시 후 다시 시도해 주세요.",
 };
 

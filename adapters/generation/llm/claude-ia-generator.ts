@@ -74,6 +74,39 @@ function buildUserMessage(input: IaGeneratorInput): string {
   return lines.join("\n");
 }
 
+// 화면을 상태별로 잘게 나누고 요건·프롬프트를 상세히 출력하면 한 번의 max_tokens로는
+// JSON이 중간에 잘린다(특히 메뉴가 많은 대형 사이트). 잘리면 지금까지의 출력을 assistant
+// 메시지로 되돌려 넣어 그 지점부터 이어쓰게 하고, 완결될 때까지(또는 상한까지) 반복한다.
+const MAX_TOKENS = 16000;
+const MAX_CONTINUATIONS = 4;
+
+async function generateRaw(client: Anthropic, userMessage: string): Promise<string> {
+  let full = "";
+  for (let attempt = 0; attempt <= MAX_CONTINUATIONS; attempt += 1) {
+    const messages: Anthropic.MessageParam[] = [{ role: "user", content: userMessage }];
+    if (full) {
+      // 이미 받은 부분을 assistant 발화로 넣으면 모델이 그 뒤를 이어서 생성한다.
+      // 단, assistant 메시지는 끝에 공백이 있으면 API가 거부하므로 잘라낸다
+      // (JSON 출력은 개행·들여쓰기로 끝나기 쉬움). 잘라낸 공백은 이어질 응답에서 자연히 채워진다.
+      messages.push({ role: "assistant", content: full.replace(/\s+$/, "") });
+    }
+    const message = await client.messages.create({
+      model: MODEL,
+      max_tokens: MAX_TOKENS,
+      system: SYSTEM_PROMPT,
+      messages,
+    });
+    const textBlock = message.content.find((block) => block.type === "text");
+    full += textBlock?.type === "text" ? textBlock.text : "";
+
+    if (message.stop_reason !== "max_tokens") {
+      return full;
+    }
+  }
+  // 이어받기를 반복해도 끝나지 않으면(비정상적으로 큰 컨셉) 명확한 에러로 알린다.
+  throw new Error("IA_GENERATOR_TRUNCATED");
+}
+
 function extractJson(text: string): string {
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
@@ -91,15 +124,7 @@ export const claudeIaGenerator: IaGenerator = {
     }
 
     const client = new Anthropic({ apiKey });
-    const message = await client.messages.create({
-      model: MODEL,
-      max_tokens: 8192,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildUserMessage(input) }],
-    });
-
-    const textBlock = message.content.find((block) => block.type === "text");
-    const raw = textBlock?.type === "text" ? textBlock.text : "";
+    const raw = await generateRaw(client, buildUserMessage(input));
 
     let parsed: unknown;
     try {

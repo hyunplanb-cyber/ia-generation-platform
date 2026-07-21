@@ -36,12 +36,18 @@ export const claudePromptGenerator: PromptGenerator = {
     }
 
     const client = new Anthropic({ apiKey });
+    // 메인 화면 등 상세 프롬프트는 1024로는 문장 중간에 잘릴 수 있어 넉넉히 확보한다.
     const message = await client.messages.create({
       model: MODEL,
-      max_tokens: 1024,
+      max_tokens: 2048,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: buildUserMessage(input) }],
     });
+
+    // 잘렸다면 문장이 끊긴 반쪽 프롬프트가 나가므로 실패로 처리한다(호출부에서 재시도/폴백).
+    if (message.stop_reason === "max_tokens") {
+      throw new Error("PROMPT_GENERATOR_TRUNCATED");
+    }
 
     const textBlock = message.content.find((block) => block.type === "text");
     return textBlock?.type === "text" ? textBlock.text.trim() : "";

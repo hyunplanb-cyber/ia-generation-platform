@@ -12,7 +12,7 @@ import { withProjectAuth } from "@/application/with-project-auth";
 
 export type GenerateIaResult =
   | { ok: true; menuCount: number; screenCount: number }
-  | { ok: false; reason: "unavailable" | "no-credit" | "already-has-menus" | "failed" };
+  | { ok: false; reason: "unavailable" | "no-credit" | "already-has-menus" | "too-large" | "failed" };
 
 // nameEn에서 프로젝트 내 고유한 2글자 메뉴코드를 만든다.
 // 앞 2글자가 겹치거나 예약어면 다른 글자 조합 → A~Z 조합 순으로 대체한다.
@@ -60,6 +60,10 @@ export async function generateIa(projectId: string): Promise<GenerateIaResult> {
       // 크레딧 부족 등 결제 관련 오류는 앱을 죽이지 않고 안내로 처리한다.
       if (error instanceof Error && error.message.includes("credit balance")) {
         return { ok: false, reason: "no-credit" };
+      }
+      // 출력이 최대 길이에 걸려 잘린 경우 — 메뉴가 아주 많은 컨셉에서 드물게 발생. 재시도 안내.
+      if (error instanceof Error && error.message === "IA_GENERATOR_TRUNCATED") {
+        return { ok: false, reason: "too-large" };
       }
       if (error instanceof Error && error.message === "IA_GENERATOR_BAD_OUTPUT") {
         return { ok: false, reason: "failed" };
