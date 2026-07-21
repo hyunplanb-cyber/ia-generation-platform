@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const paths: { path: string; priority: number }[] = [
     { path: "", priority: 1 },
+    { path: "/free", priority: 0.9 },
     { path: "/packages", priority: 0.9 },
     ...PACKAGES.map((p) => ({ path: `/packages/${p.id}`, priority: 0.9 })),
     { path: "/deliverables", priority: 0.8 },

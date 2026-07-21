@@ -14,7 +14,14 @@ import type { EnabledSocialProviders } from "@/lib/social-providers";
 
 const REMEMBERED_EMAIL_KEY = "ia-platform:remembered-email";
 
-export function LoginForm({ enabledSocialProviders }: { enabledSocialProviders: EnabledSocialProviders }) {
+export function LoginForm({
+  enabledSocialProviders,
+  // 로그인 후 돌아갈 경로(무료 샘플 등 특정 페이지에서 들어온 경우).
+  next = "/dashboard",
+}: {
+  enabledSocialProviders: EnabledSocialProviders;
+  next?: string;
+}) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,11 +53,11 @@ export function LoginForm({ enabledSocialProviders }: { enabledSocialProviders: 
     }
 
     await authClient.signIn.email(
-      { email, password, callbackURL: "/dashboard", rememberMe: keepSignedIn },
+      { email, password, callbackURL: next, rememberMe: keepSignedIn },
       {
         onRequest: () => setLoading(true),
         onSuccess: () => {
-          router.push("/dashboard");
+          router.push(next);
         },
         onError: () => {
           setLoading(false);
@@ -114,12 +121,12 @@ export function LoginForm({ enabledSocialProviders }: { enabledSocialProviders: 
               {loading ? "로그인 중..." : "로그인"}
             </Button>
           </form>
-          <SocialLoginButtons enabled={enabledSocialProviders} />
+          <SocialLoginButtons enabled={enabledSocialProviders} callbackURL={next} />
         </div>
 
         <p className="text-center text-sm text-muted-foreground">
           계정이 없으신가요?{" "}
-          <Link href="/signup" className="font-medium text-primary hover:underline">
+          <Link href={`/signup?next=${encodeURIComponent(next)}`} className="font-medium text-primary hover:underline">
             회원가입
           </Link>
         </p>

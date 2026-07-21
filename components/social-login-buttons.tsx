@@ -64,7 +64,14 @@ const providerConfig = {
   },
 } as const;
 
-export function SocialLoginButtons({ enabled }: { enabled: EnabledSocialProviders }) {
+export function SocialLoginButtons({
+  enabled,
+  // 소셜 로그인 후 돌아갈 경로(이메일 가입과 동일하게 맞춘다).
+  callbackURL = "/dashboard",
+}: {
+  enabled: EnabledSocialProviders;
+  callbackURL?: string;
+}) {
   // 인증 키(클라이언트ID/시크릿)가 설정된 제공자만 노출한다.
   // 키를 추가하면 그 버튼이 자동으로 나타나고, 하나도 없으면 영역 전체가 숨겨진다.
   const providers = (Object.keys(providerConfig) as (keyof typeof providerConfig)[]).filter(
@@ -74,7 +81,7 @@ export function SocialLoginButtons({ enabled }: { enabled: EnabledSocialProvider
   if (providers.length === 0) return null;
 
   function handleClick(provider: keyof typeof providerConfig) {
-    authClient.signIn.social({ provider, callbackURL: "/dashboard" });
+    authClient.signIn.social({ provider, callbackURL });
   }
 
   return (

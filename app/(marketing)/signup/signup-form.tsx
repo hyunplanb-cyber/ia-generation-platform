@@ -17,7 +17,14 @@ const BENEFITS = [
   { icon: FileSpreadsheet, text: "완성되면 엑셀로 바로 내보내요" },
 ];
 
-export function SignupForm({ enabledSocialProviders }: { enabledSocialProviders: EnabledSocialProviders }) {
+export function SignupForm({
+  enabledSocialProviders,
+  // 가입 후 돌아갈 경로. 무료 샘플처럼 특정 페이지에서 들어온 경우 그 자리로 되돌린다.
+  next = "/dashboard",
+}: {
+  enabledSocialProviders: EnabledSocialProviders;
+  next?: string;
+}) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,11 +39,11 @@ export function SignupForm({ enabledSocialProviders }: { enabledSocialProviders:
     setGeneralError(null);
 
     await authClient.signUp.email(
-      { email, password, name, callbackURL: "/dashboard" },
+      { email, password, name, callbackURL: next },
       {
         onRequest: () => setLoading(true),
         onSuccess: () => {
-          router.push("/dashboard");
+          router.push(next);
         },
         onError: (ctx) => {
           setLoading(false);
@@ -110,12 +117,12 @@ export function SignupForm({ enabledSocialProviders }: { enabledSocialProviders:
               {loading ? "가입 중..." : "가입하기"}
             </Button>
           </form>
-          <SocialLoginButtons enabled={enabledSocialProviders} />
+          <SocialLoginButtons enabled={enabledSocialProviders} callbackURL={next} />
         </div>
 
         <p className="text-center text-sm text-muted-foreground">
           이미 계정이 있으신가요?{" "}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          <Link href={`/login?next=${encodeURIComponent(next)}`} className="font-medium text-primary hover:underline">
             로그인
           </Link>
         </p>

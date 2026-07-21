@@ -13,11 +13,14 @@ import type { Screen } from "./domain/screen/screen";
 import type { ButtonAction } from "./domain/screen/button-action";
 import { LMS } from "./template-data-lms";
 import { BEAUTY } from "./template-data-beauty";
+import { CREATOR } from "./template-data-creator";
 
 // 어떤 템플릿을 만들지 인자로 받는다: npx tsx build-template.mts lms | beauty
 const TEMPLATES = {
   lms: { data: LMS, out: "판매용_템플릿/LMS_온라인강의플랫폼", title: "온라인 강의 플랫폼(LMS)" },
   beauty: { data: BEAUTY, out: "판매용_템플릿/뷰티샵_예약플랫폼", title: "뷰티샵 예약 플랫폼" },
+  // 무료 샘플(약식) — 인스타 릴스 리드마그넷용
+  creator: { data: CREATOR, out: "판매용_템플릿/무료샘플_콘텐츠판매사이트", title: "1인 크리에이터 콘텐츠 판매 사이트" },
 };
 const key = (process.argv[2] ?? "lms") as keyof typeof TEMPLATES;
 const picked = TEMPLATES[key];
