@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { countScreensByProject } from "@/application/count-screens-by-project";
 import { listMyProjects } from "@/application/list-my-projects";
 import { requireSession } from "@/application/require-session";
+import { canDownload } from "@/application/get-current-plan";
 import { DeleteProjectButton } from "./delete-project-button";
 import { ZipAllButton } from "./zip-all-button";
+import { UpgradeToDownload } from "./[projectId]/upgrade-to-download";
 import { createDraftProjectAction } from "./actions";
 
 function formatDate(date: Date) {
@@ -31,7 +33,11 @@ function stepOf(concept: string, screenCount: number) {
 }
 
 export default async function DashboardPage() {
-  const [session, projects] = await Promise.all([requireSession(), listMyProjects()]);
+  const [session, projects, downloadable] = await Promise.all([
+    requireSession(),
+    listMyProjects(),
+    canDownload(),
+  ]);
 
   if (projects.length === 0) {
     return (
@@ -125,7 +131,11 @@ export default async function DashboardPage() {
                           {file}
                         </span>
                       ))}
-                      <ZipAllButton projectId={p.id} />
+                      {downloadable ? (
+                        <ZipAllButton projectId={p.id} />
+                      ) : (
+                        <UpgradeToDownload label="전체 다운로드" />
+                      )}
                     </div>
                   )}
                 </div>

@@ -3,6 +3,8 @@ import { listMenus } from "@/application/list-menus";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { ExcelDownloadButton } from "../excel-download-button";
+import { UpgradeToDownload } from "../upgrade-to-download";
+import { canDownload } from "@/application/get-current-plan";
 import { buildWbsRows } from "@/lib/export/excel-rows";
 
 function safeFileName(concept: string): string {
@@ -15,9 +17,10 @@ export default async function WbsPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const [menus, { project, screens }] = await Promise.all([
+  const [menus, { project, screens }, downloadable] = await Promise.all([
     listMenus(projectId),
     getProjectScreensDetail(projectId),
+    canDownload(),
   ]);
 
   const menuById = new Map(menus.map((m) => [m.id, m]));
@@ -37,12 +40,16 @@ export default async function WbsPage({
         downloads={[]}
         actions={
           hasContent ? (
-            <ExcelDownloadButton
-              filename={`WBS_${safeFileName(project.concept)}.xlsx`}
-              sheetName="WBS"
-              rows={buildWbsRows(menus, activeScreens)}
-              colWidths={[6, 16, 24, 14, 12, 12, 10]}
-            />
+            downloadable ? (
+              <ExcelDownloadButton
+                filename={`WBS_${safeFileName(project.concept)}.xlsx`}
+                sheetName="WBS"
+                rows={buildWbsRows(menus, activeScreens)}
+                colWidths={[6, 16, 24, 14, 12, 12, 10]}
+              />
+            ) : (
+              <UpgradeToDownload label="엑셀로 다운로드" />
+            )
           ) : undefined
         }
       />

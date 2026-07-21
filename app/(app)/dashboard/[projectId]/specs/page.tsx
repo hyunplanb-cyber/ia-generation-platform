@@ -3,6 +3,8 @@ import { getProjectScreensDetail } from "@/application/get-project-screens-detai
 import { listMenus } from "@/application/list-menus";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { ExcelDownloadButton } from "../excel-download-button";
+import { UpgradeToDownload } from "../upgrade-to-download";
+import { canDownload } from "@/application/get-current-plan";
 import { buildRequirements, buildRequirementRows, type ReqType } from "@/lib/export/requirements";
 
 function safeFileName(concept: string): string {
@@ -23,9 +25,10 @@ export default async function SpecsPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const [menus, { project, screens }] = await Promise.all([
+  const [menus, { project, screens }, downloadable] = await Promise.all([
     listMenus(projectId),
     getProjectScreensDetail(projectId),
+    canDownload(),
   ]);
 
   const activeScreens = screens.filter((s) => s.status === "active");
@@ -42,12 +45,16 @@ export default async function SpecsPage({
         downloads={[]}
         actions={
           hasContent ? (
-            <ExcelDownloadButton
-              filename={`기능정의서_${safeFileName(project.concept)}.xlsx`}
-              sheetName="기능정의서"
-              rows={buildRequirementRows(menus, activeScreens)}
-              colWidths={[12, 16, 18, 48, 10]}
-            />
+            downloadable ? (
+              <ExcelDownloadButton
+                filename={`기능정의서_${safeFileName(project.concept)}.xlsx`}
+                sheetName="기능정의서"
+                rows={buildRequirementRows(menus, activeScreens)}
+                colWidths={[12, 16, 18, 48, 10]}
+              />
+            ) : (
+              <UpgradeToDownload label="엑셀로 다운로드" />
+            )
           ) : undefined
         }
       />

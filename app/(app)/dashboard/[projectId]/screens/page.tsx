@@ -9,6 +9,8 @@ import { detectScheduleReversals } from "@/domain/schedule/detect-schedule-rever
 import { Bot } from "lucide-react";
 import { DeliverableHeader, HeaderStat } from "../deliverable-header";
 import { ExcelDownloadButton } from "../excel-download-button";
+import { UpgradeToDownload } from "../upgrade-to-download";
+import { canDownload } from "@/application/get-current-plan";
 import { FileDownloadButton } from "../file-download-button";
 import { ScreensView } from "./screens-view";
 import { QuarantinedScreensSection } from "./quarantined-screens-section";
@@ -26,6 +28,7 @@ export default async function ScreensPage({
   const { projectId } = await params;
   const { project, screens, buttonActions } = await getProjectScreensDetail(projectId);
   const menus = await listMenus(projectId);
+  const downloadable = await canDownload();
   const activeScreens = screens.filter((s) => s.status === "active");
   const quarantinedScreens = screens.filter((s) => s.status === "quarantined");
 
@@ -70,12 +73,16 @@ export default async function ScreensPage({
         downloads={[]}
         actions={
           activeScreens.length > 0 ? (
-            <ExcelDownloadButton
-              filename={`IA_화면목록_${safeFileName(project.concept)}.xlsx`}
-              sheetName="화면목록"
-              rows={excelRows}
-              colWidths={[14, 14, 22, 12, 12, 40, 30, 44]}
-            />
+            downloadable ? (
+              <ExcelDownloadButton
+                filename={`IA_화면목록_${safeFileName(project.concept)}.xlsx`}
+                sheetName="화면목록"
+                rows={excelRows}
+                colWidths={[14, 14, 22, 12, 12, 40, 30, 44]}
+              />
+            ) : (
+              <UpgradeToDownload label="엑셀로 다운로드" />
+            )
           ) : undefined
         }
         meta={
@@ -100,18 +107,24 @@ export default async function ScreensPage({
             </div>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
-            <FileDownloadButton
-              filename={`스펙팩_${safeFileName(project.concept)}.md`}
-              content={buildSpecPackMarkdown(project, menus, activeScreens, buttonActions)}
-              mime="text/markdown;charset=utf-8"
-              label="마크다운"
-            />
-            <FileDownloadButton
-              filename={`스펙팩_${safeFileName(project.concept)}.json`}
-              content={buildSpecPackJson(project, menus, activeScreens, buttonActions)}
-              mime="application/json;charset=utf-8"
-              label="JSON"
-            />
+            {downloadable ? (
+              <>
+                <FileDownloadButton
+                  filename={`스펙팩_${safeFileName(project.concept)}.md`}
+                  content={buildSpecPackMarkdown(project, menus, activeScreens, buttonActions)}
+                  mime="text/markdown;charset=utf-8"
+                  label="마크다운"
+                />
+                <FileDownloadButton
+                  filename={`스펙팩_${safeFileName(project.concept)}.json`}
+                  content={buildSpecPackJson(project, menus, activeScreens, buttonActions)}
+                  mime="application/json;charset=utf-8"
+                  label="JSON"
+                />
+              </>
+            ) : (
+              <UpgradeToDownload label="스펙팩 다운로드" />
+            )}
           </div>
         </div>
       )}

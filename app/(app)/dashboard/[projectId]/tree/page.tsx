@@ -6,6 +6,8 @@ import { DiagramOrList } from "../diagram-or-list";
 import { MenuTreeChart } from "../menu-tree-chart";
 import { ExcelDownloadButton } from "../excel-download-button";
 import { PptDownloadButton } from "../ppt-download-button";
+import { UpgradeToDownload } from "../upgrade-to-download";
+import { canDownload } from "@/application/get-current-plan";
 import { buildMenuTreeRows } from "@/lib/export/excel-rows";
 
 function safeFileName(concept: string): string {
@@ -18,9 +20,10 @@ export default async function TreePage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const [menus, { project, screens }] = await Promise.all([
+  const [menus, { project, screens }, downloadable] = await Promise.all([
     listMenus(projectId),
     getProjectScreensDetail(projectId),
+    canDownload(),
   ]);
 
   const activeScreens = screens.filter((s) => s.status === "active");
@@ -84,19 +87,23 @@ export default async function TreePage({
         downloads={[]}
         actions={
           hasContent ? (
-            <>
-              <PptDownloadButton
-                filename={`메뉴구조_${fileBase}.pptx`}
-                rootLabel="사이트 전체"
-                menus={pptMenus}
-              />
-              <ExcelDownloadButton
-                filename={`메뉴구조_${fileBase}.xlsx`}
-                sheetName="메뉴구조"
-                rows={buildMenuTreeRows(menus, activeScreens)}
-                colWidths={[12, 20, 16, 24]}
-              />
-            </>
+            downloadable ? (
+              <>
+                <PptDownloadButton
+                  filename={`메뉴구조_${fileBase}.pptx`}
+                  rootLabel="사이트 전체"
+                  menus={pptMenus}
+                />
+                <ExcelDownloadButton
+                  filename={`메뉴구조_${fileBase}.xlsx`}
+                  sheetName="메뉴구조"
+                  rows={buildMenuTreeRows(menus, activeScreens)}
+                  colWidths={[12, 20, 16, 24]}
+                />
+              </>
+            ) : (
+              <UpgradeToDownload label="다운로드" />
+            )
           ) : undefined
         }
       />

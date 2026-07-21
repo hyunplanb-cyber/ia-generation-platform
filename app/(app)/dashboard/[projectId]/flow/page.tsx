@@ -4,6 +4,8 @@ import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { DiagramOrList } from "../diagram-or-list";
 import { FlowChart } from "../flow-chart";
 import { FileDownloadButton } from "../file-download-button";
+import { UpgradeToDownload } from "../upgrade-to-download";
+import { canDownload } from "@/application/get-current-plan";
 import { buildFlowHtml, buildDrawioXml } from "@/lib/export/flow-export";
 
 function safeFileName(concept: string): string {
@@ -17,6 +19,7 @@ export default async function FlowPage({
 }) {
   const { projectId } = await params;
   const { project, screens, buttonActions } = await getProjectScreensDetail(projectId);
+  const downloadable = await canDownload();
 
   const activeScreens = screens.filter((s) => s.status === "active");
   const screenById = new Map(screens.map((s) => [s.id, s]));
@@ -73,20 +76,24 @@ export default async function FlowPage({
         downloads={[]}
         actions={
           hasContent ? (
-            <>
-              <FileDownloadButton
-                filename={`FLOW_${safeFileName(project.concept)}.drawio`}
-                content={buildDrawioXml(flowNodes, flowEdges)}
-                mime="application/xml;charset=utf-8"
-                label="draw.io로 다운로드"
-              />
-              <FileDownloadButton
-                filename={`FLOW_${safeFileName(project.concept)}.html`}
-                content={buildFlowHtml(project.concept || "프로젝트", flowNodes, flowEdges)}
-                mime="text/html;charset=utf-8"
-                label="HTML로 다운로드"
-              />
-            </>
+            downloadable ? (
+              <>
+                <FileDownloadButton
+                  filename={`FLOW_${safeFileName(project.concept)}.drawio`}
+                  content={buildDrawioXml(flowNodes, flowEdges)}
+                  mime="application/xml;charset=utf-8"
+                  label="draw.io로 다운로드"
+                />
+                <FileDownloadButton
+                  filename={`FLOW_${safeFileName(project.concept)}.html`}
+                  content={buildFlowHtml(project.concept || "프로젝트", flowNodes, flowEdges)}
+                  mime="text/html;charset=utf-8"
+                  label="HTML로 다운로드"
+                />
+              </>
+            ) : (
+              <UpgradeToDownload label="다운로드" />
+            )
           ) : undefined
         }
       />
