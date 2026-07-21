@@ -13,33 +13,42 @@ import {
   Check,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { LMS } from "@/template-data-lms";
-import { getPackage, formatKrw } from "@/lib/packages";
+import { PACKAGES, getPackage, formatKrw, exceptionScreens } from "@/lib/packages";
 
 // 판매 상세이자 검색 유입 페이지. 산출물 내용을 실제로 공개해
-// "LMS 화면설계서 예시" 같은 검색어에 걸리게 하고, 그대로 구매로 잇는다.
+// "예약 시스템 기획서" 같은 검색어에 걸리게 하고, 그대로 구매로 잇는다.
 // 핵심 자산인 화면별 프롬프트는 일부만 공개한다(판매 상품과 겹치지 않게).
-export const metadata: Metadata = {
-  title: "온라인 강의 플랫폼(LMS) 화면설계서 · 기획 패키지 — 화면 37개",
-  description:
-    "온라인 강의 플랫폼(LMS) 기획 산출물 패키지입니다. 메뉴 7개, 화면 37개, 요건 241개, 화면 이동 55개를 담았습니다. 화면 목록과 기능정의를 미리 확인하고 구매하세요.",
-  keywords: [
-    "LMS 화면설계서",
-    "온라인 강의 플랫폼 기획서",
-    "LMS 기획서 예시",
-    "화면설계서 샘플",
-    "기능정의서 예시",
-    "웹기획 산출물",
-  ],
-};
+export function generateStaticParams() {
+  return PACKAGES.map((p) => ({ packageId: p.id }));
+}
 
-const screens = LMS.menus.flatMap((m) => m.screens);
-const stateScreens = screens.filter((s) => /없음|비어|오류|실패|마감|대기|확인/.test(s.name));
-const PROMPT_SAMPLES = ["cl3", "cu3", "co6"];
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ packageId: string }>;
+}): Promise<Metadata> {
+  const { packageId } = await params;
+  const pkg = getPackage(packageId);
+  if (!pkg) return {};
+  return {
+    title: `${pkg.seo.title} — 화면 ${pkg.stats.screens}개`,
+    description: pkg.seo.description,
+    keywords: pkg.seo.keywords,
+  };
+}
 
-export default function LmsPackagePage() {
-  const pkg = getPackage("lms");
+export default async function PackageDetailPage({
+  params,
+}: {
+  params: Promise<{ packageId: string }>;
+}) {
+  const { packageId } = await params;
+  const pkg = getPackage(packageId);
   if (!pkg) notFound();
+
+  const { menus, project } = pkg.data;
+  const screens = menus.flatMap((m) => m.screens);
+  const stateScreens = exceptionScreens(pkg.data);
 
   const STATS = [
     { icon: Network, label: "메뉴", value: pkg.stats.menus },
@@ -50,7 +59,6 @@ export default function LmsPackagePage() {
 
   return (
     <div className="bg-background">
-      {/* 헤더 */}
       <section className="bg-linear-to-br from-pastel-lavender/40 via-background to-pastel-mint/40">
         <div className="mx-auto max-w-5xl px-6 pb-12 pt-7">
           <Link
@@ -61,7 +69,7 @@ export default function LmsPackagePage() {
             패키지 목록
           </Link>
           <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
-            온라인 강의 플랫폼(LMS)
+            {pkg.title}
             <br />
             <span className="bg-pastel-yellow rounded-lg px-2 py-0.5">기획 패키지</span>
           </h1>
@@ -134,17 +142,15 @@ export default function LmsPackagePage() {
           )}
         </section>
 
-        {/* 컨셉 */}
         <section className="flex flex-col gap-3">
           <SectionTitle>사이트 컨셉</SectionTitle>
-          <p className="leading-relaxed text-foreground/85">{LMS.project.concept}</p>
+          <p className="leading-relaxed text-foreground/85">{project.concept}</p>
         </section>
 
-        {/* 메뉴 구조 */}
         <section className="flex flex-col gap-4">
           <SectionTitle>메뉴 구조</SectionTitle>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {LMS.menus.map((m) => (
+            {menus.map((m) => (
               <div key={m.code} className="rounded-xl border border-border bg-surface p-4">
                 <p className="font-bold text-foreground">{m.nameKo}</p>
                 <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{m.desc}</p>
@@ -156,7 +162,6 @@ export default function LmsPackagePage() {
           </div>
         </section>
 
-        {/* 예외 화면 */}
         <section className="flex flex-col gap-4">
           <SectionTitle>AI가 빠뜨리기 쉬운 예외 화면 {stateScreens.length}개</SectionTitle>
           <p className="text-muted-foreground">
@@ -174,11 +179,10 @@ export default function LmsPackagePage() {
           </div>
         </section>
 
-        {/* 화면 목록 */}
         <section className="flex flex-col gap-4">
           <SectionTitle>화면 목록 {screens.length}개 · 기능 정의</SectionTitle>
           <div className="flex flex-col gap-6">
-            {LMS.menus.map((menu) => (
+            {menus.map((menu) => (
               <div key={menu.code} className="overflow-hidden rounded-xl border border-border">
                 <div className="flex items-baseline gap-2 border-b border-border bg-muted/40 px-4 py-2.5">
                   <span className="font-mono text-xs text-muted-foreground">{menu.code}</span>
@@ -210,16 +214,15 @@ export default function LmsPackagePage() {
           </div>
         </section>
 
-        {/* 프롬프트 샘플 */}
         <section className="flex flex-col gap-4">
           <SectionTitle>화면별 AI 생성 프롬프트</SectionTitle>
           <p className="text-muted-foreground">
             화면마다 AI 코딩 도구에 그대로 넣는 프롬프트가 붙어 있습니다. 아래는{" "}
-            {PROMPT_SAMPLES.length}개 예시예요.
+            {pkg.promptSamples.length}개 예시예요.
           </p>
           <div className="flex flex-col gap-3">
             {screens
-              .filter((s) => PROMPT_SAMPLES.includes(s.ref))
+              .filter((s) => pkg.promptSamples.includes(s.ref))
               .map((s) => (
                 <div key={s.ref} className="rounded-xl border border-border bg-surface p-5">
                   <p className="font-bold text-foreground">{s.name}</p>
@@ -229,14 +232,13 @@ export default function LmsPackagePage() {
             <div className="flex items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-5 py-6 text-muted-foreground">
               <Lock className="size-5 shrink-0" />
               <p className="text-sm leading-relaxed">
-                나머지 {screens.length - PROMPT_SAMPLES.length}개 화면의 프롬프트는 패키지에
+                나머지 {screens.length - pkg.promptSamples.length}개 화면의 프롬프트는 패키지에
                 들어 있어요.
               </p>
             </div>
           </div>
         </section>
 
-        {/* 하단 CTA */}
         <section className="flex flex-col items-center gap-5 rounded-2xl bg-linear-to-br from-pastel-lavender/50 via-pastel-yellow/30 to-pastel-mint/50 px-6 py-12 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             내 서비스에 맞게 직접 만들 수도 있어요
