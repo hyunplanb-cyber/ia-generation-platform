@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowRight,
+  ArrowLeft,
   Lock,
   Network,
   LayoutList,
@@ -51,14 +52,15 @@ export default function LmsPackagePage() {
     <div className="bg-background">
       {/* 헤더 */}
       <section className="bg-linear-to-br from-pastel-lavender/40 via-background to-pastel-mint/40">
-        <div className="mx-auto max-w-5xl px-6 py-14">
+        <div className="mx-auto max-w-5xl px-6 pb-12 pt-7">
           <Link
             href="/packages"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-base font-semibold text-foreground shadow-sm transition-colors hover:bg-muted"
           >
-            ← 패키지 목록
+            <ArrowLeft className="size-4" />
+            패키지 목록
           </Link>
-          <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
+          <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
             온라인 강의 플랫폼(LMS)
             <br />
             <span className="bg-pastel-yellow rounded-lg px-2 py-0.5">기획 패키지</span>
