@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { SiteHeader } from "@/components/site-header";
 
 export default function MarketingLayout({
   children,
@@ -10,50 +10,12 @@ export default function MarketingLayout({
 
   return (
     <>
-      <header className="sticky top-0 z-10 border-b border-border bg-surface/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Link href="/" className="flex items-center gap-1.5 text-lg font-bold text-foreground">
-              <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
-                <Sparkles className="size-3.5" />
-              </span>
-              IA 자동생성 플랫폼
-            </Link>
-            <span className="hidden h-5 w-px bg-border sm:block" />
-            <Link
-              href="/deliverables"
-              className="hidden rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground sm:block"
-            >
-              산출물 소개
-            </Link>
-            <Link
-              href="/packages"
-              className="hidden rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground sm:block"
-            >
-              패키지 구매
-            </Link>
-          </div>
-          <nav className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
-            >
-              로그인
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-            >
-              회원가입
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="flex-1">{children}</main>
 
       <footer className="border-t border-border bg-surface">
-        <div className="mx-auto flex max-w-5xl flex-col gap-6 px-6 py-10 text-sm text-muted-foreground">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-10 text-sm text-muted-foreground">
           <div className="flex flex-col gap-2">
             <p className="text-base font-bold text-foreground">IA 자동생성 플랫폼</p>
             <p className="max-w-md">

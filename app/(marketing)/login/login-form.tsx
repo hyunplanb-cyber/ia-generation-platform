@@ -58,6 +58,8 @@ export function LoginForm({
         onRequest: () => setLoading(true),
         onSuccess: () => {
           router.push(next);
+          // 헤더는 서버에서 세션을 읽어 그리므로, 새로고침해야 로그인 상태로 바뀐다.
+          router.refresh();
         },
         onError: () => {
           setLoading(false);

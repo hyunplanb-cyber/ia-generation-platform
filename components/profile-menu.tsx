@@ -33,6 +33,8 @@ export function ProfileMenu({ email }: { email: string }) {
   async function handleSignOut() {
     await authClient.signOut();
     router.push("/login");
+    // 헤더는 서버에서 세션을 읽어 그리므로, 새로고침해야 로그아웃 상태로 바뀐다.
+    router.refresh();
   }
 
   // 이메일 계정(@ 앞부분) 첫 알파벳

@@ -134,7 +134,7 @@ export default function LandingPage() {
           style={{ animationDelay: "0.6s" }}
         />
 
-        <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-6 py-12 sm:py-16 lg:grid-cols-2">
+        <div className="relative mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-10 px-6 py-12 sm:py-16 lg:grid-cols-2">
           <div className="flex flex-col items-start gap-5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground shadow-sm">
               <Sparkles className="size-4" />
@@ -176,7 +176,7 @@ export default function LandingPage() {
 
       {/* Positioning — AI 웹빌더가 못 채우는 기획 계층 */}
       <section className="border-t border-border bg-surface">
-        <div className="mx-auto max-w-5xl px-6 py-20">
+        <div className="mx-auto max-w-[1440px] px-6 py-20">
           <div className="mx-auto max-w-2xl text-center">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-on-soft">
               왜 필요할까요?
@@ -224,11 +224,11 @@ export default function LandingPage() {
 
       {/* Pain points */}
       <section className="border-t border-border bg-pastel-yellow/25">
-        <div className="mx-auto max-w-4xl px-6 py-20">
+        <div className="mx-auto max-w-[1440px] px-6 py-20">
           <h2 className="text-center text-2xl font-bold text-foreground sm:text-3xl">
             혹시 이런 고민, 매번 반복하고 계신가요?
           </h2>
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {painPoints.map((point) => (
               <div
                 key={point}
@@ -246,7 +246,7 @@ export default function LandingPage() {
 
       {/* How it works */}
       <section id="how-it-works" className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-6 py-20">
+        <div className="mx-auto max-w-[1440px] px-6 py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
               4단계면 충분해요
@@ -283,7 +283,7 @@ export default function LandingPage() {
 
       {/* Build demo — 컨셉 하나로 사이트까지 */}
       <section className="border-t border-border bg-linear-to-b from-pastel-lavender/25 to-surface">
-        <div className="mx-auto max-w-6xl px-6 py-20">
+        <div className="mx-auto max-w-[1440px] px-6 py-20">
           <div className="mx-auto max-w-2xl text-center">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-on-soft">
               <Wand2 className="size-3.5" /> 실제 결과물
@@ -346,7 +346,7 @@ export default function LandingPage() {
 
       {/* Feature grid */}
       <section className="border-t border-border bg-surface">
-        <div className="mx-auto max-w-6xl px-6 py-20">
+        <div className="mx-auto max-w-[1440px] px-6 py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
               기획부터 개발 인계까지, 빠짐없이
@@ -377,11 +377,11 @@ export default function LandingPage() {
 
       {/* Audience */}
       <section className="border-t border-border bg-pastel-mint/20">
-        <div className="mx-auto max-w-4xl px-6 py-20">
+        <div className="mx-auto max-w-[1440px] px-6 py-20">
           <h2 className="text-center text-2xl font-bold text-foreground sm:text-3xl">
             이런 분들께 잘 맞아요
           </h2>
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {audiences.map((audience) => (
               <div key={audience} className="flex items-start gap-3">
                 <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-success-soft text-success">
@@ -405,7 +405,7 @@ export default function LandingPage() {
           style={{ animationDelay: "1.2s" }}
           fill="currentColor"
         />
-        <div className="relative mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 py-20 text-center">
+        <div className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-6 py-20 text-center">
           <h2 className="text-3xl font-bold text-primary-foreground">
             다음 프로젝트, IA부터 자동화해 보세요
           </h2>

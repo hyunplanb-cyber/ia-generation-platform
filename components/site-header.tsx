@@ -1,0 +1,83 @@
+import Link from "next/link";
+import { Sparkles, LayoutGrid, LayoutList, Package } from "lucide-react";
+import { ProfileMenu } from "@/components/profile-menu";
+import { getSession } from "@/lib/session";
+
+// 사이트 전체가 쓰는 단 하나의 헤더.
+// 마케팅 화면과 로그인 후 화면이 각자 헤더를 갖고 있어서 메뉴가 서로 다르고
+// 로그인 상태가 반영되지 않는 문제가 있었다 — 여기 하나로 합친다.
+export async function SiteHeader() {
+  const session = await getSession();
+
+  return (
+    <header className="sticky top-0 z-30 border-b border-border bg-surface/85 backdrop-blur-md">
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-6 py-3">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Link href="/" className="flex items-center gap-1.5 text-lg font-bold text-foreground">
+            <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
+              <Sparkles className="size-3.5" />
+            </span>
+            IA 자동생성 플랫폼
+          </Link>
+          <span className="hidden h-5 w-px bg-border sm:block" />
+          <NavLink href="/deliverables" icon={LayoutList}>
+            산출물 소개
+          </NavLink>
+          <NavLink href="/packages" icon={Package}>
+            패키지 구매
+          </NavLink>
+        </div>
+
+        <nav className="flex items-center gap-2 sm:gap-3">
+          {session ? (
+            <>
+              <NavLink href="/dashboard" icon={LayoutGrid} alwaysVisible>
+                나의 프로젝트
+              </NavLink>
+              <ProfileMenu email={session.user.email} />
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/signup"
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+              >
+                회원가입
+              </Link>
+            </>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+function NavLink({
+  href,
+  icon: Icon,
+  children,
+  // 좁은 화면에서는 메뉴를 접지만, 로그인 후 "나의 프로젝트"처럼
+  // 접히면 갈 곳이 없어지는 항목은 계속 보여준다.
+  alwaysVisible = false,
+}: {
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  children: React.ReactNode;
+  alwaysVisible?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`${alwaysVisible ? "flex" : "hidden sm:flex"} items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground`}
+    >
+      <Icon className="size-4" />
+      {children}
+    </Link>
+  );
+}
