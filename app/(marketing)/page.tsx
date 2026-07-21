@@ -138,18 +138,19 @@ export default function LandingPage() {
           <div className="flex flex-col items-start gap-6">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground shadow-sm">
               <Sparkles className="size-4" />
-              웹기획자를 위한 AI 자동화
+              바이브 코딩 전, 기획 한 단계
             </span>
             <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
-              사이트 컨셉과 메뉴만 입력하면{" "}
-              <span className="bg-pastel-yellow rounded-lg px-2 py-0.5">IA부터 AI 코딩 프롬프트까지</span>{" "}
-              한 번에 만들어드려요.
+              한 줄 프롬프트 말고
+              <br />
+              <span className="bg-pastel-yellow rounded-lg px-2 py-0.5">설계도 프롬프트로</span>
+              <br />
+              만드세요.
             </h1>
             <p className="max-w-xl text-lg leading-8 text-muted-foreground">
-              메뉴를 입력하고 <span className="font-medium text-foreground">[실행: IA 생성]</span>을
-              누르면 화면별 페이지ID, 기능정의, AI 코딩 프롬프트, 제작 일정까지 초안이
-              완성돼요. 결과는 전부 화면에서 바로 수정할 수 있고, 엑셀로 내려받아 팀과
-              공유하거나 Claude Code·Cursor 같은 AI 코딩 도구에 곧바로 활용할 수 있어요.
+              AI는 <span className="font-medium text-foreground">&ldquo;잘 풀리는 상황&rdquo;</span>만
+              만듭니다. 컨셉과 메뉴만 입력하면 화면 목록부터 화면별 프롬프트까지,
+              빠지는 화면 없이 설계해드려요.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <Link
