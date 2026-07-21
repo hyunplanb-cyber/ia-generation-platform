@@ -27,10 +27,10 @@ export default function MarketingLayout({
               산출물 소개
             </Link>
             <Link
-              href="/samples/lms"
+              href="/packages"
               className="hidden rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground sm:block"
             >
-              샘플 보기
+              패키지 구매
             </Link>
           </div>
           <nav className="flex items-center gap-3">
