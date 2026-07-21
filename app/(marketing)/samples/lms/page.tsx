@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Lock, Network, LayoutList, Workflow, FileText } from "lucide-react";
+import { ArrowRight, Lock, Network, LayoutList, Workflow, FileText, Package } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { LMS } from "@/template-data-lms";
+import { getPurchaseUrl } from "@/lib/samples";
 
 // 검색 유입용 공개 샘플. 로그인 없이 볼 수 있고, 실제 산출물 내용을 그대로 노출해
 // "LMS 화면설계서 예시" 같은 검색어에 걸리게 한다.
@@ -43,6 +44,9 @@ const STATS = [
 ];
 
 export default function LmsSamplePage() {
+  // 자체 결제가 붙기 전까지는 크몽에서 결제. 링크가 없으면(승인 대기 등) 버튼은 숨긴다.
+  const purchaseUrl = getPurchaseUrl("lms");
+
   return (
     <div className="bg-background">
       {/* 헤더 */}
@@ -190,13 +194,30 @@ export default function LmsSamplePage() {
             컨셉과 메뉴만 입력하면 화면 목록부터 화면별 프롬프트까지, 빠지는 화면 없이
             설계해드려요.
           </p>
-          <Link
-            href="/signup"
-            className={`${buttonVariants({ size: "lg" })} shadow-primary/30 shadow-lg transition-transform hover:scale-105`}
-          >
-            무료로 시작하기
-            <ArrowRight className="size-4" />
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/signup"
+              className={`${buttonVariants({ size: "lg" })} shadow-primary/30 shadow-lg transition-transform hover:scale-105`}
+            >
+              무료로 시작하기
+              <ArrowRight className="size-4" />
+            </Link>
+            {purchaseUrl && (
+              <a
+                href={purchaseUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonVariants({ variant: "outline", size: "lg" })}
+              >
+                <Package className="size-4" />이 템플릿 바로 구매하기
+              </a>
+            )}
+          </div>
+          {purchaseUrl && (
+            <p className="text-sm text-muted-foreground">
+              이 LMS 산출물 전체를 파일로 바로 받고 싶다면 구매하실 수 있어요.
+            </p>
+          )}
         </section>
       </div>
     </div>
