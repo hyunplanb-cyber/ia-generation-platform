@@ -134,17 +134,18 @@ export default function LandingPage() {
           style={{ animationDelay: "0.6s" }}
         />
 
-        <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 py-20 sm:py-28 lg:grid-cols-2">
-          <div className="flex flex-col items-start gap-6">
+        <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-6 py-12 sm:py-16 lg:grid-cols-2">
+          <div className="flex flex-col items-start gap-5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground shadow-sm">
               <Sparkles className="size-4" />
               바이브 코딩 전, 기획 한 단계
             </span>
-            <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
+            {/* 2줄 고정. 48px로는 2번째 줄이 컬럼 폭을 넘겨(1440에서도 5px 초과) 단계별로 줄인다. */}
+            <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground lg:text-[2.2rem] xl:text-[2.75rem]">
               한 줄 프롬프트 말고
               <br />
+              {/* 하이라이트 좌우 패딩(px-2)이 이미 간격 역할을 하므로 별도 공백은 넣지 않는다 */}
               <span className="bg-pastel-yellow rounded-lg px-2 py-0.5">설계도 프롬프트로</span>
-              <br />
               만드세요.
             </h1>
             <p className="max-w-xl text-lg leading-8 text-muted-foreground">
