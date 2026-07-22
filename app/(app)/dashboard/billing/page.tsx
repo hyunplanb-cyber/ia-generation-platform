@@ -1,8 +1,10 @@
-import { Check, BellRing, BellOff } from "lucide-react";
+import { redirect } from "next/navigation";
+import { Check, ThumbsUp } from "lucide-react";
+import { BILLING_OPEN } from "@/lib/flags";
 import { PLANS, PLAN_ORDER, type PlanId } from "@/lib/plans";
 import { getCurrentPlan } from "@/application/get-current-plan";
 import { getMyPlanInterests } from "@/application/plan-interest";
-import { requestPlanNoticeAction } from "./actions";
+import { recordPlanInterestAction } from "./actions";
 
 const HIGHLIGHT: PlanId = "standard";
 
@@ -18,6 +20,12 @@ export default async function BillingPage({
   // 다운로드 잠금에서 넘어온 경우 ?from=download 가 붙는다(어디서 눌렀는지 기록용).
   searchParams: Promise<{ from?: string }>;
 }) {
+  // 결제가 붙기 전까지는 요금제 화면을 닫아둔다(lib/flags.ts).
+  // 주소를 직접 쳐서 들어와도 대시보드로 돌려보낸다.
+  if (!BILLING_OPEN) {
+    redirect("/dashboard");
+  }
+
   const { from } = await searchParams;
   const source = from === "download" ? "download" : "billing";
   const [current, requested] = await Promise.all([getCurrentPlan(), getMyPlanInterests()]);
@@ -30,8 +38,6 @@ export default async function BillingPage({
           <p className="text-sm text-muted-foreground">
             산출물 다운로드는 유료 플랜에서 열려요. 아직 준비 중이라{" "}
             <b className="font-semibold text-foreground">지금은 결제하실 수 없습니다.</b>
-            <br />
-            열리면 알려드릴게요.
           </p>
         ) : (
           <p className="text-sm text-muted-foreground">
@@ -86,21 +92,21 @@ export default async function BillingPage({
                 </span>
               ) : requested.has(id) ? (
                 <span className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-success-soft px-4 py-2.5 text-sm font-semibold text-success">
-                  <BellRing className="size-4" />
-                  알림 신청 완료
+                  <Check className="size-4" />
+                  의견 주셔서 고마워요
                 </span>
               ) : (
-                // 결제가 없으니 "구매"가 아니라 "열리면 알려달라"를 받는다.
-                // 이 신청 수가 지금으로선 유일한 수요 지표다.
-                <form action={requestPlanNoticeAction} className="mt-auto">
+                // 결제가 없으니 "구매"도 "알림 발송"도 약속할 수 없다.
+                // 대신 어떤 등급이 필요한지만 받는다 — 가격을 정할 유일한 근거다.
+                <form action={recordPlanInterestAction} className="mt-auto">
                   <input type="hidden" name="planId" value={id} />
                   <input type="hidden" name="source" value={source} />
                   <button
                     type="submit"
                     className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
                   >
-                    <BellOff className="size-4" />
-                    열리면 알려주세요
+                    <ThumbsUp className="size-4" />
+                    이 플랜이 필요해요
                   </button>
                 </form>
               )}
@@ -110,9 +116,7 @@ export default async function BillingPage({
       </div>
 
       <p className="text-center text-xs text-muted-foreground">
-        알림을 신청해 주시면 결제가 열릴 때 가입하신 메일로 가장 먼저 알려드려요.
-        <br />
-        가격은 아직 확정되지 않았습니다.
+        가격은 아직 확정되지 않았어요. 어떤 플랜이 필요한지 알려주시면 정할 때 참고할게요.
       </p>
     </div>
   );
