@@ -27,12 +27,10 @@ if (process.env.KAKAO_CLIENT_ID && process.env.KAKAO_CLIENT_SECRET) {
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: 'pg' }),
+  // 이메일·비밀번호는 가입도 로그인도 받지 않는다 — 비밀번호를 아예 보관하지 않기 위해서.
+  // 화면에서 폼을 지우는 것만으로는 API 직접 호출을 막지 못하므로 서버에서도 잠근다.
   emailAndPassword: {
-    // 기존 이메일 계정의 "로그인"은 계속 열어둔다.
-    enabled: true,
-    // 신규 "가입"은 구글로만 받는다 — 비밀번호를 보관하지 않기 위해서.
-    // 화면에서 폼을 지우는 것만으로는 API 직접 호출을 막지 못하므로 서버에서도 잠근다.
-    disableSignUp: true,
+    enabled: false,
   },
   socialProviders,
   // 로컬 개발 시 다른 프로젝트와 3000번 포트가 겹쳐 매번 다른 포트로 뜰 수 있어
