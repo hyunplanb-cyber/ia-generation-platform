@@ -22,6 +22,14 @@ const TARGETS = {
       "네일·속눈썹 등 캐주얼 뷰티, 20~30대 타깃 매장",
     ],
   },
+  travel: {
+    dir: "판매용_템플릿/여행_투어티켓예약플랫폼/디자인프리셋",
+    fits: [
+      "신뢰가 중요한 해외 투어·티켓 예약, 대형 여행 플랫폼",
+      "사진이 주인공인 감성 여행 브랜드, 소규모 프라이빗 투어",
+      "액티비티·레저 예약, 20~30대 자유여행객 타깃",
+    ],
+  },
 };
 const targetKey = (process.argv[2] ?? "lms") as keyof typeof TARGETS;
 const target = TARGETS[targetKey];

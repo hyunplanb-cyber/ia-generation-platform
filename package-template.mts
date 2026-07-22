@@ -6,6 +6,7 @@ import JSZip from "jszip";
 const SETS = {
   lms: { src: "판매용_템플릿/LMS_온라인강의플랫폼", label: "LMS", title: "온라인 강의 플랫폼(LMS)" },
   beauty: { src: "판매용_템플릿/뷰티샵_예약플랫폼", label: "뷰티샵", title: "뷰티샵 예약 플랫폼" },
+  travel: { src: "판매용_템플릿/여행_투어티켓예약플랫폼", label: "여행", title: "해외 투어·티켓 예약 플랫폼" },
 };
 const setKey = (process.argv[2] ?? "lms") as keyof typeof SETS;
 const chosen = SETS[setKey];

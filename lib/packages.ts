@@ -4,6 +4,7 @@
 // kmongUrl이 null이면 아직 판매 전 → 구매 버튼 대신 "판매 준비 중"으로 표시한다.
 import { LMS, type TplMenu } from "@/template-data-lms";
 import { BEAUTY } from "@/template-data-beauty";
+import { TRAVEL } from "@/template-data-travel";
 
 export interface TplData {
   project: { concept: string; designConcept: string; deviceMode: string };
@@ -102,6 +103,34 @@ export const PACKAGES: PackageDef[] = [
       ],
     },
   },
+  {
+    id: "travel",
+    title: "해외 투어·티켓 예약 플랫폼",
+    industry: "여행·예약",
+    tagline:
+      "해외 투어·입장권·패스를 날짜와 인원을 골라 예약하고, 현지에서 쓸 바우처를 받는 여행 예약 플랫폼 기획 패키지",
+    stats: statsOf(TRAVEL),
+    tiers: [
+      { name: "스탠다드", priceKrw: 49000, desc: "기획 문서 6종" },
+      { name: "디럭스", priceKrw: 69000, desc: "6종 + AI 빌드 스펙팩" },
+      { name: "프리미엄", priceKrw: 89000, desc: "디럭스 + 디자인 프리셋 3종" },
+    ],
+    kmongUrl: null, // 등록 준비 중
+    data: TRAVEL,
+    promptSamples: ["pr3", "bk6", "vc2"],
+    seo: {
+      title: "여행 예약 플랫폼 화면설계서 · 투어·티켓 기획 패키지",
+      description:
+        "해외 투어·티켓 예약 플랫폼 기획 산출물 패키지입니다. 날짜·인원 선택부터 바우처 발급, 최소인원 미달·예약 마감 같은 예외 화면까지 미리 확인하세요.",
+      keywords: [
+        "여행 예약 사이트 기획서",
+        "투어 예약 화면설계서",
+        "티켓 예약 앱 기획",
+        "여행 플랫폼 기능정의서",
+        "바우처 예약 시스템 기획",
+      ],
+    },
+  },
 ];
 
 export function getPackage(id: string): PackageDef | undefined {
@@ -113,7 +142,7 @@ export function getPackage(id: string): PackageDef | undefined {
 export function exceptionScreens(data: TplData) {
   return data.menus
     .flatMap((m) => m.screens)
-    .filter((s) => /(empty|error|closed|pending)/.test(s.role));
+    .filter((s) => /(empty|error|closed|pending|expired)/.test(s.role));
 }
 
 export function formatKrw(won: number): string {
