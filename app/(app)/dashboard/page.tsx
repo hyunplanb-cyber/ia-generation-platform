@@ -5,6 +5,7 @@ import { countScreensByProject } from "@/application/count-screens-by-project";
 import { listMyProjects } from "@/application/list-my-projects";
 import { requireSession } from "@/application/require-session";
 import { canDownload } from "@/application/get-current-plan";
+import { getProjectQuota } from "@/application/can-create-project";
 import { DeleteProjectButton } from "./delete-project-button";
 import { ZipAllButton } from "./zip-all-button";
 import { UpgradeToDownload } from "./[projectId]/upgrade-to-download";
@@ -32,12 +33,21 @@ function stepOf(concept: string, screenCount: number) {
   return { label: "STEP 1 · 컨셉 입력", href: "edit", tone: "yellow", generated: false };
 }
 
-export default async function DashboardPage() {
-  const [session, projects, downloadable] = await Promise.all([
+export default async function DashboardPage({
+  searchParams,
+}: {
+  // 한도에 걸려 되돌아온 경우 ?limit=reached 가 붙는다.
+  searchParams: Promise<{ limit?: string }>;
+}) {
+  const [{ limit }, session, projects, downloadable] = await Promise.all([
+    searchParams,
     requireSession(),
     listMyProjects(),
     canDownload(),
   ]);
+  // 이미 불러온 목록 개수를 넘겨 같은 조회를 두 번 하지 않는다.
+  const quota = await getProjectQuota(projects.length);
+  const hitLimit = limit === "reached" || !quota.allowed;
 
   if (projects.length === 0) {
     return (
@@ -71,12 +81,28 @@ export default async function DashboardPage() {
           <h1 className="text-2xl font-bold text-foreground">{session.user.name}님의 프로젝트</h1>
           <p className="mt-1 text-muted-foreground">진행 중인 프로젝트 {projects.length}개가 있어요.</p>
         </div>
-        <form action={createDraftProjectAction}>
-          <Button type="submit">
-            <Plus className="size-4" />새 프로젝트 만들기
-          </Button>
-        </form>
+        {hitLimit ? (
+          <span
+            className="rounded-lg border border-border bg-muted/60 px-4 py-2 text-sm font-semibold text-muted-foreground"
+            title={`무료 플랜은 프로젝트 ${quota.limit}개까지 만들 수 있어요.`}
+          >
+            프로젝트 {quota.limit}개까지 (무료)
+          </span>
+        ) : (
+          <form action={createDraftProjectAction}>
+            <Button type="submit">
+              <Plus className="size-4" />새 프로젝트 만들기
+            </Button>
+          </form>
+        )}
       </div>
+
+      {hitLimit && (
+        <p className="rounded-xl border border-border bg-muted/40 px-5 py-4 text-sm text-muted-foreground">
+          무료 플랜에서는 프로젝트를 <b className="font-semibold text-foreground">{quota.limit}개</b>까지
+          만들 수 있어요. 새로 만들려면 기존 프로젝트를 지우거나, 유료 플랜이 열릴 때까지 기다려 주세요.
+        </p>
+      )}
 
       <ul className="flex flex-col gap-3">
         {sorted.map((p) => {

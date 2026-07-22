@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { deleteProject } from "@/application/delete-project";
 import { createProject } from "@/application/create-project";
+import { getProjectQuota } from "@/application/can-create-project";
 
 export async function deleteProjectAction(projectId: string) {
   await deleteProject(projectId);
@@ -16,6 +17,13 @@ function toDateStr(d: Date): string {
 // 별도의 "새 프로젝트" 위저드 없이, 빈 프로젝트를 만들고 곧바로 STEP 1(컨셉 입력)로 보낸다.
 // 컨셉 등 실제 입력은 STEP 1에서 받고, 일정은 기본값(오늘~+30일)으로 채워둔다.
 export async function createDraftProjectAction() {
+  // 등급별 프로젝트 상한을 여기서 지킨다. 생성 1건마다 AI 비용이 나가므로
+  // 화면에서 버튼을 감추는 것만으로는 부족하다(폼을 직접 보낼 수 있다).
+  const quota = await getProjectQuota();
+  if (!quota.allowed) {
+    redirect("/dashboard?limit=reached");
+  }
+
   const today = new Date();
   const end = new Date(today);
   end.setDate(end.getDate() + 30);
