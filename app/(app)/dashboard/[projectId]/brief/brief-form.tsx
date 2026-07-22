@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import {
   Sparkles,
   Loader2,
@@ -28,6 +28,19 @@ const MESSAGES: Record<string, string> = {
   "too-large": "메뉴가 많아 생성 결과가 한 번에 담기지 못했어요. 메뉴 구성을 조금 줄이거나 다시 시도해 주세요.",
   failed: "자동 생성에 실패했어요. 잠시 후 다시 시도해 주세요.",
 };
+
+// 생성은 30초~1분쯤 걸린다. 같은 문장만 떠 있으면 멈춘 것처럼 보이므로,
+// AI가 실제로 거치는 단계를 순서대로 보여준다.
+const PROGRESS_STEPS = [
+  "컨셉을 읽고 있어요",
+  "메뉴를 나누고 있어요",
+  "메뉴마다 화면을 뽑고 있어요",
+  "화면별 기능정의를 쓰고 있어요",
+  "화면별 AI 프롬프트를 쓰고 있어요",
+  "화면 사이 이동을 연결하고 있어요",
+  "일정을 나누고 있어요",
+  "거의 다 됐어요",
+];
 
 const DELIVERABLES = [
   { icon: Network, label: "메뉴 구조" },
@@ -166,11 +179,54 @@ export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: b
         </aside>
       </div>
 
-      {pending && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm">
-          <Loader2 className="size-8 animate-spin text-primary" />
-          <p className="font-medium text-foreground">컨셉을 분석해 메뉴와 화면을 만들고 있어요...</p>
-        </div>
+      {pending && <GeneratingOverlay />}
+    </div>
+  );
+}
+
+// 생성 대기 화면. pending일 때만 화면에 붙으므로, 마운트되는 순간이 곧 시작 시점이다
+// (그래서 따로 초기화할 필요가 없다).
+function GeneratingOverlay() {
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // 8초에 한 단계씩 넘어가고 마지막 문구에서 멈춘다. 실제 진행률이 아니라 안내다.
+  const step = Math.min(Math.floor(elapsed / 8), PROGRESS_STEPS.length - 1);
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-background/85 px-6 backdrop-blur-sm">
+      <Loader2 className="size-9 animate-spin text-primary" />
+
+      <div className="flex flex-col items-center gap-1.5 text-center">
+        <p className="text-lg font-bold text-foreground">{PROGRESS_STEPS[step]}</p>
+        <p className="text-sm text-muted-foreground">
+          보통 <b className="font-semibold text-foreground">30초~1분</b> 걸려요. 창을 닫지 말고
+          기다려 주세요.
+        </p>
+      </div>
+
+      {/* 진행 칸 — 실제 진행률은 알 수 없으므로 지나온 단계 수만큼 채운다 */}
+      <div className="flex gap-1.5" aria-hidden="true">
+        {PROGRESS_STEPS.map((label, i) => (
+          <span
+            key={label}
+            className={`h-1.5 w-7 rounded-full transition-colors ${
+              i <= step ? "bg-primary" : "bg-border"
+            }`}
+          />
+        ))}
+      </div>
+
+      <p className="text-xs tabular-nums text-muted-foreground">{elapsed}초 지남</p>
+
+      {elapsed >= 75 && (
+        <p className="max-w-sm text-center text-sm text-muted-foreground">
+          메뉴가 많으면 조금 더 걸릴 수 있어요. 2분이 넘으면 새로고침 후 다시 시도해 주세요.
+        </p>
       )}
     </div>
   );

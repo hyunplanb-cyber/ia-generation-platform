@@ -4,6 +4,11 @@ import { listMenus } from "@/application/list-menus";
 import { ProjectNotFoundError } from "@/application/with-project-auth";
 import { BriefForm } from "./brief-form";
 
+// 자동 생성은 AI 응답을 여러 번 이어받아야 해서 1분 가까이 걸린다.
+// 페이지에 걸면 이 화면에서 실행되는 서버 액션 전체에 적용된다.
+// (Vercel 무료 플랜의 상한이 60초라 그 이상은 올릴 수 없다.)
+export const maxDuration = 60;
+
 export default async function BriefPage({
   params,
 }: {
