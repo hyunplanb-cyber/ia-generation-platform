@@ -71,6 +71,13 @@
       "when": 1784036531096,
       "tag": "0009_orange_phantom_reporter",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1784689955035,
+      "tag": "0010_brave_wild_pack",
+      "breakpoints": true
     }
   ]
 }

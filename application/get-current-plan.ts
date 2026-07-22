@@ -1,10 +1,11 @@
 import { requireSession } from "@/application/require-session";
 import { getPlan, type PlanDef } from "@/lib/plans";
 
-// 페이월(다운로드 게이트) 전역 스위치.
-// 결제 수단이 붙기 전까지는 꺼둔다(=모두 다운로드 가능). 결제 준비되면 이 env를 켠다.
+// 페이월(다운로드 게이트) 전역 스위치. 기본은 켜짐.
+// 만들고 화면으로 보는 건 무료지만, 파일 다운로드는 유료 등급에서만 열린다.
+// 문제가 생겼을 때만 PAYWALL_ENABLED=false 로 전체를 열 수 있다(비상 탈출구).
 export function isPaywallEnabled(): boolean {
-  return process.env.PAYWALL_ENABLED === "true";
+  return process.env.PAYWALL_ENABLED !== "false";
 }
 
 // 현재 로그인 사용자의 요금제. 세션의 plan 필드를 정규화해 반환한다.

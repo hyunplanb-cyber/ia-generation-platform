@@ -277,3 +277,30 @@ export const accountRelations = relations(account, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+// 유료 플랜 알림 신청 기록.
+// 결제 수단이 붙기 전까지 다운로드는 잠겨 있는데, 그때 "열리면 알려달라"고
+// 누른 사람을 남긴다. 몇 명이 어느 등급을 원했는지가 가격 산정의 유일한 근거다.
+export const planInterest = pgTable(
+  "plan_interest",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** 관심을 보인 등급(standard/pro). */
+    planId: text("plan_id").notNull(),
+    /** 어디서 눌렀는지 — "download"(다운로드 잠금에서 넘어옴) | "billing"(요금제 화면에서 바로) */
+    source: text("source").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  // 같은 사람이 같은 등급을 여러 번 눌러도 한 번으로 센다(중복 집계 방지).
+  (table) => [uniqueIndex("plan_interest_user_plan_idx").on(table.userId, table.planId)],
+);
+
+export const planInterestRelations = relations(planInterest, ({ one }) => ({
+  user: one(user, {
+    fields: [planInterest.userId],
+    references: [user.id],
+  }),
+}));

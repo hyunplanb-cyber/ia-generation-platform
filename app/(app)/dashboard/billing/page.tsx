@@ -1,6 +1,8 @@
-import { Check } from "lucide-react";
+import { Check, BellRing, BellOff } from "lucide-react";
 import { PLANS, PLAN_ORDER, type PlanId } from "@/lib/plans";
 import { getCurrentPlan } from "@/application/get-current-plan";
+import { getMyPlanInterests } from "@/application/plan-interest";
+import { requestPlanNoticeAction } from "./actions";
 
 const HIGHLIGHT: PlanId = "standard";
 
@@ -10,16 +12,32 @@ function priceLabel(krw: number | null): string {
   return `${krw.toLocaleString()}원 / 월`;
 }
 
-export default async function BillingPage() {
-  const current = await getCurrentPlan();
+export default async function BillingPage({
+  searchParams,
+}: {
+  // 다운로드 잠금에서 넘어온 경우 ?from=download 가 붙는다(어디서 눌렀는지 기록용).
+  searchParams: Promise<{ from?: string }>;
+}) {
+  const { from } = await searchParams;
+  const source = from === "download" ? "download" : "billing";
+  const [current, requested] = await Promise.all([getCurrentPlan(), getMyPlanInterests()]);
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-12">
       <header className="flex flex-col gap-2 text-center">
         <h1 className="text-2xl font-bold text-foreground">요금제</h1>
-        <p className="text-sm text-muted-foreground">
-          지금은 모든 기능을 무료로 사용하실 수 있어요. 유료 플랜은 곧 시작됩니다.
-        </p>
+        {source === "download" ? (
+          <p className="text-sm text-muted-foreground">
+            산출물 다운로드는 유료 플랜에서 열려요. 아직 준비 중이라{" "}
+            <b className="font-semibold text-foreground">지금은 결제하실 수 없습니다.</b>
+            <br />
+            열리면 알려드릴게요.
+          </p>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            만들고 화면으로 확인하는 건 무료예요. 파일 다운로드는 유료 플랜에서 열립니다.
+          </p>
+        )}
       </header>
 
       <div className="grid gap-5 sm:grid-cols-3">
@@ -62,21 +80,39 @@ export default async function BillingPage() {
                 ))}
               </ul>
 
-              <button
-                type="button"
-                disabled
-                className="mt-auto cursor-not-allowed rounded-lg bg-muted px-4 py-2.5 text-sm font-semibold text-muted-foreground"
-                title="유료 플랜은 준비 중이에요"
-              >
-                {plan.priceKrw === 0 ? "기본 제공" : "준비 중"}
-              </button>
+              {plan.priceKrw === 0 ? (
+                <span className="mt-auto rounded-lg bg-muted px-4 py-2.5 text-center text-sm font-semibold text-muted-foreground">
+                  기본 제공
+                </span>
+              ) : requested.has(id) ? (
+                <span className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-success-soft px-4 py-2.5 text-sm font-semibold text-success">
+                  <BellRing className="size-4" />
+                  알림 신청 완료
+                </span>
+              ) : (
+                // 결제가 없으니 "구매"가 아니라 "열리면 알려달라"를 받는다.
+                // 이 신청 수가 지금으로선 유일한 수요 지표다.
+                <form action={requestPlanNoticeAction} className="mt-auto">
+                  <input type="hidden" name="planId" value={id} />
+                  <input type="hidden" name="source" value={source} />
+                  <button
+                    type="submit"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                  >
+                    <BellOff className="size-4" />
+                    열리면 알려주세요
+                  </button>
+                </form>
+              )}
             </div>
           );
         })}
       </div>
 
       <p className="text-center text-xs text-muted-foreground">
-        가격과 시작 시점은 확정되는 대로 안내드릴게요.
+        알림을 신청해 주시면 결제가 열릴 때 가입하신 메일로 가장 먼저 알려드려요.
+        <br />
+        가격은 아직 확정되지 않았습니다.
       </p>
     </div>
   );
