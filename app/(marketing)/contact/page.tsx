@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Mail, Building2, Clock } from "lucide-react";
-import { Fill } from "../legal-doc";
+import { BUSINESS, businessInfoRows } from "@/lib/business";
 
 export const metadata: Metadata = {
   title: "문의하기 | IA 자동생성 플랫폼",
@@ -14,7 +14,14 @@ const CARDS = [
     lines: [
       <>
         서비스 이용·환불·개인정보 문의는{" "}
-        <Fill key="mail">[문의 이메일]</Fill> 로 보내주세요.
+        <a
+          key="mail"
+          href={`mailto:${BUSINESS.email}`}
+          className="font-semibold text-primary hover:underline"
+        >
+          {BUSINESS.email}
+        </a>{" "}
+        로 보내주세요.
       </>,
     ],
   },
@@ -61,19 +68,10 @@ export default function ContactPage() {
             사업자 정보
           </h2>
           <dl className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
-            {[
-              ["상호", "[상호명]"],
-              ["대표자", "[대표자명]"],
-              ["사업자등록번호", "[000-00-00000]"],
-              ["통신판매업 신고번호", "[제0000-지역0000호]"],
-              ["사업장 주소", "[주소]"],
-              ["연락처", "[전화번호]"],
-            ].map(([label, value]) => (
+            {businessInfoRows().map(([label, value]) => (
               <div key={label} className="contents">
                 <dt className="font-medium text-muted-foreground">{label}</dt>
-                <dd className="text-foreground">
-                  <Fill>{value}</Fill>
-                </dd>
+                <dd className="text-foreground">{value}</dd>
               </div>
             ))}
           </dl>

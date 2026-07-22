@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LegalPage, Section, Clause, List, Fill } from "../legal-doc";
+import { BUSINESS } from "@/lib/business";
 
 export const metadata: Metadata = {
   title: "이용약관 | IA 자동생성 플랫폼",
@@ -15,7 +16,7 @@ export default function TermsPage() {
     >
       <Section title="제1조 (목적)">
         <Clause>
-          이 약관은 <Fill>[상호명]</Fill>(이하 “회사”)이 제공하는 IA 자동생성 플랫폼 서비스의
+          이 약관은 {BUSINESS.name}(이하 “회사”)이 제공하는 IA 자동생성 플랫폼 서비스의
           이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항을 규정하는 것을 목적으로 합니다.
         </Clause>
       </Section>
@@ -117,7 +118,7 @@ export default function TermsPage() {
           산정할 수 있습니다.
         </Clause>
         <Clause>
-          ④ 환불 요청은 <Fill>[문의 이메일]</Fill>로 접수하며, 접수일로부터 3영업일 이내에
+          ④ 환불 요청은 {BUSINESS.email}로 접수하며, 접수일로부터 3영업일 이내에
           처리합니다.
         </Clause>
       </Section>

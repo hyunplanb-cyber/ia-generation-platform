@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LegalPage, Section, Clause, List, DataTable, Fill } from "../legal-doc";
+import { BUSINESS } from "@/lib/business";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침 | IA 자동생성 플랫폼",
@@ -189,15 +190,9 @@ export default function PrivacyPage() {
         </Clause>
         <List
           items={[
-            <>
-              성명: <Fill>[담당자명]</Fill>
-            </>,
-            <>
-              직책: <Fill>[직책]</Fill>
-            </>,
-            <>
-              이메일: <Fill>[문의 이메일]</Fill>
-            </>,
+            <>성명: {BUSINESS.ceo}</>,
+            <>직책: 대표</>,
+            <>이메일: {BUSINESS.email}</>,
           ]}
         />
         <Clause>

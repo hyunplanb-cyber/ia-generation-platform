@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
+import { businessInfoRows } from "@/lib/business";
 
 export default function MarketingLayout({
   children,
@@ -23,19 +24,20 @@ export default function MarketingLayout({
               만들어주는 웹기획 자동화 도구예요.
             </p>
           </div>
-          {/* 전자상거래법상 표시 의무 항목. 사업자등록·통신판매업 신고 후 실제 값으로 교체할 것. */}
+          {/* 전자상거래법상 사업자 정보 표시. 내용은 lib/business.ts 한 곳에서 관리한다. */}
           <dl className="flex flex-wrap gap-x-4 gap-y-1 border-t border-border pt-6 text-xs">
-            {[
-              ["상호", "[상호명]"],
-              ["대표자", "[대표자명]"],
-              ["사업자등록번호", "[000-00-00000]"],
-              ["통신판매업 신고번호", "[제0000-지역0000호]"],
-              ["주소", "[주소]"],
-              ["문의", "[문의 이메일]"],
-            ].map(([label, value]) => (
+            {businessInfoRows().map(([label, value]) => (
               <span key={label} className="flex gap-1.5">
                 <dt className="text-muted-foreground/70">{label}</dt>
-                <dd className="text-muted-foreground">{value}</dd>
+                <dd className="text-muted-foreground">
+                  {label === "문의" ? (
+                    <a href={`mailto:${value}`} className="hover:text-foreground hover:underline">
+                      {value}
+                    </a>
+                  ) : (
+                    value
+                  )}
+                </dd>
               </span>
             ))}
           </dl>
