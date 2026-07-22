@@ -68,9 +68,15 @@ export default async function FreePage() {
                   <Download className="size-4" />
                   무료로 다운로드
                 </a>
-                <p className="text-sm text-muted-foreground">
-                  zip 파일로 바로 받아집니다.
-                </p>
+                <p className="text-sm text-muted-foreground">zip 파일로 바로 받아집니다.</p>
+                {/* 샘플을 받은 다음 자연스러운 다음 행동 — 내 서비스로 만들어보기 */}
+                <Link
+                  href="/dashboard"
+                  className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+                >
+                  내 서비스로 직접 만들어보기
+                  <ArrowRight className="size-3.5" />
+                </Link>
               </>
             ) : (
               <>
@@ -185,15 +191,20 @@ export default async function FreePage() {
         {/* 업셀 */}
         <section className="flex flex-col items-center gap-4 rounded-2xl bg-linear-to-br from-pastel-lavender/50 via-pastel-yellow/30 to-pastel-mint/50 px-6 py-10 text-center">
           <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-            더 큰 서비스를 만드시나요?
+            내 서비스는 어떤 화면이 나올까요?
           </h2>
           <p className="max-w-lg leading-relaxed text-muted-foreground">
-            컨셉과 메뉴만 입력하면 내 서비스에 맞는 산출물을 직접 만들 수 있어요. 업종별로
-            완성된 패키지도 있습니다.
+            위 샘플도 컨셉과 메뉴만 넣어서 자동으로 만든 거예요. 내 서비스로도{" "}
+            <b className="font-semibold text-foreground">프로젝트 1개를 무료로</b> 만들어볼 수
+            있습니다. 업종별로 완성된 패키지도 있어요.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/signup" className={buttonVariants({ size: "lg" })}>
-              직접 만들어보기
+            {/* 이미 로그인했다면 가입 화면을 한 번 더 거치지 않도록 바로 대시보드로 보낸다. */}
+            <Link
+              href={session ? "/dashboard" : "/signup?next=/dashboard"}
+              className={buttonVariants({ size: "lg" })}
+            >
+              무료로 만들어보기
               <ArrowRight className="size-4" />
             </Link>
             <Link href="/packages" className={buttonVariants({ variant: "outline", size: "lg" })}>
