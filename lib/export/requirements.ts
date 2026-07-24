@@ -44,6 +44,34 @@ function pad(n: number): string {
   return String(n).padStart(2, "0");
 }
 
+// 기능정의를 요건 한 줄씩으로 나눈다.
+// 구분자는 '·' 와 쉼표, 줄바꿈이다. 다만 괄호 안의 구분자는 요건을 나누는 게 아니라
+// 그 요건의 내용을 열거하는 것이므로 자르지 않는다.
+// (예: "필터(여행지·가격·소요시간)" 은 세 조각이 아니라 한 요건이다.
+//  괄호를 무시하고 자르면 "필터(여행지" / "소요시간)" 처럼 깨진 줄이 남는다.)
+function splitFuncDef(funcDef: string): string[] {
+  const items: string[] = [];
+  let depth = 0;
+  let buf = "";
+  const flush = () => {
+    const t = buf.trim();
+    if (t) items.push(t);
+    buf = "";
+  };
+  for (const ch of funcDef) {
+    if (ch === "(" || ch === "[" || ch === "{") depth++;
+    else if (ch === ")" || ch === "]" || ch === "}") depth = Math.max(0, depth - 1);
+
+    if (depth === 0 && (ch === "·" || ch === "," || ch === "\n")) {
+      flush();
+      continue;
+    }
+    buf += ch;
+  }
+  flush();
+  return items;
+}
+
 export function buildRequirements(menus: Menu[], screens: Screen[]): Requirement[] {
   const rows: Requirement[] = [];
   let 업무n = 0;
@@ -54,10 +82,7 @@ export function buildRequirements(menus: Menu[], screens: Screen[]): Requirement
     let 기능n = 0;
     for (const s of menuScreens) {
       기능n++;
-      const items = (s.funcDef ?? "")
-        .split(/[·,\n]+/)
-        .map((x) => x.trim())
-        .filter(Boolean);
+      const items = splitFuncDef(s.funcDef ?? "");
       const list = items.length > 0 ? items : [s.pageName];
       let 구성n = 0;
       for (const item of list) {

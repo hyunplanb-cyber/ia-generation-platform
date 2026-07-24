@@ -157,5 +157,19 @@ writeFileSync(`${OUT}/07_AI빌드_스펙팩.md`, buildSpecPackMarkdown(SRC_DATA.
 writeFileSync(`${OUT}/07_AI빌드_스펙팩.json`, buildSpecPackJson(SRC_DATA.project, menus, screens, buttonActions), "utf8");
 console.log("  ✔ 07_AI빌드_스펙팩.md / .json");
 
+// 7) 패키징 스크립트가 README에 넣을 실제 수치를 남긴다.
+//    예전엔 README에 LMS 수치(화면 37·요건 241)가 하드코딩돼 있어,
+//    뷰티·여행 패키지를 사도 README만 LMS 숫자로 적혀 있었다.
+const stats = {
+  title: picked.title,
+  menus: menus.length,
+  screens: screens.length,
+  requirements: buildRequirementRows(menus, screens).length,
+  buttonActions: buttonActions.length,
+};
+writeFileSync(`${OUT}/_패키지정보.json`, JSON.stringify(stats, null, 2), "utf8");
+
 console.log(`\n완료 → ${OUT}`);
-console.log(`메뉴 ${menus.length}개 · 화면 ${screens.length}개 · 화면이동 ${buttonActions.length}개`);
+console.log(
+  `메뉴 ${stats.menus}개 · 화면 ${stats.screens}개 · 요건 ${stats.requirements}개 · 화면이동 ${stats.buttonActions}개`,
+);

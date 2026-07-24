@@ -17,13 +17,20 @@ const SRC = chosen.src;
 const OUT = "판매용_템플릿/_배포";
 mkdirSync(OUT, { recursive: true });
 
+// 실제 수치는 build-template.mts가 남긴 파일에서 읽는다.
+// (예전엔 README에 LMS 수치가 박혀 있어 뷰티·여행 구매자도 "화면 37개"를 봤다.)
+const stats = JSON.parse(readFileSync(`${SRC}/_패키지정보.json`, "utf8")) as {
+  screens: number;
+  requirements: number;
+};
+
 const README = `${chosen.title} 기획 산출물 패키지
 ====================================================
 
 ■ 구성
  01_메뉴구조.xlsx        메뉴-화면 트리
- 02_IA_화면목록.xlsx     화면 37개 + 화면별 AI 생성 프롬프트  ★핵심
- 03_기능정의서.xlsx      요건 241개 (업무·기능·구성·유형)
+ 02_IA_화면목록.xlsx     화면 ${stats.screens}개 + 화면별 AI 생성 프롬프트  ★핵심
+ 03_기능정의서.xlsx      요건 ${stats.requirements}개 (업무·기능·구성·유형)
  04_WBS.xlsx             화면별 개발 일정
  05_FLOW_흐름도.html     화면 이동 흐름도 (브라우저로 열기)
  05_FLOW_흐름도.drawio   draw.io에서 편집 가능
@@ -37,7 +44,7 @@ const README = `${chosen.title} 기획 산출물 패키지
         "이 스펙대로 만들어줘" 라고 하세요. 이게 전부입니다.
 
         스펙팩 안에 프로젝트 개요, 공통 레이아웃(헤더/내비/푸터),
-        화면 37개의 요건과 프롬프트, 화면 이동이 순서대로 정리되어 있어
+        화면 ${stats.screens}개의 요건과 프롬프트, 화면 이동이 순서대로 정리되어 있어
         AI가 구조부터 잡고 화면을 순서대로 만들어 나갑니다.
 
  [부분] 특정 화면만 다시 만들고 싶다면
@@ -60,7 +67,12 @@ const README = `${chosen.title} 기획 산출물 패키지
 
 // 등급 차이: 스탠다드는 문서만(화면별 프롬프트는 IA 화면목록에 포함) →
 // 디럭스부터 "통째로 넣는" 스펙팩 → 프리미엄은 디자인 프리셋까지.
-const ALL = readdirSync(SRC).filter((f) => f.endsWith(".xlsx") || f.endsWith(".pptx") || f.endsWith(".html") || f.endsWith(".drawio") || f.endsWith(".md") || f.endsWith(".json"));
+// _패키지정보.json은 README 수치를 넘기기 위한 내부 파일이라 구매자에게 주지 않는다.
+const ALL = readdirSync(SRC).filter(
+  (f) =>
+    f !== "_패키지정보.json" &&
+    (f.endsWith(".xlsx") || f.endsWith(".pptx") || f.endsWith(".html") || f.endsWith(".drawio") || f.endsWith(".md") || f.endsWith(".json")),
+);
 const SPEC = ALL.filter((f) => f.startsWith("07_"));
 const DOCS = ALL.filter((f) => !f.startsWith("07_"));
 
