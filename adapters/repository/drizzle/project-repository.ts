@@ -1,6 +1,6 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/client";
-import { project } from "@/db/schema";
+import { project, screen, buttonAction } from "@/db/schema";
 import type { Project, DeviceMode } from "@/domain/project/project";
 import type {
   CreateProjectInput,
@@ -72,6 +72,22 @@ export const drizzleProjectRepository: ProjectRepository = {
   },
 
   async delete(id: string): Promise<void> {
+    // 버튼 연결(target_screen_id)은 화면을 RESTRICT로 참조해, 화면이 남아 있으면
+    // 삭제를 막는다. 그래서 프로젝트를 지우기 전에 이 프로젝트 화면들의 버튼 연결을
+    // 먼저 지운다. 그러면 project → menu → screen 캐스케이드가 막히지 않는다.
+    // (Neon HTTP는 트랜잭션이 없어 순차 삭제한다.)
+    const screenIds = await db
+      .select({ id: screen.id })
+      .from(screen)
+      .where(eq(screen.projectId, id));
+    if (screenIds.length > 0) {
+      await db.delete(buttonAction).where(
+        inArray(
+          buttonAction.screenId,
+          screenIds.map((s) => s.id),
+        ),
+      );
+    }
     await db.delete(project).where(eq(project.id, id));
   },
 

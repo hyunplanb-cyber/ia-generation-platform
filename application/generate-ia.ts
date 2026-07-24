@@ -136,13 +136,16 @@ export async function generateIa(projectId: string): Promise<GenerateIaResult> {
       });
     });
 
+    // 버튼 연결을 모아 한 번의 쿼리로 저장한다. 예전엔 버튼마다 INSERT를 날려
+    // (수십 번) DB 왕복이 쌓였고, 서버-DB가 멀어진 뒤 60초 제한을 넘겨 생성이 끊겼다.
+    const buttonInputs = [];
     for (let i = 0; i < createdScreens.length; i++) {
       const source = createdScreens[i];
       for (const button of meta[i].buttons) {
         const target = screenByRefDevice.get(`${button.targetRef}::${source.deviceCode}`);
         // 대상을 못 찾거나 자기 자신을 가리키면 건너뛴다(깨진 연결 방지).
         if (!target || target.id === source.id) continue;
-        await drizzleButtonActionRepository.create({
+        buttonInputs.push({
           screenId: source.id,
           label: button.label,
           targetScreenId: target.id,
@@ -150,6 +153,7 @@ export async function generateIa(projectId: string): Promise<GenerateIaResult> {
         });
       }
     }
+    await drizzleButtonActionRepository.createMany(buttonInputs);
 
     return { ok: true, menuCount: output.menus.length, screenCount: inputs.length };
   });

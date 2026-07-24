@@ -34,6 +34,22 @@ export const drizzleButtonActionRepository: ButtonActionRepository = {
     return toDomain(row);
   },
 
+  async createMany(inputs: CreateButtonActionInput[]): Promise<ButtonAction[]> {
+    if (inputs.length === 0) return [];
+    const rows = await db
+      .insert(buttonAction)
+      .values(
+        inputs.map((input) => ({
+          screenId: input.screenId,
+          label: input.label,
+          targetScreenId: input.targetScreenId,
+          targetPageIdSnapshot: input.targetPageIdSnapshot,
+        })),
+      )
+      .returning();
+    return rows.map(toDomain);
+  },
+
   async listByProject(projectId: string): Promise<ButtonAction[]> {
     const rows = await db
       .select({ buttonAction: buttonAction })
