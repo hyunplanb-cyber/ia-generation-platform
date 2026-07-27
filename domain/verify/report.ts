@@ -19,8 +19,9 @@ export interface Scenario {
 }
 
 export interface VerificationReport {
-  url: string; // 사용자가 넣은 원본
-  finalUrl: string; // 리다이렉트까지 따라간 실제 주소
+  mode: "site" | "document"; // URL 검수(자동 검사 포함) / 문서 기반(시나리오만)
+  url: string; // 사용자가 넣은 원본(문서면 파일명)
+  finalUrl: string; // 리다이렉트까지 따라간 실제 주소(문서면 파일명)
   fetchedAt: string; // ISO
   checks: Check[];
   passCount: number;

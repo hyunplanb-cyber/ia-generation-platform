@@ -9,10 +9,21 @@ import type {
 const MODEL = "claude-haiku-4-5";
 const MAX_TOKENS = 4000;
 
-const SYSTEM_PROMPT = [
+const SITE_INTRO = [
   "당신은 웹사이트 오픈 전 점검을 돕는 QA 어시스턴트입니다.",
   "사용자가 바이브코딩(AI)으로 만든 사이트의 HTML을 보고, '오픈 전에 사람이 직접 확인해야 할 것'을 짚어줍니다.",
   "개발자가 아닌 1인 창업자도 읽을 수 있게, 전문용어 대신 쉬운 말로 씁니다.",
+];
+
+const DOC_INTRO = [
+  "당신은 웹사이트 오픈 전 점검을 돕는 QA 어시스턴트입니다.",
+  "사용자가 넣은 것은 '실제 사이트'가 아니라 설계 문서(화면설계서·기획서)입니다.",
+  "이 설계대로 사이트를 만들었을 때 '무엇을 확인해야 하는지' 검수 시나리오만 만듭니다.",
+  "실제 화면이 없으므로 Pass/Fail 판정은 하지 않고, 확인할 시나리오와 요약만 냅니다.",
+  "개발자가 아닌 1인 창업자도 읽을 수 있게, 전문용어 대신 쉬운 말로 씁니다.",
+];
+
+const COMMON = [
   "출력은 반드시 아래 JSON 하나만, 다른 설명 없이 출력하세요:",
   "{",
   '  "sensitiveScreens": ["로그인", "결제", ...],',
@@ -29,11 +40,19 @@ const SYSTEM_PROMPT = [
   "- summary는 좋은 점과 확인이 필요한 점을 균형 있게, 겁주지 말고 담백하게.",
 ].join("\n");
 
+function systemPrompt(mode: "site" | "document"): string {
+  const intro = mode === "document" ? DOC_INTRO : SITE_INTRO;
+  return intro.join("\n") + "\n" + COMMON;
+}
+
 function buildUserMessage(input: VerifyAnalyzerInput): string {
+  if (input.mode === "document") {
+    return [`설계 문서: ${input.label}`, `\n문서 내용(축약):\n${input.content}`].join("\n");
+  }
   return [
-    `검사 대상 사이트: ${input.finalUrl}`,
+    `검사 대상 사이트: ${input.label}`,
     input.links.length > 0 ? `\n페이지에서 찾은 내부 링크:\n${input.links.join("\n")}` : "",
-    `\n페이지 HTML(축약):\n${input.html}`,
+    `\n페이지 HTML(축약):\n${input.content}`,
   ].join("\n");
 }
 
@@ -53,7 +72,7 @@ export const claudeVerifier: VerifyAnalyzer = {
     const message = await client.messages.create({
       model: MODEL,
       max_tokens: MAX_TOKENS,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt(input.mode),
       messages: [{ role: "user", content: buildUserMessage(input) }],
     });
 

@@ -1,10 +1,15 @@
 import { runHttpChecks } from "@/adapters/verify/http-checks";
 import { claudeVerifier } from "@/adapters/verify/llm/claude-verifier";
+import { extractDocumentText } from "@/adapters/verify/extract-document";
 import type { VerificationReport } from "@/domain/verify/report";
 
 export type VerifySiteResult =
   | { ok: true; report: VerificationReport }
   | { ok: false; reason: "bad-url" | "unreachable" | "unavailable" | "failed" };
+
+export type VerifyDocResult =
+  | { ok: true; report: VerificationReport }
+  | { ok: false; reason: "unsupported-doc" | "empty-doc" | "unavailable" | "failed" };
 
 // 사이트 URL 하나를 검수한다.
 //  1) 요청/응답 기반 자동 검사(접속·이미지·링크·모바일 대응 등)
@@ -28,6 +33,7 @@ export async function verifySite(rawUrl: string): Promise<VerifySiteResult> {
     return {
       ok: true,
       report: {
+        mode: "site",
         url: rawUrl,
         finalUrl: http.finalUrl,
         fetchedAt: new Date().toISOString(),
@@ -47,9 +53,9 @@ export async function verifySite(rawUrl: string): Promise<VerifySiteResult> {
   let analysis;
   try {
     analysis = await claudeVerifier.analyze({
-      url: rawUrl,
-      finalUrl: http.finalUrl,
-      html: http.html,
+      mode: "site",
+      label: http.finalUrl,
+      content: http.html,
       links: http.links,
     });
   } catch (error) {
@@ -71,6 +77,7 @@ export async function verifySite(rawUrl: string): Promise<VerifySiteResult> {
   return {
     ok: true,
     report: {
+      mode: "site",
       url: rawUrl,
       finalUrl: http.finalUrl,
       fetchedAt: new Date().toISOString(),
@@ -78,6 +85,59 @@ export async function verifySite(rawUrl: string): Promise<VerifySiteResult> {
       passCount,
       failCount,
       warnCount,
+      sensitiveScreens: analysis.sensitiveScreens,
+      scenarios: analysis.scenarios,
+      summary: analysis.summary,
+    },
+  };
+}
+
+// 설계 문서(PDF·PPTX)를 검수한다. 실제 사이트가 아니므로 자동 검사 없이 시나리오만 낸다.
+export async function verifyDocument(
+  filename: string,
+  bytes: ArrayBuffer,
+): Promise<VerifyDocResult> {
+  let text: string;
+  try {
+    text = await extractDocumentText(filename, bytes);
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNSUPPORTED_DOC") {
+      return { ok: false, reason: "unsupported-doc" };
+    }
+    if (error instanceof Error && error.message === "EMPTY_DOC") {
+      return { ok: false, reason: "empty-doc" };
+    }
+    console.error("verifyDocument: 추출 실패", error);
+    return { ok: false, reason: "failed" };
+  }
+
+  let analysis;
+  try {
+    analysis = await claudeVerifier.analyze({
+      mode: "document",
+      label: filename,
+      content: text,
+      links: [],
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "ANTHROPIC_API_KEY_MISSING") {
+      return { ok: false, reason: "unavailable" };
+    }
+    console.error("verifyDocument: 분석 실패", error);
+    return { ok: false, reason: "failed" };
+  }
+
+  return {
+    ok: true,
+    report: {
+      mode: "document",
+      url: filename,
+      finalUrl: filename,
+      fetchedAt: new Date().toISOString(),
+      checks: [], // 문서는 자동 검사 불가
+      passCount: 0,
+      failCount: 0,
+      warnCount: 0,
       sensitiveScreens: analysis.sensitiveScreens,
       scenarios: analysis.scenarios,
       summary: analysis.summary,

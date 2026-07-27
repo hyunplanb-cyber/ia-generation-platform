@@ -1,11 +1,11 @@
 import type { Scenario } from "@/domain/verify/report";
 
-// LLM에게 넘길 입력: 검사한 페이지의 주소와 내용, 페이지에서 찾은 링크.
+// LLM에게 넘길 입력. 실제 사이트(HTML)와 설계 문서(텍스트) 두 경우를 함께 다룬다.
 export interface VerifyAnalyzerInput {
-  url: string;
-  finalUrl: string;
-  html: string; // 정리·축약된 본문
-  links: string[]; // 페이지에서 찾은 내부 링크(민감 화면 감지 힌트)
+  mode: "site" | "document";
+  label: string; // 사이트면 최종 주소, 문서면 파일명
+  content: string; // 사이트면 축약 HTML, 문서면 추출 텍스트
+  links: string[]; // 사이트에서 찾은 내부 링크(민감 화면 감지 힌트)
 }
 
 // LLM이 판단하는 "사람이 읽어야 할" 부분 — 자동 검사로는 알 수 없는 것들.
