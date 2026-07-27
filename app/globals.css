@@ -76,7 +76,8 @@
   --card-foreground: #1F2024;
   --popover: oklch(1 0 0);
   --popover-foreground: #1F2024;
-  --primary: #5B4FE5;
+  /* 레트로모던 브랜드 — 보라 대신 오렌지 포인트(홈페이지_리디자인_시안 기준) */
+  --primary: #E4762C;
   --primary-foreground: #FFFFFF;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: #1F2024;
@@ -87,15 +88,15 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: #E7E7EA;
   --input: #E7E7EA;
-  --ring: #5B4FE5;
-  /* DESIGN.md 브랜드 레이어 델타 */
-  --primary-soft: #EDE9FE;
-  --primary-on-soft: #4A3DD1;
-  --pastel-mint: #DFF5EC;
-  --pastel-mint-foreground: #0F6B4C;
-  --pastel-lavender: #EDE9FE;
-  --pastel-lavender-foreground: #4B3FA6;
-  --pastel-yellow: #FFF6D9;
+  --ring: #E4762C;
+  /* DESIGN.md 브랜드 레이어 델타 — 파스텔 워시도 레트로(틸/골드/샌드)로 교체 */
+  --primary-soft: #FBE7D3;
+  --primary-on-soft: #B4551E;
+  --pastel-mint: #D7EFE9;
+  --pastel-mint-foreground: #0E6F60;
+  --pastel-lavender: #E9E0C8;
+  --pastel-lavender-foreground: #7A6B45;
+  --pastel-yellow: #FBF0CE;
   --pastel-yellow-foreground: #8A6D00;
   --success: #0B6B3D;
   --success-soft: #E3F7EC;
@@ -153,6 +154,27 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* 레트로 종이 표면 — 마케팅(공개) 페이지 그룹에만 씌운다.
+   배경=크림, 글자=딥그린 잉크, 카드=아이보리. 브랜드 포인트색(오렌지/틸)은
+   전역 :root 값을 그대로 물려받는다. 앱/대시보드 그룹은 이 클래스를 쓰지 않아
+   기존 흰 배경을 유지한다(데이터 화면 가독성). */
+.retro {
+  --background: #ECE1C7;
+  --foreground: #20261C;
+  --card: #FBF6E9;
+  --card-foreground: #20261C;
+  --popover: #FBF6E9;
+  --popover-foreground: #20261C;
+  --secondary: #EFE6CE;
+  --secondary-foreground: #20261C;
+  --muted: #E6DBBF;
+  --muted-foreground: #6E6446;
+  --accent: #EFE6CE;
+  --accent-foreground: #20261C;
+  --border: #D9CCA8;
+  --input: #D9CCA8;
 }
 
 @layer base {
