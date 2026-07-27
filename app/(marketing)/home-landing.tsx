@@ -412,7 +412,6 @@ export function HomeLanding() {
           box-sizing: border-box;
         }
         .cc a {
-          color: inherit;
           text-decoration: none;
         }
         .wrap {
@@ -1053,6 +1052,7 @@ export function HomeLanding() {
         }
         .tpl {
           background: var(--card);
+          color: var(--ink);
           border: 1px solid var(--paper-line);
           border-radius: 8px;
           padding: 24px;
