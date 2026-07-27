@@ -5,6 +5,7 @@ import { Check, AlertTriangle, X, Lock, ListChecks, Search, Link2, FileText } fr
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { CheckStatus } from "@/domain/verify/report";
+import { UpgradeToDownload } from "@/app/(app)/dashboard/[projectId]/upgrade-to-download";
 import { runVerifyAction, type VerifyState } from "./actions";
 
 const initialState: VerifyState = { report: null, error: null, limitReached: false };
@@ -227,6 +228,16 @@ export function VerifyForm({
                 ))}
               </ul>
             </section>
+          )}
+
+          {/* 시나리오 다운로드 — 유료 기능(현재 준비 중) */}
+          {report.scenarios.length > 0 && (
+            <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
+              <UpgradeToDownload label="검수 시나리오 다운로드" />
+              <p className="text-center text-xs text-muted-foreground">
+                시나리오를 문서로 내려받아 팀과 공유하는 기능을 준비하고 있어요.
+              </p>
+            </div>
           )}
 
           <p className="text-center text-xs text-muted-foreground">
