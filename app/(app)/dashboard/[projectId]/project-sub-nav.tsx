@@ -58,10 +58,46 @@ export function ProjectShell({
   if (activeIndex === -1) activeIndex = 2;
   const isDeliver = activeIndex === 2;
 
+  const activeStep = STEPS[activeIndex];
+  const ActiveIcon = activeStep.icon;
+
   return (
     <div className="flex flex-col gap-5">
-      {/* 스텝퍼 — 상단 풀와이드 */}
-      <ol className="flex w-full items-stretch gap-3">
+      {/* 모바일 스텝퍼 — 현재 스텝 하나만 크게 보이고, 오른쪽 점으로 3단계 위치를 표시한다.
+          예전엔 데스크톱용 3단 스텝퍼가 좁은 화면을 넘쳐 페이지가 좌우로 밀렸다.
+          점(dot)은 각 단계로 이동하는 링크라 앞뒤 이동도 된다. */}
+      <div className="flex items-center gap-3 rounded-2xl bg-primary px-4 py-3.5 text-primary-foreground shadow-md sm:hidden">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-foreground/20">
+          <ActiveIcon className="size-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-primary-foreground/75">
+            {activeStep.title} · {STEPS.length}단계 중 {activeIndex + 1}
+          </p>
+          <p className="truncate text-lg font-extrabold tracking-tight">{activeStep.label}</p>
+        </div>
+        <ol className="flex shrink-0 items-center gap-2">
+          {STEPS.map((s, i) => (
+            <li key={s.entry} className="flex">
+              <Link
+                href={`${base}${s.entry}`}
+                aria-label={`${s.title} ${s.label}`}
+                aria-current={i === activeIndex ? "step" : undefined}
+                className={`block rounded-full transition-all ${
+                  i === activeIndex
+                    ? "size-2.5 bg-primary-foreground"
+                    : i < activeIndex
+                      ? "size-2 bg-primary-foreground/70"
+                      : "size-2 bg-primary-foreground/35"
+                }`}
+              />
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* 데스크톱 스텝퍼 — 상단 풀와이드 3단(모바일에서는 위 컴팩트 버전으로 대체) */}
+      <ol className="hidden w-full items-stretch gap-3 sm:flex">
         {STEPS.map((step, i) => {
           const state = i === activeIndex ? "active" : i < activeIndex ? "done" : "todo";
           const Icon = step.icon;
