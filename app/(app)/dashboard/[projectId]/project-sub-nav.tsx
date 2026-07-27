@@ -15,6 +15,7 @@ import {
   Workflow,
   CalendarRange,
   ShieldCheck,
+  ShieldQuestion,
   type LucideIcon,
 } from "lucide-react";
 
@@ -29,7 +30,7 @@ const STEPS: { entry: string; title: string; label: string; icon: LucideIcon; sl
     title: "STEP 3",
     label: "생성 산출물",
     icon: Sparkles,
-    slugs: ["tree", "screens", "specs", "flow", "wbs", "admin"],
+    slugs: ["tree", "screens", "specs", "flow", "wbs", "admin", "verify"],
   },
 ];
 
@@ -40,6 +41,7 @@ const DELIVERABLE_ITEMS: NavItem[] = [
   { href: "flow", label: "FLOW·흐름도", icon: Workflow },
   { href: "wbs", label: "WBS", icon: CalendarRange },
   { href: "admin", label: "관리자 페이지", icon: ShieldCheck },
+  { href: "verify", label: "사이트 검수", icon: ShieldQuestion },
 ];
 
 // 상단 스텝퍼 + (산출물 단계에서만) 좌측 세로 탭 + 콘텐츠 레이아웃을 함께 그린다.

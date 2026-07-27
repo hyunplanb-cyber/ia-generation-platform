@@ -20,5 +20,6 @@ export interface VerifyRunRepository {
   create(input: CreateVerifyRunInput): Promise<VerifyRun>;
   countByUser(userId: string): Promise<number>;
   listByUser(userId: string): Promise<VerifyRun[]>;
+  listByProject(projectId: string): Promise<VerifyRun[]>;
   findById(id: string, userId: string): Promise<VerifyRun | null>;
 }

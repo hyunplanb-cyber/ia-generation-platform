@@ -55,6 +55,15 @@ export const drizzleVerifyRunRepository: VerifyRunRepository = {
     return rows.map(toDomain);
   },
 
+  async listByProject(projectId: string): Promise<VerifyRun[]> {
+    const rows = await db
+      .select()
+      .from(verifyRun)
+      .where(eq(verifyRun.projectId, projectId))
+      .orderBy(desc(verifyRun.createdAt));
+    return rows.map(toDomain);
+  },
+
   async findById(id: string, userId: string): Promise<VerifyRun | null> {
     const [row] = await db
       .select()
