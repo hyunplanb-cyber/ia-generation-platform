@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 
 // 카페인컬러 메인 — 승인된 레트로모던 시안(홈페이지_리디자인_시안/template.html)을
 // 실제 페이지로 이관한 것. 스타일은 styled-jsx로 이 컴포넌트에만 스코프된다
@@ -24,12 +23,12 @@ export function HomeLanding() {
               URL 한 줄이면 오픈 전 검수 결과가 나옵니다.
             </p>
             <div className="hero-ctas">
-              <Link className="btn btn-o" href="/signup">
+              <a className="btn btn-o" href="/signup">
                 설계도 프롬프트 만들기 <span aria-hidden="true">→</span>
-              </Link>
-              <Link className="btn btn-line" href="/verify">
+              </a>
+              <a className="btn btn-line" href="/verify">
                 내 사이트 검수하기
-              </Link>
+              </a>
             </div>
 
             <div className="hero-art">
@@ -192,9 +191,9 @@ export function HomeLanding() {
           </div>
 
           <div className="hero-ctas" style={{ marginTop: 36 }}>
-            <Link className="btn btn-o" href="/signup">
+            <a className="btn btn-o" href="/signup">
               무료로 만들어보기 <span aria-hidden="true">→</span>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -319,9 +318,9 @@ export function HomeLanding() {
           </div>
 
           <div className="hero-ctas" style={{ marginTop: 36 }}>
-            <Link className="btn btn-teal" href="/verify">
+            <a className="btn btn-teal" href="/verify">
               내 사이트 검수하기 <span aria-hidden="true">→</span>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -343,24 +342,24 @@ export function HomeLanding() {
             직접 만들기 전에, 이미 완성된 업종별 산출물 한 벌부터. 화면·예외까지 다 들어 있어요.
           </p>
           <div className="tpl-grid">
-            <Link className="tpl" href="/packages">
+            <a className="tpl" href="/packages">
               <div className="tm">LMS</div>
               <div className="tt">온라인 강의 플랫폼</div>
               <div className="td">수강·결제·수료까지 화면 37개 + 프롬프트.</div>
               <div className="tp">49,000원부터</div>
-            </Link>
-            <Link className="tpl" href="/packages">
+            </a>
+            <a className="tpl" href="/packages">
               <div className="tm">BEAUTY</div>
               <div className="tt">뷰티샵 예약 플랫폼</div>
               <div className="td">예약·디자이너·정산까지 화면 43개 + 프롬프트.</div>
               <div className="tp">49,000원부터</div>
-            </Link>
-            <Link className="tpl" href="/packages">
+            </a>
+            <a className="tpl" href="/packages">
               <div className="tm">TRAVEL</div>
               <div className="tt">해외 투어·티켓 예약</div>
               <div className="td">예약·바우처·환불까지 화면 43개 + 프롬프트.</div>
               <div className="tp">49,000원부터</div>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -378,12 +377,12 @@ export function HomeLanding() {
             진짜 오픈해도 되는지 꼭 확인해보세요.
           </p>
           <div className="fc">
-            <Link className="btn btn-o" href="/signup">
+            <a className="btn btn-o" href="/signup">
               설계도 프롬프트 만들기 <span aria-hidden="true">→</span>
-            </Link>
-            <Link className="btn btn-teal" href="/verify">
+            </a>
+            <a className="btn btn-teal" href="/verify">
               내 사이트 검수하기 <span aria-hidden="true">→</span>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
