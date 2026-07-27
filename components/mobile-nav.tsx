@@ -10,6 +10,7 @@ import {
   UserRound,
   LogOut,
   ShieldQuestion,
+  PencilRuler,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -49,6 +50,10 @@ export function MobileNav({ email }: { email: string | null }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuItem onClick={() => go("/dashboard/new")}>
+          <PencilRuler className="size-4" />
+          설계도 프롬프트
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => go("/verify")}>
           <ShieldQuestion className="size-4" />
           사이트 검수하기

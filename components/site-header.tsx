@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutGrid, LayoutList, Package, ShieldQuestion } from "lucide-react";
+import { LayoutGrid, LayoutList, Package, ShieldQuestion, PencilRuler } from "lucide-react";
 import { ProfileMenu } from "@/components/profile-menu";
 import { MobileNav } from "@/components/mobile-nav";
 import { getSession } from "@/lib/session";
@@ -10,8 +10,9 @@ import { getSession } from "@/lib/session";
 export async function SiteHeader() {
   const session = await getSession();
 
+  // 배경은 시안의 크림(종이) 색. 페이지 본문은 흰색이어도 상단 GNB만 크림 띠로 둔다.
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-surface/85 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-[#D9CCA8] bg-[#ECE1C7]/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-6 py-3">
         <div className="flex items-center gap-2 sm:gap-4">
           {/* 좁은 화면에서는 글자를 줄여 메뉴 버튼 자리를 확보한다 */}
@@ -24,6 +25,11 @@ export async function SiteHeader() {
             카페인컬러
           </Link>
           <span className="hidden h-5 w-px bg-border sm:block" />
+          {/* 설계도 프롬프트 → 새 프로젝트를 만들고 STEP 1로. 프리페치로 프로젝트가
+              새로 생기지 않도록 prefetch를 끈다. */}
+          <NavLink href="/dashboard/new" icon={PencilRuler} prefetch={false}>
+            설계도 프롬프트
+          </NavLink>
           <NavLink href="/verify" icon={ShieldQuestion}>
             사이트 검수하기
           </NavLink>
@@ -75,14 +81,17 @@ function NavLink({
   href,
   icon: Icon,
   children,
+  prefetch,
 }: {
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   children: React.ReactNode;
+  prefetch?: boolean;
 }) {
   return (
     <Link
       href={href}
+      prefetch={prefetch}
       className="hidden items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground sm:flex"
     >
       <Icon className="size-4" />

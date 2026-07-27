@@ -1,11 +1,21 @@
 import Link from "next/link";
-import { Plus, Sparkles, CalendarRange, Monitor } from "lucide-react";
+import {
+  Plus,
+  Sparkles,
+  CalendarRange,
+  Monitor,
+  PencilRuler,
+  ShieldQuestion,
+  History,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { countScreensByProject } from "@/application/count-screens-by-project";
 import { listMyProjects } from "@/application/list-my-projects";
+import { listMyVerifyRuns } from "@/application/list-my-verify-runs";
 import { requireSession } from "@/application/require-session";
 import { canDownload } from "@/application/get-current-plan";
 import { getProjectQuota } from "@/application/can-create-project";
+import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { DeleteProjectButton } from "./delete-project-button";
 import { ZipAllButton } from "./zip-all-button";
 import { UpgradeToDownload } from "./[projectId]/upgrade-to-download";
@@ -13,6 +23,10 @@ import { createDraftProjectAction } from "./actions";
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(date);
+}
+
+function formatDateTime(date: Date) {
+  return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
 const BADGE_TONE: Record<string, string> = {
@@ -33,30 +47,102 @@ function stepOf(concept: string, screenCount: number) {
   return { label: "STEP 1 · 컨셉 입력", href: "edit", tone: "yellow", generated: false };
 }
 
+// 상단 탭 — 설계도 프롬프트 / 사이트 검수
+function DashboardTabs({ active }: { active: "planning" | "verify" }) {
+  const tabs = [
+    { key: "planning", label: "설계도 프롬프트", href: "/dashboard", icon: PencilRuler },
+    { key: "verify", label: "사이트 검수", href: "/dashboard?tab=verify", icon: ShieldQuestion },
+  ] as const;
+  return (
+    <div className="border-b border-border">
+      <div className="flex gap-1">
+        {tabs.map((t) => {
+          const Icon = t.icon;
+          const on = active === t.key;
+          return (
+            <Link
+              key={t.key}
+              href={t.href}
+              className={`-mb-px flex items-center gap-1.5 border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${
+                on
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon className="size-4" />
+              {t.label}
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
-  // 한도에 걸려 되돌아온 경우 ?limit=reached 가 붙는다.
-  searchParams: Promise<{ limit?: string }>;
+  // 한도에 걸려 되돌아온 경우 ?limit=reached, 탭 전환은 ?tab=verify
+  searchParams: Promise<{ limit?: string; tab?: string }>;
 }) {
-  const [{ limit }, session, projects, downloadable] = await Promise.all([
+  const [{ limit, tab }, session, projects, downloadable] = await Promise.all([
     searchParams,
     requireSession(),
     listMyProjects(),
     canDownload(),
   ]);
-  // 이미 불러온 목록 개수를 넘겨 같은 조회를 두 번 하지 않는다.
+  const activeTab = tab === "verify" ? "verify" : "planning";
   const quota = await getProjectQuota(projects.length);
   const hitLimit = limit === "reached" || !quota.allowed;
 
+  return (
+    <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-8">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold text-foreground">{session.user.name}님의 프로젝트</h1>
+        <p className="text-muted-foreground">
+          설계도 프롬프트와 사이트 검수를 탭으로 나눠서 관리해요.
+        </p>
+      </div>
+
+      <DashboardTabs active={activeTab} />
+
+      {activeTab === "planning" ? (
+        <PlanningTab
+          projects={projects}
+          screenCounts={await countScreensByProject(projects.map((p) => p.id))}
+          hitLimit={hitLimit}
+          quotaLimit={quota.limit}
+          downloadable={downloadable}
+        />
+      ) : (
+        <VerifyTab runs={await listMyVerifyRuns()} />
+      )}
+    </div>
+  );
+}
+
+// ── 설계도 프롬프트 탭 ──────────────────────────────
+function PlanningTab({
+  projects,
+  screenCounts,
+  hitLimit,
+  quotaLimit,
+  downloadable,
+}: {
+  projects: Awaited<ReturnType<typeof listMyProjects>>;
+  screenCounts: Record<string, number>;
+  hitLimit: boolean;
+  quotaLimit: number | null;
+  downloadable: boolean;
+}) {
   if (projects.length === 0) {
     return (
-      <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-6 py-24 text-center">
+      <div className="flex flex-col items-center gap-6 py-20 text-center">
         <span className="flex size-16 items-center justify-center rounded-2xl bg-primary-soft text-primary-on-soft">
           <Sparkles className="size-8" />
         </span>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">첫 프로젝트를 시작해 볼까요?</h1>
+          <h2 className="text-2xl font-bold text-foreground">첫 프로젝트를 시작해 볼까요?</h2>
           <p className="mt-2 text-muted-foreground">
             컨셉만 입력하면 AI가 메뉴 구조·화면 목록·기능정의서까지 자동으로 만들어드려요.
           </p>
@@ -70,23 +156,18 @@ export default async function DashboardPage({
     );
   }
 
-  const screenCounts = await countScreensByProject(projects.map((p) => p.id));
-  // 최신순(최근 수정) 정렬
   const sorted = [...projects].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
   return (
-    <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-8">
+    <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">{session.user.name}님의 프로젝트</h1>
-          <p className="mt-1 text-muted-foreground">진행 중인 프로젝트 {projects.length}개가 있어요.</p>
-        </div>
+        <p className="text-sm text-muted-foreground">진행 중인 프로젝트 {projects.length}개</p>
         {hitLimit ? (
           <span
             className="rounded-lg border border-border bg-muted/60 px-4 py-2 text-sm font-semibold text-muted-foreground"
-            title={`무료 플랜은 프로젝트 ${quota.limit}개까지 만들 수 있어요.`}
+            title={`무료 플랜은 프로젝트 ${quotaLimit}개까지 만들 수 있어요.`}
           >
-            프로젝트 {quota.limit}개까지 (무료)
+            프로젝트 {quotaLimit}개까지 (무료)
           </span>
         ) : (
           <form action={createDraftProjectAction}>
@@ -99,7 +180,7 @@ export default async function DashboardPage({
 
       {hitLimit && (
         <p className="rounded-xl border border-border bg-muted/40 px-5 py-4 text-sm text-muted-foreground">
-          무료 플랜에서는 프로젝트를 <b className="font-semibold text-foreground">{quota.limit}개</b>까지
+          무료 플랜에서는 프로젝트를 <b className="font-semibold text-foreground">{quotaLimit}개</b>까지
           만들 수 있어요. 새로 만들려면 기존 프로젝트를 지우거나, 유료 플랜이 열릴 때까지 기다려 주세요.
         </p>
       )}
@@ -113,7 +194,6 @@ export default async function DashboardPage({
               key={p.id}
               className="group relative rounded-2xl border border-border bg-surface p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
-              {/* 카드 전체 클릭 → 마지막 입력 단계로 이동 */}
               <Link
                 href={`/dashboard/${p.id}/${step.href}`}
                 aria-label={`${p.concept || "새 프로젝트"} 열기`}
@@ -146,7 +226,6 @@ export default async function DashboardPage({
                     </span>
                   </div>
 
-                  {/* 생성 완료 프로젝트: 포함 산출물 + 전체 다운로드(zip) */}
                   {step.generated && (
                     <div className="relative z-20 mt-1 flex flex-wrap items-center gap-1.5">
                       {DELIVERABLE_FILES.map((file) => (
@@ -166,7 +245,6 @@ export default async function DashboardPage({
                   )}
                 </div>
 
-                {/* 삭제(아이콘) — 카드 링크 위로 올려 독립 클릭 */}
                 <div className="relative z-20 shrink-0">
                   <DeleteProjectButton projectId={p.id} />
                 </div>
@@ -175,6 +253,71 @@ export default async function DashboardPage({
           );
         })}
       </ul>
+    </div>
+  );
+}
+
+// ── 사이트 검수 탭 ──────────────────────────────
+function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>> }) {
+  if (runs.length === 0) {
+    return (
+      <div className="flex flex-col items-center gap-6 py-20 text-center">
+        <span className="flex size-16 items-center justify-center rounded-2xl bg-pastel-mint text-pastel-mint-foreground">
+          <ShieldQuestion className="size-8" />
+        </span>
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">아직 검수한 사이트가 없어요</h2>
+          <p className="mt-2 text-muted-foreground">
+            만든 사이트의 주소(URL)나 설계 문서를 넣으면, 오픈 전에 무엇을 확인해야 하는지 짚어드려요.
+          </p>
+        </div>
+        <Link href="/verify">
+          <Button size="lg">
+            <ShieldQuestion className="size-4" />내 사이트 검수하기
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="point-green flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <History className="size-4" /> 지난 검수 {runs.length}회
+        </p>
+        <Link href="/verify">
+          <Button size="sm">
+            <ShieldQuestion className="size-4" />새 검수
+          </Button>
+        </Link>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {runs.map((run) => (
+          <details key={run.id} className="rounded-xl border border-border bg-surface">
+            <summary className="flex cursor-pointer flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 text-sm">
+              <span className="font-medium text-foreground">{formatDateTime(run.createdAt)}</span>
+              <span className="min-w-0 truncate font-mono text-xs text-muted-foreground">
+                {run.target}
+              </span>
+              {run.mode === "site" && (
+                <span className="ml-auto flex shrink-0 gap-1.5">
+                  <span className="rounded-full bg-success-soft px-2 py-0.5 text-xs font-semibold text-success">
+                    통과 {run.report.passCount}
+                  </span>
+                  <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-semibold text-danger">
+                    실패 {run.report.failCount}
+                  </span>
+                </span>
+              )}
+            </summary>
+            <div className="border-t border-border/60 p-4">
+              <VerifyReportView report={run.report} />
+            </div>
+          </details>
+        ))}
+      </div>
     </div>
   );
 }
