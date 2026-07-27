@@ -1,5 +1,5 @@
 // 산출물 소개 페이지용 — 각 산출물의 "샘플 화면" 미니 목업(정적, 파스텔).
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check, X, Lock } from "lucide-react";
 
 function Frame({ children }: { children: React.ReactNode }) {
   return (
@@ -144,6 +144,58 @@ export function WbsMockup() {
             </div>
           </div>
         ))}
+      </div>
+    </Frame>
+  );
+}
+
+export function VerifyScenarioMockup() {
+  const checks = [
+    { label: "접속·HTTPS", ok: true },
+    { label: "모바일 대응", ok: true },
+    { label: "이미지 깨짐", ok: false },
+  ];
+  const scenarios = [
+    { name: "로그인", sensitive: true, step: "아이디·비밀번호로 로그인이 되는지" },
+    { name: "결제", sensitive: true, step: "카드 결제가 끝까지 완료되는지" },
+  ];
+  return (
+    <Frame>
+      <div className="flex flex-col gap-3 text-[11px]">
+        {/* 자동 검사 */}
+        <div className="flex flex-wrap gap-1.5">
+          <span className="rounded-full bg-success-soft px-2 py-0.5 font-semibold text-success">통과 6</span>
+          <span className="rounded-full bg-danger-soft px-2 py-0.5 font-semibold text-danger">실패 1</span>
+        </div>
+        <div className="flex flex-col gap-1">
+          {checks.map((c) => (
+            <div key={c.label} className="flex items-center gap-1.5">
+              {c.ok ? (
+                <Check className="size-3 text-success" />
+              ) : (
+                <X className="size-3 text-danger" />
+              )}
+              <span className={c.ok ? "text-muted-foreground" : "font-medium text-foreground"}>
+                {c.label}
+              </span>
+            </div>
+          ))}
+        </div>
+        {/* 직접 확인 시나리오 */}
+        <div className="border-t border-border/60 pt-2">
+          <p className="mb-1.5 font-semibold text-muted-foreground">직접 확인할 것</p>
+          <div className="flex flex-col gap-1.5">
+            {scenarios.map((s) => (
+              <div key={s.name} className="flex items-start gap-1.5">
+                {s.sensitive && <Lock className="mt-0.5 size-3 shrink-0 text-warning" />}
+                <span>
+                  <span className="font-medium text-foreground">{s.name}</span>
+                  <span className="text-muted-foreground"> · {s.step}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </Frame>
   );

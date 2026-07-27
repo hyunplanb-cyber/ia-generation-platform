@@ -7,6 +7,7 @@ import {
   CalendarRange,
   Bot,
   ArrowRight,
+  ShieldQuestion,
   type LucideIcon,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import {
   FlowMockup,
   WbsMockup,
   SpecPackMockup,
+  VerifyScenarioMockup,
 } from "./deliverable-mockups";
 
 export const metadata = {
@@ -138,6 +140,44 @@ export default function DeliverablesPage() {
           </section>
         );
       })}
+
+      {/* 검수 — 생성 산출물과 결이 다른 별도 pillar (만든 뒤 진짜 되는지 확인) */}
+      <section className="border-b border-border bg-linear-to-br from-pastel-mint/40 via-surface to-background">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 px-6 py-16 lg:grid-cols-2 lg:gap-16">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-pastel-mint px-3 py-1 text-xs font-semibold text-pastel-mint-foreground">
+              <ShieldQuestion className="size-3.5" /> 오픈 전 검수
+            </span>
+            <h2 className="mt-4 text-2xl font-bold text-foreground">사이트 검수 시나리오</h2>
+            <p className="mt-3 leading-relaxed text-muted-foreground">
+              바이브코딩으로 만든 사이트는 보이는 화면만 그럴듯할 때가 많아요. URL만 넣으면 공개 화면은
+              접속·모바일·이미지·링크까지 자동으로 검사하고, 로그인·결제처럼 자동으로 볼 수 없는 화면은
+              무엇을 직접 눌러봐야 하는지 <b className="font-semibold text-foreground">확인 시나리오</b>로
+              짚어드려요.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {["자동 검사 리포트", "직접 확인 시나리오"].map((f) => (
+                <span
+                  key={f}
+                  className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground"
+                >
+                  {f}
+                </span>
+              ))}
+            </div>
+            <Link
+              href="/verify"
+              className={`${buttonVariants({ variant: "outline" })} mt-6`}
+            >
+              내 사이트 검수해보기
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+          <div>
+            <VerifyScenarioMockup />
+          </div>
+        </div>
+      </section>
 
       {/* CTA */}
       <section className="bg-primary">
