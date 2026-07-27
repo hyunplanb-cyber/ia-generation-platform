@@ -5,6 +5,7 @@ import { Menu, LayoutList, Package, LayoutGrid, LogIn, UserRound, LogOut } from 
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -51,7 +52,9 @@ export function MobileNav({ email }: { email: string | null }) {
         <DropdownMenuSeparator />
 
         {email ? (
-          <>
+          // GroupLabel(이메일)은 반드시 Group 안에 있어야 한다(Base UI 규칙).
+          // Group 없이 두면 메뉴를 여는 순간 크래시한다(Base UI error #31).
+          <DropdownMenuGroup>
             <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">
               {email}
             </DropdownMenuLabel>
@@ -67,7 +70,7 @@ export function MobileNav({ email }: { email: string | null }) {
               <LogOut className="size-4" />
               로그아웃
             </DropdownMenuItem>
-          </>
+          </DropdownMenuGroup>
         ) : (
           <DropdownMenuItem onClick={() => go("/login")}>
             <LogIn className="size-4" />
