@@ -21,7 +21,7 @@ function line(slide: pptxgen.Slide, x1: number, y1: number, x2: number, y2: numb
     h: Math.max(0.001, Math.abs(y2 - y1)),
     flipH: x2 < x1,
     flipV: y2 < y1,
-    line: { color: "C9C5E8", width: 1 },
+    line: { color: "E2D3AE", width: 1 },
   });
 }
 
@@ -60,14 +60,14 @@ export function createMenuPptx(rootLabel: string, menus: PptMenu[]): pptxgen {
     slide.addText(
       [
         { text: m.name, options: { bold: true, fontSize: 12 } },
-        { text: `  ${m.code}`, options: { fontSize: 9, color: "E7E4FB" } },
+        { text: `  ${m.code}`, options: { fontSize: 9, color: "FBE7D3" } },
       ],
       {
         x,
         y: MENU_Y,
         w: colW,
         h: BOX_H,
-        fill: { color: "5B4FE5" },
+        fill: { color: "E4762C" },
         color: "FFFFFF",
         align: "center",
         valign: "middle",
@@ -89,7 +89,7 @@ export function createMenuPptx(rootLabel: string, menus: PptMenu[]): pptxgen {
           w: colW,
           h: BOX_H,
           fill: { color: "FFFFFF" },
-          line: { color: "C9C5E8", width: 1 },
+          line: { color: "E2D3AE", width: 1 },
           color: "1F2024",
           align: "center",
           valign: "middle",

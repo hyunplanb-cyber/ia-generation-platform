@@ -127,9 +127,9 @@ export function buildFlowSvg(nodes: ExportNode[], edges: ExportEdge[]): string {
       const midX = (x1 + x2) / 2;
       const midY = (y1 + y2) / 2;
       const label = e.label
-        ? `<rect x="${midX - e.label.length * 4 - 6}" y="${midY - 10}" width="${e.label.length * 8 + 12}" height="20" rx="10" fill="#EDE9FE"/><text x="${midX}" y="${midY + 4}" font-size="11" fill="#4A3DD1" text-anchor="middle" font-family="sans-serif">${esc(e.label)}</text>`
+        ? `<rect x="${midX - e.label.length * 4 - 6}" y="${midY - 10}" width="${e.label.length * 8 + 12}" height="20" rx="10" fill="#FBE7D3"/><text x="${midX}" y="${midY + 4}" font-size="11" fill="#B4551E" text-anchor="middle" font-family="sans-serif">${esc(e.label)}</text>`
         : "";
-      return `<path d="M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}" stroke="#C9C5E8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>${label}`;
+      return `<path d="M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}" stroke="#E2D3AE" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>${label}`;
     })
     .join("\n");
 
@@ -137,10 +137,10 @@ export function buildFlowSvg(nodes: ExportNode[], edges: ExportEdge[]): string {
     .map((n) => {
       const p = pos.get(n.id)!;
       const isEntry = entry.has(n.id);
-      const fill = isEntry ? "#5B4FE5" : "#FFFFFF";
-      const stroke = isEntry ? "#5B4FE5" : "#C9C5E8";
+      const fill = isEntry ? "#E4762C" : "#FFFFFF";
+      const stroke = isEntry ? "#E4762C" : "#E2D3AE";
       const nameColor = isEntry ? "#FFFFFF" : "#1F2024";
-      const idColor = isEntry ? "#E7E4FB" : "#6B6F76";
+      const idColor = isEntry ? "#FBE7D3" : "#6B6F76";
       return `<g>
   <rect x="${p.x}" y="${p.y}" width="${NODE_W}" height="${NODE_H}" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
   <text x="${p.x + NODE_W / 2}" y="${p.y + 26}" font-size="13" font-weight="600" fill="${nameColor}" text-anchor="middle" font-family="sans-serif">${esc(n.pageName)}</text>
@@ -197,8 +197,8 @@ export function buildDrawioXml(nodes: ExportNode[], edges: ExportEdge[]): string
     const p = pos.get(n.id)!;
     const isEntry = entry.has(n.id);
     const style = isEntry
-      ? "rounded=1;whiteSpace=wrap;html=1;fillColor=#5B4FE5;strokeColor=#5B4FE5;fontColor=#FFFFFF;"
-      : "rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9C5E8;fontColor=#1F2024;";
+      ? "rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;"
+      : "rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;";
     const value = esc(`${n.pageName}\n${n.pageId}`);
     cells.push(
       `<mxCell id="${idOf.get(n.id)}" value="${value}" style="${style}" vertex="1" parent="1"><mxGeometry x="${Math.round(p.x)}" y="${Math.round(p.y)}" width="${NODE_W}" height="${NODE_H}" as="geometry"/></mxCell>`,

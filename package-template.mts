@@ -9,6 +9,8 @@ const SETS = {
   travel: { src: "판매용_템플릿/여행_투어티켓예약플랫폼", label: "여행", title: "해외 투어·티켓 예약 플랫폼" },
   admin: { src: "판매용_템플릿/비즈니스관리_관리자시스템", label: "관리자시스템", title: "통합 비즈니스 관리자 시스템" },
   groupbuy: { src: "판매용_템플릿/공동구매_공구플랫폼", label: "공동구매", title: "공동구매(공구) 플랫폼" },
+  "groupbuy-deep": { src: "판매용_템플릿/공동구매_공구플랫폼_상세IA", label: "공동구매상세", title: "공동구매(공구) 플랫폼 — 상세 IA" },
+  "admin-deep": { src: "판매용_템플릿/비즈니스관리_관리자시스템_상세IA", label: "관리자상세", title: "통합 비즈니스 관리자 시스템 — 상세 IA" },
 };
 const setKey = (process.argv[2] ?? "lms") as keyof typeof SETS;
 const chosen = SETS[setKey];

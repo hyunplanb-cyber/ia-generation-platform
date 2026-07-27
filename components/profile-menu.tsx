@@ -11,7 +11,7 @@ import { authClient } from "@/lib/auth-client";
 
 // 이메일별로 고정되지만 서로 달라 보이는(랜덤한) 아바타 배경색.
 const AVATAR_COLORS = [
-  "#5B4FE5",
+  "#0E6F60",
   "#FF8A65",
   "#26A69A",
   "#EC407A",
