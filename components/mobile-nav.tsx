@@ -1,7 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Menu, LayoutList, Package, LayoutGrid, LogIn, UserRound, LogOut } from "lucide-react";
+import {
+  Menu,
+  LayoutList,
+  Package,
+  LayoutGrid,
+  LogIn,
+  UserRound,
+  LogOut,
+  ShieldQuestion,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,6 +49,10 @@ export function MobileNav({ email }: { email: string | null }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuItem onClick={() => go("/verify")}>
+          <ShieldQuestion className="size-4" />
+          사이트 검수하기
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => go("/deliverables")}>
           <LayoutList className="size-4" />
           산출물 소개

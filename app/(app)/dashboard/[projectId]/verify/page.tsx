@@ -29,7 +29,7 @@ export default async function ProjectVerifyPage({
   const plannedScreens = screens.filter((s) => s.status === "active");
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="point-green flex flex-col gap-6">
       <DeliverableHeader
         icon={ShieldCheck}
         tone="mint"

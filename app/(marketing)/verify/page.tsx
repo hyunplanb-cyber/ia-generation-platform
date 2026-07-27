@@ -22,7 +22,7 @@ export default async function VerifyPage() {
   const quota = await getVerifyQuota();
 
   return (
-    <main className="mx-auto max-w-[820px] px-6 py-14">
+    <main className="point-green mx-auto max-w-[820px] px-6 py-14">
       <header className="border-b border-border pb-8">
         <p className="text-sm font-semibold text-primary">사이트 검수</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">

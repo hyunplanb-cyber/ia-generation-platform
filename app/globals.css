@@ -156,25 +156,15 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* 레트로 종이 표면 — 마케팅(공개) 페이지 그룹에만 씌운다.
-   배경=크림, 글자=딥그린 잉크, 카드=아이보리. 브랜드 포인트색(오렌지/틸)은
-   전역 :root 값을 그대로 물려받는다. 앱/대시보드 그룹은 이 클래스를 쓰지 않아
-   기존 흰 배경을 유지한다(데이터 화면 가독성). */
-.retro {
-  --background: #ECE1C7;
-  --foreground: #20261C;
-  --card: #FBF6E9;
-  --card-foreground: #20261C;
-  --popover: #FBF6E9;
-  --popover-foreground: #20261C;
-  --secondary: #EFE6CE;
-  --secondary-foreground: #20261C;
-  --muted: #E6DBBF;
-  --muted-foreground: #6E6446;
-  --accent: #EFE6CE;
-  --accent-foreground: #20261C;
-  --border: #D9CCA8;
-  --input: #D9CCA8;
+/* 검수(verify) 화면의 포인트 컬러는 녹색으로 바꾼다.
+   기본(:root)은 주황이고, 검수 관련 페이지 컨테이너에만 이 클래스를 씌워
+   버튼·강조·활성 상태가 녹색이 되게 한다. 그 외 화면은 주황 그대로. */
+.point-green {
+  --primary: #0E6F60;
+  --primary-foreground: #FFFFFF;
+  --ring: #0E6F60;
+  --primary-soft: #D7EFE9;
+  --primary-on-soft: #0E6F60;
 }
 
 @layer base {

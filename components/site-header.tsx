@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, LayoutGrid, LayoutList, Package } from "lucide-react";
+import { LayoutGrid, LayoutList, Package, ShieldQuestion } from "lucide-react";
 import { ProfileMenu } from "@/components/profile-menu";
 import { MobileNav } from "@/components/mobile-nav";
 import { getSession } from "@/lib/session";
@@ -17,14 +17,16 @@ export async function SiteHeader() {
           {/* 좁은 화면에서는 글자를 줄여 메뉴 버튼 자리를 확보한다 */}
           <Link
             href="/"
-            className="flex items-center gap-1.5 whitespace-nowrap text-base font-bold text-foreground sm:text-lg"
+            className="flex items-center gap-2 whitespace-nowrap text-base font-bold text-foreground sm:text-lg"
           >
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
-              <Sparkles className="size-3.5" />
-            </span>
-            IA 자동생성 플랫폼
+            {/* 시안의 브랜드 마크 — 주황 원점 + 카페인컬러 */}
+            <span className="size-5 shrink-0 rounded-full bg-primary" />
+            카페인컬러
           </Link>
           <span className="hidden h-5 w-px bg-border sm:block" />
+          <NavLink href="/verify" icon={ShieldQuestion}>
+            사이트 검수하기
+          </NavLink>
           <NavLink href="/deliverables" icon={LayoutList}>
             산출물 소개
           </NavLink>

@@ -10,7 +10,7 @@ export default function MarketingLayout({
   const year = new Date().getFullYear();
 
   return (
-    <div className="retro flex min-h-screen flex-col bg-background text-foreground">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader />
 
       <main className="flex-1">{children}</main>
@@ -18,7 +18,7 @@ export default function MarketingLayout({
       <footer className="border-t border-border bg-surface">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-10 text-sm text-muted-foreground">
           <div className="flex flex-col gap-2">
-            <p className="text-base font-bold text-foreground">IA 자동생성 플랫폼</p>
+            <p className="text-base font-bold text-foreground">카페인컬러</p>
             <p className="max-w-md">
               사이트 컨셉과 메뉴만 입력하면 IA·기능정의·AI프롬프트·일정까지 자동으로
               만들어주는 웹기획 자동화 도구예요.
