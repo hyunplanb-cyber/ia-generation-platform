@@ -304,3 +304,29 @@ export const planInterestRelations = relations(planInterest, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+// 사이트 검수 실행 기록. 무료 횟수 집계 + 결과 저장(내 프로젝트 연동)에 쓴다.
+// (better-auth의 verification 테이블과 이름이 겹치지 않게 verify_run으로 둔다.)
+export const verifyRun = pgTable(
+  "verify_run",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    // 프로젝트에 연결된 검수면 그 프로젝트(설계도 대비 검수). 아니면 null(독립 검수).
+    projectId: uuid("project_id").references(() => project.id, { onDelete: "set null" }),
+    mode: text("mode").notNull(), // "site" | "document"
+    target: text("target").notNull(), // URL 또는 파일명
+    report: text("report").notNull(), // VerificationReport JSON 문자열
+    passCount: integer("pass_count").default(0).notNull(),
+    failCount: integer("fail_count").default(0).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("verify_run_user_idx").on(table.userId)],
+);
+
+export const verifyRunRelations = relations(verifyRun, ({ one }) => ({
+  user: one(user, { fields: [verifyRun.userId], references: [user.id] }),
+  project: one(project, { fields: [verifyRun.projectId], references: [project.id] }),
+}));

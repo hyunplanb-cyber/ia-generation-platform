@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import type { CheckStatus } from "@/domain/verify/report";
 import { runVerifyAction, type VerifyState } from "./actions";
 
-const initialState: VerifyState = { report: null, error: null };
+const initialState: VerifyState = { report: null, error: null, limitReached: false };
 
 function StatusIcon({ status }: { status: CheckStatus }) {
   if (status === "pass") return <Check className="size-4 shrink-0 text-success" />;
@@ -15,11 +15,36 @@ function StatusIcon({ status }: { status: CheckStatus }) {
   return <X className="size-4 shrink-0 text-danger" />;
 }
 
-export function VerifyForm() {
+function LimitNotice({ freeLimit }: { freeLimit: number | null }) {
+  return (
+    <div className="rounded-xl border border-primary/30 bg-primary-soft/30 p-6 text-center">
+      <p className="font-semibold text-foreground">
+        무료 검수 {freeLimit ?? 1}회를 다 쓰셨어요
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        검수를 계속 이용하는 유료 플랜을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요.
+      </p>
+    </div>
+  );
+}
+
+export function VerifyForm({
+  alreadyBlocked,
+  freeLimit,
+}: {
+  alreadyBlocked: boolean;
+  freeLimit: number | null;
+}) {
   const [state, formAction, pending] = useActionState(runVerifyAction, initialState);
   const [mode, setMode] = useState<"url" | "document">("url");
   const [fileName, setFileName] = useState<string | null>(null);
   const report = state.report;
+  const blocked = alreadyBlocked || state.limitReached;
+
+  // 무료 횟수를 이미 다 썼으면 입력 폼 대신 안내만 보여준다.
+  if (blocked && !report) {
+    return <LimitNotice freeLimit={freeLimit} />;
+  }
 
   return (
     <div className="flex flex-col gap-8">

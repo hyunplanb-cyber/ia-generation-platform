@@ -13,6 +13,8 @@ export interface PlanDef {
   canDownload: boolean;
   /** 만들 수 있는 프로젝트 수 상한. null = 무제한 */
   projectLimit: number | null;
+  /** 사이트 검수 무료 횟수 상한. null = 무제한 */
+  verifyLimit: number | null;
   /** 한 줄 설명 */
   tagline: string;
   /** 이 등급에서 열리는 기능 목록(요금제 안내 화면용) */
@@ -26,6 +28,7 @@ export const PLANS: Record<PlanId, PlanDef> = {
     priceKrw: 0,
     canDownload: false,
     projectLimit: 1,
+    verifyLimit: 1,
     tagline: "만들어보고 화면으로 확인하세요.",
     features: [
       "프로젝트 1개 생성",
@@ -39,6 +42,7 @@ export const PLANS: Record<PlanId, PlanDef> = {
     priceKrw: null, // 미정
     canDownload: true,
     projectLimit: null,
+    verifyLimit: null,
     tagline: "산출물을 파일로 받아 실무에 바로.",
     features: [
       "프로젝트 무제한 생성",
@@ -52,6 +56,7 @@ export const PLANS: Record<PlanId, PlanDef> = {
     priceKrw: null, // 미정
     canDownload: true,
     projectLimit: null,
+    verifyLimit: null,
     tagline: "무제한 재생성과 상위 품질까지.",
     features: [
       "스탠다드의 모든 기능",
