@@ -9,6 +9,9 @@ import type { Screen } from "@/domain/screen/screen";
 import type { ButtonAction } from "@/domain/screen/button-action";
 import { updateScreenAction, type UpdateScreenState } from "./update-screen-action";
 
+// 화면 한 개 = 카드 한 장.
+// 예전엔 표(5칸)였는데, 좁은 화면에서 칸이 짓눌려 한글이 한 글자씩 세로로 쪼개졌다.
+// 세로로 쌓는 카드로 바꿔 모바일에서 읽히게 하고, 넓은 화면에서도 한 줄로 정돈되게 한다.
 export function ScreenListItem({
   screen,
   projectId,
@@ -55,167 +58,159 @@ export function ScreenListItem({
 
   if (isEditing) {
     return (
-      <tr className="border-t border-border">
-        <td colSpan={5} className="px-4 py-3">
-          <form action={formAction} className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            <input type="hidden" name="updatedAt" value={screen.updatedAt.toISOString()} />
-            <div className="flex flex-1 flex-col gap-1.5">
-              <Label htmlFor={`pageId-${screen.id}`}>페이지ID</Label>
-              <Input
-                id={`pageId-${screen.id}`}
-                name="pageId"
-                className="font-mono"
-                defaultValue={state.values.pageId}
-                required
-              />
-            </div>
-            <div className="flex flex-1 flex-col gap-1.5">
-              <Label htmlFor={`pageName-${screen.id}`}>페이지명</Label>
-              <Input
-                id={`pageName-${screen.id}`}
-                name="pageName"
-                defaultValue={state.values.pageName}
-                required
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Button type="submit" size="sm" disabled={pending}>
-                {pending ? "저장하는 중..." : "저장"}
-              </Button>
-              <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditing(false)}>
-                취소
-              </Button>
-            </div>
-          </form>
-          {state.error && <p className="mt-2 text-sm text-danger">{state.error}</p>}
-        </td>
-      </tr>
+      <li className="px-4 py-3">
+        <form action={formAction} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <input type="hidden" name="updatedAt" value={screen.updatedAt.toISOString()} />
+          <div className="flex flex-1 flex-col gap-1.5">
+            <Label htmlFor={`pageId-${screen.id}`}>페이지ID</Label>
+            <Input
+              id={`pageId-${screen.id}`}
+              name="pageId"
+              className="font-mono"
+              defaultValue={state.values.pageId}
+              required
+            />
+          </div>
+          <div className="flex flex-1 flex-col gap-1.5">
+            <Label htmlFor={`pageName-${screen.id}`}>페이지명</Label>
+            <Input
+              id={`pageName-${screen.id}`}
+              name="pageName"
+              defaultValue={state.values.pageName}
+              required
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Button type="submit" size="sm" disabled={pending}>
+              {pending ? "저장하는 중..." : "저장"}
+            </Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditing(false)}>
+              취소
+            </Button>
+          </div>
+        </form>
+        {state.error && <p className="mt-2 text-sm text-danger">{state.error}</p>}
+      </li>
     );
   }
 
   return (
-    <>
-      <tr className="border-t border-border">
-        <td className="px-4 py-2 align-top">
-          <button
-            type="button"
-            onClick={() => setExpanded((v) => !v)}
-            className="flex items-center gap-1.5 text-left"
-            aria-expanded={expanded}
-          >
-            {expanded ? (
-              <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
-            ) : (
-              <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-            )}
-            <span className="rounded-sm bg-pastel-lavender px-2 py-0.5 font-mono text-xs font-medium text-pastel-lavender-foreground">
-              {screen.pageId}
-            </span>
-          </button>
-        </td>
-        <td className="px-4 py-2 align-top text-foreground">{screen.pageName}</td>
-        <td className="px-4 py-2 align-top">
-          <div className="flex flex-col gap-1">
-            <span className="text-sm text-foreground">
-              {screen.scheduleStart ?? "-"} ~ {screen.scheduleEnd ?? "-"}
-            </span>
-            <div className="flex flex-wrap gap-1">
-              {isOutOfRange && (
-                <span className="w-fit rounded-full bg-warning-soft px-2 py-0.5 text-xs font-medium text-warning">
-                  범위 이탈
-                </span>
-              )}
-              {isReversed && (
-                <span className="w-fit rounded-full bg-warning-soft px-2 py-0.5 text-xs font-medium text-warning">
-                  일정 역전
-                </span>
-              )}
-            </div>
-          </div>
-        </td>
-        <td className="px-4 py-2 align-top">
-          <span className="rounded-full bg-neutral-badge-soft px-2 py-0.5 text-xs font-medium text-neutral-badge">
-            {isModified ? "수정됨" : "자동생성"}
+    <li>
+      <div className="flex items-start gap-3 px-4 py-3">
+        {/* 펼치기 토글 = 페이지ID 배지. 넓은 화면에서도 자리를 고정해 목록이 정렬돼 보인다. */}
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="flex shrink-0 items-center gap-1.5 pt-0.5"
+          aria-expanded={expanded}
+          aria-label={expanded ? "접기" : "펼치기"}
+        >
+          {expanded ? (
+            <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+          ) : (
+            <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+          )}
+          <span className="rounded-sm bg-pastel-lavender px-2 py-0.5 font-mono text-xs font-medium text-pastel-lavender-foreground">
+            {screen.pageId}
           </span>
-        </td>
-        <td className="px-4 py-2 align-top">
-          <div className="flex items-center gap-2">
-            <Button type="button" variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
-              수정
-            </Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => onOpenDetail(screen.id)}>
-              상세
-            </Button>
+        </button>
+
+        {/* 가운데: 화면명 + 일정 + 상태 배지. break-keep로 한글이 단어 중간에서 안 잘리게 한다. */}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="font-medium break-keep text-foreground">{screen.pageName}</span>
+          <span className="text-xs text-muted-foreground">
+            {screen.scheduleStart ?? "-"} ~ {screen.scheduleEnd ?? "-"}
+          </span>
+          <div className="mt-0.5 flex flex-wrap items-center gap-1">
+            <span className="rounded-full bg-neutral-badge-soft px-2 py-0.5 text-xs font-medium text-neutral-badge">
+              {isModified ? "수정됨" : "자동생성"}
+            </span>
+            {isOutOfRange && (
+              <span className="rounded-full bg-warning-soft px-2 py-0.5 text-xs font-medium text-warning">
+                범위 이탈
+              </span>
+            )}
+            {isReversed && (
+              <span className="rounded-full bg-warning-soft px-2 py-0.5 text-xs font-medium text-warning">
+                일정 역전
+              </span>
+            )}
           </div>
-        </td>
-      </tr>
+        </div>
+
+        {/* 오른쪽: 관리 버튼. 좁은 화면에선 세로로, 넓은 화면에선 가로로 둔다. */}
+        <div className="flex shrink-0 flex-col gap-1.5 sm:flex-row">
+          <Button type="button" variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
+            수정
+          </Button>
+          <Button type="button" variant="ghost" size="sm" onClick={() => onOpenDetail(screen.id)}>
+            상세
+          </Button>
+        </div>
+      </div>
 
       {expanded && (
-        <tr className="border-t border-border/60 bg-muted/20">
-          <td colSpan={5} className="px-4 py-4">
-            <div className="flex flex-col gap-4 pl-6 text-sm">
-              <div>
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  설명 · 기능정의
-                </p>
-                {screen.funcDef ? (
-                  <p className="whitespace-pre-wrap text-foreground">{screen.funcDef}</p>
-                ) : (
-                  <p className="text-muted-foreground/60">아직 비어 있어요</p>
-                )}
-              </div>
+        <div className="flex flex-col gap-4 border-t border-border/60 bg-muted/20 px-4 py-4 pl-6 text-sm sm:pl-12">
+          <div>
+            <p className="mb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              설명 · 기능정의
+            </p>
+            {screen.funcDef ? (
+              <p className="break-keep whitespace-pre-wrap text-foreground">{screen.funcDef}</p>
+            ) : (
+              <p className="text-muted-foreground/60">아직 비어 있어요</p>
+            )}
+          </div>
 
-              <div>
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  버튼 · 이동 화면
-                </p>
-                {buttonActions.length === 0 ? (
-                  <p className="text-muted-foreground/60">버튼 없음</p>
-                ) : (
-                  <ul className="flex flex-col gap-1.5">
-                    {buttonActions.map((ba) => {
-                      const target = screenById.get(ba.targetScreenId);
-                      return (
-                        <li key={ba.id} className="flex flex-wrap items-center gap-2">
-                          <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-medium text-primary-on-soft">
-                            {ba.label}
-                          </span>
-                          <ArrowRight className="size-3.5 text-muted-foreground" />
-                          {target ? (
-                            <span className="text-foreground">
-                              <span className="font-mono text-xs text-muted-foreground">
-                                {target.pageId}
-                              </span>{" "}
-                              {target.pageName}
-                            </span>
-                          ) : (
-                            <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-medium text-danger">
-                              깨진 링크
-                            </span>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </div>
+          <div>
+            <p className="mb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              버튼 · 이동 화면
+            </p>
+            {buttonActions.length === 0 ? (
+              <p className="text-muted-foreground/60">버튼 없음</p>
+            ) : (
+              <ul className="flex flex-col gap-1.5">
+                {buttonActions.map((ba) => {
+                  const target = screenById.get(ba.targetScreenId);
+                  return (
+                    <li key={ba.id} className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-medium text-primary-on-soft">
+                        {ba.label}
+                      </span>
+                      <ArrowRight className="size-3.5 text-muted-foreground" />
+                      {target ? (
+                        <span className="break-keep text-foreground">
+                          <span className="font-mono text-xs text-muted-foreground">
+                            {target.pageId}
+                          </span>{" "}
+                          {target.pageName}
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-medium text-danger">
+                          깨진 링크
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
 
-              <div>
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  AI 프롬프트
-                </p>
-                {screen.prompt ? (
-                  <p className="whitespace-pre-wrap rounded-md border border-border bg-background px-3 py-2 text-foreground">
-                    {screen.prompt}
-                  </p>
-                ) : (
-                  <p className="text-muted-foreground/60">아직 비어 있어요</p>
-                )}
-              </div>
-            </div>
-          </td>
-        </tr>
+          <div>
+            <p className="mb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              AI 프롬프트
+            </p>
+            {screen.prompt ? (
+              <p className="break-keep whitespace-pre-wrap rounded-md border border-border bg-background px-3 py-2 text-foreground">
+                {screen.prompt}
+              </p>
+            ) : (
+              <p className="text-muted-foreground/60">아직 비어 있어요</p>
+            )}
+          </div>
+        </div>
       )}
-    </>
+    </li>
   );
 }

@@ -120,20 +120,9 @@ function MenuGroupCard({
           화면 {count}개
         </span>
       </header>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/30 text-xs uppercase tracking-wide text-muted-foreground">
-            <tr>
-              <th className="px-4 py-2 font-semibold">페이지ID</th>
-              <th className="px-4 py-2 font-semibold">페이지명</th>
-              <th className="px-4 py-2 font-semibold">일정</th>
-              <th className="px-4 py-2 font-semibold">상태</th>
-              <th className="px-4 py-2 font-semibold">관리</th>
-            </tr>
-          </thead>
-          <tbody>{children}</tbody>
-        </table>
-      </div>
+      {/* 표 대신 카드 목록 — 좁은 화면에서 한글이 한 글자씩 세로로 쪼개지지 않게 한다.
+          각 항목이 페이지ID·화면명·일정·상태를 스스로 라벨링하므로 헤더 행은 두지 않는다. */}
+      <ul className="divide-y divide-border text-sm">{children}</ul>
     </section>
   );
 }

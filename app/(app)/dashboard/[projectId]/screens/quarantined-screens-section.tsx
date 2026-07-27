@@ -9,34 +9,20 @@ export function QuarantinedScreensSection({ screens }: { screens: Screen[] }) {
           소속 메뉴가 삭제된 화면이에요. 데이터는 삭제되지 않고 남아있어요.
         </p>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/40 text-muted-foreground">
-            <tr>
-              <th className="px-4 py-2 font-medium">페이지ID</th>
-              <th className="px-4 py-2 font-medium">페이지명</th>
-              <th className="px-4 py-2 font-medium">상태</th>
-            </tr>
-          </thead>
-          <tbody>
-            {screens.map((screen) => (
-              <tr key={screen.id} className="border-t border-border">
-                <td className="px-4 py-2">
-                  <span className="rounded-sm bg-neutral-badge-soft px-2 py-0.5 font-mono text-xs font-medium text-neutral-badge">
-                    {screen.pageId}
-                  </span>
-                </td>
-                <td className="px-4 py-2 text-foreground">{screen.pageName}</td>
-                <td className="px-4 py-2">
-                  <span className="rounded-full bg-warning-soft px-2 py-0.5 text-xs font-medium text-warning">
-                    격리됨
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* 카드 목록 — 좁은 화면에서 표 칸이 짓눌려 한글이 세로로 쪼개지지 않게 한다. */}
+      <ul className="divide-y divide-border rounded-lg border border-border text-sm">
+        {screens.map((screen) => (
+          <li key={screen.id} className="flex items-start gap-3 px-4 py-3">
+            <span className="mt-0.5 shrink-0 rounded-sm bg-neutral-badge-soft px-2 py-0.5 font-mono text-xs font-medium text-neutral-badge">
+              {screen.pageId}
+            </span>
+            <span className="min-w-0 flex-1 break-keep text-foreground">{screen.pageName}</span>
+            <span className="shrink-0 rounded-full bg-warning-soft px-2 py-0.5 text-xs font-medium text-warning">
+              격리됨
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
