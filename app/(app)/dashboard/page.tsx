@@ -346,13 +346,13 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
       <div className="flex flex-col gap-2">
         {runs.map((run) => (
           <details key={run.id} className="rounded-xl border border-border bg-surface">
-            <summary className="flex cursor-pointer flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 text-sm">
+            <summary className="flex cursor-pointer flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 text-sm">
               <span className="font-medium text-foreground">{formatDateTime(run.createdAt)}</span>
-              <span className="min-w-0 truncate font-mono text-xs text-muted-foreground">
+              <span className="min-w-0 flex-1 truncate font-mono text-xs text-muted-foreground">
                 {run.target}
               </span>
               {run.mode === "site" && (
-                <span className="ml-auto flex shrink-0 gap-1.5">
+                <span className="flex shrink-0 gap-1.5">
                   <span className="rounded-full bg-success-soft px-2 py-0.5 text-xs font-semibold text-success">
                     통과 {run.report.passCount}
                   </span>
@@ -361,13 +361,11 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
                   </span>
                 </span>
               )}
-            </summary>
-            <div className="flex flex-col gap-4 border-t border-border/60 p-4">
               {run.report.scenarios.length > 0 && (
-                <div className="flex justify-end">
-                  <VerifyScenarioDownloadButton report={run.report} />
-                </div>
+                <VerifyScenarioDownloadButton report={run.report} />
               )}
+            </summary>
+            <div className="border-t border-border/60 p-4">
               <VerifyReportView report={run.report} />
             </div>
           </details>

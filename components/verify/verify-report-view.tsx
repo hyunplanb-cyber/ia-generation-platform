@@ -32,10 +32,18 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 요약 — 상단에 결과 배지, 그 아래 총평(URL은 목록/헤더에서 이미 보이므로 생략) */}
+      {/* 요약(총평) */}
       <div className="rounded-xl border border-border bg-background p-5">
-        {report.mode === "site" && (
-          <div className="flex flex-wrap gap-2">
+        <p className="leading-relaxed text-foreground">{report.summary}</p>
+      </div>
+
+      {/* 자동 검사 — URL 검수일 때만. 결과 배지(총검수·PASS·WARN·FAIL)는 자동 검사 수치이므로 여기 묶는다 */}
+      {report.mode === "site" && report.checks.length > 0 && (
+        <section className="rounded-xl border border-border bg-background p-5">
+          <h3 className="mb-3 flex items-center gap-2 font-semibold text-foreground">
+            <Search className="size-4 text-primary" /> 자동 검사
+          </h3>
+          <div className="mb-4 flex flex-wrap gap-2">
             <span className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
               총 검수 {report.passCount + report.warnCount + report.failCount}
             </span>
@@ -49,18 +57,6 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
               실패 · FAIL {report.failCount}
             </span>
           </div>
-        )}
-        <p className={`${report.mode === "site" ? "mt-4" : ""} leading-relaxed text-foreground`}>
-          {report.summary}
-        </p>
-      </div>
-
-      {/* 자동 검사 — URL 검수일 때만. 좌측에 테스트ID, 우측 끝에 PASS/FAIL/WARN */}
-      {report.mode === "site" && report.checks.length > 0 && (
-        <section className="rounded-xl border border-border bg-background p-5">
-          <h3 className="mb-3 flex items-center gap-2 font-semibold text-foreground">
-            <Search className="size-4 text-primary" /> 자동 검사
-          </h3>
           <ul className="flex flex-col gap-2.5">
             {report.checks.map((c, i) => (
               <li key={c.id} className="flex flex-col gap-1 text-sm">

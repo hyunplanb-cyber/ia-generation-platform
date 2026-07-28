@@ -48,8 +48,13 @@ export function VerifyScenarioDownloadButton({
   return (
     <button
       type="button"
-      onClick={handleDownload}
-      className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+      // <summary> 안에 놓여도 클릭 시 폴드가 접히지 않도록 전파를 막는다.
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        handleDownload();
+      }}
+      className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
     >
       <Download className="size-4" />
       {label}
