@@ -41,17 +41,18 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
           <span className="font-mono text-sm break-all text-foreground">{report.finalUrl}</span>
         </div>
         {report.mode === "site" && (
-          <div className="mt-3 flex gap-2">
-            <span className="rounded-full bg-success-soft px-3 py-1 text-sm font-semibold text-success">
-              통과 {report.passCount}
+          <div className="mt-3 flex flex-wrap gap-2">
+            <span className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
+              총 검수 {report.passCount + report.warnCount + report.failCount}
             </span>
-            {report.warnCount > 0 && (
-              <span className="rounded-full bg-warning-soft px-3 py-1 text-sm font-semibold text-warning">
-                주의 {report.warnCount}
-              </span>
-            )}
-            <span className="rounded-full bg-danger-soft px-3 py-1 text-sm font-semibold text-danger">
-              실패 {report.failCount}
+            <span className="rounded-full bg-success-soft px-4 py-2 text-sm font-bold text-success">
+              통과 · PASS {report.passCount}
+            </span>
+            <span className="rounded-full bg-warning-soft px-4 py-2 text-sm font-bold text-warning">
+              주의 · WARN {report.warnCount}
+            </span>
+            <span className="rounded-full bg-danger-soft px-4 py-2 text-sm font-bold text-danger">
+              실패 · FAIL {report.failCount}
             </span>
           </div>
         )}
