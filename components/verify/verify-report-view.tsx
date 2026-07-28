@@ -32,16 +32,10 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 요약 */}
+      {/* 요약 — 상단에 결과 배지, 그 아래 총평(URL은 목록/헤더에서 이미 보이므로 생략) */}
       <div className="rounded-xl border border-border bg-background p-5">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-muted-foreground">
-            {report.mode === "document" ? "문서 기반 시나리오 ·" : "검수 결과 ·"}
-          </span>
-          <span className="font-mono text-sm break-all text-foreground">{report.finalUrl}</span>
-        </div>
         {report.mode === "site" && (
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2">
             <span className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
               총 검수 {report.passCount + report.warnCount + report.failCount}
             </span>
@@ -56,7 +50,9 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
             </span>
           </div>
         )}
-        <p className="mt-4 leading-relaxed text-foreground">{report.summary}</p>
+        <p className={`${report.mode === "site" ? "mt-4" : ""} leading-relaxed text-foreground`}>
+          {report.summary}
+        </p>
       </div>
 
       {/* 자동 검사 — URL 검수일 때만. 좌측에 테스트ID, 우측 끝에 PASS/FAIL/WARN */}

@@ -364,7 +364,7 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
             </summary>
             <div className="flex flex-col gap-4 border-t border-border/60 p-4">
               {run.report.scenarios.length > 0 && (
-                <div className="flex">
+                <div className="flex justify-end">
                   <VerifyScenarioDownloadButton report={run.report} />
                 </div>
               )}
