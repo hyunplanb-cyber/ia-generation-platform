@@ -41,7 +41,7 @@ export default async function ScreensPage({
         icon={LayoutList}
         tone="violet"
         title="IA · 화면 목록"
-        description="메뉴별로 자동 생성된 화면 목록이에요. 각 화면의 페이지ID·일정·기능정의·이동 화면을 확인하고 수정할 수 있어요. 모든 산출물은 [전체 다운로드] 하나로 받아요."
+        description="메뉴별로 자동 생성된 화면 목록이에요. 각 화면의 페이지ID·일정·기능정의·이동 화면을 확인하고 수정할 수 있어요."
         downloads={[]}
         actions={
           activeScreens.length > 0 ? (
