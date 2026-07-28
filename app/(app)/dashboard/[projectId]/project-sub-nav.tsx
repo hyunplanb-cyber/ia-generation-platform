@@ -109,7 +109,7 @@ export function ProjectShell({
                 <Link
                   href={`${base}${step.entry}`}
                   aria-current={state === "active" ? "step" : undefined}
-                  className={`flex h-full items-center justify-center gap-4 rounded-2xl px-6 py-5 transition-colors ${
+                  className={`flex h-full items-center justify-center gap-3 rounded-2xl px-6 py-4 transition-colors ${
                     state === "active"
                       ? "bg-primary text-primary-foreground shadow-lg"
                       : state === "done"
@@ -118,7 +118,7 @@ export function ProjectShell({
                   }`}
                 >
                   <span
-                    className={`flex size-14 shrink-0 items-center justify-center rounded-full ${
+                    className={`flex size-10 shrink-0 items-center justify-center rounded-full ${
                       state === "active"
                         ? "bg-primary-foreground/20"
                         : state === "done"
@@ -126,7 +126,7 @@ export function ProjectShell({
                           : "bg-background text-muted-foreground"
                     }`}
                   >
-                    {state === "done" ? <Check className="size-7" /> : <Icon className="size-7" />}
+                    {state === "done" ? <Check className="size-5" /> : <Icon className="size-5" />}
                   </span>
                   <span className="flex items-baseline gap-2 whitespace-nowrap">
                     <span

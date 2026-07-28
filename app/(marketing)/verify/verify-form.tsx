@@ -69,7 +69,7 @@ function VerifySteps({ active }: { active: 0 | 1 }) {
             <Fragment key={s.title}>
               <li className="min-w-0 flex-1 lg:w-[429px] lg:flex-none">
                 <div
-                  className={`flex h-full items-center justify-center gap-4 rounded-2xl px-6 py-5 ${
+                  className={`flex h-full items-center justify-center gap-3 rounded-2xl px-6 py-4 ${
                     on
                       ? "bg-primary text-primary-foreground shadow-lg"
                       : done
@@ -78,7 +78,7 @@ function VerifySteps({ active }: { active: 0 | 1 }) {
                   }`}
                 >
                   <span
-                    className={`flex size-14 shrink-0 items-center justify-center rounded-full ${
+                    className={`flex size-10 shrink-0 items-center justify-center rounded-full ${
                       on
                         ? "bg-primary-foreground/20"
                         : done
@@ -86,7 +86,7 @@ function VerifySteps({ active }: { active: 0 | 1 }) {
                           : "bg-background text-muted-foreground"
                     }`}
                   >
-                    {done ? <Check className="size-7" /> : <Icon className="size-7" />}
+                    {done ? <Check className="size-5" /> : <Icon className="size-5" />}
                   </span>
                   <span className="flex items-baseline gap-2 whitespace-nowrap">
                     <span
