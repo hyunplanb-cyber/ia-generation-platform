@@ -7,15 +7,24 @@ import {
   PencilRuler,
   ShieldQuestion,
   History,
+  ChevronDown,
+  Network,
+  LayoutList,
+  FileText,
+  Workflow,
+  ShieldCheck,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { countScreensByProject } from "@/application/count-screens-by-project";
 import { listMyProjects } from "@/application/list-my-projects";
+import { listProjectResults, type ProjectResult } from "@/application/list-project-results";
 import { listMyVerifyRuns } from "@/application/list-my-verify-runs";
 import { requireSession } from "@/application/require-session";
 import { canDownload } from "@/application/get-current-plan";
 import { getProjectQuota } from "@/application/can-create-project";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
+import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { DeleteProjectButton } from "./delete-project-button";
 import { ZipAllButton } from "./zip-all-button";
 import { UpgradeToDownload } from "./[projectId]/upgrade-to-download";
@@ -29,23 +38,15 @@ function formatDateTime(date: Date) {
   return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
-const BADGE_TONE: Record<string, string> = {
-  mint: "bg-pastel-mint text-pastel-mint-foreground",
-  lavender: "bg-pastel-lavender text-pastel-lavender-foreground",
-  yellow: "bg-pastel-yellow text-pastel-yellow-foreground",
-};
-
-// 생성 완료 시 내려받을 수 있는 산출물 파일들(실제 내보내기는 준비 중).
-const DELIVERABLE_FILES = ["메뉴 구조", "IA·화면목록", "기능정의서", "FLOW·흐름도", "WBS", "AI 스펙팩"];
-
-// 프로젝트가 지금 어느 단계인지 → 뱃지 + 클릭 시 이동할 "마지막 입력 단계".
-function stepOf(concept: string, screenCount: number) {
-  if (screenCount > 0)
-    return { label: "생성 완료", href: "screens", tone: "mint", generated: true };
-  if (concept.trim() !== "")
-    return { label: "STEP 2 · 메뉴·디자인", href: "brief", tone: "lavender", generated: false };
-  return { label: "STEP 1 · 컨셉 입력", href: "edit", tone: "yellow", generated: false };
-}
+// 프로젝트를 펼쳤을 때 바로 갈 수 있는 산출물들.
+const DELIVERABLE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "tree", label: "메뉴 구조", icon: Network },
+  { href: "screens", label: "IA · 화면 목록", icon: LayoutList },
+  { href: "specs", label: "기능정의서", icon: FileText },
+  { href: "flow", label: "FLOW · 흐름도", icon: Workflow },
+  { href: "wbs", label: "WBS", icon: CalendarRange },
+  { href: "admin", label: "관리자 페이지", icon: ShieldCheck },
+];
 
 // 상단 탭 — 설계도 프롬프트 / 사이트 검수
 function DashboardTabs({ active }: { active: "planning" | "verify" }) {
@@ -82,7 +83,6 @@ function DashboardTabs({ active }: { active: "planning" | "verify" }) {
 export default async function DashboardPage({
   searchParams,
 }: {
-  // 한도에 걸려 되돌아온 경우 ?limit=reached, 탭 전환은 ?tab=verify
   searchParams: Promise<{ limit?: string; tab?: string }>;
 }) {
   const [{ limit, tab }, session, projects, downloadable] = await Promise.all([
@@ -95,6 +95,29 @@ export default async function DashboardPage({
   const quota = await getProjectQuota(projects.length);
   const hitLimit = limit === "reached" || !quota.allowed;
 
+  let body: React.ReactNode;
+  if (activeTab === "verify") {
+    body = <VerifyTab runs={await listMyVerifyRuns()} />;
+  } else {
+    const screenCounts = await countScreensByProject(projects.map((p) => p.id));
+    // 생성 완료(화면이 생긴)된 것만 목록에 노출한다. 작성 중(초안)은 감춘다.
+    const completed = projects
+      .filter((p) => (screenCounts[p.id] ?? 0) > 0)
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+    const results = await listProjectResults(completed.map((p) => p.id));
+    body = (
+      <PlanningTab
+        completed={completed}
+        results={results}
+        screenCounts={screenCounts}
+        draftCount={projects.length - completed.length}
+        hitLimit={hitLimit}
+        quotaLimit={quota.limit}
+        downloadable={downloadable}
+      />
+    );
+  }
+
   return (
     <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-8">
       <div className="flex flex-col gap-1">
@@ -105,46 +128,55 @@ export default async function DashboardPage({
       </div>
 
       <DashboardTabs active={activeTab} />
-
-      {activeTab === "planning" ? (
-        <PlanningTab
-          projects={projects}
-          screenCounts={await countScreensByProject(projects.map((p) => p.id))}
-          hitLimit={hitLimit}
-          quotaLimit={quota.limit}
-          downloadable={downloadable}
-        />
-      ) : (
-        <VerifyTab runs={await listMyVerifyRuns()} />
-      )}
+      {body}
     </div>
   );
 }
 
 // ── 설계도 프롬프트 탭 ──────────────────────────────
 function PlanningTab({
-  projects,
+  completed,
+  results,
   screenCounts,
+  draftCount,
   hitLimit,
   quotaLimit,
   downloadable,
 }: {
-  projects: Awaited<ReturnType<typeof listMyProjects>>;
+  completed: Awaited<ReturnType<typeof listMyProjects>>;
+  results: Record<string, ProjectResult>;
   screenCounts: Record<string, number>;
+  draftCount: number;
   hitLimit: boolean;
   quotaLimit: number | null;
   downloadable: boolean;
 }) {
-  if (projects.length === 0) {
+  const newButton = hitLimit ? (
+    <span
+      className="rounded-lg border border-border bg-muted/60 px-4 py-2 text-sm font-semibold text-muted-foreground"
+      title={`무료 플랜은 프로젝트 ${quotaLimit}개까지 만들 수 있어요.`}
+    >
+      프로젝트 {quotaLimit}개까지 (무료)
+    </span>
+  ) : (
+    <form action={createDraftProjectAction}>
+      <Button type="submit">
+        <Plus className="size-4" />새 프로젝트 만들기
+      </Button>
+    </form>
+  );
+
+  if (completed.length === 0) {
     return (
       <div className="flex flex-col items-center gap-6 py-20 text-center">
         <span className="flex size-16 items-center justify-center rounded-2xl bg-primary-soft text-primary-on-soft">
           <Sparkles className="size-8" />
         </span>
         <div>
-          <h2 className="text-2xl font-bold text-foreground">첫 프로젝트를 시작해 볼까요?</h2>
+          <h2 className="text-2xl font-bold text-foreground">아직 완성된 프로젝트가 없어요</h2>
           <p className="mt-2 text-muted-foreground">
             컨셉만 입력하면 AI가 메뉴 구조·화면 목록·기능정의서까지 자동으로 만들어드려요.
+            {draftCount > 0 && ` (작성 중 ${draftCount}개는 완성되면 여기에 표시돼요.)`}
           </p>
         </div>
         <form action={createDraftProjectAction}>
@@ -156,26 +188,14 @@ function PlanningTab({
     );
   }
 
-  const sorted = [...projects].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">진행 중인 프로젝트 {projects.length}개</p>
-        {hitLimit ? (
-          <span
-            className="rounded-lg border border-border bg-muted/60 px-4 py-2 text-sm font-semibold text-muted-foreground"
-            title={`무료 플랜은 프로젝트 ${quotaLimit}개까지 만들 수 있어요.`}
-          >
-            프로젝트 {quotaLimit}개까지 (무료)
-          </span>
-        ) : (
-          <form action={createDraftProjectAction}>
-            <Button type="submit">
-              <Plus className="size-4" />새 프로젝트 만들기
-            </Button>
-          </form>
-        )}
+        <p className="text-sm text-muted-foreground">
+          완성된 프로젝트 {completed.length}개
+          {draftCount > 0 && ` · 작성 중 ${draftCount}개는 완성되면 표시돼요`}
+        </p>
+        {newButton}
       </div>
 
       {hitLimit && (
@@ -185,32 +205,22 @@ function PlanningTab({
         </p>
       )}
 
-      <ul className="flex flex-col gap-3">
-        {sorted.map((p) => {
+      <div className="flex flex-col gap-3">
+        {completed.map((p) => {
           const count = screenCounts[p.id] ?? 0;
-          const step = stepOf(p.concept, count);
+          const result = results[p.id];
           return (
-            <li
+            <details
               key={p.id}
-              className="group relative rounded-2xl border border-border bg-surface p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+              className="group rounded-2xl border border-border bg-surface shadow-sm"
             >
-              <Link
-                href={`/dashboard/${p.id}/${step.href}`}
-                aria-label={`${p.concept || "새 프로젝트"} 열기`}
-                className="absolute inset-0 z-10 rounded-2xl"
-              />
-
-              <div className="flex items-start justify-between gap-4">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 p-5">
                 <div className="flex min-w-0 flex-col gap-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${BADGE_TONE[step.tone]}`}
-                    >
-                      {step.label}
-                    </span>
-                  </div>
+                  <span className="w-fit rounded-full bg-pastel-mint px-2.5 py-0.5 text-xs font-semibold text-pastel-mint-foreground">
+                    생성 완료
+                  </span>
                   <h3 className="line-clamp-1 text-base font-bold text-foreground">
-                    {p.concept || "새 프로젝트 (작성 중)"}
+                    {p.concept || "새 프로젝트"}
                   </h3>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1.5">
@@ -225,34 +235,74 @@ function PlanningTab({
                       최근 수정 {formatDate(p.updatedAt)}
                     </span>
                   </div>
+                </div>
+                <ChevronDown className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+              </summary>
 
-                  {step.generated && (
-                    <div className="relative z-20 mt-1 flex flex-wrap items-center gap-1.5">
-                      {DELIVERABLE_FILES.map((file) => (
-                        <span
-                          key={file}
-                          className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-1 text-xs font-medium text-muted-foreground"
-                        >
-                          {file}
-                        </span>
-                      ))}
-                      {downloadable ? (
-                        <ZipAllButton projectId={p.id} />
-                      ) : (
-                        <UpgradeToDownload label="전체 다운로드" />
-                      )}
-                    </div>
-                  )}
+              <div className="flex flex-col gap-5 border-t border-border/60 p-5">
+                {/* 결과 인라인 — 메뉴별 화면 목록 */}
+                {result && result.screens.length > 0 && (
+                  <div className="flex flex-col gap-4">
+                    {result.menus.map((m) => {
+                      const scns = result.screens.filter((s) => s.menuId === m.id);
+                      if (scns.length === 0) return null;
+                      return (
+                        <div key={m.id}>
+                          <p className="mb-1.5 text-sm font-semibold text-foreground">
+                            {m.nameKo}
+                            <span className="ml-2 text-xs font-normal text-muted-foreground">
+                              화면 {scns.length}개
+                            </span>
+                          </p>
+                          <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                            {scns.map((s) => (
+                              <li
+                                key={s.id}
+                                className="flex items-baseline gap-2 text-sm text-muted-foreground"
+                              >
+                                <span className="font-mono text-xs text-foreground/60">
+                                  {s.pageId}
+                                </span>
+                                <span className="min-w-0 truncate text-foreground">
+                                  {s.pageName}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 산출물 바로가기 */}
+                <div className="flex flex-wrap gap-2 border-t border-border/60 pt-4">
+                  {DELIVERABLE_LINKS.map(({ href, label, icon: Icon }) => (
+                    <Link
+                      key={href}
+                      href={`/dashboard/${p.id}/${href}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:bg-muted"
+                    >
+                      <Icon className="size-4 text-muted-foreground" />
+                      {label}
+                    </Link>
+                  ))}
                 </div>
 
-                <div className="relative z-20 shrink-0">
+                {/* 다운로드 · 삭제 */}
+                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
+                  {downloadable ? (
+                    <ZipAllButton projectId={p.id} />
+                  ) : (
+                    <UpgradeToDownload label="전체 다운로드" />
+                  )}
                   <DeleteProjectButton projectId={p.id} />
                 </div>
               </div>
-            </li>
+            </details>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }
@@ -312,8 +362,13 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
                 </span>
               )}
             </summary>
-            <div className="border-t border-border/60 p-4">
+            <div className="flex flex-col gap-4 border-t border-border/60 p-4">
               <VerifyReportView report={run.report} />
+              {run.report.scenarios.length > 0 && (
+                <div className="flex justify-end">
+                  <VerifyScenarioDownloadButton report={run.report} />
+                </div>
+              )}
             </div>
           </details>
         ))}
