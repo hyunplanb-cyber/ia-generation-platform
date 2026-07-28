@@ -1,5 +1,5 @@
-import { Lock, ListChecks, Search } from "lucide-react";
-import type { CheckStatus, VerificationReport } from "@/domain/verify/report";
+import { Lock, ListChecks, Search, FileText } from "lucide-react";
+import type { Check, CheckStatus, VerificationReport } from "@/domain/verify/report";
 
 const STATUS_KO: Record<CheckStatus, string> = { pass: "PASS", warn: "WARN", fail: "FAIL" };
 
@@ -22,10 +22,53 @@ function pad(n: number): string {
   return String(n).padStart(3, "0");
 }
 
+// 항목 한 줄 — 테스트ID(AUTO-…) + 이름 + 근거 + 결과, 실패면 근거 경로.
+function CheckRow({ check, num }: { check: Check; num: number }) {
+  return (
+    <li className="flex flex-col gap-1 text-sm">
+      <div className="flex items-center gap-2.5">
+        <span className="shrink-0 font-mono text-[11px] text-muted-foreground">AUTO-{pad(num)}</span>
+        <span className="min-w-0 flex-1">
+          <span className="font-medium text-foreground">{check.label}</span>
+          <span className="text-muted-foreground"> — {check.detail}</span>
+        </span>
+        <StatusBadge status={check.status} />
+      </div>
+      {check.items && check.items.length > 0 && (
+        <ul className="ml-14 flex flex-col gap-0.5 border-l-2 border-danger/20 pl-3">
+          {check.items.map((it, k) => (
+            <li key={k} className="break-all font-mono text-[11px] text-danger/80">
+              {it}
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+}
+
 // 검수 리포트 하나를 그리는 표시 전용 컴포넌트.
 // 마케팅 /verify 와 프로젝트 대시보드 검수 탭이 같은 모습으로 보이도록 공유한다.
 // 항목마다 테스트ID(AUTO-/SCN-)를 붙여 다운로드 엑셀과 번호가 맞도록 한다.
 export function VerifyReportView({ report }: { report: VerificationReport }) {
+  // 자동 검사 항목의 전체 순번(엑셀 AUTO-001…과 동일 순서)을 미리 매긴다.
+  const autoNum = new Map<string, number>();
+  report.checks.forEach((c, i) => autoNum.set(c.id, i + 1));
+
+  // 페이지 태그가 있으면 페이지별로 묶어 보여준다(없는 옛 결과는 한 덩어리).
+  const siteChecks = report.checks.filter((c) => !c.page);
+  const pageOrder: string[] = [];
+  const byPage = new Map<string, Check[]>();
+  for (const c of report.checks) {
+    if (!c.page) continue;
+    if (!byPage.has(c.page)) {
+      byPage.set(c.page, []);
+      pageOrder.push(c.page);
+    }
+    byPage.get(c.page)!.push(c);
+  }
+  const grouped = pageOrder.length > 0;
+
   // 시나리오 각 단계의 테스트ID를 미리 매긴다(엑셀의 SCN-001…과 동일 순서).
   let scn = 0;
   const stepIds = report.scenarios.map((s) => s.steps.map(() => `SCN-${pad(++scn)}`));
@@ -42,6 +85,11 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
         <section className="rounded-xl border border-border bg-background p-5">
           <h3 className="mb-3 flex items-center gap-2 font-semibold text-foreground">
             <Search className="size-4 text-primary" /> 자동 검사
+            {grouped && (
+              <span className="ml-1 text-sm font-normal text-muted-foreground">
+                · {pageOrder.length}개 페이지
+              </span>
+            )}
           </h3>
           <div className="mb-4 flex flex-wrap gap-2">
             <span className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
@@ -57,31 +105,42 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
               실패 · FAIL {report.failCount}
             </span>
           </div>
-          <ul className="flex flex-col gap-2.5">
-            {report.checks.map((c, i) => (
-              <li key={c.id} className="flex flex-col gap-1 text-sm">
-                <div className="flex items-center gap-2.5">
-                  <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
-                    AUTO-{pad(i + 1)}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="font-medium text-foreground">{c.label}</span>
-                    <span className="text-muted-foreground"> — {c.detail}</span>
-                  </span>
-                  <StatusBadge status={c.status} />
-                </div>
-                {c.items && c.items.length > 0 && (
-                  <ul className="ml-14 flex flex-col gap-0.5 border-l-2 border-danger/20 pl-3">
-                    {c.items.map((it, k) => (
-                      <li key={k} className="break-all font-mono text-[11px] text-danger/80">
-                        {it}
-                      </li>
+
+          {grouped ? (
+            <div className="flex flex-col gap-5">
+              {siteChecks.length > 0 && (
+                <div>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                    사이트 전체
+                  </p>
+                  <ul className="flex flex-col gap-2.5">
+                    {siteChecks.map((c) => (
+                      <CheckRow key={c.id} check={c} num={autoNum.get(c.id) ?? 0} />
                     ))}
                   </ul>
-                )}
-              </li>
-            ))}
-          </ul>
+                </div>
+              )}
+              {pageOrder.map((pg) => (
+                <div key={pg} className="border-t border-border/60 pt-4">
+                  <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                    <FileText className="size-3.5 text-primary" />
+                    <span className="break-all">{pg}</span>
+                  </p>
+                  <ul className="flex flex-col gap-2.5">
+                    {byPage.get(pg)!.map((c) => (
+                      <CheckRow key={c.id} check={c} num={autoNum.get(c.id) ?? 0} />
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <ul className="flex flex-col gap-2.5">
+              {report.checks.map((c) => (
+                <CheckRow key={c.id} check={c} num={autoNum.get(c.id) ?? 0} />
+              ))}
+            </ul>
+          )}
         </section>
       )}
 

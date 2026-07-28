@@ -48,10 +48,13 @@ export function buildVerifyScenarioSheets(
   ];
 
   const scenarioStepCount = report.scenarios.reduce((n, s) => n + s.steps.length, 0);
+  const pageCount = new Set(report.checks.map((c) => c.page).filter(Boolean)).size;
   const status: (string | number)[][] = [
     ["검수 현황"],
     [],
     ["구분", "건수"],
+    ["검수한 페이지 수", pageCount],
+    ["자동 검사 항목", report.checks.length],
     ["통과(PASS)", report.passCount],
     ["실패(FAIL)", report.failCount],
     ["주의(WARN)", report.warnCount],
@@ -67,6 +70,7 @@ export function buildVerifyScenarioSheets(
   report.checks.forEach((c, i) => {
     scenarios.push({
       테스트ID: `AUTO-${String(i + 1).padStart(3, "0")}`,
+      페이지: c.page ?? "사이트 전체",
       화면구분: "공개(자동 검사)",
       테스트영역: c.label,
       "테스트 방법": c.detail,
@@ -83,6 +87,7 @@ export function buildVerifyScenarioSheets(
       const mark = marks[`${si}-${sti}`];
       scenarios.push({
         테스트ID: `SCN-${String(scn).padStart(3, "0")}`,
+        페이지: "",
         화면구분: sensitive ? "민감(직접 확인)" : "공개(직접 확인)",
         테스트영역: s.screen,
         "테스트 방법": step,

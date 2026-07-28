@@ -31,9 +31,12 @@ export function VerifyScenarioDownloadButton({
 
     const scnWs = scenarios.length
       ? XLSX.utils.json_to_sheet(scenarios)
-      : XLSX.utils.aoa_to_sheet([["테스트ID", "화면구분", "테스트영역", "테스트 방법", "결과", "비고"]]);
+      : XLSX.utils.aoa_to_sheet([
+          ["테스트ID", "페이지", "화면구분", "테스트영역", "테스트 방법", "결과", "비고"],
+        ]);
     scnWs["!cols"] = [
       { wch: 12 },
+      { wch: 20 },
       { wch: 16 },
       { wch: 24 },
       { wch: 52 },

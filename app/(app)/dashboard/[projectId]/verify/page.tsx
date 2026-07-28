@@ -6,8 +6,10 @@ import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenari
 import { DeliverableHeader, HeaderStat } from "../deliverable-header";
 import { VerifyPanel } from "./verify-panel";
 
-// 검수는 LLM 호출 + 여러 요청을 거쳐 15~30초가 걸릴 수 있다 → 무료 플랜 상한(60초) 명시.
-export const maxDuration = 60;
+// 검수는 여러 페이지를 돌며 자동 검사(수십~백여 건) + LLM 시나리오까지 하므로
+// 30초~1분 넘게 걸릴 수 있다. Fluid Compute에서는 무료 플랜도 300초까지 허용되므로
+// 여유 있게 올린다(마케팅 /verify 와 동일).
+export const maxDuration = 180;
 
 function formatDate(d: Date): string {
   // 서버에서 고정 포맷으로. (예: 2026. 7. 28. 15:04)

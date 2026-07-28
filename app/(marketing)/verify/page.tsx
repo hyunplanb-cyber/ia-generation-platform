@@ -3,8 +3,10 @@ import { getSession } from "@/lib/session";
 import { getVerifyQuota } from "@/application/get-verify-quota";
 import { VerifyForm } from "./verify-form";
 
-// 검수는 LLM 호출 + 여러 요청을 거쳐 15~30초가 걸릴 수 있다 → 무료 플랜 상한(60초) 명시.
-export const maxDuration = 60;
+// 검수는 여러 페이지를 돌며 자동 검사(수십~백여 건) + LLM 시나리오까지 하므로
+// 30초~1분 넘게 걸릴 수 있다. Fluid Compute에서는 무료 플랜도 300초까지 허용되므로
+// 여유 있게 올려 크롤 중 타임아웃(504)이 나지 않게 한다.
+export const maxDuration = 180;
 
 export const metadata = {
   title: "사이트 검수 · 카페인컬러",
