@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getProjectForEdit } from "@/application/get-project-for-edit";
 import { listMenus } from "@/application/list-menus";
 import { ProjectNotFoundError } from "@/application/with-project-auth";
+import { CREDITS_OPEN } from "@/lib/flags";
 import { BriefForm } from "./brief-form";
 
 // 자동 생성은 AI 응답을 여러 번 이어받아야 해서 시간이 걸린다.
@@ -30,5 +31,5 @@ export default async function BriefPage({
   ]);
   const hasMenus = menus.length > 0;
 
-  return <BriefForm project={project} hasMenus={hasMenus} />;
+  return <BriefForm project={project} hasMenus={hasMenus} creditsOpen={CREDITS_OPEN} />;
 }

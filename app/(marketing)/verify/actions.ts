@@ -3,6 +3,9 @@
 import { verifySite, verifyDocument, verifyText } from "@/application/verify-site";
 import { getVerifyQuota } from "@/application/get-verify-quota";
 import { requireSession } from "@/application/require-session";
+import { getCreditBalance, spendCredits } from "@/application/credit";
+import { CREDITS_OPEN } from "@/lib/flags";
+import { CREDIT_COST } from "@/lib/credits";
 import { drizzleVerifyRunRepository } from "@/adapters/repository/drizzle/verify-run-repository";
 import type { VerificationReport } from "@/domain/verify/report";
 
@@ -43,13 +46,20 @@ export async function runVerifyAction(
     return fail("로그인이 필요해요. 로그인 후 다시 시도해 주세요.");
   }
 
-  // 무료 횟수 확인. 다 썼으면 실행하지 않고 안내만.
-  const quota = await getVerifyQuota();
-  if (!quota.allowed) {
-    return { report: null, error: null, limitReached: true };
+  // 결제 전에는 무료 횟수, 결제 켜지면 크레딧으로 대체한다.
+  if (!CREDITS_OPEN) {
+    const quota = await getVerifyQuota();
+    if (!quota.allowed) {
+      return { report: null, error: null, limitReached: true };
+    }
   }
 
   const mode = String(formData.get("mode") ?? "url");
+  // 사이트 검수는 여러 페이지 크롤이라 더 비싸고, 문서·설계도는 시나리오만이라 저렴.
+  const cost = mode === "url" ? CREDIT_COST.verifySite : CREDIT_COST.verifyDoc;
+  if (CREDITS_OPEN && (await getCreditBalance()) < cost) {
+    return fail("크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요.");
+  }
 
   let report: VerificationReport;
   if (mode === "spec") {
@@ -80,6 +90,11 @@ export async function runVerifyAction(
     const result = await verifySite(url);
     if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
     report = result.report;
+  }
+
+  // 검수가 성공했으니 크레딧을 차감한다(결제 켜짐일 때만).
+  if (CREDITS_OPEN) {
+    await spendCredits(cost, mode === "url" ? "사이트 검수" : "문서·설계도 검수", {});
   }
 
   // 결과 저장(무료 횟수 집계 + 내 프로젝트 연동 기반). 저장 실패가 결과를 막지 않게 방어.

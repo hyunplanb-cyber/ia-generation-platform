@@ -284,9 +284,11 @@ function ModeSection({
 export function VerifyForm({
   alreadyBlocked,
   freeLimit,
+  creditsOpen,
 }: {
   alreadyBlocked: boolean;
   freeLimit: number | null;
+  creditsOpen: boolean;
 }) {
   const [state, formAction, pending] = useActionState(runVerifyAction, initialState);
   const [mode, setMode] = useState<Mode>("url");
@@ -294,12 +296,14 @@ export function VerifyForm({
   const [specFileName, setSpecFileName] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const report = state.report;
-  const blocked = alreadyBlocked || state.limitReached;
+  // 결제 켜지면 무료 횟수 제한 대신 크레딧으로 — 무료 소진 안내를 띄우지 않는다.
+  const blocked = !creditsOpen && (alreadyBlocked || state.limitReached);
 
   const onResult = !!report && !dismissed;
   const activeStep: 0 | 1 = onResult ? 1 : 0;
 
   const isUrl = mode === "url";
+  const verifyCost = isUrl ? 8 : 4; // 사이트 8 / 문서·설계도 4 크레딧
   const buttonLabel = isUrl ? "사이트 검수하기" : "검수 시나리오 만들기";
 
   // 무료 횟수를 다 썼고 결과도 없으면 입력 자리에 안내만.
@@ -398,6 +402,7 @@ export function VerifyForm({
 
           <Button type="submit" disabled={pending} className="mt-1 sm:w-56">
             {buttonLabel}
+            {creditsOpen && <span className="ml-1.5 font-normal opacity-80">· {verifyCost}크레딧</span>}
           </Button>
         </form>
       </div>

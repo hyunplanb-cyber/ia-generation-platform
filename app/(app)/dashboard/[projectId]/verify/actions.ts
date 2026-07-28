@@ -5,6 +5,9 @@ import { verifySite } from "@/application/verify-site";
 import { getVerifyQuota } from "@/application/get-verify-quota";
 import { withProjectAuth } from "@/application/with-project-auth";
 import { requireSession } from "@/application/require-session";
+import { getCreditBalance, spendCredits } from "@/application/credit";
+import { CREDITS_OPEN } from "@/lib/flags";
+import { CREDIT_COST } from "@/lib/credits";
 import { drizzleVerifyRunRepository } from "@/adapters/repository/drizzle/verify-run-repository";
 import type { VerificationReport } from "@/domain/verify/report";
 
@@ -45,14 +48,26 @@ export async function runProjectVerifyAction(
     return fail("이 프로젝트에 접근할 수 없어요.");
   }
 
-  // 무료 횟수 확인(결제 붙기 전엔 항상 허용).
-  const quota = await getVerifyQuota();
-  if (!quota.allowed) {
-    return { report: null, error: null, limitReached: true };
+  // 결제 전에는 무료 횟수, 결제 켜지면 크레딧으로 대체.
+  if (!CREDITS_OPEN) {
+    const quota = await getVerifyQuota();
+    if (!quota.allowed) {
+      return { report: null, error: null, limitReached: true };
+    }
+  }
+
+  const cost = CREDIT_COST.verifySite;
+  if (CREDITS_OPEN && (await getCreditBalance()) < cost) {
+    return fail("크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요.");
   }
 
   const result = await verifySite(url);
   if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
+
+  // 검수 성공 → 크레딧 차감(결제 켜짐일 때만).
+  if (CREDITS_OPEN) {
+    await spendCredits(cost, "사이트 검수(프로젝트)", { projectId });
+  }
 
   try {
     await drizzleVerifyRunRepository.create({

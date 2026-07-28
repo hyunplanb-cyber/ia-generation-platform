@@ -22,6 +22,7 @@ const initialState: GenerateState = { reason: null };
 
 const MESSAGES: Record<string, string> = {
   unavailable: "AI 자동 생성 기능을 아직 사용할 수 없어요. 관리자 설정(ANTHROPIC_API_KEY)이 필요해요.",
+  "insufficient-credit": "크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요.",
   "no-credit":
     "AI 사용 크레딧이 부족해요. Anthropic 콘솔의 Plans & Billing에서 크레딧을 충전하면 바로 사용할 수 있어요.",
   "already-has-menus": "이미 메뉴가 있어요. 자동 생성은 메뉴가 없는 새 프로젝트에서만 실행돼요.",
@@ -69,7 +70,15 @@ const SCALE_OPTIONS: { key: Scale; title: string; credit: string; desc: string }
   },
 ];
 
-export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: boolean }) {
+export function BriefForm({
+  project,
+  hasMenus,
+  creditsOpen,
+}: {
+  project: Project;
+  hasMenus: boolean;
+  creditsOpen: boolean;
+}) {
   const boundAction = saveBriefAndGenerateAction.bind(null, project.id);
   const [state, formAction, pending] = useActionState(boundAction, initialState);
   const [scale, setScale] = useState<Scale>("basic");
@@ -189,7 +198,9 @@ export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: b
                   })}
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  지금은 결제 준비 중이라 무료로 생성돼요.
+                  {creditsOpen
+                    ? "선택한 규모만큼 크레딧이 차감돼요. (미리보기·수정은 무료)"
+                    : "지금은 결제 준비 중이라 무료로 생성돼요."}
                 </p>
               </div>
 
@@ -200,6 +211,14 @@ export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: b
               {state.reason && (
                 <p className="text-sm text-danger">
                   {MESSAGES[state.reason] ?? "자동 생성에 실패했어요."}
+                  {state.reason === "insufficient-credit" && (
+                    <Link
+                      href={`/dashboard/billing`}
+                      className="ml-2 font-semibold text-primary underline"
+                    >
+                      충전하기
+                    </Link>
+                  )}
                 </p>
               )}
               <p className="text-xs leading-relaxed text-muted-foreground">

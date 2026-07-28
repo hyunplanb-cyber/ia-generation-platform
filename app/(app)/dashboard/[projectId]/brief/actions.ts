@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { updateProject } from "@/application/update-project";
 import { generateIa } from "@/application/generate-ia";
+import { getCreditBalance, spendCredits } from "@/application/credit";
+import { CREDITS_OPEN } from "@/lib/flags";
+import { CREDIT_COST } from "@/lib/credits";
 import type { DeviceMode } from "@/domain/project/project";
 
 export interface GenerateState {
@@ -40,8 +43,17 @@ export async function saveBriefAndGenerateAction(
     deviceMode,
   });
 
+  // 크레딧: 잔액을 먼저 확인하고, 생성이 성공했을 때만 차감한다(실패 시 무과금).
+  const cost = detail ? CREDIT_COST.genDetail : CREDIT_COST.genBasic;
+  if (CREDITS_OPEN && (await getCreditBalance()) < cost) {
+    return { reason: "insufficient-credit" };
+  }
+
   const result = await generateIa(projectId, detail);
   if (result.ok) {
+    if (CREDITS_OPEN) {
+      await spendCredits(cost, detail ? "설계도 생성(상세)" : "설계도 생성(기본)", { projectId });
+    }
     revalidatePath(`/dashboard/${projectId}/menus`);
     revalidatePath(`/dashboard/${projectId}/screens`);
     redirect(`/dashboard/${projectId}/screens`);
