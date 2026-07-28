@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { confirmCharge } from "@/application/charge";
-import { getCreditBalance } from "@/application/credit";
 
 // 토스 승인 API 호출이 있어 여유를 둔다.
 export const maxDuration = 60;
@@ -30,8 +29,6 @@ export default async function ChargeSuccessPage({
     message = "결제 정보가 올바르지 않아요.";
   }
 
-  const balance = ok ? await getCreditBalance() : 0;
-
   return (
     <div className="mx-auto flex max-w-md flex-col items-center gap-5 px-6 py-16 text-center">
       {ok ? (
@@ -40,8 +37,7 @@ export default async function ChargeSuccessPage({
           <h1 className="text-xl font-bold text-foreground">충전이 완료됐어요</h1>
           <p className="text-sm text-muted-foreground">
             <span className="font-bold text-primary">+{credits.toLocaleString()}</span> 크레딧이
-            지급됐어요. 현재 잔액{" "}
-            <span className="font-bold text-foreground">{balance.toLocaleString()}</span> 크레딧.
+            지급됐어요.
           </p>
         </>
       ) : (
