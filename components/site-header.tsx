@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LayoutGrid, LayoutList, Package, ShieldQuestion, PencilRuler } from "lucide-react";
 import { ProfileMenu } from "@/components/profile-menu";
 import { MobileNav } from "@/components/mobile-nav";
+import { NavLink } from "@/components/nav-link";
 import { getSession } from "@/lib/session";
 
 // 사이트 전체가 쓰는 단 하나의 헤더.
@@ -45,7 +46,7 @@ export async function SiteHeader() {
           {session ? (
             <>
               {/* 넓은 화면에서만 — 좁은 화면에서는 메뉴 버튼 안에 들어 있다 */}
-              <NavLink href="/dashboard" icon={LayoutGrid}>
+              <NavLink href="/dashboard" match="/dashboard" icon={LayoutGrid}>
                 나의 프로젝트
               </NavLink>
               <span className="hidden sm:block">
@@ -76,26 +77,3 @@ export async function SiteHeader() {
   );
 }
 
-// 넓은 화면에서만 보이는 메뉴. 좁은 화면에서는 MobileNav 안에 같은 항목이 들어 있다.
-function NavLink({
-  href,
-  icon: Icon,
-  children,
-  prefetch,
-}: {
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  children: React.ReactNode;
-  prefetch?: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      prefetch={prefetch}
-      className="hidden items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-muted hover:text-foreground sm:flex"
-    >
-      <Icon className="size-4" />
-      {children}
-    </Link>
-  );
-}

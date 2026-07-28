@@ -26,8 +26,8 @@ export function HomeLanding() {
               <a className="btn btn-o" href="/signup">
                 설계도 프롬프트 만들기 <span aria-hidden="true">→</span>
               </a>
-              <a className="btn btn-line" href="/verify">
-                내 사이트 검수하기
+              <a className="btn btn-teal" href="/verify">
+                내 사이트 검수하기 <span aria-hidden="true">→</span>
               </a>
             </div>
 
@@ -285,6 +285,34 @@ export function HomeLanding() {
                 <div className="rfail">✕ &lsquo;장바구니 비어 있음&rsquo; 화면 없음</div>
                 <div className="rfail">✕ /free 대표 이미지 깨짐</div>
               </div>
+            </div>
+          </div>
+
+          {/* 검수 산출물 — 받는 것 */}
+          <div className="sec-eye" style={{ marginTop: 48 }}>
+            <span className="idx" style={{ color: "var(--teal)" }}>
+              ✓
+            </span>
+            <span className="mono" style={{ textTransform: "none", color: "var(--teal)" }}>
+              이런 산출물을 받아요
+            </span>
+          </div>
+          <div className="vout">
+            <div className="vchip">
+              <div className="vc-h">검수 현황</div>
+              <div className="vc-d">통과·실패·주의 한눈에</div>
+            </div>
+            <div className="vchip">
+              <div className="vc-h">자동 검사 리포트</div>
+              <div className="vc-d">항목마다 UI·기능 구분</div>
+            </div>
+            <div className="vchip">
+              <div className="vc-h">재현 시나리오</div>
+              <div className="vc-d">공개·로그인·결제 확인 순서</div>
+            </div>
+            <div className="vchip">
+              <div className="vc-h">엑셀 결과서</div>
+              <div className="vc-d">표지·현황·시나리오 한 벌</div>
             </div>
           </div>
 
@@ -668,6 +696,7 @@ export function HomeLanding() {
         }
         .sec h2 {
           font-size: clamp(34px, 5vw, 58px);
+          line-height: 1.14;
         }
         .lead {
           font-size: 19px;
@@ -984,6 +1013,29 @@ export function HomeLanding() {
           align-items: center;
           padding: 6px 0;
           border-top: 1px solid #1e3228;
+        }
+        .vout {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 12px;
+          margin-top: 18px;
+        }
+        .vchip {
+          background: var(--green-2);
+          border: 1px solid var(--green-line);
+          border-radius: 8px;
+          padding: 16px;
+        }
+        .vchip .vc-h {
+          font-size: 15px;
+          font-weight: 700;
+          color: #efe9d9;
+        }
+        .vchip .vc-d {
+          font-size: 12.5px;
+          font-weight: 400;
+          color: #9db3a6;
+          margin-top: 5px;
         }
         .tiers {
           display: grid;
