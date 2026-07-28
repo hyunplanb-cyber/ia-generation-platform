@@ -205,13 +205,14 @@ function PlanningTab({
         {completed.map((p) => {
           const count = screenCounts[p.id] ?? 0;
           const result = results[p.id];
+          const cost = downloadCost(!!result && result.screens.some((s) => s.screenGroup));
           return (
             <details
               key={p.id}
               className="group rounded-2xl border border-border bg-surface shadow-sm"
             >
               <summary className="cursor-pointer list-none p-5 [&::-webkit-details-marker]:hidden">
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-start justify-between gap-4">
                   <div className="flex min-w-0 flex-col gap-2">
                     <span className="w-fit rounded-full bg-pastel-mint px-2.5 py-0.5 text-xs font-semibold text-pastel-mint-foreground">
                       생성 완료
@@ -234,16 +235,28 @@ function PlanningTab({
                     </div>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
-                    <ZipAllButton
-                      projectId={p.id}
-                      large
-                      credits={downloadCost(!!result && result.screens.some((s) => s.screenGroup))}
-                      unlocked={unlocks[p.id]}
-                      creditsOpen={CREDITS_OPEN}
-                    />
-                    {/* downloadable 게이팅은 크레딧으로 대체됨 */}
+                    {/* 데스크톱: 오른쪽에 다운로드 */}
+                    <span className="hidden sm:block">
+                      <ZipAllButton
+                        projectId={p.id}
+                        large
+                        credits={cost}
+                        unlocked={unlocks[p.id]}
+                        creditsOpen={CREDITS_OPEN}
+                      />
+                    </span>
                     <ChevronDown className="size-5 text-muted-foreground transition-transform group-open:rotate-180" />
                   </div>
+                </div>
+                {/* 모바일: 다운로드 버튼을 카드 하단에 */}
+                <div className="mt-4 sm:hidden">
+                  <ZipAllButton
+                    projectId={p.id}
+                    large
+                    credits={cost}
+                    unlocked={unlocks[p.id]}
+                    creditsOpen={CREDITS_OPEN}
+                  />
                 </div>
               </summary>
 
@@ -298,7 +311,7 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
         {runs.map((run) => (
           <details key={run.id} className="rounded-xl border border-border bg-surface">
             <summary className="cursor-pointer list-none px-4 py-3 [&::-webkit-details-marker]:hidden">
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1.5">
                   <span className="w-fit rounded-full bg-pastel-mint px-2.5 py-0.5 text-xs font-semibold text-pastel-mint-foreground">
                     검수완료
@@ -316,10 +329,19 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
                     </span>
                   </div>
                 </div>
+                {/* 데스크톱: 오른쪽에 다운로드 */}
                 {run.report.scenarios.length > 0 && (
-                  <VerifyScenarioDownloadButton report={run.report} />
+                  <span className="hidden sm:block">
+                    <VerifyScenarioDownloadButton report={run.report} />
+                  </span>
                 )}
               </div>
+              {/* 모바일: 다운로드를 카드 하단에 */}
+              {run.report.scenarios.length > 0 && (
+                <div className="mt-3 sm:hidden">
+                  <VerifyScenarioDownloadButton report={run.report} />
+                </div>
+              )}
             </summary>
             <div className="border-t border-border/60 p-4">
               <VerifyReportView report={run.report} />
