@@ -1,10 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Coins } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
@@ -27,7 +29,15 @@ function colorFor(email: string): string {
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
 
-export function ProfileMenu({ email }: { email: string }) {
+export function ProfileMenu({
+  email,
+  balance,
+  showCharge,
+}: {
+  email: string;
+  balance: number;
+  showCharge: boolean;
+}) {
   const router = useRouter();
 
   async function handleSignOut() {
@@ -50,7 +60,20 @@ export function ProfileMenu({ email }: { email: string }) {
       >
         {initial}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="min-w-48">
+        {/* 내 크레딧 잔액 */}
+        <div className="flex items-center justify-between gap-3 px-2 py-1.5">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+            <Coins className="size-3.5 text-primary" /> 내 크레딧
+          </span>
+          <span className="text-sm font-bold text-foreground">{balance.toLocaleString()}</span>
+        </div>
+        {showCharge && (
+          <DropdownMenuItem onClick={() => router.push("/dashboard/billing")}>
+            충전하기
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/account")}>계정 설정</DropdownMenuItem>
         <DropdownMenuItem onClick={handleSignOut}>로그아웃</DropdownMenuItem>
       </DropdownMenuContent>

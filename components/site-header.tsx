@@ -4,12 +4,16 @@ import { ProfileMenu } from "@/components/profile-menu";
 import { MobileNav } from "@/components/mobile-nav";
 import { NavLink } from "@/components/nav-link";
 import { getSession } from "@/lib/session";
+import { getCreditBalance } from "@/application/credit";
+import { CREDITS_OPEN } from "@/lib/flags";
 
 // 사이트 전체가 쓰는 단 하나의 헤더.
 // 마케팅 화면과 로그인 후 화면이 각자 헤더를 갖고 있어서 메뉴가 서로 다르고
 // 로그인 상태가 반영되지 않는 문제가 있었다 — 여기 하나로 합친다.
 export async function SiteHeader() {
   const session = await getSession();
+  // 로그인 상태면 크레딧 잔액을 함께 읽어 프로필 메뉴에 보여준다(무료 크레딧도 여기서 첫 지급).
+  const balance = session ? await getCreditBalance() : 0;
 
   // 배경은 시안의 크림(종이) 색. 페이지 본문은 흰색이어도 상단 GNB만 크림 띠로 둔다.
   return (
@@ -61,7 +65,7 @@ export async function SiteHeader() {
                 나의 프로젝트
               </NavLink>
               <span className="hidden sm:block">
-                <ProfileMenu email={session.user.email} />
+                <ProfileMenu email={session.user.email} balance={balance} showCharge={CREDITS_OPEN} />
               </span>
             </>
           ) : (
