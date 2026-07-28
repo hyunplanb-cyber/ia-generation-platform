@@ -18,7 +18,7 @@ export interface ProjectFlowEdge {
 }
 
 export interface ProjectResult {
-  menus: { id: string; nameKo: string }[];
+  menus: { id: string; nameKo: string; menuCode: string }[];
   screens: ProjectResultScreen[];
   requirements: Requirement[];
   flow: ProjectFlowEdge[];
@@ -46,7 +46,7 @@ export async function listProjectResults(
         }));
 
       const result: ProjectResult = {
-        menus: menus.map((m) => ({ id: m.id, nameKo: m.nameKo })),
+        menus: menus.map((m) => ({ id: m.id, nameKo: m.nameKo, menuCode: m.menuCode })),
         screens: active.map((s) => ({
           id: s.id,
           menuId: s.menuId,
