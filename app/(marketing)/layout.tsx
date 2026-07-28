@@ -19,9 +19,8 @@ export default function MarketingLayout({
         <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-10 text-sm text-muted-foreground">
           <div className="flex flex-col gap-2">
             <p className="text-base font-bold text-foreground">카페인컬러</p>
-            <p className="max-w-md">
-              사이트 컨셉과 메뉴만 입력하면 IA·기능정의·AI프롬프트·일정까지 자동으로
-              만들어주는 웹기획 자동화 도구예요.
+            <p>
+              사이트 컨셉과 메뉴만 입력하면 IA·기능정의·AI프롬프트·일정까지 자동으로 만들어주는 웹기획 자동화 도구예요.
             </p>
           </div>
           {/* 전자상거래법상 사업자 정보 표시. 내용은 lib/business.ts 한 곳에서 관리한다. */}
