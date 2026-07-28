@@ -351,16 +351,14 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
               <span className="min-w-0 flex-1 truncate font-mono text-xs text-muted-foreground">
                 {run.target}
               </span>
-              {run.mode === "site" && (
-                <span className="flex shrink-0 gap-1.5">
-                  <span className="rounded-full bg-success-soft px-2 py-0.5 text-xs font-semibold text-success">
-                    통과 {run.report.passCount}
-                  </span>
-                  <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-semibold text-danger">
-                    실패 {run.report.failCount}
-                  </span>
+              <span className="flex shrink-0 gap-1.5">
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
+                  검수 {run.report.checks.length}건
                 </span>
-              )}
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
+                  시나리오 {run.report.scenarios.reduce((n, s) => n + s.steps.length, 0)}개
+                </span>
+              </span>
               {run.report.scenarios.length > 0 && (
                 <VerifyScenarioDownloadButton report={run.report} />
               )}
