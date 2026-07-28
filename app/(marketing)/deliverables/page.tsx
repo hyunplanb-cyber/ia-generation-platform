@@ -18,14 +18,10 @@ export default function DeliverablesPage() {
             <LayoutList className="size-3.5" /> 산출물 소개
           </span>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            만들기 전엔 설계도,
-            <br />
-            오픈 전엔 검수
+            만들기 전엔 설계도, 오픈 전엔 검수
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            각 산출물이 어떤 역할을 하는지, 실제로 어떻게 생겼는지 샘플과 함께 소개해요. 아래 탭에서
-            <b className="font-semibold text-foreground"> 설계도 프롬프트</b>와{" "}
-            <b className="font-semibold text-foreground">사이트 검수</b>를 나눠 볼 수 있어요.
+            각 산출물이 어떤 역할을 하는지, 실제로 어떻게 생겼는지 샘플과 함께 소개해요.
           </p>
         </div>
       </section>
