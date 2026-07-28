@@ -187,10 +187,7 @@ function PlanningTab({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          완성된 프로젝트 {completed.length}개
-          {draftCount > 0 && ` · 작성 중 ${draftCount}개는 완성되면 표시돼요`}
-        </p>
+        <p className="text-sm text-muted-foreground">생성 완료 {completed.length}건</p>
         {newButton}
       </div>
 
