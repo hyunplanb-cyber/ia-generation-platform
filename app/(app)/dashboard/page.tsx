@@ -116,9 +116,7 @@ export default async function DashboardPage({
     <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-6 py-8">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-foreground">{session.user.name}님의 프로젝트</h1>
-        <p className="text-muted-foreground">
-          설계도 프롬프트와 사이트 검수를 탭으로 나눠서 관리해요.
-        </p>
+        <p className="text-muted-foreground">생성된 프로젝트입니다.</p>
       </div>
 
       <DashboardTabs active={activeTab} />
