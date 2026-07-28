@@ -34,7 +34,8 @@ function VerifySteps() {
         const Icon = s.icon;
         return (
           <Fragment key={s.title}>
-            <li className="flex-1">
+            {/* 프롬프트 탭과 같은 스텝 크기(최대 429px). 2단계라 우측은 비워둔다. */}
+            <li className="min-w-0 flex-1 sm:w-[429px] sm:flex-none">
               <div
                 className={`flex h-full items-center justify-center gap-3 rounded-2xl px-4 py-4 sm:gap-4 sm:px-6 sm:py-5 ${
                   s.active
@@ -97,19 +98,8 @@ export default async function VerifyPage() {
         </p>
 
         <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
-          {/* 좌측 콘텐츠 — 헤더 + 입력 폼 */}
+          {/* 좌측 콘텐츠 — 입력 폼 */}
           <div className="flex flex-col gap-6">
-            <header className="border-b border-border pb-6">
-              <p className="text-sm font-semibold text-primary">사이트 검수</p>
-              <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                오픈 전에, 진짜 다 되는지 확인하세요
-              </h1>
-              <p className="mt-3 leading-relaxed text-muted-foreground">
-                AI로 만든 사이트는 보이는 화면만 그럴듯해요. URL을 넣으면 공개 화면은 우리가 검수하고,
-                로그인·결제처럼 자동으로 볼 수 없는 화면은 직접 확인할 시나리오로 짚어드려요.
-              </p>
-            </header>
-
             <VerifyForm alreadyBlocked={!quota.allowed} freeLimit={quota.limit} />
           </div>
 
