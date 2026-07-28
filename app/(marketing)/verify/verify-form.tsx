@@ -108,7 +108,7 @@ export function VerifyForm({
           active={mode === "spec"}
           onSelect={() => setMode("spec")}
           title="설계도 프롬프트"
-          hint="카페인컬러로 만든 IA·스펙팩을 넣으면 가장 정확해요."
+          hint="카페인컬러로 만든 IA·스펙팩을 넣으면 가장 정확한 검수 시나리오를 받을 수 있어요."
         >
           <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
             <PencilRuler className="size-6 text-muted-foreground" />
@@ -128,10 +128,6 @@ export function VerifyForm({
               onChange={(e) => setSpecFileName(e.target.files?.[0]?.name ?? null)}
             />
           </label>
-          <p className="mt-3 rounded-lg bg-primary-soft/30 px-4 py-3 text-xs leading-relaxed text-foreground">
-            화면·요건을 그대로 알아 <b className="font-semibold">가장 자세한 검수 시나리오</b>를
-            만들어드려요.
-          </p>
         </ModeSection>
 
         {/* 사이트 URL */}
@@ -150,9 +146,10 @@ export function VerifyForm({
             disabled={mode !== "url"}
           />
           <p className="mt-3 rounded-lg bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-            URL을 넣으면 <b className="font-semibold text-foreground">공개 화면은 우리가 검수</b>하고,
+            <b className="font-semibold text-foreground">공개 화면은 우리가 검수</b>하고,
             로그인·결제처럼 자동으로 볼 수 없는 화면은{" "}
-            <b className="font-semibold text-foreground">직접 확인할 시나리오</b>로 짚어드려요.
+            <b className="font-semibold text-foreground">직접 확인할 수 있도록 검수 시나리오</b>로
+            짚어드려요.
           </p>
         </ModeSection>
 
@@ -161,7 +158,7 @@ export function VerifyForm({
           active={mode === "document"}
           onSelect={() => setMode("document")}
           title="설계 문서(PDF·PPTX)"
-          hint="화면설계서·기획서 파일을 넣어주세요."
+          hint={'화면설계서·기획서 파일을 넣어주세요. "무엇을 확인할지" 설계도에 맞는 검수 시나리오를 만들어드려요.'}
         >
           <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
             <FileText className="size-6 text-muted-foreground" />
@@ -181,10 +178,6 @@ export function VerifyForm({
               onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
             />
           </label>
-          <p className="mt-3 rounded-lg bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-            문서만으로는 <b className="font-semibold text-foreground">&quot;무엇을 확인할지&quot;
-            시나리오</b>까지 드려요. 실제 통과/실패 검수는 사이트가 만들어진 뒤 URL을 넣어주세요.
-          </p>
         </ModeSection>
 
         {/* 버튼은 한 자리 — 고른 방식에 따라 이름만 바뀐다 */}
