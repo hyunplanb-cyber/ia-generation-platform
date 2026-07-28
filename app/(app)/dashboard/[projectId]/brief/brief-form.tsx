@@ -51,9 +51,28 @@ const DELIVERABLES = [
   { icon: ShieldCheck, label: "관리자 페이지" },
 ];
 
+// 생성 규모 — 화면 수로 나뉘고, 크레딧(요금)도 다르다.
+// key "detail"이 true면 상세(3뎁스). 액션은 formData.get("detail")==="on"으로 읽는다.
+type Scale = "basic" | "detail";
+const SCALE_OPTIONS: { key: Scale; title: string; credit: string; desc: string }[] = [
+  {
+    key: "basic",
+    title: "기본 · 30~50화면",
+    credit: "4크레딧",
+    desc: "핵심 화면 위주로 빠르게(2뎁스). 처음엔 이걸로 충분해요.",
+  },
+  {
+    key: "detail",
+    title: "상세 · 100~150화면",
+    credit: "8크레딧",
+    desc: "상태·탭·예외까지 촘촘히(3뎁스). 실무 산출물 수준, 조금 더 걸려요.",
+  },
+];
+
 export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: boolean }) {
   const boundAction = saveBriefAndGenerateAction.bind(null, project.id);
   const [state, formAction, pending] = useActionState(boundAction, initialState);
+  const [scale, setScale] = useState<Scale>("basic");
 
   return (
     <div className="flex flex-col gap-5">
@@ -129,22 +148,50 @@ export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: b
                   </p>
                 </div>
               </div>
-              {/* 상세 IA(3뎁스) 옵션 — 화면을 상태·탭까지 촘촘히 100개+로 */}
-              <label className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-border bg-background p-3.5">
-                <input
-                  type="checkbox"
-                  name="detail"
-                  disabled={pending}
-                  className="mt-0.5 size-4 accent-primary"
-                />
-                <span className="text-sm">
-                  <span className="font-semibold text-foreground">상세하게 만들기 (3뎁스)</span>
-                  <span className="block text-xs leading-relaxed text-muted-foreground">
-                    화면을 상태·탭·예외까지 쪼개 실무 수준(보통 80~150개)으로 뽑아요. 더 정확하지만
-                    생성이 조금 더 걸려요.
-                  </span>
-                </span>
-              </label>
+              {/* 생성 규모 선택 — 화면 수(2뎁스/3뎁스)에 따라 크레딧이 다르다.
+                  선택값은 hidden input의 detail(on/off)로 액션에 전달된다. */}
+              <input type="hidden" name="detail" value={scale === "detail" ? "on" : "off"} />
+              <div>
+                <p className="mb-2 text-sm font-semibold text-foreground">얼마나 촘촘하게 만들까요?</p>
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                  {SCALE_OPTIONS.map((opt) => {
+                    const on = scale === opt.key;
+                    return (
+                      <button
+                        key={opt.key}
+                        type="button"
+                        onClick={() => setScale(opt.key)}
+                        disabled={pending}
+                        aria-pressed={on}
+                        className={`flex flex-col gap-1.5 rounded-xl border p-4 text-left transition-colors disabled:opacity-60 ${
+                          on
+                            ? "border-primary bg-background ring-2 ring-primary/30"
+                            : "border-border bg-background hover:border-primary/40"
+                        }`}
+                      >
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="font-semibold text-foreground">{opt.title}</span>
+                          <span
+                            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                              on
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            {opt.credit}
+                          </span>
+                        </span>
+                        <span className="text-xs leading-relaxed text-muted-foreground">
+                          {opt.desc}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  지금은 결제 준비 중이라 무료로 생성돼요.
+                </p>
+              </div>
 
               <Button type="submit" size="lg" disabled={pending} className="self-start">
                 <Sparkles className="size-4" />
