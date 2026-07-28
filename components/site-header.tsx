@@ -30,6 +30,7 @@ export async function SiteHeader() {
               새로 생기지 않도록 prefetch를 끈다. */}
           <NavLink
             href="/dashboard/new"
+            match="/dashboard/"
             icon={<PencilRuler className="size-4" />}
             prefetch={false}
           >
@@ -50,7 +51,13 @@ export async function SiteHeader() {
           {session ? (
             <>
               {/* 넓은 화면에서만 — 좁은 화면에서는 메뉴 버튼 안에 들어 있다 */}
-              <NavLink href="/dashboard" match="/dashboard" icon={<LayoutGrid className="size-4" />}>
+              <NavLink
+                href="/dashboard"
+                match="/dashboard"
+                exact
+                noLine
+                icon={<LayoutGrid className="size-4" />}
+              >
                 나의 프로젝트
               </NavLink>
               <span className="hidden sm:block">

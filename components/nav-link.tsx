@@ -10,19 +10,27 @@ import { usePathname } from "next/navigation";
 export function NavLink({
   href,
   match,
+  exact,
+  noLine,
   icon,
   children,
   prefetch,
 }: {
   href: string;
-  match?: string;
+  match?: string; // 활성 판정 경로. "/로 끝나면" 그 접두사로 시작하면 활성(하위 전체).
+  exact?: boolean; // 정확히 일치할 때만 활성
+  noLine?: boolean; // 활성 시 밑줄 없이 색만
   icon: React.ReactNode;
   children: React.ReactNode;
   prefetch?: boolean;
 }) {
   const pathname = usePathname() ?? "";
   const base = match ?? href;
-  const active = pathname === base || pathname.startsWith(`${base}/`);
+  const active = exact
+    ? pathname === base
+    : base.endsWith("/")
+      ? pathname.startsWith(base)
+      : pathname === base || pathname.startsWith(`${base}/`);
 
   return (
     <Link
@@ -31,7 +39,11 @@ export function NavLink({
       aria-current={active ? "page" : undefined}
       className={`relative hidden items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:flex ${
         active
-          ? "text-primary after:absolute after:inset-x-3 after:-bottom-[11px] after:h-0.5 after:rounded-full after:bg-primary"
+          ? `text-primary ${
+              noLine
+                ? ""
+                : "after:absolute after:inset-x-3 after:-bottom-[11px] after:h-0.5 after:rounded-full after:bg-primary"
+            }`
           : "text-foreground/80 hover:bg-muted hover:text-foreground"
       }`}
     >
