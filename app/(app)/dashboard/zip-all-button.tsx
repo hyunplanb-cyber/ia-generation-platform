@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { Download, Loader2 } from "lucide-react";
 
 function safeFileName(concept: string): string {
@@ -13,7 +13,10 @@ export function ZipAllButton({ projectId, large }: { projectId: string; large?: 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
 
-  async function handleDownload() {
+  async function handleDownload(e: MouseEvent) {
+    // <summary> 안에 놓여도 클릭 시 폴드가 접히지 않도록.
+    e.stopPropagation();
+    e.preventDefault();
     setBusy(true);
     setError(false);
     try {

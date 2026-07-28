@@ -1,0 +1,254 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Network,
+  LayoutList,
+  FileText,
+  Workflow,
+  CalendarRange,
+  ShieldCheck,
+  ArrowRight,
+  ExternalLink,
+  type LucideIcon,
+} from "lucide-react";
+import { DeleteProjectButton } from "./delete-project-button";
+import type { ProjectResult } from "@/application/list-project-results";
+
+type TabKey = "screens" | "tree" | "specs" | "flow" | "wbs" | "admin";
+
+const TABS: { key: TabKey; label: string; icon: LucideIcon; href: string }[] = [
+  { key: "screens", label: "IA · 화면 목록", icon: LayoutList, href: "screens" },
+  { key: "tree", label: "메뉴 구조", icon: Network, href: "tree" },
+  { key: "specs", label: "기능정의서", icon: FileText, href: "specs" },
+  { key: "flow", label: "FLOW · 흐름도", icon: Workflow, href: "flow" },
+  { key: "wbs", label: "WBS", icon: CalendarRange, href: "wbs" },
+  { key: "admin", label: "관리자 페이지", icon: ShieldCheck, href: "admin" },
+];
+
+const REQ_TONE: Record<string, string> = {
+  기능: "bg-primary-soft text-primary-on-soft",
+  콘텐츠: "bg-pastel-mint text-pastel-mint-foreground",
+  "UI/UX": "bg-pastel-lavender text-pastel-lavender-foreground",
+  정책: "bg-warning-soft text-warning",
+  기타: "bg-muted text-muted-foreground",
+};
+
+// 산출물 탭 — 선택하면 이동하지 않고 아래에 미리보기를 보여준다.
+export function ProjectDeliverablePreview({
+  projectId,
+  result,
+}: {
+  projectId: string;
+  result: ProjectResult;
+}) {
+  const [tab, setTab] = useState<TabKey>("screens");
+  const active = TABS.find((t) => t.key === tab)!;
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* 탭 + 삭제 */}
+      <div className="flex flex-wrap items-center gap-2">
+        {TABS.map((t) => {
+          const Icon = t.icon;
+          const on = t.key === tab;
+          return (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setTab(t.key)}
+              aria-pressed={on}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
+                on
+                  ? "border-primary bg-primary-soft text-primary-on-soft"
+                  : "border-border bg-background text-foreground hover:border-primary/40 hover:bg-muted"
+              }`}
+            >
+              <Icon className="size-4" />
+              {t.label}
+            </button>
+          );
+        })}
+        <div className="ml-auto">
+          <DeleteProjectButton projectId={projectId} />
+        </div>
+      </div>
+
+      {/* 미리보기 */}
+      <div className="rounded-xl border border-border bg-muted/10 p-4">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-foreground">{active.label} 미리보기</p>
+          <Link
+            href={`/dashboard/${projectId}/${active.href}`}
+            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+          >
+            자세히 열기 <ExternalLink className="size-3.5" />
+          </Link>
+        </div>
+
+        {tab === "screens" && <ScreensPreview result={result} />}
+        {tab === "tree" && <TreePreview result={result} />}
+        {tab === "specs" && <SpecsPreview result={result} />}
+        {tab === "flow" && <FlowPreview result={result} />}
+        {tab === "wbs" && <WbsPreview result={result} />}
+        {tab === "admin" && <AdminPreview />}
+      </div>
+    </div>
+  );
+}
+
+// IA · 화면 목록 — 메뉴별 화면
+function ScreensPreview({ result }: { result: ProjectResult }) {
+  return (
+    <div className="flex flex-col gap-4">
+      {result.menus.map((m) => {
+        const scns = result.screens.filter((s) => s.menuId === m.id);
+        if (scns.length === 0) return null;
+        return (
+          <div key={m.id}>
+            <p className="mb-1.5 text-sm font-semibold text-foreground">
+              {m.nameKo}
+              <span className="ml-2 text-xs font-normal text-muted-foreground">
+                화면 {scns.length}개
+              </span>
+            </p>
+            <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+              {scns.map((s) => (
+                <li key={s.id} className="flex items-baseline gap-2 text-sm text-muted-foreground">
+                  <span className="font-mono text-xs text-foreground/60">{s.pageId}</span>
+                  <span className="min-w-0 truncate text-foreground">{s.pageName}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// 메뉴 구조 — 메뉴 + 화면 수
+function TreePreview({ result }: { result: ProjectResult }) {
+  return (
+    <ul className="flex flex-col gap-2">
+      {result.menus.map((m) => {
+        const count = result.screens.filter((s) => s.menuId === m.id).length;
+        return (
+          <li
+            key={m.id}
+            className="flex items-center justify-between rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          >
+            <span className="flex items-center gap-2 font-medium text-foreground">
+              <Network className="size-4 text-muted-foreground" />
+              {m.nameKo}
+            </span>
+            <span className="text-xs text-muted-foreground">화면 {count}개</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+// 기능정의서 — 업무 · 기능 · 구성 · 유형
+function SpecsPreview({ result }: { result: ProjectResult }) {
+  const rows = result.requirements;
+  if (rows.length === 0) {
+    return <p className="text-sm text-muted-foreground">아직 요건이 없어요.</p>;
+  }
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[560px] border-collapse text-sm">
+        <thead>
+          <tr className="border-b border-border text-left text-xs font-semibold text-muted-foreground">
+            <th className="py-1.5 pr-3">ID</th>
+            <th className="py-1.5 pr-3">업무</th>
+            <th className="py-1.5 pr-3">기능</th>
+            <th className="py-1.5 pr-3">구성</th>
+            <th className="py-1.5">유형</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i} className="border-b border-border/50">
+              <td className="py-1.5 pr-3 font-mono text-xs text-muted-foreground">{r.reqId}</td>
+              <td className="py-1.5 pr-3 font-medium text-foreground">{r.업무}</td>
+              <td className="py-1.5 pr-3 text-foreground">{r.기능}</td>
+              <td className="py-1.5 pr-3 text-muted-foreground">{r.구성}</td>
+              <td className="py-1.5">
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${REQ_TONE[r.유형] ?? REQ_TONE.기타}`}
+                >
+                  {r.유형}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// FLOW · 흐름도 — 화면 이동
+function FlowPreview({ result }: { result: ProjectResult }) {
+  if (result.flow.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">아직 화면 이동(버튼 연결)이 없어요.</p>
+    );
+  }
+  return (
+    <ul className="flex flex-col gap-1.5">
+      {result.flow.map((e, i) => (
+        <li key={i} className="flex flex-wrap items-center gap-1.5 text-sm">
+          <span className="rounded-md bg-background px-2 py-0.5 font-medium text-foreground">
+            {e.from}
+          </span>
+          {e.label && <span className="text-xs text-muted-foreground">[{e.label}]</span>}
+          <ArrowRight className="size-3.5 text-muted-foreground/60" />
+          <span className="rounded-md bg-background px-2 py-0.5 font-medium text-foreground">
+            {e.to}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// WBS — 화면별 일정
+function WbsPreview({ result }: { result: ProjectResult }) {
+  return (
+    <ul className="flex flex-col gap-1">
+      {result.screens.map((s) => (
+        <li
+          key={s.id}
+          className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-border/50 py-1.5 text-sm"
+        >
+          <span className="flex min-w-0 items-baseline gap-2">
+            <span className="font-mono text-xs text-foreground/60">{s.pageId}</span>
+            <span className="truncate text-foreground">{s.pageName}</span>
+          </span>
+          <span className="shrink-0 text-xs text-muted-foreground">
+            {s.scheduleStart && s.scheduleEnd ? `${s.scheduleStart} ~ ${s.scheduleEnd}` : "일정 미정"}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// 관리자 페이지 — 선택 산출물(준비 중)
+function AdminPreview() {
+  return (
+    <div className="flex items-start gap-3 rounded-lg border border-dashed border-border bg-background px-4 py-4 text-sm">
+      <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" />
+      <p className="text-muted-foreground">
+        관리자 페이지는 필요할 때만 만드는 <b className="font-semibold text-foreground">선택 산출물</b>
+        이에요. 회원·콘텐츠·통계를 관리할 백오피스가 필요하면 관리자용 메뉴·화면을 따로 생성해요.
+        <br />
+        (자동 생성은 준비 중이에요.)
+      </p>
+    </div>
+  );
+}

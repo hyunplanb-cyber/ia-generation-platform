@@ -8,12 +8,6 @@ import {
   ShieldQuestion,
   History,
   ChevronDown,
-  Network,
-  LayoutList,
-  FileText,
-  Workflow,
-  ShieldCheck,
-  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { countScreensByProject } from "@/application/count-screens-by-project";
@@ -25,9 +19,9 @@ import { canDownload } from "@/application/get-current-plan";
 import { getProjectQuota } from "@/application/can-create-project";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
-import { DeleteProjectButton } from "./delete-project-button";
 import { ZipAllButton } from "./zip-all-button";
 import { UpgradeToDownload } from "./[projectId]/upgrade-to-download";
+import { ProjectDeliverablePreview } from "./project-deliverable-preview";
 import { createDraftProjectAction } from "./actions";
 
 function formatDate(date: Date) {
@@ -37,16 +31,6 @@ function formatDate(date: Date) {
 function formatDateTime(date: Date) {
   return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
-
-// 프로젝트를 펼쳤을 때 바로 갈 수 있는 산출물들.
-const DELIVERABLE_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "tree", label: "메뉴 구조", icon: Network },
-  { href: "screens", label: "IA · 화면 목록", icon: LayoutList },
-  { href: "specs", label: "기능정의서", icon: FileText },
-  { href: "flow", label: "FLOW · 흐름도", icon: Workflow },
-  { href: "wbs", label: "WBS", icon: CalendarRange },
-  { href: "admin", label: "관리자 페이지", icon: ShieldCheck },
-];
 
 // 상단 탭 — 설계도 프롬프트 / 사이트 검수
 function DashboardTabs({ active }: { active: "planning" | "verify" }) {
@@ -214,90 +198,42 @@ function PlanningTab({
               key={p.id}
               className="group rounded-2xl border border-border bg-surface shadow-sm"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 [&::-webkit-details-marker]:hidden">
-                <div className="flex min-w-0 flex-col gap-2">
-                  <span className="w-fit rounded-full bg-pastel-mint px-2.5 py-0.5 text-xs font-semibold text-pastel-mint-foreground">
-                    생성 완료
-                  </span>
-                  <h3 className="line-clamp-1 text-base font-bold text-foreground">
-                    {p.concept || "새 프로젝트"}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
-                      <CalendarRange className="size-4" />
-                      {p.overallStart} ~ {p.overallEnd}
+              <summary className="cursor-pointer list-none p-5 [&::-webkit-details-marker]:hidden">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex min-w-0 flex-col gap-2">
+                    <span className="w-fit rounded-full bg-pastel-mint px-2.5 py-0.5 text-xs font-semibold text-pastel-mint-foreground">
+                      생성 완료
                     </span>
-                    <span className="flex items-center gap-1.5">
-                      <Monitor className="size-4" />
-                      화면 {count}개
-                    </span>
-                    <span className="text-xs text-muted-foreground/80">
-                      최근 수정 {formatDate(p.updatedAt)}
-                    </span>
+                    <h3 className="line-clamp-1 text-base font-bold text-foreground">
+                      {p.concept || "새 프로젝트"}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1.5">
+                        <CalendarRange className="size-4" />
+                        {p.overallStart} ~ {p.overallEnd}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Monitor className="size-4" />
+                        화면 {count}개
+                      </span>
+                      <span className="text-xs text-muted-foreground/80">
+                        최근 수정 {formatDate(p.updatedAt)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
+                    {downloadable ? (
+                      <ZipAllButton projectId={p.id} large />
+                    ) : (
+                      <UpgradeToDownload label="전체 다운로드" />
+                    )}
+                    <ChevronDown className="size-5 text-muted-foreground transition-transform group-open:rotate-180" />
                   </div>
                 </div>
-                <ChevronDown className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
               </summary>
 
-              <div className="flex flex-col gap-5 border-t border-border/60 p-5">
-                {/* 상단 액션 — 전체 다운로드(크게) + 삭제 */}
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  {downloadable ? (
-                    <ZipAllButton projectId={p.id} large />
-                  ) : (
-                    <UpgradeToDownload label="전체 다운로드" />
-                  )}
-                  <DeleteProjectButton projectId={p.id} />
-                </div>
-
-                {/* 결과 인라인 — 메뉴별 화면 목록 */}
-                {result && result.screens.length > 0 && (
-                  <div className="flex flex-col gap-4">
-                    {result.menus.map((m) => {
-                      const scns = result.screens.filter((s) => s.menuId === m.id);
-                      if (scns.length === 0) return null;
-                      return (
-                        <div key={m.id}>
-                          <p className="mb-1.5 text-sm font-semibold text-foreground">
-                            {m.nameKo}
-                            <span className="ml-2 text-xs font-normal text-muted-foreground">
-                              화면 {scns.length}개
-                            </span>
-                          </p>
-                          <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-                            {scns.map((s) => (
-                              <li
-                                key={s.id}
-                                className="flex items-baseline gap-2 text-sm text-muted-foreground"
-                              >
-                                <span className="font-mono text-xs text-foreground/60">
-                                  {s.pageId}
-                                </span>
-                                <span className="min-w-0 truncate text-foreground">
-                                  {s.pageName}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* 산출물 바로가기 */}
-                <div className="flex flex-wrap gap-2 border-t border-border/60 pt-4">
-                  {DELIVERABLE_LINKS.map(({ href, label, icon: Icon }) => (
-                    <Link
-                      key={href}
-                      href={`/dashboard/${p.id}/${href}`}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:bg-muted"
-                    >
-                      <Icon className="size-4 text-muted-foreground" />
-                      {label}
-                    </Link>
-                  ))}
-                </div>
+              <div className="border-t border-border/60 p-5">
+                {result && <ProjectDeliverablePreview projectId={p.id} result={result} />}
               </div>
             </details>
           );
