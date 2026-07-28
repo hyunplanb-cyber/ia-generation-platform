@@ -14,8 +14,6 @@ import {
   FileText,
   Workflow,
   CalendarRange,
-  ShieldCheck,
-  ShieldQuestion,
   type LucideIcon,
 } from "lucide-react";
 
@@ -34,14 +32,14 @@ const STEPS: { entry: string; title: string; label: string; icon: LucideIcon; sl
   },
 ];
 
+// 관리자 페이지·사이트 검수는 성격이 달라(별도 생성/별도 행동) 탭에서 잠시 숨긴다.
+// 내일 각각 "관리자 백오피스 생성"·"검수" 옵션으로 재배치 예정. 페이지는 남아 있어 직접 URL은 동작.
 const DELIVERABLE_ITEMS: NavItem[] = [
   { href: "tree", label: "메뉴 구조", icon: Network },
   { href: "screens", label: "IA · 화면 목록", icon: LayoutList },
   { href: "specs", label: "기능정의서", icon: FileText },
   { href: "flow", label: "FLOW·흐름도", icon: Workflow },
   { href: "wbs", label: "WBS", icon: CalendarRange },
-  { href: "admin", label: "관리자 페이지", icon: ShieldCheck },
-  { href: "verify", label: "사이트 검수", icon: ShieldQuestion },
 ];
 
 // 상단 스텝퍼 + (산출물 단계에서만) 좌측 세로 탭 + 콘텐츠 레이아웃을 함께 그린다.

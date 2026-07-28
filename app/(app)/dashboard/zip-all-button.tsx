@@ -28,7 +28,6 @@ export function ZipAllButton({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
-  const [needCharge, setNeedCharge] = useState(false);
 
   // 크레딧을 내야 열리는 상태인가(결제 켜짐 + 아직 안 열림 + 원가 있음).
   const gated = !!creditsOpen && !unlocked && (credits ?? 0) > 0;
@@ -39,14 +38,19 @@ export function ZipAllButton({
     e.preventDefault();
     setBusy(true);
     setError(false);
-    setNeedCharge(false);
     try {
       if (gated) {
         const r = await unlockDownloadAction(projectId);
         if (!r.ok) {
-          setNeedCharge(r.reason === "insufficient");
-          setError(true);
           setBusy(false);
+          // 부족 알림은 버튼 옆이 아니라 알럿으로 — 레이아웃이 흔들리지 않게.
+          if (r.reason === "insufficient") {
+            if (window.confirm("크레딧이 부족해요. 충전 페이지로 갈까요?")) {
+              router.push("/dashboard/billing");
+            }
+          } else {
+            setError(true);
+          }
           return;
         }
         router.refresh(); // 잠금 해제 상태를 화면에 반영
@@ -148,35 +152,22 @@ export function ZipAllButton({
   }
 
   return (
-    <span className="inline-flex flex-wrap items-center gap-2">
-      <button
-        type="button"
-        onClick={handleDownload}
-        disabled={busy}
-        title={error ? "다운로드에 실패했어요. 다시 시도해 주세요." : "모든 산출물을 zip으로 내려받기"}
-        className={`inline-flex items-center gap-2 rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60 ${
-          large ? "px-4 py-2 text-sm" : "gap-1.5 px-2.5 py-1 text-xs"
-        }`}
-      >
-        {busy ? (
-          <Loader2 className={`${large ? "size-4" : "size-3"} animate-spin`} />
-        ) : (
-          <Download className={large ? "size-4" : "size-3"} />
-        )}
-        전체 다운로드
-        {gated && (
-          <span className="font-normal opacity-80">· {credits}크레딧</span>
-        )}
-      </button>
-      {needCharge && (
-        <a
-          href="/dashboard/billing"
-          onClick={(e) => e.stopPropagation()}
-          className="text-xs font-semibold text-primary underline"
-        >
-          크레딧이 부족해요 · 충전하기
-        </a>
+    <button
+      type="button"
+      onClick={handleDownload}
+      disabled={busy}
+      title={error ? "다운로드에 실패했어요. 다시 시도해 주세요." : "모든 산출물을 zip으로 내려받기"}
+      className={`inline-flex items-center gap-2 rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60 ${
+        large ? "px-4 py-2 text-sm" : "gap-1.5 px-2.5 py-1 text-xs"
+      }`}
+    >
+      {busy ? (
+        <Loader2 className={`${large ? "size-4" : "size-3"} animate-spin`} />
+      ) : (
+        <Download className={large ? "size-4" : "size-3"} />
       )}
-    </span>
+      전체 다운로드
+      {gated && <span className="font-normal opacity-80">· {credits}크레딧</span>}
+    </button>
   );
 }
