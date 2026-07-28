@@ -2,6 +2,7 @@ import { ShieldCheck, History, LayoutList } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { listProjectVerifyRuns } from "@/application/list-project-verify-runs";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
+import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { DeliverableHeader, HeaderStat } from "../deliverable-header";
 import { VerifyPanel } from "./verify-panel";
 
@@ -88,8 +89,13 @@ export default async function ProjectVerifyPage({
                     </span>
                   )}
                 </summary>
-                <div className="border-t border-border/60 p-4">
+                <div className="flex flex-col gap-4 border-t border-border/60 p-4">
                   <VerifyReportView report={run.report} />
+                  {run.report.scenarios.length > 0 && (
+                    <div className="flex justify-end">
+                      <VerifyScenarioDownloadButton report={run.report} />
+                    </div>
+                  )}
                 </div>
               </details>
             ))}

@@ -5,7 +5,7 @@ import { Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
-import { UpgradeToDownload } from "../upgrade-to-download";
+import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { runProjectVerifyAction, type ProjectVerifyState } from "./actions";
 
 const initialState: ProjectVerifyState = { report: null, error: null, limitReached: false };
@@ -67,9 +67,9 @@ export function VerifyPanel({ projectId }: { projectId: string }) {
           <VerifyReportView report={report} />
           {report.scenarios.length > 0 && (
             <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
-              <UpgradeToDownload label="검수 시나리오 다운로드" />
+              <VerifyScenarioDownloadButton report={report} />
               <p className="text-center text-xs text-muted-foreground">
-                시나리오를 문서로 내려받아 팀과 공유하는 기능을 준비하고 있어요.
+                표지·검수 현황·시나리오가 담긴 엑셀 문서로 내려받아 팀과 공유하세요.
               </p>
             </div>
           )}

@@ -1,12 +1,12 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { FileText, PencilRuler, Check, ShieldCheck, RotateCcw } from "lucide-react";
+import { FileText, PencilRuler, Check, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { VerificationReport } from "@/domain/verify/report";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
-import { UpgradeToDownload } from "@/app/(app)/dashboard/[projectId]/upgrade-to-download";
+import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { runVerifyAction, type VerifyState } from "./actions";
 
 const initialState: VerifyState = { report: null, error: null, limitReached: false };
@@ -46,28 +46,39 @@ function LoadingScreen({ mode }: { mode: Mode }) {
           "확인할 시나리오를 만들고 있어요",
           "검수 리포트를 만들고 있어요",
         ];
-  const idx = Math.min(Math.floor(elapsed / 5), steps.length - 1);
-  const pct = Math.min(96, Math.round((elapsed / 28) * 100));
+  const step = Math.min(Math.floor(elapsed / 6), steps.length - 1);
 
   return (
-    <div className="flex flex-col items-center gap-6 rounded-2xl border border-border bg-surface px-6 py-16 text-center">
-      <div className="relative flex size-20 items-center justify-center">
-        <span className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-        <span className="flex size-16 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">
-          <ShieldCheck className="size-8 animate-pulse" />
-        </span>
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-background/85 px-6 backdrop-blur-sm">
+      <Loader2 className="size-9 animate-spin text-primary" />
+
+      <div className="flex flex-col items-center gap-1.5 text-center">
+        <p className="text-lg font-bold text-foreground">{steps[step]}</p>
+        <p className="text-sm text-muted-foreground">
+          보통 <b className="font-semibold text-foreground">15~30초</b> 걸려요. 창을 닫지 말고
+          기다려 주세요.
+        </p>
       </div>
-      <div>
-        <p className="text-lg font-bold text-foreground">{steps[idx]}</p>
-        <p className="mt-1 text-sm text-muted-foreground">보통 15~30초 걸려요 · {elapsed}초 지남</p>
+
+      {/* 진행 칸 — 실제 진행률은 알 수 없으므로 지나온 단계 수만큼 채운다 */}
+      <div className="flex gap-1.5" aria-hidden="true">
+        {steps.map((label, i) => (
+          <span
+            key={label}
+            className={`h-1.5 w-7 rounded-full transition-colors ${
+              i <= step ? "bg-primary" : "bg-border"
+            }`}
+          />
+        ))}
       </div>
-      <div className="h-2 w-full max-w-sm overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full bg-primary transition-all duration-1000 ease-out"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <p className="text-xs text-muted-foreground">창을 닫지 말고 잠시만 기다려 주세요.</p>
+
+      <p className="text-xs tabular-nums text-muted-foreground">{elapsed}초 지남</p>
+
+      {elapsed >= 45 && (
+        <p className="max-w-sm text-center text-sm text-muted-foreground">
+          사이트가 크면 조금 더 걸릴 수 있어요. 1분이 넘으면 새로고침 후 다시 시도해 주세요.
+        </p>
+      )}
     </div>
   );
 }
@@ -88,9 +99,9 @@ function ResultView({ report, onReset }: { report: VerificationReport; onReset: 
 
       {report.scenarios.length > 0 && (
         <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
-          <UpgradeToDownload label="검수 시나리오 다운로드" />
+          <VerifyScenarioDownloadButton report={report} />
           <p className="text-center text-xs text-muted-foreground">
-            시나리오를 문서로 내려받아 팀과 공유하는 기능을 준비하고 있어요.
+            표지·검수 현황·시나리오가 담긴 엑셀 문서로 내려받아 팀과 공유하세요.
           </p>
         </div>
       )}
@@ -170,10 +181,7 @@ export function VerifyForm({
     return <LimitNotice freeLimit={freeLimit} />;
   }
 
-  // 검수 중 → 로딩 화면. 완료 → 결과 화면. 그 외 → 입력 폼.
-  if (pending) {
-    return <LoadingScreen mode={mode} />;
-  }
+  // 완료 → 결과 화면. 검수 중에는 입력 폼 위에 전체 로딩 오버레이를 덮는다.
   if (report && !dismissed) {
     return <ResultView report={report} onReset={() => setDismissed(true)} />;
   }
@@ -278,6 +286,9 @@ export function VerifyForm({
           {buttonLabel}
         </Button>
       </form>
+
+      {/* 검수 중 — 화면 전체를 덮는 로딩 오버레이(설계도 프롬프트와 동일) */}
+      {pending && <LoadingScreen mode={mode} />}
     </div>
   );
 }
