@@ -1,7 +1,20 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
-import { FileText, PencilRuler, Check, Loader2, RotateCcw } from "lucide-react";
+import { Fragment, useActionState, useEffect, useState } from "react";
+import {
+  FileText,
+  PencilRuler,
+  Check,
+  Loader2,
+  RotateCcw,
+  Upload,
+  ShieldCheck,
+  ChevronRight,
+  Search,
+  Lock,
+  ListChecks,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { VerificationReport } from "@/domain/verify/report";
@@ -16,6 +29,125 @@ const initialState: VerifyState = { report: null, error: null, limitReached: fal
 
 type Mode = "spec" | "url" | "document";
 
+// ── 상단 스텝(입력 → 검수 결과). active 로 현재 단계를 표시한다. ───────────
+function VerifySteps({ active }: { active: 0 | 1 }) {
+  const steps = [
+    { title: "STEP 1", label: "입력", icon: Upload },
+    { title: "STEP 2", label: "검수 결과", icon: ShieldCheck },
+  ];
+  const cur = steps[active];
+  const CurIcon = cur.icon;
+  return (
+    <>
+      {/* 모바일 — 현재 스텝 하나 + 점(좌우로 넘치지 않게) */}
+      <div className="flex items-center gap-3 rounded-2xl bg-primary px-4 py-3.5 text-primary-foreground shadow-md sm:hidden">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-foreground/20">
+          <CurIcon className="size-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-primary-foreground/75">
+            {cur.title} · 2단계 중 {active + 1}
+          </p>
+          <p className="truncate text-lg font-extrabold tracking-tight">{cur.label}</p>
+        </div>
+        <ol className="flex shrink-0 items-center gap-2">
+          {steps.map((s, i) => (
+            <li
+              key={s.title}
+              className={`block rounded-full ${
+                i === active ? "size-2.5 bg-primary-foreground" : "size-2 bg-primary-foreground/35"
+              }`}
+            />
+          ))}
+        </ol>
+      </div>
+
+      {/* 데스크톱 — 2단 스텝(각 최대 429px) */}
+      <ol className="hidden w-full items-stretch gap-3 sm:flex">
+        {steps.map((s, i) => {
+          const Icon = s.icon;
+          const on = i === active;
+          const done = i < active;
+          return (
+            <Fragment key={s.title}>
+              <li className="min-w-0 flex-1 lg:w-[429px] lg:flex-none">
+                <div
+                  className={`flex h-full items-center justify-center gap-4 rounded-2xl px-6 py-5 ${
+                    on
+                      ? "bg-primary text-primary-foreground shadow-lg"
+                      : done
+                        ? "bg-primary-soft text-primary-on-soft"
+                        : "bg-muted text-foreground/70"
+                  }`}
+                >
+                  <span
+                    className={`flex size-14 shrink-0 items-center justify-center rounded-full ${
+                      on
+                        ? "bg-primary-foreground/20"
+                        : done
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-background text-muted-foreground"
+                    }`}
+                  >
+                    {done ? <Check className="size-7" /> : <Icon className="size-7" />}
+                  </span>
+                  <span className="flex items-baseline gap-2 whitespace-nowrap">
+                    <span
+                      className={`text-sm font-bold ${on ? "text-primary-foreground/75" : "opacity-60"}`}
+                    >
+                      {s.title}
+                    </span>
+                    <span className="text-xl font-extrabold tracking-tight">{s.label}</span>
+                  </span>
+                </div>
+              </li>
+              {i < steps.length - 1 && (
+                <ChevronRight className="size-7 shrink-0 self-center text-muted-foreground/50" />
+              )}
+            </Fragment>
+          );
+        })}
+      </ol>
+    </>
+  );
+}
+
+// 우측 안내 패널 — 설계도 프롬프트의 '이 입력으로 만들어져요'와 같은 형태.
+const VERIFY_OUTPUTS: { icon: LucideIcon; label: string }[] = [
+  { icon: Search, label: "공개 화면 자동 검사 · 통과/실패" },
+  { icon: Lock, label: "로그인·결제 재현 시나리오" },
+  { icon: ListChecks, label: "항목별 UI·기능 구분" },
+];
+
+function HelperPanel() {
+  return (
+    <aside className="lg:sticky lg:top-5 lg:self-start">
+      <div className="rounded-xl border border-border bg-muted/20 p-5">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="size-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">이 검수로 확인해요</h3>
+        </div>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          무엇을 넣느냐에 따라 자동 검사와 재현 시나리오를 드려요.
+        </p>
+        <ul className="mt-4 flex flex-col gap-1.5">
+          {VERIFY_OUTPUTS.map(({ icon: Icon, label }) => (
+            <li
+              key={label}
+              className="flex items-center gap-2.5 rounded-lg bg-background px-3 py-2 text-sm text-foreground shadow-sm"
+            >
+              <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary-on-soft">
+                <Icon className="size-3.5" />
+              </span>
+              {label}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  );
+}
+
 function LimitNotice({ freeLimit }: { freeLimit: number | null }) {
   return (
     <div className="rounded-xl border border-primary/30 bg-primary-soft/30 p-6 text-center">
@@ -27,7 +159,7 @@ function LimitNotice({ freeLimit }: { freeLimit: number | null }) {
   );
 }
 
-// 검수하는 동안 보여주는 "시간이 흐르는" 로딩 화면.
+// 검수하는 동안 보여주는 "시간이 흐르는" 전체 오버레이(설계도 프롬프트와 동일).
 function LoadingScreen({ mode }: { mode: Mode }) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
@@ -54,7 +186,6 @@ function LoadingScreen({ mode }: { mode: Mode }) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-background/85 px-6 backdrop-blur-sm">
       <Loader2 className="size-9 animate-spin text-primary" />
-
       <div className="flex flex-col items-center gap-1.5 text-center">
         <p className="text-lg font-bold text-foreground">{steps[step]}</p>
         <p className="text-sm text-muted-foreground">
@@ -62,8 +193,6 @@ function LoadingScreen({ mode }: { mode: Mode }) {
           기다려 주세요.
         </p>
       </div>
-
-      {/* 진행 칸 — 실제 진행률은 알 수 없으므로 지나온 단계 수만큼 채운다 */}
       <div className="flex gap-1.5" aria-hidden="true">
         {steps.map((label, i) => (
           <span
@@ -74,9 +203,7 @@ function LoadingScreen({ mode }: { mode: Mode }) {
           />
         ))}
       </div>
-
       <p className="text-xs tabular-nums text-muted-foreground">{elapsed}초 지남</p>
-
       {elapsed >= 45 && (
         <p className="max-w-sm text-center text-sm text-muted-foreground">
           사이트가 크면 조금 더 걸릴 수 있어요. 1분이 넘으면 새로고침 후 다시 시도해 주세요.
@@ -171,123 +298,133 @@ export function VerifyForm({
   const [mode, setMode] = useState<Mode>("url");
   const [fileName, setFileName] = useState<string | null>(null);
   const [specFileName, setSpecFileName] = useState<string | null>(null);
-  // 결과 화면을 닫고 다시 입력 폼으로 돌아왔는지.
   const [dismissed, setDismissed] = useState(false);
   const report = state.report;
   const blocked = alreadyBlocked || state.limitReached;
 
-  // 무료 횟수를 이미 다 썼으면 입력 폼 대신 안내만 보여준다.
-  if (blocked && !report) {
-    return <LimitNotice freeLimit={freeLimit} />;
-  }
-
-  // 완료 → 결과 화면. 검수 중에는 입력 폼 위에 전체 로딩 오버레이를 덮는다.
-  if (report && !dismissed) {
-    return <ResultView report={report} onReset={() => setDismissed(true)} />;
-  }
+  const onResult = !!report && !dismissed;
+  const activeStep: 0 | 1 = onResult ? 1 : 0;
 
   const isUrl = mode === "url";
   const buttonLabel = isUrl ? "사이트 검수하기" : "검수 시나리오 만들기";
 
+  // 무료 횟수를 다 썼고 결과도 없으면 입력 자리에 안내만.
+  const leftContent =
+    blocked && !report ? (
+      <LimitNotice freeLimit={freeLimit} />
+    ) : onResult ? (
+      <ResultView report={report} onReset={() => setDismissed(true)} />
+    ) : (
+      <div className="flex flex-col gap-6">
+        {state.error && (
+          <p className="rounded-lg bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
+            {state.error}
+          </p>
+        )}
+
+        <form action={formAction} onSubmit={() => setDismissed(false)} className="flex flex-col gap-3">
+          <input type="hidden" name="mode" value={mode} />
+
+          {/* 설계도 프롬프트 — 파일 등록 */}
+          <ModeSection
+            active={mode === "spec"}
+            onSelect={() => setMode("spec")}
+            title="설계도 프롬프트"
+            hint="카페인컬러로 만든 IA·스펙팩을 넣으면 가장 정확한 검수 시나리오를 받을 수 있어요."
+          >
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
+              <PencilRuler className="size-6 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">
+                {specFileName ?? "스펙팩 파일을 넣으세요 (.md·.json·.txt)"}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                AI 빌드 스펙팩(마크다운·JSON)을 그대로 올리면 가장 정확해요 · 8MB 이하
+              </span>
+              <input
+                type="file"
+                name="spec"
+                accept=".md,.markdown,.json,.txt"
+                required={mode === "spec"}
+                disabled={mode !== "spec"}
+                className="hidden"
+                onChange={(e) => setSpecFileName(e.target.files?.[0]?.name ?? null)}
+              />
+            </label>
+          </ModeSection>
+
+          {/* 사이트 URL */}
+          <ModeSection
+            active={mode === "url"}
+            onSelect={() => setMode("url")}
+            title="사이트 URL"
+            hint="이미 오픈(배포)한 사이트 주소를 넣어주세요."
+          >
+            <Input
+              name="url"
+              type="text"
+              inputMode="url"
+              placeholder="https://내-사이트.com"
+              required={mode === "url"}
+              disabled={mode !== "url"}
+            />
+            <p className="mt-3 rounded-lg bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+              <b className="font-semibold text-foreground">공개 화면은 우리가 검수</b>하고,
+              로그인·결제처럼 자동으로 볼 수 없는 화면은{" "}
+              <b className="font-semibold text-foreground">직접 확인할 수 있도록 검수 시나리오</b>로
+              짚어드려요.
+            </p>
+          </ModeSection>
+
+          {/* 설계 문서(PDF·PPTX) */}
+          <ModeSection
+            active={mode === "document"}
+            onSelect={() => setMode("document")}
+            title="설계 문서(PDF·PPTX)"
+            hint={'화면설계서·기획서 파일을 넣어주세요. "무엇을 확인할지" 설계도에 맞는 검수 시나리오를 만들어드려요.'}
+          >
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
+              <FileText className="size-6 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">
+                {fileName ?? "화면설계서·기획서 파일을 넣으세요 (PDF·PPTX)"}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                피그마·워드·한글은 PDF로 내보내 넣으면 돼요 · 8MB 이하
+              </span>
+              <input
+                type="file"
+                name="document"
+                accept=".pdf,.pptx"
+                required={mode === "document"}
+                disabled={mode !== "document"}
+                className="hidden"
+                onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+              />
+            </label>
+          </ModeSection>
+
+          <Button type="submit" disabled={pending} className="mt-1 sm:w-56">
+            {buttonLabel}
+          </Button>
+        </form>
+      </div>
+    );
+
   return (
-    <div className="flex flex-col gap-6">
-      {state.error && (
-        <p className="rounded-lg bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
-          {state.error}
+    <div className="flex flex-col gap-5">
+      <VerifySteps active={activeStep} />
+
+      {!onResult && !(blocked && !report) && (
+        <p className="text-sm text-muted-foreground">
+          이미 오픈(배포)한 사이트 주소나 설계 문서를 넣으면, 오픈 전에 진짜 다 되는지 확인해 드려요.
         </p>
       )}
 
-      <form
-        action={formAction}
-        onSubmit={() => setDismissed(false)}
-        className="flex flex-col gap-3"
-      >
-        <input type="hidden" name="mode" value={mode} />
+      <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
+        <div className="flex flex-col gap-6">{leftContent}</div>
+        <HelperPanel />
+      </div>
 
-        {/* 설계도 프롬프트 — 파일 등록 */}
-        <ModeSection
-          active={mode === "spec"}
-          onSelect={() => setMode("spec")}
-          title="설계도 프롬프트"
-          hint="카페인컬러로 만든 IA·스펙팩을 넣으면 가장 정확한 검수 시나리오를 받을 수 있어요."
-        >
-          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
-            <PencilRuler className="size-6 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">
-              {specFileName ?? "스펙팩 파일을 넣으세요 (.md·.json·.txt)"}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              AI 빌드 스펙팩(마크다운·JSON)을 그대로 올리면 가장 정확해요 · 8MB 이하
-            </span>
-            <input
-              type="file"
-              name="spec"
-              accept=".md,.markdown,.json,.txt"
-              required={mode === "spec"}
-              disabled={mode !== "spec"}
-              className="hidden"
-              onChange={(e) => setSpecFileName(e.target.files?.[0]?.name ?? null)}
-            />
-          </label>
-        </ModeSection>
-
-        {/* 사이트 URL */}
-        <ModeSection
-          active={mode === "url"}
-          onSelect={() => setMode("url")}
-          title="사이트 URL"
-          hint="이미 오픈(배포)한 사이트 주소를 넣어주세요."
-        >
-          <Input
-            name="url"
-            type="text"
-            inputMode="url"
-            placeholder="https://내-사이트.com"
-            required={mode === "url"}
-            disabled={mode !== "url"}
-          />
-          <p className="mt-3 rounded-lg bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-            <b className="font-semibold text-foreground">공개 화면은 우리가 검수</b>하고,
-            로그인·결제처럼 자동으로 볼 수 없는 화면은{" "}
-            <b className="font-semibold text-foreground">직접 확인할 수 있도록 검수 시나리오</b>로
-            짚어드려요.
-          </p>
-        </ModeSection>
-
-        {/* 설계 문서(PDF·PPTX) */}
-        <ModeSection
-          active={mode === "document"}
-          onSelect={() => setMode("document")}
-          title="설계 문서(PDF·PPTX)"
-          hint={'화면설계서·기획서 파일을 넣어주세요. "무엇을 확인할지" 설계도에 맞는 검수 시나리오를 만들어드려요.'}
-        >
-          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
-            <FileText className="size-6 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">
-              {fileName ?? "화면설계서·기획서 파일을 넣으세요 (PDF·PPTX)"}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              피그마·워드·한글은 PDF로 내보내 넣으면 돼요 · 8MB 이하
-            </span>
-            <input
-              type="file"
-              name="document"
-              accept=".pdf,.pptx"
-              required={mode === "document"}
-              disabled={mode !== "document"}
-              className="hidden"
-              onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
-            />
-          </label>
-        </ModeSection>
-
-        {/* 버튼은 한 자리 — 고른 방식에 따라 이름만 바뀐다 */}
-        <Button type="submit" disabled={pending} className="mt-1 sm:w-56">
-          {buttonLabel}
-        </Button>
-      </form>
-
-      {/* 검수 중 — 화면 전체를 덮는 로딩 오버레이(설계도 프롬프트와 동일) */}
+      {/* 검수 중 — 화면 전체를 덮는 로딩 오버레이 */}
       {pending && <LoadingScreen mode={mode} />}
     </div>
   );
