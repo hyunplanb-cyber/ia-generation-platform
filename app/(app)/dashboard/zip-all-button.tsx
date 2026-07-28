@@ -9,7 +9,7 @@ function safeFileName(concept: string): string {
 
 // 대시보드 "전체 다운로드" — 프로젝트의 모든 산출물을 zip 하나로 묶어 내려받는다.
 // 무거운 라이브러리(xlsx/jszip/pptxgenjs)는 클릭 시점에 동적 로딩.
-export function ZipAllButton({ projectId }: { projectId: string }) {
+export function ZipAllButton({ projectId, large }: { projectId: string; large?: boolean }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
 
@@ -119,9 +119,15 @@ export function ZipAllButton({ projectId }: { projectId: string }) {
       onClick={handleDownload}
       disabled={busy}
       title={error ? "다운로드에 실패했어요. 다시 시도해 주세요." : "모든 산출물을 zip으로 내려받기"}
-      className="inline-flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60"
+      className={`inline-flex items-center gap-2 rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60 ${
+        large ? "px-4 py-2 text-sm" : "gap-1.5 px-2.5 py-1 text-xs"
+      }`}
     >
-      {busy ? <Loader2 className="size-3 animate-spin" /> : <Download className="size-3" />}
+      {busy ? (
+        <Loader2 className={`${large ? "size-4" : "size-3"} animate-spin`} />
+      ) : (
+        <Download className={large ? "size-4" : "size-3"} />
+      )}
       전체 다운로드
     </button>
   );

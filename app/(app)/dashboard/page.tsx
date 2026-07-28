@@ -240,6 +240,16 @@ function PlanningTab({
               </summary>
 
               <div className="flex flex-col gap-5 border-t border-border/60 p-5">
+                {/* 상단 액션 — 전체 다운로드(크게) + 삭제 */}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  {downloadable ? (
+                    <ZipAllButton projectId={p.id} large />
+                  ) : (
+                    <UpgradeToDownload label="전체 다운로드" />
+                  )}
+                  <DeleteProjectButton projectId={p.id} />
+                </div>
+
                 {/* 결과 인라인 — 메뉴별 화면 목록 */}
                 {result && result.screens.length > 0 && (
                   <div className="flex flex-col gap-4">
@@ -287,16 +297,6 @@ function PlanningTab({
                       {label}
                     </Link>
                   ))}
-                </div>
-
-                {/* 다운로드 · 삭제 */}
-                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
-                  {downloadable ? (
-                    <ZipAllButton projectId={p.id} />
-                  ) : (
-                    <UpgradeToDownload label="전체 다운로드" />
-                  )}
-                  <DeleteProjectButton projectId={p.id} />
                 </div>
               </div>
             </details>
@@ -363,12 +363,12 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
               )}
             </summary>
             <div className="flex flex-col gap-4 border-t border-border/60 p-4">
-              <VerifyReportView report={run.report} />
               {run.report.scenarios.length > 0 && (
-                <div className="flex justify-end">
+                <div className="flex">
                   <VerifyScenarioDownloadButton report={run.report} />
                 </div>
               )}
+              <VerifyReportView report={run.report} />
             </div>
           </details>
         ))}
