@@ -214,7 +214,7 @@ function PlanningTab({
               key={p.id}
               className="group rounded-2xl border border-border bg-surface shadow-sm"
             >
-              <summary className="flex cursor-pointer items-center justify-between gap-4 p-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 [&::-webkit-details-marker]:hidden">
                 <div className="flex min-w-0 flex-col gap-2">
                   <span className="w-fit rounded-full bg-pastel-mint px-2.5 py-0.5 text-xs font-semibold text-pastel-mint-foreground">
                     생성 완료
@@ -346,13 +346,13 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
       <div className="flex flex-col gap-2">
         {runs.map((run) => (
           <details key={run.id} className="rounded-xl border border-border bg-surface">
-            <summary className="cursor-pointer px-4 py-3">
+            <summary className="cursor-pointer list-none px-4 py-3 [&::-webkit-details-marker]:hidden">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1.5">
                   <span className="w-fit rounded-full bg-pastel-mint px-2.5 py-0.5 text-xs font-semibold text-pastel-mint-foreground">
                     검수완료
                   </span>
-                  <span className="min-w-0 truncate font-mono text-xs text-muted-foreground">
+                  <span className="max-w-[600px] truncate font-mono text-xs text-muted-foreground">
                     {run.target}
                   </span>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
