@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Link2, FileText, PencilRuler, Check, type LucideIcon } from "lucide-react";
+import { FileText, PencilRuler, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
@@ -12,12 +12,6 @@ const initialState: VerifyState = { report: null, error: null, limitReached: fal
 
 type Mode = "spec" | "url" | "document";
 
-const MODES: { key: Mode; icon: LucideIcon; title: string; desc: string }[] = [
-  { key: "spec", icon: PencilRuler, title: "설계도 프롬프트", desc: "카페인컬러로 만든 IA·스펙팩" },
-  { key: "url", icon: Link2, title: "사이트 URL", desc: "이미 오픈한 사이트 주소" },
-  { key: "document", icon: FileText, title: "설계 문서", desc: "PDF·PPTX 화면설계서" },
-];
-
 function LimitNotice({ freeLimit }: { freeLimit: number | null }) {
   return (
     <div className="rounded-xl border border-primary/30 bg-primary-soft/30 p-6 text-center">
@@ -25,6 +19,53 @@ function LimitNotice({ freeLimit }: { freeLimit: number | null }) {
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         검수를 계속 이용하는 유료 플랜을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요.
       </p>
+    </div>
+  );
+}
+
+// 입력 방식 한 칸 — 셋 다 펼쳐 두고, 고른 것만 활성(나머지는 딤 처리).
+function ModeSection({
+  active,
+  onSelect,
+  title,
+  hint,
+  children,
+}: {
+  active: boolean;
+  onSelect: () => void;
+  title: string;
+  hint: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      onClick={active ? undefined : onSelect}
+      className={`rounded-2xl border p-4 transition-colors sm:p-5 ${
+        active ? "border-primary bg-primary-soft/10" : "cursor-pointer border-border hover:border-primary/40"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-pressed={active}
+        className="flex w-full items-center gap-2.5 border-b-2 border-border pb-2.5 text-left"
+      >
+        <span
+          className={`h-6 w-1.5 shrink-0 rounded-full ${active ? "bg-primary" : "bg-muted-foreground/25"}`}
+        />
+        <span className="flex-1 text-lg font-extrabold tracking-tight text-foreground">{title}</span>
+        <span
+          className={`flex size-5 shrink-0 items-center justify-center rounded-full border ${
+            active ? "border-primary bg-primary text-primary-foreground" : "border-border"
+          }`}
+        >
+          {active && <Check className="size-3.5" />}
+        </span>
+      </button>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{hint}</p>
+      <div className={active ? "mt-4" : "mt-4 pointer-events-none opacity-40"} aria-hidden={!active}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -48,153 +89,113 @@ export function VerifyForm({
     return <LimitNotice freeLimit={freeLimit} />;
   }
 
+  const isUrl = mode === "url";
+  const buttonLabel = pending
+    ? isUrl
+      ? "검사 중…"
+      : "분석 중…"
+    : isUrl
+      ? "사이트 검수하기"
+      : "검수 시나리오 만들기";
+
   return (
     <div className="flex flex-col gap-6">
-      {/* 입력 방식 3가지를 한 화면에 세로로 펼쳐 놓고, 그중 하나를 골라 검수한다. */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2.5 border-b-2 border-border pb-2.5">
-          <span className="h-6 w-1.5 shrink-0 rounded-full bg-primary" />
-          <h2 className="text-xl font-extrabold tracking-tight text-foreground">
-            무엇을 검수할까요?
-          </h2>
-        </div>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          설계도·사이트 URL·문서 중 하나를 골라 넣으면 돼요.
-        </p>
-        <div className="flex flex-col gap-2.5">
-          {MODES.map((m) => {
-            const Icon = m.icon;
-            const on = mode === m.key;
-            return (
-              <button
-                key={m.key}
-                type="button"
-                onClick={() => setMode(m.key)}
-                aria-pressed={on}
-                className={`flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${
-                  on
-                    ? "border-primary bg-primary-soft/40"
-                    : "border-border hover:border-primary/40 hover:bg-muted/40"
-                }`}
-              >
-                <span
-                  className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${
-                    on ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  <Icon className="size-5" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-bold text-foreground">{m.title}</span>
-                  <span className="block text-xs leading-relaxed text-muted-foreground">
-                    {m.desc}
-                  </span>
-                </span>
-                <span
-                  className={`flex size-5 shrink-0 items-center justify-center rounded-full border ${
-                    on ? "border-primary bg-primary text-primary-foreground" : "border-border"
-                  }`}
-                >
-                  {on && <Check className="size-3.5" />}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       <form action={formAction} className="flex flex-col gap-3">
         <input type="hidden" name="mode" value={mode} />
 
-        {mode === "spec" && (
-          <div className="flex flex-col gap-3">
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
-              <PencilRuler className="size-6 text-muted-foreground" />
-              <span className="text-sm font-medium text-foreground">
-                {specFileName ?? "카페인컬러에서 받은 스펙팩 파일을 넣으세요 (.md·.json·.txt)"}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                AI 빌드 스펙팩(마크다운·JSON)을 그대로 올리면 가장 정확해요 · 8MB 이하
-              </span>
-              <input
-                type="file"
-                name="spec"
-                accept=".md,.markdown,.json,.txt"
-                required
-                disabled={pending}
-                className="hidden"
-                onChange={(e) => setSpecFileName(e.target.files?.[0]?.name ?? null)}
-              />
-            </label>
-            <p className="rounded-lg bg-primary-soft/30 px-4 py-3 text-xs leading-relaxed text-foreground">
-              카페인컬러에서 생성한 <b className="font-semibold">IA 화면목록</b>·
-              <b className="font-semibold">스펙팩</b>을 넣으면, 화면·요건을 그대로 알아{" "}
-              <b className="font-semibold">가장 자세한 검수 시나리오</b>를 만들어드려요.
-            </p>
-            <Button type="submit" disabled={pending} className="sm:w-56">
-              {pending ? "분석 중…" : "검수 시나리오 만들기"}
-            </Button>
-          </div>
-        )}
+        {/* 설계도 프롬프트 — 파일 등록 */}
+        <ModeSection
+          active={mode === "spec"}
+          onSelect={() => setMode("spec")}
+          title="설계도 프롬프트"
+          hint="카페인컬러로 만든 IA·스펙팩을 넣으면 가장 정확해요."
+        >
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
+            <PencilRuler className="size-6 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">
+              {specFileName ?? "스펙팩 파일을 넣으세요 (.md·.json·.txt)"}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              AI 빌드 스펙팩(마크다운·JSON)을 그대로 올리면 가장 정확해요 · 8MB 이하
+            </span>
+            <input
+              type="file"
+              name="spec"
+              accept=".md,.markdown,.json,.txt"
+              required={mode === "spec"}
+              disabled={mode !== "spec"}
+              className="hidden"
+              onChange={(e) => setSpecFileName(e.target.files?.[0]?.name ?? null)}
+            />
+          </label>
+          <p className="mt-3 rounded-lg bg-primary-soft/30 px-4 py-3 text-xs leading-relaxed text-foreground">
+            화면·요건을 그대로 알아 <b className="font-semibold">가장 자세한 검수 시나리오</b>를
+            만들어드려요.
+          </p>
+        </ModeSection>
 
-        {mode === "url" && (
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Input
-                name="url"
-                type="text"
-                inputMode="url"
-                placeholder="https://내-사이트.com"
-                className="flex-1"
-                required
-                disabled={pending}
-              />
-              <Button type="submit" disabled={pending} className="sm:w-40">
-                {pending ? "검사 중…" : "사이트 검수하기"}
-              </Button>
-            </div>
-            <p className="rounded-lg bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-              URL을 넣으면 <b className="font-semibold text-foreground">공개 화면은 우리가 검수</b>하고,
-              로그인·결제처럼 자동으로 볼 수 없는 화면은{" "}
-              <b className="font-semibold text-foreground">직접 확인할 시나리오</b>로 짚어드려요.
-            </p>
-          </div>
-        )}
+        {/* 사이트 URL */}
+        <ModeSection
+          active={mode === "url"}
+          onSelect={() => setMode("url")}
+          title="사이트 URL"
+          hint="이미 오픈(배포)한 사이트 주소를 넣어주세요."
+        >
+          <Input
+            name="url"
+            type="text"
+            inputMode="url"
+            placeholder="https://내-사이트.com"
+            required={mode === "url"}
+            disabled={mode !== "url"}
+          />
+          <p className="mt-3 rounded-lg bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+            URL을 넣으면 <b className="font-semibold text-foreground">공개 화면은 우리가 검수</b>하고,
+            로그인·결제처럼 자동으로 볼 수 없는 화면은{" "}
+            <b className="font-semibold text-foreground">직접 확인할 시나리오</b>로 짚어드려요.
+          </p>
+        </ModeSection>
 
-        {mode === "document" && (
-          <div className="flex flex-col gap-3">
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
-              <FileText className="size-6 text-muted-foreground" />
-              <span className="text-sm font-medium text-foreground">
-                {fileName ?? "화면설계서·기획서 파일을 넣으세요 (PDF·PPTX)"}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                피그마·워드·한글은 PDF로 내보내 넣으면 돼요 · 8MB 이하
-              </span>
-              <input
-                type="file"
-                name="document"
-                accept=".pdf,.pptx"
-                required
-                disabled={pending}
-                className="hidden"
-                onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
-              />
-            </label>
-            <p className="rounded-lg bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-              문서만으로는 <b className="font-semibold text-foreground">&quot;무엇을 확인할지&quot;
-              시나리오</b>까지 드려요. 실제 통과/실패 검수는 사이트가 만들어진 뒤 URL을 넣어주세요.
-            </p>
-            <Button type="submit" disabled={pending} className="sm:w-56">
-              {pending ? "분석 중…" : "검수 시나리오 만들기"}
-            </Button>
-          </div>
-        )}
+        {/* 설계 문서(PDF·PPTX) */}
+        <ModeSection
+          active={mode === "document"}
+          onSelect={() => setMode("document")}
+          title="설계 문서(PDF·PPTX)"
+          hint="화면설계서·기획서 파일을 넣어주세요."
+        >
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
+            <FileText className="size-6 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">
+              {fileName ?? "화면설계서·기획서 파일을 넣으세요 (PDF·PPTX)"}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              피그마·워드·한글은 PDF로 내보내 넣으면 돼요 · 8MB 이하
+            </span>
+            <input
+              type="file"
+              name="document"
+              accept=".pdf,.pptx"
+              required={mode === "document"}
+              disabled={mode !== "document"}
+              className="hidden"
+              onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+            />
+          </label>
+          <p className="mt-3 rounded-lg bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+            문서만으로는 <b className="font-semibold text-foreground">&quot;무엇을 확인할지&quot;
+            시나리오</b>까지 드려요. 실제 통과/실패 검수는 사이트가 만들어진 뒤 URL을 넣어주세요.
+          </p>
+        </ModeSection>
+
+        {/* 버튼은 한 자리 — 고른 방식에 따라 이름만 바뀐다 */}
+        <Button type="submit" disabled={pending} className="mt-1 sm:w-56">
+          {buttonLabel}
+        </Button>
       </form>
 
       {pending && (
         <p className="text-sm text-muted-foreground">
-          {mode === "url"
+          {isUrl
             ? "사이트를 열어 하나씩 확인하고 있어요. 보통 15~30초 걸려요. 창을 닫지 마세요."
             : "내용을 읽어 확인할 시나리오를 만들고 있어요. 잠시만요."}
         </p>
