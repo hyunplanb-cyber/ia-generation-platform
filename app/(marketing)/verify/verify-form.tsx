@@ -5,7 +5,10 @@ import { FileText, PencilRuler, Check, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { VerificationReport } from "@/domain/verify/report";
-import { VerifyReportView } from "@/components/verify/verify-report-view";
+import {
+  VerifyResultInteractive,
+  type VerifyMark,
+} from "@/components/verify/verify-result-interactive";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { runVerifyAction, type VerifyState } from "./actions";
 
@@ -83,31 +86,28 @@ function LoadingScreen({ mode }: { mode: Mode }) {
   );
 }
 
-// 결과 화면 — 리포트 + 다시 검수하기.
+// 결과 화면 — 리포트 + 항목별 PASS/FAIL/WARN 표시 + 다운로드.
 function ResultView({ report, onReset }: { report: VerificationReport; onReset: () => void }) {
+  const [marks, setMarks] = useState<Record<string, VerifyMark>>({});
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-semibold text-primary">검수 결과</p>
-        <Button type="button" variant="outline" size="sm" onClick={onReset}>
-          <RotateCcw className="size-4" />
-          다시 검수하기
-        </Button>
+        <div className="flex items-center gap-2">
+          {report.scenarios.length > 0 && (
+            <VerifyScenarioDownloadButton report={report} marks={marks} />
+          )}
+          <Button type="button" variant="outline" size="sm" onClick={onReset}>
+            <RotateCcw className="size-4" />
+            다시 검수하기
+          </Button>
+        </div>
       </div>
 
-      <VerifyReportView report={report} />
-
-      {report.scenarios.length > 0 && (
-        <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
-          <VerifyScenarioDownloadButton report={report} />
-          <p className="text-center text-xs text-muted-foreground">
-            표지·검수 현황·시나리오가 담긴 엑셀 문서로 내려받아 팀과 공유하세요.
-          </p>
-        </div>
-      )}
+      <VerifyResultInteractive report={report} marks={marks} onChange={setMarks} />
 
       <p className="text-center text-xs text-muted-foreground">
-        자동 검사는 공개 화면만 봅니다. 로그인 뒤 화면은 위 시나리오로 직접 확인하세요.
+        자동 검사는 공개 화면만 봅니다. 로그인 뒤 화면은 위 시나리오를 직접 확인하고 결과를 골라주세요.
       </p>
     </div>
   );

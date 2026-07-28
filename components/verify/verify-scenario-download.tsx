@@ -9,13 +9,16 @@ import { buildVerifyScenarioSheets } from "@/lib/export/verify-scenario";
 // 표지 / 검수 현황 / 검수 시나리오 3개 시트로 구성.
 export function VerifyScenarioDownloadButton({
   report,
+  marks,
   label = "검수 시나리오 다운로드",
 }: {
   report: VerificationReport;
+  // 사용자가 직접 확인하며 고른 PASS/FAIL/WARN. 결과 칸에 채워진다.
+  marks?: Record<string, string>;
   label?: string;
 }) {
   function handleDownload() {
-    const { filename, cover, status, scenarios } = buildVerifyScenarioSheets(report);
+    const { filename, cover, status, scenarios } = buildVerifyScenarioSheets(report, marks);
     const wb = XLSX.utils.book_new();
 
     const coverWs = XLSX.utils.aoa_to_sheet(cover);
