@@ -66,15 +66,26 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
           </h3>
           <ul className="flex flex-col gap-2.5">
             {report.checks.map((c, i) => (
-              <li key={c.id} className="flex items-center gap-2.5 text-sm">
-                <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
-                  AUTO-{pad(i + 1)}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="font-medium text-foreground">{c.label}</span>
-                  <span className="text-muted-foreground"> — {c.detail}</span>
-                </span>
-                <StatusBadge status={c.status} />
+              <li key={c.id} className="flex flex-col gap-1 text-sm">
+                <div className="flex items-center gap-2.5">
+                  <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
+                    AUTO-{pad(i + 1)}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="font-medium text-foreground">{c.label}</span>
+                    <span className="text-muted-foreground"> — {c.detail}</span>
+                  </span>
+                  <StatusBadge status={c.status} />
+                </div>
+                {c.items && c.items.length > 0 && (
+                  <ul className="ml-14 flex flex-col gap-0.5 border-l-2 border-danger/20 pl-3">
+                    {c.items.map((it, k) => (
+                      <li key={k} className="break-all font-mono text-[11px] text-danger/80">
+                        {it}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>

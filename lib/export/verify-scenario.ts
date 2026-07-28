@@ -71,7 +71,8 @@ export function buildVerifyScenarioSheets(
       테스트영역: c.label,
       "테스트 방법": c.detail,
       결과: STATUS_KO[c.status] ?? c.status,
-      비고: "",
+      // 깨진 이미지·링크의 실제 경로를 근거로 함께 남긴다.
+      비고: c.items && c.items.length > 0 ? c.items.join("\n") : "",
     });
   });
   let scn = 0;

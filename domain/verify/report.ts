@@ -9,6 +9,7 @@ export interface Check {
   label: string; // 사람이 읽는 이름 — "접속 성공", "이미지 깨짐 없음"
   status: CheckStatus;
   detail: string; // 근거 한 줄 — "200 OK · 0.8초", "이미지 20개 중 2개 깨짐"
+  items?: string[]; // 근거가 되는 실제 항목들(예: 깨진 이미지·링크의 경로)
 }
 
 // 사람이 직접 확인할 시나리오. 공개 화면은 보조 확인용, 민감 화면은 자동 검수가 안 되므로 필수.

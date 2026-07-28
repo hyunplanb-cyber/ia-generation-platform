@@ -82,6 +82,16 @@ function findTags(html: string, tag: string): string[] {
   return html.match(re) ?? [];
 }
 
+// 깨진 항목을 사람이 읽기 좋게 — 같은 사이트면 경로만, 외부면 전체 URL.
+function shortenUrl(u: string, origin: string): string {
+  try {
+    const url = new URL(u);
+    return url.origin === origin ? url.pathname + url.search : u;
+  } catch {
+    return u;
+  }
+}
+
 async function sampleBroken(
   urls: string[],
   base: URL,
@@ -182,6 +192,7 @@ export async function runHttpChecks(rawUrl: string): Promise<HttpCheckResult> {
   const imgs = findTags(html, "img")
     .map((t) => attr(t, "src"))
     .filter((s): s is string => !!s && !s.startsWith("data:"));
+  const origin = new URL(finalUrl).origin;
   const imgRes = await sampleBroken(imgs, new URL(finalUrl));
   checks.push({
     id: "images",
@@ -191,6 +202,7 @@ export async function runHttpChecks(rawUrl: string): Promise<HttpCheckResult> {
       imgRes.checked === 0
         ? "확인할 이미지 없음"
         : `${imgRes.checked}개 중 ${imgRes.broken.length}개 깨짐`,
+    items: imgRes.broken.map((u) => shortenUrl(u, origin)),
   });
 
   // 7) 내부 링크 깨짐
@@ -217,6 +229,7 @@ export async function runHttpChecks(rawUrl: string): Promise<HttpCheckResult> {
       linkRes.checked === 0
         ? "확인할 링크 없음"
         : `${linkRes.checked}개 중 ${linkRes.broken.length}개 깨짐`,
+    items: linkRes.broken.map((u) => shortenUrl(u, origin)),
   });
 
   // LLM에 넘길 본문은 태그를 살리되 스크립트/스타일을 걷어내고 길이를 제한한다.
