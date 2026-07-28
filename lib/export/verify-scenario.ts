@@ -57,6 +57,8 @@ export function buildVerifyScenarioSheets(
     ["주의(WARN)", report.warnCount],
     ["직접 확인 시나리오", scenarioStepCount],
     [],
+    ["안내", "‘검수 시나리오’ 시트의 '결과' 칸에 PASS / FAIL / WARN 을 적어 관리하세요."],
+    [],
     ["오픈 전 직접 확인이 필요한 화면(로그인·결제 등)"],
     ...report.sensitiveScreens.map((s) => [s]),
   ];

@@ -18,10 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { VerificationReport } from "@/domain/verify/report";
-import {
-  VerifyResultInteractive,
-  type VerifyMark,
-} from "@/components/verify/verify-result-interactive";
+import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { runVerifyAction, type VerifyState } from "./actions";
 
@@ -213,17 +210,14 @@ function LoadingScreen({ mode }: { mode: Mode }) {
   );
 }
 
-// 결과 화면 — 리포트 + 항목별 PASS/FAIL/WARN 표시 + 다운로드.
+// 결과 화면 — 리포트(읽기 전용) + 다운로드. 결과 기록(PASS/FAIL/WARN)은 엑셀에서.
 function ResultView({ report, onReset }: { report: VerificationReport; onReset: () => void }) {
-  const [marks, setMarks] = useState<Record<string, VerifyMark>>({});
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-semibold text-primary">검수 결과</p>
         <div className="flex items-center gap-2">
-          {report.scenarios.length > 0 && (
-            <VerifyScenarioDownloadButton report={report} marks={marks} />
-          )}
+          {report.scenarios.length > 0 && <VerifyScenarioDownloadButton report={report} />}
           <Button type="button" variant="outline" size="sm" onClick={onReset}>
             <RotateCcw className="size-4" />
             다시 검수하기
@@ -231,10 +225,10 @@ function ResultView({ report, onReset }: { report: VerificationReport; onReset: 
         </div>
       </div>
 
-      <VerifyResultInteractive report={report} marks={marks} onChange={setMarks} />
+      <VerifyReportView report={report} />
 
       <p className="text-center text-xs text-muted-foreground">
-        자동 검사는 공개 화면만 봅니다. 로그인 뒤 화면은 위 시나리오를 직접 확인하고 결과를 골라주세요.
+        직접 확인 항목의 결과(PASS/FAIL/WARN)는 다운로드한 엑셀의 &apos;결과&apos; 칸에 기록하세요.
       </p>
     </div>
   );
