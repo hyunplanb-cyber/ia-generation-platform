@@ -346,22 +346,29 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
       <div className="flex flex-col gap-2">
         {runs.map((run) => (
           <details key={run.id} className="rounded-xl border border-border bg-surface">
-            <summary className="flex cursor-pointer flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 text-sm">
-              <span className="font-medium text-foreground">{formatDateTime(run.createdAt)}</span>
-              <span className="min-w-0 flex-1 truncate font-mono text-xs text-muted-foreground">
-                {run.target}
-              </span>
-              <span className="flex shrink-0 gap-1.5">
-                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-                  검수 {run.report.checks.length}건
-                </span>
-                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-                  시나리오 {run.report.scenarios.reduce((n, s) => n + s.steps.length, 0)}개
-                </span>
-              </span>
-              {run.report.scenarios.length > 0 && (
-                <VerifyScenarioDownloadButton report={run.report} />
-              )}
+            <summary className="cursor-pointer px-4 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <span className="w-fit rounded-full bg-pastel-mint px-2.5 py-0.5 text-xs font-semibold text-pastel-mint-foreground">
+                    검수완료
+                  </span>
+                  <span className="min-w-0 truncate font-mono text-xs text-muted-foreground">
+                    {run.target}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                    <span>{formatDateTime(run.createdAt)}</span>
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold">
+                      검수 {run.report.checks.length}건
+                    </span>
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold">
+                      시나리오 {run.report.scenarios.reduce((n, s) => n + s.steps.length, 0)}개
+                    </span>
+                  </div>
+                </div>
+                {run.report.scenarios.length > 0 && (
+                  <VerifyScenarioDownloadButton report={run.report} />
+                )}
+              </div>
             </summary>
             <div className="border-t border-border/60 p-4">
               <VerifyReportView report={run.report} />
