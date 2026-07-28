@@ -28,16 +28,20 @@ export async function SiteHeader() {
           <span className="hidden h-5 w-px bg-border sm:block" />
           {/* 설계도 프롬프트 → 새 프로젝트를 만들고 STEP 1로. 프리페치로 프로젝트가
               새로 생기지 않도록 prefetch를 끈다. */}
-          <NavLink href="/dashboard/new" icon={PencilRuler} prefetch={false}>
+          <NavLink
+            href="/dashboard/new"
+            icon={<PencilRuler className="size-4" />}
+            prefetch={false}
+          >
             설계도 프롬프트
           </NavLink>
-          <NavLink href="/verify" icon={ShieldQuestion}>
+          <NavLink href="/verify" icon={<ShieldQuestion className="size-4" />}>
             사이트 검수하기
           </NavLink>
-          <NavLink href="/deliverables" icon={LayoutList}>
+          <NavLink href="/deliverables" icon={<LayoutList className="size-4" />}>
             산출물 소개
           </NavLink>
-          <NavLink href="/packages" icon={Package}>
+          <NavLink href="/packages" icon={<Package className="size-4" />}>
             패키지 구매
           </NavLink>
         </div>
@@ -46,7 +50,7 @@ export async function SiteHeader() {
           {session ? (
             <>
               {/* 넓은 화면에서만 — 좁은 화면에서는 메뉴 버튼 안에 들어 있다 */}
-              <NavLink href="/dashboard" match="/dashboard" icon={LayoutGrid}>
+              <NavLink href="/dashboard" match="/dashboard" icon={<LayoutGrid className="size-4" />}>
                 나의 프로젝트
               </NavLink>
               <span className="hidden sm:block">
