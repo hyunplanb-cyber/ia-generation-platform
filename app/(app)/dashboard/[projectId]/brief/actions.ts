@@ -28,6 +28,8 @@ export async function saveBriefAndGenerateAction(
   const deviceMode: DeviceMode = DEVICE_MODES.includes(deviceModeRaw as DeviceMode)
     ? (deviceModeRaw as DeviceMode)
     : "responsive";
+  // 상세 IA(3뎁스: 화면→상태·탭) 여부. 체크박스 on일 때 화면을 100개+로 촘촘히.
+  const detail = formData.get("detail") === "on";
 
   await updateProject(projectId, {
     concept,
@@ -38,7 +40,7 @@ export async function saveBriefAndGenerateAction(
     deviceMode,
   });
 
-  const result = await generateIa(projectId);
+  const result = await generateIa(projectId, detail);
   if (result.ok) {
     revalidatePath(`/dashboard/${projectId}/menus`);
     revalidatePath(`/dashboard/${projectId}/screens`);

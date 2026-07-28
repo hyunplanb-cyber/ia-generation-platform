@@ -8,6 +8,8 @@ export interface Screen {
   menuId: string;
   pageId: string;
   pageName: string;
+  // 상세 IA(3뎁스)에서 이 화면이 속한 2뎁스 화면 그룹명. 기본 생성은 null.
+  screenGroup: string | null;
   status: ScreenStatus;
   screenRole: string;
   deviceCode: string;

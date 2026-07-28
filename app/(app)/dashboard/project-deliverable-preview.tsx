@@ -117,7 +117,9 @@ function ScreensPreview({ result }: { result: ProjectResult }) {
               {scns.map((s) => (
                 <li key={s.id} className="flex items-baseline gap-2 text-sm text-muted-foreground">
                   <span className="font-mono text-xs text-foreground/60">{s.pageId}</span>
-                  <span className="min-w-0 truncate text-foreground">{s.pageName}</span>
+                  <span className="min-w-0 truncate text-foreground">
+                    {s.screenGroup ? `${s.screenGroup} · ${s.pageName}` : s.pageName}
+                  </span>
                 </li>
               ))}
             </ul>

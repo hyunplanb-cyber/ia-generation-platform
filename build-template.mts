@@ -80,6 +80,7 @@ SRC_DATA.menus.forEach((m, mi) => {
       menuId,
       pageId,
       pageName: s.name,
+      screenGroup: null,
       status: "active",
       screenRole: s.role,
       deviceCode: "R",

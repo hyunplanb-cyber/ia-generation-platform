@@ -13,23 +13,39 @@ function daysBetween(start?: string | null, end?: string | null): number | strin
   return Math.max(1, Math.round((e - s) / 86400000) + 1);
 }
 
-// 메뉴 구조 — 메뉴별 화면을 한 행씩.
+// 메뉴 구조 — 메뉴별 화면을 한 행씩. 상세(3뎁스)면 화면/상태·탭 열로 나눈다.
 export function buildMenuTreeRows(menus: Menu[], screens: Screen[]): Row[] {
+  const hasGroup = screens.some((s) => s.screenGroup);
   const rows: Row[] = [];
   for (const menu of menus) {
     const menuScreens = screens.filter((s) => s.menuId === menu.id);
     if (menuScreens.length === 0) {
-      rows.push({ 메뉴코드: menu.menuCode, 메뉴명: menu.nameKo, 화면ID: "", 화면명: "" });
+      rows.push(
+        hasGroup
+          ? { 메뉴코드: menu.menuCode, 메뉴명: menu.nameKo, 화면: "", "상태·탭": "", 화면ID: "" }
+          : { 메뉴코드: menu.menuCode, 메뉴명: menu.nameKo, 화면ID: "", 화면명: "" },
+      );
       continue;
     }
     for (const s of menuScreens) {
-      rows.push({ 메뉴코드: menu.menuCode, 메뉴명: menu.nameKo, 화면ID: s.pageId, 화면명: s.pageName });
+      rows.push(
+        hasGroup
+          ? {
+              메뉴코드: menu.menuCode,
+              메뉴명: menu.nameKo,
+              화면: s.screenGroup ?? s.pageName,
+              "상태·탭": s.screenGroup ? s.pageName : "",
+              화면ID: s.pageId,
+            }
+          : { 메뉴코드: menu.menuCode, 메뉴명: menu.nameKo, 화면ID: s.pageId, 화면명: s.pageName },
+      );
     }
   }
   return rows;
 }
 
 // IA 화면 목록 — 메뉴·ID·명·일정·기능정의·버튼이동·프롬프트.
+// 상세(3뎁스)면 화면(2뎁스)/상태·탭(3뎁스) 열을 분리한다.
 export function buildScreenListRows(
   menus: Menu[],
   screens: Screen[],
@@ -37,6 +53,7 @@ export function buildScreenListRows(
 ): Row[] {
   const menuName = new Map(menus.map((m) => [m.id, m.nameKo]));
   const scrById = new Map(screens.map((s) => [s.id, s]));
+  const hasGroup = screens.some((s) => s.screenGroup);
   return screens.map((s) => {
     const links = buttonActions
       .filter((ba) => ba.screenId === s.id)
@@ -45,10 +62,13 @@ export function buildScreenListRows(
         return `${ba.label} → ${t ? t.pageName : "(삭제됨)"}`;
       })
       .join("\n");
+    const nameCols: Row = hasGroup
+      ? { 화면: s.screenGroup ?? s.pageName, "상태·탭": s.screenGroup ? s.pageName : "" }
+      : { 화면명: s.pageName };
     return {
       메뉴: menuName.get(s.menuId) ?? "",
+      ...nameCols,
       화면ID: s.pageId,
-      화면명: s.pageName,
       "일정 시작": s.scheduleStart ?? "",
       "일정 종료": s.scheduleEnd ?? "",
       "설명·기능정의": s.funcDef ?? "",

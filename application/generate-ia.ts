@@ -38,7 +38,10 @@ function resolveMenuCode(nameEn: string, existingCodes: string[]): string {
   return "ZZ";
 }
 
-export async function generateIa(projectId: string): Promise<GenerateIaResult> {
+export async function generateIa(
+  projectId: string,
+  detail = false,
+): Promise<GenerateIaResult> {
   return withProjectAuth(projectId, async (project) => {
     const existingMenus = await drizzleMenuRepository.listByProject(projectId);
     if (existingMenus.length > 0) {
@@ -52,6 +55,7 @@ export async function generateIa(projectId: string): Promise<GenerateIaResult> {
         menuDraft: project.menuDraft,
         designConcept: project.designConcept,
         deviceMode: project.deviceMode,
+        detail,
       });
     } catch (error) {
       if (error instanceof Error && error.message === "ANTHROPIC_API_KEY_MISSING") {
@@ -103,6 +107,7 @@ export async function generateIa(projectId: string): Promise<GenerateIaResult> {
             menuId: menu.id,
             pageId: derivePageId(deviceCode, menuCode, serial),
             pageName: screen.pageName,
+            screenGroup: screen.screenGroup ?? null,
             screenRole: screen.screenRole,
             deviceCode,
             funcDef: screen.funcDef || undefined,

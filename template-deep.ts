@@ -123,6 +123,7 @@ export function expandDeep(input: DeepInput): DeepResult {
           menuId,
           pageId,
           pageName: fullName,
+          screenGroup: null,
           status: "active",
           screenRole: leaf.role,
           deviceCode: "R",

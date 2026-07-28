@@ -129,6 +129,23 @@ export function BriefForm({ project, hasMenus }: { project: Project; hasMenus: b
                   </p>
                 </div>
               </div>
+              {/* 상세 IA(3뎁스) 옵션 — 화면을 상태·탭까지 촘촘히 100개+로 */}
+              <label className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-border bg-background p-3.5">
+                <input
+                  type="checkbox"
+                  name="detail"
+                  disabled={pending}
+                  className="mt-0.5 size-4 accent-primary"
+                />
+                <span className="text-sm">
+                  <span className="font-semibold text-foreground">상세하게 만들기 (3뎁스)</span>
+                  <span className="block text-xs leading-relaxed text-muted-foreground">
+                    화면을 상태·탭·예외까지 쪼개 실무 수준(보통 80~150개)으로 뽑아요. 더 정확하지만
+                    생성이 조금 더 걸려요.
+                  </span>
+                </span>
+              </label>
+
               <Button type="submit" size="lg" disabled={pending} className="self-start">
                 <Sparkles className="size-4" />
                 컨셉 분석해서 자동 생성

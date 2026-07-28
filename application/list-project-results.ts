@@ -7,6 +7,7 @@ export interface ProjectResultScreen {
   menuId: string;
   pageId: string;
   pageName: string;
+  screenGroup: string | null;
   scheduleStart: string | null;
   scheduleEnd: string | null;
 }
@@ -52,6 +53,7 @@ export async function listProjectResults(
           menuId: s.menuId,
           pageId: s.pageId,
           pageName: s.pageName,
+          screenGroup: s.screenGroup,
           scheduleStart: s.scheduleStart,
           scheduleEnd: s.scheduleEnd,
         })),

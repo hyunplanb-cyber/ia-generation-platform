@@ -17,6 +17,8 @@ const MODEL = "claude-haiku-4-5";
 // (실측: 같은 컨셉에서 117초 → 37초. 내용은 줄지 않았다.)
 const SCREENS_PER_CALL = 5;
 const SKELETON_MAX_TOKENS = 4000;
+// 상세(3뎁스)는 화면이 100개+라 뼈대만도 길어진다 → 넉넉히.
+const DETAIL_SKELETON_MAX_TOKENS = 12000;
 const DETAIL_MAX_TOKENS = 8000;
 
 const SKELETON_SYSTEM = [
@@ -52,6 +54,47 @@ const SKELETON_SYSTEM = [
   "- 로그인/회원가입이 컨셉상 필요하면 회원 관련 메뉴를 포함하세요.",
   "- screenRole은 같은 메뉴 안에서 중복되지 않게 하세요(상태가 다르면 예: search-empty, search-result처럼 구분).",
   "- 영문 메뉴명은 서로 앞 2글자가 겹치지 않게 하면 좋습니다(페이지ID 코드 충돌 방지).",
+  "- ref는 전체에서 유일해야 합니다.",
+].join("\n");
+
+// 상세(3뎁스) 뼈대 — 화면(2뎁스)을 상태·탭·예외(3뎁스)까지 촘촘히 쪼갠다.
+const DETAIL_SKELETON_SYSTEM = [
+  "당신은 실무 웹 기획자를 돕는 IA(정보구조) 설계 어시스턴트입니다.",
+  "주어진 컨셉·메뉴를 분석해, 실제 기획 산출물 수준의 '상세 화면 목록'을 3뎁스로 설계합니다.",
+  "3뎁스 구조: 1뎁스=메뉴 / 2뎁스=화면(기능 단위) / 3뎁스=그 화면의 상태·탭·예외.",
+  "세부 요건·프롬프트는 이 단계에서 쓰지 마세요(다음 단계에서 채웁니다).",
+  "출력은 반드시 아래 JSON 스키마 하나만, 다른 설명 없이 출력하세요:",
+  "{",
+  '  "menus": [',
+  "    {",
+  '      "nameKo": "한글 메뉴명",',
+  '      "nameEn": "영문 메뉴명(2단어 이하, 각 단어 첫 글자 대문자)",',
+  '      "description": "이 메뉴의 역할 한 줄(없으면 null)",',
+  '      "screens": [',
+  "        {",
+  '          "ref": "전체에서 고유한 짧은 식별자(s1, s2 ...)",',
+  '          "screenGroup": "2뎁스 화면명(기능 단위, 예: 로그인 / 상품 목록 / 주문 상세)",',
+  '          "pageName": "3뎁스 상태·탭명(짧게, 예: 기본 / 비어 있음 / 오류 / 완료 / 상세 탭)",',
+  '          "screenRole": "화면 유형 태그(영문 소문자, 상태별로 다르게: login, login-locked, list, list-empty ...)"',
+  "        }",
+  "      ]",
+  "    }",
+  "  ]",
+  "}",
+  "규칙(중요):",
+  "- 메뉴는 6~10개로, 규모 있는 서비스처럼 폭넓게 구성하세요.",
+  "- **각 2뎁스 화면(screenGroup)을 반드시 상태·탭·예외(3뎁스)로 쪼개세요.** 화면당 3뎁스 3~5개가 자연스럽습니다. 예:",
+  "  · 로그인 → 기본 / 로그인 실패·잠금 / 2단계 인증",
+  "  · 목록 → 데이터 있음 / 비어 있음 / 필터 적용 / 로딩·오류",
+  "  · 상세 → 기본 / 편집 / 삭제 확인",
+  "  · 입력 폼 → 입력 / 유효성 오류 / 저장 완료",
+  "  · 검색 → 검색 전 / 결과 있음 / 결과 없음",
+  "- 같은 2뎁스 화면의 3뎁스들은 screenGroup을 똑같이 쓰고, pageName만 상태·탭으로 다르게 하세요.",
+  "- **전체 3뎁스 화면 수가 80~150개가 되도록** 촘촘히 뽑으세요(억지 중복이 아니라, 실제로 확인해야 할 상태들).",
+  "- pageName은 상태·탭만 짧게(‘로그인 - 기본’처럼 화면명을 반복하지 말고 그냥 ‘기본’).",
+  "- 로그인·회원가입·권한·설정 등 시스템 화면도 상태까지 포함하세요.",
+  "- screenRole은 같은 메뉴 안에서 중복되지 않게(상태가 다르면 다른 태그).",
+  "- 영문 메뉴명은 서로 앞 2글자가 겹치지 않게 하면 좋습니다.",
   "- ref는 전체에서 유일해야 합니다.",
 ].join("\n");
 
@@ -132,12 +175,18 @@ async function askJson(
   return JSON.parse(extractJson(text));
 }
 
-type SkeletonScreen = { ref: string; pageName: string; screenRole: string; menuKo: string };
+type SkeletonScreen = {
+  ref: string;
+  pageName: string;
+  screenGroup: string | null;
+  screenRole: string;
+  menuKo: string;
+};
 type SkeletonMenu = {
   nameKo: string;
   nameEn: string;
   description: string | null;
-  screens: { ref: string; pageName: string; screenRole: string }[];
+  screens: { ref: string; pageName: string; screenGroup: string | null; screenRole: string }[];
 };
 type ScreenDetail = { funcDef: string; prompt: string; buttons: GeneratedButtonDraft[] };
 
@@ -174,7 +223,14 @@ export const claudeIaGenerator: IaGenerator = {
     const conceptBlock = buildConceptBlock(input);
 
     // ── 1단계: 메뉴·화면 뼈대 ────────────────────────────────────────────
-    const skeleton = await askJson(client, SKELETON_SYSTEM, conceptBlock, SKELETON_MAX_TOKENS);
+    // 상세 모드는 3뎁스(화면→상태·탭)로, 더 긴 출력이 필요하다.
+    const detail = input.detail === true;
+    const skeleton = await askJson(
+      client,
+      detail ? DETAIL_SKELETON_SYSTEM : SKELETON_SYSTEM,
+      conceptBlock,
+      detail ? DETAIL_SKELETON_MAX_TOKENS : SKELETON_MAX_TOKENS,
+    );
     const rawMenus = (skeleton as { menus?: unknown })?.menus;
     if (!Array.isArray(rawMenus) || rawMenus.length === 0) {
       throw new Error("IA_GENERATOR_BAD_OUTPUT");
@@ -189,10 +245,12 @@ export const claudeIaGenerator: IaGenerator = {
         const raw = String((screen as { ref?: unknown })?.ref ?? "").trim();
         const ref = raw && !usedRefs.has(raw) ? raw : `auto-${refFallback}`;
         usedRefs.add(ref);
-        const s = screen as { pageName?: unknown; screenRole?: unknown };
+        const s = screen as { pageName?: unknown; screenGroup?: unknown; screenRole?: unknown };
+        const group = String(s?.screenGroup ?? "").trim();
         return {
           ref,
           pageName: String(s?.pageName ?? "").trim() || "화면",
+          screenGroup: group || null,
           screenRole: String(s?.screenRole ?? "").trim() || "default",
         };
       });
@@ -228,7 +286,10 @@ export const claudeIaGenerator: IaGenerator = {
             conceptBlock,
             `\n전체 화면 목록(targetRef 후보):\n${roster}`,
             `\n담당 화면:\n${chunk
-              .map((s) => `${s.ref}: [${s.menuKo}] ${s.pageName} (${s.screenRole})`)
+              .map(
+                (s) =>
+                  `${s.ref}: [${s.menuKo}] ${s.screenGroup ? `${s.screenGroup} · ` : ""}${s.pageName} (${s.screenRole})`,
+              )
               .join("\n")}`,
           ].join("\n"),
           DETAIL_MAX_TOKENS,
@@ -261,14 +322,15 @@ export const claudeIaGenerator: IaGenerator = {
         nameEn: menu.nameEn,
         description: menu.description,
         screens: menu.screens.map((screen) => {
-          const detail = details.get(screen.ref);
+          const d = details.get(screen.ref);
           return {
             ref: screen.ref,
             pageName: screen.pageName,
+            screenGroup: screen.screenGroup,
             screenRole: screen.screenRole,
-            funcDef: detail?.funcDef ?? "",
-            prompt: detail?.prompt ?? "",
-            buttons: (detail?.buttons ?? []).filter(
+            funcDef: d?.funcDef ?? "",
+            prompt: d?.prompt ?? "",
+            buttons: (d?.buttons ?? []).filter(
               (button) => validRefs.has(button.targetRef) && button.targetRef !== screen.ref,
             ),
           };

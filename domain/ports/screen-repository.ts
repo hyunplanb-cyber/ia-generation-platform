@@ -5,6 +5,8 @@ export interface CreateScreenInput {
   menuId: string;
   pageId: string;
   pageName: string;
+  // 상세 IA(3뎁스)의 2뎁스 화면 그룹명(기본 생성/수동 추가 시 비움)
+  screenGroup?: string | null;
   screenRole: string;
   deviceCode: string;
   scheduleStart?: string;

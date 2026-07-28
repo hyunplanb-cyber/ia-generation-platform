@@ -152,6 +152,9 @@ export const screen = pgTable(
       .references(() => menu.id, { onDelete: "cascade" }),
     pageId: text("page_id").notNull(),
     pageName: text("page_name").notNull(),
+    // 상세 IA(3뎁스): 이 화면이 속한 2뎁스 화면 그룹명. 기본 생성은 null(2뎁스).
+    // 상세 생성에선 screenGroup=2뎁스 화면, pageName=3뎁스 상태·탭.
+    screenGroup: text("screen_group"),
     // 'active' | 'quarantined' — 격리는 Story 3.7
     status: text("status").default("active").notNull(),
     // 재실행 매칭키(AD-3), 예: list/detail/create/done — Story 3.6이 사용
