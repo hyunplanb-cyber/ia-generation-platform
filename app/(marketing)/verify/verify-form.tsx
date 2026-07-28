@@ -1,10 +1,9 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Link2, FileText, PencilRuler, type LucideIcon } from "lucide-react";
+import { Link2, FileText, PencilRuler, Check, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { UpgradeToDownload } from "@/app/(app)/dashboard/[projectId]/upgrade-to-download";
 import { runVerifyAction, type VerifyState } from "./actions";
@@ -40,6 +39,7 @@ export function VerifyForm({
   const [state, formAction, pending] = useActionState(runVerifyAction, initialState);
   const [mode, setMode] = useState<Mode>("url");
   const [fileName, setFileName] = useState<string | null>(null);
+  const [specFileName, setSpecFileName] = useState<string | null>(null);
   const report = state.report;
   const blocked = alreadyBlocked || state.limitReached;
 
@@ -50,37 +50,57 @@ export function VerifyForm({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 입력 방식 3가지를 한 화면에 펼쳐 놓고, 그중 하나를 골라 검수한다. */}
-      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-        {MODES.map((m) => {
-          const Icon = m.icon;
-          const on = mode === m.key;
-          return (
-            <button
-              key={m.key}
-              type="button"
-              onClick={() => setMode(m.key)}
-              aria-pressed={on}
-              className={`flex flex-col gap-1 rounded-xl border p-3.5 text-left transition-colors ${
-                on
-                  ? "border-primary bg-primary-soft/40"
-                  : "border-border hover:border-primary/40 hover:bg-muted/40"
-              }`}
-            >
-              <span className="flex items-center gap-2">
+      {/* 입력 방식 3가지를 한 화면에 세로로 펼쳐 놓고, 그중 하나를 골라 검수한다. */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2.5 border-b-2 border-border pb-2.5">
+          <span className="h-6 w-1.5 shrink-0 rounded-full bg-primary" />
+          <h2 className="text-xl font-extrabold tracking-tight text-foreground">
+            무엇을 검수할까요?
+          </h2>
+        </div>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          설계도·사이트 URL·문서 중 하나를 골라 넣으면 돼요.
+        </p>
+        <div className="flex flex-col gap-2.5">
+          {MODES.map((m) => {
+            const Icon = m.icon;
+            const on = mode === m.key;
+            return (
+              <button
+                key={m.key}
+                type="button"
+                onClick={() => setMode(m.key)}
+                aria-pressed={on}
+                className={`flex items-center gap-3 rounded-xl border p-4 text-left transition-colors ${
+                  on
+                    ? "border-primary bg-primary-soft/40"
+                    : "border-border hover:border-primary/40 hover:bg-muted/40"
+                }`}
+              >
                 <span
-                  className={`flex size-7 shrink-0 items-center justify-center rounded-md ${
+                  className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${
                     on ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                   }`}
                 >
-                  <Icon className="size-4" />
+                  <Icon className="size-5" />
                 </span>
-                <span className="text-sm font-bold text-foreground">{m.title}</span>
-              </span>
-              <span className="text-xs leading-relaxed text-muted-foreground">{m.desc}</span>
-            </button>
-          );
-        })}
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-bold text-foreground">{m.title}</span>
+                  <span className="block text-xs leading-relaxed text-muted-foreground">
+                    {m.desc}
+                  </span>
+                </span>
+                <span
+                  className={`flex size-5 shrink-0 items-center justify-center rounded-full border ${
+                    on ? "border-primary bg-primary text-primary-foreground" : "border-border"
+                  }`}
+                >
+                  {on && <Check className="size-3.5" />}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <form action={formAction} className="flex flex-col gap-3">
@@ -88,15 +108,26 @@ export function VerifyForm({
 
         {mode === "spec" && (
           <div className="flex flex-col gap-3">
-            <Textarea
-              name="spec"
-              rows={7}
-              placeholder="카페인컬러에서 만든 'IA·화면목록'과 'AI 빌드 스펙팩' 내용을 붙여넣으세요."
-              required
-              disabled={pending}
-            />
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
+              <PencilRuler className="size-6 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">
+                {specFileName ?? "카페인컬러에서 받은 스펙팩 파일을 넣으세요 (.md·.json·.txt)"}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                AI 빌드 스펙팩(마크다운·JSON)을 그대로 올리면 가장 정확해요 · 8MB 이하
+              </span>
+              <input
+                type="file"
+                name="spec"
+                accept=".md,.markdown,.json,.txt"
+                required
+                disabled={pending}
+                className="hidden"
+                onChange={(e) => setSpecFileName(e.target.files?.[0]?.name ?? null)}
+              />
+            </label>
             <p className="rounded-lg bg-primary-soft/30 px-4 py-3 text-xs leading-relaxed text-foreground">
-              카페인컬러에서 생성한 <b className="font-semibold">IA 화면목록</b>과{" "}
+              카페인컬러에서 생성한 <b className="font-semibold">IA 화면목록</b>·
               <b className="font-semibold">스펙팩</b>을 넣으면, 화면·요건을 그대로 알아{" "}
               <b className="font-semibold">가장 자세한 검수 시나리오</b>를 만들어드려요.
             </p>

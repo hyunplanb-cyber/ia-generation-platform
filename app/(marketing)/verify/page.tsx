@@ -23,52 +23,71 @@ export const metadata = {
 };
 
 // 설계도 프롬프트 화면과 같은 형태의 상단 스텝. 검수는 입력 → 결과 2단계.
+// 모바일에서 큰 2단 스텝이 화면을 좌우로 넘치던 문제 때문에, 좁은 화면은
+// 현재 스텝 하나만 크게 보이는 컴팩트 버전으로 대체한다(대시보드 스텝퍼와 동일 방식).
 function VerifySteps() {
   const steps = [
     { title: "STEP 1", label: "입력", icon: Upload, active: true },
     { title: "STEP 2", label: "검수 결과", icon: ShieldCheck, active: false },
   ];
   return (
-    <ol className="flex w-full items-stretch gap-2 sm:gap-3">
-      {steps.map((s, i) => {
-        const Icon = s.icon;
-        return (
-          <Fragment key={s.title}>
-            {/* 프롬프트 탭과 같은 스텝 크기(최대 429px). 2단계라 우측은 비워둔다. */}
-            <li className="min-w-0 flex-1 sm:w-[429px] sm:flex-none">
-              <div
-                className={`flex h-full items-center justify-center gap-3 rounded-2xl px-4 py-4 sm:gap-4 sm:px-6 sm:py-5 ${
-                  s.active
-                    ? "bg-primary text-primary-foreground shadow-lg"
-                    : "bg-muted text-foreground/70"
-                }`}
-              >
-                <span
-                  className={`flex size-11 shrink-0 items-center justify-center rounded-full sm:size-14 ${
-                    s.active ? "bg-primary-foreground/20" : "bg-background text-muted-foreground"
+    <>
+      {/* 모바일 — 현재 스텝 하나 + 오른쪽 점으로 2단계 위치 표시 */}
+      <div className="flex items-center gap-3 rounded-2xl bg-primary px-4 py-3.5 text-primary-foreground shadow-md sm:hidden">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-foreground/20">
+          <Upload className="size-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-primary-foreground/75">STEP 1 · 2단계 중 1</p>
+          <p className="truncate text-lg font-extrabold tracking-tight">입력</p>
+        </div>
+        <ol className="flex shrink-0 items-center gap-2">
+          <li className="block size-2.5 rounded-full bg-primary-foreground" />
+          <li className="block size-2 rounded-full bg-primary-foreground/35" />
+        </ol>
+      </div>
+
+      {/* 데스크톱 — 2단 스텝(각 최대 429px, 우측은 비워둠) */}
+      <ol className="hidden w-full items-stretch gap-3 sm:flex">
+        {steps.map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <Fragment key={s.title}>
+              <li className="min-w-0 flex-1 lg:w-[429px] lg:flex-none">
+                <div
+                  className={`flex h-full items-center justify-center gap-4 rounded-2xl px-6 py-5 ${
+                    s.active
+                      ? "bg-primary text-primary-foreground shadow-lg"
+                      : "bg-muted text-foreground/70"
                   }`}
                 >
-                  <Icon className="size-6 sm:size-7" />
-                </span>
-                <span className="flex items-baseline gap-2 whitespace-nowrap">
                   <span
-                    className={`text-xs font-bold sm:text-sm ${
-                      s.active ? "text-primary-foreground/75" : "opacity-60"
+                    className={`flex size-14 shrink-0 items-center justify-center rounded-full ${
+                      s.active ? "bg-primary-foreground/20" : "bg-background text-muted-foreground"
                     }`}
                   >
-                    {s.title}
+                    <Icon className="size-7" />
                   </span>
-                  <span className="text-lg font-extrabold tracking-tight sm:text-xl">{s.label}</span>
-                </span>
-              </div>
-            </li>
-            {i < steps.length - 1 && (
-              <ChevronRight className="size-6 shrink-0 self-center text-muted-foreground/50 sm:size-7" />
-            )}
-          </Fragment>
-        );
-      })}
-    </ol>
+                  <span className="flex items-baseline gap-2 whitespace-nowrap">
+                    <span
+                      className={`text-sm font-bold ${
+                        s.active ? "text-primary-foreground/75" : "opacity-60"
+                      }`}
+                    >
+                      {s.title}
+                    </span>
+                    <span className="text-xl font-extrabold tracking-tight">{s.label}</span>
+                  </span>
+                </div>
+              </li>
+              {i < steps.length - 1 && (
+                <ChevronRight className="size-7 shrink-0 self-center text-muted-foreground/50" />
+              )}
+            </Fragment>
+          );
+        })}
+      </ol>
+    </>
   );
 }
 

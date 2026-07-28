@@ -50,9 +50,14 @@ export async function runVerifyAction(
 
   let report: VerificationReport;
   if (mode === "spec") {
-    const spec = String(formData.get("spec") ?? "").trim();
-    if (!spec) return fail("검수할 설계도(IA 화면목록·스펙팩) 내용을 붙여넣어 주세요.");
-    const result = await verifyText("설계도 프롬프트", spec);
+    const file = formData.get("spec");
+    if (!(file instanceof File) || file.size === 0) {
+      return fail("검수할 설계도 파일(.md·.json·.txt)을 넣어주세요.");
+    }
+    if (file.size > MAX_DOC_BYTES) {
+      return fail("파일이 너무 커요. 8MB 이하로 넣어주세요.");
+    }
+    const result = await verifyText(file.name || "설계도 프롬프트", await file.text());
     if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
     report = result.report;
   } else if (mode === "document") {
