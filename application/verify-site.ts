@@ -9,7 +9,19 @@ export type VerifySiteResult =
 
 export type VerifyDocResult =
   | { ok: true; report: VerificationReport }
-  | { ok: false; reason: "unsupported-doc" | "empty-doc" | "unavailable" | "failed" };
+  | {
+      ok: false;
+      reason: "unsupported-doc" | "empty-doc" | "unavailable" | "bad-output" | "api-error" | "failed";
+    };
+
+// 분석 오류 메시지를 사용자용 사유로 매핑(문서·설계도 모드 공통).
+function docReasonFor(error: unknown): "unavailable" | "bad-output" | "api-error" | "failed" {
+  const msg = error instanceof Error ? error.message : "";
+  if (msg === "ANTHROPIC_API_KEY_MISSING") return "unavailable";
+  if (msg === "VERIFY_BAD_OUTPUT") return "bad-output";
+  if (msg === "VERIFY_API_ERROR") return "api-error";
+  return "failed";
+}
 
 // 사이트 URL 하나를 검수한다.
 //  1) 요청/응답 기반 자동 검사(접속·이미지·링크·모바일 대응 등)
@@ -109,11 +121,8 @@ export async function verifyText(label: string, rawText: string): Promise<Verify
       links: [],
     });
   } catch (error) {
-    if (error instanceof Error && error.message === "ANTHROPIC_API_KEY_MISSING") {
-      return { ok: false, reason: "unavailable" };
-    }
     console.error("verifyText: 분석 실패", error);
-    return { ok: false, reason: "failed" };
+    return { ok: false, reason: docReasonFor(error) };
   }
 
   return {
@@ -162,11 +171,8 @@ export async function verifyDocument(
       links: [],
     });
   } catch (error) {
-    if (error instanceof Error && error.message === "ANTHROPIC_API_KEY_MISSING") {
-      return { ok: false, reason: "unavailable" };
-    }
     console.error("verifyDocument: 분석 실패", error);
-    return { ok: false, reason: "failed" };
+    return { ok: false, reason: docReasonFor(error) };
   }
 
   return {

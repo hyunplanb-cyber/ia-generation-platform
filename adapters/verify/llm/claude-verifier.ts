@@ -7,7 +7,8 @@ import type {
 } from "@/domain/ports/verify-analyzer";
 
 const MODEL = "claude-haiku-4-5";
-const MAX_TOKENS = 4000;
+// 시나리오가 6~10개면 JSON이 길어져 4000토큰에서 잘려 파싱이 깨지곤 했다 → 넉넉히.
+const MAX_TOKENS = 8000;
 
 const SITE_INTRO = [
   "당신은 웹사이트 오픈 전 점검을 돕는 QA 어시스턴트입니다.",
@@ -69,12 +70,20 @@ export const claudeVerifier: VerifyAnalyzer = {
     if (!apiKey) throw new Error("ANTHROPIC_API_KEY_MISSING");
 
     const client = new Anthropic({ apiKey });
-    const message = await client.messages.create({
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
-      system: systemPrompt(input.mode),
-      messages: [{ role: "user", content: buildUserMessage(input) }],
-    });
+
+    let message;
+    try {
+      message = await client.messages.create({
+        model: MODEL,
+        max_tokens: MAX_TOKENS,
+        system: systemPrompt(input.mode),
+        messages: [{ role: "user", content: buildUserMessage(input) }],
+      });
+    } catch (err) {
+      // 모델·인증·요청한도 등 API 호출 자체의 실패.
+      console.error("verify analyze: API 호출 실패", err);
+      throw new Error("VERIFY_API_ERROR");
+    }
 
     const textBlock = message.content.find((b) => b.type === "text");
     const raw = textBlock?.type === "text" ? textBlock.text : "";
@@ -83,6 +92,16 @@ export const claudeVerifier: VerifyAnalyzer = {
     try {
       parsed = JSON.parse(extractJson(raw));
     } catch {
+      // 응답이 잘렸거나(JSON 미완성) 형식이 어긋난 경우. 원인 파악용 로그를 남긴다.
+      console.error(
+        "verify analyze: JSON 파싱 실패",
+        "stop_reason=",
+        message.stop_reason,
+        "output_tokens=",
+        message.usage?.output_tokens,
+        "raw앞:",
+        raw.slice(0, 200),
+      );
       throw new Error("VERIFY_BAD_OUTPUT");
     }
 
