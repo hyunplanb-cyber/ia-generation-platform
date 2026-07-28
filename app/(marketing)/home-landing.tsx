@@ -55,9 +55,28 @@ export function HomeLanding() {
                   <span className="art-tag ex">예외</span>
                 </div>
               </div>
-              <div className="hero-photo">
-                <div className="beach" aria-hidden="true" />
-                <span className="kc">READY TO OPEN</span>
+              <div className="art-card">
+                <div className="art-head">검수 결과 · 통과 9 · 실패 3</div>
+                <div className="art-row">
+                  <span className="pid">AUTO-02</span>
+                  <span>모바일 대응</span>
+                  <span className="art-tag pass">PASS</span>
+                </div>
+                <div className="art-row">
+                  <span className="pid">AUTO-06</span>
+                  <span>이미지 깨짐</span>
+                  <span className="art-tag fail">FAIL</span>
+                </div>
+                <div className="art-row">
+                  <span className="pid">SCN-01</span>
+                  <span>로그인 · 재현 확인</span>
+                  <span className="art-tag">직접</span>
+                </div>
+                <div className="art-row">
+                  <span className="pid">SCN-02</span>
+                  <span>결제 · 재현 확인</span>
+                  <span className="art-tag">직접</span>
+                </div>
               </div>
             </div>
           </div>
@@ -600,6 +619,14 @@ export function HomeLanding() {
         .art-tag.ex {
           background: #f7e0ce;
           color: #b4551e;
+        }
+        .art-tag.pass {
+          background: #d7efe9;
+          color: #0e6f60;
+        }
+        .art-tag.fail {
+          background: #f7d9d2;
+          color: #b4241e;
         }
         .hero-photo {
           height: 100%;
