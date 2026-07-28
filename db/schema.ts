@@ -333,3 +333,31 @@ export const verifyRunRelations = relations(verifyRun, ({ one }) => ({
   user: one(user, { fields: [verifyRun.userId], references: [user.id] }),
   project: one(project, { fields: [verifyRun.projectId], references: [project.id] }),
 }));
+
+// 크레딧 원장(append-only). 잔액은 이 행들의 amount 합.
+// 양수 = 지급/충전, 음수 = 사용. 결제·구독이 아니라 "충전형" 지갑이다.
+export const creditLedger = pgTable(
+  "credit_ledger",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    // 양수 = 지급/충전, 음수 = 사용
+    amount: integer("amount").notNull(),
+    // "free"(가입 무료) | "charge"(충전) | "spend"(사용) | "refund"(환불)
+    kind: text("kind").notNull(),
+    // 사람이 읽는 설명 — "가입 무료 크레딧", "10,000원 충전", "설계도 생성(상세)"
+    memo: text("memo").notNull(),
+    // 지급분의 만료 시각(무료 3일·유상 1년). 사용분은 null.
+    expiresAt: timestamp("expires_at"),
+    // 참조(JSON 문자열): { orderId, paymentKey, projectId } 등
+    meta: text("meta"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("credit_ledger_user_idx").on(table.userId)],
+);
+
+export const creditLedgerRelations = relations(creditLedger, ({ one }) => ({
+  user: one(user, { fields: [creditLedger.userId], references: [user.id] }),
+}));
