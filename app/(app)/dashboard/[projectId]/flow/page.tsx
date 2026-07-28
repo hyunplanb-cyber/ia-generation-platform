@@ -3,14 +3,10 @@ import { getProjectScreensDetail } from "@/application/get-project-screens-detai
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { DiagramOrList } from "../diagram-or-list";
 import { FlowChart } from "../flow-chart";
-import { FileDownloadButton } from "../file-download-button";
-import { UpgradeToDownload } from "../upgrade-to-download";
-import { canDownload } from "@/application/get-current-plan";
-import { buildFlowHtml, buildDrawioXml } from "@/lib/export/flow-export";
-
-function safeFileName(concept: string): string {
-  return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
-}
+import { ZipAllButton } from "../../zip-all-button";
+import { CREDITS_OPEN } from "@/lib/flags";
+import { isDownloadUnlocked } from "@/application/download";
+import { downloadCost } from "@/lib/credits";
 
 export default async function FlowPage({
   params,
@@ -18,10 +14,11 @@ export default async function FlowPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const { project, screens, buttonActions } = await getProjectScreensDetail(projectId);
-  const downloadable = await canDownload();
+  const { screens, buttonActions } = await getProjectScreensDetail(projectId);
+  const unlocked = await isDownloadUnlocked(projectId);
 
   const activeScreens = screens.filter((s) => s.status === "active");
+  const cost = downloadCost(activeScreens.some((s) => s.screenGroup));
   const screenById = new Map(screens.map((s) => [s.id, s]));
   const flows = buttonActions
     .map((ba) => {
@@ -76,24 +73,13 @@ export default async function FlowPage({
         downloads={[]}
         actions={
           hasContent ? (
-            downloadable ? (
-              <>
-                <FileDownloadButton
-                  filename={`FLOW_${safeFileName(project.concept)}.drawio`}
-                  content={buildDrawioXml(flowNodes, flowEdges)}
-                  mime="application/xml;charset=utf-8"
-                  label="draw.io로 다운로드"
-                />
-                <FileDownloadButton
-                  filename={`FLOW_${safeFileName(project.concept)}.html`}
-                  content={buildFlowHtml(project.concept || "프로젝트", flowNodes, flowEdges)}
-                  mime="text/html;charset=utf-8"
-                  label="HTML로 다운로드"
-                />
-              </>
-            ) : (
-              <UpgradeToDownload label="다운로드" />
-            )
+            <ZipAllButton
+              projectId={projectId}
+              large
+              credits={cost}
+              unlocked={unlocked}
+              creditsOpen={CREDITS_OPEN}
+            />
           ) : undefined
         }
       />

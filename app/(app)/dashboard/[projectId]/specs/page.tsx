@@ -2,14 +2,11 @@ import { FileText } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { listMenus } from "@/application/list-menus";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
-import { ExcelDownloadButton } from "../excel-download-button";
-import { UpgradeToDownload } from "../upgrade-to-download";
-import { canDownload } from "@/application/get-current-plan";
-import { buildRequirements, buildRequirementRows, type ReqType } from "@/lib/export/requirements";
-
-function safeFileName(concept: string): string {
-  return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
-}
+import { ZipAllButton } from "../../zip-all-button";
+import { CREDITS_OPEN } from "@/lib/flags";
+import { isDownloadUnlocked } from "@/application/download";
+import { downloadCost } from "@/lib/credits";
+import { buildRequirements, type ReqType } from "@/lib/export/requirements";
 
 const TYPE_BADGE: Record<ReqType, string> = {
   기능: "bg-primary-soft text-primary-on-soft",
@@ -25,15 +22,16 @@ export default async function SpecsPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const [menus, { project, screens }, downloadable] = await Promise.all([
+  const [menus, { screens }, unlocked] = await Promise.all([
     listMenus(projectId),
     getProjectScreensDetail(projectId),
-    canDownload(),
+    isDownloadUnlocked(projectId),
   ]);
 
   const activeScreens = screens.filter((s) => s.status === "active");
   const requirements = buildRequirements(menus, activeScreens);
   const hasContent = requirements.length > 0;
+  const cost = downloadCost(activeScreens.some((s) => s.screenGroup));
 
   return (
     <div className="flex flex-col gap-6">
@@ -45,16 +43,13 @@ export default async function SpecsPage({
         downloads={[]}
         actions={
           hasContent ? (
-            downloadable ? (
-              <ExcelDownloadButton
-                filename={`기능정의서_${safeFileName(project.concept)}.xlsx`}
-                sheetName="기능정의서"
-                rows={buildRequirementRows(menus, activeScreens)}
-                colWidths={[12, 16, 18, 48, 10]}
-              />
-            ) : (
-              <UpgradeToDownload label="엑셀로 다운로드" />
-            )
+            <ZipAllButton
+              projectId={projectId}
+              large
+              credits={cost}
+              unlocked={unlocked}
+              creditsOpen={CREDITS_OPEN}
+            />
           ) : undefined
         }
       />

@@ -48,3 +48,8 @@ export const CREDIT_COST = {
 export function wonToCredits(won: number): number {
   return Math.round(won / WON_PER_CREDIT);
 }
+
+// 프로젝트 산출물 전체 다운로드 원가 — 상세(3뎁스)면 더 비싸다.
+export function downloadCost(hasDetail: boolean): number {
+  return hasDetail ? CREDIT_COST.downloadScreens150 : CREDIT_COST.downloadScreens30;
+}

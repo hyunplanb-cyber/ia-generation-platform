@@ -20,6 +20,9 @@ import { getProjectQuota } from "@/application/can-create-project";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { ZipAllButton } from "./zip-all-button";
+import { CREDITS_OPEN } from "@/lib/flags";
+import { isDownloadUnlocked } from "@/application/download";
+import { downloadCost } from "@/lib/credits";
 import { UpgradeToDownload } from "./[projectId]/upgrade-to-download";
 import { ProjectDeliverablePreview } from "./project-deliverable-preview";
 import { createDraftProjectAction } from "./actions";
@@ -89,10 +92,17 @@ export default async function DashboardPage({
       .filter((p) => (screenCounts[p.id] ?? 0) > 0)
       .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
     const results = await listProjectResults(completed.map((p) => p.id));
+    // 각 프로젝트의 다운로드 잠금 해제 여부(전체 다운로드 게이팅용).
+    const unlocks = Object.fromEntries(
+      await Promise.all(
+        completed.map(async (p) => [p.id, await isDownloadUnlocked(p.id)] as const),
+      ),
+    );
     body = (
       <PlanningTab
         completed={completed}
         results={results}
+        unlocks={unlocks}
         screenCounts={screenCounts}
         draftCount={projects.length - completed.length}
         hitLimit={hitLimit}
@@ -121,6 +131,7 @@ export default async function DashboardPage({
 function PlanningTab({
   completed,
   results,
+  unlocks,
   screenCounts,
   draftCount,
   hitLimit,
@@ -129,6 +140,7 @@ function PlanningTab({
 }: {
   completed: Awaited<ReturnType<typeof listMyProjects>>;
   results: Record<string, ProjectResult>;
+  unlocks: Record<string, boolean>;
   screenCounts: Record<string, number>;
   draftCount: number;
   hitLimit: boolean;
@@ -222,11 +234,14 @@ function PlanningTab({
                     </div>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
-                    {downloadable ? (
-                      <ZipAllButton projectId={p.id} large />
-                    ) : (
-                      <UpgradeToDownload label="전체 다운로드" />
-                    )}
+                    <ZipAllButton
+                      projectId={p.id}
+                      large
+                      credits={downloadCost(!!result && result.screens.some((s) => s.screenGroup))}
+                      unlocked={unlocks[p.id]}
+                      creditsOpen={CREDITS_OPEN}
+                    />
+                    {/* downloadable 게이팅은 크레딧으로 대체됨 */}
                     <ChevronDown className="size-5 text-muted-foreground transition-transform group-open:rotate-180" />
                   </div>
                 </div>

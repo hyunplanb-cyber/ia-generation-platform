@@ -385,3 +385,25 @@ export const creditOrder = pgTable(
 export const creditOrderRelations = relations(creditOrder, ({ one }) => ({
   user: one(user, { fields: [creditOrder.userId], references: [user.id] }),
 }));
+
+// 프로젝트 산출물 다운로드 잠금 해제 기록. 한 번 열면(크레딧 차감) 그 프로젝트 파일은 계속 무료.
+export const downloadUnlock = pgTable(
+  "download_unlock",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => project.id, { onDelete: "cascade" }),
+    creditsSpent: integer("credits_spent").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex("download_unlock_user_project_idx").on(table.userId, table.projectId)],
+);
+
+export const downloadUnlockRelations = relations(downloadUnlock, ({ one }) => ({
+  user: one(user, { fields: [downloadUnlock.userId], references: [user.id] }),
+  project: one(project, { fields: [downloadUnlock.projectId], references: [project.id] }),
+}));

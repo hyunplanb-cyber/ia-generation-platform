@@ -1,17 +1,37 @@
 "use client";
 
 import { useState, type MouseEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Download, Loader2 } from "lucide-react";
+import { unlockDownloadAction } from "./[projectId]/download-actions";
 
 function safeFileName(concept: string): string {
   return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
 }
 
-// 대시보드 "전체 다운로드" — 프로젝트의 모든 산출물을 zip 하나로 묶어 내려받는다.
+// "전체 다운로드" — 프로젝트의 모든 산출물을 zip 하나로 묶어 내려받는다.
 // 무거운 라이브러리(xlsx/jszip/pptxgenjs)는 클릭 시점에 동적 로딩.
-export function ZipAllButton({ projectId, large }: { projectId: string; large?: boolean }) {
+// creditsOpen이 켜져 있고 아직 안 열린 프로젝트면, 먼저 크레딧을 차감해 잠금을 연다.
+export function ZipAllButton({
+  projectId,
+  large,
+  credits,
+  unlocked,
+  creditsOpen,
+}: {
+  projectId: string;
+  large?: boolean;
+  credits?: number;
+  unlocked?: boolean;
+  creditsOpen?: boolean;
+}) {
+  const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
+  const [needCharge, setNeedCharge] = useState(false);
+
+  // 크레딧을 내야 열리는 상태인가(결제 켜짐 + 아직 안 열림 + 원가 있음).
+  const gated = !!creditsOpen && !unlocked && (credits ?? 0) > 0;
 
   async function handleDownload(e: MouseEvent) {
     // <summary> 안에 놓여도 클릭 시 폴드가 접히지 않도록.
@@ -19,7 +39,18 @@ export function ZipAllButton({ projectId, large }: { projectId: string; large?: 
     e.preventDefault();
     setBusy(true);
     setError(false);
+    setNeedCharge(false);
     try {
+      if (gated) {
+        const r = await unlockDownloadAction(projectId);
+        if (!r.ok) {
+          setNeedCharge(r.reason === "insufficient");
+          setError(true);
+          setBusy(false);
+          return;
+        }
+        router.refresh(); // 잠금 해제 상태를 화면에 반영
+      }
       const res = await fetch(`/api/projects/${projectId}/export-data`);
       if (!res.ok) throw new Error("fetch failed");
       const data = await res.json();
@@ -117,21 +148,35 @@ export function ZipAllButton({ projectId, large }: { projectId: string; large?: 
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleDownload}
-      disabled={busy}
-      title={error ? "다운로드에 실패했어요. 다시 시도해 주세요." : "모든 산출물을 zip으로 내려받기"}
-      className={`inline-flex items-center gap-2 rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60 ${
-        large ? "px-4 py-2 text-sm" : "gap-1.5 px-2.5 py-1 text-xs"
-      }`}
-    >
-      {busy ? (
-        <Loader2 className={`${large ? "size-4" : "size-3"} animate-spin`} />
-      ) : (
-        <Download className={large ? "size-4" : "size-3"} />
+    <span className="inline-flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        onClick={handleDownload}
+        disabled={busy}
+        title={error ? "다운로드에 실패했어요. 다시 시도해 주세요." : "모든 산출물을 zip으로 내려받기"}
+        className={`inline-flex items-center gap-2 rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60 ${
+          large ? "px-4 py-2 text-sm" : "gap-1.5 px-2.5 py-1 text-xs"
+        }`}
+      >
+        {busy ? (
+          <Loader2 className={`${large ? "size-4" : "size-3"} animate-spin`} />
+        ) : (
+          <Download className={large ? "size-4" : "size-3"} />
+        )}
+        전체 다운로드
+        {gated && (
+          <span className="font-normal opacity-80">· {credits}크레딧</span>
+        )}
+      </button>
+      {needCharge && (
+        <a
+          href="/dashboard/billing"
+          onClick={(e) => e.stopPropagation()}
+          className="text-xs font-semibold text-primary underline"
+        >
+          크레딧이 부족해요 · 충전하기
+        </a>
       )}
-      전체 다운로드
-    </button>
+    </span>
   );
 }
