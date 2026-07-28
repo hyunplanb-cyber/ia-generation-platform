@@ -361,3 +361,27 @@ export const creditLedger = pgTable(
 export const creditLedgerRelations = relations(creditLedger, ({ one }) => ({
   user: one(user, { fields: [creditLedger.userId], references: [user.id] }),
 }));
+
+// 크레딧 충전 주문. 토스 결제 금액 검증·중복 지급 방지에 쓴다.
+export const creditOrder = pgTable(
+  "credit_order",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orderId: text("order_id").notNull().unique(), // 토스에 보내는 주문번호
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    packId: text("pack_id").notNull(),
+    amountKrw: integer("amount_krw").notNull(),
+    credits: integer("credits").notNull(),
+    status: text("status").notNull().default("pending"), // pending | paid | failed
+    paymentKey: text("payment_key"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    paidAt: timestamp("paid_at"),
+  },
+  (table) => [index("credit_order_user_idx").on(table.userId)],
+);
+
+export const creditOrderRelations = relations(creditOrder, ({ one }) => ({
+  user: one(user, { fields: [creditOrder.userId], references: [user.id] }),
+}));

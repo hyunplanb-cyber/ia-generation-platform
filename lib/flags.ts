@@ -8,3 +8,12 @@
  * 결제를 붙일 때 이 값을 true 로 바꾸면 요금제 화면과 다운로드 안내가 함께 열린다.
  */
 export const BILLING_OPEN = false;
+
+/**
+ * 크레딧 충전(토스 결제)을 여는가.
+ *
+ * 결제 연동은 붙였지만, 검증 전까지 기본은 닫아둔다(충전 페이지에 들어와도 대시보드로 보냄).
+ * Vercel 환경변수 `CREDITS_OPEN=true` 로 켜서 테스트하고, 준비되면 유지한다.
+ * (테스트 키가 들어간 상태라, 켜도 실제 결제는 되지 않고 테스트 모드로만 동작한다.)
+ */
+export const CREDITS_OPEN = process.env.CREDITS_OPEN === "true";
