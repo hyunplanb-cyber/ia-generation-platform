@@ -10,7 +10,7 @@ import { buildVerifyScenarioSheets } from "@/lib/export/verify-scenario";
 export function VerifyScenarioDownloadButton({
   report,
   marks,
-  label = "검수 시나리오 다운로드",
+  label = "시나리오 다운로드",
 }: {
   report: VerificationReport;
   // 사용자가 직접 확인하며 고른 PASS/FAIL/WARN. 결과 칸에 채워진다.

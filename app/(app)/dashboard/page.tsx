@@ -274,7 +274,7 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
         </p>
         <Link href="/verify">
           <Button size="sm">
-            <ShieldQuestion className="size-4" />새 검수
+            <ShieldQuestion className="size-4" />다른 사이트 검수하기
           </Button>
         </Link>
       </div>
@@ -288,7 +288,7 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
                   <span className="w-fit rounded-full bg-pastel-mint px-2.5 py-0.5 text-xs font-semibold text-pastel-mint-foreground">
                     검수완료
                   </span>
-                  <span className="max-w-[600px] truncate font-mono text-xs text-muted-foreground">
+                  <span className="max-w-[600px] truncate font-mono text-sm text-muted-foreground">
                     {run.target}
                   </span>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
