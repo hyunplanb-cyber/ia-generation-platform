@@ -1,6 +1,6 @@
 "use server";
 
-import { verifySite, verifyDocument } from "@/application/verify-site";
+import { verifySite, verifyDocument, verifyText } from "@/application/verify-site";
 import { getVerifyQuota } from "@/application/get-verify-quota";
 import { requireSession } from "@/application/require-session";
 import { drizzleVerifyRunRepository } from "@/adapters/repository/drizzle/verify-run-repository";
@@ -49,7 +49,13 @@ export async function runVerifyAction(
   const mode = String(formData.get("mode") ?? "url");
 
   let report: VerificationReport;
-  if (mode === "document") {
+  if (mode === "spec") {
+    const spec = String(formData.get("spec") ?? "").trim();
+    if (!spec) return fail("검수할 설계도(IA 화면목록·스펙팩) 내용을 붙여넣어 주세요.");
+    const result = await verifyText("설계도 프롬프트", spec);
+    if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
+    report = result.report;
+  } else if (mode === "document") {
     const file = formData.get("document");
     if (!(file instanceof File) || file.size === 0) {
       return fail("검수할 문서(PDF·PPTX)를 넣어주세요.");

@@ -92,6 +92,48 @@ export async function verifySite(rawUrl: string): Promise<VerifySiteResult> {
   };
 }
 
+// 카페인컬러에서 만든 설계도(IA 화면목록·스펙팩) 텍스트를 그대로 검수한다.
+// 화면·요건을 글로 아는 상태라 시나리오가 가장 촘촘하다. 자동 검사(사이트)는 없다.
+export async function verifyText(label: string, rawText: string): Promise<VerifyDocResult> {
+  const text = rawText.trim();
+  if (text.length < 20) {
+    return { ok: false, reason: "empty-doc" };
+  }
+
+  let analysis;
+  try {
+    analysis = await claudeVerifier.analyze({
+      mode: "document",
+      label,
+      content: text.slice(0, 16000),
+      links: [],
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "ANTHROPIC_API_KEY_MISSING") {
+      return { ok: false, reason: "unavailable" };
+    }
+    console.error("verifyText: 분석 실패", error);
+    return { ok: false, reason: "failed" };
+  }
+
+  return {
+    ok: true,
+    report: {
+      mode: "document",
+      url: label,
+      finalUrl: label,
+      fetchedAt: new Date().toISOString(),
+      checks: [],
+      passCount: 0,
+      failCount: 0,
+      warnCount: 0,
+      sensitiveScreens: analysis.sensitiveScreens,
+      scenarios: analysis.scenarios,
+      summary: analysis.summary,
+    },
+  };
+}
+
 // 설계 문서(PDF·PPTX)를 검수한다. 실제 사이트가 아니므로 자동 검사 없이 시나리오만 낸다.
 export async function verifyDocument(
   filename: string,

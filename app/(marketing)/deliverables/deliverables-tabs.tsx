@@ -183,6 +183,14 @@ function PlanningDeliverables() {
 // 입력 방식별 — 무엇을 넣으면 어떤 산출물이 나오는지
 const VERIFY_INPUTS = [
   {
+    icon: PencilRuler,
+    name: "우리 설계도 산출물",
+    badge: "가장 정확",
+    badgeTone: "bg-warning-soft text-warning",
+    desc: "카페인컬러로 만든 설계도(IA 화면목록·스펙팩)를 그대로 넣으면, 화면과 요건을 100% 알기 때문에 재현 시나리오가 가장 촘촘하고 정확해요.",
+    out: ["가장 정확한 재현 시나리오", "설계도 대비 빠진 화면까지 점검"],
+  },
+  {
     icon: Link2,
     name: "사이트 URL",
     badge: "검수 + 재현",
@@ -201,14 +209,6 @@ const VERIFY_INPUTS = [
     badgeTone: "bg-pastel-mint text-pastel-mint-foreground",
     desc: "화면설계서·기획서를 PDF로 내보내 넣으면, 문서에서 화면과 요건을 읽어 확인해야 할 재현 시나리오를 뽑아드려요. 아직 사이트가 없어도 ‘무엇을 확인할지’부터 준비할 수 있어요.",
     out: ["문서 기반 재현 시나리오", "빠뜨리기 쉬운 예외 화면 점검 포인트"],
-  },
-  {
-    icon: PencilRuler,
-    name: "우리 설계도 산출물",
-    badge: "가장 정확",
-    badgeTone: "bg-warning-soft text-warning",
-    desc: "이 서비스로 만든 설계도(화면 목록·기능정의)를 그대로 넣으면, 화면과 요건을 100% 알기 때문에 재현 시나리오가 가장 촘촘하고 정확해요.",
-    out: ["가장 정확한 재현 시나리오", "설계도 대비 빠진 화면까지 점검"],
   },
 ];
 
@@ -282,7 +282,7 @@ function VerifyDeliverable() {
         <div className="mx-auto max-w-5xl px-6 py-14">
           <h3 className="text-lg font-bold text-foreground">무엇을 넣느냐에 따라 이렇게 나와요</h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            셋 다 재현 시나리오를 드리고, 정확도는 아래로 갈수록 높아져요.
+            셋 다 재현 시나리오를 드려요. 카페인컬러로 만든 설계도를 넣으면 가장 정확해요.
           </p>
           <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
             {VERIFY_INPUTS.map((inp) => {
