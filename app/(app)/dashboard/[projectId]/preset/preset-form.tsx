@@ -169,7 +169,7 @@ export function PresetForm({
   // ── 설정 컨트롤(생성 전 화면 + 생성 후 "설정 수정"에서 공용) ──
   const controls = (
     <div className="flex flex-col gap-7">
-      <Section title="큰 방향" hint="브리프에서 고른 컨셉이 기본으로 잡혀 있어요. 방향에 맞는 색이 아래에 나와요.">
+      <Section title="테마" hint="브리프에서 고른 컨셉이 기본으로 잡혀 있어요. 테마에 맞는 색이 아래에 나와요.">
         <div className="grid gap-2 sm:grid-cols-3">
           {DESIGN_OPTIONS.map((opt) => (
             <button
@@ -192,7 +192,7 @@ export function PresetForm({
         </div>
       </Section>
 
-      <Section title="주 색상" hint="고른 큰 방향에 어울리는 색이에요. 버튼·강조에 쓰입니다.">
+      <Section title="주 색상" hint="고른 테마에 어울리는 색이에요. 버튼·강조에 쓰입니다.">
         <div className="flex flex-wrap gap-2">
           {swatches.map((hex) => (
             <button
@@ -311,7 +311,7 @@ export function PresetForm({
           <Palette className="size-6 text-primary" /> 디자인 프리셋
         </h1>
         <p className="text-sm text-muted-foreground">
-          컨셉은 큰 방향이고, 여기서 색·글꼴·모서리·밀도를 직접 골라 <b className="text-foreground">개발에 바로 쓰는
+          컨셉은 큰 방향이고, 여기서 테마와 색·글꼴·모서리·밀도를 직접 골라 <b className="text-foreground">개발에 바로 쓰는
           디자인 시스템</b>을 만들어요. 미리보기는 무료예요.
         </p>
       </div>
@@ -323,6 +323,9 @@ export function PresetForm({
           <div className="lg:sticky lg:top-6 lg:h-fit">
             <p className="mb-2 text-xs font-semibold text-muted-foreground">미리보기</p>
             {preview}
+            <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+              해당 이미지는 테마 참고용입니다. 구현하시는 사이트의 컨셉 및 UI에 따라 다르게 적용됩니다.
+            </p>
             <button
               type="button"
               onClick={() => handleGenerate("gen")}
