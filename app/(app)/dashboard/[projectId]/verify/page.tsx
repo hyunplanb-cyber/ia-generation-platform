@@ -1,5 +1,6 @@
 import { ShieldCheck, History, LayoutList, Check } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
+import { listMenus } from "@/application/list-menus";
 import { listProjectVerifyRuns } from "@/application/list-project-verify-runs";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
@@ -12,6 +13,23 @@ import { VerifyPanel } from "./verify-panel";
 // 30초~1분 넘게 걸릴 수 있다. Fluid Compute에서는 무료 플랜도 300초까지 허용되므로
 // 여유 있게 올린다(마케팅 /verify 와 동일).
 export const maxDuration = 180;
+
+// 1뎁스 메뉴 이름으로 "이 메뉴에서 이런 걸 확인해요" 질문을 만든다(키워드 기반).
+function checkQuestionFor(name: string): string {
+  const n = name;
+  if (/홈|메인|main|home/i.test(n)) return "깨지는 이미지·링크는 없나요?";
+  if (/검색|찾기|탐색|search/i.test(n)) return "필터를 선택하면 결과가 검색되나요?";
+  if (/등록|작성|신청|글쓰기|write|register|create|post/i.test(n)) return "입력한 정보가 정확히 저장되나요?";
+  if (/상세|detail/i.test(n)) return "상세 정보가 빠짐없이 노출되나요?";
+  if (/목록|리스트|list/i.test(n)) return "목록이 정렬·페이지대로 잘 나오나요?";
+  if (/로그인|회원|가입|마이|내\s?정보|mypage|login|auth|profile/i.test(n)) return "로그인 후 내 정보가 맞게 보이나요?";
+  if (/장바구니|결제|주문|구매|cart|order|pay|checkout/i.test(n)) return "결제·주문이 끝까지 진행되나요?";
+  if (/팝업|이벤트|프로모션|event/i.test(n)) return "기간에 맞는 항목이 노출되나요?";
+  if (/문의|고객|상담|support|contact|cs|help/i.test(n)) return "문의 등록·답변이 정상 처리되나요?";
+  if (/지도|위치|장소|공간|map|location|place/i.test(n)) return "위치 정보가 정확하게 나오나요?";
+  if (/알림|notice|notification/i.test(n)) return "알림·공지가 제대로 표시되나요?";
+  return `${n}의 핵심 기능이 정상 동작하나요?`;
+}
 
 function formatDate(d: Date): string {
   // 서버에서 고정 포맷으로. (예: 2026. 7. 28. 15:04)
@@ -27,11 +45,17 @@ export default async function ProjectVerifyPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const [{ screens }, runs] = await Promise.all([
+  const [{ screens }, menus, runs] = await Promise.all([
     getProjectScreensDetail(projectId),
+    listMenus(projectId),
     listProjectVerifyRuns(projectId),
   ]);
   const plannedScreens = screens.filter((s) => s.status === "active");
+  // 1뎁스 메뉴 상위 4개로 "이 메뉴에서 이런 걸 확인해요" 예시를 만든다.
+  const menuChecks = [...menus]
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .slice(0, 4)
+    .map((m) => ({ name: m.nameKo, question: checkQuestionFor(m.nameKo) }));
   const verifyUnlocks = Object.fromEntries(
     await Promise.all(runs.map(async (r) => [r.id, await isVerifyDownloadUnlocked(r.id)] as const)),
   );
@@ -64,35 +88,35 @@ export default async function ProjectVerifyPage({
         </p>
       </div>
 
-      {/* 메인(강조) — 무엇을 검수하는지 */}
+      {/* 메인(강조) — 무엇을 검수하는지 (생성된 메뉴 기준) */}
       <div>
         <h2 className="text-lg font-extrabold text-foreground">지금 산출물 기준, 이런 부분을 검수해요</h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {[
-            "계획한 화면이 다 있는지",
-            "버튼·링크가 설계대로 이동하는지",
-            "기능정의서의 핵심 기능이 실제 되는지",
-            "입력·폼 검증",
-            "빈 상태·오류 처리",
-            "모바일·반응형",
-          ].map((label) => (
-            <span
-              key={label}
-              className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-background px-3 py-1.5 text-sm font-medium text-foreground"
-            >
-              <Check className="size-3.5 shrink-0 text-primary" />
-              {label}
-            </span>
-          ))}
-        </div>
-        {plannedScreens.length > 0 ? (
-          <p className="mt-4 text-sm text-foreground">
-            이 프로젝트는 <b className="text-primary">화면 {plannedScreens.length}개</b> 기준의 검수 시나리오가
-            만들어져요.
-          </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          생성된 산출물 기준 확인해야 할 항목이 많아요. 시나리오대로 눌러보며 하나씩 확인할 수 있도록 검수 시나리오를
+          만들어드려요.
+        </p>
+
+        {menuChecks.length > 0 ? (
+          <>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {menuChecks.map((m) => (
+                <li key={m.name} className="flex items-baseline gap-2 text-sm">
+                  <Check className="size-4 shrink-0 translate-y-0.5 text-primary" />
+                  <span>
+                    <b className="text-foreground">{m.name}</b>
+                    <span className="text-muted-foreground"> : {m.question}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-sm text-foreground">
+              이 프로젝트는 <b className="text-primary">화면 {plannedScreens.length}개</b> 기준의 검수 시나리오가
+              만들어져요.
+            </p>
+          </>
         ) : (
           <p className="mt-4 text-sm text-muted-foreground">
-            먼저 산출물(화면 목록)을 생성하면, 그 화면들 기준으로 검수 시나리오가 만들어져요.
+            먼저 산출물(메뉴·화면)을 생성하면, 그 메뉴들 기준으로 확인할 항목과 검수 시나리오가 만들어져요.
           </p>
         )}
       </div>
