@@ -484,11 +484,7 @@ export function VerifyForm({
                     key={c.key}
                     onClick={() => setScale(c.key)}
                     className={`relative flex flex-col rounded-xl border-2 bg-background p-4 pt-5 text-left transition-all ${
-                      active
-                        ? "border-primary shadow-md"
-                        : c.best
-                          ? "border-primary/50 hover:border-primary"
-                          : "border-border hover:border-primary/40"
+                      active ? "border-primary shadow-md" : "border-border hover:border-primary/40"
                     }`}
                   >
                     {c.best && (
