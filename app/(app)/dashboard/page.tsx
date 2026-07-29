@@ -21,8 +21,8 @@ import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { ZipAllButton } from "./zip-all-button";
 import { CREDITS_OPEN } from "@/lib/flags";
-import { isDownloadUnlocked } from "@/application/download";
-import { downloadCost } from "@/lib/credits";
+import { isDownloadUnlocked, isVerifyDownloadUnlocked } from "@/application/download";
+import { downloadCost, CREDIT_COST } from "@/lib/credits";
 import { UpgradeToDownload } from "./[projectId]/upgrade-to-download";
 import { ProjectDeliverablePreview } from "./project-deliverable-preview";
 import { createDraftProjectAction } from "./actions";
@@ -84,7 +84,11 @@ export default async function DashboardPage({
 
   let body: React.ReactNode;
   if (activeTab === "verify") {
-    body = <VerifyTab runs={await listMyVerifyRuns()} />;
+    const runs = await listMyVerifyRuns();
+    const verifyUnlocks = Object.fromEntries(
+      await Promise.all(runs.map(async (r) => [r.id, await isVerifyDownloadUnlocked(r.id)] as const)),
+    );
+    body = <VerifyTab runs={runs} verifyUnlocks={verifyUnlocks} creditsOpen={CREDITS_OPEN} />;
   } else {
     const screenCounts = await countScreensByProject(projects.map((p) => p.id));
     // 생성 완료(화면이 생긴)된 것만 목록에 노출한다. 작성 중(초안)은 감춘다.
@@ -267,7 +271,15 @@ function PlanningTab({
 }
 
 // ── 사이트 검수 탭 ──────────────────────────────
-function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>> }) {
+function VerifyTab({
+  runs,
+  verifyUnlocks,
+  creditsOpen,
+}: {
+  runs: Awaited<ReturnType<typeof listMyVerifyRuns>>;
+  verifyUnlocks: Record<string, boolean>;
+  creditsOpen: boolean;
+}) {
   if (runs.length === 0) {
     return (
       <div className="flex flex-col items-center gap-6 py-20 text-center">
@@ -327,14 +339,14 @@ function VerifyTab({ runs }: { runs: Awaited<ReturnType<typeof listMyVerifyRuns>
                 {/* 데스크톱: 오른쪽에 다운로드 */}
                 {run.report.scenarios.length > 0 && (
                   <span className="hidden sm:block">
-                    <VerifyScenarioDownloadButton report={run.report} />
+                    <VerifyScenarioDownloadButton report={run.report} verifyRunId={run.id} credits={CREDIT_COST.downloadVerify} unlocked={verifyUnlocks[run.id]} creditsOpen={creditsOpen} />
                   </span>
                 )}
               </div>
               {/* 모바일: 다운로드를 카드 하단에 */}
               {run.report.scenarios.length > 0 && (
                 <div className="mt-3 sm:hidden">
-                  <VerifyScenarioDownloadButton report={run.report} />
+                  <VerifyScenarioDownloadButton report={run.report} verifyRunId={run.id} credits={CREDIT_COST.downloadVerify} unlocked={verifyUnlocks[run.id]} creditsOpen={creditsOpen} />
                 </div>
               )}
             </summary>

@@ -407,3 +407,25 @@ export const downloadUnlockRelations = relations(downloadUnlock, ({ one }) => ({
   user: one(user, { fields: [downloadUnlock.userId], references: [user.id] }),
   project: one(project, { fields: [downloadUnlock.projectId], references: [project.id] }),
 }));
+
+// 검수 시나리오 다운로드 잠금 해제 기록. 검수 기록(run) 단위로 한 번 열면 계속 무료.
+export const verifyDownloadUnlock = pgTable(
+  "verify_download_unlock",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    verifyRunId: uuid("verify_run_id")
+      .notNull()
+      .references(() => verifyRun.id, { onDelete: "cascade" }),
+    creditsSpent: integer("credits_spent").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex("verify_download_unlock_idx").on(table.userId, table.verifyRunId)],
+);
+
+export const verifyDownloadUnlockRelations = relations(verifyDownloadUnlock, ({ one }) => ({
+  user: one(user, { fields: [verifyDownloadUnlock.userId], references: [user.id] }),
+  run: one(verifyRun, { fields: [verifyDownloadUnlock.verifyRunId], references: [verifyRun.id] }),
+}));

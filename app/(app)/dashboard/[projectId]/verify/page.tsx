@@ -3,6 +3,9 @@ import { getProjectScreensDetail } from "@/application/get-project-screens-detai
 import { listProjectVerifyRuns } from "@/application/list-project-verify-runs";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
+import { isVerifyDownloadUnlocked } from "@/application/download";
+import { CREDITS_OPEN } from "@/lib/flags";
+import { CREDIT_COST } from "@/lib/credits";
 import { DeliverableHeader, HeaderStat } from "../deliverable-header";
 import { VerifyPanel } from "./verify-panel";
 
@@ -30,6 +33,9 @@ export default async function ProjectVerifyPage({
     listProjectVerifyRuns(projectId),
   ]);
   const plannedScreens = screens.filter((s) => s.status === "active");
+  const verifyUnlocks = Object.fromEntries(
+    await Promise.all(runs.map(async (r) => [r.id, await isVerifyDownloadUnlocked(r.id)] as const)),
+  );
 
   return (
     <div className="point-green flex flex-col gap-6">
@@ -95,7 +101,13 @@ export default async function ProjectVerifyPage({
                   <VerifyReportView report={run.report} />
                   {run.report.scenarios.length > 0 && (
                     <div className="flex justify-end">
-                      <VerifyScenarioDownloadButton report={run.report} />
+                      <VerifyScenarioDownloadButton
+                        report={run.report}
+                        verifyRunId={run.id}
+                        credits={CREDIT_COST.downloadVerify}
+                        unlocked={verifyUnlocks[run.id]}
+                        creditsOpen={CREDITS_OPEN}
+                      />
                     </div>
                   )}
                 </div>
