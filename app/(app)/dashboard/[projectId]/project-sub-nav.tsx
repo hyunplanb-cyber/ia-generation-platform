@@ -64,7 +64,7 @@ export function ProjectShell({
   const ActiveIcon = activeStep.icon;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-7">
       {/* 모바일 스텝퍼 — 현재 스텝 하나만 크게 보이고, 오른쪽 점으로 3단계 위치를 표시한다.
           예전엔 데스크톱용 3단 스텝퍼가 좁은 화면을 넘쳐 페이지가 좌우로 밀렸다.
           점(dot)은 각 단계로 이동하는 링크라 앞뒤 이동도 된다. */}
