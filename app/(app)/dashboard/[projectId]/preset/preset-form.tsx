@@ -337,14 +337,14 @@ export function PresetForm({
             </button>
             <ul className="mt-3 flex flex-col gap-1 text-[11px] leading-relaxed text-muted-foreground">
               <li>
-                · 생성 시 디자인 프리셋 MD가 생성됩니다
+                · 생성 시 디자인 프리셋 md가 생성됩니다
                 {willChargeGen ? (
                   <> (<b className="text-foreground">{genCost}크레딧</b>)</>
                 ) : null}
                 .
               </li>
-              <li>· 디자인 프리셋 MD는 다운로드하여 AI 도구에 넣어 바로 사용 가능합니다.</li>
-              <li>· 디자인 프리셋 MD는 다운로드 시 별도 비용이 발생하니 참고해 주세요.</li>
+              <li>· 디자인 프리셋 md는 다운로드하여 사용 가능합니다.</li>
+              <li>· 디자인 프리셋 md는 다운로드 시 별도 비용이 발생하니 참고해 주세요.</li>
             </ul>
           </div>
         </div>
