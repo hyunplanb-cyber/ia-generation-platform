@@ -229,7 +229,7 @@ export function BriefForm({
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
                   {creditsOpen
-                    ? "선택한 규모만큼 크레딧이 차감돼요. (미리보기·수정은 무료)"
+                    ? "선택한 규모만큼 크레딧이 차감돼요."
                     : "지금은 결제 준비 중이라 무료로 생성돼요."}
                 </p>
               </div>
@@ -251,16 +251,6 @@ export function BriefForm({
                   )}
                 </p>
               )}
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                메뉴를 직접 하나씩 넣고 싶다면{" "}
-                <Link
-                  href={`/dashboard/${project.id}/menus`}
-                  className="font-medium text-primary underline"
-                >
-                  메뉴 직접 편집
-                </Link>
-                을 이용하세요.
-              </p>
             </div>
           )}
         </form>
