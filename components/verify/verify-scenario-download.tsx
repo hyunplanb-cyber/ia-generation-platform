@@ -36,6 +36,8 @@ export function VerifyScenarioDownloadButton({
 
   // 크레딧을 내야 열리는 상태인가(결제 켜짐 + 검수기록 id 있음 + 아직 안 열림 + 원가 있음).
   const gated = !!creditsOpen && !!verifyRunId && !unlocked && (credits ?? 0) > 0;
+  // 크레딧 표기 대상인가(결제 켜짐 + 검수기록 단위). 이미 받았으면 0크레딧으로 노출.
+  const showCredit = !!creditsOpen && !!verifyRunId;
 
   function writeFile() {
     const { filename, cover, status, scenarios } = buildVerifyScenarioSheets(report, marks);
@@ -111,7 +113,7 @@ export function VerifyScenarioDownloadButton({
     >
       {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
       {label}
-      {gated && <span className="text-xs opacity-75">· {credits}크레딧</span>}
+      {showCredit && <span className="text-xs opacity-75">· {gated ? (credits ?? 0) : 0}크레딧</span>}
     </button>
   );
 }
