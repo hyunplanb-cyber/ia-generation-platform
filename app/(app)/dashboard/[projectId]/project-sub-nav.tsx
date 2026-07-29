@@ -59,6 +59,8 @@ export function ProjectShell({
   let activeIndex = STEPS.findIndex((s) => s.slugs.includes(slug));
   if (activeIndex === -1) activeIndex = 2;
   const isDeliver = activeIndex === 2;
+  // 추가 산출물 페이지(프리셋·검수·관리자)에서는 하단 "추가 산출물" 홍보 섹션을 숨긴다.
+  const isAddonPage = slug === "preset" || slug === "verify" || slug === "admin";
 
   const activeStep = STEPS[activeIndex];
   const ActiveIcon = activeStep.icon;
@@ -179,7 +181,7 @@ export function ProjectShell({
           </div>
           <div className="min-w-0 flex-1">
             {children}
-            <AddonSection base={base} />
+            {!isAddonPage && <AddonSection base={base} />}
           </div>
         </div>
       ) : (
@@ -191,6 +193,7 @@ export function ProjectShell({
 
 // 데스크톱 좌측 컬럼(탭 아래)용 컴팩트 요약 — 하단 강조 섹션과 함께 눈에 띄게.
 function AddonNav({ base }: { base: string }) {
+  const pathname = usePathname();
   const items: {
     href?: string;
     title: string;
@@ -215,6 +218,7 @@ function AddonNav({ base }: { base: string }) {
       <div className="flex flex-col">
         {items.map((it) => {
           const Icon = it.icon;
+          const active = !!it.href && pathname.startsWith(it.href);
           const badgeClass =
             it.tone === "action"
               ? "bg-primary text-primary-foreground"
@@ -222,8 +226,16 @@ function AddonNav({ base }: { base: string }) {
                 ? "bg-success-soft text-success"
                 : "bg-muted text-muted-foreground";
           const inner = (
-            <div className="flex items-center justify-between gap-2 rounded-lg px-1.5 py-2 transition-colors hover:bg-muted">
-              <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-foreground">
+            <div
+              className={`flex items-center justify-between gap-2 rounded-lg px-1.5 py-2 transition-colors ${
+                active ? "bg-primary-soft" : "hover:bg-muted"
+              }`}
+            >
+              <span
+                className={`flex min-w-0 items-center gap-2 text-sm font-semibold ${
+                  active ? "text-primary-on-soft" : "text-foreground"
+                }`}
+              >
                 <Icon className="size-4 shrink-0 text-primary" />
                 <span className="truncate">{it.title}</span>
               </span>
