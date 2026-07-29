@@ -101,23 +101,17 @@ export default async function ProjectVerifyPage({
         </p>
 
         {menuChecks.length > 0 ? (
-          <>
-            <ul className="mt-4 flex flex-col gap-2.5">
-              {menuChecks.map((m) => (
-                <li key={m.name} className="flex items-baseline gap-2 text-sm">
-                  <Check className="size-4 shrink-0 translate-y-0.5 text-primary" />
-                  <span>
-                    <b className="text-foreground">{m.name}</b>
-                    <span className="text-muted-foreground"> : {m.question}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 text-sm text-foreground">
-              규모를 골라 생성하세요 — <b className="text-primary">주요 약 30~50개</b> 또는{" "}
-              <b className="text-primary">상세 약 100~150개</b> 시나리오를 만들어드려요.
-            </p>
-          </>
+          <ul className="mt-4 flex flex-col gap-2.5">
+            {menuChecks.map((m) => (
+              <li key={m.name} className="flex items-baseline gap-2 text-sm">
+                <Check className="size-4 shrink-0 translate-y-0.5 text-primary" />
+                <span>
+                  <b className="text-foreground">{m.name}</b>
+                  <span className="text-muted-foreground"> : {m.question}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         ) : (
           <p className="mt-4 text-sm text-muted-foreground">
             먼저 산출물(메뉴·화면)을 생성하면, 그 메뉴들 기준으로 확인할 항목과 검수 시나리오가 만들어져요.

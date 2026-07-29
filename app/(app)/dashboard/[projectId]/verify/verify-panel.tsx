@@ -81,7 +81,7 @@ export function VerifyPanel({
             <>
               <p className="text-sm font-bold text-foreground">검수 시나리오 생성</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                생성된 산출물을 바탕으로 만들어요. 규모를 골라주세요.
+                생성된 산출물을 바탕으로 만들어요. 주요 약 30~50개 또는 상세 약 100~150개 시나리오를 만들어드려요.
               </p>
               <form action={formAction} className="mt-4 flex flex-col gap-2">
                 <input type="hidden" name="projectId" value={projectId} />
@@ -112,6 +112,10 @@ export function VerifyPanel({
                   <span className="text-[11px] opacity-80">약 100~150개</span>
                 </button>
               </form>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                100~150개를 선택해도 규모가 작아 만들 시나리오가 없으면 더 적게 생성될 수 있어요. 규모에 맞게
+                선택하세요.
+              </p>
               <ul className="mt-3 flex flex-col gap-1 text-[11px] leading-relaxed text-muted-foreground">
                 <li>· 생성 시 산출물 기준 검수 시나리오가 생성됩니다.</li>
                 <li>· 검수 시나리오는 다운로드하여 사용 가능합니다.</li>
