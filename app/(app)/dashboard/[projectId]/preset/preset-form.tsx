@@ -348,7 +348,7 @@ export function PresetForm({
         </div>
       ) : (
         // ── 생성 후: (왼쪽) 요약 + 수정 / (오른쪽) 다운로드 ──
-        <div className="grid gap-6 lg:grid-cols-[1fr_19rem]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
           <div className="flex min-w-0 flex-col gap-6">
             <PresetSummaryView sum={sum} rad={rad} />
 

@@ -27,34 +27,32 @@ export function VerifyPanel({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-6 lg:grid-cols-[1fr_19rem]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
         {/* 왼쪽: 안내 + 검수 항목 */}
         <div className="flex min-w-0 flex-col gap-6">{children}</div>
 
-        {/* 오른쪽: 검수 시나리오 생성 패널 */}
+        {/* 오른쪽: 검수 시나리오 생성 (박스 없이) */}
         <div className="lg:sticky lg:top-6 lg:h-fit">
-          <div className="rounded-xl border border-primary/30 bg-primary-soft/20 p-5">
-            <p className="text-sm font-bold text-foreground">검수 시나리오 생성</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              생성된 산출물(화면·기능·버튼 연결)을 바탕으로 만들어요.
-            </p>
-            <form action={formAction}>
-              <input type="hidden" name="projectId" value={projectId} />
-              <Button type="submit" disabled={pending} className="mt-4 w-full gap-2">
-                <Sparkles className="size-4" />
-                {pending
-                  ? "생성 중…"
-                  : creditsOpen
-                    ? `검수 시나리오 생성 · ${cost}크레딧`
-                    : "검수 시나리오 생성"}
-              </Button>
-            </form>
-            <ul className="mt-3 flex flex-col gap-1 text-[11px] leading-relaxed text-muted-foreground">
-              <li>· 생성 시 산출물 기준 검수 시나리오가 생성됩니다.</li>
-              <li>· 검수 시나리오는 다운로드하여 사용 가능합니다.</li>
-              <li>· 검수 시나리오 다운로드 시 별도 비용이 발생하니 참고해 주세요.</li>
-            </ul>
-          </div>
+          <p className="text-sm font-bold text-foreground">검수 시나리오 생성</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            생성된 산출물(화면·기능·버튼 연결)을 바탕으로 만들어요.
+          </p>
+          <form action={formAction}>
+            <input type="hidden" name="projectId" value={projectId} />
+            <Button type="submit" disabled={pending} className="mt-4 w-full gap-2">
+              <Sparkles className="size-4" />
+              {pending
+                ? "생성 중…"
+                : creditsOpen
+                  ? `검수 시나리오 생성 · ${cost}크레딧`
+                  : "검수 시나리오 생성"}
+            </Button>
+          </form>
+          <ul className="mt-3 flex flex-col gap-1 text-[11px] leading-relaxed text-muted-foreground">
+            <li>· 생성 시 산출물 기준 검수 시나리오가 생성됩니다.</li>
+            <li>· 검수 시나리오는 다운로드하여 사용 가능합니다.</li>
+            <li>· 검수 시나리오 다운로드 시 별도 비용이 발생하니 참고해 주세요.</li>
+          </ul>
         </div>
       </div>
 
