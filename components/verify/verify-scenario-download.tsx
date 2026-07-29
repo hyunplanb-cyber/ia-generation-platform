@@ -111,7 +111,7 @@ export function VerifyScenarioDownloadButton({
     >
       {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
       {label}
-      {gated && <span className="text-xs text-primary/70">· {credits}크레딧</span>}
+      {gated && <span className="text-xs opacity-75">· {credits}크레딧</span>}
     </button>
   );
 }
