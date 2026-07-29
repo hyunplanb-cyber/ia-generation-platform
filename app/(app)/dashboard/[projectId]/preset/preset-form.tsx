@@ -392,7 +392,9 @@ export function PresetForm({
                   ? "준비 중"
                   : willChargeDownload
                     ? `프리셋 다운로드 · ${downloadCost}크레딧`
-                    : "프리셋 다운로드"}
+                    : creditsOpen
+                      ? "프리셋 다운로드 · 0크레딧"
+                      : "프리셋 다운로드"}
               </button>
               <ul className="mt-2 flex flex-col gap-1 text-xs text-muted-foreground">
                 <li>· 다운로드 크레딧은 처음 다운로드 시 한 번만 사용됩니다.</li>

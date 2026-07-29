@@ -169,7 +169,9 @@ export function ZipAllButton({
         <Download className={large ? "size-4" : "size-3"} />
       )}
       전체 다운로드
-      {gated && <span className="text-xs text-primary/70">· {credits}크레딧</span>}
+      {creditsOpen && (
+        <span className="text-xs text-primary/70">· {gated ? (credits ?? 0) : 0}크레딧</span>
+      )}
     </button>
   );
 }
