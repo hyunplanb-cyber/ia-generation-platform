@@ -74,19 +74,25 @@ export function VerifyScenarioDownloadButton({
 
     if (gated) {
       setBusy(true);
-      const r = await unlockVerifyDownloadAction(verifyRunId!);
-      setBusy(false);
-      if (!r.ok) {
-        if (r.reason === "insufficient") {
-          if (window.confirm("크레딧이 부족해요. 충전 페이지로 갈까요?")) {
-            router.push("/dashboard/billing");
+      try {
+        const r = await unlockVerifyDownloadAction(verifyRunId!);
+        if (!r.ok) {
+          if (r.reason === "insufficient") {
+            if (window.confirm("크레딧이 부족해요. 충전 페이지로 갈까요?")) {
+              router.push("/dashboard/billing");
+            }
+          } else {
+            window.alert("다운로드에 실패했어요. 다시 시도해 주세요.");
           }
-        } else {
-          window.alert("다운로드에 실패했어요. 다시 시도해 주세요.");
+          return;
         }
+        router.refresh();
+      } catch {
+        window.alert("결제 처리 중 문제가 있었어요. 잠시 후 다시 시도해 주세요.");
         return;
+      } finally {
+        setBusy(false);
       }
-      router.refresh();
     }
     writeFile();
   }
