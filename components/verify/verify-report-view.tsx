@@ -127,19 +127,47 @@ export function VerifyReportView({
                   </ul>
                 </div>
               )}
-              {pageOrder.map((pg) => (
-                <div key={pg} className="border-t border-border/60 pt-4">
-                  <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                    <FileText className="size-3.5 text-primary" />
-                    <span className="break-all">{pg}</span>
-                  </p>
-                  <ul className="flex flex-col gap-2.5">
-                    {byPage.get(pg)!.map((c) => (
-                      <CheckRow key={c.id} check={c} num={autoNum.get(c.id) ?? 0} />
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              {pageOrder.map((pg, idx) => {
+                const pageChecks = byPage.get(pg)!;
+                // 미리보기: 앞 2개 화면만 항목 전체, 나머지는 통과/주의/실패 건수만.
+                const showFull = !preview || idx < 2;
+                const cnt = { pass: 0, warn: 0, fail: 0 };
+                for (const c of pageChecks) cnt[c.status]++;
+                return (
+                  <div key={pg} className="border-t border-border/60 pt-4">
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                      <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                        <FileText className="size-3.5 text-primary" />
+                        <span className="break-all">{pg}</span>
+                      </p>
+                      {!showFull && (
+                        <span className="flex shrink-0 gap-1.5 text-xs font-semibold">
+                          <span className="rounded-full bg-success-soft px-2 py-0.5 text-success">
+                            통과 {cnt.pass}
+                          </span>
+                          {cnt.warn > 0 && (
+                            <span className="rounded-full bg-warning-soft px-2 py-0.5 text-warning">
+                              주의 {cnt.warn}
+                            </span>
+                          )}
+                          {cnt.fail > 0 && (
+                            <span className="rounded-full bg-danger-soft px-2 py-0.5 text-danger">
+                              실패 {cnt.fail}
+                            </span>
+                          )}
+                        </span>
+                      )}
+                    </div>
+                    {showFull && (
+                      <ul className="flex flex-col gap-2.5">
+                        {pageChecks.map((c) => (
+                          <CheckRow key={c.id} check={c} num={autoNum.get(c.id) ?? 0} />
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <ul className="flex flex-col gap-2.5">
