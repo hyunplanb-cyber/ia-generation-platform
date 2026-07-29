@@ -316,7 +316,7 @@ function VerifyTab({
 
       <div className="flex flex-col gap-2">
         {runs.map((run) => (
-          <details key={run.id} className="rounded-xl border border-border bg-surface">
+          <details key={run.id} className="group rounded-xl border border-border bg-surface">
             <summary className="cursor-pointer list-none px-4 py-3 [&::-webkit-details-marker]:hidden">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1.5">
@@ -336,12 +336,15 @@ function VerifyTab({
                     </span>
                   </div>
                 </div>
-                {/* 데스크톱: 오른쪽에 다운로드 */}
-                {run.report.scenarios.length > 0 && (
-                  <span className="hidden sm:block">
-                    <VerifyScenarioDownloadButton report={run.report} verifyRunId={run.id} credits={CREDIT_COST.downloadVerify} unlocked={verifyUnlocks[run.id]} creditsOpen={creditsOpen} />
-                  </span>
-                )}
+                <div className="flex shrink-0 items-center gap-3">
+                  {/* 데스크톱: 오른쪽에 다운로드 */}
+                  {run.report.scenarios.length > 0 && (
+                    <span className="hidden sm:block">
+                      <VerifyScenarioDownloadButton report={run.report} verifyRunId={run.id} credits={CREDIT_COST.downloadVerify} unlocked={verifyUnlocks[run.id]} creditsOpen={creditsOpen} />
+                    </span>
+                  )}
+                  <ChevronDown className="size-5 text-muted-foreground transition-transform group-open:rotate-180" />
+                </div>
               </div>
               {/* 모바일: 다운로드를 카드 하단에 */}
               {run.report.scenarios.length > 0 && (
