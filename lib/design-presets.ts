@@ -3,7 +3,7 @@
 // 전체 다운로드 zip에 함께 담는다(AI 코딩 도구에 붙여 넣으면 그 스타일로 만들어짐).
 // UI·서버 공용(순수 데이터/문자열).
 
-export type DesignKey = "navy" | "mono" | "pastel";
+export type DesignKey = "navy" | "mono" | "pastel" | "retro" | "forest" | "coral";
 
 // 브리프에서 보여줄 3개 선택지. concept 텍스트가 프로젝트에 저장되고, 그걸로 프리셋을 되찾는다.
 // swatches: 카드에 보여줄 대표 색(주색·강조·본문·배경 순).
@@ -34,6 +34,27 @@ export const DESIGN_OPTIONS: {
     desc: "부드럽고 친근한 분위기",
     concept: "부드럽고 친근한 파스텔 톤. 둥근 모서리와 넉넉한 여백으로 편안한 느낌.",
     swatches: ["#5B4FE5", "#FFD54A", "#DFF5EC", "#FAFAFA"],
+  },
+  {
+    key: "retro",
+    title: "레트로 페이퍼",
+    desc: "종이 질감 · 오렌지 & 틸",
+    concept: "종이 질감의 따뜻한 레트로 톤. 크림색 배경에 오렌지·틸 포인트, 편집숍 같은 감성.",
+    swatches: ["#DE6F26", "#0E6F60", "#2A2320", "#F7F1E6"],
+  },
+  {
+    key: "forest",
+    title: "내추럴 그린",
+    desc: "차분한 자연 · 친환경",
+    concept: "차분한 그린 톤의 내추럴 디자인. 자연·건강·친환경 느낌, 넉넉한 여백.",
+    swatches: ["#15803D", "#65A30D", "#1C2B22", "#F3F7F2"],
+  },
+  {
+    key: "coral",
+    title: "코럴 선셋",
+    desc: "밝고 따뜻한 생기",
+    concept: "밝고 따뜻한 코럴 톤. 둥근 모서리와 생기 있는 색으로 친근한 느낌.",
+    swatches: ["#F0654F", "#F59E0B", "#33221E", "#FFF6F3"],
   },
 ];
 
@@ -134,6 +155,90 @@ const PRESETS: Record<DesignKey, Preset> = {
       ["표", "헤더 배경 #F7F7F9, 행 구분 연하게, 행 높이 48px"],
     ],
   },
+  retro: {
+    key: "retro",
+    name: "레트로 페이퍼",
+    tagline: "종이 질감과 따뜻한 오렌지·틸. 편집숍 같은 감성.",
+    font: "제목은 명조/Paperlogy로 개성 있게, 본문은 Pretendard로 읽기 편하게.",
+    colors: {
+      "primary(주요 액션)": "#DE6F26",
+      "accent(강조·배지)": "#0E6F60",
+      "background(페이지)": "#F7F1E6",
+      "surface(카드)": "#FFFDF8",
+      "text(본문)": "#2A2320",
+      "text-muted(보조)": "#6B5E4F",
+      "border(구분선)": "#E4D9C4",
+    },
+    scale: [
+      ["페이지 제목", "34px / 800"],
+      ["섹션 제목", "22px / 700"],
+      ["카드 제목", "18px / 700"],
+      ["본문", "15px / 400"],
+      ["보조 설명", "13px / 400"],
+    ],
+    radius: "카드 10px · 버튼 8px · 입력 8px · 배지 6px",
+    components: [
+      ["버튼(주요)", "오렌지 배경, 흰 글자, 높이 42px, 굵기 700"],
+      ["카드", "크림 surface, 연한 갈색 border 1px, 그림자 없이 종이 느낌"],
+      ["표", "헤더 배경 진한 크림, 행 구분 1px, 행 높이 46px"],
+    ],
+  },
+  forest: {
+    key: "forest",
+    name: "내추럴 그린",
+    tagline: "차분한 그린. 자연·건강·친환경 서비스에 잘 맞는다.",
+    font: "Pretendard (대체: Noto Sans KR). 넉넉한 줄간격으로 편안하게.",
+    colors: {
+      "primary(주요 액션)": "#15803D",
+      "accent(강조·배지)": "#65A30D",
+      "background(페이지)": "#F3F7F2",
+      "surface(카드)": "#FFFFFF",
+      "text(본문)": "#1C2B22",
+      "text-muted(보조)": "#5B6B60",
+      "border(구분선)": "#DBE7DC",
+    },
+    scale: [
+      ["페이지 제목", "32px / 700"],
+      ["섹션 제목", "22px / 700"],
+      ["카드 제목", "18px / 600"],
+      ["본문", "15px / 400"],
+      ["보조 설명", "13px / 400"],
+    ],
+    radius: "카드 12px · 버튼 10px · 입력 10px · 배지 8px",
+    components: [
+      ["버튼(주요)", "그린 배경, 흰 글자, 높이 40px, 굵기 600"],
+      ["카드", "surface 배경, border 1px, 은은한 그림자"],
+      ["표", "헤더 배경 연한 그린, 행 구분 1px, 행 높이 44px"],
+    ],
+  },
+  coral: {
+    key: "coral",
+    name: "코럴 선셋",
+    tagline: "밝고 따뜻한 코럴. 생기 있고 친근한 브랜드에.",
+    font: "Paperlogy 또는 Pretendard. 제목을 둥글고 크게, 경쾌하게.",
+    colors: {
+      "primary(주요 액션)": "#F0654F",
+      "accent(강조·배지)": "#F59E0B",
+      "background(페이지)": "#FFF6F3",
+      "surface(카드)": "#FFFFFF",
+      "text(본문)": "#33221E",
+      "text-muted(보조)": "#8A6F68",
+      "border(구분선)": "#F6E0D8",
+    },
+    scale: [
+      ["페이지 제목", "34px / 800"],
+      ["섹션 제목", "23px / 700"],
+      ["카드 제목", "18px / 700"],
+      ["본문", "15px / 500"],
+      ["보조 설명", "14px / 500"],
+    ],
+    radius: "카드 18px · 버튼 14px · 입력 14px · 배지 999px(알약)",
+    components: [
+      ["버튼(주요)", "코럴 배경, 흰 글자, 높이 44px, 굵기 700"],
+      ["카드", "surface 배경, radius 18px, 부드러운 그림자"],
+      ["표", "헤더 배경 연한 코럴, 행 구분 연하게, 행 높이 48px"],
+    ],
+  },
 };
 
 // 저장된 디자인 컨셉 텍스트(또는 키) → 프리셋. 못 찾으면 navy 기본.
@@ -200,6 +305,9 @@ export const PRIMARY_SWATCHES_BY_STYLE: Record<DesignKey, string[]> = {
   navy: ["#2B4A8B", "#1E3A6E", "#3B5BA5", "#2563EB", "#0E7490", "#FF7A30"],
   mono: ["#111111", "#2B2B2B", "#454545", "#6B7280", "#0E6F60", "#DE6F26"],
   pastel: ["#5B4FE5", "#7C6FF0", "#EC4899", "#F59E0B", "#14B8A6", "#0EA5E9"],
+  retro: ["#DE6F26", "#C2410C", "#0E6F60", "#B45309", "#A63D2A", "#1F6F5C"],
+  forest: ["#15803D", "#166534", "#0E7C66", "#65A30D", "#4D7C0F", "#0E7490"],
+  coral: ["#F0654F", "#EF4444", "#FB7185", "#F97316", "#F59E0B", "#E11D48"],
 };
 
 export function primarySwatchesFor(style: DesignKey): string[] {
@@ -232,12 +340,30 @@ export const DENSITIES: {
   { key: "compact", label: "컴팩트", cardPad: "16px", rowH: "40px", sectionGap: "28px" },
 ];
 
+// 방향별 기본 글꼴/모서리 느낌.
+const DEFAULT_FONT: Record<DesignKey, FontFeel> = {
+  navy: "sans",
+  mono: "sans",
+  pastel: "rounded",
+  retro: "serif",
+  forest: "sans",
+  coral: "rounded",
+};
+const DEFAULT_RADIUS: Record<DesignKey, RadiusFeel> = {
+  navy: "normal",
+  mono: "sharp",
+  pastel: "round",
+  retro: "normal",
+  forest: "normal",
+  coral: "round",
+};
+
 export function defaultPresetConfig(style: DesignKey): PresetConfig {
   return {
     style,
     primary: primarySwatchesFor(style)[0],
-    font: style === "pastel" ? "rounded" : "sans",
-    radius: style === "mono" ? "sharp" : style === "pastel" ? "round" : "normal",
+    font: DEFAULT_FONT[style] ?? "sans",
+    radius: DEFAULT_RADIUS[style] ?? "normal",
     density: "cozy",
     dark: false,
   };
