@@ -10,7 +10,6 @@ import {
   FileText,
   Workflow,
   CalendarRange,
-  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,11 +45,10 @@ const PROGRESS_STEPS = [
 
 const DELIVERABLES = [
   { icon: Network, label: "메뉴 구조" },
-  { icon: LayoutList, label: "IA · 화면 목록" },
+  { icon: LayoutList, label: "IA · 화면 목록+화면별 프롬프트" },
   { icon: FileText, label: "기능정의서" },
   { icon: Workflow, label: "FLOW·흐름도" },
   { icon: CalendarRange, label: "WBS 일정" },
-  { icon: ShieldCheck, label: "관리자 페이지" },
 ];
 
 // 생성 규모 — 화면 수로 나뉘고, 크레딧(요금)도 다르다.
@@ -263,7 +261,7 @@ export function BriefForm({
               <h3 className="text-sm font-semibold text-foreground">이렇게 만들어져요</h3>
             </div>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              생성 버튼을 누르면 아래 6가지 산출물이 자동으로 완성돼요.
+              생성 버튼을 누르면 아래 5가지 산출물이 자동으로 완성돼요.
             </p>
             <ul className="mt-4 flex flex-col gap-1.5">
               {DELIVERABLES.map(({ icon: Icon, label }) => (
