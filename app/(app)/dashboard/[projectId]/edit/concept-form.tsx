@@ -7,6 +7,7 @@ import {
   FileText,
   Workflow,
   CalendarRange,
+  Package,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ const DELIVERABLES = [
   { icon: FileText, label: "기능정의서" },
   { icon: Workflow, label: "FLOW·흐름도" },
   { icon: CalendarRange, label: "WBS 일정" },
+  { icon: Package, label: "AI 빌드 스펙팩" },
 ];
 
 export function ConceptForm({ project, hasScreens }: { project: Project; hasScreens: boolean }) {
@@ -157,7 +159,7 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
               <h3 className="text-sm font-semibold text-foreground">이 입력으로 만들어져요</h3>
             </div>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              컨셉만 채우면 아래 5가지 산출물이 자동으로 완성돼요.
+              컨셉만 채우면 아래 6가지 산출물이 자동으로 완성돼요.
             </p>
             <ul className="mt-4 flex flex-col gap-1.5">
               {DELIVERABLES.map(({ icon: Icon, label }) => (
@@ -172,6 +174,9 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
                 </li>
               ))}
             </ul>
+            <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+              AI 빌드 스펙팩은 파일 다운로드 시 확인됩니다.
+            </p>
           </div>
         </aside>
       </div>

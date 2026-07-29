@@ -10,6 +10,7 @@ import {
   FileText,
   Workflow,
   CalendarRange,
+  Package,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,6 +50,7 @@ const DELIVERABLES = [
   { icon: FileText, label: "기능정의서" },
   { icon: Workflow, label: "FLOW·흐름도" },
   { icon: CalendarRange, label: "WBS 일정" },
+  { icon: Package, label: "AI 빌드 스펙팩" },
 ];
 
 // 생성 규모 — 화면 수로 나뉘고, 크레딧(요금)도 다르다.
@@ -261,7 +263,7 @@ export function BriefForm({
               <h3 className="text-sm font-semibold text-foreground">이렇게 만들어져요</h3>
             </div>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              생성 버튼을 누르면 아래 5가지 산출물이 자동으로 완성돼요.
+              생성 버튼을 누르면 아래 6가지 산출물이 자동으로 완성돼요.
             </p>
             <ul className="mt-4 flex flex-col gap-1.5">
               {DELIVERABLES.map(({ icon: Icon, label }) => (
@@ -276,6 +278,9 @@ export function BriefForm({
                 </li>
               ))}
             </ul>
+            <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+              AI 빌드 스펙팩은 파일 다운로드 시 확인됩니다.
+            </p>
           </div>
         </aside>
       </div>
