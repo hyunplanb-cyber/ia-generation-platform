@@ -1,4 +1,4 @@
-import { ShieldCheck, History, LayoutList, Check } from "lucide-react";
+import { ShieldCheck, History, Check } from "lucide-react";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { listMenus } from "@/application/list-menus";
 import { listProjectVerifyRuns } from "@/application/list-project-verify-runs";
@@ -122,26 +122,6 @@ export default async function ProjectVerifyPage({
         )}
       </div>
 
-      {/* 설계도 대비 — 계획한 화면 목록을 옆에 두고 결과와 견줘볼 수 있게 */}
-      {plannedScreens.length > 0 && (
-        <details className="group rounded-xl border border-border bg-muted/20 p-4">
-          <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-foreground">
-            <LayoutList className="size-4 text-primary" />
-            설계도에 계획한 화면 {plannedScreens.length}개
-            <span className="text-xs font-normal text-muted-foreground">
-              (검수 결과와 견줘보세요)
-            </span>
-          </summary>
-          <ul className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-            {plannedScreens.map((s) => (
-              <li key={s.id} className="flex items-baseline gap-2 text-sm text-muted-foreground">
-                <span className="font-mono text-xs text-foreground/60">{s.pageId}</span>
-                <span className="min-w-0 truncate text-foreground">{s.pageName}</span>
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
       </VerifyPanel>
 
       {/* 지난 검수 기록 */}
