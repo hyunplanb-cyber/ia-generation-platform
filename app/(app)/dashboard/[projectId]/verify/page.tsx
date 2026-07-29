@@ -79,6 +79,7 @@ export default async function ProjectVerifyPage({
         </p>
       </div>
 
+      <VerifyPanel projectId={projectId} cost={CREDIT_COST.verifyDoc} creditsOpen={CREDITS_OPEN}>
       {/* 보조 안내(먼저) — 왜 필요한지 */}
       <div className="rounded-xl border border-border bg-muted/20 p-4">
         <p className="text-sm font-bold text-foreground">왜 검수 시나리오가 필요할까요?</p>
@@ -141,9 +142,7 @@ export default async function ProjectVerifyPage({
           </ul>
         </details>
       )}
-
-      {/* 검수 시나리오 생성 */}
-      <VerifyPanel projectId={projectId} cost={CREDIT_COST.verifyDoc} creditsOpen={CREDITS_OPEN} />
+      </VerifyPanel>
 
       {/* 지난 검수 기록 */}
       {runs.length > 0 && (

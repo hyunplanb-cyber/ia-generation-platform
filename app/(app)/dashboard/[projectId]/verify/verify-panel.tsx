@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { type ReactNode, useActionState } from "react";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
@@ -9,36 +9,52 @@ import { generateScenariosAction, type ProjectVerifyState } from "./actions";
 
 const initialState: ProjectVerifyState = { report: null, error: null, limitReached: false };
 
-// 생성된 산출물을 바탕으로 검수 시나리오를 만든다(사이트 URL 불필요).
+// 왼쪽(children=안내·검수 항목) + 오른쪽(생성 패널) 2단 배치.
+// 생성 결과(리포트)는 2단 아래 전체 폭으로 펼친다.
 export function VerifyPanel({
   projectId,
   cost,
   creditsOpen,
+  children,
 }: {
   projectId: string;
   cost: number;
   creditsOpen: boolean;
+  children: ReactNode;
 }) {
   const [state, formAction, pending] = useActionState(generateScenariosAction, initialState);
   const report = state.report;
 
   return (
     <div className="flex flex-col gap-6">
-      <form action={formAction} className="flex flex-col gap-2">
-        <input type="hidden" name="projectId" value={projectId} />
-        <Button type="submit" disabled={pending} className="w-full gap-2 sm:w-auto">
-          <Sparkles className="size-4" />
-          {pending
-            ? "생성 중…"
-            : creditsOpen
-              ? `검수 시나리오 생성 · ${cost}크레딧`
-              : "검수 시나리오 생성"}
-        </Button>
-        <p className="text-xs text-muted-foreground">
-          생성된 산출물(화면·기능·버튼 연결)을 바탕으로 검수 시나리오를 만들어요. 다운로드(엑셀)는 이후 별도예요.
-        </p>
-      </form>
+      <div className="grid gap-6 lg:grid-cols-[1fr_19rem]">
+        {/* 왼쪽: 안내 + 검수 항목 */}
+        <div className="flex min-w-0 flex-col gap-6">{children}</div>
 
+        {/* 오른쪽: 검수 시나리오 생성 패널 */}
+        <div className="lg:sticky lg:top-6 lg:h-fit">
+          <div className="rounded-xl border border-primary/30 bg-primary-soft/20 p-5">
+            <p className="text-sm font-bold text-foreground">검수 시나리오 생성</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              생성된 산출물(화면·기능·버튼 연결)을 바탕으로 만들어요.
+            </p>
+            <form action={formAction}>
+              <input type="hidden" name="projectId" value={projectId} />
+              <Button type="submit" disabled={pending} className="mt-4 w-full gap-2">
+                <Sparkles className="size-4" />
+                {pending
+                  ? "생성 중…"
+                  : creditsOpen
+                    ? `검수 시나리오 생성 · ${cost}크레딧`
+                    : "검수 시나리오 생성"}
+              </Button>
+            </form>
+            <p className="mt-2 text-xs text-muted-foreground">다운로드(엑셀)는 이후 별도예요.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 아래: 진행/오류/결과 (전체 폭) */}
       {pending && (
         <p className="text-sm text-muted-foreground">
           산출물을 읽어 검수 시나리오를 만들고 있어요. 보통 15~30초 걸려요. 창을 닫지 마세요.
