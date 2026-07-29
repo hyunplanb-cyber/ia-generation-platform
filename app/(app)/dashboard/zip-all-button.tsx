@@ -2,12 +2,48 @@
 
 import { Fragment, useState, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Download, Loader2 } from "lucide-react";
+import { Check, Download, Loader2, X } from "lucide-react";
 import type { VerificationReport } from "@/domain/verify/report";
 import { unlockBundleAction } from "./[projectId]/download-actions";
 
 function safeFileName(concept: string): string {
   return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
+}
+
+// 함께 받기 항목 한 줄 — 체크 시 테두리·배경 강조 + 체크 아이콘.
+function AddonRow({
+  checked,
+  onToggle,
+  label,
+  cost,
+}: {
+  checked: boolean;
+  onToggle: () => void;
+  label: string;
+  cost: number;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={checked}
+      className={`flex items-center justify-between gap-2 rounded-lg border-2 px-3 py-2.5 text-sm transition-colors ${
+        checked ? "border-primary bg-primary-soft/20" : "border-border hover:bg-muted/40"
+      }`}
+    >
+      <span className="flex items-center gap-2">
+        <span
+          className={`flex size-4 shrink-0 items-center justify-center rounded border ${
+            checked ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground/40"
+          }`}
+        >
+          {checked && <Check className="size-3" />}
+        </span>
+        <span className="font-medium text-foreground">{label}</span>
+      </span>
+      <span className="text-xs font-semibold text-primary">+{cost}크레딧</span>
+    </button>
+  );
 }
 
 // "전체 다운로드" — 프로젝트의 프롬프트 산출물을 zip 하나로 묶어 내려받는다.
@@ -254,10 +290,23 @@ export function ZipAllButton({
               e.preventDefault();
             }}
           >
-            <h3 className="text-base font-bold text-foreground">전체 다운로드</h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              프롬프트 산출물과 함께 받을 항목을 골라주세요. 선택에 따라 크레딧이 달라져요.
-            </p>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h3 className="text-base font-bold text-foreground">전체 다운로드</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  함께 받을 항목을 골라주세요. 선택에 따라 크레딧이 달라져요.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => !busy && setModalOpen(false)}
+                aria-label="닫기"
+                className="-mr-1 -mt-1 rounded-lg p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-60"
+                disabled={busy}
+              >
+                <X className="size-5" />
+              </button>
+            </div>
 
             <div className="mt-4 flex flex-col gap-2">
               <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5 text-sm">
@@ -266,33 +315,20 @@ export function ZipAllButton({
               </div>
 
               {offerPreset && (
-                <label className="flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-border px-3 py-2.5 text-sm hover:bg-muted/40">
-                  <span className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={addPreset}
-                      onChange={(e) => setAddPreset(e.target.checked)}
-                      className="size-4 accent-primary"
-                    />
-                    <span className="font-medium text-foreground">디자인 프리셋 함께 받기</span>
-                  </span>
-                  <span className="text-xs font-semibold text-primary">+{presetCost}크레딧</span>
-                </label>
+                <AddonRow
+                  checked={addPreset}
+                  onToggle={() => setAddPreset((v) => !v)}
+                  label="디자인 프리셋 함께 받기"
+                  cost={presetCost ?? 0}
+                />
               )}
-
               {offerVerify && (
-                <label className="flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-border px-3 py-2.5 text-sm hover:bg-muted/40">
-                  <span className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={addVerify}
-                      onChange={(e) => setAddVerify(e.target.checked)}
-                      className="size-4 accent-primary"
-                    />
-                    <span className="font-medium text-foreground">검수 시나리오 함께 받기</span>
-                  </span>
-                  <span className="text-xs font-semibold text-primary">+{verifyCost}크레딧</span>
-                </label>
+                <AddonRow
+                  checked={addVerify}
+                  onToggle={() => setAddVerify((v) => !v)}
+                  label="검수 시나리오 함께 받기"
+                  cost={verifyCost ?? 0}
+                />
               )}
             </div>
 
@@ -301,25 +337,15 @@ export function ZipAllButton({
               <span className="text-base font-extrabold text-primary">{total}크레딧</span>
             </div>
 
-            <div className="mt-4 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                disabled={busy}
-                className="flex-1 rounded-lg border border-border bg-transparent px-4 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60"
-              >
-                취소
-              </button>
-              <button
-                type="button"
-                onClick={() => void runDownload(offerPreset && addPreset, offerVerify && addVerify)}
-                disabled={busy}
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
-              >
-                {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
-                다운로드 · {total}크레딧
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => void runDownload(offerPreset && addPreset, offerVerify && addVerify)}
+              disabled={busy}
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+            >
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
+              다운로드 · {total}크레딧
+            </button>
           </div>
         </div>
       )}
