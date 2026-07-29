@@ -312,7 +312,7 @@ export function PresetForm({
         </h1>
         <p className="text-sm text-muted-foreground">
           컨셉은 큰 방향이고, 여기서 테마와 색·글꼴·모서리·밀도를 직접 골라 <b className="text-foreground">개발에 바로 쓰는
-          디자인 시스템</b>을 만들어요. 미리보기는 무료예요.
+          디자인 시스템</b>을 생성하세요. 통일된 디자인은 사이트의 퀄리티를 완성합니다.
         </p>
       </div>
 
