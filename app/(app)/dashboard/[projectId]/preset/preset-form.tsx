@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, Download, Loader2, Palette, Sparkles } from "lucide-react";
+import { Check, Download, Loader2, Palette, Sparkles } from "lucide-react";
 import {
   DESIGN_OPTIONS,
   FONT_FEELS,
@@ -299,14 +298,8 @@ export function PresetForm({
   );
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-10">
+    <div className="mx-auto flex max-w-[1100px] flex-col gap-8 px-6 py-10">
       <div className="flex flex-col gap-2">
-        <Link
-          href={`/dashboard/${projectId}`}
-          className="inline-flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" /> {projectName}
-        </Link>
         <h1 className="flex items-center gap-2 text-2xl font-bold text-foreground">
           <Palette className="size-6 text-primary" /> 디자인 프리셋
         </h1>
@@ -342,57 +335,61 @@ export function PresetForm({
           </div>
         </div>
       ) : (
-        // ── 생성 후: 요약 + (수정) + 다운로드 ──
-        <div className="flex flex-col gap-6">
-          <PresetSummaryView sum={sum} rad={rad} />
+        // ── 생성 후: (왼쪽) 요약 + 수정 / (오른쪽) 다운로드 ──
+        <div className="grid gap-6 lg:grid-cols-[1fr_19rem]">
+          <div className="flex min-w-0 flex-col gap-6">
+            <PresetSummaryView sum={sum} rad={rad} />
 
-          <details className="rounded-xl border border-border">
-            <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-foreground">
-              설정 수정 <span className="font-normal text-muted-foreground">(무료 · 색·글꼴 등)</span>
-            </summary>
-            <div className="border-t border-border px-4 py-5">
-              {controls}
+            <details className="rounded-xl border border-border">
+              <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-foreground">
+                설정 수정 <span className="font-normal text-muted-foreground">(무료 · 색·글꼴 등)</span>
+              </summary>
+              <div className="border-t border-border px-4 py-5">
+                {controls}
+                <button
+                  type="button"
+                  onClick={() => handleGenerate("save")}
+                  disabled={!!busy}
+                  className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg border border-primary bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-60"
+                >
+                  {busy === "save" ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : savedTick ? (
+                    <Check className="size-4" />
+                  ) : null}
+                  {busy === "save" ? "저장 중" : savedTick ? "저장됨" : "변경 저장"}
+                </button>
+              </div>
+            </details>
+          </div>
+
+          <div className="lg:sticky lg:top-6 lg:h-fit">
+            <div className="rounded-xl border border-primary/30 bg-primary-soft/20 p-5">
+              <p className="text-sm font-bold text-foreground">디자인 시스템 문서(.md) 다운로드</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                위 내용을 파일로 받아 AI 코딩 도구에 넣으면 이 디자인대로 만들어져요.
+              </p>
               <button
                 type="button"
-                onClick={() => handleGenerate("save")}
+                onClick={handleDownload}
                 disabled={!!busy}
-                className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg border border-primary bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-60"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                {busy === "save" ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : savedTick ? (
-                  <Check className="size-4" />
-                ) : null}
-                {busy === "save" ? "저장 중" : savedTick ? "저장됨" : "변경 저장"}
+                {busy === "download" ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
+                {busy === "download"
+                  ? "준비 중"
+                  : willChargeDownload
+                    ? `프리셋 다운로드 · ${downloadCost}크레딧`
+                    : "프리셋 다운로드"}
               </button>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {willChargeDownload ? (
+                  <>받을 때 <b className="text-foreground">{downloadCost}크레딧</b>이 들어요. 한 번 받으면 다시 받기는 무료예요.</>
+                ) : (
+                  <>이미 결제해서 <b className="text-foreground">다시 받기는 무료</b>예요.</>
+                )}
+              </p>
             </div>
-          </details>
-
-          <div className="rounded-xl border border-primary/30 bg-primary-soft/20 p-5">
-            <p className="text-sm font-bold text-foreground">디자인 시스템 문서(.md) 다운로드</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              위 내용을 파일로 받아 AI 코딩 도구에 넣으면 이 디자인대로 만들어져요.
-            </p>
-            <button
-              type="button"
-              onClick={handleDownload}
-              disabled={!!busy}
-              className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
-            >
-              {busy === "download" ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
-              {busy === "download"
-                ? "준비 중"
-                : willChargeDownload
-                  ? `프리셋 다운로드 · ${downloadCost}크레딧`
-                  : "프리셋 다운로드"}
-            </button>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {willChargeDownload ? (
-                <>받을 때 <b className="text-foreground">{downloadCost}크레딧</b>이 들어요. 한 번 받으면 다시 받기는 무료예요.</>
-              ) : (
-                <>이미 결제해서 <b className="text-foreground">다시 받기는 무료</b>예요.</>
-              )}
-            </p>
           </div>
         </div>
       )}
