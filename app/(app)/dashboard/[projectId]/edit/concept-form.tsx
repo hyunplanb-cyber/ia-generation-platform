@@ -7,7 +7,6 @@ import {
   FileText,
   Workflow,
   CalendarRange,
-  ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,11 +28,10 @@ const DEVICE_OPTIONS: { value: DeviceMode; label: string; desc: string }[] = [
 // 이 입력으로 만들어지는 산출물 — 오른쪽 패널에서 "결과물 미리보기"로 동기부여.
 const DELIVERABLES = [
   { icon: Network, label: "메뉴 구조" },
-  { icon: LayoutList, label: "IA · 화면 목록" },
+  { icon: LayoutList, label: "IA · 화면 목록+화면별 프롬프트" },
   { icon: FileText, label: "기능정의서" },
   { icon: Workflow, label: "FLOW·흐름도" },
   { icon: CalendarRange, label: "WBS 일정" },
-  { icon: ShieldCheck, label: "관리자 페이지" },
 ];
 
 export function ConceptForm({ project, hasScreens }: { project: Project; hasScreens: boolean }) {
@@ -159,7 +157,7 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
               <h3 className="text-sm font-semibold text-foreground">이 입력으로 만들어져요</h3>
             </div>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              컨셉만 채우면 아래 6가지 산출물이 자동으로 완성돼요.
+              컨셉만 채우면 아래 5가지 산출물이 자동으로 완성돼요.
             </p>
             <ul className="mt-4 flex flex-col gap-1.5">
               {DELIVERABLES.map(({ icon: Icon, label }) => (

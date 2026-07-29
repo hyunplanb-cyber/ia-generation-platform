@@ -180,35 +180,6 @@ export function HomeLanding() {
             </div>
           </div>
 
-          <div className="ptiers">
-            <div className="ptier">
-              <div className="tn">스탠다드</div>
-              <div className="tb">DOCS</div>
-              <ul className="tl">
-                <li className="base">기획 문서 6종</li>
-                <li className="base">화면별 프롬프트</li>
-              </ul>
-            </div>
-            <div className="ptier mid">
-              <div className="tn">디럭스</div>
-              <div className="tb">+ SPEC-PACK</div>
-              <ul className="tl">
-                <li className="base">스탠다드 전부</li>
-                <li>AI 빌드 스펙팩</li>
-                <li>넣고 한 마디면 끝</li>
-              </ul>
-            </div>
-            <div className="ptier">
-              <div className="tn">프리미엄</div>
-              <div className="tb">+ DESIGN</div>
-              <ul className="tl">
-                <li className="base">디럭스 전부</li>
-                <li>디자인 프리셋 3종</li>
-                <li>스타일까지 통일</li>
-              </ul>
-            </div>
-          </div>
-
           <div className="hero-ctas" style={{ marginTop: 36 }}>
             <a className="btn btn-o" href="/signup">
               무료로 만들어보기 <span aria-hidden="true">→</span>
@@ -332,35 +303,6 @@ export function HomeLanding() {
             <div className="vchip">
               <div className="vc-h">엑셀 결과서</div>
               <div className="vc-d">표지·현황·시나리오 한 벌</div>
-            </div>
-          </div>
-
-          <div className="tiers">
-            <div className="tier">
-              <div className="tn">스탠다드</div>
-              <div className="tb">SCENARIO</div>
-              <ul className="tl">
-                <li className="base">검수 시나리오 전체</li>
-                <li className="base">공개 + 민감 재현방법</li>
-              </ul>
-            </div>
-            <div className="tier mid">
-              <div className="tn">디럭스</div>
-              <div className="tb">+ RESULT</div>
-              <ul className="tl">
-                <li className="base">스탠다드 전부</li>
-                <li>공개 화면 자동 검수</li>
-                <li>Pass / Fail 결과</li>
-              </ul>
-            </div>
-            <div className="tier">
-              <div className="tn">프리미엄</div>
-              <div className="tb">+ FIX</div>
-              <ul className="tl">
-                <li className="base">디럭스 전부</li>
-                <li>Fail 항목 수정 방안</li>
-                <li>개발에 그대로 전달</li>
-              </ul>
             </div>
           </div>
 
