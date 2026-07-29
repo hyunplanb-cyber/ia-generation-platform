@@ -1,6 +1,7 @@
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { listMenus } from "@/application/list-menus";
 import { listProjectVerifyRuns } from "@/application/list-project-verify-runs";
+import { isVerifyDownloadUnlocked } from "@/application/download";
 import { buildRequirements, type Requirement } from "@/lib/export/requirements";
 import type { VerificationReport } from "@/domain/verify/report";
 
@@ -27,8 +28,11 @@ export interface ProjectResult {
   flow: ProjectFlowEdge[];
   presetConfig: string | null; // 생성된 디자인 프리셋 설정(없으면 null)
   designConcept: string | null; // 프리셋 기본값 추정용
+  presetDownloaded: boolean; // 프리셋 md를 이미 결제(다운로드)했는가
   verifyCount: number; // 생성한 검수 시나리오 횟수
   latestVerifyReport: VerificationReport | null; // 가장 최근 검수 결과(미리보기용)
+  latestVerifyRunId: string | null; // 가장 최근 검수 기록 id(다운로드 결제용)
+  verifyDownloaded: boolean; // 최근 검수 시나리오를 이미 결제(다운로드)했는가
 }
 
 // 완성된 프로젝트들의 산출물 미리보기 데이터를 한 번에 만든다.
@@ -43,6 +47,8 @@ export async function listProjectResults(
         listMenus(id),
         listProjectVerifyRuns(id),
       ]);
+      const latestRun = verifyRuns[0] ?? null;
+      const verifyDownloaded = latestRun ? await isVerifyDownloadUnlocked(latestRun.id) : false;
       const active = screens.filter((s) => s.status === "active");
       const nameById = new Map(active.map((s) => [s.id, s.pageName]));
       const flow: ProjectFlowEdge[] = buttonActions
@@ -68,8 +74,11 @@ export async function listProjectResults(
         flow,
         presetConfig: project.presetConfig,
         designConcept: project.designConcept,
+        presetDownloaded: !!project.presetDownloadedAt,
         verifyCount: verifyRuns.length,
-        latestVerifyReport: verifyRuns[0]?.report ?? null,
+        latestVerifyReport: latestRun?.report ?? null,
+        latestVerifyRunId: latestRun?.id ?? null,
+        verifyDownloaded,
       };
       return [id, result] as const;
     }),

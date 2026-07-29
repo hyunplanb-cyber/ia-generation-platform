@@ -205,6 +205,18 @@ function PlanningTab({
           const count = screenCounts[p.id] ?? 0;
           const result = results[p.id];
           const cost = downloadCost(!!result && result.screens.some((s) => s.screenGroup));
+          const canAddPreset = !!result?.presetConfig && !result?.presetDownloaded;
+          const canAddVerify = !!result?.latestVerifyReport && !result?.verifyDownloaded;
+          const zipAddonProps = {
+            presetConfig: result?.presetConfig ?? null,
+            designConcept: result?.designConcept ?? null,
+            canAddPreset,
+            presetCost: CREDIT_COST.optionPreset,
+            verifyReport: result?.latestVerifyReport ?? null,
+            verifyRunId: result?.latestVerifyRunId ?? null,
+            canAddVerify,
+            verifyCost: CREDIT_COST.downloadVerify,
+          };
           return (
             <details
               key={p.id}
@@ -242,6 +254,7 @@ function PlanningTab({
                         credits={cost}
                         unlocked={unlocks[p.id]}
                         creditsOpen={CREDITS_OPEN}
+                        {...zipAddonProps}
                       />
                     </span>
                     <ChevronDown className="size-5 text-muted-foreground transition-transform group-open:rotate-180" />
@@ -255,6 +268,7 @@ function PlanningTab({
                     credits={cost}
                     unlocked={unlocks[p.id]}
                     creditsOpen={CREDITS_OPEN}
+                    {...zipAddonProps}
                   />
                 </div>
               </summary>

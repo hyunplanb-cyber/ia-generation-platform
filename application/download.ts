@@ -3,7 +3,9 @@ import { db } from "@/db/client";
 import { downloadUnlock, verifyDownloadUnlock, verifyRun } from "@/db/schema";
 import { requireSession } from "@/application/require-session";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
-import { spendCredits } from "@/application/credit";
+import { spendCredits, getCreditBalance } from "@/application/credit";
+import { downloadPreset, getPresetState, PRESET_DOWNLOAD_COST } from "@/application/preset";
+import { CREDITS_OPEN } from "@/lib/flags";
 import { downloadCost, CREDIT_COST } from "@/lib/credits";
 
 // 이 프로젝트의 다운로드가 이미 열려 있는가(크레딧을 낸 적 있는가).
@@ -89,5 +91,51 @@ export async function unlockVerifyDownload(runId: string): Promise<UnlockResult>
     .insert(verifyDownloadUnlock)
     .values({ userId: session.user.id, verifyRunId: runId, creditsSpent: cost })
     .onConflictDoNothing();
+  return { ok: true };
+}
+
+// ── 묶음 다운로드(프롬프트 + 선택한 프리셋·검수) 결제 ─────────────────────
+export interface BundleSelection {
+  base: boolean; // 프롬프트 산출물(전체 다운로드)
+  preset: boolean; // 디자인 프리셋 함께
+  verifyRunId: string | null; // 검수 시나리오 함께(해당 검수 기록)
+}
+
+// 선택 항목 중 '아직 안 받은 것'의 크레딧을 한 번에 확인·차감한다.
+// 총액이 부족하면 아무것도 차감하지 않고 insufficient 반환.
+export async function unlockBundle(
+  projectId: string,
+  sel: BundleSelection,
+): Promise<UnlockResult> {
+  await requireSession();
+  if (!CREDITS_OPEN) return { ok: true }; // 결제 꺼짐 — 전부 무료
+
+  let total = 0;
+  if (sel.base && !(await isDownloadUnlocked(projectId))) total += await downloadCostFor(projectId);
+  if (sel.preset) {
+    const ps = await getPresetState(projectId);
+    if (!ps.downloaded) total += PRESET_DOWNLOAD_COST;
+  }
+  if (sel.verifyRunId && !(await isVerifyDownloadUnlocked(sel.verifyRunId))) {
+    total += CREDIT_COST.downloadVerify;
+  }
+  if (total > 0) {
+    const balance = await getCreditBalance();
+    if (balance < total) return { ok: false, reason: "insufficient", balance };
+  }
+
+  // 잔액을 확인했으니 각 항목을 차감(이미 받은 항목은 재차감 없음).
+  if (sel.base) {
+    const r = await unlockDownload(projectId);
+    if (!r.ok) return r;
+  }
+  if (sel.preset) {
+    const r = await downloadPreset(projectId);
+    if (!r.ok) return { ok: false, reason: "insufficient", balance: r.balance };
+  }
+  if (sel.verifyRunId) {
+    const r = await unlockVerifyDownload(sel.verifyRunId);
+    if (!r.ok) return r;
+  }
   return { ok: true };
 }
