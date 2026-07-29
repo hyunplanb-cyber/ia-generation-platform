@@ -6,6 +6,7 @@ export interface VerifyAnalyzerInput {
   label: string; // 사이트면 최종 주소, 문서면 파일명
   content: string; // 사이트면 축약 HTML, 문서면 추출 텍스트
   links: string[]; // 사이트에서 찾은 내부 링크(민감 화면 감지 힌트)
+  focus?: string; // 상세 생성에서 회차별로 다른 관점을 주문할 때(겹치지 않게)
 }
 
 // LLM이 판단하는 "사람이 읽어야 할" 부분 — 자동 검사로는 알 수 없는 것들.

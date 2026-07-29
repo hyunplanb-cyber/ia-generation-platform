@@ -47,13 +47,15 @@ function systemPrompt(mode: "site" | "document"): string {
 }
 
 function buildUserMessage(input: VerifyAnalyzerInput): string {
+  const focus = input.focus ? `\n\n[이번 회차 관점] ${input.focus}` : "";
   if (input.mode === "document") {
-    return [`설계 문서: ${input.label}`, `\n문서 내용(축약):\n${input.content}`].join("\n");
+    return [`설계 문서: ${input.label}`, `\n문서 내용(축약):\n${input.content}`, focus].join("\n");
   }
   return [
     `검사 대상 사이트: ${input.label}`,
     input.links.length > 0 ? `\n페이지에서 찾은 내부 링크:\n${input.links.join("\n")}` : "",
     `\n페이지 HTML(축약):\n${input.content}`,
+    focus,
   ].join("\n");
 }
 

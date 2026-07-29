@@ -13,6 +13,7 @@ import {
   Search,
   Lock,
   ListChecks,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,53 @@ import { runVerifyAction, type VerifyState } from "./actions";
 const initialState: VerifyState = { report: null, error: null, limitReached: false };
 
 type Mode = "spec" | "url" | "document";
+
+// 규모(기본/상세) 선택 카드. 파일과 사이트가 항목·개수·가격이 다르다.
+type ScaleCard = {
+  key: "basic" | "detail";
+  title: string;
+  cost: number;
+  desc?: string;
+  checks?: string;
+  scnTitle?: string;
+  scnDesc?: string;
+  scnCount?: string;
+};
+const FILE_SCALES: ScaleCard[] = [
+  {
+    key: "basic",
+    title: "기본 · 30~50개 시나리오",
+    cost: 4,
+    desc: "핵심 화면 위주로 빠르게. 규모가 작은 사이트라면 충분해요.",
+  },
+  {
+    key: "detail",
+    title: "상세 · 100~150개 시나리오",
+    cost: 8,
+    desc: "상세 화면과 기능까지 촘촘히. 실무 산출물 수준, 조금 더 걸려요.",
+  },
+];
+const URL_SCALES: ScaleCard[] = [
+  {
+    key: "basic",
+    title: "홈화면을 기준으로 7개 항목 검수",
+    cost: 8,
+    checks: "사이트 접속, 보안 연결(HTTPS), 모바일 대응, 검색 기본(제목·설명), 첫 응답 속도, 이미지 깨짐, 내부 링크 깨짐",
+    scnTitle: "민감화면 시나리오",
+    scnDesc: "핵심 기능 위주로 빠르게. 규모가 작은 사이트라면 충분해요.",
+    scnCount: "30~50개 시나리오",
+  },
+  {
+    key: "detail",
+    title: "홈+주요 화면을 기준으로 11개 항목 검수",
+    cost: 16,
+    checks:
+      "페이지 열림, 응답 속도, 모바일 대응, 검색 기본(제목·설명), SNS 공유 카드, 대표 제목, 인코딩·언어 설정, 이미지 대체 텍스트, 혼합 콘텐츠(http 리소스), 이미지 깨짐, 내부 링크 깨짐",
+    scnTitle: "민감화면 시나리오",
+    scnDesc: "상세 화면과 기능까지 촘촘히. 실무 산출물 수준, 조금 더 걸려요.",
+    scnCount: "100~150개 시나리오",
+  },
+];
 
 // ── 상단 스텝(입력 → 검수 결과). active 로 현재 단계를 표시한다. ───────────
 function VerifySteps({ active }: { active: 0 | 1 }) {
@@ -292,6 +340,7 @@ export function VerifyForm({
 }) {
   const [state, formAction, pending] = useActionState(runVerifyAction, initialState);
   const [mode, setMode] = useState<Mode>("url");
+  const [scale, setScale] = useState<"basic" | "detail">("basic");
   const [fileName, setFileName] = useState<string | null>(null);
   const [specFileName, setSpecFileName] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -302,9 +351,9 @@ export function VerifyForm({
   const onResult = !!report && !dismissed;
   const activeStep: 0 | 1 = onResult ? 1 : 0;
 
-  const isUrl = mode === "url";
-  const verifyCost = isUrl ? 8 : 4; // 사이트 8 / 문서·설계도 4 크레딧
-  const buttonLabel = isUrl ? "사이트 검수하기" : "검수 시나리오 만들기";
+  const isFile = mode === "spec" || mode === "document";
+  // 파일: 기본 4 / 상세 8, 사이트: 기본 8 / 상세 16.
+  const genCost = isFile ? (scale === "detail" ? 8 : 4) : scale === "detail" ? 16 : 8;
 
   // 무료 횟수를 다 썼고 결과도 없으면 입력 자리에 안내만.
   const leftContent =
@@ -400,10 +449,80 @@ export function VerifyForm({
             </label>
           </ModeSection>
 
-          <Button type="submit" disabled={pending} className="mt-1 sm:w-56">
-            {buttonLabel}
-            {creditsOpen && <span className="ml-1.5 font-normal opacity-80">· {verifyCost}크레딧</span>}
-          </Button>
+          <input type="hidden" name="scale" value={scale} />
+
+          {/* 규모(기본/상세) 선택 + 생성 — 설계도 프롬프트 생성 영역과 같은 형태 */}
+          <div className="mt-1 rounded-2xl border-2 border-primary/25 bg-primary-soft/10 p-5">
+            <div className="mb-1 flex items-center gap-2">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <Sparkles className="size-4" />
+              </span>
+              <h3 className="text-base font-extrabold text-foreground">
+                {isFile ? "등록한 파일로 검수 시나리오 생성하기" : "등록한 사이트 검수하고, 시나리오 생성하기"}
+              </h3>
+            </div>
+            <p className="mb-4 pl-10 text-sm text-muted-foreground">
+              {isFile
+                ? "아래 버튼을 누르면 AI가 분석해 UI·기능을 중심으로 오픈 전에 꼭 확인할 검수 시나리오를 만들어드려요."
+                : "아래 버튼을 누르면 AI가 사이트의 공개 화면을 검수하여 결과를 도출하고 민감 화면의 검수 시나리오를 만들어드려요."}
+            </p>
+
+            <p className="mb-2 text-sm font-bold text-foreground">얼마나 촘촘하게 검수하실건가요?</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {(isFile ? FILE_SCALES : URL_SCALES).map((c) => {
+                const active = scale === c.key;
+                return (
+                  <button
+                    type="button"
+                    key={c.key}
+                    onClick={() => setScale(c.key)}
+                    className={`flex flex-col rounded-xl border-2 bg-background p-4 text-left transition-colors ${
+                      active ? "border-primary" : "border-border hover:border-primary/40"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-sm font-extrabold text-foreground">{c.title}</span>
+                      <span
+                        className={`shrink-0 rounded-md px-2 py-0.5 text-xs font-bold ${
+                          active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                        }`}
+                      >
+                        {c.cost}크레딧
+                      </span>
+                    </div>
+                    {c.checks && (
+                      <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{c.checks}</p>
+                    )}
+                    {c.scnTitle ? (
+                      <div className="mt-2">
+                        <p className="text-sm font-bold text-foreground">{c.scnTitle}</p>
+                        <p className="text-xs leading-relaxed text-muted-foreground">{c.scnDesc}</p>
+                        <p className="mt-0.5 text-xs font-medium text-primary">{c.scnCount}</p>
+                      </div>
+                    ) : (
+                      <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{c.desc}</p>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <ul className="mt-3 flex flex-col gap-1 text-[11px] leading-relaxed text-muted-foreground">
+              <li>
+                · 검수 시나리오는 100~150개를 선택해도 규모가 작아 만들 시나리오가 없으면 더 적게 생성될 수 있어요.
+                규모에 맞게 선택하세요.
+              </li>
+              <li>
+                · 검수 시나리오는 다운로드하여 사용 가능합니다. 검수 시나리오 다운로드 시 별도 비용이 발생하니 참고해
+                주세요.
+              </li>
+            </ul>
+
+            <Button type="submit" disabled={pending} className="mt-4">
+              {isFile ? "등록 파일 분석해서 시나리오 생성" : "등록한 사이트 검수 시작"}
+              {creditsOpen && <span className="ml-1.5 font-normal opacity-80">· {genCost}크레딧</span>}
+            </Button>
+          </div>
         </form>
       </div>
     );

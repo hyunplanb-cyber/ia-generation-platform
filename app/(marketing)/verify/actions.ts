@@ -55,8 +55,17 @@ export async function runVerifyAction(
   }
 
   const mode = String(formData.get("mode") ?? "url");
-  // 사이트 검수는 여러 페이지 크롤이라 더 비싸고, 문서·설계도는 시나리오만이라 저렴.
-  const cost = mode === "url" ? CREDIT_COST.verifySite : CREDIT_COST.verifyDoc;
+  const detail = String(formData.get("scale") ?? "basic") === "detail";
+  const isUrl = mode === "url";
+  // 사이트는 자동검사+시나리오라 더 비싸다. 상세는 시나리오를 여러 번 뽑아 개수를 늘린다.
+  // 파일: 기본 4 / 상세 8, 사이트: 기본 8 / 상세 16.
+  const cost = isUrl
+    ? detail
+      ? CREDIT_COST.verifySite * 2
+      : CREDIT_COST.verifySite
+    : detail
+      ? CREDIT_COST.genDetail
+      : CREDIT_COST.genBasic;
   if (CREDITS_OPEN && (await getCreditBalance()) < cost) {
     return fail("크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요.");
   }
@@ -70,7 +79,7 @@ export async function runVerifyAction(
     if (file.size > MAX_DOC_BYTES) {
       return fail("파일이 너무 커요. 8MB 이하로 넣어주세요.");
     }
-    const result = await verifyText(file.name || "설계도 프롬프트", await file.text());
+    const result = await verifyText(file.name || "설계도 프롬프트", await file.text(), detail);
     if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
     report = result.report;
   } else if (mode === "document") {
@@ -81,13 +90,13 @@ export async function runVerifyAction(
     if (file.size > MAX_DOC_BYTES) {
       return fail("파일이 너무 커요. 8MB 이하로 넣어주세요.");
     }
-    const result = await verifyDocument(file.name, await file.arrayBuffer());
+    const result = await verifyDocument(file.name, await file.arrayBuffer(), detail);
     if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
     report = result.report;
   } else {
     const url = String(formData.get("url") ?? "").trim();
     if (!url) return fail("검사할 사이트 주소를 넣어주세요.");
-    const result = await verifySite(url);
+    const result = await verifySite(url, detail);
     if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
     report = result.report;
   }
