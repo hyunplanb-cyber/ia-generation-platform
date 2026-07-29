@@ -276,7 +276,7 @@ function ResultView({ report, onReset }: { report: VerificationReport; onReset: 
         </div>
       </div>
 
-      <VerifyReportView report={report} />
+      <VerifyReportView report={report} preview />
 
       <p className="text-center text-xs text-muted-foreground">
         직접 확인 항목의 결과(PASS/FAIL/WARN)는 다운로드한 엑셀의 &apos;결과&apos; 칸에 기록하세요.

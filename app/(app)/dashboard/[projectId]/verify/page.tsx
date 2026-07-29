@@ -147,7 +147,7 @@ export default async function ProjectVerifyPage({
                   )}
                 </summary>
                 <div className="flex flex-col gap-4 border-t border-border/60 p-4">
-                  <VerifyReportView report={run.report} />
+                  <VerifyReportView report={run.report} preview />
                   {run.report.scenarios.length > 0 && (
                     <div className="flex justify-end">
                       <VerifyScenarioDownloadButton
