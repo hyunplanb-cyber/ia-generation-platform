@@ -61,7 +61,7 @@ export default async function ProjectVerifyPage({
   );
 
   return (
-    <div className="point-green flex flex-col gap-6">
+    <div className="point-green mx-auto flex w-full max-w-[1152px] flex-col gap-6">
       {/* 헤더 — 디자인 프리셋과 같은 형태(제목 + 서브 카피) */}
       <div className="flex flex-col gap-2 border-b border-border pb-4">
         <div className="flex flex-wrap items-center gap-2">

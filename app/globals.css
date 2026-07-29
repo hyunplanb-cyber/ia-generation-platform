@@ -176,6 +176,9 @@
   }
   html {
     @apply font-sans;
+    /* 페이지마다 세로 스크롤바 유무가 달라 탭 이동 시 화면이 좌우로 튀는 것을 방지.
+       스크롤바 자리를 항상 확보한다. */
+    scrollbar-gutter: stable;
   }
 }
 
