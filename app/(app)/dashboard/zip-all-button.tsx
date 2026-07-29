@@ -135,12 +135,7 @@ export function ZipAllButton({
         specLib.buildSpecPackJson(specProject, menus, screens, buttonActions),
       );
 
-      // 상세 디자인 시스템 문서 — 프리셋을 생성(설정 저장)한 프로젝트에만 담는다.
-      if (specProject.presetConfig) {
-        const { parsePresetConfig, buildDetailedPresetMarkdown } = await import("@/lib/design-presets");
-        const presetCfg = parsePresetConfig(specProject.presetConfig, specProject.designConcept);
-        zip.file(`디자인시스템_${base}.md`, buildDetailedPresetMarkdown(presetCfg, concept || undefined));
-      }
+      // 디자인 프리셋은 여기 포함하지 않는다 — 프리셋 페이지에서 별도 다운로드(비용)로 제공.
 
       const blob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(blob);

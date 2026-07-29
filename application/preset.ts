@@ -37,7 +37,7 @@ export async function savePresetConfig(
     let charged = false;
 
     if (CREDITS_OPEN && firstTime) {
-      const spend = await spendCredits(PRESET_GEN_COST, "디자인 프리셋 생성", { projectId });
+      const spend = await spendCredits(PRESET_GEN_COST, "디자인 프리셋 다운로드", { projectId });
       if (!spend.ok) return { ok: false, reason: "insufficient", balance: spend.balance };
       charged = true;
     }

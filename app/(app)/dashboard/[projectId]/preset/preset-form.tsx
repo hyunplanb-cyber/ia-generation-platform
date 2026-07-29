@@ -3,13 +3,14 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, Loader2, Palette } from "lucide-react";
+import { ArrowLeft, Download, Loader2, Palette } from "lucide-react";
 import {
   DESIGN_OPTIONS,
   FONT_FEELS,
   RADIUS_FEELS,
   DENSITIES,
   primarySwatchesFor,
+  buildDetailedPresetMarkdown,
   type PresetConfig,
   type DesignKey,
   type FontFeel,
@@ -73,19 +74,16 @@ export function PresetForm({
   const router = useRouter();
   const [cfg, setCfg] = useState<PresetConfig>(initial);
   const [busy, setBusy] = useState(false);
-  const [saved, setSaved] = useState(false);
-  // 이미 생성(=크레딧 차감)된 프로젝트인지. 첫 생성 후 true가 되어 이후 저장은 무료.
+  // 이미 결제(다운로드)한 프로젝트인지. 첫 다운로드 후 true가 되어 이후 재다운로드는 무료.
   const [paid, setPaid] = useState(generated);
 
   const set = <K extends keyof PresetConfig>(key: K, value: PresetConfig[K]) => {
     setCfg((c) => ({ ...c, [key]: value }));
-    setSaved(false);
   };
 
   // 큰 방향을 바꾸면 그 방향의 기본 주색으로 함께 맞춰준다.
   const changeStyle = (style: DesignKey) => {
     setCfg((c) => ({ ...c, style, primary: primarySwatchesFor(style)[0] }));
-    setSaved(false);
   };
 
   const swatches = useMemo(() => primarySwatchesFor(cfg.style), [cfg.style]);
@@ -96,10 +94,15 @@ export function PresetForm({
     ? { bg: "#0E1116", surface: "#171B22", text: "#E8EAED", muted: "#9AA0A8", border: "#2A2F37" }
     : { bg: "#FFFFFF", surface: "#FFFFFF", text: "#16181D", muted: "#6B7280", border: "#E5E7EB" };
 
-  // 크레딧을 내야 하는 상태인가(결제 켜짐 + 아직 생성 전).
+  // 크레딧을 내야 하는 상태인가(결제 켜짐 + 아직 결제 전).
   const willCharge = creditsOpen && !paid;
 
-  async function handleSave() {
+  function safeName(s: string) {
+    return (s || "프로젝트").trim().slice(0, 20).replace(/[\\/:*?"<>|]/g, "_");
+  }
+
+  // 설정을 저장(첫 다운로드면 4크레딧 차감)하고, 디자인 시스템 문서를 바로 내려받는다.
+  async function handleDownload() {
     setBusy(true);
     try {
       const r = await savePresetConfigAction(projectId, cfg);
@@ -110,8 +113,18 @@ export function PresetForm({
         }
         return;
       }
-      setSaved(true);
       if (r.charged) setPaid(true);
+
+      const md = buildDetailedPresetMarkdown(cfg, projectName);
+      const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `디자인시스템_${safeName(projectName)}.md`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
       router.refresh();
     } finally {
       setBusy(false);
@@ -300,31 +313,25 @@ export function PresetForm({
 
           <button
             type="button"
-            onClick={handleSave}
+            onClick={handleDownload}
             disabled={busy}
             className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
           >
-            {busy ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : saved ? (
-              <Check className="size-4" />
-            ) : null}
+            {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
             {busy
-              ? "저장 중"
-              : saved
-                ? "저장됨"
-                : willCharge
-                  ? `프리셋 생성 · ${cost}크레딧`
-                  : "프리셋 저장"}
+              ? "준비 중"
+              : willCharge
+                ? `프리셋 다운로드 · ${cost}크레딧`
+                : "프리셋 다운로드"}
           </button>
           <p className="mt-2 text-center text-xs text-muted-foreground">
             {willCharge ? (
               <>
-                생성에 <b className="text-foreground">{cost}크레딧</b>이 들어요. 이후 수정은 무료이고, 문서는 전체
-                다운로드에 포함됩니다.
+                받을 때 <b className="text-foreground">{cost}크레딧</b>이 들어요. 한 번 받으면 색·글꼴을 바꿔 다시
+                받아도 무료예요.
               </>
             ) : (
-              <>수정은 무료예요. 문서 파일은 <b className="text-foreground">전체 다운로드</b>에 포함됩니다.</>
+              <>이미 결제한 프리셋이라 <b className="text-foreground">다시 받기는 무료</b>예요.</>
             )}
           </p>
         </div>

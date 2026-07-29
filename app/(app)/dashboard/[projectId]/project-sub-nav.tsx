@@ -261,8 +261,8 @@ function AddonSection({ base }: { base: string }) {
           href={`${base}preset`}
           icon={Palette}
           title="디자인 프리셋"
-          desc="색·글꼴·모서리·밀도를 직접 골라 개발에 바로 쓰는 디자인 시스템 문서를 만들어요."
-          badge="생성 · 4크레딧"
+          desc="색·글꼴·모서리·밀도를 직접 골라 개발에 바로 쓰는 디자인 시스템 문서를 받아요."
+          badge="다운로드 · 4크레딧"
           tone="action"
         />
         <AddonCard
