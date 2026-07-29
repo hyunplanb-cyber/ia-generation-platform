@@ -150,8 +150,9 @@ export function ProjectShell({
 
       {isDeliver ? (
         <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
-          {/* 좌측 산출물 세부 탭 (세로) */}
-          <nav className="flex gap-1 overflow-x-auto pb-1 lg:w-52 lg:shrink-0 lg:flex-col lg:overflow-visible lg:pb-0 lg:pt-1">
+          {/* 좌측: 산출물 세부 탭 + (데스크톱) 추가 산출물 요약 */}
+          <div className="lg:w-52 lg:shrink-0">
+            <nav className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0 lg:pt-1">
             {DELIVERABLE_ITEMS.map(({ href, label, icon: Icon }) => {
               const fullHref = `${base}${href}`;
               const isActive = pathname.startsWith(fullHref);
@@ -170,7 +171,12 @@ export function ProjectShell({
                 </Link>
               );
             })}
-          </nav>
+            </nav>
+            {/* 데스크톱: 탭 아래 빈 공간에 추가 산출물 요약 */}
+            <div className="hidden lg:block">
+              <AddonNav base={base} />
+            </div>
+          </div>
           <div className="min-w-0 flex-1">
             {children}
             <AddonSection base={base} />
@@ -179,6 +185,61 @@ export function ProjectShell({
       ) : (
         <div>{children}</div>
       )}
+    </div>
+  );
+}
+
+// 데스크톱 좌측 컬럼(탭 아래)용 컴팩트 요약 — 하단 강조 섹션과 함께 눈에 띄게.
+function AddonNav({ base }: { base: string }) {
+  const items: {
+    href?: string;
+    title: string;
+    badge: string;
+    tone: "ready" | "action" | "soon";
+    icon: LucideIcon;
+  }[] = [
+    { title: "디자인 프리셋", badge: "포함", tone: "ready", icon: Palette },
+    {
+      href: `${base}verify`,
+      title: "검수 시나리오",
+      badge: "4크레딧",
+      tone: "action",
+      icon: ShieldQuestion,
+    },
+    { href: `${base}admin`, title: "관리자 산출물", badge: "준비 중", tone: "soon", icon: ShieldCheck },
+  ];
+  return (
+    <div className="mt-3 flex flex-col gap-1.5 rounded-xl border border-primary/25 bg-primary-soft/15 p-2.5">
+      <p className="flex items-center gap-1 px-1 pb-0.5 text-xs font-bold text-primary">
+        <Sparkles className="size-3.5" /> 추가 산출물
+      </p>
+      {items.map((it) => {
+        const Icon = it.icon;
+        const badgeClass =
+          it.tone === "action"
+            ? "bg-primary text-primary-foreground"
+            : it.tone === "ready"
+              ? "bg-success-soft text-success"
+              : "bg-muted text-muted-foreground";
+        const inner = (
+          <div className="flex items-center justify-between gap-1.5 rounded-lg bg-background px-2.5 py-2">
+            <span className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-foreground">
+              <Icon className="size-3.5 shrink-0 text-primary" />
+              <span className="truncate">{it.title}</span>
+            </span>
+            <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${badgeClass}`}>
+              {it.badge}
+            </span>
+          </div>
+        );
+        return it.href ? (
+          <Link key={it.title} href={it.href} className="block hover:opacity-90">
+            {inner}
+          </Link>
+        ) : (
+          <div key={it.title}>{inner}</div>
+        );
+      })}
     </div>
   );
 }
