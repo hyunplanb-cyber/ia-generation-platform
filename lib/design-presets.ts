@@ -6,24 +6,34 @@
 export type DesignKey = "navy" | "mono" | "pastel";
 
 // 브리프에서 보여줄 3개 선택지. concept 텍스트가 프로젝트에 저장되고, 그걸로 프리셋을 되찾는다.
-export const DESIGN_OPTIONS: { key: DesignKey; title: string; desc: string; concept: string }[] = [
+// swatches: 카드에 보여줄 대표 색(주색·강조·본문·배경 순).
+export const DESIGN_OPTIONS: {
+  key: DesignKey;
+  title: string;
+  desc: string;
+  concept: string;
+  swatches: string[];
+}[] = [
   {
     key: "navy",
     title: "모던 네이비",
     desc: "신뢰감 있고 정돈된, 실무형",
     concept: "모던하고 신뢰감 있는 네이비 톤. 정보가 잘 정돈된 실무형 디자인, 카드와 표 중심.",
+    swatches: ["#2B4A8B", "#FF7A30", "#16233F", "#F5F7FA"],
   },
   {
     key: "mono",
     title: "미니멀 모노",
     desc: "색을 뺀 여백·활자 중심",
     concept: "색을 절제한 미니멀 모노톤. 넉넉한 여백과 활자 위계로 정리된 깔끔한 디자인.",
+    swatches: ["#111111", "#767676", "#E5E5E5", "#FFFFFF"],
   },
   {
     key: "pastel",
     title: "소프트 파스텔",
     desc: "부드럽고 친근한 분위기",
     concept: "부드럽고 친근한 파스텔 톤. 둥근 모서리와 넉넉한 여백으로 편안한 느낌.",
+    swatches: ["#5B4FE5", "#FFD54A", "#DFF5EC", "#FAFAFA"],
   },
 ];
 

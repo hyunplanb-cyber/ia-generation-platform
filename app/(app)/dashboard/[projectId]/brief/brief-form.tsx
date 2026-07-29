@@ -139,6 +139,15 @@ export function BriefForm({
                   >
                     <span className="font-semibold text-foreground">{opt.title}</span>
                     <span className="text-xs leading-relaxed text-muted-foreground">{opt.desc}</span>
+                    <span className="mt-1.5 flex gap-1">
+                      {opt.swatches.map((c) => (
+                        <span
+                          key={c}
+                          className="size-4 rounded-full border border-black/10"
+                          style={{ backgroundColor: c }}
+                        />
+                      ))}
+                    </span>
                   </button>
                 );
               })}
