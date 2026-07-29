@@ -195,18 +195,16 @@ export interface PresetConfig {
   dark: boolean;
 }
 
-export const PRIMARY_SWATCHES = [
-  "#2B4A8B",
-  "#0E6F60",
-  "#DE6F26",
-  "#5B4FE5",
-  "#111827",
-  "#E11D48",
-  "#0EA5E9",
-  "#16A34A",
-  "#9333EA",
-  "#F59E0B",
-];
+// 고른 "큰 방향"에 어울리는 주 색상 후보. 각 세트의 첫 색이 그 방향의 기본 주색.
+export const PRIMARY_SWATCHES_BY_STYLE: Record<DesignKey, string[]> = {
+  navy: ["#2B4A8B", "#1E3A6E", "#3B5BA5", "#2563EB", "#0E7490", "#FF7A30"],
+  mono: ["#111111", "#2B2B2B", "#454545", "#6B7280", "#0E6F60", "#DE6F26"],
+  pastel: ["#5B4FE5", "#7C6FF0", "#EC4899", "#F59E0B", "#14B8A6", "#0EA5E9"],
+};
+
+export function primarySwatchesFor(style: DesignKey): string[] {
+  return PRIMARY_SWATCHES_BY_STYLE[style] ?? PRIMARY_SWATCHES_BY_STYLE.navy;
+}
 export const FONT_FEELS: { key: FontFeel; label: string; family: string }[] = [
   { key: "sans", label: "고딕", family: "Pretendard, 'Noto Sans KR', sans-serif" },
   { key: "serif", label: "명조", family: "'Noto Serif KR', 'Nanum Myeongjo', serif" },
@@ -237,7 +235,7 @@ export const DENSITIES: {
 export function defaultPresetConfig(style: DesignKey): PresetConfig {
   return {
     style,
-    primary: Object.values(PRESETS[style].colors)[0],
+    primary: primarySwatchesFor(style)[0],
     font: style === "pastel" ? "rounded" : "sans",
     radius: style === "mono" ? "sharp" : style === "pastel" ? "round" : "normal",
     density: "cozy",

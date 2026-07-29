@@ -135,11 +135,12 @@ export function ZipAllButton({
         specLib.buildSpecPackJson(specProject, menus, screens, buttonActions),
       );
 
-      // 상세 디자인 시스템 문서(프리셋에서 고른 색·글꼴·모서리·밀도·다크 반영).
-      // 프리셋을 따로 저장하지 않았어도 컨셉 기반 기본값으로 상세 문서를 만든다.
-      const { parsePresetConfig, buildDetailedPresetMarkdown } = await import("@/lib/design-presets");
-      const presetCfg = parsePresetConfig(specProject.presetConfig ?? null, specProject.designConcept);
-      zip.file(`디자인시스템_${base}.md`, buildDetailedPresetMarkdown(presetCfg, concept || undefined));
+      // 상세 디자인 시스템 문서 — 프리셋을 생성(설정 저장)한 프로젝트에만 담는다.
+      if (specProject.presetConfig) {
+        const { parsePresetConfig, buildDetailedPresetMarkdown } = await import("@/lib/design-presets");
+        const presetCfg = parsePresetConfig(specProject.presetConfig, specProject.designConcept);
+        zip.file(`디자인시스템_${base}.md`, buildDetailedPresetMarkdown(presetCfg, concept || undefined));
+      }
 
       const blob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(blob);

@@ -198,7 +198,7 @@ function AddonNav({ base }: { base: string }) {
     tone: "ready" | "action" | "soon";
     icon: LucideIcon;
   }[] = [
-    { href: `${base}preset`, title: "디자인 프리셋", badge: "설정", tone: "ready", icon: Palette },
+    { href: `${base}preset`, title: "디자인 프리셋", badge: "4크레딧", tone: "action", icon: Palette },
     {
       href: `${base}verify`,
       title: "검수 시나리오",
@@ -262,8 +262,8 @@ function AddonSection({ base }: { base: string }) {
           icon={Palette}
           title="디자인 프리셋"
           desc="색·글꼴·모서리·밀도를 직접 골라 개발에 바로 쓰는 디자인 시스템 문서를 만들어요."
-          badge="직접 설정 · 무료"
-          tone="ready"
+          badge="생성 · 4크레딧"
+          tone="action"
         />
         <AddonCard
           href={`${base}verify`}

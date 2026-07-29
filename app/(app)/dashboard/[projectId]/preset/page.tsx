@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { getProjectForEdit } from "@/application/get-project-for-edit";
-import { getPresetConfig } from "@/application/preset";
+import { getPresetConfig, PRESET_GEN_COST } from "@/application/preset";
 import { ProjectNotFoundError } from "@/application/with-project-auth";
+import { CREDITS_OPEN } from "@/lib/flags";
 import { PresetForm } from "./preset-form";
 
 export default async function PresetPage({
@@ -20,6 +21,9 @@ export default async function PresetPage({
         projectId={projectId}
         projectName={proj.concept || "프로젝트"}
         initial={config}
+        creditsOpen={CREDITS_OPEN}
+        cost={PRESET_GEN_COST}
+        generated={!!proj.presetConfig}
       />
     );
   } catch (e) {
