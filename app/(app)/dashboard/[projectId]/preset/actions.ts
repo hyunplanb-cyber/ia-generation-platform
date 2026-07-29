@@ -1,15 +1,26 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { savePresetConfig, type PresetSaveResult } from "@/application/preset";
+import {
+  generatePreset,
+  downloadPreset,
+  type PresetActionResult,
+} from "@/application/preset";
 import type { PresetConfig } from "@/lib/design-presets";
 
-// 상세 프리셋 설정을 저장한다. 첫 생성 때만 4크레딧 차감(이후 수정은 무료).
-export async function savePresetConfigAction(
+// 프리셋 생성 — 첫 생성 때만 4크레딧 차감.
+export async function generatePresetAction(
   projectId: string,
   config: PresetConfig,
-): Promise<PresetSaveResult> {
-  const result = await savePresetConfig(projectId, config);
+): Promise<PresetActionResult> {
+  const result = await generatePreset(projectId, config);
+  if (result.ok) revalidatePath(`/dashboard/${projectId}/preset`);
+  return result;
+}
+
+// 프리셋 md 다운로드 결제 — 첫 다운로드 때만 99크레딧 차감.
+export async function downloadPresetAction(projectId: string): Promise<PresetActionResult> {
+  const result = await downloadPreset(projectId);
   if (result.ok) revalidatePath(`/dashboard/${projectId}/preset`);
   return result;
 }

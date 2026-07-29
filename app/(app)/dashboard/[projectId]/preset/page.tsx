@@ -1,6 +1,11 @@
 import { notFound } from "next/navigation";
 import { getProjectForEdit } from "@/application/get-project-for-edit";
-import { getPresetConfig, PRESET_DOWNLOAD_COST } from "@/application/preset";
+import {
+  getPresetConfig,
+  getPresetState,
+  PRESET_GEN_COST,
+  PRESET_DOWNLOAD_COST,
+} from "@/application/preset";
 import { ProjectNotFoundError } from "@/application/with-project-auth";
 import { CREDITS_OPEN } from "@/lib/flags";
 import { PresetForm } from "./preset-form";
@@ -12,9 +17,10 @@ export default async function PresetPage({
 }) {
   const { projectId } = await params;
   try {
-    const [proj, config] = await Promise.all([
+    const [proj, config, state] = await Promise.all([
       getProjectForEdit(projectId),
       getPresetConfig(projectId),
+      getPresetState(projectId),
     ]);
     return (
       <PresetForm
@@ -22,8 +28,10 @@ export default async function PresetPage({
         projectName={proj.concept || "프로젝트"}
         initial={config}
         creditsOpen={CREDITS_OPEN}
-        cost={PRESET_DOWNLOAD_COST}
-        generated={!!proj.presetConfig}
+        genCost={PRESET_GEN_COST}
+        downloadCost={PRESET_DOWNLOAD_COST}
+        generated={state.generated}
+        downloaded={state.downloaded}
       />
     );
   } catch (e) {

@@ -198,11 +198,11 @@ function AddonNav({ base }: { base: string }) {
     tone: "ready" | "action" | "soon";
     icon: LucideIcon;
   }[] = [
-    { href: `${base}preset`, title: "디자인 프리셋", badge: "99크레딧", tone: "action", icon: Palette },
+    { href: `${base}preset`, title: "디자인 프리셋", badge: "", tone: "action", icon: Palette },
     {
       href: `${base}verify`,
       title: "검수 시나리오",
-      badge: "4크레딧",
+      badge: "",
       tone: "action",
       icon: ShieldQuestion,
     },
@@ -227,9 +227,11 @@ function AddonNav({ base }: { base: string }) {
                 <Icon className="size-4 shrink-0 text-primary" />
                 <span className="truncate">{it.title}</span>
               </span>
-              <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${badgeClass}`}>
-                {it.badge}
-              </span>
+              {it.badge && (
+                <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${badgeClass}`}>
+                  {it.badge}
+                </span>
+              )}
             </div>
           );
           return it.href ? (
@@ -261,8 +263,8 @@ function AddonSection({ base }: { base: string }) {
           href={`${base}preset`}
           icon={Palette}
           title="디자인 프리셋"
-          desc="색·글꼴·모서리·밀도를 직접 골라 개발에 바로 쓰는 디자인 시스템 문서를 받아요."
-          badge="다운로드 · 99크레딧"
+          desc="색·글꼴·모서리·밀도를 직접 골라 개발에 바로 쓰는 디자인 시스템을 만들어요."
+          badge="생성 4 · 다운로드 99크레딧"
           tone="action"
         />
         <AddonCard

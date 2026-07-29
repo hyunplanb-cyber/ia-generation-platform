@@ -375,3 +375,58 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   L.push("");
   return L.join("\n");
 }
+
+// 생성 완료 화면에 보여줄 요약(온페이지용 구조 데이터).
+export interface PresetSummary {
+  baseName: string;
+  primary: string;
+  palette: [string, string][]; // [라벨, hex]
+  bg: string;
+  surface: string;
+  text: string;
+  muted: string;
+  border: string;
+  fontLabel: string;
+  fontFamily: string;
+  radius: { card: string; button: string; badge: string };
+  densityLabel: string;
+  dark: boolean;
+  typeScale: [string, string][]; // [용도, 스펙]
+  components: [string, string][]; // [이름, 규칙 요약]
+}
+
+export function buildPresetSummary(cfg: PresetConfig): PresetSummary {
+  const base = PRESETS[cfg.style];
+  const font = FONT_FEELS.find((f) => f.key === cfg.font)!;
+  const rad = RADIUS_FEELS.find((r) => r.key === cfg.radius)!;
+  const den = DENSITIES.find((d) => d.key === cfg.density)!;
+  const pal = palette(cfg.primary);
+  return {
+    baseName: base.name,
+    primary: cfg.primary,
+    palette: Object.entries(pal),
+    bg: cfg.dark ? "#0E1116" : "#FFFFFF",
+    surface: cfg.dark ? "#171B22" : "#FFFFFF",
+    text: cfg.dark ? "#E8EAED" : "#16181D",
+    muted: cfg.dark ? "#9AA0A8" : "#6B7280",
+    border: cfg.dark ? "#2A2F37" : "#E5E7EB",
+    fontLabel: font.label,
+    fontFamily: font.family,
+    radius: { card: rad.card, button: rad.button, badge: rad.badge },
+    densityLabel: den.label,
+    dark: cfg.dark,
+    typeScale: [
+      ["페이지 제목", "32px / 800"],
+      ["섹션 제목", "22px / 700"],
+      ["카드 제목", "18px / 700"],
+      ["본문", "15px / 400"],
+      ["버튼", "14px / 600"],
+    ],
+    components: [
+      ["버튼(주요)", `primary 배경 · 높이 44px · radius ${rad.button}`],
+      ["카드", `surface 배경 · border 1px · radius ${rad.card}`],
+      ["입력", "높이 44px · focus 시 primary 링"],
+      ["배지", `상태색 10% 배경 · radius ${rad.badge}`],
+    ],
+  };
+}

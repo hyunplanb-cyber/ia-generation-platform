@@ -100,6 +100,8 @@ export const project = pgTable(
     designConcept: text("design_concept"),
     // 디자인 프리셋 상세 설정(JSON): { style, primary, font, radius, density, dark }
     presetConfig: text("preset_config"),
+    // 프리셋 md 다운로드를 처음 결제한 시각(있으면 재다운로드 무료)
+    presetDownloadedAt: timestamp("preset_downloaded_at"),
     overallStart: date("overall_start").notNull(),
     overallEnd: date("overall_end").notNull(),
     deviceMode: text("device_mode").default("responsive").notNull(),

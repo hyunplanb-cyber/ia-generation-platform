@@ -8,6 +8,7 @@ export interface Project {
   menuDraft: string | null;
   designConcept: string | null;
   presetConfig: string | null;
+  presetDownloadedAt: Date | null;
   overallStart: string;
   overallEnd: string;
   deviceMode: DeviceMode;

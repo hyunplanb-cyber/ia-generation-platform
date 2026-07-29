@@ -16,6 +16,7 @@ function toDomain(row: typeof project.$inferSelect): Project {
     menuDraft: row.menuDraft,
     designConcept: row.designConcept,
     presetConfig: row.presetConfig,
+    presetDownloadedAt: row.presetDownloadedAt,
     overallStart: row.overallStart,
     overallEnd: row.overallEnd,
     deviceMode: row.deviceMode as DeviceMode,
