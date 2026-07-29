@@ -70,6 +70,29 @@ const SCALE_OPTIONS: { key: Scale; title: string; credit: string; desc: string }
   },
 ];
 
+// 디자인 컨셉 — 자유 입력 대신 3개 중 하나를 고른다. 고른 concept이 생성 프롬프트에 반영된다.
+type Design = "navy" | "mono" | "pastel";
+const DESIGN_OPTIONS: { key: Design; title: string; desc: string; concept: string }[] = [
+  {
+    key: "navy",
+    title: "모던 네이비",
+    desc: "신뢰감 있고 정돈된, 실무형",
+    concept: "모던하고 신뢰감 있는 네이비 톤. 정보가 잘 정돈된 실무형 디자인, 카드와 표 중심.",
+  },
+  {
+    key: "mono",
+    title: "미니멀 모노",
+    desc: "색을 뺀 여백·활자 중심",
+    concept: "색을 절제한 미니멀 모노톤. 넉넉한 여백과 활자 위계로 정리된 깔끔한 디자인.",
+  },
+  {
+    key: "pastel",
+    title: "소프트 파스텔",
+    desc: "부드럽고 친근한 분위기",
+    concept: "부드럽고 친근한 파스텔 톤. 둥근 모서리와 넉넉한 여백으로 편안한 느낌.",
+  },
+];
+
 export function BriefForm({
   project,
   hasMenus,
@@ -82,6 +105,11 @@ export function BriefForm({
   const boundAction = saveBriefAndGenerateAction.bind(null, project.id);
   const [state, formAction, pending] = useActionState(boundAction, initialState);
   const [scale, setScale] = useState<Scale>("basic");
+  // 기존 프로젝트가 저장한 값이 3개 중 하나면 그걸 고르고, 아니면 첫 번째로.
+  const [design, setDesign] = useState<Design>(
+    DESIGN_OPTIONS.find((d) => d.concept === project.designConcept)?.key ?? "navy",
+  );
+  const designConcept = DESIGN_OPTIONS.find((d) => d.key === design)!.concept;
 
   return (
     <div className="flex flex-col gap-5">
@@ -113,15 +141,30 @@ export function BriefForm({
 
           <FormSection
             title="디자인 컨셉"
-            hint="원하는 분위기나 스타일을 적으면 각 화면의 생성 프롬프트에 반영돼요."
+            hint="원하는 분위기를 하나 고르면, 각 화면의 생성 프롬프트에 반영돼요."
           >
-            <Textarea
-              id="designConcept"
-              name="designConcept"
-              rows={5}
-              defaultValue={project.designConcept ?? ""}
-              placeholder="예) 미니멀하고 깔끔한, 파스텔 톤"
-            />
+            <input type="hidden" name="designConcept" value={designConcept} />
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+              {DESIGN_OPTIONS.map((opt) => {
+                const on = design === opt.key;
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => setDesign(opt.key)}
+                    aria-pressed={on}
+                    className={`flex flex-col gap-1 rounded-xl border p-4 text-left transition-colors ${
+                      on
+                        ? "border-primary bg-background ring-2 ring-primary/30"
+                        : "border-border bg-background hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="font-semibold text-foreground">{opt.title}</span>
+                    <span className="text-xs leading-relaxed text-muted-foreground">{opt.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
           </FormSection>
 
           {/* 산출물 생성 영역 — 디자인 컨셉 바로 아래 */}
