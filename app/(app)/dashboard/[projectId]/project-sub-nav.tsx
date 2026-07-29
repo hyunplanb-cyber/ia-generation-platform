@@ -173,6 +173,29 @@ export function ProjectShell({
                 </Link>
               );
             })}
+            {/* 모바일에서만 — 추가 산출물도 상단 탭에 노출(데스크톱은 좌측 요약에 있음) */}
+            {[
+              { href: "preset", label: "디자인 프리셋", icon: Palette },
+              { href: "verify", label: "검수 시나리오", icon: ShieldQuestion },
+              { href: "admin", label: "관리자", icon: ShieldCheck },
+            ].map(({ href, label, icon: Icon }) => {
+              const fullHref = `${base}${href}`;
+              const isActive = pathname.startsWith(fullHref);
+              return (
+                <Link
+                  key={href}
+                  href={fullHref}
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:hidden ${
+                    isActive
+                      ? "bg-primary-soft text-primary-on-soft"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="size-4 shrink-0" />
+                  {label}
+                </Link>
+              );
+            })}
             </nav>
             {/* 데스크톱: 탭 아래 빈 공간에 추가 산출물 요약 */}
             <div className="hidden lg:block">
