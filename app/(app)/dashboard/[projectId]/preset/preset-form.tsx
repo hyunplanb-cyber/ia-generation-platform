@@ -266,27 +266,17 @@ export function PresetForm({
   // ── 미리보기 카드(생성 전) ──
   const preview = (
     <div
-      className="flex flex-col gap-3 border"
+      className="flex flex-col gap-3"
       style={{
         background: pv.bg,
-        borderColor: pv.border,
+        border: `2px solid ${highlight}`,
         borderRadius: rad.card,
         fontFamily: font.family,
         padding: den.key === "cozy" ? "20px" : "14px",
       }}
     >
       <div className="flex items-center justify-between" style={{ color: pv.text }}>
-        <strong
-          style={{
-            fontSize: 15,
-            backgroundImage: `linear-gradient(transparent 55%, ${highlight}73 55%)`,
-            padding: "0 3px",
-            WebkitBoxDecorationBreak: "clone",
-            boxDecorationBreak: "clone",
-          }}
-        >
-          화면 제목
-        </strong>
+        <strong style={{ fontSize: 15 }}>화면 제목</strong>
         <span
           style={{
             background: accent + "22",
