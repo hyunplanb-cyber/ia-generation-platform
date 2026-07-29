@@ -96,11 +96,11 @@ export function VerifyScenarioDownloadButton({
       type="button"
       onClick={handleClick}
       disabled={busy}
-      className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60"
+      className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-60"
     >
       {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
       {label}
-      {gated && <span className="font-normal opacity-80">· {credits}크레딧</span>}
+      {gated && <span className="text-xs text-primary/70">· {credits}크레딧</span>}
     </button>
   );
 }

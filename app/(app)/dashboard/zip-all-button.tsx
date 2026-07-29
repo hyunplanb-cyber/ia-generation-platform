@@ -157,7 +157,7 @@ export function ZipAllButton({
       onClick={handleDownload}
       disabled={busy}
       title={error ? "다운로드에 실패했어요. 다시 시도해 주세요." : "모든 산출물을 zip으로 내려받기"}
-      className={`inline-flex items-center gap-2 rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60 ${
+      className={`inline-flex items-center gap-2 rounded-lg border border-primary bg-transparent font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-60 ${
         large ? "px-4 py-2 text-sm" : "gap-1.5 px-2.5 py-1 text-xs"
       }`}
     >
@@ -167,7 +167,7 @@ export function ZipAllButton({
         <Download className={large ? "size-4" : "size-3"} />
       )}
       전체 다운로드
-      {gated && <span className="font-normal opacity-80">· {credits}크레딧</span>}
+      {gated && <span className="text-xs text-primary/70">· {credits}크레딧</span>}
     </button>
   );
 }
