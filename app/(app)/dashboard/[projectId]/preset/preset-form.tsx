@@ -309,7 +309,7 @@ export function PresetForm({
   );
 
   return (
-    <div className="mx-auto flex max-w-[1100px] flex-col gap-8 px-6 py-10">
+    <div className="mx-auto flex max-w-[1152px] flex-col gap-8 px-6 py-10">
       <div className="flex flex-col gap-2">
         <h1 className="flex items-center gap-2 text-2xl font-bold text-foreground">
           <Palette className="size-6 text-primary" /> 디자인 프리셋

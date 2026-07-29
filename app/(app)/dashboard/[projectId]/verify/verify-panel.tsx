@@ -1,57 +1,55 @@
 "use client";
 
 import { useActionState } from "react";
-import { Link2 } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
-import { runProjectVerifyAction, type ProjectVerifyState } from "./actions";
+import { generateScenariosAction, type ProjectVerifyState } from "./actions";
 
 const initialState: ProjectVerifyState = { report: null, error: null, limitReached: false };
 
-// 프로젝트 안에서 사이트 URL을 넣어 검수를 돌리고, 결과를 이 프로젝트에 저장한다.
-export function VerifyPanel({ projectId }: { projectId: string }) {
-  const [state, formAction, pending] = useActionState(runProjectVerifyAction, initialState);
+// 생성된 산출물을 바탕으로 검수 시나리오를 만든다(사이트 URL 불필요).
+export function VerifyPanel({
+  projectId,
+  cost,
+  creditsOpen,
+}: {
+  projectId: string;
+  cost: number;
+  creditsOpen: boolean;
+}) {
+  const [state, formAction, pending] = useActionState(generateScenariosAction, initialState);
   const report = state.report;
 
   return (
     <div className="flex flex-col gap-6">
-      <form action={formAction} className="flex flex-col gap-3">
+      <form action={formAction} className="flex flex-col gap-2">
         <input type="hidden" name="projectId" value={projectId} />
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-background px-3">
-            <Link2 className="size-4 shrink-0 text-muted-foreground" />
-            <Input
-              name="url"
-              type="text"
-              inputMode="url"
-              placeholder="https://내-사이트.com"
-              className="border-0 px-0 shadow-none focus-visible:ring-0"
-              required
-              disabled={pending}
-            />
-          </div>
-          <Button type="submit" disabled={pending} className="sm:w-40">
-            {pending ? "검사 중…" : "사이트 검수하기"}
-          </Button>
-        </div>
+        <Button type="submit" disabled={pending} className="w-full gap-2 sm:w-auto">
+          <Sparkles className="size-4" />
+          {pending
+            ? "생성 중…"
+            : creditsOpen
+              ? `검수 시나리오 생성 · ${cost}크레딧`
+              : "검수 시나리오 생성"}
+        </Button>
         <p className="text-xs text-muted-foreground">
-          이미 오픈(배포)한 사이트 주소를 넣어주세요. 검수 결과는 이 프로젝트에 저장됩니다.
+          생성된 산출물(화면·기능·버튼 연결)을 바탕으로 검수 시나리오를 만들어요. 다운로드(엑셀)는 이후 별도예요.
         </p>
       </form>
 
       {pending && (
         <p className="text-sm text-muted-foreground">
-          사이트를 열어 하나씩 확인하고 있어요. 보통 15~30초 걸려요. 창을 닫지 마세요.
+          산출물을 읽어 검수 시나리오를 만들고 있어요. 보통 15~30초 걸려요. 창을 닫지 마세요.
         </p>
       )}
 
       {state.limitReached && !pending && (
         <div className="rounded-xl border border-primary/30 bg-primary-soft/30 p-6 text-center">
-          <p className="font-semibold text-foreground">무료 검수 횟수를 다 쓰셨어요</p>
+          <p className="font-semibold text-foreground">무료 이용 횟수를 다 쓰셨어요</p>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            검수를 계속 이용하는 유료 플랜을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요.
+            계속 이용하는 유료 플랜을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요.
           </p>
         </div>
       )}
