@@ -7,6 +7,7 @@ export interface Project {
   concept: string;
   menuDraft: string | null;
   designConcept: string | null;
+  presetConfig: string | null;
   overallStart: string;
   overallEnd: string;
   deviceMode: DeviceMode;

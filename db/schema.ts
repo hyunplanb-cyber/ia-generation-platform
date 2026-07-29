@@ -98,6 +98,8 @@ export const project = pgTable(
     menuDraft: text("menu_draft"),
     // 원하는 분위기/스타일에 대한 텍스트 설명. 이미지 업로드+AI 무드 분석은 추후 지원.
     designConcept: text("design_concept"),
+    // 디자인 프리셋 상세 설정(JSON): { style, primary, font, radius, density, dark }
+    presetConfig: text("preset_config"),
     overallStart: date("overall_start").notNull(),
     overallEnd: date("overall_end").notNull(),
     deviceMode: text("device_mode").default("responsive").notNull(),

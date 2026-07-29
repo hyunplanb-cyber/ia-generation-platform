@@ -1,0 +1,153 @@
+<title>카페인컬러 가격 정책서 (내부)</title>
+<style>
+  :root {
+    --paper: #F3EAD4; --card: #FBF6E9; --ink: #22301E; --muted: #756A54;
+    --line: #E2D6B6; --line-soft: #ECE2C8; --orange: #DE6F26; --teal: #0E6F60;
+    --teal-soft: #DFEDE8; --orange-soft: #F7E4D0; color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #191811; --card: #23211A; --ink: #F1E8D1; --muted: #ABA085;
+      --line: #38331F; --line-soft: #2E2A1D; --orange: #EF8B41; --teal: #4FB0A0;
+      --teal-soft: #1E2E2A; --orange-soft: #33261A; color-scheme: dark;
+    }
+  }
+  :root[data-theme="light"] { --paper: #F3EAD4; --card: #FBF6E9; --ink: #22301E; --muted: #756A54; --line: #E2D6B6; --line-soft: #ECE2C8; --orange: #DE6F26; --teal: #0E6F60; --teal-soft: #DFEDE8; --orange-soft: #F7E4D0; color-scheme: light; }
+  :root[data-theme="dark"] { --paper: #191811; --card: #23211A; --ink: #F1E8D1; --muted: #ABA085; --line: #38331F; --line-soft: #2E2A1D; --orange: #EF8B41; --teal: #4FB0A0; --teal-soft: #1E2E2A; --orange-soft: #33261A; color-scheme: dark; }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, -apple-system, sans-serif;
+    line-height: 1.6; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 840px; margin: 0 auto; padding: 40px 24px 64px; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--teal); }
+  .topbar { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1.5px solid var(--ink); padding-bottom: 10px; margin-bottom: 26px; gap: 12px; flex-wrap: wrap; }
+  .brand { font-weight: 800; }
+  .brand .dot { color: var(--orange); }
+  .topbar .ver { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+  h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.08; margin: 0 0 10px; font-weight: 800; letter-spacing: -.01em; text-wrap: balance; }
+  .lede { font-size: 16px; color: var(--muted); margin: 0 0 6px; max-width: 60ch; }
+  .model { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; background: var(--orange-soft); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 7px 15px; font-size: 13px; font-weight: 600; }
+  .model b { color: var(--orange); }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 8px; margin: 30px 0 8px; }
+  .flow .step { text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 10px; }
+  .flow .n { font-size: 11px; font-weight: 800; color: var(--teal); letter-spacing: .1em; }
+  .flow .t { font-weight: 700; margin-top: 3px; font-size: 15px; }
+  .flow .d { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .flow .arw { color: var(--orange); font-weight: 800; font-size: 18px; }
+  @media (max-width: 620px) { .flow { grid-template-columns: 1fr; } .flow .arw { transform: rotate(90deg); justify-self: center; } }
+  section { margin-top: 40px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  .sec-num { font-size: 13px; font-weight: 800; color: var(--orange); }
+  h2 { font-size: 21px; margin: 0; font-weight: 800; letter-spacing: -.01em; }
+  .sec-note { font-size: 13px; color: var(--muted); margin: 2px 0 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 4px 20px; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line-soft); }
+  .row:last-child { border-bottom: 0; }
+  .row .k { font-weight: 600; }
+  .row .k small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; margin-top: 1px; }
+  .row .v { font-weight: 800; white-space: nowrap; font-size: 16px; }
+  .row .v .u { font-weight: 600; color: var(--muted); font-size: 12px; }
+  .bonus { display:inline-block; background: var(--teal); color:#fff; font-size:11px; font-weight:800; border-radius:6px; padding:2px 7px; margin-left:6px; vertical-align:middle; }
+  .pill { display: inline-block; background: var(--teal-soft); color: var(--teal); border-radius: 7px; padding: 2px 9px; font-size: 12.5px; font-weight: 800; }
+  .free { color: var(--teal); }
+  .subhead { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 14px 0 2px; }
+  .note { font-size: 13px; color: var(--muted); margin-top: 10px; padding-left: 14px; border-left: 2px solid var(--orange); }
+  .pkg { background: var(--card); border: 1px dashed var(--line); border-radius: 16px; padding: 20px 22px; }
+  .pkg .tag { display:inline-block; background: var(--orange); color:#fff; font-size:11px; font-weight:800; letter-spacing:.08em; border-radius: 6px; padding: 3px 9px; text-transform: uppercase; }
+  .pkg p { margin: 12px 0 0; }
+  .pkg .big { font-size: 17px; font-weight: 800; }
+  ul.clean { list-style: none; padding: 0; margin: 0; font-size: 14px; columns: 2; column-gap: 26px; }
+  @media (max-width: 620px) { ul.clean { columns: 1; } }
+  ul.clean li { position: relative; padding-left: 18px; break-inside: avoid; margin-bottom: 9px; }
+  ul.clean li::before { content: "—"; position: absolute; left: 0; color: var(--orange); font-weight: 800; }
+  footer { margin-top: 46px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+</style>
+
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand">카페인컬러<span class="dot">.</span></span>
+    <span class="ver">가격 정책서 · 내부 기준 · v1</span>
+  </div>
+
+  <p class="eyebrow">Internal Pricing Policy</p>
+  <h1>가격 정책서</h1>
+  <p class="lede">내부 기준 문서. 손님 화면에는 이 세부(1회당 소모 크레딧 등)를 그대로 노출하지 않고, 충전 안내 위주로 보여주고 세부는 FAQ·이용약관에 둔다.</p>
+  <span class="model"><b>구독 아님</b> · 충전형(쓴 만큼) · 1크레딧 = 100원</span>
+
+  <div class="flow">
+    <div class="step"><div class="n">STEP 1</div><div class="t">놀기</div><div class="d">크레딧으로 생성·검수</div></div>
+    <div class="arw">→</div>
+    <div class="step"><div class="n">STEP 2</div><div class="t">미리보기</div><div class="d">화면으로 확인 · 무료</div></div>
+    <div class="arw">→</div>
+    <div class="step"><div class="n">STEP 3</div><div class="t">받기</div><div class="d">파일 다운로드 · 크레딧</div></div>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">01</span><h2>크레딧 충전</h2></div>
+    <p class="sec-note">1크레딧 = 100원. 많이 충전할수록 보너스 크레딧을 더 준다.</p>
+    <div class="card">
+      <div class="row"><span class="k">무료 체험<small>가입 시 지급 · 3일 내 사용, 미사용분 소멸</small></span><span class="v free">무료 크레딧</span></div>
+      <div class="row"><span class="k">스타터<small>기본 그대로</small></span><span class="v">5,000원 <span class="u">/ 55크레딧</span><span class="bonus">+10%</span></span></div>
+      <div class="row"><span class="k">베이직</span><span class="v">10,000원 <span class="u">/ 120크레딧</span><span class="bonus">+20%</span></span></div>
+      <div class="row"><span class="k">밸류<small>가장 이득</small></span><span class="v">20,000원 <span class="u">/ 260크레딧</span><span class="bonus">+30%</span></span></div>
+    </div>
+    <p class="note">손님 화면엔 이 충전 3종 + 보너스 %만 노출. 아래 '소모'는 버튼 라벨과 FAQ·약관에.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">02</span><h2>크레딧 소모 (실행)</h2></div>
+    <p class="sec-note">생성·검수를 실행할 때 차감. 미리보기는 무료.</p>
+    <div class="card">
+      <div class="row"><span class="k">설계도 생성 · 기본<small>30~50화면 (2뎁스)</small></span><span class="v"><span class="pill">4크레딧</span></span></div>
+      <div class="row"><span class="k">설계도 생성 · 상세<small>100~150화면 (3뎁스)</small></span><span class="v"><span class="pill">8크레딧</span></span></div>
+      <div class="row"><span class="k">관리자 백오피스 생성<small>회원·상품·주문·통계 — 밀도 높은 화면</small></span><span class="v"><span class="pill">8크레딧</span></span></div>
+      <div class="row"><span class="k">검수<small>문서·설계도 4 · 사이트 8 · 설계 대비 12</small></span><span class="v"><span class="pill">4~12크레딧</span></span></div>
+    </div>
+    <p class="note">미사용 크레딧은 실행 전까지 환불 가능. 같은 프로젝트 재생성으로 마음껏 튜닝.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">03</span><h2>다운로드 (파일 받기)</h2></div>
+    <p class="sec-note">미리보기 무료, 파일로 받을 때 크레딧 차감. 버튼에 소모 크레딧을 표기.</p>
+    <div class="card">
+      <div class="row"><span class="k">설계도 · 30~50화면<small>IA · 프롬프트 · 기획 4종 · 스펙팩</small></span><span class="v">190크레딧 <span class="u">/ 19,000원</span></span></div>
+      <div class="row"><span class="k">설계도 · 100~150화면</span><span class="v">390크레딧 <span class="u">/ 39,000원</span></span></div>
+      <div class="row"><span class="k">관리자 백오피스</span><span class="v">290크레딧 <span class="u">/ 29,000원</span></span></div>
+      <div class="row"><span class="k">검수 시나리오<small>사이트 검수는 149크레딧</small></span><span class="v">99크레딧 <span class="u">/ 9,900원</span></span></div>
+      <div class="subhead">옵션 — 다운로드에 추가</div>
+      <div class="row"><span class="k">디자인 프리셋<small>내 컨셉 맞춤 · AI 3종 제안 → 고른 것</small></span><span class="v">+99크레딧</span></div>
+      <div class="row"><span class="k">검수 시나리오</span><span class="v">+99크레딧</span></div>
+    </div>
+    <p class="note">디자인 <b>방향</b>(주색·무드)은 무료 프롬프트에 담김. 화면 100개가 한 브랜드처럼 맞아떨어지는 <b>정확한 디자인 시스템</b>이 프리셋(+99).</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">04</span><h2>완성 패키지</h2></div>
+    <p class="sec-note">기성 업종 템플릿 — 셀프 생성과 다른 별도 상품(쇼핑 상품).</p>
+    <div class="pkg">
+      <span class="tag">쇼핑 상품 · 별도 판매</span>
+      <p class="big">검증된 업종을, 안 만들고 바로.</p>
+      <p style="color:var(--muted);font-size:14px;">LMS · 뷰티샵 · 여행 · 관리자 시스템 · 공동구매 등. 파일 + 사람 큐레이션에 디자인 프리셋·검수 시나리오까지 묶은 완성본.</p>
+      <p class="big" style="margin-top:14px;">가격 — 상품별 개별 책정 <span style="font-weight:600;color:var(--muted);font-size:14px;">(만들 때마다)</span></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">05</span><h2>환불 · 유효기간</h2></div>
+    <p class="sec-note">소액인 만큼 관대하게 — 분쟁 없이, 신뢰 있게. (FAQ·이용약관에 명시)</p>
+    <div class="card" style="padding:20px;">
+      <ul class="clean">
+        <li>미사용 크레딧은 <b>환불 가능</b>, 사용한 크레딧은 불가</li>
+        <li>무료 크레딧 <b>3일</b> · 유상 크레딧 <b>최근 충전일 +1년</b></li>
+        <li>만료 = 재사용 불가, 단 <b>유상 잔액은 환불 요청 가능</b>(몰수 없음)</li>
+        <li>미리보기 무료 제공 → 다운로드·패키지는 구매 후 환불 제한(사전 고지)</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>카페인컬러 · caffeinecolor.com · 내부 기준서</span>
+    <span>v1 — 숫자는 조정 가능</span>
+  </footer>
+</div>

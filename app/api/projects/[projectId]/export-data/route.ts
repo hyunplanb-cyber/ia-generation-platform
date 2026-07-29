@@ -21,6 +21,7 @@ export async function GET(
       project: {
         concept: p.concept,
         designConcept: p.designConcept,
+        presetConfig: p.presetConfig,
         deviceMode: p.deviceMode,
         overallStart: p.overallStart,
         overallEnd: p.overallEnd,

@@ -179,3 +179,201 @@ export function buildPresetMarkdown(p: Preset): string {
   L.push("");
   return L.join("\n");
 }
+
+// ── 상세 프리셋 설정(사용자가 더 고르는 항목) + 상세 디자인 시스템 생성 ──────────
+
+export type FontFeel = "sans" | "serif" | "rounded";
+export type RadiusFeel = "sharp" | "normal" | "round";
+export type Density = "cozy" | "compact";
+
+export interface PresetConfig {
+  style: DesignKey; // 큰 방향(브리프에서 고른 컨셉)
+  primary: string; // 주 색상(hex)
+  font: FontFeel;
+  radius: RadiusFeel;
+  density: Density;
+  dark: boolean;
+}
+
+export const PRIMARY_SWATCHES = [
+  "#2B4A8B",
+  "#0E6F60",
+  "#DE6F26",
+  "#5B4FE5",
+  "#111827",
+  "#E11D48",
+  "#0EA5E9",
+  "#16A34A",
+  "#9333EA",
+  "#F59E0B",
+];
+export const FONT_FEELS: { key: FontFeel; label: string; family: string }[] = [
+  { key: "sans", label: "고딕", family: "Pretendard, 'Noto Sans KR', sans-serif" },
+  { key: "serif", label: "명조", family: "'Noto Serif KR', 'Nanum Myeongjo', serif" },
+  { key: "rounded", label: "둥근", family: "Paperlogy, Pretendard, sans-serif" },
+];
+export const RADIUS_FEELS: {
+  key: RadiusFeel;
+  label: string;
+  card: string;
+  button: string;
+  badge: string;
+}[] = [
+  { key: "sharp", label: "각진", card: "4px", button: "4px", badge: "3px" },
+  { key: "normal", label: "기본", card: "12px", button: "8px", badge: "6px" },
+  { key: "round", label: "둥근", card: "20px", button: "14px", badge: "999px" },
+];
+export const DENSITIES: {
+  key: Density;
+  label: string;
+  cardPad: string;
+  rowH: string;
+  sectionGap: string;
+}[] = [
+  { key: "cozy", label: "넉넉하게", cardPad: "24px", rowH: "48px", sectionGap: "40px" },
+  { key: "compact", label: "컴팩트", cardPad: "16px", rowH: "40px", sectionGap: "28px" },
+];
+
+export function defaultPresetConfig(style: DesignKey): PresetConfig {
+  return {
+    style,
+    primary: Object.values(PRESETS[style].colors)[0],
+    font: style === "pastel" ? "rounded" : "sans",
+    radius: style === "mono" ? "sharp" : style === "pastel" ? "round" : "normal",
+    density: "cozy",
+    dark: false,
+  };
+}
+
+export function parsePresetConfig(json: string | null, concept?: string | null): PresetConfig {
+  if (json) {
+    try {
+      const c = JSON.parse(json) as Partial<PresetConfig>;
+      if (c.style) return { ...defaultPresetConfig(c.style), ...c } as PresetConfig;
+    } catch {
+      /* ignore */
+    }
+  }
+  return defaultPresetConfig(presetForConcept(concept).key);
+}
+
+// 주색상에서 밝은/진한 단계를 파생한다(색 섞기).
+function clamp(n: number) {
+  return Math.max(0, Math.min(255, Math.round(n)));
+}
+function toRgb(hex: string): [number, number, number] {
+  const h = hex.replace("#", "");
+  const v = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  return [parseInt(v.slice(0, 2), 16), parseInt(v.slice(2, 4), 16), parseInt(v.slice(4, 6), 16)];
+}
+function toHex(r: number, g: number, b: number): string {
+  return (
+    "#" +
+    [r, g, b]
+      .map((n) => clamp(n).toString(16).padStart(2, "0"))
+      .join("")
+      .toUpperCase()
+  );
+}
+function mix(hex: string, t: [number, number, number], amt: number): string {
+  const [r, g, b] = toRgb(hex);
+  return toHex(r + (t[0] - r) * amt, g + (t[1] - g) * amt, b + (t[2] - b) * amt);
+}
+const WHITE: [number, number, number] = [255, 255, 255];
+const BLACK: [number, number, number] = [0, 0, 0];
+
+function palette(primary: string): Record<string, string> {
+  return {
+    "primary-50": mix(primary, WHITE, 0.9),
+    "primary-100": mix(primary, WHITE, 0.8),
+    "primary-200": mix(primary, WHITE, 0.6),
+    "primary-500 (기본)": primary,
+    "primary-600 (hover)": mix(primary, BLACK, 0.12),
+    "primary-700 (active)": mix(primary, BLACK, 0.28),
+  };
+}
+
+// 설정을 바탕으로 상세 디자인 시스템 문서(마크다운)를 만든다.
+export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: string): string {
+  const base = PRESETS[cfg.style];
+  const font = FONT_FEELS.find((f) => f.key === cfg.font)!;
+  const rad = RADIUS_FEELS.find((r) => r.key === cfg.radius)!;
+  const den = DENSITIES.find((d) => d.key === cfg.density)!;
+  const pal = palette(cfg.primary);
+  const bg = cfg.dark ? "#0E1116" : "#FFFFFF";
+  const surface = cfg.dark ? "#171B22" : "#FFFFFF";
+  const text = cfg.dark ? "#E8EAED" : "#16181D";
+  const muted = cfg.dark ? "#9AA0A8" : "#6B7280";
+  const border = cfg.dark ? "#2A2F37" : "#E5E7EB";
+
+  const L: string[] = [];
+  L.push(`# 디자인 시스템 — ${base.name} 기반${projectName ? ` · ${projectName}` : ""}`);
+  L.push("");
+  L.push(`> ${base.tagline}`);
+  L.push("");
+  L.push(
+    `설정: 주색상 \`${cfg.primary}\` · 폰트 ${font.label} · 모서리 ${rad.label} · 밀도 ${den.label} · ${cfg.dark ? "다크모드" : "라이트모드"}`,
+  );
+  L.push("");
+  L.push("AI 코딩 도구(Claude Code·Cursor 등)에 이 파일을 넣고 “이 디자인 시스템대로 만들어줘”라고 주문하세요.");
+  L.push("");
+  L.push("## 1. 색 팔레트");
+  L.push("");
+  L.push("| 토큰 | 값 |");
+  L.push("| --- | --- |");
+  for (const [k, v] of Object.entries(pal)) L.push(`| ${k} | \`${v}\` |`);
+  L.push(`| background | \`${bg}\` |`);
+  L.push(`| surface(카드) | \`${surface}\` |`);
+  L.push(`| text | \`${text}\` |`);
+  L.push(`| text-muted | \`${muted}\` |`);
+  L.push(`| border | \`${border}\` |`);
+  L.push("| success / warning / danger | `#16A34A` / `#D97706` / `#DC2626` |");
+  L.push("");
+  L.push("## 2. 타이포그래피");
+  L.push("");
+  L.push(`- 폰트: **${font.label}** — \`${font.family}\``);
+  L.push("");
+  L.push("| 용도 | 크기 / 굵기 |");
+  L.push("| --- | --- |");
+  L.push("| 페이지 제목 | 32px / 800 |");
+  L.push("| 섹션 제목 | 22px / 700 |");
+  L.push("| 카드 제목 | 18px / 700 |");
+  L.push("| 본문 | 15px / 400 (줄높이 1.6) |");
+  L.push("| 보조 | 13px / 400 |");
+  L.push("| 버튼 | 14px / 600 |");
+  L.push("");
+  L.push("## 3. 간격 · 모서리 · 그림자");
+  L.push("");
+  L.push(`- 간격 스케일: 4·8·12·16·24·32·48 (카드 내부 ${den.cardPad}, 섹션 간격 ${den.sectionGap})`);
+  L.push(`- 모서리: 카드 ${rad.card} · 버튼 ${rad.button} · 배지 ${rad.badge} · 입력 ${rad.button}`);
+  L.push(
+    `- 그림자: ${cfg.dark ? "쓰지 않고 border로 깊이 표현" : "카드에 0 1px 3px rgba(0,0,0,.08) 1단계만"}`,
+  );
+  L.push("");
+  L.push("## 4. 컴포넌트");
+  L.push("");
+  L.push("| 컴포넌트 | 규칙 |");
+  L.push("| --- | --- |");
+  L.push(
+    `| 버튼(주요) | primary-500 배경, 흰 글자, 높이 44px, radius ${rad.button}. hover primary-600, active primary-700 |`,
+  );
+  L.push(`| 버튼(보조) | 투명 배경 + border 1px(${border}), text 색 글자 |`);
+  L.push(`| 카드 | surface 배경, border 1px, radius ${rad.card}, 내부 여백 ${den.cardPad} |`);
+  L.push("| 입력 | 높이 44px, border 1px, focus 시 primary 2px 링 |");
+  L.push(`| 배지 | 상태색 10% 배경 + 같은 색 글자, radius ${rad.badge} |`);
+  L.push(`| 표 | 헤더 muted 배경, 행 구분 border 1px, 행 높이 ${den.rowH} |`);
+  L.push("");
+  L.push("## 5. 상태(꼭 지킬 것)");
+  L.push("");
+  L.push("- hover/active/focus: 버튼·링크·행 모두 시각 피드백. focus는 키보드 접근성을 위해 링 필수.");
+  L.push("- 비어 있음: 아이콘 + 한 줄 안내 + 주요 액션 하나.");
+  L.push("- 로딩: 스켈레톤 또는 스피너. 버튼은 로딩 시 비활성 + 스피너.");
+  L.push("- 오류: danger 색 + 무엇이 왜 틀렸는지 + 다음 행동.");
+  if (cfg.dark) {
+    L.push("- 다크모드: 위 배경/표면/텍스트 토큰을 그대로 쓰고, 그림자 대신 border로 층을 표현.");
+  }
+  L.push("");
+  L.push("화면마다 다른 스타일을 쓰지 말고, 위 시스템을 끝까지 일관되게 적용해줘.");
+  L.push("");
+  return L.join("\n");
+}
