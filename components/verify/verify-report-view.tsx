@@ -98,6 +98,9 @@ export function VerifyReportView({
               </span>
             )}
           </h3>
+          <p className="mb-3 text-xs text-muted-foreground">
+            검수 시나리오 다운로드 시 전체 결과 확인이 가능합니다.
+          </p>
           <div className="mb-4 flex flex-wrap gap-2">
             <span className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
               총 검수 {report.passCount + report.warnCount + report.failCount}
