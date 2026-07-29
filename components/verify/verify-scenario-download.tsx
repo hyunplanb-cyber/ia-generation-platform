@@ -19,6 +19,7 @@ export function VerifyScenarioDownloadButton({
   credits,
   unlocked,
   creditsOpen,
+  className,
 }: {
   report: VerificationReport;
   // 사용자가 직접 확인하며 고른 PASS/FAIL/WARN. 결과 칸에 채워진다.
@@ -28,6 +29,7 @@ export function VerifyScenarioDownloadButton({
   credits?: number;
   unlocked?: boolean;
   creditsOpen?: boolean;
+  className?: string;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -102,7 +104,10 @@ export function VerifyScenarioDownloadButton({
       type="button"
       onClick={handleClick}
       disabled={busy}
-      className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-60"
+      className={
+        className ??
+        "inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-60"
+      }
     >
       {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
       {label}

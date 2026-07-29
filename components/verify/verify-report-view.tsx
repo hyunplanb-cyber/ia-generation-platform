@@ -50,7 +50,14 @@ function CheckRow({ check, num }: { check: Check; num: number }) {
 // 검수 리포트 하나를 그리는 표시 전용 컴포넌트.
 // 마케팅 /verify 와 프로젝트 대시보드 검수 탭이 같은 모습으로 보이도록 공유한다.
 // 항목마다 테스트ID(AUTO-/SCN-)를 붙여 다운로드 엑셀과 번호가 맞도록 한다.
-export function VerifyReportView({ report }: { report: VerificationReport }) {
+export function VerifyReportView({
+  report,
+  preview = false,
+}: {
+  report: VerificationReport;
+  // 미리보기: 시나리오를 3개까지만 보여주고 "외 N개 시나리오 생성" 표기.
+  preview?: boolean;
+}) {
   // 자동 검사 항목의 전체 순번(엑셀 AUTO-001…과 동일 순서)을 미리 매긴다.
   const autoNum = new Map<string, number>();
   report.checks.forEach((c, i) => autoNum.set(c.id, i + 1));
@@ -144,13 +151,6 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
         </section>
       )}
 
-      {report.mode === "document" && (
-        <p className="rounded-lg bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-          문서만으로는 자동 검사(Pass/Fail)를 하지 않아요. 사이트가 만들어지면 URL을 넣어 실제 검수를
-          받아보세요.
-        </p>
-      )}
-
       {/* 직접 확인 시나리오 — 항목마다 테스트ID(SCN-…). 결과 표시는 다운로드 엑셀에서 */}
       {report.scenarios.length > 0 && (
         <section className="rounded-xl border border-border bg-background p-5">
@@ -170,24 +170,33 @@ export function VerifyReportView({ report }: { report: VerificationReport }) {
             )}
           </p>
           <ul className="flex flex-col gap-4">
-            {report.scenarios.map((s, i) => (
-              <li key={i} className="border-t border-border/60 pt-4 first:border-t-0 first:pt-0">
-                <p className="mb-1.5 flex items-center gap-1.5 font-medium text-foreground">
-                  {s.area === "sensitive" && <Lock className="size-3.5 text-warning" />}
-                  {s.screen}
-                </p>
-                <ul className="flex flex-col gap-1">
-                  {s.steps.map((step, j) => (
-                    <li key={j} className="flex items-baseline gap-2 text-sm text-muted-foreground">
-                      <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
-                        {stepIds[i][j]}
-                      </span>
-                      <span>{step}</span>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
+            {report.scenarios.map((s, i) => {
+              const shown = preview ? s.steps.slice(0, 3) : s.steps;
+              const rest = s.steps.length - shown.length;
+              return (
+                <li key={i} className="border-t border-border/60 pt-4 first:border-t-0 first:pt-0">
+                  <p className="mb-1.5 flex items-center gap-1.5 font-medium text-foreground">
+                    {s.area === "sensitive" && <Lock className="size-3.5 text-warning" />}
+                    {s.screen}
+                  </p>
+                  <ul className="flex flex-col gap-1">
+                    {shown.map((step, j) => (
+                      <li key={j} className="flex items-baseline gap-2 text-sm text-muted-foreground">
+                        <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
+                          {stepIds[i][j]}
+                        </span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {preview && rest > 0 && (
+                    <p className="mt-1.5 pl-[3.25rem] text-xs font-medium text-primary">
+                      외 {rest}개 시나리오 생성
+                    </p>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
       )}

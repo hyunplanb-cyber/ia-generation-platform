@@ -18,6 +18,7 @@ export interface ProjectVerifyState {
   report: VerificationReport | null;
   error: string | null;
   limitReached: boolean;
+  runId: string | null;
 }
 
 const REASON_MESSAGE: Record<string, string> = {
@@ -28,7 +29,7 @@ const REASON_MESSAGE: Record<string, string> = {
 };
 
 function fail(error: string): ProjectVerifyState {
-  return { report: null, error, limitReached: false };
+  return { report: null, error, limitReached: false, runId: null };
 }
 
 // 프로젝트에 연결해서 사이트를 검수한다. 결과는 이 프로젝트의 검수 기록으로 저장된다.
@@ -55,7 +56,7 @@ export async function runProjectVerifyAction(
   if (!CREDITS_OPEN) {
     const quota = await getVerifyQuota();
     if (!quota.allowed) {
-      return { report: null, error: null, limitReached: true };
+      return { report: null, error: null, limitReached: true, runId: null };
     }
   }
 
@@ -72,12 +73,14 @@ export async function runProjectVerifyAction(
     await spendCredits(cost, "사이트 검수(프로젝트)", { projectId });
   }
 
+  let runId: string | null = null;
   try {
-    await drizzleVerifyRunRepository.create({
+    const run = await drizzleVerifyRunRepository.create({
       userId: ownerId,
       projectId,
       report: result.report,
     });
+    runId = run.id;
   } catch (error) {
     console.error("프로젝트 검수 저장 실패", error);
   }
@@ -85,7 +88,7 @@ export async function runProjectVerifyAction(
   // 검수 기록 목록을 새로 읽어오도록.
   revalidatePath(`/dashboard/${projectId}/verify`);
 
-  return { report: result.report, error: null, limitReached: false };
+  return { report: result.report, error: null, limitReached: false, runId };
 }
 
 // 생성된 산출물(화면·기능·버튼 연결)을 바탕으로 검수 시나리오를 만든다. 사이트 URL은 필요 없다.
@@ -108,7 +111,7 @@ export async function generateScenariosAction(
   // 결제 전에는 무료 횟수, 결제 켜지면 크레딧으로.
   if (!CREDITS_OPEN) {
     const quota = await getVerifyQuota();
-    if (!quota.allowed) return { report: null, error: null, limitReached: true };
+    if (!quota.allowed) return { report: null, error: null, limitReached: true, runId: null };
   }
   const cost = CREDIT_COST.verifyDoc;
   if (CREDITS_OPEN && (await getCreditBalance()) < cost) {
@@ -135,16 +138,18 @@ export async function generateScenariosAction(
     await spendCredits(cost, "검수 시나리오 생성", { projectId });
   }
 
+  let runId: string | null = null;
   try {
-    await drizzleVerifyRunRepository.create({
+    const run = await drizzleVerifyRunRepository.create({
       userId: ownerId,
       projectId,
       report: result.report,
     });
+    runId = run.id;
   } catch (error) {
     console.error("검수 시나리오 저장 실패", error);
   }
 
   revalidatePath(`/dashboard/${projectId}/verify`);
-  return { report: result.report, error: null, limitReached: false };
+  return { report: result.report, error: null, limitReached: false, runId };
 }
