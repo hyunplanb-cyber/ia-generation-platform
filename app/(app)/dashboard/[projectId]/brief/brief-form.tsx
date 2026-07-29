@@ -210,15 +210,17 @@ export function BriefForm({
                       >
                         <span className="flex items-center justify-between gap-2">
                           <span className="font-semibold text-foreground">{opt.title}</span>
-                          <span
-                            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                              on
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            {opt.credit}
-                          </span>
+                          {creditsOpen && (
+                            <span
+                              className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                                on
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              {opt.credit}
+                            </span>
+                          )}
                         </span>
                         <span className="text-xs leading-relaxed text-muted-foreground">
                           {opt.desc}

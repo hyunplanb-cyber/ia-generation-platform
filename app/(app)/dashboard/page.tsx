@@ -15,7 +15,6 @@ import { listMyProjects } from "@/application/list-my-projects";
 import { listProjectResults, type ProjectResult } from "@/application/list-project-results";
 import { listMyVerifyRuns } from "@/application/list-my-verify-runs";
 import { requireSession } from "@/application/require-session";
-import { canDownload } from "@/application/get-current-plan";
 import { getProjectQuota } from "@/application/can-create-project";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
@@ -23,7 +22,6 @@ import { ZipAllButton } from "./zip-all-button";
 import { CREDITS_OPEN } from "@/lib/flags";
 import { isDownloadUnlocked, isVerifyDownloadUnlocked } from "@/application/download";
 import { downloadCost, CREDIT_COST } from "@/lib/credits";
-import { UpgradeToDownload } from "./[projectId]/upgrade-to-download";
 import { ProjectDeliverablePreview } from "./project-deliverable-preview";
 import { createDraftProjectAction } from "./actions";
 
@@ -72,11 +70,10 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<{ limit?: string; tab?: string }>;
 }) {
-  const [{ limit, tab }, session, projects, downloadable] = await Promise.all([
+  const [{ limit, tab }, session, projects] = await Promise.all([
     searchParams,
     requireSession(),
     listMyProjects(),
-    canDownload(),
   ]);
   const activeTab = tab === "verify" ? "verify" : "planning";
   const quota = await getProjectQuota(projects.length);
@@ -111,7 +108,6 @@ export default async function DashboardPage({
         draftCount={projects.length - completed.length}
         hitLimit={hitLimit}
         quotaLimit={quota.limit}
-        downloadable={downloadable}
       />
     );
   }
@@ -138,7 +134,6 @@ function PlanningTab({
   draftCount,
   hitLimit,
   quotaLimit,
-  downloadable,
 }: {
   completed: Awaited<ReturnType<typeof listMyProjects>>;
   results: Record<string, ProjectResult>;
@@ -147,7 +142,6 @@ function PlanningTab({
   draftCount: number;
   hitLimit: boolean;
   quotaLimit: number | null;
-  downloadable: boolean;
 }) {
   const newButton = hitLimit ? (
     <span
@@ -196,7 +190,7 @@ function PlanningTab({
       {hitLimit && (
         <p className="rounded-xl border border-border bg-muted/40 px-5 py-4 text-sm text-muted-foreground">
           무료 플랜에서는 프로젝트를 <b className="font-semibold text-foreground">{quotaLimit}개</b>까지
-          만들 수 있어요. 새로 만들려면 기존 프로젝트를 지우거나, 유료 플랜이 열릴 때까지 기다려 주세요.
+          만들 수 있어요. 새로 만들려면 기존 프로젝트를 지우거나, 정식 오픈까지 기다려 주세요.
         </p>
       )}
 

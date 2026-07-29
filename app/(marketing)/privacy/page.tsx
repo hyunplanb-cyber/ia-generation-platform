@@ -3,8 +3,8 @@ import { LegalPage, Section, Clause, List, DataTable, Fill } from "../legal-doc"
 import { BUSINESS } from "@/lib/business";
 
 export const metadata: Metadata = {
-  title: "개인정보처리방침 | IA 자동생성 플랫폼",
-  description: "IA 자동생성 플랫폼의 개인정보 수집·이용·보관에 관한 안내입니다.",
+  title: "개인정보처리방침 | 카페인컬러",
+  description: "카페인컬러의 개인정보 수집·이용·보관에 관한 안내입니다.",
 };
 
 export default function PrivacyPage() {
@@ -12,7 +12,7 @@ export default function PrivacyPage() {
     <LegalPage
       title="개인정보처리방침"
       effectiveDate="2026년 8월 1일"
-      intro="IA 자동생성 플랫폼은 이용자의 개인정보를 소중히 다루며, 개인정보 보호법 등 관련 법령을 준수합니다."
+      intro="카페인컬러은 이용자의 개인정보를 소중히 다루며, 개인정보 보호법 등 관련 법령을 준수합니다."
     >
       <Section title="1. 수집하는 개인정보 항목">
         <DataTable

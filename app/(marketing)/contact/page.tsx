@@ -3,7 +3,7 @@ import { Mail, Building2, Clock } from "lucide-react";
 import { BUSINESS, businessInfoRows } from "@/lib/business";
 
 export const metadata: Metadata = {
-  title: "문의하기 | IA 자동생성 플랫폼",
+  title: "문의하기 | 카페인컬러",
   description: "서비스 이용 문의, 환불 요청, 개인정보 관련 문의를 받습니다.",
 };
 

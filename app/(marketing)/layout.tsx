@@ -56,7 +56,7 @@ export default function MarketingLayout({
                 문의하기
               </Link>
             </nav>
-            <p>© {year} IA 자동생성 플랫폼</p>
+            <p>© {year} 카페인컬러</p>
           </div>
         </div>
       </footer>

@@ -3,8 +3,8 @@ import { LegalPage, Section, Clause, List } from "../legal-doc";
 import { BUSINESS } from "@/lib/business";
 
 export const metadata: Metadata = {
-  title: "이용약관 | IA 자동생성 플랫폼",
-  description: "IA 자동생성 플랫폼 서비스 이용약관입니다.",
+  title: "이용약관 | 카페인컬러",
+  description: "카페인컬러 서비스 이용약관입니다.",
 };
 
 export default function TermsPage() {
@@ -12,11 +12,11 @@ export default function TermsPage() {
     <LegalPage
       title="이용약관"
       effectiveDate="2026년 8월 1일"
-      intro="IA 자동생성 플랫폼(이하 “서비스”)의 이용 조건과 절차, 회사와 회원의 권리·의무를 정합니다."
+      intro="카페인컬러(이하 “서비스”)의 이용 조건과 절차, 회사와 회원의 권리·의무를 정합니다."
     >
       <Section title="제1조 (목적)">
         <Clause>
-          이 약관은 {BUSINESS.name}(이하 “회사”)이 제공하는 IA 자동생성 플랫폼 서비스의
+          이 약관은 {BUSINESS.name}(이하 “회사”)이 제공하는 카페인컬러 서비스의
           이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항을 규정하는 것을 목적으로 합니다.
         </Clause>
       </Section>

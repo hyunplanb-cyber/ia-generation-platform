@@ -146,7 +146,7 @@ export function VerifyPanel({
         <div className="rounded-xl border border-primary/30 bg-primary-soft/30 p-6 text-center">
           <p className="font-semibold text-foreground">무료 이용 횟수를 다 쓰셨어요</p>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            계속 이용하는 유료 플랜을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요.
+            계속 이용하려면 크레딧이 필요해요. 충전 기능을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요.
           </p>
         </div>
       )}

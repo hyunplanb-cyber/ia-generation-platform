@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IA 자동생성 플랫폼",
+  title: "카페인컬러",
   description: "사이트 컨셉과 메뉴만 입력하면 IA·화면기능정의·AI프롬프트·일정을 자동으로 만들어드려요.",
 };
 
