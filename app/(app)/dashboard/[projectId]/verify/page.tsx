@@ -55,48 +55,46 @@ export default async function ProjectVerifyPage({
         </p>
       </div>
 
-      {/* 메인: 무엇을 검수하는지(강조) + 보조: 왜 필요한지 */}
-      <div className="flex flex-col gap-5 rounded-xl border border-border bg-muted/20 p-5">
-        <div>
-          <h2 className="text-lg font-extrabold text-foreground">지금 산출물 기준, 이런 부분을 검수해요</h2>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {[
-              "계획한 화면이 다 있는지",
-              "버튼·링크가 설계대로 이동하는지",
-              "기능정의서의 핵심 기능이 실제 되는지",
-              "입력·폼 검증",
-              "빈 상태·오류 처리",
-              "모바일·반응형",
-            ].map((label) => (
-              <span
-                key={label}
-                className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-background px-3 py-1.5 text-sm font-medium text-foreground"
-              >
-                <Check className="size-3.5 shrink-0 text-primary" />
-                {label}
-              </span>
-            ))}
-          </div>
-          {plannedScreens.length > 0 ? (
-            <p className="mt-4 text-sm text-foreground">
-              이 프로젝트는 <b className="text-primary">화면 {plannedScreens.length}개</b> 기준의 검수 시나리오가
-              만들어져요.
-            </p>
-          ) : (
-            <p className="mt-4 text-sm text-muted-foreground">
-              먼저 산출물(화면 목록)을 생성하면, 그 화면들 기준으로 검수 시나리오가 만들어져요.
-            </p>
-          )}
-        </div>
+      {/* 보조 안내(먼저) — 왜 필요한지 */}
+      <div className="rounded-xl border border-border bg-muted/20 p-4">
+        <p className="text-sm font-bold text-foreground">왜 검수 시나리오가 필요할까요?</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+          바이브코딩·외주로 만든 사이트는 “화면은 있는데 버튼이 안 눌리거나, 계획한 기능이 빠지는” 경우가 많아요.
+          산출물과 하나씩 대조해 진짜 다 됐는지 확인해야 오픈 후 사고를 막습니다.
+        </p>
+      </div>
 
-        {/* 보조 안내 */}
-        <div className="rounded-lg border border-border/70 bg-background/50 p-3">
-          <p className="text-xs font-semibold text-muted-foreground">왜 검수 시나리오가 필요할까요?</p>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-            바이브코딩·외주로 만든 사이트는 “화면은 있는데 버튼이 안 눌리거나, 계획한 기능이 빠지는” 경우가 많아요.
-            산출물과 하나씩 대조해 진짜 다 됐는지 확인해야 오픈 후 사고를 막습니다.
-          </p>
+      {/* 메인(강조) — 무엇을 검수하는지 */}
+      <div>
+        <h2 className="text-lg font-extrabold text-foreground">지금 산출물 기준, 이런 부분을 검수해요</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {[
+            "계획한 화면이 다 있는지",
+            "버튼·링크가 설계대로 이동하는지",
+            "기능정의서의 핵심 기능이 실제 되는지",
+            "입력·폼 검증",
+            "빈 상태·오류 처리",
+            "모바일·반응형",
+          ].map((label) => (
+            <span
+              key={label}
+              className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-background px-3 py-1.5 text-sm font-medium text-foreground"
+            >
+              <Check className="size-3.5 shrink-0 text-primary" />
+              {label}
+            </span>
+          ))}
         </div>
+        {plannedScreens.length > 0 ? (
+          <p className="mt-4 text-sm text-foreground">
+            이 프로젝트는 <b className="text-primary">화면 {plannedScreens.length}개</b> 기준의 검수 시나리오가
+            만들어져요.
+          </p>
+        ) : (
+          <p className="mt-4 text-sm text-muted-foreground">
+            먼저 산출물(화면 목록)을 생성하면, 그 화면들 기준으로 검수 시나리오가 만들어져요.
+          </p>
+        )}
       </div>
 
       {/* 설계도 대비 — 계획한 화면 목록을 옆에 두고 결과와 견줘볼 수 있게 */}
