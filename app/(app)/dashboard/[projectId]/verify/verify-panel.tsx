@@ -49,7 +49,11 @@ export function VerifyPanel({
                     : "검수 시나리오 생성"}
               </Button>
             </form>
-            <p className="mt-2 text-xs text-muted-foreground">다운로드(엑셀)는 이후 별도예요.</p>
+            <ul className="mt-3 flex flex-col gap-1 text-[11px] leading-relaxed text-muted-foreground">
+              <li>· 생성 시 산출물 기준 검수 시나리오가 생성됩니다.</li>
+              <li>· 검수 시나리오는 다운로드하여 사용 가능합니다.</li>
+              <li>· 검수 시나리오 다운로드 시 별도 비용이 발생하니 참고해 주세요.</li>
+            </ul>
           </div>
         </div>
       </div>
