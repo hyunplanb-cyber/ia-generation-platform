@@ -7,8 +7,8 @@ import { CREDITS_OPEN } from "@/lib/flags";
 import { CREDIT_COST } from "@/lib/credits";
 import { parsePresetConfig, type PresetConfig } from "@/lib/design-presets";
 
-// 프리셋 "생성"(첫 저장) 비용 — 검수 시나리오 생성과 동일하게 4크레딧.
-export const PRESET_GEN_COST = CREDIT_COST.genBasic;
+// 프리셋 다운로드 비용 — 검수 시나리오 다운로드와 동일하게 99크레딧(9,900원).
+export const PRESET_DOWNLOAD_COST = CREDIT_COST.optionPreset;
 
 export type PresetSaveResult =
   | { ok: true; charged: boolean }
@@ -37,7 +37,7 @@ export async function savePresetConfig(
     let charged = false;
 
     if (CREDITS_OPEN && firstTime) {
-      const spend = await spendCredits(PRESET_GEN_COST, "디자인 프리셋 다운로드", { projectId });
+      const spend = await spendCredits(PRESET_DOWNLOAD_COST, "디자인 프리셋 다운로드", { projectId });
       if (!spend.ok) return { ok: false, reason: "insufficient", balance: spend.balance };
       charged = true;
     }
