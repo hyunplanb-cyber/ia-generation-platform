@@ -264,7 +264,7 @@ function AddonSection({ base }: { base: string }) {
           icon={Palette}
           title="디자인 프리셋"
           desc="색·글꼴·모서리·밀도를 직접 골라 개발에 바로 쓰는 디자인 시스템을 만들어요."
-          badge="생성 4 · 다운로드 99크레딧"
+          badge=""
           tone="action"
         />
         <AddonCard
@@ -272,7 +272,7 @@ function AddonSection({ base }: { base: string }) {
           icon={ShieldQuestion}
           title="검수 시나리오"
           desc="설계도 대비 진짜 다 됐는지 확인할 검수 시나리오 + 자동 검사."
-          badge="생성 · 4크레딧"
+          badge=""
           tone="action"
         />
         <AddonCard
@@ -322,9 +322,11 @@ function AddonCard({
         {title}
       </span>
       <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
-      <span className={`mt-1 w-fit rounded-md px-2 py-0.5 text-xs font-bold ${badgeClass}`}>
-        {badge}
-      </span>
+      {badge && (
+        <span className={`mt-1 w-fit rounded-md px-2 py-0.5 text-xs font-bold ${badgeClass}`}>
+          {badge}
+        </span>
+      )}
     </div>
   );
   return href ? (
