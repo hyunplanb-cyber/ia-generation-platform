@@ -209,37 +209,38 @@ function AddonNav({ base }: { base: string }) {
     { href: `${base}admin`, title: "관리자 산출물", badge: "준비 중", tone: "soon", icon: ShieldCheck },
   ];
   return (
-    <div className="mt-3 flex flex-col gap-1.5 rounded-xl border border-primary/25 bg-primary-soft/15 p-2.5">
-      <p className="flex items-center gap-1 px-1 pb-0.5 text-xs font-bold text-primary">
-        <Sparkles className="size-3.5" /> 추가 산출물
-      </p>
-      {items.map((it) => {
-        const Icon = it.icon;
-        const badgeClass =
-          it.tone === "action"
-            ? "bg-primary text-primary-foreground"
-            : it.tone === "ready"
-              ? "bg-success-soft text-success"
-              : "bg-muted text-muted-foreground";
-        const inner = (
-          <div className="flex items-center justify-between gap-1.5 rounded-lg bg-background px-2.5 py-2">
-            <span className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-foreground">
-              <Icon className="size-3.5 shrink-0 text-primary" />
-              <span className="truncate">{it.title}</span>
-            </span>
-            <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${badgeClass}`}>
-              {it.badge}
-            </span>
-          </div>
-        );
-        return it.href ? (
-          <Link key={it.title} href={it.href} className="block hover:opacity-90">
-            {inner}
-          </Link>
-        ) : (
-          <div key={it.title}>{inner}</div>
-        );
-      })}
+    <div className="mt-3">
+      <div className="mb-3 h-px bg-border" />
+      <p className="mb-1.5 px-1.5 text-sm font-extrabold text-foreground">완성도를 높이세요.</p>
+      <div className="flex flex-col">
+        {items.map((it) => {
+          const Icon = it.icon;
+          const badgeClass =
+            it.tone === "action"
+              ? "bg-primary text-primary-foreground"
+              : it.tone === "ready"
+                ? "bg-success-soft text-success"
+                : "bg-muted text-muted-foreground";
+          const inner = (
+            <div className="flex items-center justify-between gap-2 rounded-lg px-1.5 py-2 transition-colors hover:bg-muted">
+              <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-foreground">
+                <Icon className="size-4 shrink-0 text-primary" />
+                <span className="truncate">{it.title}</span>
+              </span>
+              <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${badgeClass}`}>
+                {it.badge}
+              </span>
+            </div>
+          );
+          return it.href ? (
+            <Link key={it.title} href={it.href} className="block">
+              {inner}
+            </Link>
+          ) : (
+            <div key={it.title}>{inner}</div>
+          );
+        })}
+      </div>
     </div>
   );
 }
