@@ -468,7 +468,10 @@ async function fetchPage(url: string, origin: string): Promise<PageData> {
   }
 }
 
-export async function runHttpChecks(rawUrl: string): Promise<HttpCheckResult> {
+// 기본 등급에서 노출하는 페이지 검사 항목(7개). 상세는 여기에 og·h1·인코딩·alt·혼합콘텐츠까지 전부.
+const BASIC_PAGE_CHECKS = new Set(["reachable", "speed", "viewport", "seo", "images", "links"]);
+
+export async function runHttpChecks(rawUrl: string, detail = false): Promise<HttpCheckResult> {
   const target = normalizeUrl(rawUrl);
 
   // 홈 페이지 — 접속 자체가 안 되면 여기서 접속 실패만 담아 돌려준다(예전과 동일).
@@ -512,9 +515,11 @@ export async function runHttpChecks(rawUrl: string): Promise<HttpCheckResult> {
     }
   }
   const uniqueInternal = [...new Set(internalAbs)];
+  // 기본은 홈만, 상세는 홈+주요 화면까지 크롤한다.
+  const maxPages = detail ? MAX_PAGES : 1;
   // 후보를 넉넉히 뽑는다 — 리다이렉트로 같은 페이지(예: 여러 링크가 /login으로)로
   // 모이면 중복 제거 후 페이지 수가 줄기 때문에, 여유분을 두고 최종 경로로 합친다.
-  const subTargets = pickCrawlTargets(uniqueInternal, finalUrl, MAX_PAGES + 3);
+  const subTargets = detail ? pickCrawlTargets(uniqueInternal, finalUrl, MAX_PAGES + 3) : [];
 
   // 사이트 전체 검사 + 하위 페이지 받아오기를 동시에 시작
   const [siteChecks, fetchedSubs] = await Promise.all([
@@ -535,7 +540,7 @@ export async function runHttpChecks(rawUrl: string): Promise<HttpCheckResult> {
     if (seenPaths.has(path)) continue;
     seenPaths.add(path);
     subPages.push(p);
-    if (subPages.length >= MAX_PAGES - 1) break;
+    if (subPages.length >= maxPages - 1) break;
   }
 
   // 페이지별 검사 — 홈 먼저, 그다음 하위 페이지들
@@ -553,8 +558,18 @@ export async function runHttpChecks(rawUrl: string): Promise<HttpCheckResult> {
     checkPage(p, origin, host, i === 0 ? HOME_ASSETS : SUB_ASSETS),
   );
 
+  // 기본 등급은 항목을 7개로 좁힌다(사이트 전체 검사는 보안 연결만, 페이지 검사는 핵심만).
+  // 상세 등급은 전부 노출 + 여러 페이지 크롤로 실제 검수 깊이가 더 깊다.
+  let siteFinal = siteChecks;
+  let perPageFinal = perPage.flat();
+  if (!detail) {
+    siteFinal = siteChecks.filter((c) => c.id === "site:https");
+    perPageFinal = perPageFinal.filter((c) =>
+      BASIC_PAGE_CHECKS.has(c.id.split(":").pop() ?? ""),
+    );
+  }
   // 순서: 사이트 전체 → 홈 → 하위 페이지. (엑셀·화면의 AUTO 번호가 이 순서로 매겨진다)
-  const checks: Check[] = [...siteChecks, ...perPage.flat()];
+  const checks: Check[] = [...siteFinal, ...perPageFinal];
 
   // LLM에 넘길 본문은 태그를 살리되 스크립트/스타일을 걷어내고 길이를 제한한다.
   const trimmed = homeHtml

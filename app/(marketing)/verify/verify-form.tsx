@@ -32,6 +32,7 @@ type ScaleCard = {
   key: "basic" | "detail";
   title: string;
   cost: number;
+  best?: boolean; // 더 촘촘한 추천 옵션
   desc?: string;
   checks?: string;
   scnTitle?: string;
@@ -49,6 +50,7 @@ const FILE_SCALES: ScaleCard[] = [
     key: "detail",
     title: "상세 · 100~150개 시나리오",
     cost: 8,
+    best: true,
     desc: "상세 화면과 기능까지 촘촘히. 실무 산출물 수준, 조금 더 걸려요.",
   },
 ];
@@ -66,6 +68,7 @@ const URL_SCALES: ScaleCard[] = [
     key: "detail",
     title: "홈+주요 화면을 기준으로 11개 항목 검수",
     cost: 16,
+    best: true,
     checks:
       "페이지 열림, 응답 속도, 모바일 대응, 검색 기본(제목·설명), SNS 공유 카드, 대표 제목, 인코딩·언어 설정, 이미지 대체 텍스트, 혼합 콘텐츠(http 리소스), 이미지 깨짐, 내부 링크 깨짐",
     scnTitle: "민감화면 시나리오",
@@ -467,8 +470,12 @@ export function VerifyForm({
                 : "아래 버튼을 누르면 AI가 사이트의 공개 화면을 검수하여 결과를 도출하고 민감 화면의 검수 시나리오를 만들어드려요."}
             </p>
 
-            <p className="mb-2 text-sm font-bold text-foreground">얼마나 촘촘하게 검수하실건가요?</p>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <p className="mb-1 text-sm font-bold text-foreground">얼마나 촘촘하게 검수하실건가요?</p>
+            <p className="mb-2 text-xs text-muted-foreground">
+              상세일수록 <b className="text-foreground">검수하는 화면·항목이 많고 더 깊게</b> 봐요. 오픈 직전이라면
+              상세를 추천해요.
+            </p>
+            <div className="grid items-stretch gap-3 sm:grid-cols-2">
               {(isFile ? FILE_SCALES : URL_SCALES).map((c) => {
                 const active = scale === c.key;
                 return (
@@ -476,10 +483,19 @@ export function VerifyForm({
                     type="button"
                     key={c.key}
                     onClick={() => setScale(c.key)}
-                    className={`flex flex-col rounded-xl border-2 bg-background p-4 text-left transition-colors ${
-                      active ? "border-primary" : "border-border hover:border-primary/40"
+                    className={`relative flex flex-col rounded-xl border-2 bg-background p-4 pt-5 text-left transition-all ${
+                      active
+                        ? "border-primary shadow-md"
+                        : c.best
+                          ? "border-primary/50 hover:border-primary"
+                          : "border-border hover:border-primary/40"
                     }`}
                   >
+                    {c.best && (
+                      <span className="absolute -top-2.5 left-3 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-sm">
+                        추천 · 가장 촘촘
+                      </span>
+                    )}
                     <div className="flex items-start justify-between gap-2">
                       <span className="text-sm font-extrabold text-foreground">{c.title}</span>
                       <span

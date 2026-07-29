@@ -66,10 +66,10 @@ function docReasonFor(error: unknown): "unavailable" | "bad-output" | "api-error
 //  2) LLM이 HTML을 읽어 민감 화면 분류 + 확인 시나리오 + 쉬운 총평
 // 두 결과를 하나의 리포트로 합친다.
 export async function verifySite(rawUrl: string, detail = false): Promise<VerifySiteResult> {
-  // 1) 자동 검사 (주소 형식/차단 호스트는 여기서 걸러짐)
+  // 1) 자동 검사 (주소 형식/차단 호스트는 여기서 걸러짐). 상세면 여러 페이지 + 전체 항목.
   let http;
   try {
-    http = await runHttpChecks(rawUrl);
+    http = await runHttpChecks(rawUrl, detail);
   } catch (error) {
     if (error instanceof Error && (error.message === "BLOCKED_HOST" || error.message === "INVALID_PROTOCOL")) {
       return { ok: false, reason: "bad-url" };
