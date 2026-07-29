@@ -170,39 +170,103 @@ export function ProjectShell({
                 </Link>
               );
             })}
-            {/* 별도 행동 — 사이트 검수(산출물을 '보는' 게 아니라 '검수를 실행') */}
-            <div className="mx-1 my-1 hidden h-px bg-border lg:block" />
-            <Link
-              href={`${base}verify`}
-              className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                pathname.startsWith(`${base}verify`)
-                  ? "bg-primary-soft text-primary-on-soft"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              <ShieldQuestion className="size-4 shrink-0" />
-              사이트 검수
-            </Link>
-            <Link
-              href={`${base}admin`}
-              className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                pathname.startsWith(`${base}admin`)
-                  ? "bg-primary-soft text-primary-on-soft"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              <ShieldCheck className="size-4 shrink-0" />
-              관리자 백오피스
-              <span className="ml-auto rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                준비 중
-              </span>
-            </Link>
           </nav>
-          <div className="min-w-0 flex-1">{children}</div>
+          <div className="min-w-0 flex-1">
+            {children}
+            <AddonSection base={base} />
+          </div>
         </div>
       ) : (
         <div>{children}</div>
       )}
     </div>
+  );
+}
+
+// 완성도를 높이는 추가 산출물 — 기본 탭과 다른 프리미엄 느낌으로 강조.
+function AddonSection({ base }: { base: string }) {
+  return (
+    <section className="mt-8 rounded-2xl border-2 border-primary/25 bg-primary-soft/20 p-5">
+      <div className="mb-1 flex flex-wrap items-center gap-2">
+        <Sparkles className="size-5 text-primary" />
+        <h3 className="text-base font-extrabold text-foreground">완성도를 높이는 추가 산출물</h3>
+      </div>
+      <p className="mb-4 text-sm text-muted-foreground">
+        기본 산출물에 이걸 더하면 실제로 바로 쓸 수 있는 수준으로 올라가요. 필요한 것만 고르세요.
+      </p>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <AddonCard
+          icon={Palette}
+          title="디자인 프리셋"
+          desc="고른 스타일의 색·타이포·컴포넌트 규칙. AI 코딩 도구에 넣으면 그 디자인으로 만들어져요."
+          badge="전체 다운로드에 포함"
+          tone="ready"
+        />
+        <AddonCard
+          href={`${base}verify`}
+          icon={ShieldQuestion}
+          title="검수 시나리오"
+          desc="설계도 대비 진짜 다 됐는지 확인할 검수 시나리오 + 자동 검사."
+          badge="생성 · 4크레딧"
+          tone="action"
+        />
+        <AddonCard
+          href={`${base}admin`}
+          icon={ShieldCheck}
+          title="관리자 산출물"
+          desc="회원·상품·주문·통계를 다루는 백오피스 IA 한 벌."
+          badge="준비 중"
+          tone="soon"
+        />
+      </div>
+    </section>
+  );
+}
+
+function AddonCard({
+  href,
+  icon: Icon,
+  title,
+  desc,
+  badge,
+  tone,
+}: {
+  href?: string;
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  badge: string;
+  tone: "ready" | "action" | "soon";
+}) {
+  const badgeClass =
+    tone === "action"
+      ? "bg-primary text-primary-foreground"
+      : tone === "ready"
+        ? "bg-success-soft text-success"
+        : "bg-muted text-muted-foreground";
+  const inner = (
+    <div
+      className={`flex h-full flex-col gap-1.5 rounded-xl border border-border bg-background p-4 transition-all ${
+        href ? "hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md" : ""
+      }`}
+    >
+      <span className="flex items-center gap-2 font-bold text-foreground">
+        <span className="flex size-7 items-center justify-center rounded-lg bg-primary-soft text-primary-on-soft">
+          <Icon className="size-4" />
+        </span>
+        {title}
+      </span>
+      <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
+      <span className={`mt-1 w-fit rounded-md px-2 py-0.5 text-xs font-bold ${badgeClass}`}>
+        {badge}
+      </span>
+    </div>
+  );
+  return href ? (
+    <Link href={href} className="block h-full">
+      {inner}
+    </Link>
+  ) : (
+    inner
   );
 }
