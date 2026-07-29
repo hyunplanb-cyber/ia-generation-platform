@@ -49,6 +49,25 @@ export function wonToCredits(won: number): number {
   return Math.round(won / WON_PER_CREDIT);
 }
 
+// 충전 금액별 보너스율(팩과 동일 기준). 직접 입력 충전에도 그대로 적용한다.
+export function bonusPctForWon(won: number): number {
+  if (won >= 20000) return 30;
+  if (won >= 10000) return 20;
+  if (won >= 5000) return 10;
+  return 0;
+}
+
+// 충전 금액(원) → 지급 크레딧(기본 + 보너스). 5,000→55 / 10,000→120 / 20,000→260 과 일치.
+export function creditsForWon(won: number): number {
+  const base = Math.floor(won / WON_PER_CREDIT);
+  return base + Math.floor((base * bonusPctForWon(won)) / 100);
+}
+
+// 직접 입력 충전 한도(1,000원 단위).
+export const CUSTOM_MIN_WON = 1000;
+export const CUSTOM_MAX_WON = 1000000;
+export const CUSTOM_STEP_WON = 1000;
+
 // 프로젝트 산출물 전체 다운로드 원가 — 상세(3뎁스)면 더 비싸다.
 export function downloadCost(hasDetail: boolean): number {
   return hasDetail ? CREDIT_COST.downloadScreens150 : CREDIT_COST.downloadScreens30;

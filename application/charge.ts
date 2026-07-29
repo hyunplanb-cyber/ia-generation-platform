@@ -5,7 +5,13 @@ import { creditOrder } from "@/db/schema";
 import { requireSession } from "@/application/require-session";
 import { chargeCredits } from "@/application/credit";
 import { confirmTossPayment } from "@/adapters/payment/toss";
-import { packById } from "@/lib/credits";
+import {
+  packById,
+  creditsForWon,
+  CUSTOM_MIN_WON,
+  CUSTOM_MAX_WON,
+  CUSTOM_STEP_WON,
+} from "@/lib/credits";
 
 export interface StartedOrder {
   orderId: string;
@@ -34,6 +40,30 @@ export async function createChargeOrder(packId: string): Promise<StartedOrder | 
     credits: pack.credits,
     orderName: `${pack.name} 크레딧 ${pack.credits}개`,
   };
+}
+
+// 직접 입력 충전(1,000원 단위) 주문 생성. 금액·크레딧은 서버가 확정한다.
+export async function createCustomChargeOrder(amountKrw: number): Promise<StartedOrder | null> {
+  if (
+    !Number.isFinite(amountKrw) ||
+    amountKrw < CUSTOM_MIN_WON ||
+    amountKrw > CUSTOM_MAX_WON ||
+    amountKrw % CUSTOM_STEP_WON !== 0
+  ) {
+    return null;
+  }
+  const session = await requireSession();
+  const credits = creditsForWon(amountKrw);
+  const orderId = `credit_${randomUUID().replace(/-/g, "")}`;
+  await db.insert(creditOrder).values({
+    orderId,
+    userId: session.user.id,
+    packId: "custom",
+    amountKrw,
+    credits,
+    status: "pending",
+  });
+  return { orderId, amountKrw, credits, orderName: `크레딧 ${credits}개 충전` };
 }
 
 export type ConfirmResult =
