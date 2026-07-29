@@ -394,13 +394,10 @@ export function PresetForm({
                     ? `프리셋 다운로드 · ${downloadCost}크레딧`
                     : "프리셋 다운로드"}
               </button>
-              <p className="mt-2 text-xs text-muted-foreground">
-                {willChargeDownload ? (
-                  <>받을 때 <b className="text-foreground">{downloadCost}크레딧</b>이 들어요. 한 번 받으면 다시 받기는 무료예요.</>
-                ) : (
-                  <>이미 결제해서 <b className="text-foreground">다시 받기는 무료</b>예요.</>
-                )}
-              </p>
+              <ul className="mt-2 flex flex-col gap-1 text-xs text-muted-foreground">
+                <li>· 다운로드 크레딧은 처음 다운로드 시 한 번만 사용됩니다.</li>
+                <li>· 다시 받기는 무료이며, ‘나의 프로젝트’에서 가능합니다.</li>
+              </ul>
             </div>
           </div>
         </div>
