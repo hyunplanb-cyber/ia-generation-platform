@@ -2,7 +2,6 @@
 
 import { type ReactNode, useActionState, useEffect, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { generateScenariosAction, type ProjectVerifyState } from "./actions";
@@ -18,13 +17,15 @@ const initialState: ProjectVerifyState = {
 // 생성 후: 왼쪽=결과 미리보기 / 오른쪽=다운로드 패널(디자인 프리셋과 동일 형태).
 export function VerifyPanel({
   projectId,
-  cost,
+  basicCost,
+  detailCost,
   downloadCost,
   creditsOpen,
   children,
 }: {
   projectId: string;
-  cost: number;
+  basicCost: number;
+  detailCost: number;
   downloadCost: number;
   creditsOpen: boolean;
   children: ReactNode;
@@ -80,18 +81,36 @@ export function VerifyPanel({
             <>
               <p className="text-sm font-bold text-foreground">검수 시나리오 생성</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                생성된 산출물(화면·기능·버튼 연결)을 바탕으로 만들어요.
+                생성된 산출물을 바탕으로 만들어요. 규모를 골라주세요.
               </p>
-              <form action={formAction}>
+              <form action={formAction} className="mt-4 flex flex-col gap-2">
                 <input type="hidden" name="projectId" value={projectId} />
-                <Button type="submit" disabled={pending} className="mt-4 w-full gap-2">
-                  <Sparkles className="size-4" />
-                  {pending
-                    ? "생성 중…"
-                    : creditsOpen
-                      ? `검수 시나리오 생성 · ${cost}크레딧`
-                      : "검수 시나리오 생성"}
-                </Button>
+                <button
+                  type="submit"
+                  name="mode"
+                  value="basic"
+                  disabled={pending}
+                  className="flex w-full flex-col items-center rounded-lg bg-primary px-4 py-2.5 text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+                >
+                  <span className="flex items-center gap-1.5 text-sm font-bold">
+                    <Sparkles className="size-4" /> 주요 시나리오 생성
+                    {creditsOpen && <span className="opacity-80">· {basicCost}크레딧</span>}
+                  </span>
+                  <span className="text-[11px] opacity-80">약 30~50개</span>
+                </button>
+                <button
+                  type="submit"
+                  name="mode"
+                  value="detail"
+                  disabled={pending}
+                  className="flex w-full flex-col items-center rounded-lg border border-primary bg-transparent px-4 py-2.5 text-primary transition-colors hover:bg-primary/10 disabled:opacity-60"
+                >
+                  <span className="flex items-center gap-1.5 text-sm font-bold">
+                    <Sparkles className="size-4" /> 상세 시나리오 생성
+                    {creditsOpen && <span className="opacity-80">· {detailCost}크레딧</span>}
+                  </span>
+                  <span className="text-[11px] opacity-80">약 100~150개</span>
+                </button>
               </form>
               <ul className="mt-3 flex flex-col gap-1 text-[11px] leading-relaxed text-muted-foreground">
                 <li>· 생성 시 산출물 기준 검수 시나리오가 생성됩니다.</li>

@@ -1,5 +1,4 @@
 import { ShieldCheck, History, Check } from "lucide-react";
-import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { listMenus } from "@/application/list-menus";
 import { listProjectVerifyRuns } from "@/application/list-project-verify-runs";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
@@ -45,12 +44,10 @@ export default async function ProjectVerifyPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const [{ screens }, menus, runs] = await Promise.all([
-    getProjectScreensDetail(projectId),
+  const [menus, runs] = await Promise.all([
     listMenus(projectId),
     listProjectVerifyRuns(projectId),
   ]);
-  const plannedScreens = screens.filter((s) => s.status === "active");
   // 1뎁스 메뉴 상위 4개로 "이 메뉴에서 이런 걸 확인해요" 예시를 만든다.
   const menuChecks = [...menus]
     .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -81,7 +78,8 @@ export default async function ProjectVerifyPage({
 
       <VerifyPanel
         projectId={projectId}
-        cost={CREDIT_COST.verifyDoc}
+        basicCost={CREDIT_COST.genBasic}
+        detailCost={CREDIT_COST.genDetail}
         downloadCost={CREDIT_COST.downloadVerify}
         creditsOpen={CREDITS_OPEN}
       >
@@ -116,8 +114,8 @@ export default async function ProjectVerifyPage({
               ))}
             </ul>
             <p className="mt-4 text-sm text-foreground">
-              이 프로젝트는 <b className="text-primary">화면 {plannedScreens.length}개</b> 기준의 검수 시나리오가
-              만들어져요.
+              규모를 골라 생성하세요 — <b className="text-primary">주요 약 30~50개</b> 또는{" "}
+              <b className="text-primary">상세 약 100~150개</b> 시나리오를 만들어드려요.
             </p>
           </>
         ) : (
