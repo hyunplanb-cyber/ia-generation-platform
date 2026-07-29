@@ -9,6 +9,7 @@ import {
   RADIUS_FEELS,
   DENSITIES,
   primarySwatchesFor,
+  fontById,
   buildDetailedPresetMarkdown,
   buildPresetSummary,
   type PresetConfig,
@@ -92,7 +93,7 @@ export function PresetForm({
 
   const swatches = useMemo(() => primarySwatchesFor(cfg.style), [cfg.style]);
   const rad = useMemo(() => RADIUS_FEELS.find((r) => r.key === cfg.radius)!, [cfg.radius]);
-  const font = useMemo(() => FONT_FEELS.find((f) => f.key === cfg.font)!, [cfg.font]);
+  const font = useMemo(() => fontById(cfg.font), [cfg.font]);
   const den = useMemo(() => DENSITIES.find((d) => d.key === cfg.density)!, [cfg.density]);
   const sum = useMemo(() => buildPresetSummary(cfg), [cfg]);
   const pv = { bg: sum.bg, text: sum.text, muted: sum.muted, border: sum.border };
@@ -192,7 +193,7 @@ export function PresetForm({
         </div>
       </Section>
 
-      <Section title="주 색상" hint="고른 테마에 어울리는 색이에요. 버튼·강조에 쓰입니다.">
+      <Section title="포인트 색상" hint="고른 테마에 어울리는 색이에요. 버튼·강조에 쓰입니다.">
         <div className="flex flex-wrap gap-2">
           {swatches.map((hex) => (
             <button
@@ -220,11 +221,14 @@ export function PresetForm({
         </div>
       </Section>
 
-      <Section title="글꼴 느낌">
+      <Section
+        title="글꼴"
+        hint="웹에서 많이 쓰는 한글 폰트예요. AI 도구에서 쓸 땐 이 폰트를 웹폰트로 불러오거나 로컬에 설치해야 제대로 보입니다."
+      >
         <div className="flex flex-wrap gap-2">
           {FONT_FEELS.map((f) => (
             <Choice key={f.key} active={cfg.font === f.key} onClick={() => set("font", f.key as FontFeel)}>
-              {f.label}
+              <span style={{ fontFamily: f.family }}>{f.label}</span>
             </Choice>
           ))}
         </div>

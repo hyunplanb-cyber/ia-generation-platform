@@ -287,7 +287,13 @@ export function buildPresetMarkdown(p: Preset): string {
 
 // ── 상세 프리셋 설정(사용자가 더 고르는 항목) + 상세 디자인 시스템 생성 ──────────
 
-export type FontFeel = "sans" | "serif" | "rounded";
+export type FontFeel =
+  | "pretendard"
+  | "noto-sans"
+  | "gmarket"
+  | "noto-serif"
+  | "nanum-myeongjo"
+  | "paperlogy";
 export type RadiusFeel = "sharp" | "normal" | "round";
 export type Density = "cozy" | "compact";
 
@@ -313,11 +319,19 @@ export const PRIMARY_SWATCHES_BY_STYLE: Record<DesignKey, string[]> = {
 export function primarySwatchesFor(style: DesignKey): string[] {
   return PRIMARY_SWATCHES_BY_STYLE[style] ?? PRIMARY_SWATCHES_BY_STYLE.navy;
 }
-export const FONT_FEELS: { key: FontFeel; label: string; family: string }[] = [
-  { key: "sans", label: "고딕", family: "Pretendard, 'Noto Sans KR', sans-serif" },
-  { key: "serif", label: "명조", family: "'Noto Serif KR', 'Nanum Myeongjo', serif" },
-  { key: "rounded", label: "둥근", family: "Paperlogy, Pretendard, sans-serif" },
+// 웹에서 많이 쓰는 한글 폰트 제안. label=버튼 표기, name=문서에 적을 폰트명, family=CSS.
+export const FONT_FEELS: { key: FontFeel; label: string; name: string; family: string }[] = [
+  { key: "pretendard", label: "프리텐다드", name: "Pretendard", family: "Pretendard, 'Noto Sans KR', sans-serif" },
+  { key: "noto-sans", label: "본고딕", name: "Noto Sans KR", family: "'Noto Sans KR', sans-serif" },
+  { key: "gmarket", label: "지마켓 산스", name: "Gmarket Sans", family: "'Gmarket Sans', Pretendard, sans-serif" },
+  { key: "noto-serif", label: "본명조", name: "Noto Serif KR", family: "'Noto Serif KR', serif" },
+  { key: "nanum-myeongjo", label: "나눔명조", name: "Nanum Myeongjo", family: "'Nanum Myeongjo', serif" },
+  { key: "paperlogy", label: "페이퍼로지", name: "Paperlogy", family: "Paperlogy, Pretendard, sans-serif" },
 ];
+
+export function fontById(key: string): (typeof FONT_FEELS)[number] {
+  return FONT_FEELS.find((f) => f.key === key) ?? FONT_FEELS[0];
+}
 export const RADIUS_FEELS: {
   key: RadiusFeel;
   label: string;
@@ -342,12 +356,12 @@ export const DENSITIES: {
 
 // 방향별 기본 글꼴/모서리 느낌.
 const DEFAULT_FONT: Record<DesignKey, FontFeel> = {
-  navy: "sans",
-  mono: "sans",
-  pastel: "rounded",
-  retro: "serif",
-  forest: "sans",
-  coral: "rounded",
+  navy: "pretendard",
+  mono: "pretendard",
+  pastel: "paperlogy",
+  retro: "noto-serif",
+  forest: "noto-sans",
+  coral: "paperlogy",
 };
 const DEFAULT_RADIUS: Record<DesignKey, RadiusFeel> = {
   navy: "normal",
@@ -373,7 +387,12 @@ export function parsePresetConfig(json: string | null, concept?: string | null):
   if (json) {
     try {
       const c = JSON.parse(json) as Partial<PresetConfig>;
-      if (c.style) return { ...defaultPresetConfig(c.style), ...c } as PresetConfig;
+      if (c.style) {
+        const cfg = { ...defaultPresetConfig(c.style), ...c } as PresetConfig;
+        // 예전에 저장된 글꼴 값(sans/serif/rounded 등)은 기본값으로 교체.
+        if (!FONT_FEELS.some((f) => f.key === cfg.font)) cfg.font = DEFAULT_FONT[cfg.style] ?? "pretendard";
+        return cfg;
+      }
     } catch {
       /* ignore */
     }
@@ -420,7 +439,7 @@ function palette(primary: string): Record<string, string> {
 // 설정을 바탕으로 상세 디자인 시스템 문서(마크다운)를 만든다.
 export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: string): string {
   const base = PRESETS[cfg.style];
-  const font = FONT_FEELS.find((f) => f.key === cfg.font)!;
+  const font = fontById(cfg.font);
   const rad = RADIUS_FEELS.find((r) => r.key === cfg.radius)!;
   const den = DENSITIES.find((d) => d.key === cfg.density)!;
   const pal = palette(cfg.primary);
@@ -455,7 +474,10 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   L.push("");
   L.push("## 2. 타이포그래피");
   L.push("");
-  L.push(`- 폰트: **${font.label}** — \`${font.family}\``);
+  L.push(`- 폰트: **${font.name}** (${font.label}) — \`${font.family}\``);
+  L.push(
+    "  · 이 폰트를 쓰려면 웹폰트로 불러오거나(link / @font-face) 로컬에 설치돼 있어야 제대로 보입니다.",
+  );
   L.push("");
   L.push("| 용도 | 크기 / 굵기 |");
   L.push("| --- | --- |");
@@ -523,7 +545,7 @@ export interface PresetSummary {
 
 export function buildPresetSummary(cfg: PresetConfig): PresetSummary {
   const base = PRESETS[cfg.style];
-  const font = FONT_FEELS.find((f) => f.key === cfg.font)!;
+  const font = fontById(cfg.font);
   const rad = RADIUS_FEELS.find((r) => r.key === cfg.radius)!;
   const den = DENSITIES.find((d) => d.key === cfg.density)!;
   const pal = palette(cfg.primary);
