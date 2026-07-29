@@ -12,7 +12,7 @@ export default function DeliverablesPage() {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="border-b border-border bg-linear-to-br from-pastel-lavender/40 via-pastel-yellow/30 to-pastel-mint/40">
+      <section className="border-b border-border bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
         <div className="mx-auto max-w-4xl px-6 py-20 text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-on-soft">
             <LayoutList className="size-3.5" /> 산출물 소개

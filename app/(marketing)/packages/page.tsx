@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function PackagesPage() {
   return (
     <div className="bg-background">
-      <section className="bg-linear-to-br from-pastel-lavender/40 via-background to-pastel-mint/40">
+      <section className="bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
         <div className="mx-auto max-w-5xl px-6 py-14">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground shadow-sm">
             <ShoppingBag className="size-4" />
@@ -22,7 +22,7 @@ export default function PackagesPage() {
           <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
             직접 만들지 않아도 돼요.
             <br />
-            <span className="bg-pastel-yellow rounded-lg px-2 py-0.5">이미 만들어둔 패키지</span>를
+            <span className="bg-primary-soft rounded-lg px-2 py-0.5">이미 만들어둔 패키지</span>를
             바로 받으세요.
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">

@@ -42,7 +42,7 @@ export default async function FreePage() {
 
   return (
     <div className="bg-background">
-      <section className="bg-linear-to-br from-pastel-lavender/40 via-background to-pastel-mint/40">
+      <section className="bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
         <div className="mx-auto max-w-3xl px-6 pb-12 pt-12 text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground shadow-sm">
             <Gift className="size-4" />
@@ -51,7 +51,7 @@ export default async function FreePage() {
           <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
             내 콘텐츠 파는 사이트,
             <br />
-            <span className="bg-pastel-yellow rounded-lg px-2 py-0.5">설계도부터</span> 받아가세요
+            <span className="bg-primary-soft rounded-lg px-2 py-0.5">설계도부터</span> 받아가세요
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
             전자책·템플릿·강의자료를 직접 파는 1인 사이트의 기획 산출물이에요. 화면{" "}
@@ -189,7 +189,7 @@ export default async function FreePage() {
         </section>
 
         {/* 업셀 */}
-        <section className="flex flex-col items-center gap-4 rounded-2xl bg-linear-to-br from-pastel-lavender/50 via-pastel-yellow/30 to-pastel-mint/50 px-6 py-10 text-center">
+        <section className="flex flex-col items-center gap-4 rounded-2xl bg-linear-to-br from-primary-soft/50 via-background to-muted/40 px-6 py-10 text-center">
           <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             내 서비스는 어떤 화면이 나올까요?
           </h2>

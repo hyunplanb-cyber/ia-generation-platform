@@ -12,8 +12,8 @@ export const BUSINESS = {
   address: "서울특별시 강남구 학동로4길 15, 719호 동화상가 (논현동)",
   /** 대표 연락 이메일. */
   email: "caffeinecolor.all@gmail.com",
-  /** 전화번호 — 공개할 번호가 정해지면 채운다. */
-  phone: "",
+  /** 전화번호(통신판매 표시용). 추후 대표번호로 교체 예정. */
+  phone: "010-6526-9808",
 } as const;
 
 /**

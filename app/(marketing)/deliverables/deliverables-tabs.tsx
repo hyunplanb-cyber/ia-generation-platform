@@ -58,7 +58,7 @@ const DELIVERABLES: Deliverable[] = [
   },
   {
     icon: FileText,
-    tone: "bg-pastel-lavender text-pastel-lavender-foreground",
+    tone: "bg-muted text-foreground",
     name: "기능정의서",
     role: "사이트에 필요한 요건을 업무 · 기능 · 구성 계층으로 분해하고, 유형(기능·콘텐츠·UI/UX·정책)을 붙여 정리한 요구사항 정의서예요. 실무 문서 형식 그대로 내려받을 수 있어요.",
     formats: ["엑셀"],
@@ -74,7 +74,7 @@ const DELIVERABLES: Deliverable[] = [
   },
   {
     icon: CalendarRange,
-    tone: "bg-pastel-yellow text-pastel-yellow-foreground",
+    tone: "bg-muted text-foreground",
     name: "WBS · 일정",
     role: "화면(작업)별 제작 일정을 정리해요. 전체 일정을 입력하면 화면 수에 맞춰 일정 초안을 자동으로 나눠주고, 손으로 조정한 화면은 그대로 유지돼요.",
     formats: ["엑셀"],
@@ -245,7 +245,7 @@ function KindTag({ kind }: { kind: string }) {
   return (
     <span
       className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${
-        ui ? "bg-pastel-mint text-pastel-mint-foreground" : "bg-pastel-yellow text-pastel-yellow-foreground"
+        ui ? "bg-pastel-mint text-pastel-mint-foreground" : "bg-primary-soft text-primary-on-soft"
       }`}
     >
       {ui ? "UI" : "기능"}

@@ -34,7 +34,7 @@ const CARDS = [
 
 export default function ContactPage() {
   return (
-    <div className="bg-linear-to-b from-pastel-mint/25 to-background">
+    <div className="bg-linear-to-b from-primary-soft/25 to-background">
       <div className="mx-auto max-w-3xl px-6 py-14">
         <header className="flex flex-col gap-3 border-b-2 border-border pb-6">
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">문의하기</h1>

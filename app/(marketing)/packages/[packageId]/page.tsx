@@ -59,7 +59,7 @@ export default async function PackageDetailPage({
 
   return (
     <div className="bg-background">
-      <section className="bg-linear-to-br from-pastel-lavender/40 via-background to-pastel-mint/40">
+      <section className="bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
         <div className="mx-auto max-w-5xl px-6 pb-12 pt-7">
           <Link
             href="/packages"
@@ -71,7 +71,7 @@ export default async function PackageDetailPage({
           <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
             {pkg.title}
             <br />
-            <span className="bg-pastel-yellow rounded-lg px-2 py-0.5">기획 패키지</span>
+            <span className="bg-primary-soft rounded-lg px-2 py-0.5">기획 패키지</span>
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
             화면 {pkg.stats.screens}개와 요건 {pkg.stats.reqs}개가 담긴 완성본입니다. 아래에서
@@ -239,7 +239,7 @@ export default async function PackageDetailPage({
           </div>
         </section>
 
-        <section className="flex flex-col items-center gap-5 rounded-2xl bg-linear-to-br from-pastel-lavender/50 via-pastel-yellow/30 to-pastel-mint/50 px-6 py-12 text-center">
+        <section className="flex flex-col items-center gap-5 rounded-2xl bg-linear-to-br from-primary-soft/50 via-background to-muted/40 px-6 py-12 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             내 서비스에 맞게 직접 만들 수도 있어요
           </h2>

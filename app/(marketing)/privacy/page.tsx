@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LegalPage, Section, Clause, List, DataTable, Fill } from "../legal-doc";
+import { LegalPage, Section, Clause, List, DataTable } from "../legal-doc";
 import { BUSINESS } from "@/lib/business";
 
 export const metadata: Metadata = {
@@ -93,7 +93,7 @@ export default function PrivacyPage() {
             ["Anthropic PBC", "인공지능을 이용한 기획 산출물 생성"],
             ["Neon Inc.", "데이터베이스 운영 및 데이터 보관"],
             ["Vercel Inc.", "서비스 호스팅 및 운영"],
-            [<Fill key="pg">[결제대행사명]</Fill>, "결제 처리 및 환불"],
+            ["(주)토스페이먼츠", "결제 처리 및 환불"],
           ]}
         />
       </Section>
