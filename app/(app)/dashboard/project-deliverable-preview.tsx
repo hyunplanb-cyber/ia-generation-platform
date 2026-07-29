@@ -9,14 +9,19 @@ import {
   Workflow,
   CalendarRange,
   ShieldCheck,
+  ShieldQuestion,
+  Palette,
+  Sparkles,
   ArrowRight,
   ExternalLink,
   type LucideIcon,
 } from "lucide-react";
 import { DeleteProjectButton } from "./delete-project-button";
+import { VerifyReportView } from "@/components/verify/verify-report-view";
+import { buildPresetSummary, parsePresetConfig } from "@/lib/design-presets";
 import type { ProjectResult } from "@/application/list-project-results";
 
-type TabKey = "screens" | "tree" | "specs" | "flow" | "wbs" | "admin";
+type TabKey = "screens" | "tree" | "specs" | "flow" | "wbs" | "preset" | "verify" | "admin";
 
 const TABS: { key: TabKey; label: string; icon: LucideIcon; href: string }[] = [
   { key: "screens", label: "IA · 화면 목록", icon: LayoutList, href: "screens" },
@@ -24,6 +29,8 @@ const TABS: { key: TabKey; label: string; icon: LucideIcon; href: string }[] = [
   { key: "specs", label: "기능정의서", icon: FileText, href: "specs" },
   { key: "flow", label: "FLOW · 흐름도", icon: Workflow, href: "flow" },
   { key: "wbs", label: "WBS", icon: CalendarRange, href: "wbs" },
+  { key: "preset", label: "디자인 프리셋", icon: Palette, href: "preset" },
+  { key: "verify", label: "검수 시나리오", icon: ShieldQuestion, href: "verify" },
   { key: "admin", label: "관리자 페이지", icon: ShieldCheck, href: "admin" },
 ];
 
@@ -92,6 +99,8 @@ export function ProjectDeliverablePreview({
         {tab === "specs" && <SpecsPreview result={result} />}
         {tab === "flow" && <FlowPreview result={result} />}
         {tab === "wbs" && <WbsPreview result={result} />}
+        {tab === "preset" && <PresetPreview projectId={projectId} result={result} />}
+        {tab === "verify" && <VerifyPreview projectId={projectId} result={result} />}
         {tab === "admin" && <AdminPreview />}
       </div>
     </div>
@@ -283,6 +292,94 @@ function WbsPreview({ result }: { result: ProjectResult }) {
       ))}
     </ul>
   );
+}
+
+// 아직 생성 안 한 산출물 — 마케팅 문구 + 생성하기 버튼.
+function GenerateCta({
+  icon: Icon,
+  title,
+  desc,
+  href,
+  cta,
+}: {
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  href: string;
+  cta: string;
+}) {
+  return (
+    <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-primary/40 bg-primary-soft/10 px-4 py-5">
+      <span className="flex items-center gap-2 font-bold text-foreground">
+        <span className="flex size-7 items-center justify-center rounded-lg bg-primary-soft text-primary-on-soft">
+          <Icon className="size-4" />
+        </span>
+        {title}
+      </span>
+      <p className="text-sm leading-relaxed text-muted-foreground">{desc}</p>
+      <Link
+        href={href}
+        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
+      >
+        <Sparkles className="size-4" />
+        {cta}
+      </Link>
+    </div>
+  );
+}
+
+// 디자인 프리셋 — 생성됐으면 요약, 아니면 생성 유도.
+function PresetPreview({ projectId, result }: { projectId: string; result: ProjectResult }) {
+  if (!result.presetConfig) {
+    return (
+      <GenerateCta
+        icon={Palette}
+        title="디자인 프리셋으로 완성도를 높이세요"
+        desc="색·글꼴·모서리·밀도를 직접 골라 개발에 바로 쓰는 디자인 시스템을 만들어요. 통일된 디자인이 사이트 퀄리티를 완성합니다."
+        href={`/dashboard/${projectId}/preset`}
+        cta="디자인 프리셋 만들기"
+      />
+    );
+  }
+  const sum = buildPresetSummary(parsePresetConfig(result.presetConfig, result.designConcept));
+  const swatch = (label: string, hex: string) => (
+    <div key={label} className="flex items-center gap-1.5">
+      <span className="size-5 rounded-md ring-1 ring-black/10" style={{ backgroundColor: hex }} />
+      <span className="font-mono text-[11px] text-muted-foreground">{hex}</span>
+    </div>
+  );
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm text-muted-foreground">
+        {sum.baseName} · {sum.fontLabel} · {sum.dark ? "다크" : "라이트"}
+      </p>
+      <div className="flex flex-wrap gap-x-4 gap-y-2">
+        {sum.palette.map(([k, v]) => swatch(k, v))}
+        {swatch("bg", sum.bg)}
+        {swatch("text", sum.text)}
+        {swatch("border", sum.border)}
+      </div>
+      <p className="text-xs text-muted-foreground">
+        모서리 카드 {sum.radius.card} · 버튼 {sum.radius.button} · 밀도 {sum.densityLabel}
+      </p>
+    </div>
+  );
+}
+
+// 검수 시나리오 — 생성됐으면 최근 결과 미리보기, 아니면 생성 유도.
+function VerifyPreview({ projectId, result }: { projectId: string; result: ProjectResult }) {
+  if (!result.latestVerifyReport) {
+    return (
+      <GenerateCta
+        icon={ShieldQuestion}
+        title="검수 시나리오로 오픈 전에 꼭 확인하세요"
+        desc="생성된 산출물 기준으로, 화면·버튼·기능이 진짜 다 되는지 확인할 검수 시나리오를 만들어드려요."
+        href={`/dashboard/${projectId}/verify`}
+        cta="검수 시나리오 만들기"
+      />
+    );
+  }
+  return <VerifyReportView report={result.latestVerifyReport} preview />;
 }
 
 // 관리자 페이지 — 선택 산출물(준비 중)
