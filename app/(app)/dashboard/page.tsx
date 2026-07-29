@@ -354,7 +354,7 @@ function VerifyTab({
               )}
             </summary>
             <div className="border-t border-border/60 p-4">
-              <VerifyReportView report={run.report} />
+              <VerifyReportView report={run.report} preview />
             </div>
           </details>
         ))}
