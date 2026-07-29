@@ -14,6 +14,8 @@ import {
   FileText,
   Workflow,
   CalendarRange,
+  ShieldCheck,
+  ShieldQuestion,
   type LucideIcon,
 } from "lucide-react";
 
@@ -168,6 +170,33 @@ export function ProjectShell({
                 </Link>
               );
             })}
+            {/* 별도 행동 — 사이트 검수(산출물을 '보는' 게 아니라 '검수를 실행') */}
+            <div className="mx-1 my-1 hidden h-px bg-border lg:block" />
+            <Link
+              href={`${base}verify`}
+              className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                pathname.startsWith(`${base}verify`)
+                  ? "bg-primary-soft text-primary-on-soft"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <ShieldQuestion className="size-4 shrink-0" />
+              사이트 검수
+            </Link>
+            <Link
+              href={`${base}admin`}
+              className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                pathname.startsWith(`${base}admin`)
+                  ? "bg-primary-soft text-primary-on-soft"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <ShieldCheck className="size-4 shrink-0" />
+              관리자 백오피스
+              <span className="ml-auto rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                준비 중
+              </span>
+            </Link>
           </nav>
           <div className="min-w-0 flex-1">{children}</div>
         </div>

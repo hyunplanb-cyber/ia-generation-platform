@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FormSection } from "../form-shell";
 import { saveBriefAndGenerateAction, type GenerateState } from "./actions";
+import { DESIGN_OPTIONS, type DesignKey } from "@/lib/design-presets";
 import type { Project } from "@/domain/project/project";
 
 const initialState: GenerateState = { reason: null };
@@ -70,29 +71,6 @@ const SCALE_OPTIONS: { key: Scale; title: string; credit: string; desc: string }
   },
 ];
 
-// 디자인 컨셉 — 자유 입력 대신 3개 중 하나를 고른다. 고른 concept이 생성 프롬프트에 반영된다.
-type Design = "navy" | "mono" | "pastel";
-const DESIGN_OPTIONS: { key: Design; title: string; desc: string; concept: string }[] = [
-  {
-    key: "navy",
-    title: "모던 네이비",
-    desc: "신뢰감 있고 정돈된, 실무형",
-    concept: "모던하고 신뢰감 있는 네이비 톤. 정보가 잘 정돈된 실무형 디자인, 카드와 표 중심.",
-  },
-  {
-    key: "mono",
-    title: "미니멀 모노",
-    desc: "색을 뺀 여백·활자 중심",
-    concept: "색을 절제한 미니멀 모노톤. 넉넉한 여백과 활자 위계로 정리된 깔끔한 디자인.",
-  },
-  {
-    key: "pastel",
-    title: "소프트 파스텔",
-    desc: "부드럽고 친근한 분위기",
-    concept: "부드럽고 친근한 파스텔 톤. 둥근 모서리와 넉넉한 여백으로 편안한 느낌.",
-  },
-];
-
 export function BriefForm({
   project,
   hasMenus,
@@ -106,7 +84,7 @@ export function BriefForm({
   const [state, formAction, pending] = useActionState(boundAction, initialState);
   const [scale, setScale] = useState<Scale>("basic");
   // 기존 프로젝트가 저장한 값이 3개 중 하나면 그걸 고르고, 아니면 첫 번째로.
-  const [design, setDesign] = useState<Design>(
+  const [design, setDesign] = useState<DesignKey>(
     DESIGN_OPTIONS.find((d) => d.concept === project.designConcept)?.key ?? "navy",
   );
   const designConcept = DESIGN_OPTIONS.find((d) => d.key === design)!.concept;

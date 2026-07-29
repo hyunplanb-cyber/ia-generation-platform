@@ -135,6 +135,11 @@ export function ZipAllButton({
         specLib.buildSpecPackJson(specProject, menus, screens, buttonActions),
       );
 
+      // 고른 디자인 컨셉에 맞는 디자인 프리셋 스펙(디자인 시스템 문서)
+      const { presetForConcept, buildPresetMarkdown } = await import("@/lib/design-presets");
+      const preset = presetForConcept(specProject.designConcept);
+      zip.file(`디자인프리셋_${preset.name}_${base}.md`, buildPresetMarkdown(preset));
+
       const blob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
