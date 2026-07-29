@@ -96,6 +96,13 @@ export function PresetForm({
   const den = useMemo(() => DENSITIES.find((d) => d.key === cfg.density)!, [cfg.density]);
   const sum = useMemo(() => buildPresetSummary(cfg), [cfg]);
   const pv = { bg: sum.bg, text: sum.text, muted: sum.muted, border: sum.border };
+  // 테마 대표 색 4개(주색·강조·본문·배경). 미리보기에서 강조/형광펜에 쓴다.
+  const theme = useMemo(
+    () => DESIGN_OPTIONS.find((o) => o.key === cfg.style)?.swatches ?? [cfg.primary],
+    [cfg.style, cfg.primary],
+  );
+  const accent = theme[1] ?? cfg.primary; // 2번째 색 → 배지
+  const highlight = theme[2] ?? cfg.primary; // 3번째 색 → 제목 형광펜
 
   const willChargeGen = creditsOpen && !gen;
   const willChargeDownload = creditsOpen && !down;
@@ -269,11 +276,21 @@ export function PresetForm({
       }}
     >
       <div className="flex items-center justify-between" style={{ color: pv.text }}>
-        <strong style={{ fontSize: 15 }}>화면 제목</strong>
+        <strong
+          style={{
+            fontSize: 15,
+            backgroundImage: `linear-gradient(transparent 55%, ${highlight}73 55%)`,
+            padding: "0 3px",
+            WebkitBoxDecorationBreak: "clone",
+            boxDecorationBreak: "clone",
+          }}
+        >
+          화면 제목
+        </strong>
         <span
           style={{
-            background: cfg.primary + "1A",
-            color: cfg.primary,
+            background: accent + "22",
+            color: accent,
             borderRadius: rad.badge,
             fontSize: 11,
             padding: "2px 8px",
