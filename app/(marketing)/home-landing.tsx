@@ -18,9 +18,9 @@ export function HomeLanding() {
             </h1>
             <div className="hero-rule" />
             <p className="sub">
-              AI로 사이트 만드는 사람을 위한 두 가지.<br />
-              컨셉 한 줄이면 화면 목록과 화면별 프롬프트가,<br />
-              URL 한 줄이면 오픈 전 검수 결과가 나옵니다.
+              바이브코딩으로 사이트 만드는 사람을 위한 두 가지.<br />
+              컨셉 한 줄이면 → 화면별 프롬프트·스펙팩 (Cursor·Claude Code에 그대로).<br />
+              URL 한 줄이면 → 오픈 전 검수 리포트.
             </p>
             <div className="hero-ctas">
               <a className="btn btn-o" href="/signup">
@@ -117,11 +117,12 @@ export function HomeLanding() {
           </div>
           <h2>
             한 줄 컨셉이<br />
-            산출물 한 벌이 됩니다.
+            바로 만들 재료가 됩니다.
           </h2>
           <p className="lead">
-            컨셉과 메뉴만 넣으면 메뉴 구조부터 화면 목록, 화면별 프롬프트, 화면 흐름, 개발 일정까지
-            자동으로. 실제 기획 산출물 그대로 받습니다.
+            메뉴 구조·화면 목록·기능정의·흐름·일정까지 자동으로. 여기서 끝이 아니라{" "}
+            <b>화면별 프롬프트와 AI 빌드 스펙팩</b>까지 나와, Cursor·Claude Code에 그대로 넣으면 화면이
+            됩니다.
           </p>
 
           <div className="plan-grid">
@@ -202,8 +203,9 @@ export function HomeLanding() {
             <span className="o">대신 눌러봐 드려요.</span>
           </h2>
           <p className="lead">
-            URL이나 설계 문서를 넣으면, 확인할 것을 시나리오로 짚어주고,<br />
-            공개 화면은 검수 결과까지 냅니다. 개발자가 아니어도 읽는 리포트로요.
+            기획으로 끝나는 도구는 여기까지 안 와요. URL이나 설계 문서를 넣으면 확인할 것을 시나리오로
+            짚어주고,<br />
+            공개 화면은 검수 결과(Pass/Fail)까지 냅니다. 개발자가 아니어도 읽는 리포트로요.
           </p>
 
           <div className="inputs">
