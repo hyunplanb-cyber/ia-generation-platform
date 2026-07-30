@@ -68,6 +68,8 @@ export interface PackageDef {
    * 없는 업종은 비워 둔다 — 없는 걸 링크하느니 안 보이는 게 낫다.
    */
   demoUrl?: string;
+  /** 이 AI팩으로 실제 만드는 과정을 담은 유튜브 영상 ID. 없으면 영상 영역이 안 나온다. */
+  videoId?: string;
   /** 이런 분께 추천 */
   audience: string[];
   /** 이 업종에서 특히 놓치기 쉬운 지점 — 판매 논거 */
@@ -319,6 +321,7 @@ export const PACKAGES: PackageDef[] = [
     ],
     // 프리미엄 스펙팩(144화면)을 Claude Code(Opus 5)로 그대로 구현한 결과.
     demoUrl: "/demo/travel/index.html",
+    videoId: "RmbiLbCQKEI",
     audience: [
       "마이리얼트립 같은 투어·티켓 예약 서비스를 만들려는 분",
       "현지 투어 상품을 온라인으로 팔려는 분",

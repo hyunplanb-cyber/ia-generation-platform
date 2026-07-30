@@ -280,6 +280,54 @@ export default async function PackageDetailPage({
           </p>
         </section>
 
+        {/* 증거 — 말보다 실물. 구매 결정 전에 보이도록 앞쪽에 둔다. */}
+        {(pkg.videoId || pkg.demoUrl) && (
+          <section className="flex flex-col gap-4">
+            <SectionTitle>말보다, 실제로 만든 걸 보여드릴게요</SectionTitle>
+            {pkg.videoId && (
+              <>
+                <p className="leading-relaxed text-muted-foreground">
+                  이 AI팩의 프리미엄 스펙팩을 Claude Code에 넣고 돌린 기록입니다. 화면{" "}
+                  {premium.stats.screens}개가 약 40분 만에 만들어졌어요.
+                </p>
+                <div className="aspect-video overflow-hidden rounded-xl border border-border bg-muted">
+                  <iframe
+                    className="size-full"
+                    src={`https://www.youtube-nocookie.com/embed/${pkg.videoId}`}
+                    title={`${pkg.title} AI팩으로 만든 화면`}
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    loading="lazy"
+                    allowFullScreen
+                  />
+                </div>
+              </>
+            )}
+            {pkg.demoUrl && (
+              <a
+                href={pkg.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col gap-3 rounded-xl border border-primary bg-primary-soft/30 p-5 transition-colors hover:bg-primary-soft/50 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div>
+                  <p className="flex items-center gap-2 font-bold text-foreground">
+                    <MonitorPlay className="size-4 text-primary" />
+                    직접 눌러볼 수도 있어요
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-foreground/80">
+                    만들어진 화면 중 일부를 열어 뒀습니다. 예외 화면까지 그대로 들어 있어요.
+                  </p>
+                </div>
+                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground">
+                  데모 보기
+                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </a>
+            )}
+          </section>
+        )}
+
         {/* 이런 분께 추천 */}
         <section className="flex flex-col gap-4">
           <SectionTitle>이런 분께 맞아요</SectionTitle>
@@ -347,30 +395,6 @@ export default async function PackageDetailPage({
             기능</b>은 눌러도 반응하지 않아요. 그 부분은 개발이 필요합니다. 사실대로 미리
             알려드립니다.
           </p>
-
-          {pkg.demoUrl && (
-            <a
-              href={pkg.demoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col gap-3 rounded-xl border border-primary bg-primary-soft/30 p-5 transition-colors hover:bg-primary-soft/50 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div>
-                <p className="flex items-center gap-2 font-bold text-foreground">
-                  <MonitorPlay className="size-4 text-primary" />
-                  말로 설명하는 대신, 직접 눌러보세요
-                </p>
-                <p className="mt-1 text-sm leading-relaxed text-foreground/80">
-                  이 AI팩의 프리미엄 스펙팩을 Claude Code에 넣어 실제로 만든 화면{" "}
-                  {premium.stats.screens}개입니다. 예외 화면까지 그대로 들어 있어요.
-                </p>
-              </div>
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground">
-                데모 보기
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-              </span>
-            </a>
-          )}
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl border border-primary/30 bg-primary-soft/20 p-5">
@@ -859,11 +883,22 @@ function PlanCard({
             {plan.name} 구매하기
           </a>
         ) : (
-          <div className="rounded-lg border border-dashed border-border bg-background/60 px-4 py-3 text-center">
-            <p className="text-sm font-semibold text-foreground">판매 준비 중이에요</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              아래에서 내용을 먼저 확인해 보세요.
+          // 결제(PG) 붙기 전까지 여기가 막다른 길이 되지 않게, 무료 샘플로 이어준다.
+          // 지금 온 사람을 회원으로 남겨야 출시일에 알릴 대상이 생긴다.
+          <div className="rounded-lg border border-dashed border-border bg-background/60 px-4 py-4 text-center">
+            <p className="text-sm font-semibold text-foreground">곧 판매를 시작해요</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              준비되면 가장 먼저 알려드릴게요.
+              <br />
+              그동안 무료 샘플로 먼저 살펴보세요.
             </p>
+            <Link
+              href="/free"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+            >
+              무료 샘플 받기
+              <ArrowRight className="size-4" />
+            </Link>
           </div>
         )}
       </div>
