@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 
 // 카페인컬러 메인 — 승인된 레트로모던 시안(홈페이지_리디자인_시안/template.html)을
 // 실제 페이지로 이관한 것. 스타일은 styled-jsx로 이 컴포넌트에만 스코프된다
@@ -23,12 +25,12 @@ export function HomeLanding() {
               URL 한 줄이면 → 오픈 전 검수 리포트.
             </p>
             <div className="hero-ctas">
-              <a className="btn btn-o" href="/signup">
+              <Link className="btn btn-o" href="/signup">
                 설계도 프롬프트 만들기 <span aria-hidden="true">→</span>
-              </a>
-              <a className="btn btn-teal" href="/verify">
+              </Link>
+              <Link className="btn btn-teal" href="/verify">
                 내 사이트 검수하기 <span aria-hidden="true">→</span>
-              </a>
+              </Link>
             </div>
 
             <div className="hero-art">
@@ -182,9 +184,9 @@ export function HomeLanding() {
           </div>
 
           <div className="hero-ctas" style={{ marginTop: 36 }}>
-            <a className="btn btn-o" href="/signup">
+            <Link className="btn btn-o" href="/signup">
               무료로 만들어보기 <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -308,9 +310,9 @@ export function HomeLanding() {
           </div>
 
           <div className="hero-ctas" style={{ marginTop: 36 }}>
-            <a className="btn btn-teal" href="/verify">
+            <Link className="btn btn-teal" href="/verify">
               내 사이트 검수하기 <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -332,24 +334,24 @@ export function HomeLanding() {
             직접 만들기 전에, 이미 완성된 업종별 산출물 한 벌부터. 화면·예외까지 다 들어 있어요.
           </p>
           <div className="tpl-grid">
-            <a className="tpl" href="/packages">
+            <Link className="tpl" href="/packages">
               <div className="tm">LMS</div>
               <div className="tt">온라인 강의 플랫폼</div>
               <div className="td">수강·결제·수료까지 화면 37개 + 프롬프트.</div>
               <div className="tp">49,000원부터</div>
-            </a>
-            <a className="tpl" href="/packages">
+            </Link>
+            <Link className="tpl" href="/packages">
               <div className="tm">BEAUTY</div>
               <div className="tt">뷰티샵 예약 플랫폼</div>
               <div className="td">예약·디자이너·정산까지 화면 43개 + 프롬프트.</div>
               <div className="tp">49,000원부터</div>
-            </a>
-            <a className="tpl" href="/packages">
+            </Link>
+            <Link className="tpl" href="/packages">
               <div className="tm">TRAVEL</div>
               <div className="tt">해외 투어·티켓 예약</div>
               <div className="td">예약·바우처·환불까지 화면 43개 + 프롬프트.</div>
               <div className="tp">49,000원부터</div>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -367,12 +369,12 @@ export function HomeLanding() {
             진짜 오픈해도 되는지 꼭 확인해보세요.
           </p>
           <div className="fc">
-            <a className="btn btn-o" href="/signup">
+            <Link className="btn btn-o" href="/signup">
               설계도 프롬프트 만들기 <span aria-hidden="true">→</span>
-            </a>
-            <a className="btn btn-teal" href="/verify">
+            </Link>
+            <Link className="btn btn-teal" href="/verify">
               내 사이트 검수하기 <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -401,7 +403,7 @@ export function HomeLanding() {
         .cc * {
           box-sizing: border-box;
         }
-        .cc a {
+        .cc :global(a) {
           text-decoration: none;
         }
         .wrap {
@@ -415,7 +417,7 @@ export function HomeLanding() {
           font-weight: 600;
           color: var(--tan);
         }
-        .btn {
+        .cc :global(.btn) {
           display: inline-flex;
           align-items: center;
           gap: 8px;
@@ -425,21 +427,21 @@ export function HomeLanding() {
           border-radius: 2px;
           transition: transform 0.12s ease, background 0.12s ease;
         }
-        .btn:active {
+        .cc :global(.btn):active {
           transform: translateY(1px);
         }
-        .btn-o {
+        .cc :global(.btn-o) {
           background: var(--orange);
           color: #fcf3e2;
         }
-        .btn-o:hover {
+        .cc :global(.btn-o):hover {
           background: var(--orange-deep);
         }
-        .btn-teal {
+        .cc :global(.btn-teal) {
           background: var(--teal);
           color: #f1fbf8;
         }
-        .btn-teal:hover {
+        .cc :global(.btn-teal):hover {
           background: var(--teal-deep);
         }
         .cc h1,
@@ -924,7 +926,7 @@ export function HomeLanding() {
           gap: 16px;
           margin-top: 38px;
         }
-        .tpl {
+        .cc :global(.tpl) {
           background: var(--card);
           color: var(--ink);
           border: 1px solid var(--paper-line);
@@ -935,27 +937,27 @@ export function HomeLanding() {
           gap: 6px;
           transition: transform 0.12s ease, border-color 0.12s ease;
         }
-        .tpl:hover {
+        .cc :global(.tpl):hover {
           transform: translateY(-2px);
           border-color: var(--orange);
         }
-        .tpl .tt {
+        .cc :global(.tpl) .tt {
           font-size: 20px;
           font-weight: 700;
         }
-        .tpl .tm {
+        .cc :global(.tpl) .tm {
           font-family: var(--mono);
           font-size: 11.5px;
           color: var(--tan);
         }
-        .tpl .td {
+        .cc :global(.tpl) .td {
           font-size: 14px;
           color: var(--ink-soft);
           font-weight: 400;
           margin-top: 6px;
           line-height: 1.55;
         }
-        .tpl .tp {
+        .cc :global(.tpl) .tp {
           margin-top: 14px;
           font-weight: 700;
           font-size: 17px;
