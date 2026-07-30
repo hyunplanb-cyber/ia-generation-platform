@@ -384,17 +384,18 @@ export function PresetForm({
               <button
                 type="button"
                 onClick={handleDownload}
-                disabled={!!busy}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+                disabled={!!busy || !creditsOpen}
+                title={!creditsOpen ? "다운로드는 준비 중이에요" : undefined}
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {busy === "download" ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
                 {busy === "download"
                   ? "준비 중"
-                  : willChargeDownload
-                    ? `프리셋 다운로드 · ${downloadCost}크레딧`
-                    : creditsOpen
-                      ? "프리셋 다운로드 · 0크레딧"
-                      : "프리셋 다운로드"}
+                  : !creditsOpen
+                    ? "프리셋 다운로드 · 준비 중"
+                    : willChargeDownload
+                      ? `프리셋 다운로드 · ${downloadCost}크레딧`
+                      : "프리셋 다운로드 · 0크레딧"}
               </button>
               <ul className="mt-2 flex flex-col gap-1 text-xs text-muted-foreground">
                 <li>· 다운로드 크레딧은 처음 다운로드 시 한 번만 사용됩니다.</li>

@@ -34,6 +34,9 @@ export function VerifyScenarioDownloadButton({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
+  // 베타(결제 전) — 프로젝트 검수 다운로드는 준비 중으로 둔다.
+  // (마케팅 무료 검수 다운로드는 verifyRunId가 없어 계속 이용 가능)
+  const comingSoon = !!verifyRunId && !creditsOpen;
   // 크레딧을 내야 열리는 상태인가(결제 켜짐 + 검수기록 id 있음 + 아직 안 열림 + 원가 있음).
   const gated = !!creditsOpen && !!verifyRunId && !unlocked && (credits ?? 0) > 0;
   // 크레딧 표기 대상인가(결제 켜짐 + 검수기록 단위). 이미 받았으면 0크레딧으로 노출.
@@ -74,7 +77,7 @@ export function VerifyScenarioDownloadButton({
     // <summary> 안에 놓여도 클릭 시 폴드가 접히지 않도록 전파를 막는다.
     e.stopPropagation();
     e.preventDefault();
-    if (busy) return;
+    if (busy || comingSoon) return;
 
     if (gated) {
       setBusy(true);
@@ -105,15 +108,20 @@ export function VerifyScenarioDownloadButton({
     <button
       type="button"
       onClick={handleClick}
-      disabled={busy}
+      disabled={busy || comingSoon}
+      title={comingSoon ? "다운로드는 준비 중이에요" : undefined}
       className={
         className ??
-        "inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-60"
+        "inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-60"
       }
     >
       {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
       {label}
-      {showCredit && <span className="text-xs opacity-75">· {gated ? (credits ?? 0) : 0}크레딧</span>}
+      {comingSoon ? (
+        <span className="text-xs opacity-75">· 준비 중</span>
+      ) : (
+        showCredit && <span className="text-xs opacity-75">· {gated ? (credits ?? 0) : 0}크레딧</span>
+      )}
     </button>
   );
 }

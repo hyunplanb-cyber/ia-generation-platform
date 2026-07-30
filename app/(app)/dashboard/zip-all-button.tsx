@@ -85,6 +85,8 @@ export function ZipAllButton({
   const [addPreset, setAddPreset] = useState(true);
   const [addVerify, setAddVerify] = useState(true);
 
+  // 베타(결제 전)에는 다운로드를 아직 열지 않고 "준비 중"으로 둔다.
+  const comingSoon = !creditsOpen;
   const gated = !!creditsOpen && !unlocked && (credits ?? 0) > 0;
   const offerPreset = !!creditsOpen && !!canAddPreset && !!presetConfig;
   const offerVerify = !!creditsOpen && !!canAddVerify && !!verifyReport && !!verifyRunId;
@@ -100,6 +102,7 @@ export function ZipAllButton({
     // <summary> 안에 놓여도 폴드가 접히지 않도록.
     e.stopPropagation();
     e.preventDefault();
+    if (comingSoon) return; // 베타 — 다운로드 준비 중
     if (needsModal) {
       setModalOpen(true);
       return;
@@ -257,9 +260,15 @@ export function ZipAllButton({
       <button
         type="button"
         onClick={onClick}
-        disabled={busy}
-        title={error ? "다운로드에 실패했어요. 다시 시도해 주세요." : "모든 산출물을 zip으로 내려받기"}
-        className={`inline-flex items-center gap-2 rounded-lg border border-primary bg-transparent font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-60 ${
+        disabled={busy || comingSoon}
+        title={
+          comingSoon
+            ? "다운로드는 준비 중이에요"
+            : error
+              ? "다운로드에 실패했어요. 다시 시도해 주세요."
+              : "모든 산출물을 zip으로 내려받기"
+        }
+        className={`inline-flex items-center gap-2 rounded-lg border border-primary bg-transparent font-medium text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-60 ${
           large ? "px-4 py-2 text-sm" : "gap-1.5 px-2.5 py-1 text-xs"
         }`}
       >
@@ -269,8 +278,12 @@ export function ZipAllButton({
           <Download className={large ? "size-4" : "size-3"} />
         )}
         전체 다운로드
-        {creditsOpen && (
-          <span className="text-xs text-primary/70">· {gated ? (credits ?? 0) : 0}크레딧</span>
+        {comingSoon ? (
+          <span className="text-xs opacity-70">· 준비 중</span>
+        ) : (
+          creditsOpen && (
+            <span className="text-xs text-primary/70">· {gated ? (credits ?? 0) : 0}크레딧</span>
+          )
         )}
       </button>
 

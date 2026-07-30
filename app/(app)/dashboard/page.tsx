@@ -119,13 +119,13 @@ export default async function DashboardPage({
         <p className="text-muted-foreground">생성된 프로젝트입니다.</p>
       </div>
 
-      {/* 무료 베타 안내 — 결제(크레딧 충전) 열리기 전까지 전부 무료 */}
+      {/* 무료 베타 안내 — 무료 크레딧으로 생성·미리보기, 그 외(다운로드·충전)는 준비중 */}
       {!CREDITS_OPEN && (
         <div className="flex items-start gap-2 rounded-xl border border-primary/30 bg-primary-soft/20 px-4 py-3 text-sm">
           <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" />
           <p className="leading-relaxed text-foreground">
-            <b className="font-semibold">지금은 무료 베타예요.</b> 생성·검수·다운로드까지 모두 무료로 써보실 수
-            있어요. <span className="text-muted-foreground">크레딧 충전은 곧 열립니다.</span>
+            <b className="font-semibold">지금은 무료 베타예요.</b> 무료 크레딧으로 생성·미리보기는 지금 이용하실 수
+            있어요. <span className="text-muted-foreground">파일 다운로드 등 그 외 사용은 준비 중입니다.</span>
           </p>
         </div>
       )}
