@@ -23,11 +23,11 @@ import { GROUPBUY } from "./template-data-groupbuy";
 const TEMPLATES = {
   lms: { data: LMS, out: "판매용_템플릿/LMS_온라인강의플랫폼", title: "온라인 강의 플랫폼(LMS)" },
   beauty: { data: BEAUTY, out: "판매용_템플릿/뷰티샵_예약플랫폼", title: "뷰티샵 예약 플랫폼" },
-  travel: { data: TRAVEL, out: "판매용_템플릿/여행_투어티켓예약플랫폼", title: "해외 투어·티켓 예약 플랫폼" },
+  travel: { data: TRAVEL, out: "판매용_템플릿/해외투어_티켓예약", title: "해외 투어·티켓 예약 플랫폼" },
   admin: { data: ADMIN, out: "판매용_템플릿/비즈니스관리_관리자시스템", title: "통합 비즈니스 관리자 시스템" },
   groupbuy: { data: GROUPBUY, out: "판매용_템플릿/공동구매_공구플랫폼", title: "공동구매(공구) 플랫폼" },
   // 무료 샘플(약식) — 인스타 릴스 리드마그넷용
-  creator: { data: CREATOR, out: "판매용_템플릿/무료샘플_콘텐츠판매사이트", title: "1인 크리에이터 콘텐츠 판매 사이트" },
+  creator: { data: CREATOR, out: "판매용_템플릿/_무료샘플_콘텐츠판매사이트", title: "1인 크리에이터 콘텐츠 판매 사이트" },
 };
 const key = (process.argv[2] ?? "lms") as keyof typeof TEMPLATES;
 const picked = TEMPLATES[key];
