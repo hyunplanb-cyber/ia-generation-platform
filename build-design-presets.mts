@@ -23,7 +23,7 @@ const TARGETS = {
     ],
   },
   travel: {
-    dir: "판매용_템플릿/여행_투어티켓예약플랫폼/디자인프리셋",
+    dir: "판매용_템플릿/해외투어_티켓예약/디자인프리셋",
     fits: [
       "신뢰가 중요한 해외 투어·티켓 예약, 대형 여행 플랫폼",
       "사진이 주인공인 감성 여행 브랜드, 소규모 프라이빗 투어",
@@ -347,22 +347,25 @@ const card = (p: Preset) => {
     <div class="demo" style="background:${bg};color:${tx}">
       <div class="dcard" style="background:${sf};border:1px solid ${bd};border-radius:${p.radius.card};
            box-shadow:${p.shadow.startsWith("0") ? p.shadow.split(" — ")[0] : "none"}">
-        <p class="dt" style="font-size:${p.scale[2][1]};font-weight:${p.scale[2][2]}">내 강의실</p>
-        <p class="dm" style="color:${mu};font-size:${p.scale[4][1]}">수강 중 3 · 완료 12</p>
+        <p class="dt" style="font-size:${p.scale[2][1]};font-weight:${p.scale[2][2]}">제목입니다</p>
+        <p class="dm" style="color:${mu};font-size:${p.scale[4][1]}">서브 카피입니다</p>
         <div class="drow">
           <span class="dbadge" style="background:${acc}22;color:${acc};border-radius:${p.radius.badge};
-                border:1px solid ${acc}55">진행 중</span>
+                border:1px solid ${acc}55">배지 1</span>
           <span class="dbadge" style="background:transparent;color:${mu};border:1px solid ${bd};
-                border-radius:${p.radius.badge}">완료</span>
+                border-radius:${p.radius.badge}">배지 2</span>
+        </div>
+        <div class="dfield" style="border:1px solid ${bd};border-radius:${p.radius.button};color:${mu}">
+          입력창입니다
         </div>
         <div class="dbtns">
-          <span class="db" style="background:${pri};color:#fff;border-radius:${p.radius.button}">이어보기</span>
-          <span class="db2" style="border:1px solid ${bd};color:${tx};border-radius:${p.radius.button}">목록</span>
+          <span class="db" style="background:${pri};color:#fff;border-radius:${p.radius.button}">메인 버튼</span>
+          <span class="db2" style="border:1px solid ${bd};color:${tx};border-radius:${p.radius.button}">보조 버튼</span>
         </div>
       </div>
       <div class="dnums">
-        <div><b style="color:${pri};font-size:${p.scale[0][1]};font-weight:${p.scale[0][2]}">37</b><span style="color:${mu}">화면</span></div>
-        <div><b style="color:${pri};font-size:${p.scale[0][1]};font-weight:${p.scale[0][2]}">241</b><span style="color:${mu}">요건</span></div>
+        <div><b style="color:${pri};font-size:${p.scale[0][1]};font-weight:${p.scale[0][2]}">00</b><span style="color:${mu}">지표 1</span></div>
+        <div><b style="color:${pri};font-size:${p.scale[0][1]};font-weight:${p.scale[0][2]}">00</b><span style="color:${mu}">지표 2</span></div>
       </div>
       <div class="dsw">${Object.values(p.c).slice(0, 7).map(v => `<i style="background:${v}"></i>`).join("")}</div>
     </div>
@@ -383,6 +386,7 @@ h1{font-size:26px;font-weight:800;margin-bottom:6px}
 .dt{margin-bottom:4px}.dm{margin-bottom:14px}
 .drow{display:flex;gap:8px;margin-bottom:16px}
 .dbadge{font-size:11px;font-weight:700;padding:4px 10px}
+.dfield{font-size:13px;padding:9px 12px;margin-bottom:14px}
 .dbtns{display:flex;gap:8px}
 .db,.db2{font-size:13px;font-weight:700;padding:9px 16px}
 .dnums{display:flex;gap:26px;margin-top:20px}
@@ -392,7 +396,8 @@ h1{font-size:26px;font-weight:800;margin-bottom:6px}
 .dsw i{width:26px;height:26px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
 </style></head><body>
 <h1>디자인 프리셋 3종</h1>
-<p class="sub">같은 화면을 세 가지 스타일로. 원하는 프리셋을 스펙팩과 함께 AI에 넣으면 그 스타일로 만들어집니다.</p>
+<p class="sub">같은 구성요소를 세 가지 스타일로. 원하는 프리셋을 스펙팩과 함께 AI에 넣으면 그 스타일로 만들어집니다.<br>
+글자는 자리표시용이며, 색·굵기·모서리·여백이 프리셋마다 어떻게 달라지는지 보시면 됩니다.</p>
 <div class="grid">${PRESETS.map(card).join("")}</div>
 </body></html>`;
 
