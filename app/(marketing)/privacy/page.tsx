@@ -3,7 +3,7 @@ import { LegalPage, Section, Clause, List, DataTable } from "../legal-doc";
 import { BUSINESS } from "@/lib/business";
 
 export const metadata: Metadata = {
-  title: "개인정보처리방침 | 카페인컬러",
+  title: "개인정보처리방침",
   description: "카페인컬러의 개인정보 수집·이용·보관에 관한 안내입니다.",
 };
 

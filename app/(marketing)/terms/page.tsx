@@ -3,7 +3,7 @@ import { LegalPage, Section, Clause, List } from "../legal-doc";
 import { BUSINESS } from "@/lib/business";
 
 export const metadata: Metadata = {
-  title: "이용약관 | 카페인컬러",
+  title: "이용약관",
   description: "카페인컬러 서비스 이용약관입니다.",
 };
 

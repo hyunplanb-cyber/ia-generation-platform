@@ -19,7 +19,7 @@ export function HomeLanding() {
             <div className="hero-rule" />
             <p className="sub">
               바이브코딩으로 사이트 만드는 사람을 위한 두 가지.<br />
-              컨셉 한 줄이면 → 화면별 프롬프트·스펙팩 (Cursor·Claude Code에 그대로).<br />
+              컨셉 한 줄이면 → 화면별 프롬프트·스펙팩 (Cursor·Claude Code에 바로).<br />
               URL 한 줄이면 → 오픈 전 검수 리포트.
             </p>
             <div className="hero-ctas">
@@ -481,10 +481,10 @@ export function HomeLanding() {
           margin: 26px 0 20px;
         }
         .hero p.sub {
-          font-size: clamp(16px, 2vw, 20px);
+          font-size: clamp(15px, 1.9vw, 19px);
           font-weight: 400;
           color: var(--ink-soft);
-          max-width: 520px;
+          max-width: 720px;
         }
         .hero-ctas {
           display: flex;

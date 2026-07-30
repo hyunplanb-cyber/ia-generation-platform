@@ -10,7 +10,7 @@ import { VerifyForm } from "./verify-form";
 export const maxDuration = 180;
 
 export const metadata = {
-  title: "사이트 검수 · 카페인컬러",
+  title: "사이트 검수",
   description:
     "URL만 넣으면 공개 화면은 자동으로 검수하고, 로그인·결제 화면은 직접 확인할 시나리오를 짚어드려요.",
 };

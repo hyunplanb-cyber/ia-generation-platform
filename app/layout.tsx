@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const paperlogy = localFont({
@@ -20,9 +21,48 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_NAME = "카페인컬러";
+const SITE_TITLE = "카페인컬러 — 만들기 전엔 설계도, 오픈 전엔 검수";
+const SITE_DESC =
+  "바이브코딩으로 사이트 만드는 사람을 위한 서비스. 컨셉 한 줄이면 화면 목록·화면별 프롬프트·AI 빌드 스펙팩이 나와 Cursor·Claude Code에 바로. 오픈 전엔 URL 한 줄로 검수 리포트까지.";
+
 export const metadata: Metadata = {
-  title: "카페인컬러",
-  description: "사이트 컨셉과 메뉴만 입력하면 IA·화면기능정의·AI프롬프트·일정을 자동으로 만들어드려요.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: "%s | 카페인컬러",
+  },
+  description: SITE_DESC,
+  applicationName: SITE_NAME,
+  keywords: [
+    "웹기획",
+    "IA",
+    "화면설계",
+    "기능정의서",
+    "바이브코딩",
+    "AI 사이트 제작",
+    "화면별 프롬프트",
+    "사이트 검수",
+    "QA",
+    "Cursor",
+    "Claude Code",
+    "카페인컬러",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "ko_KR",
+    url: SITE_URL,
+    title: SITE_TITLE,
+    description: SITE_DESC,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESC,
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
