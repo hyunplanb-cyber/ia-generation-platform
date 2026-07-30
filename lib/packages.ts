@@ -303,7 +303,8 @@ export function packageProducts(): PackageProduct[] {
       pkg,
       plan,
       name: `${pkg.title} · ${plan.name}`,
-      href: `/packages/${pkg.id}#plan-${plan.id}`,
+      // 상세는 고른 규모 기준으로 열린다(화면 목록·검수 수치까지 그 규모로 바뀐다).
+      href: `/packages/${pkg.id}?plan=${plan.id}`,
     })),
   );
 }
@@ -344,4 +345,14 @@ export function deepSample(deep: DeepInput, refs: string[]) {
 
 export function formatKrw(won: number): string {
   return `${won.toLocaleString("ko-KR")}원`;
+}
+
+/**
+ * 받침 여부에 맞는 조사를 붙인다 — "스탠다드는", "프리미엄은".
+ * 플랜 이름이 화면 문구에 섞여 나오므로 조사를 고정해 두면 어색해진다.
+ */
+export function withTopic(word: string): string {
+  const code = word.charCodeAt(word.length - 1) - 0xac00;
+  const hasFinalConsonant = code >= 0 && code <= 11171 && code % 28 !== 0;
+  return `${word}${hasFinalConsonant ? "은" : "는"}`;
 }

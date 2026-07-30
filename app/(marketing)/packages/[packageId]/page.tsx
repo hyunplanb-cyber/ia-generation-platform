@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
@@ -29,6 +30,7 @@ import {
   deepSample,
   DESIGN_PRESETS,
   PRESET_CONTENTS,
+  withTopic,
   type PackagePlan,
 } from "@/lib/packages";
 
@@ -99,23 +101,67 @@ const NOTES = [
   "디지털 콘텐츠 특성상 파일 전달 후에는 환불이 제한됩니다.",
 ];
 
+// 예외·상태 화면 판별(lib/packages의 규칙과 같다). 잎사귀까지 걸러내는 데 쓴다.
+const EXCEPTION_ROLE = /(empty|error|closed|pending|expired)/;
+const EXCEPTION_CHIP_LIMIT = 30;
+
 export default async function PackageDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ packageId: string }>;
+  searchParams: Promise<{ plan?: string }>;
 }) {
   const { packageId } = await params;
+  const { plan: planParam } = await searchParams;
   const pkg = getPackage(packageId);
   if (!pkg) notFound();
 
   const { menus, project } = pkg.data;
   const screens = menus.flatMap((m) => m.screens);
   const stateScreens = exceptionScreens(pkg.data);
+  const standard = pkg.plans[0];
   const premium = pkg.plans[pkg.plans.length - 1];
   const lowest = Math.min(...pkg.plans.map((p) => p.priceKrw));
   const deepExceptions = deepExceptionCount(pkg.deep);
 
-  // 3뎁스로 가장 많이 펼쳐지는 화면 3개를 프리미엄 미리보기로 보여준다.
+  // 고른 규모가 페이지 전체를 지배한다 — 지표·화면 목록·예외 화면·검수 수치까지.
+  const isPremium = planParam === "premium";
+  const selected = isPremium ? premium : standard;
+  const other = isPremium ? standard : premium;
+
+  // 화면 목록. 프리미엄이면 화면 밑에 3뎁스 잎사귀를 함께 편다.
+  const viewMenus = menus.map((m) => {
+    const rows = m.screens.map((s) => ({
+      ref: s.ref,
+      name: s.name,
+      role: s.role,
+      func: s.func,
+      leaves: isPremium ? (pkg.deep.subs[s.ref] ?? []) : [],
+    }));
+    return {
+      code: m.code,
+      nameKo: m.nameKo,
+      desc: m.desc,
+      rows,
+      count: rows.reduce((n, r) => n + 1 + r.leaves.length, 0),
+    };
+  });
+
+  // 예외·상태 화면 이름. 프리미엄은 잎사귀에서 나온 것까지 합친다.
+  const exceptionNames = isPremium
+    ? menus.flatMap((m) =>
+        m.screens.flatMap((s) => [
+          ...(EXCEPTION_ROLE.test(s.role) ? [s.name] : []),
+          ...(pkg.deep.subs[s.ref] ?? [])
+            .filter((l) => EXCEPTION_ROLE.test(l.role))
+            .map((l) => `${s.name} › ${l.name}`),
+        ]),
+      )
+    : stateScreens.map((s) => s.name);
+  const exceptionShown = exceptionNames.slice(0, EXCEPTION_CHIP_LIMIT);
+
+  // 3뎁스로 가장 많이 펼쳐지는 화면 3개 — 스탠다드를 볼 때 "위에는 이만큼 더 있다"로 쓴다.
   const topRefs = Object.entries(pkg.deep.subs)
     .sort((a, b) => b[1].length - a[1].length)
     .slice(0, 3)
@@ -145,10 +191,10 @@ export default async function PackageDetailPage({
     });
 
   const STATS = [
-    { icon: Network, label: "메뉴", value: premium.stats.menus },
-    { icon: LayoutList, label: "화면", value: premium.stats.screens },
-    { icon: FileText, label: "요건", value: premium.stats.reqs },
-    { icon: Workflow, label: "화면 이동", value: premium.stats.flows },
+    { icon: Network, label: "메뉴", value: selected.stats.menus },
+    { icon: LayoutList, label: "화면", value: selected.stats.screens },
+    { icon: FileText, label: "요건", value: selected.stats.reqs },
+    { icon: Workflow, label: "화면 이동", value: selected.stats.flows },
   ];
 
   return (
@@ -189,7 +235,8 @@ export default async function PackageDetailPage({
             ))}
           </dl>
           <p className="mt-2 text-sm text-muted-foreground">
-            프리미엄 기준입니다. 스탠다드는 화면 {pkg.plans[0].stats.screens}개예요.
+            <b className="text-foreground">{selected.name}</b> 기준입니다.{" "}
+            {withTopic(other.name)} 화면 {other.stats.screens}개예요.
           </p>
 
           <p className="mt-6 text-lg font-bold text-foreground">
@@ -202,17 +249,22 @@ export default async function PackageDetailPage({
       </section>
 
       <div className="mx-auto flex max-w-5xl flex-col gap-16 px-6 py-14">
-        {/* 플랜 비교 — 이 페이지의 핵심 */}
-        <section className="flex flex-col gap-5">
+        {/* 플랜 비교 — 이 페이지의 핵심. 고르면 아래 내용 전체가 그 규모로 바뀐다. */}
+        <section id="plans" className="flex scroll-mt-20 flex-col gap-5">
           <SectionTitle>어떤 규모로 만드시나요?</SectionTitle>
           <div className="grid gap-4 md:grid-cols-2">
             {pkg.plans.map((plan) => (
-              <PlanCard key={plan.id} plan={plan} />
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                pkgId={pkg.id}
+                selected={plan.id === selected.id}
+              />
             ))}
           </div>
           <p className="text-center text-sm text-muted-foreground">
             두 플랜 모두 디자인 프리셋과 검수 시나리오가 들어 있어요. 차이는 설계의 깊이와
-            분량입니다.
+            분량입니다. 규모를 고르면 아래 내용이 전부 그 기준으로 바뀝니다.
           </p>
         </section>
 
@@ -278,8 +330,8 @@ export default async function PackageDetailPage({
           <SectionTitle>디자인 프리셋 3종</SectionTitle>
           <p className="leading-relaxed text-muted-foreground">
             AI에 화면만 시키면 <b className="text-foreground">화면마다 디자인이 제각각</b>이
-            됩니다. 스펙팩과 프리셋을 함께 넣으면 화면 {premium.stats.screens}개가 같은 스타일로
-            나와요. 세 가지 중 원하는 하나를 고르시면 됩니다.
+            됩니다. 스펙팩과 프리셋을 함께 넣으면 {selected.name} 화면 {selected.stats.screens}개가
+            같은 스타일로 나와요. 세 가지 중 원하는 하나를 고르시면 됩니다.
           </p>
 
           <div className="grid gap-3 sm:grid-cols-3">
@@ -336,7 +388,7 @@ export default async function PackageDetailPage({
 
         {/* 검수 시나리오 */}
         <section className="flex flex-col gap-4">
-          <SectionTitle>검수 시나리오 {premium.verify.scenarios}개</SectionTitle>
+          <SectionTitle>검수 시나리오 {selected.verify.scenarios}개</SectionTitle>
           <p className="leading-relaxed text-muted-foreground">
             AI로 화면을 다 만든 다음이 진짜 문제입니다. 뭐가 빠졌는지 모르니까요. 이 문서는{" "}
             <b className="text-foreground">화면 하나당 시나리오 하나</b>로, 눌러보며 확인할 항목을
@@ -399,10 +451,9 @@ export default async function PackageDetailPage({
             </table>
           </div>
           <p className="text-sm text-muted-foreground">
-            스탠다드 {pkg.plans[0].verify.scenarios}개 시나리오(확인 항목{" "}
-            {pkg.plans[0].verify.checks}개) · 프리미엄 {premium.verify.scenarios}개 시나리오(확인
-            항목 {premium.verify.checks}개). 엑셀이라 결과를 적어 개발자와 그대로 주고받을 수
-            있어요.
+            {withTopic(selected.name)} 시나리오 {selected.verify.scenarios}개 · 확인 항목{" "}
+            {selected.verify.checks}개입니다({withTopic(other.name)} {other.verify.scenarios}개 ·{" "}
+            {other.verify.checks}개). 엑셀이라 결과를 적어 개발자와 그대로 주고받을 수 있어요.
           </p>
         </section>
 
@@ -427,13 +478,15 @@ export default async function PackageDetailPage({
           </div>
         </section>
 
-        {/* 프리미엄 차별점 — 3뎁스로 어떻게 펼쳐지는지 */}
-        {deepSamples.length > 0 && (
+        {/* 스탠다드를 볼 때만 — 프리미엄으로 올리면 뭐가 더 오는지 보여준다.
+            (프리미엄 화면에서는 아래 화면 목록이 이미 3뎁스를 전부 펼쳐 보여준다) */}
+        {!isPremium && deepSamples.length > 0 && (
           <section className="flex flex-col gap-4">
             <SectionTitle>프리미엄은 화면 하나를 이렇게 펼칩니다</SectionTitle>
             <p className="leading-relaxed text-muted-foreground">
-              스탠다드가 &ldquo;화면 하나&rdquo;로 두는 것을, 프리미엄은 탭·상태·예외까지
-              나눠 각각을 독립된 화면으로 설계합니다. 프롬프트도 그만큼 따로 붙어요.
+              지금 보시는 스탠다드가 &ldquo;화면 하나&rdquo;로 두는 것을, 프리미엄은{" "}
+              탭·상태·예외까지 나눠 각각을 독립된 화면으로 설계합니다. 프롬프트도 그만큼 따로
+              붙어요.
             </p>
             <div className="flex flex-col gap-3">
               {deepSamples.map(({ screen, leaves }) => (
@@ -465,49 +518,75 @@ export default async function PackageDetailPage({
         )}
 
         <section className="flex flex-col gap-4">
-          <SectionTitle>AI가 빠뜨리기 쉬운 예외 화면 {stateScreens.length}개</SectionTitle>
+          <SectionTitle>AI가 빠뜨리기 쉬운 예외 화면 {exceptionNames.length}개</SectionTitle>
           <p className="text-muted-foreground">
             &ldquo;만들어줘&rdquo; 한 줄로는 잘 나오지 않는, 실제 서비스에 꼭 필요한 화면들입니다.
           </p>
           <div className="flex flex-wrap gap-2">
-            {stateScreens.map((s) => (
+            {exceptionShown.map((name) => (
               <span
-                key={s.ref}
+                key={name}
                 className="rounded-lg border border-primary/25 bg-primary-soft/50 px-3 py-1.5 text-sm font-medium text-primary-on-soft"
               >
-                {s.name}
+                {name}
               </span>
             ))}
+            {exceptionNames.length > exceptionShown.length && (
+              <span className="rounded-lg border border-dashed border-border px-3 py-1.5 text-sm font-medium text-muted-foreground">
+                외 {exceptionNames.length - exceptionShown.length}개
+              </span>
+            )}
           </div>
         </section>
 
         <section className="flex flex-col gap-4">
-          <SectionTitle>화면 목록 {screens.length}개 · 기능 정의</SectionTitle>
+          <SectionTitle>
+            화면 목록 {selected.stats.screens}개 · 기능 정의
+          </SectionTitle>
+          <p className="text-muted-foreground">
+            {isPremium
+              ? "들여쓴 줄이 3뎁스입니다. 화면 하나를 탭·상태·예외로 나눠 각각 따로 설계했어요."
+              : "메뉴 아래 화면을 2뎁스로 정리했습니다."}
+          </p>
           <div className="flex flex-col gap-6">
-            {menus.map((menu) => (
+            {viewMenus.map((menu) => (
               <div key={menu.code} className="overflow-hidden rounded-xl border border-border">
                 <div className="flex items-baseline gap-2 border-b border-border bg-muted/40 px-4 py-2.5">
                   <span className="font-mono text-xs text-muted-foreground">{menu.code}</span>
                   <h3 className="font-bold text-foreground">{menu.nameKo}</h3>
-                  <span className="text-xs text-muted-foreground">
-                    화면 {menu.screens.length}개
-                  </span>
+                  <span className="text-xs text-muted-foreground">화면 {menu.count}개</span>
                 </div>
                 <table className="w-full text-left text-sm">
                   <tbody>
-                    {menu.screens.map((s, i) => (
-                      <tr
-                        key={s.ref}
-                        className={i > 0 ? "border-t border-border/60 align-top" : "align-top"}
-                      >
-                        <td className="w-56 px-4 py-3 font-semibold text-foreground">
-                          {s.name}
-                          <span className="mt-0.5 block font-mono text-xs font-normal text-muted-foreground">
-                            {s.role}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 leading-relaxed text-foreground/80">{s.func}</td>
-                      </tr>
+                    {menu.rows.map((s, i) => (
+                      <Fragment key={s.ref}>
+                        <tr className={i > 0 ? "border-t border-border/60 align-top" : "align-top"}>
+                          <td className="w-56 px-4 py-3 font-semibold text-foreground">
+                            {s.name}
+                            <span className="mt-0.5 block font-mono text-xs font-normal text-muted-foreground">
+                              {s.role}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 leading-relaxed text-foreground/80">{s.func}</td>
+                        </tr>
+                        {s.leaves.map((l) => (
+                          <tr
+                            key={`${s.ref}-${l.name}`}
+                            className="border-t border-border/40 bg-muted/20 align-top"
+                          >
+                            <td className="w-56 py-2.5 pl-9 pr-4 text-foreground/90">
+                              <span className="text-muted-foreground">└ </span>
+                              {l.name}
+                              <span className="mt-0.5 block pl-4 font-mono text-xs text-muted-foreground">
+                                {l.role}
+                              </span>
+                            </td>
+                            <td className="px-4 py-2.5 leading-relaxed text-foreground/70">
+                              {l.func}
+                            </td>
+                          </tr>
+                        ))}
+                      </Fragment>
                     ))}
                   </tbody>
                 </table>
@@ -534,8 +613,8 @@ export default async function PackageDetailPage({
             <div className="flex items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-5 py-6 text-muted-foreground">
               <Lock className="size-5 shrink-0" />
               <p className="text-sm leading-relaxed">
-                나머지 화면의 프롬프트는 패키지에 들어 있어요. 프리미엄은 총{" "}
-                {premium.stats.screens}개입니다.
+                나머지 화면의 프롬프트는 패키지에 들어 있어요. {withTopic(selected.name)} 총{" "}
+                {selected.stats.screens}개입니다.
               </p>
             </div>
           </div>
@@ -594,22 +673,38 @@ export default async function PackageDetailPage({
   );
 }
 
-function PlanCard({ plan }: { plan: PackagePlan }) {
-  const isPremium = plan.id === "premium";
+function PlanCard({
+  plan,
+  pkgId,
+  selected,
+}: {
+  plan: PackagePlan;
+  pkgId: string;
+  selected: boolean;
+}) {
   return (
     <div
       id={`plan-${plan.id}`}
-      className={`flex scroll-mt-24 flex-col gap-4 rounded-2xl border p-6 ${
-        isPremium ? "border-primary bg-primary-soft/20" : "border-border bg-surface"
+      className={`flex scroll-mt-24 flex-col gap-4 rounded-2xl border p-6 transition-colors ${
+        selected
+          ? "border-primary bg-primary-soft/20 ring-2 ring-primary/30"
+          : "border-border bg-surface"
       }`}
     >
       <div className="flex items-center justify-between gap-2">
         <p className="text-lg font-bold text-foreground">{plan.name}</p>
-        {plan.badge && (
-          <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
-            {plan.badge}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5">
+          {plan.badge && (
+            <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+              {plan.badge}
+            </span>
+          )}
+          {selected && (
+            <span className="rounded-full border border-primary px-2.5 py-0.5 text-xs font-semibold text-primary">
+              보는 중
+            </span>
+          )}
+        </div>
       </div>
 
       <p className="text-3xl font-bold text-primary">{formatKrw(plan.priceKrw)}</p>
@@ -642,6 +737,16 @@ function PlanCard({ plan }: { plan: PackagePlan }) {
         ))}
       </ul>
 
+      {!selected && (
+        <Link
+          href={`/packages/${pkgId}?plan=${plan.id}#plans`}
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+        >
+          이 규모로 내용 보기
+          <ArrowRight className="size-4" />
+        </Link>
+      )}
+
       <div className="mt-auto pt-2">
         {plan.kmongUrl ? (
           <a
@@ -649,7 +754,7 @@ function PlanCard({ plan }: { plan: PackagePlan }) {
             target="_blank"
             rel="noopener noreferrer"
             className={`${buttonVariants({ size: "lg" })} w-full ${
-              isPremium ? "" : "bg-foreground hover:bg-foreground/90"
+              plan.id === "premium" ? "" : "bg-foreground hover:bg-foreground/90"
             }`}
           >
             <ShoppingBag className="size-4" />
