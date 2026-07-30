@@ -323,12 +323,12 @@ export function HomeLanding() {
           <div className="sec-eye">
             <span className="idx">03</span>
             <span className="mono" style={{ textTransform: "none" }}>
-              패키지 구매
+              AI팩
             </span>
           </div>
           <h2 style={{ textWrap: "normal" }}>
             바로 사용하는<br />
-            설계도 프롬프트 패키지
+            설계도 프롬프트 AI팩
           </h2>
           <p className="lead">
             직접 만들기 전에, 이미 완성된 업종별 산출물 한 벌부터. 화면·예외까지 다 들어 있어요.

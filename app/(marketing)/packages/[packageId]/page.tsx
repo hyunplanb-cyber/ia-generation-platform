@@ -92,7 +92,7 @@ const FAQ = [
   },
   {
     q: "디자인 시안도 들어 있나요?",
-    a: "아니요. 이 패키지는 기획 문서입니다. 디자인 프리셋은 색상·글꼴·컴포넌트 규칙을 정리한 문서이지 시안 이미지가 아닙니다.",
+    a: "아니요. AI팩은 기획 문서입니다. 디자인 프리셋은 색상·글꼴·컴포넌트 규칙을 정리한 문서이지 시안 이미지가 아닙니다.",
   },
   {
     q: "AI로 만들면 바로 쓸 수 있는 사이트가 되나요?",
@@ -105,7 +105,7 @@ const FAQ = [
 ];
 
 const NOTES = [
-  "기획 문서 패키지입니다. 디자인 시안(GUI)과 개발 소스코드는 포함되지 않습니다.",
+  "기획 문서 한 벌(AI팩)입니다. 디자인 시안(GUI)과 개발 소스코드는 포함되지 않습니다.",
   "AI로 만들면 화면까지 나옵니다. 로그인·결제·지도·알림 등 외부 연동은 개발이 필요합니다.",
   "디자인 프리셋은 색상·글꼴·모서리·컴포넌트 규칙을 정리한 문서입니다.",
   "AI로 생성한 초안을 다듬은 자료로, 실제 서비스에 적용하기 전 검토가 필요합니다.",
@@ -219,7 +219,7 @@ export default async function PackageDetailPage({
             className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-base font-semibold text-foreground shadow-sm transition-colors hover:bg-muted"
           >
             <ArrowLeft className="size-4" />
-            패키지 목록
+            AI팩 목록
           </Link>
 
           <span className="mt-5 inline-block rounded-full bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
@@ -228,7 +228,7 @@ export default async function PackageDetailPage({
           <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
             {pkg.title}
             <br />
-            <span className="bg-primary-soft rounded-lg px-2 py-0.5">기획 패키지</span>
+            <span className="bg-primary-soft rounded-lg px-2 py-0.5">AI팩</span>
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{pkg.tagline}</p>
 
@@ -313,7 +313,7 @@ export default async function PackageDetailPage({
             ))}
           </ul>
           <p className="rounded-xl bg-primary-soft/40 px-5 py-4 leading-relaxed text-foreground">
-            이 패키지는 그 지점들을 빠뜨리지 않도록 <b>화면 단위까지 쪼개 놓은 설계 문서</b>입니다.
+            이 AI팩은 그 지점들을 빠뜨리지 않도록 <b>화면 단위까지 쪼개 놓은 설계 문서</b>입니다.
             프리미엄에는 예외·상태 화면만 {deepExceptions}개가 정의돼 있어요. 화면 자체는 이
             문서를 AI에 넣으면 만들어집니다.
           </p>
@@ -361,7 +361,7 @@ export default async function PackageDetailPage({
                   말로 설명하는 대신, 직접 눌러보세요
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-foreground/80">
-                  이 패키지의 프리미엄 스펙팩을 Claude Code에 넣어 실제로 만든 화면{" "}
+                  이 AI팩의 프리미엄 스펙팩을 Claude Code에 넣어 실제로 만든 화면{" "}
                   {premium.stats.screens}개입니다. 예외 화면까지 그대로 들어 있어요.
                 </p>
               </div>
@@ -711,7 +711,7 @@ export default async function PackageDetailPage({
             <div className="flex items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-5 py-6 text-muted-foreground">
               <Lock className="size-5 shrink-0" />
               <p className="text-sm leading-relaxed">
-                나머지 화면의 프롬프트는 패키지에 들어 있어요. {withTopic(selected.name)} 총{" "}
+                나머지 화면의 프롬프트는 AI팩에 들어 있어요. {withTopic(selected.name)} 총{" "}
                 {selected.stats.screens}개입니다.
               </p>
             </div>

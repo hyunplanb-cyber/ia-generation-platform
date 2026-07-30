@@ -1,4 +1,4 @@
-// 판매 중인 기획 패키지 정의.
+// 판매 중인 AI팩(기획 산출물 한 벌) 정의.
 // 자체 결제(PG)가 붙기 전까지 결제는 크몽에서 처리한다.
 // (우리 사이트 → 크몽 방향은 마켓 정책상 문제 없다. 반대 방향이 금지 대상.)
 // kmongUrl이 null이면 아직 판매 전 → 구매 버튼 대신 "판매 준비 중"으로 표시한다.
@@ -64,7 +64,7 @@ export interface PackageDef {
    */
   integrations: { area: string; detail: string }[];
   /**
-   * 이 패키지의 스펙팩으로 실제 만들어 본 데모 사이트(public/demo/).
+   * 이 AI팩의 스펙팩으로 실제 만들어 본 데모 사이트(public/demo/).
    * 없는 업종은 비워 둔다 — 없는 걸 링크하느니 안 보이는 게 낫다.
    */
   demoUrl?: string;
@@ -207,7 +207,7 @@ export const PACKAGES: PackageDef[] = [
     title: "온라인 강의 플랫폼 (LMS)",
     industry: "교육",
     tagline:
-      "수강생 학습부터 강사의 수업 편성·학생 관리·정산까지 갖춘 강의 플랫폼 기획 패키지",
+      "수강생 학습부터 강사의 수업 편성·학생 관리·정산까지 갖춘 강의 플랫폼 AI팩",
     plans: makePlans(LMS, LMS_DEEP, { standard: null, premium: null }),
     data: LMS,
     deep: LMS_DEEP,
@@ -236,9 +236,9 @@ export const PACKAGES: PackageDef[] = [
       "강사 정산은 수강료 환불이 끼는 순간 계산이 꼬인다",
     ],
     seo: {
-      title: "온라인 강의 플랫폼(LMS) 화면설계서 · 기획 패키지",
+      title: "온라인 강의 플랫폼(LMS) 화면설계서 · AI팩",
       description:
-        "온라인 강의 플랫폼(LMS) 기획 산출물 패키지입니다. 메뉴·화면 목록·기능정의·흐름도를 미리 확인하고 구매하세요.",
+        "온라인 강의 플랫폼(LMS) AI팩(기획 산출물 한 벌)입니다. 메뉴·화면 목록·기능정의·흐름도를 미리 확인하고 구매하세요.",
       keywords: [
         "LMS 화면설계서",
         "온라인 강의 플랫폼 기획서",
@@ -253,7 +253,7 @@ export const PACKAGES: PackageDef[] = [
     title: "뷰티샵 예약 플랫폼",
     industry: "뷰티·예약",
     tagline:
-      "미용실·네일·왁싱·피부관리 매장을 찾아 예약하고, 매장은 예약·디자이너 일정·정산을 관리하는 예약 플랫폼 기획 패키지",
+      "미용실·네일·왁싱·피부관리 매장을 찾아 예약하고, 매장은 예약·디자이너 일정·정산을 관리하는 예약 플랫폼 AI팩",
     plans: makePlans(BEAUTY, BEAUTY_DEEP, { standard: null, premium: null }),
     data: BEAUTY,
     deep: BEAUTY_DEEP,
@@ -282,9 +282,9 @@ export const PACKAGES: PackageDef[] = [
       "같은 시간대를 두 사람이 동시에 누르는 상황을 설계에서 빼먹기 쉽다",
     ],
     seo: {
-      title: "뷰티샵 예약 플랫폼 화면설계서 · 기획 패키지",
+      title: "뷰티샵 예약 플랫폼 화면설계서 · AI팩",
       description:
-        "미용실·네일·왁싱 예약 플랫폼 기획 산출물 패키지입니다. 예약 흐름, 매장 관리, 디자이너 일정까지 화면 목록과 기능정의를 미리 확인하세요.",
+        "미용실·네일·왁싱 예약 플랫폼 AI팩(기획 산출물 한 벌)입니다. 예약 흐름, 매장 관리, 디자이너 일정까지 화면 목록과 기능정의를 미리 확인하세요.",
       keywords: [
         "예약 시스템 기획서",
         "미용실 예약 화면설계서",
@@ -299,7 +299,7 @@ export const PACKAGES: PackageDef[] = [
     title: "해외 투어·티켓 예약 플랫폼",
     industry: "여행·예약",
     tagline:
-      "해외 투어·입장권·패스를 날짜와 인원을 골라 예약하고, 현지에서 쓸 바우처를 받는 여행 예약 플랫폼 기획 패키지",
+      "해외 투어·입장권·패스를 날짜와 인원을 골라 예약하고, 현지에서 쓸 바우처를 받는 여행 예약 플랫폼 AI팩",
     plans: makePlans(TRAVEL, TRAVEL_DEEP, { standard: null, premium: null }),
     data: TRAVEL,
     deep: TRAVEL_DEEP,
@@ -330,9 +330,9 @@ export const PACKAGES: PackageDef[] = [
       "바우처는 오프라인에서 인터넷 없이 열려야 한다는 조건이 붙는다",
     ],
     seo: {
-      title: "여행 예약 플랫폼 화면설계서 · 투어·티켓 기획 패키지",
+      title: "여행 예약 플랫폼 화면설계서 · 투어·티켓 AI팩",
       description:
-        "해외 투어·티켓 예약 플랫폼 기획 산출물 패키지입니다. 날짜·인원 선택부터 바우처 발급, 최소인원 미달·예약 마감 같은 예외 화면까지 미리 확인하세요.",
+        "해외 투어·티켓 예약 플랫폼 AI팩(기획 산출물 한 벌)입니다. 날짜·인원 선택부터 바우처 발급, 최소인원 미달·예약 마감 같은 예외 화면까지 미리 확인하세요.",
       keywords: [
         "여행 예약 사이트 기획서",
         "투어 예약 화면설계서",

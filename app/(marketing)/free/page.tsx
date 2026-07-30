@@ -196,7 +196,7 @@ export default async function FreePage() {
           <p className="max-w-lg leading-relaxed text-muted-foreground">
             위 샘플도 컨셉과 메뉴만 넣어서 자동으로 만든 거예요. 내 서비스로도{" "}
             <b className="font-semibold text-foreground">프로젝트 1개를 무료로</b> 만들어볼 수
-            있습니다. 업종별로 완성된 패키지도 있어요.
+            있습니다. 업종별로 완성된 AI팩도 있어요.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {/* 이미 로그인했다면 가입 화면을 한 번 더 거치지 않도록 바로 대시보드로 보낸다. */}
@@ -208,7 +208,7 @@ export default async function FreePage() {
               <ArrowRight className="size-4" />
             </Link>
             <Link href="/packages" className={buttonVariants({ variant: "outline", size: "lg" })}>
-              패키지 보기
+              AI팩 보기
             </Link>
           </div>
         </section>

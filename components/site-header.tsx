@@ -47,7 +47,7 @@ export async function SiteHeader() {
             산출물 소개
           </NavLink>
           <NavLink href="/packages" icon={<Package className="size-4" />}>
-            패키지 구매
+            AI팩
           </NavLink>
         </div>
 
