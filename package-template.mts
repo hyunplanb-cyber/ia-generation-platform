@@ -12,6 +12,7 @@
 //         npx tsx package-template.mts groupbuy    → 미판매 재고(구 3등급 방식)
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from "node:fs";
 import JSZip from "jszip";
+import { PACKAGES, BUILD_SCOPE } from "./lib/packages";
 
 const T = "판매용_템플릿";
 
@@ -24,6 +25,8 @@ interface Product {
   zipName: string;
   title: string;
   planLabel: string;
+  /** lib/packages.ts의 PackageDef.id — 업종별 외부 연동 목록을 README에 넣을 때 쓴다. */
+  pkgId?: string;
 }
 
 // 사이트에서 파는 6종.
@@ -40,6 +43,7 @@ for (const ind of INDUSTRIES) {
     zipName: `${ind.label}_스탠다드`,
     title: ind.title,
     planLabel: "스탠다드",
+    pkgId: ind.key,
   };
   PRODUCTS[`${ind.key}-premium`] = {
     src: ind.deep,
@@ -47,6 +51,7 @@ for (const ind of INDUSTRIES) {
     zipName: `${ind.label}_프리미엄`,
     title: ind.title,
     planLabel: "프리미엄",
+    pkgId: ind.key,
   };
 }
 
@@ -60,6 +65,17 @@ const LEGACY: Record<string, Product> = {
 
 const ALL_PRODUCTS = { ...PRODUCTS, ...LEGACY };
 const OUT = `${T}/_배포/판매_6종`;
+
+// 업종별로 개발자에게 넘겨야 할 외부 연동 목록. 판매 페이지와 같은 출처를 쓴다.
+function integrationBlock(p: Product): string {
+  const items = p.pkgId ? PACKAGES.find((x) => x.id === p.pkgId)?.integrations : undefined;
+  if (!items?.length) return "";
+  return `
+ 이 서비스에서 개발자에게 넘길 항목 ${items.length}가지
+${items.map((it) => `  · ${it.area} — ${it.detail}`).join("\n")}
+   견적을 받거나 개발을 맡길 때 이 목록을 그대로 쓰세요.
+`;
+}
 
 function readme(p: Product, stats: { screens: number; requirements: number; verifyScenarios?: number }) {
   const 검수 = stats.verifyScenarios
@@ -105,6 +121,21 @@ ${검수} 디자인프리셋/          색·글꼴·컴포넌트 규칙 3종 (.m
 
  ※ AI에 넣는 파일은 스펙팩(.md) 하나면 충분합니다.
    엑셀은 AI용이 아니라 기획 문서로 보시는 용도입니다.
+
+■ 어디까지 만들어지나요 — 먼저 읽어주세요
+
+ AI가 만들어 주는 것
+${BUILD_SCOPE.made.map((x) => `  · ${x}`).join("\n")}
+
+ 개발이 필요한 것
+${BUILD_SCOPE.needsDev.map((x) => `  · ${x}`).join("\n")}
+
+ 화면은 눌러서 돌아다닐 수 있는 상태로 나옵니다. 다만 로그인 버튼을 눌러도
+ 실제로 로그인이 되지는 않습니다. 바깥 서비스를 불러야 하는 기능이기 때문입니다.
+${integrationBlock(p)}
+ ※ 참고 — Claude Code(Opus 5, 추론 높음)로 144화면을 만들 때 약 40분이 걸렸습니다.
+   쓰시는 도구·모델과 화면 수에 따라 달라집니다. 종량제 API를 쓰신다면
+   화면이 많을수록 비용이 늘어나니, 먼저 일부만 만들어 보고 판단하세요.
 
 ■ 안내
  - 본 상품은 기획 산출물(문서)이며, 완성된 코드나 사이트를 제공하지 않습니다.

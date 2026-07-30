@@ -19,6 +19,7 @@ import {
   ShoppingBag,
   Users,
   Workflow,
+  Wrench,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -30,6 +31,7 @@ import {
   deepSample,
   DESIGN_PRESETS,
   PRESET_CONTENTS,
+  BUILD_SCOPE,
   withTopic,
   type PackagePlan,
 } from "@/lib/packages";
@@ -91,10 +93,19 @@ const FAQ = [
     q: "디자인 시안도 들어 있나요?",
     a: "아니요. 이 패키지는 기획 문서입니다. 디자인 프리셋은 색상·글꼴·컴포넌트 규칙을 정리한 문서이지 시안 이미지가 아닙니다.",
   },
+  {
+    q: "AI로 만들면 바로 쓸 수 있는 사이트가 되나요?",
+    a: "화면까지는 됩니다. 눌러서 돌아다닐 수 있는 상태로 나와요. 다만 로그인 버튼을 눌러도 실제로 로그인이 되지는 않습니다. 로그인·결제·지도·알림처럼 바깥 서비스를 불러야 하는 기능은 개발자가 붙여야 해요. 위의 '어디까지 만들어지나요?'에 업종별로 정리해 두었습니다.",
+  },
+  {
+    q: "만드는 데 얼마나 걸리나요?",
+    a: "저희가 재봤을 때 Claude Code(Opus 5, 추론 높음)로 144화면이 약 40분 걸렸습니다. 쓰시는 도구와 모델, 화면 수에 따라 달라져요. 가벼운 모델을 쓰면 더 빠르지만 결과물의 꼼꼼함은 줄어듭니다.",
+  },
 ];
 
 const NOTES = [
   "기획 문서 패키지입니다. 디자인 시안(GUI)과 개발 소스코드는 포함되지 않습니다.",
+  "AI로 만들면 화면까지 나옵니다. 로그인·결제·지도·알림 등 외부 연동은 개발이 필요합니다.",
   "디자인 프리셋은 색상·글꼴·모서리·컴포넌트 규칙을 정리한 문서입니다.",
   "AI로 생성한 초안을 다듬은 자료로, 실제 서비스에 적용하기 전 검토가 필요합니다.",
   "결제와 파일 전달은 크몽에서 진행됩니다.",
@@ -323,6 +334,67 @@ export default async function PackageDetailPage({
           <p className="text-sm text-muted-foreground">
             엑셀(.xlsx) · 파워포인트(.pptx) · 마크다운(.md) 파일을 ZIP 한 벌로 받으시게 됩니다.
           </p>
+        </section>
+
+        {/* 어디까지 만들어지는지 — 구매 전에 반드시 알아야 할 경계 */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>어디까지 만들어지나요?</SectionTitle>
+          <p className="leading-relaxed text-muted-foreground">
+            스펙팩을 AI 코딩 도구에 넣으면 <b className="text-foreground">화면이 만들어집니다.</b>{" "}
+            다만 로그인·결제·지도처럼 <b className="text-foreground">바깥 서비스를 불러야 하는
+            기능</b>은 눌러도 반응하지 않아요. 그 부분은 개발이 필요합니다. 사실대로 미리
+            알려드립니다.
+          </p>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-primary/30 bg-primary-soft/20 p-5">
+              <p className="flex items-center gap-2 font-bold text-foreground">
+                <Check className="size-4 text-primary" />
+                AI가 만들어 주는 것
+              </p>
+              <ul className="mt-3 flex flex-col gap-1.5">
+                {BUILD_SCOPE.made.map((x) => (
+                  <li key={x} className="flex items-start gap-2 text-sm leading-relaxed text-foreground/85">
+                    <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
+                    {x}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-xl border border-border bg-surface p-5">
+              <p className="flex items-center gap-2 font-bold text-foreground">
+                <Wrench className="size-4 text-warning" />
+                개발이 필요한 것
+              </p>
+              <ul className="mt-3 flex flex-col gap-1.5">
+                {BUILD_SCOPE.needsDev.map((x) => (
+                  <li key={x} className="flex items-start gap-2 text-sm leading-relaxed text-foreground/85">
+                    <Wrench className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+                    {x}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-border">
+            <div className="border-b border-border bg-muted/40 px-4 py-2.5">
+              <h3 className="font-bold text-foreground">
+                이 업종에서 개발자에게 넘길 항목 {pkg.integrations.length}가지
+              </h3>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                견적을 받거나 개발을 맡길 때 그대로 쓰실 수 있게 정리했어요.
+              </p>
+            </div>
+            <ul className="divide-y divide-border/60">
+              {pkg.integrations.map((it) => (
+                <li key={it.area} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:gap-4">
+                  <p className="w-40 shrink-0 font-semibold text-foreground">{it.area}</p>
+                  <p className="text-sm leading-relaxed text-foreground/80">{it.detail}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
 
         {/* 디자인 프리셋 3종 */}
