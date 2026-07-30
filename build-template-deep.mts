@@ -11,9 +11,16 @@ import { buildSpecPackMarkdown, buildSpecPackJson } from "./lib/export/spec-pack
 import { expandDeep, type DeepInput } from "./template-deep";
 import { GROUPBUY_DEEP } from "./template-data-groupbuy-deep";
 import { ADMIN_DEEP } from "./template-data-admin-deep";
+import { LMS_DEEP } from "./template-data-lms-deep";
+import { BEAUTY_DEEP } from "./template-data-beauty-deep";
+import { TRAVEL_DEEP } from "./template-data-travel-deep";
 
-// npx tsx build-template-deep.mts groupbuy | admin
+// npx tsx build-template-deep.mts lms | beauty | travel | groupbuy | admin
+// lms·beauty·travel은 판매 상품 "프리미엄" 3종의 납품 파일이다(/packages 상세와 같은 데이터).
 const TEMPLATES: Record<string, { data: DeepInput; out: string; title: string }> = {
+  lms: { data: LMS_DEEP, out: "판매용_템플릿/온라인강의_LMS_상세IA", title: "온라인 강의 플랫폼(LMS) — 상세 IA" },
+  beauty: { data: BEAUTY_DEEP, out: "판매용_템플릿/뷰티샵_예약플랫폼_상세IA", title: "뷰티샵 예약 플랫폼 — 상세 IA" },
+  travel: { data: TRAVEL_DEEP, out: "판매용_템플릿/해외투어_티켓예약_상세IA", title: "해외 투어·티켓 예약 플랫폼 — 상세 IA" },
   groupbuy: { data: GROUPBUY_DEEP, out: "판매용_템플릿/공동구매_공구플랫폼_상세IA", title: "공동구매(공구) 플랫폼 — 상세 IA" },
   admin: { data: ADMIN_DEEP, out: "판매용_템플릿/비즈니스관리_관리자시스템_상세IA", title: "통합 비즈니스 관리자 시스템 — 상세 IA" },
 };

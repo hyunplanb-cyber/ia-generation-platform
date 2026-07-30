@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Package, ShoppingBag, Sparkles } from "lucide-react";
-import { PACKAGES, formatKrw } from "@/lib/packages";
+import { ArrowRight, Check, Layers, ShoppingBag, Sparkles } from "lucide-react";
+import { packageProducts, formatKrw } from "@/lib/packages";
 
 export const metadata: Metadata = {
   title: "기획 패키지 구매 — 업종별 화면설계서·기능정의서 완성본",
   description:
-    "이미 만들어진 업종별 기획 산출물 패키지를 바로 받아보세요. 메뉴 구조, 화면 목록, 기능정의서, 흐름도, AI 빌드 스펙팩까지 한 벌로 제공합니다.",
+    "이미 만들어진 업종별 기획 산출물 패키지를 바로 받아보세요. 메뉴 구조, 화면 목록, 기능정의서, 흐름도, AI 빌드 스펙팩, 디자인 프리셋, 검수 시나리오까지 한 벌로 제공합니다.",
   keywords: ["기획서 템플릿", "화면설계서 템플릿", "기능정의서 양식", "IA 템플릿", "웹기획 산출물"],
 };
 
 export default function PackagesPage() {
+  const products = packageProducts();
+
   return (
     <div className="bg-background">
       <section className="bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
@@ -26,66 +28,67 @@ export default function PackagesPage() {
             바로 받으세요.
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-            업종별로 완성된 기획 산출물입니다. 화면 목록부터 기능정의서, 흐름도, AI 빌드
-            스펙팩까지 한 벌로 들어 있어요. 내려받아 바로 쓰거나, 내 서비스에 맞게 고쳐
-            쓰시면 됩니다.
+            업종별로 완성된 기획 산출물입니다. 화면 목록부터 기능정의서, 흐름도, AI 빌드 스펙팩,
+            디자인 프리셋, 검수 시나리오까지 한 벌로 들어 있어요. 만들려는 사이트 규모에 맞춰
+            두 가지 중에 고르시면 됩니다.
           </p>
         </div>
       </section>
 
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-14">
-        {/* 패키지 목록 — 박스(카드) 그리드 */}
+        {/* 상품 6종 — 업종 3 × 규모 2 */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {PACKAGES.map((pkg) => {
-            const lowest = Math.min(...pkg.tiers.map((t) => t.priceKrw));
+          {products.map(({ pkg, plan, href }) => {
+            const isPremium = plan.id === "premium";
             return (
               <Link
-                key={pkg.id}
-                href={`/packages/${pkg.id}`}
-                className="group flex flex-col rounded-2xl border border-border bg-surface p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-md"
+                key={`${pkg.id}-${plan.id}`}
+                href={href}
+                className={`group flex flex-col rounded-2xl border bg-surface p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md ${
+                  isPremium
+                    ? "border-primary/40 hover:border-primary"
+                    : "border-border hover:border-primary/40"
+                }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary-on-soft">
-                    <Package className="size-6" />
+                  <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                    {pkg.industry}
                   </span>
-                  {!pkg.kmongUrl && (
-                    <span className="rounded-full bg-warning-soft px-2 py-0.5 text-xs font-semibold text-warning">
-                      판매 준비 중
+                  {plan.badge && (
+                    <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-primary-on-soft">
+                      {plan.badge}
                     </span>
                   )}
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <h2 className="text-lg font-bold text-foreground">{pkg.title}</h2>
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                    {pkg.industry}
-                  </span>
-                </div>
-                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                  {pkg.tagline}
+                <h2 className="mt-3 text-lg font-bold leading-snug text-foreground">
+                  {pkg.title}
+                </h2>
+                <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-primary">
+                  <Layers className="size-4" />
+                  {plan.name} · {plan.depthLabel}
                 </p>
 
-                <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-border/60 pt-4 text-sm">
-                  {[
-                    ["메뉴", pkg.stats.menus],
-                    ["화면", pkg.stats.screens],
-                    ["요건", pkg.stats.reqs],
-                    ["화면 이동", pkg.stats.flows],
-                  ].map(([label, value]) => (
-                    <span key={label as string} className="flex items-baseline gap-1.5">
-                      <dt className="text-muted-foreground">{label}</dt>
-                      <dd className="font-bold text-primary">{value}</dd>
-                    </span>
+                <ul className="mt-4 flex flex-col gap-1.5 border-t border-border/60 pt-4">
+                  {plan.highlights.map((h) => (
+                    <li key={h} className="flex items-start gap-1.5 text-sm text-foreground/80">
+                      <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
+                      {h}
+                    </li>
                   ))}
-                </dl>
+                </ul>
 
                 <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-4">
-                  <p className="text-sm font-bold text-foreground">{formatKrw(lowest)}~</p>
+                  <p className="text-lg font-bold text-foreground">{formatKrw(plan.priceKrw)}</p>
                   <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary">
                     자세히 보기
                     <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>
+
+                {!plan.kmongUrl && (
+                  <p className="mt-2 text-xs font-medium text-warning">판매 준비 중</p>
+                )}
               </Link>
             );
           })}
