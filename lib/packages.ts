@@ -63,6 +63,11 @@ export interface PackageDef {
    * 구매 후 "버튼이 안 눌려요"가 나오지 않도록 구매 전에 명확히 알린다.
    */
   integrations: { area: string; detail: string }[];
+  /**
+   * 이 패키지의 스펙팩으로 실제 만들어 본 데모 사이트(public/demo/).
+   * 없는 업종은 비워 둔다 — 없는 걸 링크하느니 안 보이는 게 낫다.
+   */
+  demoUrl?: string;
   /** 이런 분께 추천 */
   audience: string[];
   /** 이 업종에서 특히 놓치기 쉬운 지점 — 판매 논거 */
@@ -312,6 +317,8 @@ export const PACKAGES: PackageDef[] = [
       { area: "알림", detail: "예약 확정·출발 임박·기상 취소 안내 발송" },
       { area: "다국어·통화", detail: "현지어 표기와 통화 변환" },
     ],
+    // 프리미엄 스펙팩(144화면)을 Claude Code(Opus 5)로 그대로 구현한 결과.
+    demoUrl: "/demo/travel/index.html",
     audience: [
       "마이리얼트립 같은 투어·티켓 예약 서비스를 만들려는 분",
       "현지 투어 상품을 온라인으로 팔려는 분",

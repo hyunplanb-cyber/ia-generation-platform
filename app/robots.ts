@@ -7,7 +7,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/dashboard/", "/api/"],
+      // /demo/ — 스펙팩으로 만든 데모 사이트. 남의 브랜드 화면이라
+      // 검색에 잡히면 우리 판매 페이지와 경쟁하게 된다(각 HTML에도 noindex).
+      disallow: ["/dashboard/", "/api/", "/demo/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

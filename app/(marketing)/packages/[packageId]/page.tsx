@@ -12,6 +12,7 @@ import {
   LayoutList,
   Layers,
   Lock,
+  MonitorPlay,
   Network,
   Package,
   Palette,
@@ -345,6 +346,30 @@ export default async function PackageDetailPage({
             기능</b>은 눌러도 반응하지 않아요. 그 부분은 개발이 필요합니다. 사실대로 미리
             알려드립니다.
           </p>
+
+          {pkg.demoUrl && (
+            <a
+              href={pkg.demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col gap-3 rounded-xl border border-primary bg-primary-soft/30 p-5 transition-colors hover:bg-primary-soft/50 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div>
+                <p className="flex items-center gap-2 font-bold text-foreground">
+                  <MonitorPlay className="size-4 text-primary" />
+                  말로 설명하는 대신, 직접 눌러보세요
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-foreground/80">
+                  이 패키지의 프리미엄 스펙팩을 Claude Code에 넣어 실제로 만든 화면{" "}
+                  {premium.stats.screens}개입니다. 예외 화면까지 그대로 들어 있어요.
+                </p>
+              </div>
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground">
+                데모 보기
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </a>
+          )}
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl border border-primary/30 bg-primary-soft/20 p-5">
