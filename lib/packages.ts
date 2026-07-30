@@ -32,8 +32,8 @@ export interface PackagePlan {
   /** IA 깊이 라벨 */
   depthLabel: string;
   stats: { menus: number; screens: number; reqs: number; flows: number };
-  /** 검수 시나리오 항목 수 표기 */
-  verifyRange: string;
+  /** 검수 시나리오 수 = 화면 수. 확인 항목은 기능정의를 낱개로 쪼갠 수. */
+  verify: { scenarios: number; checks: number };
   /** 이 플랜에만 해당하는 강조 문구 */
   highlights: string[];
   kmongUrl: string | null;
@@ -56,6 +56,8 @@ export interface PackageDef {
   deep: DeepInput;
   /** 전문 공개할 프롬프트 화면 ref (나머지는 잠금 안내) */
   promptSamples: string[];
+  /** 디자인 프리셋 3종이 이 업종에서 어디에 어울리는지 (DESIGN_PRESETS와 같은 순서) */
+  presetFits: [string, string, string];
   /** 이런 분께 추천 */
   audience: string[];
   /** 이 업종에서 특히 놓치기 쉬운 지점 — 판매 논거 */
@@ -64,6 +66,33 @@ export interface PackageDef {
 }
 
 const countItems = (s: string) => s.split("·").filter((x) => x.trim()).length;
+
+// 모든 업종이 같은 프리셋 3종을 함께 받는다. 업종별로 다른 건 "어울리는 곳"뿐이라
+// 그 문구만 PackageDef.presetFits로 따로 둔다(판매본 디자인프리셋 폴더와 같은 순서).
+export const DESIGN_PRESETS = [
+  { no: "01", name: "모던 네이비", tagline: "신뢰감과 밀도. 실무형 서비스의 기본값." },
+  { no: "02", name: "미니멀 모노", tagline: "여백과 활자. 색을 빼면 내용이 남는다." },
+  { no: "03", name: "소프트 파스텔", tagline: "부드럽고 친근하게. 처음 쓰는 사람도 겁먹지 않게." },
+] as const;
+
+/** 프리셋 문서 한 벌에 들어 있는 항목. */
+export const PRESET_CONTENTS = [
+  "색상 — 배경·본문·강조·경고까지 용도별 값",
+  "타이포그래피 — 글꼴과 크기 단계",
+  "모서리 · 여백 · 그림자",
+  "컴포넌트 규칙 — 버튼·카드·입력·표",
+  "화면 유형별 적용 지침",
+  "AI에게 그대로 넣는 지시문",
+] as const;
+
+// 검수 시나리오 수치. lib/export/template-verify.ts의 생성 규칙과 같은 계산이라
+// 판매 페이지에 적힌 숫자와 실제 파일이 어긋나지 않는다.
+function verifyOf(funcs: string[]) {
+  return {
+    scenarios: funcs.length,
+    checks: funcs.reduce((n, f) => n + Math.max(1, countItems(f)), 0),
+  };
+}
 
 // 지표는 템플릿 데이터에서 직접 계산해, 화면에 적힌 숫자와 실제 산출물이 어긋나지 않게 한다.
 function statsOf(data: { menus: { screens: { func: string; btns?: [string, string][] }[] }[] }) {
@@ -99,6 +128,14 @@ function makePlans(
 ): PackagePlan[] {
   const s = statsOf(base);
   const p = deepStatsOf(deep);
+  const baseFuncs = base.menus.flatMap((m) => m.screens).map((x) => x.func);
+  const sv = verifyOf(baseFuncs);
+  const pv = verifyOf([
+    ...deep.menus.flatMap((m) => m.screens).map((x) => x.func),
+    ...Object.values(deep.subs)
+      .flat()
+      .map((l) => l.func),
+  ]);
   return [
     {
       id: "standard",
@@ -107,11 +144,11 @@ function makePlans(
       summary: `화면 ${s.screens}개 · 2뎁스 기본 설계`,
       depthLabel: "메뉴 → 화면 (2뎁스)",
       stats: s,
-      verifyRange: "30~50",
+      verify: sv,
       highlights: [
         `화면 ${s.screens}개와 화면별 프롬프트 ${s.screens}개`,
         "디자인 프리셋 3종 포함",
-        "검수 시나리오 30~50개 항목",
+        `검수 시나리오 ${sv.scenarios}개`,
       ],
       kmongUrl: kmong.standard,
     },
@@ -122,11 +159,11 @@ function makePlans(
       summary: `화면 ${p.screens}개 · 3뎁스 심화 설계`,
       depthLabel: "메뉴 → 화면 → 탭·상태 (3뎁스)",
       stats: p,
-      verifyRange: "100~150",
+      verify: pv,
       highlights: [
         `화면 ${p.screens}개와 화면별 프롬프트 ${p.screens}개`,
         "탭·상태·예외까지 3뎁스로 분해",
-        "검수 시나리오 100~150개 항목",
+        `검수 시나리오 ${pv.scenarios}개`,
       ],
       kmongUrl: kmong.premium,
       badge: "가장 촘촘",
@@ -145,6 +182,11 @@ export const PACKAGES: PackageDef[] = [
     data: LMS,
     deep: LMS_DEEP,
     promptSamples: ["cl3", "cu3", "co6"],
+    presetFits: [
+      "B2B 교육, 사내 LMS, 기업 대상 강의 플랫폼",
+      "전문가용 도구, 관리자 콘솔, 정보 밀도가 높은 화면",
+      "B2C 강의 서비스, 취미·키즈 교육, 일반 사용자 대상",
+    ],
     audience: [
       "인프런·클래스101 같은 강의 플랫폼을 만들려는 분",
       "사내 교육용 LMS를 구축해야 하는 담당자",
@@ -178,6 +220,11 @@ export const PACKAGES: PackageDef[] = [
     data: BEAUTY,
     deep: BEAUTY_DEEP,
     promptSamples: ["re3", "mg1", "st5"],
+    presetFits: [
+      "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
+      "감각적인 편집숍형 살롱, 남성 전용 바버샵",
+      "네일·속눈썹 등 캐주얼 뷰티, 20~30대 타깃 매장",
+    ],
     audience: [
       "미용실·네일샵 예약 서비스를 만들려는 분",
       "지역 기반 예약 플랫폼을 준비하는 창업자",
@@ -211,6 +258,11 @@ export const PACKAGES: PackageDef[] = [
     data: TRAVEL,
     deep: TRAVEL_DEEP,
     promptSamples: ["pr3", "bk6", "vc2"],
+    presetFits: [
+      "신뢰가 중요한 해외 투어·티켓 예약, 대형 여행 플랫폼",
+      "사진이 주인공인 감성 여행 브랜드, 소규모 프라이빗 투어",
+      "액티비티·레저 예약, 20~30대 자유여행객 타깃",
+    ],
     audience: [
       "마이리얼트립 같은 투어·티켓 예약 서비스를 만들려는 분",
       "현지 투어 상품을 온라인으로 팔려는 분",

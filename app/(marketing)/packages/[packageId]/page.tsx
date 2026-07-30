@@ -27,6 +27,8 @@ import {
   exceptionScreens,
   deepExceptionCount,
   deepSample,
+  DESIGN_PRESETS,
+  PRESET_CONTENTS,
   type PackagePlan,
 } from "@/lib/packages";
 
@@ -119,6 +121,28 @@ export default async function PackageDetailPage({
     .slice(0, 3)
     .map(([ref]) => ref);
   const deepSamples = deepSample(pkg.deep, topRefs);
+
+  // 검수 시나리오 미리보기 — 실제 생성 규칙(화면당 시나리오 1개, 기능정의를 항목으로 분해)
+  // 그대로 앞부분만 보여준다. 예외 화면이 섞이도록 일반/예외를 하나씩 뽑는다.
+  const firstNormal = screens.find((s) => !stateScreens.includes(s));
+  const firstException = stateScreens[0];
+  const verifyPreview = [firstNormal, firstException]
+    .filter((s): s is NonNullable<typeof s> => Boolean(s))
+    .flatMap((s) => {
+      const idx = screens.indexOf(s) + 1;
+      const kind = stateScreens.includes(s) ? "예외·상태" : "기본";
+      return s.func
+        .split("·")
+        .map((x) => x.trim())
+        .filter(Boolean)
+        .slice(0, 3)
+        .map((check, j) => ({
+          id: `SCN-${String(idx).padStart(3, "0")}`,
+          screen: j === 0 ? s.name : "",
+          kind: j === 0 ? kind : "",
+          check,
+        }));
+    });
 
   const STATS = [
     { icon: Network, label: "메뉴", value: premium.stats.menus },
@@ -246,6 +270,139 @@ export default async function PackageDetailPage({
           </ul>
           <p className="text-sm text-muted-foreground">
             엑셀(.xlsx) · 파워포인트(.pptx) · 마크다운(.md) 파일을 ZIP 한 벌로 받으시게 됩니다.
+          </p>
+        </section>
+
+        {/* 디자인 프리셋 3종 */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>디자인 프리셋 3종</SectionTitle>
+          <p className="leading-relaxed text-muted-foreground">
+            AI에 화면만 시키면 <b className="text-foreground">화면마다 디자인이 제각각</b>이
+            됩니다. 스펙팩과 프리셋을 함께 넣으면 화면 {premium.stats.screens}개가 같은 스타일로
+            나와요. 세 가지 중 원하는 하나를 고르시면 됩니다.
+          </p>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            {DESIGN_PRESETS.map((preset, i) => (
+              <div
+                key={preset.no}
+                className="flex flex-col gap-2 rounded-xl border border-border bg-surface p-5"
+              >
+                <span className="font-mono text-xs text-muted-foreground">{preset.no}</span>
+                <p className="text-lg font-bold text-foreground">{preset.name}</p>
+                <p className="text-sm leading-relaxed text-foreground/80">{preset.tagline}</p>
+                <p className="mt-1 border-t border-border/60 pt-2 text-sm leading-relaxed text-muted-foreground">
+                  <span className="font-semibold text-primary">어울리는 곳</span>
+                  <br />
+                  {pkg.presetFits[i]}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-border bg-surface p-5">
+              <p className="font-bold text-foreground">프리셋 한 벌에 들어 있는 것</p>
+              <ul className="mt-3 flex flex-col gap-1.5">
+                {PRESET_CONTENTS.map((c) => (
+                  <li
+                    key={c}
+                    className="flex items-start gap-2 text-sm leading-relaxed text-foreground/80"
+                  >
+                    <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-xl border border-border bg-surface p-5">
+              <p className="font-bold text-foreground">쓰는 법</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                AI 코딩 도구에 <b className="text-foreground">스펙팩과 프리셋 파일을 함께</b> 넣고
+                이렇게 주문하세요.
+              </p>
+              <pre className="mt-3 overflow-x-auto rounded-lg bg-muted/50 px-4 py-3 text-sm leading-relaxed text-foreground">
+                {`AI 빌드 스펙팩과 디자인 프리셋 01(모던 네이비)을
+확인해서 이 디자인 규칙대로 화면을 만들어줘.`}
+              </pre>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                스펙팩이 <b className="text-foreground">무엇을 만들지</b>를, 프리셋이{" "}
+                <b className="text-foreground">어떻게 보이게 할지</b>를 정합니다. 마크다운(.md)과
+                JSON 두 가지로 들어 있어요.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 검수 시나리오 */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>검수 시나리오 {premium.verify.scenarios}개</SectionTitle>
+          <p className="leading-relaxed text-muted-foreground">
+            AI로 화면을 다 만든 다음이 진짜 문제입니다. 뭐가 빠졌는지 모르니까요. 이 문서는{" "}
+            <b className="text-foreground">화면 하나당 시나리오 하나</b>로, 눌러보며 확인할 항목을
+            표로 정리한 점검표입니다.
+          </p>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[
+              ["표지", "쓰는 법과 PASS · FAIL · WARN 판정 기준"],
+              ["검수 현황", "시나리오 수 · 확인 항목 수 · 예외 화면 수 집계"],
+              ["검수 시나리오", "화면별 확인 항목과 결과 기입란"],
+            ].map(([name, desc]) => (
+              <div key={name} className="rounded-xl border border-border bg-surface p-4">
+                <p className="font-bold text-foreground">{name}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="overflow-x-auto rounded-xl border border-border">
+            <table className="w-full min-w-[40rem] text-left text-sm">
+              <thead className="bg-muted/40">
+                <tr>
+                  {["테스트ID", "화면", "화면구분", "확인 항목", "결과"].map((h) => (
+                    <th key={h} className="px-4 py-2.5 font-semibold text-foreground">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {verifyPreview.map((r, i) => (
+                  <tr key={i} className="border-t border-border/60 align-top">
+                    <td className="whitespace-nowrap px-4 py-2.5 font-mono text-xs text-muted-foreground">
+                      {r.id}
+                    </td>
+                    <td className="px-4 py-2.5 font-medium text-foreground">{r.screen}</td>
+                    <td className="whitespace-nowrap px-4 py-2.5">
+                      {r.kind && (
+                        <span
+                          className={`rounded-md px-2 py-0.5 text-xs font-medium ${
+                            r.kind === "예외·상태"
+                              ? "bg-warning-soft text-warning"
+                              : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {r.kind}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2.5 leading-relaxed text-foreground/80">{r.check}</td>
+                    <td className="whitespace-nowrap px-4 py-2.5 text-muted-foreground">
+                      <span className="rounded border border-dashed border-border px-2 py-0.5 text-xs">
+                        기입
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            스탠다드 {pkg.plans[0].verify.scenarios}개 시나리오(확인 항목{" "}
+            {pkg.plans[0].verify.checks}개) · 프리미엄 {premium.verify.scenarios}개 시나리오(확인
+            항목 {premium.verify.checks}개). 엑셀이라 결과를 적어 개발자와 그대로 주고받을 수
+            있어요.
           </p>
         </section>
 
@@ -467,7 +624,7 @@ function PlanCard({ plan }: { plan: PackagePlan }) {
           ["메뉴", plan.stats.menus],
           ["화면", plan.stats.screens],
           ["요건", plan.stats.reqs],
-          ["검수 항목", plan.verifyRange],
+          ["검수 시나리오", plan.verify.scenarios],
         ].map(([label, value]) => (
           <span key={label as string} className="flex items-baseline gap-1.5">
             <dt className="text-muted-foreground">{label}</dt>

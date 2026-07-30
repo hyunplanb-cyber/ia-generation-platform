@@ -8,6 +8,7 @@ import { buildWbsRows } from "./lib/export/excel-rows";
 import { buildFlowHtml, buildDrawioXml, type ExportNode, type ExportEdge } from "./lib/export/flow-export";
 import { createMenuPptx, type PptMenu } from "./lib/export/ppt-export";
 import { buildSpecPackMarkdown, buildSpecPackJson } from "./lib/export/spec-pack";
+import { buildTemplateVerifySheets } from "./lib/export/template-verify";
 import { expandDeep, type DeepInput } from "./template-deep";
 import { GROUPBUY_DEEP } from "./template-data-groupbuy-deep";
 import { ADMIN_DEEP } from "./template-data-admin-deep";
@@ -75,6 +76,35 @@ writeFileSync(`${OUT}/07_AI빌드_스펙팩.md`, buildSpecPackMarkdown(deep.proj
 writeFileSync(`${OUT}/07_AI빌드_스펙팩.json`, buildSpecPackJson(deep.project, deep.menus, deep.leafScreens, deep.buttonActions), "utf8");
 console.log("  ✔ 07_AI빌드_스펙팩.md / .json");
 
+// 08 — 검수 시나리오(화면 하나당 시나리오 하나)
+const menuNameById = new Map(deep.menus.map((m) => [m.id, m.nameKo]));
+const verify = buildTemplateVerifySheets(
+  picked.title,
+  deep.leafScreens.map((s) => ({
+    pageId: s.pageId,
+    pageName: s.pageName,
+    menuName: menuNameById.get(s.menuId) ?? "",
+    funcDef: s.funcDef ?? "",
+    role: s.screenRole ?? "",
+  })),
+);
+{
+  const wb = XLSX.utils.book_new();
+  const coverWs = XLSX.utils.aoa_to_sheet(verify.cover);
+  coverWs["!cols"] = [{ wch: 3 }, { wch: 22 }, { wch: 74 }];
+  XLSX.utils.book_append_sheet(wb, coverWs, "표지");
+  const statusWs = XLSX.utils.aoa_to_sheet(verify.status);
+  statusWs["!cols"] = [{ wch: 24 }, { wch: 46 }];
+  XLSX.utils.book_append_sheet(wb, statusWs, "검수 현황");
+  const scnWs = XLSX.utils.json_to_sheet(verify.scenarios);
+  scnWs["!cols"] = [12, 16, 28, 12, 12, 40, 62, 10, 24].map((w) => ({ wch: w }));
+  XLSX.utils.book_append_sheet(wb, scnWs, "검수 시나리오");
+  writeFileSync(`${OUT}/${verify.filename}`, XLSX.write(wb, { type: "buffer", bookType: "xlsx" }));
+  console.log(
+    `  ✔ ${verify.filename} (시나리오 ${deep.leafScreens.length}개 / 확인항목 ${verify.scenarios.length}개)`,
+  );
+}
+
 // 패키징이 README 수치로 쓸 실제 값
 const stats = {
   title: picked.title,
@@ -82,6 +112,8 @@ const stats = {
   screens: deep.leafScreens.length,
   requirements: buildRequirementRows(deep.menus, deep.leafScreens).length,
   buttonActions: deep.buttonActions.length,
+  verifyScenarios: deep.leafScreens.length,
+  verifyChecks: verify.scenarios.length,
 };
 writeFileSync(`${OUT}/_패키지정보.json`, JSON.stringify(stats, null, 2), "utf8");
 

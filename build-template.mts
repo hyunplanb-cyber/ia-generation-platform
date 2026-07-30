@@ -8,6 +8,7 @@ import { buildRequirementRows } from "./lib/export/requirements";
 import { buildFlowHtml, buildDrawioXml, type ExportNode, type ExportEdge } from "./lib/export/flow-export";
 import { createMenuPptx, type PptMenu } from "./lib/export/ppt-export";
 import { buildSpecPackMarkdown, buildSpecPackJson } from "./lib/export/spec-pack";
+import { buildTemplateVerifySheets } from "./lib/export/template-verify";
 import type { Menu } from "./domain/menu/menu";
 import type { Screen } from "./domain/screen/screen";
 import type { ButtonAction } from "./domain/screen/button-action";
@@ -162,7 +163,36 @@ writeFileSync(`${OUT}/07_AI빌드_스펙팩.md`, buildSpecPackMarkdown(SRC_DATA.
 writeFileSync(`${OUT}/07_AI빌드_스펙팩.json`, buildSpecPackJson(SRC_DATA.project, menus, screens, buttonActions), "utf8");
 console.log("  ✔ 07_AI빌드_스펙팩.md / .json");
 
-// 7) 패키징 스크립트가 README에 넣을 실제 수치를 남긴다.
+// 7) 검수 시나리오(화면 하나당 시나리오 하나)
+const menuNameById = new Map(menus.map((m) => [m.id, m.nameKo]));
+const verify = buildTemplateVerifySheets(
+  picked.title,
+  screens.map((s) => ({
+    pageId: s.pageId,
+    pageName: s.pageName,
+    menuName: menuNameById.get(s.menuId) ?? "",
+    funcDef: s.funcDef ?? "",
+    role: s.screenRole ?? "",
+  })),
+);
+{
+  const wb = XLSX.utils.book_new();
+  const coverWs = XLSX.utils.aoa_to_sheet(verify.cover);
+  coverWs["!cols"] = [{ wch: 3 }, { wch: 22 }, { wch: 74 }];
+  XLSX.utils.book_append_sheet(wb, coverWs, "표지");
+  const statusWs = XLSX.utils.aoa_to_sheet(verify.status);
+  statusWs["!cols"] = [{ wch: 24 }, { wch: 46 }];
+  XLSX.utils.book_append_sheet(wb, statusWs, "검수 현황");
+  const scnWs = XLSX.utils.json_to_sheet(verify.scenarios);
+  scnWs["!cols"] = [12, 16, 28, 12, 12, 40, 62, 10, 24].map((w) => ({ wch: w }));
+  XLSX.utils.book_append_sheet(wb, scnWs, "검수 시나리오");
+  writeFileSync(`${OUT}/${verify.filename}`, XLSX.write(wb, { type: "buffer", bookType: "xlsx" }));
+  console.log(
+    `  ✔ ${verify.filename} (시나리오 ${screens.length}개 / 확인항목 ${verify.scenarios.length}개)`,
+  );
+}
+
+// 8) 패키징 스크립트가 README에 넣을 실제 수치를 남긴다.
 //    예전엔 README에 LMS 수치(화면 37·요건 241)가 하드코딩돼 있어,
 //    뷰티·여행 패키지를 사도 README만 LMS 숫자로 적혀 있었다.
 const stats = {
@@ -171,6 +201,8 @@ const stats = {
   screens: screens.length,
   requirements: buildRequirementRows(menus, screens).length,
   buttonActions: buttonActions.length,
+  verifyScenarios: screens.length,
+  verifyChecks: verify.scenarios.length,
 };
 writeFileSync(`${OUT}/_패키지정보.json`, JSON.stringify(stats, null, 2), "utf8");
 
