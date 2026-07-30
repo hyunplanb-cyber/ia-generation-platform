@@ -27,7 +27,7 @@ export default function PackagesPage() {
             <span className="bg-primary-soft rounded-lg px-2 py-0.5">이미 만들어둔 패키지</span>를
             바로 받으세요.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
+          <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
             업종별로 완성된 기획 산출물입니다. 화면 목록부터 기능정의서, 흐름도, AI 빌드 스펙팩,
             디자인 프리셋, 검수 시나리오까지 한 벌로 들어 있어요. 만들려는 사이트 규모에 맞춰
             두 가지 중에 고르시면 됩니다.
