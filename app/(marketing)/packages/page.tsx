@@ -16,7 +16,7 @@ export default function PackagesPage() {
   return (
     <div className="bg-background">
       <section className="bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
-        <div className="mx-auto max-w-5xl px-6 py-14">
+        <div className="mx-auto max-w-5xl px-6 pb-7 pt-14">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground shadow-sm">
             <ShoppingBag className="size-4" />
             패키지 구매
@@ -35,7 +35,7 @@ export default function PackagesPage() {
         </div>
       </section>
 
-      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-14">
+      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 pb-14 pt-7">
         {/* 상품 6종 — 업종 3 × 규모 2 */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {products.map(({ pkg, plan, href }) => {
