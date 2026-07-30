@@ -61,13 +61,16 @@ export function ProfileMenu({
         {initial}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-48">
-        {/* 내 크레딧 잔액 */}
-        <div className="flex items-center justify-between gap-3 px-2 py-1.5">
+        {/* 내 크레딧 잔액 — 클릭 시 사용 내역 */}
+        <DropdownMenuItem
+          onClick={() => router.push("/dashboard/billing/history")}
+          className="flex items-center justify-between gap-3"
+        >
           <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
             <Coins className="size-3.5 text-primary" /> 내 크레딧
           </span>
           <span className="text-sm font-bold text-foreground">{balance.toLocaleString()}</span>
-        </div>
+        </DropdownMenuItem>
         {showCharge && (
           <DropdownMenuItem onClick={() => router.push("/dashboard/billing")}>
             충전하기

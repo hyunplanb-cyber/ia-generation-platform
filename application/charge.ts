@@ -99,6 +99,7 @@ export async function confirmCharge(
   await chargeCredits(order.userId, order.credits, `${order.amountKrw.toLocaleString()}원 충전`, {
     orderId,
     paymentKey,
+    amountKrw: order.amountKrw,
   });
   await db
     .update(creditOrder)
