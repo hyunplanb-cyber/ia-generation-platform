@@ -204,8 +204,7 @@ export function HomeLanding() {
           </h2>
           <p className="lead">
             기획으로 끝나는 도구는 여기까지 안 와요. URL이나 설계 문서를 넣으면 확인할 것을 시나리오로
-            짚어주고,<br />
-            공개 화면은 검수 결과(Pass/Fail)까지 냅니다. 개발자가 아니어도 읽는 리포트로요.
+            짚어주고, 공개 화면은 검수 결과(Pass/Fail)까지 냅니다. 개발자가 아니어도 읽는 리포트로요.
           </p>
 
           <div className="inputs">
@@ -626,7 +625,8 @@ export function HomeLanding() {
           font-size: 19px;
           font-weight: 400;
           color: var(--ink-soft);
-          max-width: 600px;
+          /* 세 섹션 리드가 각각 2줄·2줄·1줄로 떨어지는 폭 */
+          max-width: 760px;
           margin-top: 16px;
         }
 
@@ -982,7 +982,8 @@ export function HomeLanding() {
           font-size: 17px;
           color: var(--ink-soft);
           font-weight: 400;
-          max-width: 640px;
+          /* 마무리 문단이 2줄로 떨어지는 폭 */
+          max-width: 780px;
           margin: 22px auto 0;
           line-height: 1.7;
         }
