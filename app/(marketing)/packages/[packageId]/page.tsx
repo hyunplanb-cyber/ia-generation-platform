@@ -313,8 +313,9 @@ export default async function PackageDetailPage({
             ))}
           </ul>
           <p className="rounded-xl bg-primary-soft/40 px-5 py-4 leading-relaxed text-foreground">
-            이 패키지는 그 지점들을 <b>이미 화면으로 만들어 둔</b> 설계도입니다. 프리미엄에는
-            예외·상태 화면만 {deepExceptions}개가 들어 있어요.
+            이 패키지는 그 지점들을 빠뜨리지 않도록 <b>화면 단위까지 쪼개 놓은 설계 문서</b>입니다.
+            프리미엄에는 예외·상태 화면만 {deepExceptions}개가 정의돼 있어요. 화면 자체는 이
+            문서를 AI에 넣으면 만들어집니다.
           </p>
         </section>
 
