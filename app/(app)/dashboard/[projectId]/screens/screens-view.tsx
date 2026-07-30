@@ -111,7 +111,7 @@ function MenuGroupCard({
         <span className="flex size-7 items-center justify-center rounded-lg bg-primary-soft text-primary-on-soft">
           <Folder className="size-4" />
         </span>
-        <span className="rounded-md bg-pastel-lavender px-2 py-0.5 font-mono text-xs font-semibold text-pastel-lavender-foreground">
+        <span className="rounded-md bg-primary-soft px-2 py-0.5 font-mono text-xs font-semibold text-primary-on-soft">
           {code}
         </span>
         <h3 className="font-semibold text-foreground">{name}</h3>

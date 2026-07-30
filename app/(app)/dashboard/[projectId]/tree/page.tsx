@@ -32,7 +32,7 @@ export default async function TreePage({
             return (
               <div key={menu.id} className={i > 0 ? "border-t border-border" : ""}>
                 <div className="flex items-center gap-2 bg-muted/40 px-4 py-2.5">
-                  <span className="rounded-sm bg-pastel-lavender px-2 py-0.5 font-mono text-xs font-medium text-pastel-lavender-foreground">
+                  <span className="rounded-sm bg-primary-soft px-2 py-0.5 font-mono text-xs font-medium text-primary-on-soft">
                     {menu.menuCode}
                   </span>
                   <span className="font-semibold text-foreground">{menu.nameKo}</span>

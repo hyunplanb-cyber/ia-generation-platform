@@ -110,7 +110,7 @@ export function ScreenListItem({
           ) : (
             <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
           )}
-          <span className="rounded-sm bg-pastel-lavender px-2 py-0.5 font-mono text-xs font-medium text-pastel-lavender-foreground">
+          <span className="rounded-sm bg-primary-soft px-2 py-0.5 font-mono text-xs font-medium text-primary-on-soft">
             {screen.pageId}
           </span>
         </button>

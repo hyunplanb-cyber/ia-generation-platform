@@ -15,7 +15,7 @@ export function LoginForm({
   const hasSocialProvider = Object.values(enabledSocialProviders).some(Boolean);
 
   return (
-    <div className="relative overflow-hidden bg-linear-to-br from-pastel-lavender/40 via-background to-pastel-mint/40 py-16">
+    <div className="relative overflow-hidden bg-linear-to-br from-primary-soft/40 via-background to-muted/40 py-16">
       <div className="mx-auto flex max-w-sm flex-col gap-6 px-6">
         <div className="flex flex-col items-center gap-3 text-center">
           <span className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">

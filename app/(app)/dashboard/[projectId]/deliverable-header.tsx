@@ -3,8 +3,8 @@ import { Download, Sparkles, type LucideIcon } from "lucide-react";
 const TONE: Record<string, string> = {
   violet: "bg-primary-soft text-primary-on-soft",
   mint: "bg-pastel-mint text-pastel-mint-foreground",
-  yellow: "bg-pastel-yellow text-pastel-yellow-foreground",
-  lavender: "bg-pastel-lavender text-pastel-lavender-foreground",
+  yellow: "bg-muted text-muted-foreground",
+  lavender: "bg-muted text-muted-foreground",
 };
 
 // 산출물 페이지 공통 헤더 — 상단 탭이 이미 페이지를 나타내므로, 여기서는

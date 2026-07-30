@@ -61,7 +61,7 @@ export function ScreenDetailPanel({
       >
         <div className="flex items-center justify-between">
           <div>
-            <span className="rounded-sm bg-pastel-lavender px-2 py-0.5 font-mono text-xs font-medium text-pastel-lavender-foreground">
+            <span className="rounded-sm bg-primary-soft px-2 py-0.5 font-mono text-xs font-medium text-primary-on-soft">
               {screen.pageId}
             </span>
             <h2 className="mt-1 text-lg font-bold text-foreground">{screen.pageName}</h2>

@@ -11,7 +11,7 @@ import { buildRequirements, type ReqType } from "@/lib/export/requirements";
 const TYPE_BADGE: Record<ReqType, string> = {
   기능: "bg-primary-soft text-primary-on-soft",
   콘텐츠: "bg-pastel-mint text-pastel-mint-foreground",
-  "UI/UX": "bg-pastel-lavender text-pastel-lavender-foreground",
+  "UI/UX": "bg-muted text-muted-foreground",
   정책: "bg-warning-soft text-warning",
   기타: "bg-neutral-badge-soft text-neutral-badge",
 };

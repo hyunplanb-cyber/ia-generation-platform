@@ -10,7 +10,7 @@ export default async function AccountPage() {
   const deletedAt = session.user.deletedAt as Date | null;
 
   return (
-    <div className="bg-linear-to-br from-pastel-mint/20 via-background to-pastel-lavender/20 py-16">
+    <div className="bg-linear-to-br from-primary-soft/25 via-background to-muted/40 py-16">
       <div className="mx-auto flex max-w-lg flex-col gap-8 px-6">
         <div className="flex items-center gap-3">
           <span className="flex size-11 items-center justify-center rounded-full bg-primary-soft text-primary-on-soft">

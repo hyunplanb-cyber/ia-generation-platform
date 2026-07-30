@@ -88,7 +88,7 @@ export function MenuListItem({
     <li className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background p-4">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <span className="rounded-sm bg-pastel-lavender px-2 py-0.5 font-mono text-xs font-medium text-pastel-lavender-foreground">
+          <span className="rounded-sm bg-primary-soft px-2 py-0.5 font-mono text-xs font-medium text-primary-on-soft">
             {menu.menuCode}
           </span>
           <span className="font-semibold text-foreground">{menu.nameKo}</span>

@@ -37,9 +37,9 @@ const TABS: { key: TabKey; label: string; icon: LucideIcon; href: string }[] = [
 const REQ_TONE: Record<string, string> = {
   기능: "bg-primary-soft text-primary-on-soft",
   콘텐츠: "bg-pastel-mint text-pastel-mint-foreground",
-  "UI/UX": "bg-pastel-lavender text-pastel-lavender-foreground",
+  "UI/UX": "bg-muted text-muted-foreground",
   정책: "bg-warning-soft text-warning",
-  기타: "bg-muted text-muted-foreground",
+  기타: "bg-neutral-badge-soft text-neutral-badge",
 };
 
 // 산출물 탭 — 선택하면 이동하지 않고 아래에 미리보기를 보여준다.
