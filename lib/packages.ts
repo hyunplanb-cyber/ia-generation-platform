@@ -369,6 +369,34 @@ export function packageProducts(): PackageProduct[] {
   );
 }
 
+/**
+ * 메인 랜딩이 쓰는 가벼운 카드 데이터.
+ * 랜딩은 클라이언트 컴포넌트라 PackageDef를 통째로 넘기면 템플릿 데이터(화면 수백 개)가
+ * 클라이언트 번들에 딸려 들어간다. 서버에서 필요한 값만 뽑아 넘긴다.
+ */
+export interface AiPackCard {
+  href: string;
+  /** 카드 상단 영문 라벨 */
+  code: string;
+  title: string;
+  planName: string;
+  screens: number;
+  price: string;
+  badge?: string;
+}
+
+export function aiPackCards(): AiPackCard[] {
+  return packageProducts().map(({ pkg, plan, href }) => ({
+    href,
+    code: pkg.id.toUpperCase(),
+    title: pkg.title,
+    planName: plan.name,
+    screens: plan.stats.screens,
+    price: formatKrw(plan.priceKrw),
+    badge: plan.badge,
+  }));
+}
+
 export function getPackage(id: string): PackageDef | undefined {
   return PACKAGES.find((p) => p.id === id);
 }

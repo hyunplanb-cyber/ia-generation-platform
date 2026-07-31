@@ -1,14 +1,30 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
+import type { AiPackCard } from "@/lib/packages";
+
+const PER_PAGE = 3;
+const ROLL_MS = 5000;
 
 
 // 카페인컬러 메인 — 승인된 레트로모던 시안(홈페이지_리디자인_시안/template.html)을
 // 실제 페이지로 이관한 것. 스타일은 styled-jsx로 이 컴포넌트에만 스코프된다
 // (일반 element 선택자 section/h2/a 등이 다른 페이지로 새지 않게).
 // 상단 네비·하단 푸터는 마케팅 레이아웃(SiteHeader/footer)이 담당하므로 여기선 본문만.
-export function HomeLanding() {
+export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
+  // AI팩 6종을 3개씩 두 페이지로 굴린다. 마우스를 올리면 멈춰서 읽을 시간을 준다.
+  const pageCount = Math.max(1, Math.ceil(packs.length / PER_PAGE));
+  const [page, setPage] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused || pageCount < 2) return;
+    const t = setInterval(() => setPage((p) => (p + 1) % pageCount), ROLL_MS);
+    return () => clearInterval(t);
+  }, [paused, pageCount]);
+
   return (
     <div className="cc">
       {/* HERO */}
@@ -356,25 +372,47 @@ export function HomeLanding() {
           <p className="lead">
             직접 만들기 전에, 이미 완성된 업종별 산출물 한 벌부터. 화면·예외까지 다 들어 있어요.
           </p>
-          <div className="tpl-grid">
-            <Link className="tpl" href="/packages">
-              <div className="tm">LMS</div>
-              <div className="tt">온라인 강의 플랫폼</div>
-              <div className="td">수강·결제·수료까지 화면 37개 + 프롬프트.</div>
-              <div className="tp">49,000원부터</div>
-            </Link>
-            <Link className="tpl" href="/packages">
-              <div className="tm">BEAUTY</div>
-              <div className="tt">뷰티샵 예약 플랫폼</div>
-              <div className="td">예약·디자이너·정산까지 화면 43개 + 프롬프트.</div>
-              <div className="tp">49,000원부터</div>
-            </Link>
-            <Link className="tpl" href="/packages">
-              <div className="tm">TRAVEL</div>
-              <div className="tt">해외 투어·티켓 예약</div>
-              <div className="td">예약·바우처·환불까지 화면 43개 + 프롬프트.</div>
-              <div className="tp">49,000원부터</div>
-            </Link>
+          <div
+            className="tpl-roll"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+          >
+            <div className="tpl-vp">
+              <div className="tpl-track" style={{ transform: `translateX(-${page * 100}%)` }}>
+                {Array.from({ length: pageCount }, (_, i) => (
+                  <div className="tpl-page" key={i} aria-hidden={i !== page}>
+                    {packs.slice(i * PER_PAGE, i * PER_PAGE + PER_PAGE).map((p) => (
+                      <Link className="tpl" href={p.href} key={p.href}>
+                        <div className="tm">{p.code}</div>
+                        <div className="tt">{p.title}</div>
+                        <div className="td">
+                          {p.planName} · 화면 {p.screens}개 + 화면별 프롬프트.
+                        </div>
+                        <div className="tp">{p.price}</div>
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="tpl-foot">
+              <div className="tpl-dots">
+                {Array.from({ length: pageCount }, (_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={i === page ? "on" : ""}
+                    aria-label={`AI팩 ${i + 1}페이지 보기`}
+                    aria-current={i === page}
+                    onClick={() => setPage(i)}
+                  />
+                ))}
+              </div>
+              <Link className="btn btn-line" href="/packages">
+                AI팩 더보기 <span aria-hidden="true">→</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -980,11 +1018,64 @@ export function HomeLanding() {
         .tpls h2 {
           font-size: clamp(34px, 5vw, 58px);
         }
-        .tpl-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 16px;
+        /* AI팩 6종 — 3개씩 두 페이지로 롤링 */
+        .tpl-roll {
           margin-top: 38px;
+        }
+        .tpl-vp {
+          overflow: hidden;
+        }
+        .tpl-track {
+          display: flex;
+          transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .tpl-page {
+          flex: 0 0 100%;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+          /* 트랙이 옆으로 밀릴 때 카드 그림자가 잘리지 않게 살짝 여유를 준다 */
+          padding: 4px;
+        }
+        @media (max-width: 860px) {
+          .tpl-page {
+            grid-template-columns: 1fr;
+          }
+        }
+        .tpl-foot {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          margin-top: 22px;
+          flex-wrap: wrap;
+        }
+        .tpl-dots {
+          display: flex;
+          gap: 8px;
+        }
+        .tpl-dots button {
+          width: 26px;
+          height: 6px;
+          border: 0;
+          padding: 0;
+          border-radius: 999px;
+          background: var(--paper-line);
+          cursor: pointer;
+          transition: background 0.2s ease, width 0.2s ease;
+        }
+        .tpl-dots button.on {
+          width: 40px;
+          background: var(--orange);
+        }
+        .cc :global(.btn-line) {
+          background: transparent;
+          color: var(--ink);
+          border: 1.5px solid var(--ink);
+        }
+        .cc :global(.btn-line):hover {
+          background: var(--ink);
+          color: var(--paper);
         }
         .cc :global(.tpl) {
           background: var(--card);
