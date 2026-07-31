@@ -196,17 +196,6 @@ function HelperPanel() {
   );
 }
 
-function LimitNotice({ freeLimit }: { freeLimit: number | null }) {
-  return (
-    <div className="rounded-xl border border-primary/30 bg-primary-soft/30 p-6 text-center">
-      <p className="font-semibold text-foreground">무료 검수 {freeLimit ?? 1}회를 다 쓰셨어요</p>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        검수를 계속 이용하려면 크레딧이 필요해요. 충전 기능을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요.
-      </p>
-    </div>
-  );
-}
-
 // 검수하는 동안 보여주는 "시간이 흐르는" 전체 오버레이(설계도 프롬프트와 동일).
 function LoadingScreen({ mode }: { mode: Mode }) {
   const [elapsed, setElapsed] = useState(0);
@@ -333,12 +322,11 @@ function ModeSection({
 }
 
 export function VerifyForm({
-  alreadyBlocked,
-  freeLimit,
+  balance,
   creditsOpen,
 }: {
-  alreadyBlocked: boolean;
-  freeLimit: number | null;
+  /** 지금 남은 크레딧. 한도는 이것 하나로만 정한다. */
+  balance: number;
   creditsOpen: boolean;
 }) {
   const [state, formAction, pending] = useActionState(runVerifyAction, initialState);
@@ -348,8 +336,7 @@ export function VerifyForm({
   const [specFileName, setSpecFileName] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const report = state.report;
-  // 결제 켜지면 무료 횟수 제한 대신 크레딧으로 — 무료 소진 안내를 띄우지 않는다.
-  const blocked = !creditsOpen && (alreadyBlocked || state.limitReached);
+
 
   const onResult = !!report && !dismissed;
   const activeStep: 0 | 1 = onResult ? 1 : 0;
@@ -358,11 +345,11 @@ export function VerifyForm({
   // 파일: 기본 4 / 상세 8, 사이트: 기본 8 / 상세 16.
   const genCost = isFile ? (scale === "detail" ? 8 : 4) : scale === "detail" ? 16 : 8;
 
-  // 무료 횟수를 다 썼고 결과도 없으면 입력 자리에 안내만.
+  // 크레딧이 모자라도 입력 화면은 그대로 보여준다 — 무엇을 넣는 자리인지 알 수 없으면
+  // 처음 온 사람은 서비스를 이해할 수 없다. 막는 건 제출 버튼에서만.
+  const shortOfCredits = balance < genCost;
   const leftContent =
-    blocked && !report ? (
-      <LimitNotice freeLimit={freeLimit} />
-    ) : onResult ? (
+    onResult ? (
       <ResultView report={report} onReset={() => setDismissed(true)} />
     ) : (
       <div className="flex flex-col gap-6">
@@ -530,9 +517,21 @@ export function VerifyForm({
               </li>
             </ul>
 
-            <Button type="submit" disabled={pending} className="mt-4">
+            {shortOfCredits && (
+              <p className="mt-4 rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+                <b className="font-semibold text-foreground">크레딧이 모자라요.</b> 이 검수에는{" "}
+                {genCost}크레딧이 필요한데 지금 {balance}크레딧 남았어요.
+                {creditsOpen
+                  ? " 충전한 뒤 다시 시도해 주세요."
+                  : " 충전 기능을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요."}
+                <br />
+                규모를 낮추면 더 적은 크레딧으로 해보실 수 있어요.
+              </p>
+            )}
+
+            <Button type="submit" disabled={pending || shortOfCredits} className="mt-4">
               {isFile ? "등록 파일 분석해서 시나리오 생성" : "등록한 사이트 검수 시작"}
-              {creditsOpen && <span className="ml-1.5 font-normal opacity-80">· {genCost}크레딧</span>}
+              <span className="ml-1.5 font-normal opacity-80">· {genCost}크레딧</span>
             </Button>
           </div>
         </form>
@@ -543,7 +542,7 @@ export function VerifyForm({
     <div className="flex flex-col gap-5">
       <VerifySteps active={activeStep} />
 
-      {!onResult && !(blocked && !report) && (
+      {!onResult && (
         <p className="text-sm text-muted-foreground">
           이미 오픈(배포)한 사이트 주소나 설계 문서를 넣으면, 오픈 전에 진짜 다 되는지 확인해 드려요.
         </p>

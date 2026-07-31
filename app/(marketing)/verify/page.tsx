@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
-import { getVerifyQuota } from "@/application/get-verify-quota";
+import { getCreditBalance } from "@/application/credit";
 import { CREDITS_OPEN } from "@/lib/flags";
 import { VerifyForm } from "./verify-form";
 
@@ -22,12 +22,13 @@ export default async function VerifyPage() {
     redirect("/login?next=/verify");
   }
 
-  const quota = await getVerifyQuota();
+  // 한도는 크레딧 하나로만 정한다(무료 N회 같은 기능별 예외를 두지 않는다).
+  const balance = await getCreditBalance();
 
   // 스텝(입력→검수 결과)·안내 패널·폼이 상태를 공유해야 하므로, 셸 전체를 VerifyForm(클라이언트)이 그린다.
   return (
     <main className="point-green mx-auto w-full max-w-[1440px] px-6 py-5">
-      <VerifyForm alreadyBlocked={!quota.allowed} freeLimit={quota.limit} creditsOpen={CREDITS_OPEN} />
+      <VerifyForm balance={balance} creditsOpen={CREDITS_OPEN} />
     </main>
   );
 }

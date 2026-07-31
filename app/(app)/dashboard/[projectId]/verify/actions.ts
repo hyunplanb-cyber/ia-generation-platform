@@ -2,14 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { verifyText } from "@/application/verify-site";
-import { getVerifyQuota } from "@/application/get-verify-quota";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { listMenus } from "@/application/list-menus";
 import { withProjectAuth } from "@/application/with-project-auth";
 import { requireSession } from "@/application/require-session";
 import { getCreditBalance, spendCredits } from "@/application/credit";
 import { CREDITS_OPEN } from "@/lib/flags";
-import { CREDIT_COST } from "@/lib/credits";
+import { CREDIT_COST, insufficientCreditMessage } from "@/lib/credits";
 import { buildSpecPackMarkdown } from "@/lib/export/spec-pack";
 import { drizzleVerifyRunRepository } from "@/adapters/repository/drizzle/verify-run-repository";
 import type { VerificationReport } from "@/domain/verify/report";
@@ -44,14 +43,10 @@ export async function generateScenariosAction(
     return fail("이 프로젝트에 접근할 수 없어요.");
   }
 
-  // 결제 전에는 무료 횟수, 결제 켜지면 크레딧으로.
-  if (!CREDITS_OPEN) {
-    const quota = await getVerifyQuota();
-    if (!quota.allowed) return { report: null, error: null, limitReached: true, runId: null };
-  }
+  // 한도는 크레딧 하나로만 정한다(기능별 무료 횟수를 두지 않는다).
   const cost = detailMode ? CREDIT_COST.genDetail : CREDIT_COST.genBasic;
-  if (CREDITS_OPEN && (await getCreditBalance()) < cost) {
-    return fail("크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요.");
+  if ((await getCreditBalance()) < cost) {
+    return { report: null, error: insufficientCreditMessage(CREDITS_OPEN), limitReached: true, runId: null };
   }
 
   // 산출물 → 텍스트(스펙팩) → 시나리오 생성.
@@ -96,11 +91,10 @@ export async function generateScenariosAction(
     report = result.report;
   }
 
-  if (CREDITS_OPEN) {
-    await spendCredits(cost, detailMode ? "검수 시나리오 생성(상세)" : "검수 시나리오 생성(주요)", {
-      projectId,
-    });
-  }
+  // 생성이 성공했을 때만 차감한다(실패하면 무과금).
+  await spendCredits(cost, detailMode ? "검수 시나리오 생성(상세)" : "검수 시나리오 생성(주요)", {
+    projectId,
+  });
 
   let runId: string | null = null;
   try {

@@ -43,7 +43,7 @@ export async function generatePreset(
 ): Promise<PresetActionResult> {
   return withProjectAuth(projectId, async (p) => {
     const firstTime = !p.presetConfig;
-    if (CREDITS_OPEN && firstTime) {
+    if (firstTime) {
       const spend = await spendCredits(PRESET_GEN_COST, "디자인 프리셋 생성", { projectId });
       if (!spend.ok) return { ok: false, reason: "insufficient", balance: spend.balance };
     }
@@ -51,7 +51,7 @@ export async function generatePreset(
       .update(project)
       .set({ presetConfig: JSON.stringify(config), updatedAt: new Date() })
       .where(eq(project.id, projectId));
-    return { ok: true, charged: CREDITS_OPEN && firstTime };
+    return { ok: true, charged: firstTime };
   });
 }
 

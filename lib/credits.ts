@@ -3,6 +3,16 @@
 
 export const WON_PER_CREDIT = 100;
 
+/**
+ * 크레딧이 모자랄 때 보여줄 문구.
+ * 충전이 아직 안 열린 동안에는 "충전하세요"라고 하면 안 된다 — 갈 곳이 없다.
+ */
+export function insufficientCreditMessage(creditsOpen: boolean): string {
+  return creditsOpen
+    ? "크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요."
+    : "무료 크레딧을 다 쓰셨어요. 충전 기능을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요.";
+}
+
 // 무료 체험 — 가입 시 지급.
 //
 // 유효기간이 30일인 이유: 결제(PG)가 붙기 전까지의 한시 설정이다.

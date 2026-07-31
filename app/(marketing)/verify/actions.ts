@@ -1,11 +1,10 @@
 "use server";
 
 import { verifySite, verifyDocument, verifyText } from "@/application/verify-site";
-import { getVerifyQuota } from "@/application/get-verify-quota";
 import { requireSession } from "@/application/require-session";
 import { getCreditBalance, spendCredits } from "@/application/credit";
 import { CREDITS_OPEN } from "@/lib/flags";
-import { CREDIT_COST } from "@/lib/credits";
+import { CREDIT_COST, insufficientCreditMessage } from "@/lib/credits";
 import { drizzleVerifyRunRepository } from "@/adapters/repository/drizzle/verify-run-repository";
 import type { VerificationReport } from "@/domain/verify/report";
 
@@ -46,14 +45,6 @@ export async function runVerifyAction(
     return fail("로그인이 필요해요. 로그인 후 다시 시도해 주세요.");
   }
 
-  // 결제 전에는 무료 횟수, 결제 켜지면 크레딧으로 대체한다.
-  if (!CREDITS_OPEN) {
-    const quota = await getVerifyQuota();
-    if (!quota.allowed) {
-      return { report: null, error: null, limitReached: true };
-    }
-  }
-
   const mode = String(formData.get("mode") ?? "url");
   const detail = String(formData.get("scale") ?? "basic") === "detail";
   const isUrl = mode === "url";
@@ -66,8 +57,9 @@ export async function runVerifyAction(
     : detail
       ? CREDIT_COST.genDetail
       : CREDIT_COST.genBasic;
-  if (CREDITS_OPEN && (await getCreditBalance()) < cost) {
-    return fail("크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요.");
+  // 한도는 크레딧 하나로만 정한다(기능별 무료 횟수를 두지 않는다).
+  if ((await getCreditBalance()) < cost) {
+    return { report: null, error: insufficientCreditMessage(CREDITS_OPEN), limitReached: true };
   }
 
   let report: VerificationReport;
@@ -101,10 +93,8 @@ export async function runVerifyAction(
     report = result.report;
   }
 
-  // 검수가 성공했으니 크레딧을 차감한다(결제 켜짐일 때만).
-  if (CREDITS_OPEN) {
-    await spendCredits(cost, mode === "url" ? "사이트 검수" : "문서·설계도 검수", {});
-  }
+  // 검수가 성공했을 때만 차감한다(실패하면 무과금).
+  await spendCredits(cost, mode === "url" ? "사이트 검수" : "문서·설계도 검수", {});
 
   // 결과 저장(무료 횟수 집계 + 내 프로젝트 연동 기반). 저장 실패가 결과를 막지 않게 방어.
   try {
