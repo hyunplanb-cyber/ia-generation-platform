@@ -97,8 +97,16 @@ ${items.map((it) => `  · ${it.area} — ${it.detail}`).join("\n")}
 }
 
 function readme(p: Product, stats: { screens: number; requirements: number; verifyScenarios?: number }) {
-  const 검수 = stats.verifyScenarios
-    ? ` 08_검수시나리오.xlsx     오픈 전 점검표 — 시나리오 ${stats.verifyScenarios}개\n`
+  // 검수 시나리오는 프리미엄 전용이다.
+  // "만들기 전(설계)"과 "오픈 전(검수)"을 등급으로 갈랐다 — 아래 두 등급은 설계까지만 판다.
+  const 검수 = p.sitePath && stats.verifyScenarios
+    ? ` 08_검수시나리오.xlsx     오픈 전 점검표 — 시나리오 ${stats.verifyScenarios}개  ★프리미엄\n`
+    : "";
+  const 검수사용법 = p.sitePath
+    ? ` [검수] 08_검수시나리오.xlsx를 열어 화면을 하나씩 눌러보며
+        '결과' 칸에 PASS / FAIL / WARN 을 적으세요. 빠진 화면이 드러납니다.
+
+`
     : "";
   // 프리미엄에만 붙는다 — 설계뿐 아니라 그 설계로 실제로 만든 화면이 함께 들어간다.
   const 사이트구성 = p.sitePath
@@ -137,10 +145,7 @@ ${사이트구성}
  [부분] 특정 화면만 다시 만들고 싶다면
         02_IA_화면목록.xlsx에서 그 화면의 '생성 프롬프트' 칸만 복사해 넣으세요.
 
- [검수] 다 만든 뒤 08_검수시나리오.xlsx를 열어 화면을 하나씩 눌러보며
-        '결과' 칸에 PASS / FAIL / WARN 을 적으세요. 빠진 화면이 드러납니다.
-
- [문서] 01·03·04·05는 사람이 보는 기획 문서입니다.
+${검수사용법} [문서] 01·03·04·05는 사람이 보는 기획 문서입니다.
         기획서, 제안서, 개발 견적서에 그대로 활용하세요.
 
  ※ AI에 넣는 파일은 스펙팩(.md) 하나면 충분합니다.
@@ -207,9 +212,11 @@ async function pack(p: Product) {
   };
 
   // _패키지정보.json은 README 수치를 넘기기 위한 내부 파일이라 구매자에게 주지 않는다.
+  // 08_검수시나리오는 프리미엄에만 넣는다 — README 구성표와 실제 파일이 어긋나면 안 된다.
   const files = readdirSync(p.src).filter(
     (f) =>
       f !== "_패키지정보.json" &&
+      (p.sitePath || !f.startsWith("08_검수시나리오")) &&
       /\.(xlsx|pptx|html|drawio|md|json)$/.test(f),
   );
 
