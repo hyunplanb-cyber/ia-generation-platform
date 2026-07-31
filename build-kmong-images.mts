@@ -109,7 +109,6 @@ table.mtx tr.only td.y{color:${ORANGE}}
 .opt{margin-top:14px;font-size:17px;color:#55534E}
 .close{margin-top:30px}
 .close p,.close span{display:block;font-size:34px;font-weight:800;line-height:1.35}
-.close span{margin-top:14px}
 .foot{margin-top:34px;padding-top:22px;border-top:1px solid ${LINE};display:flex;align-items:center}
 .foot b{font-size:18px;font-weight:800}
 .dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:${ORANGE};margin-right:8px;vertical-align:-1px}
