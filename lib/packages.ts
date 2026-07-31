@@ -3,10 +3,13 @@
 // (우리 사이트 → 크몽 방향은 마켓 정책상 문제 없다. 반대 방향이 금지 대상.)
 // kmongUrl이 null이면 아직 판매 전 → 구매 버튼 대신 "판매 준비 중"으로 표시한다.
 //
-// 업종 3종 × 플랜 2종 = 판매 상품 6개.
-// 플랜은 "규모"로 나뉜다. 스탠다드는 2뎁스 기본판, 프리미엄은 탭·상태·예외까지
-// 펼친 3뎁스 심화판(template-deep의 expandDeep이 쓰는 데이터와 같은 것).
-// 두 플랜 모두 디자인 프리셋과 검수 시나리오를 포함한다 — 어느 쪽을 사도 완결형.
+// 등급은 세 칸이다.
+//   스탠다드 = 2뎁스 기본판
+//   디럭스   = 탭·상태·예외까지 펼친 3뎁스 심화판(template-deep의 expandDeep과 같은 데이터)
+//   프리미엄 = 디럭스 + 그 스펙팩으로 실제로 만들어 둔 화면(HTML) + 검수 시나리오
+// 디자인 프리셋은 전 등급 공통. 검수 시나리오는 프리미엄에만 —
+// "만들기 전(설계)"과 "오픈 전(검수)"을 등급으로 갈랐다.
+// 만들어 둔 화면이 있는 업종만 프리미엄이 생긴다(현재 여행뿐).
 import { LMS, type TplMenu } from "@/template-data-lms";
 import { BEAUTY } from "@/template-data-beauty";
 import { TRAVEL } from "@/template-data-travel";
@@ -21,7 +24,14 @@ export interface TplData {
   menus: TplMenu[];
 }
 
-export type PlanId = "standard" | "premium";
+/**
+ * 등급 사다리 세 칸.
+ *   standard = 2뎁스 기본 설계
+ *   deluxe   = 3뎁스 심화 설계
+ *   premium  = 디럭스 + 그 설계로 실제로 만들어 둔 화면(HTML) + 검수 시나리오
+ * 만들어 둔 화면이 있는 업종만 premium이 생긴다 — 없는 걸 팔지 않기 위해서.
+ */
+export type PlanId = "standard" | "deluxe" | "premium";
 
 export interface PackagePlan {
   id: PlanId;
@@ -33,8 +43,13 @@ export interface PackagePlan {
   /** IA 깊이 라벨 */
   depthLabel: string;
   stats: { menus: number; screens: number; reqs: number; flows: number };
-  /** 검수 시나리오 수 = 화면 수. 확인 항목은 기능정의를 낱개로 쪼갠 수. */
-  verify: { scenarios: number; checks: number };
+  /**
+   * 검수 시나리오 수 = 화면 수. 확인 항목은 기능정의를 낱개로 쪼갠 수.
+   * 프리미엄에만 있다 — "만들기 전(설계)"과 "오픈 전(검수)"을 등급으로 갈랐다.
+   */
+  verify?: { scenarios: number; checks: number };
+  /** 이 스펙팩으로 실제로 만들어 둔 화면(HTML) 수. 있으면 프리미엄. */
+  siteScreens?: number;
   /** 이 플랜에만 해당하는 강조 문구 */
   highlights: string[];
   kmongUrl: string | null;
@@ -153,23 +168,24 @@ function deepStatsOf(deep: DeepInput) {
   };
 }
 
-// 두 플랜의 뼈대는 업종이 달라도 같다. 숫자와 판매 링크만 업종별로 꽂는다.
+// 플랜의 뼈대는 업종이 달라도 같다. 숫자와 판매 링크만 업종별로 꽂는다.
+// siteScreens를 주면 프리미엄이 한 칸 더 생긴다.
 function makePlans(
   base: TplData,
   deep: DeepInput,
-  kmong: { standard: string | null; premium: string | null },
+  kmong: { standard: string | null; deluxe: string | null; premium?: string | null },
+  siteScreens?: number,
 ): PackagePlan[] {
   const s = statsOf(base);
   const p = deepStatsOf(deep);
-  const baseFuncs = base.menus.flatMap((m) => m.screens).map((x) => x.func);
-  const sv = verifyOf(baseFuncs);
+  // 검수 시나리오는 프리미엄(3뎁스 전체)에만 들어가므로 심화판 기준으로만 센다.
   const pv = verifyOf([
     ...deep.menus.flatMap((m) => m.screens).map((x) => x.func),
     ...Object.values(deep.subs)
       .flat()
       .map((l) => l.func),
   ]);
-  return [
+  const plans: PackagePlan[] = [
     {
       id: "standard",
       name: "스탠다드",
@@ -177,31 +193,51 @@ function makePlans(
       summary: `화면 ${s.screens}개 · 2뎁스 기본 설계`,
       depthLabel: "메뉴 → 화면 (2뎁스)",
       stats: s,
-      verify: sv,
       highlights: [
         `화면 ${s.screens}개와 화면별 프롬프트 ${s.screens}개`,
         "디자인 프리셋 3종 포함",
-        `검수 시나리오 ${sv.scenarios}개`,
+        "가볍게 시작하는 분께",
       ],
       kmongUrl: kmong.standard,
     },
     {
-      id: "premium",
-      name: "프리미엄",
-      priceKrw: 99000,
+      id: "deluxe",
+      name: "디럭스",
+      priceKrw: 129000,
       summary: `화면 ${p.screens}개 · 3뎁스 심화 설계`,
       depthLabel: "메뉴 → 화면 → 탭·상태 (3뎁스)",
       stats: p,
-      verify: pv,
       highlights: [
         `화면 ${p.screens}개와 화면별 프롬프트 ${p.screens}개`,
         "탭·상태·예외까지 3뎁스로 분해",
-        `검수 시나리오 ${pv.scenarios}개`,
+        "실무에서 2~3개월 걸리는 분량",
       ],
-      kmongUrl: kmong.premium,
-      badge: "가장 촘촘",
+      kmongUrl: kmong.deluxe,
+      badge: siteScreens ? undefined : "가장 촘촘",
     },
   ];
+
+  // 만들어 둔 화면이 있을 때만 프리미엄이 생긴다.
+  if (siteScreens) {
+    plans.push({
+      id: "premium",
+      name: "프리미엄",
+      priceKrw: 249000,
+      summary: `설계 ${p.screens}개 + 만들어 둔 화면 ${siteScreens}개`,
+      depthLabel: "메뉴 → 화면 → 탭·상태 (3뎁스) + 완성 화면",
+      stats: p,
+      verify: pv,
+      siteScreens,
+      highlights: [
+        `이미 만들어 둔 화면 ${siteScreens}개 (HTML)`,
+        `검수 시나리오 ${pv.scenarios}개 · 확인 항목 ${pv.checks}개`,
+        "화면을 다시 찍어내는 생성기 포함",
+      ],
+      kmongUrl: kmong.premium ?? null,
+      badge: "전부 들어 있음",
+    });
+  }
+  return plans;
 }
 
 export const PACKAGES: PackageDef[] = [
@@ -211,7 +247,7 @@ export const PACKAGES: PackageDef[] = [
     industry: "교육",
     tagline:
       "수강생 학습부터 강사의 수업 편성·학생 관리·정산까지 갖춘 강의 플랫폼 AI팩",
-    plans: makePlans(LMS, LMS_DEEP, { standard: null, premium: null }),
+    plans: makePlans(LMS, LMS_DEEP, { standard: null, deluxe: null }),
     data: LMS,
     deep: LMS_DEEP,
     promptSamples: ["cl3", "cu3", "co6"],
@@ -257,7 +293,7 @@ export const PACKAGES: PackageDef[] = [
     industry: "뷰티·예약",
     tagline:
       "미용실·네일·왁싱·피부관리 매장을 찾아 예약하고, 매장은 예약·디자이너 일정·정산을 관리하는 예약 플랫폼 AI팩",
-    plans: makePlans(BEAUTY, BEAUTY_DEEP, { standard: null, premium: null }),
+    plans: makePlans(BEAUTY, BEAUTY_DEEP, { standard: null, deluxe: null }),
     data: BEAUTY,
     deep: BEAUTY_DEEP,
     promptSamples: ["re3", "mg1", "st5"],
@@ -303,7 +339,8 @@ export const PACKAGES: PackageDef[] = [
     industry: "여행·예약",
     tagline:
       "해외 투어·입장권·패스를 날짜와 인원을 골라 예약하고, 현지에서 쓸 바우처를 받는 여행 예약 플랫폼 AI팩",
-    plans: makePlans(TRAVEL, TRAVEL_DEEP, { standard: null, premium: null }),
+    // 여행만 스펙팩으로 화면 144개를 실제로 만들어 뒀다 → 프리미엄이 생긴다.
+    plans: makePlans(TRAVEL, TRAVEL_DEEP, { standard: null, deluxe: null, premium: null }, 144),
     data: TRAVEL,
     deep: TRAVEL_DEEP,
     promptSamples: ["pr3", "bk6", "vc2"],

@@ -137,10 +137,12 @@ export default async function PackageDetailPage({
   const lowest = Math.min(...pkg.plans.map((p) => p.priceKrw));
   const deepExceptions = deepExceptionCount(pkg.deep);
 
-  // 고른 규모가 페이지 전체를 지배한다 — 지표·화면 목록·예외 화면·검수 수치까지.
-  const isPremium = planParam === "premium";
-  const selected = isPremium ? premium : standard;
-  const other = isPremium ? standard : premium;
+  // 고른 등급이 페이지 전체를 지배한다 — 지표·화면 목록·예외 화면·검수 수치까지.
+  const selected = pkg.plans.find((p) => p.id === planParam) ?? standard;
+  // 비교 대상은 스탠다드. 단, 스탠다드를 보고 있으면 가장 큰 등급과 견준다.
+  const other = selected.id === "standard" ? premium : standard;
+  // 3뎁스 화면 목록은 스탠다드가 아닐 때 편다.
+  const isPremium = selected.id !== "standard";
 
   // 화면 목록. 프리미엄이면 화면 밑에 3뎁스 잎사귀를 함께 편다.
   const viewMenus = menus.map((m) => {
@@ -386,6 +388,43 @@ export default async function PackageDetailPage({
           </p>
         </section>
 
+        {/* 완성 화면 — 프리미엄에만. 설계만 파는 등급과 갈리는 지점이라 앞쪽에 둔다. */}
+        {selected.siteScreens && (
+          <section className="flex flex-col gap-4">
+            <SectionTitle>이미 만들어 둔 화면 {selected.siteScreens}개</SectionTitle>
+            <p className="leading-relaxed text-muted-foreground">
+              프리미엄은 설계만 드리지 않습니다.{" "}
+              <b className="text-foreground">이 스펙팩으로 실제로 만든 화면</b>이 함께 들어 있어요.
+              받아서 브라우저로 열면 바로 눌러볼 수 있습니다.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                {
+                  t: `화면 ${selected.siteScreens}개 (HTML)`,
+                  d: "빈 목록, 결제 실패, 마감처럼 예외 상황 화면까지 전부 들어 있어요.",
+                },
+                {
+                  t: "개발자에게 그대로",
+                  d: "개발자는 문서보다 소스를 봅니다. 의도만 잘 오가면 착수에 충분한 자료가 돼요.",
+                },
+                {
+                  t: "다시 찍어내는 생성기",
+                  d: "사이트 이름·메뉴·가격이 파일 하나에 모여 있어요. 고치고 다시 돌리면 전부 갱신됩니다.",
+                },
+              ].map((x) => (
+                <div key={x.t} className="rounded-xl border border-border bg-surface p-4">
+                  <p className="text-sm font-semibold text-foreground">{x.t}</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{x.d}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              다만 서버와 데이터베이스는 붙어 있지 않습니다. 로그인·결제 버튼을 눌러도 실제로
+              동작하지는 않아요. 아래 &lsquo;어디까지 만들어지나요?&rsquo;를 꼭 읽어주세요.
+            </p>
+          </section>
+        )}
+
         {/* 어디까지 만들어지는지 — 구매 전에 반드시 알아야 할 경계 */}
         <section className="flex flex-col gap-4">
           <SectionTitle>어디까지 만들어지나요?</SectionTitle>
@@ -508,7 +547,8 @@ export default async function PackageDetailPage({
           </div>
         </section>
 
-        {/* 검수 시나리오 */}
+        {/* 검수 시나리오 — 프리미엄에만 들어 있다 */}
+        {selected.verify && (
         <section className="flex flex-col gap-4">
           <SectionTitle>검수 시나리오 {selected.verify.scenarios}개</SectionTitle>
           <p className="leading-relaxed text-muted-foreground">
@@ -574,10 +614,11 @@ export default async function PackageDetailPage({
           </div>
           <p className="text-sm text-muted-foreground">
             {withTopic(selected.name)} 시나리오 {selected.verify.scenarios}개 · 확인 항목{" "}
-            {selected.verify.checks}개입니다({withTopic(other.name)} {other.verify.scenarios}개 ·{" "}
-            {other.verify.checks}개). 엑셀이라 결과를 적어 개발자와 그대로 주고받을 수 있어요.
+            {selected.verify.checks}개입니다. 엑셀이라 결과를 적어 개발자와 그대로 주고받을 수
+            있어요. 검수 시나리오는 프리미엄에만 들어 있습니다.
           </p>
         </section>
+        )}
 
         {/* ── 여기부터 실제 내용 공개 ── */}
         <section className="flex flex-col gap-3">
@@ -841,7 +882,9 @@ function PlanCard({
           ["메뉴", plan.stats.menus],
           ["화면", plan.stats.screens],
           ["요건", plan.stats.reqs],
-          ["검수 시나리오", plan.verify.scenarios],
+          plan.verify
+            ? (["검수 시나리오", plan.verify.scenarios] as const)
+            : (["화면 이동", plan.stats.flows] as const),
         ].map(([label, value]) => (
           <span key={label as string} className="flex items-baseline gap-1.5">
             <dt className="text-muted-foreground">{label}</dt>
