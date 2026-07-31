@@ -116,7 +116,52 @@ table.mtx tr.only td.y{color:${ORANGE}}
 .num{display:flex;gap:14px;margin-top:24px}
 .num div{flex:1;background:#fff;border:1px solid ${LINE};border-radius:14px;padding:20px;text-align:center}
 .num b{display:block;font-size:38px;font-weight:800;color:${ORANGE};font-variant-numeric:tabular-nums}
-.num span{font-size:16px;color:#55534E}`;
+.num span{font-size:16px;color:#55534E}
+/* ── 산출물 예시 ─────────────────────────────────────────────
+   말로 "들어 있다"고 하는 것보다 실물을 보여주는 게 빠르다.
+   수치·문구는 전부 실제 산출물에서 읽어 온다. */
+.doc{margin-top:20px;background:#fff;border:1px solid ${LINE};border-radius:16px;overflow:hidden}
+.doc-h{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid ${LINE}}
+.doc-h b{font-size:20px;font-weight:800}
+.doc-h i{font-style:normal;font-size:14px;color:#7A756A;font-weight:700}
+.doc-h .sp{flex:1}
+.tag{font-size:13px;font-weight:800;padding:4px 10px;border-radius:999px;
+  background:${PAPER_DEEP};color:#7A756A}
+.tag.on{background:${ORANGE};color:#fff}
+.doc-b{padding:16px 20px 18px}
+.doc-b .note{margin-top:12px;font-size:14px;color:#7A756A}
+table.ex{width:100%;border-collapse:collapse;font-size:14.5px;table-layout:fixed}
+table.ex th{text-align:left;font-size:12.5px;font-weight:800;color:#7A756A;
+  padding:0 8px 8px;border-bottom:1px solid ${LINE}}
+table.ex td{padding:10px 8px;border-bottom:1px solid #EFEDE6;vertical-align:top;line-height:1.45}
+table.ex tr:last-child td{border-bottom:0}
+table.ex .id{font-weight:800;color:${ORANGE};font-size:13.5px;white-space:nowrap}
+table.ex .dim{color:#7A756A}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.tree{font-size:14.5px;line-height:1.9}
+.tree b{display:block;font-weight:800;color:${TEAL};margin-bottom:6px;font-size:15px}
+.tree span{display:block;padding-left:14px;color:#55534E}
+.tree span em{font-style:normal;color:#A9A396;font-size:13px;margin-left:5px}
+.flow{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.fn{font-size:13.5px;font-weight:700;padding:7px 12px;border-radius:8px;
+  background:${PAPER_DEEP};color:#55534E}
+.fn.ok{background:#E1F0EC;color:${TEAL}}
+.fn.no{background:${ORANGE_SOFT};color:#B4551E}
+.fa{color:#C9C4B6;font-size:13px}
+.gantt div{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:14px}
+.gantt em{font-style:normal;width:150px;flex:none;font-weight:700}
+.gantt s{text-decoration:none;height:11px;border-radius:6px;background:${ORANGE};display:block}
+.gantt u{text-decoration:none;font-size:12.5px;color:#A9A396;white-space:nowrap}
+.code{background:#1F2024;border-radius:10px;padding:16px 18px;font-size:13.5px;
+  line-height:1.75;color:#D8D4C6;white-space:pre-wrap;word-break:break-all}
+.code b{color:${ORANGE};font-weight:800}
+.sw{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.sw div{border:1px solid ${LINE};border-radius:12px;padding:14px}
+.sw .chips{display:flex;gap:5px;margin-bottom:10px}
+.sw .chips i{width:22px;height:22px;border-radius:5px;display:block}
+.sw b{font-size:15px;font-weight:800;display:block}
+.sw span{font-size:13px;color:#7A756A;line-height:1.5;display:block;margin-top:4px}
+`;
 
 const page = (title: string, body: string) =>
   `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${title}</title><style>${CSS}</style></head><body><div class="wrap">${body}</div></body></html>`;
@@ -126,6 +171,8 @@ const eye = (n: string, t: string) => `<div class="eye"><i>${n}</i><s></s></div>
 const foot = `<div class="foot"><b><span class="dot"></span>카페인컬러</b></div>`;
 
 const travel = PACKAGES.find((p) => p.id === "travel")!;
+// 요건 문장을 낱개로 쪼갠다 — 판매 페이지 수치(reqs)와 같은 기준.
+const splitItems = (f: string) => f.split("·").map((x) => x.trim()).filter(Boolean);
 const [std, dlx, prm] = travel.plans;
 const Y = '<td class="c y">✓</td>';
 const X = '<td class="c x">—</td>';
@@ -167,7 +214,140 @@ const SECTIONS: { file: string; title: string; body: string }[] = [
       </div>`,
   },
   {
-    file: "03_어떻게_다른가",
+    file: "03_산출물_예시",
+    title: "산출물 예시",
+    body: (() => {
+      // 실제 산출물에서 뽑는다. 그럴듯한 예시를 지어내면 받아보고 다르다고 느낀다.
+      const all = travel.deep.menus.flatMap((m) => m.screens);
+      const pick = (ref: string) => all.find((s) => s.ref === ref);
+      const rows = [...new Set([...travel.promptSamples, "bk6", "ho1"])]
+        .map(pick)
+        .filter((s): s is NonNullable<typeof s> => Boolean(s))
+        .slice(0, 4);
+      const cut = (t: string, n: number) => (t.length > n ? `${t.slice(0, n)}…` : t);
+      const badge = () => "";
+
+      const ia = `<div class="doc"><div class="doc-h"><b>IA 화면목록</b><i>xlsx</i><span class="sp"></span>${badge()}</div>
+        <div class="doc-b"><table class="ex"><colgroup><col style="width:88px"><col style="width:150px"><col><col style="width:270px"></colgroup>
+        <thead><tr><th>화면ID</th><th>화면명</th><th>기능 정의</th><th>AI 생성 프롬프트</th></tr></thead><tbody>
+        ${rows
+          .map(
+            (s) =>
+              `<tr><td class="id">${s.ref.toUpperCase()}</td><td>${s.name}</td>
+               <td class="dim">${cut(s.func, 52)}</td><td class="dim">${cut(s.prompt, 76)}</td></tr>`,
+          )
+          .join("")}
+        </tbody></table><p class="note">외 ${prm.stats.screens - rows.length}개 화면 · 화면마다 프롬프트가 붙어 있습니다</p></div></div>`;
+
+      // 요구사항ID는 lib/export/requirements.ts와 같은 규칙(업무-기능-구성 3단)으로
+      // 실제 데이터를 걸어 계산한다. 지어낸 번호를 쓰면 받아본 파일과 어긋난다.
+      const pad = (n: number) => String(n).padStart(2, "0");
+      // 메뉴를 흩어서 뽑는다 — 한 메뉴에서만 고르면 표본이 편중돼 보인다.
+      const reqRows: { id: string; 업무: string; 구성: string }[] = [];
+      travel.deep.menus.forEach((m, mi) => {
+        m.screens.forEach((sc, si) => {
+          splitItems(sc.func).forEach((item, ii) => {
+            reqRows.push({
+              id: `${pad(mi + 1)}-${pad(si + 1)}-${pad(ii + 1)}`,
+              업무: sc.name,
+              구성: item,
+              menu: mi,
+            } as never);
+          });
+        });
+      });
+      // 메뉴마다 가장 충실한 요건 하나씩. 짧은 단어만 뽑히면 설계가 얕아 보인다.
+      const fdPick = [0, 2, 4, 6]
+        .map((mi) => {
+          const inMenu = (reqRows as unknown as ({ menu: number } & (typeof reqRows)[number])[]).filter(
+            (r) => r.menu === mi && r.구성.length <= 34,
+          );
+          return inMenu.sort((x, y) => y.구성.length - x.구성.length)[0];
+        })
+        .filter(Boolean)
+        .slice(0, 4);
+
+      const fd = `<div class="doc"><div class="doc-h"><b>기능정의서</b><i>xlsx · 요건 ${prm.stats.reqs}개</i><span class="sp"></span>${badge()}</div>
+        <div class="doc-b"><table class="ex"><colgroup><col style="width:120px"><col style="width:170px"><col></colgroup>
+        <thead><tr><th>요구사항ID</th><th>업무 · 기능</th><th>구성</th></tr></thead><tbody>
+        ${fdPick
+          .map(
+            (r) =>
+              `<tr><td class="id">${r.id}</td><td>${r.업무}</td><td class="dim">${cut(r.구성, 58)}</td></tr>`,
+          )
+          .join("")}
+        </tbody></table><p class="note">업무 → 기능 → 구성 3단계 · 유형(기능·콘텐츠·UI/UX·정책)은 자동 분류됩니다</p></div></div>`;
+
+      const menus = travel.deep.menus as unknown as { code: string; nameKo: string; screens: unknown[] }[];
+      const tree = `<div class="doc"><div class="doc-h"><b>메뉴구조</b><i>xlsx · pptx</i><span class="sp"></span>${badge()}</div>
+        <div class="doc-b"><div class="tree"><b>${travel.title}</b>
+        ${menus.map((m) => `<span>├ ${m.code} ${m.nameKo}<em>화면 ${m.screens.length}</em></span>`).join("")}
+        </div></div></div>`;
+
+      const flow = `<div class="doc"><div class="doc-h"><b>FLOW 흐름도</b><i>html · drawio</i><span class="sp"></span>${badge()}</div>
+        <div class="doc-b"><div class="flow">
+          <span class="fn">상품 상세</span><span class="fa">→</span>
+          <span class="fn">날짜·인원</span><span class="fa">→</span>
+          <span class="fn">결제</span><span class="fa">→</span>
+          <span class="fn ok">예약 완료</span><span class="fa">→</span>
+          <span class="fn ok">바우처 발급</span>
+        </div><div class="flow" style="margin-top:9px">
+          <span class="fa">예외 →</span>
+          <span class="fn no">결제 실패</span><span class="fn no">확정 대기</span><span class="fn no">최소 인원 미달</span><span class="fn no">마감</span>
+        </div><p class="note">화면 이동 ${prm.stats.flows}개 · draw.io에서 편집</p></div></div>`;
+
+      const wbs = `<div class="doc"><div class="doc-h"><b>WBS</b><i>xlsx</i><span class="sp"></span>${badge()}</div>
+        <div class="doc-b"><div class="gantt">
+          ${[
+            ["HO 홈", 0, 110, "8/3–8/9"],
+            ["PR 상품", 90, 170, "8/10–8/20"],
+            ["BK 예약·결제", 240, 200, "8/21–9/4"],
+            ["VC 바우처", 420, 130, "9/5–9/12"],
+          ]
+            .map(
+              ([n, off, w, d]) =>
+                `<div><em>${n}</em><s style="width:${w}px;margin-left:${off}px"></s><u>${d}</u></div>`,
+            )
+            .join("")}
+        </div><p class="note">화면 ${prm.stats.screens}개 전체 일정</p></div></div>`;
+
+      const spec = `<div class="doc"><div class="doc-h"><b>AI 빌드 스펙팩</b><i>md · json</i><span class="sp"></span>${badge()}</div>
+        <div class="doc-b"><div class="code">### <b>BK06</b> 최소 인원 미달 안내
+· 역할: pending-error
+· 요건: ${cut(pick("bk6")?.func ?? "", 44)}
+· 프롬프트: ${cut(pick("bk6")?.prompt ?? "", 60)}
+· 이동: 대체 상품 → PR01</div>
+        <p class="note">이 파일 하나를 AI에 넣고 &ldquo;이대로 만들어줘&rdquo; 하면 됩니다</p></div></div>`;
+
+      const preset = `<div class="doc"><div class="doc-h"><b>디자인 프리셋 3종</b><i>md · json</i><span class="sp"></span>${badge()}</div>
+        <div class="doc-b"><div class="sw">
+        ${[
+          ["#1B2A4A", "#3C5A99", "#E8ECF4"],
+          ["#1F2024", "#6B6F76", "#EDEDED"],
+          ["#F2C14E", "#7FD1C1", "#F6E7C1"],
+        ]
+          .map(
+            (cs, i) =>
+              `<div><div class="chips">${cs.map((c) => `<i style="background:${c}"></i>`).join("")}</div>
+               <b>${DESIGN_PRESETS[i].no} ${DESIGN_PRESETS[i].name}</b><span>${travel.presetFits[i]}</span></div>`,
+          )
+          .join("")}
+        </div><p class="note">스펙팩과 함께 넣으면 화면 ${prm.stats.screens}개가 같은 스타일로 나옵니다</p></div></div>`;
+
+      return (
+        eye("SAMPLE", "말로 하지 않고<br><em>실물</em>로 보여드릴게요.") +
+        `<p class="lead">아래는 실제 산출물에서 그대로 가져온 화면입니다. 예시로 지어낸 게 아니에요.<br>아래 산출물은 <b>전 등급 공통</b>이고, 검수 시나리오와 완성 화면은 프리미엄에만 들어갑니다.</p>` +
+        ia +
+        fd +
+        `<div class="two-col">${tree}${flow}</div>` +
+        wbs +
+        spec +
+        preset
+      );
+    })(),
+  },
+  {
+    file: "04_어떻게_다른가",
     title: "어떻게 다른가",
     body:
       eye("HOW", "한 줄 프롬프트로 만든 사이트,<br><em>완벽할까요?</em>") +
@@ -188,7 +368,7 @@ const SECTIONS: { file: string; title: string; body: string }[] = [
       <p class="opt">AI에게든 개발사든 <b>고유 ID로 이야기하면 전달이 쉬워집니다.</b></p>`,
   },
   {
-    file: "04_어디까지",
+    file: "05_어디까지",
     title: "어디까지 만들어지나요",
     body:
       eye("SCOPE", "개발에 꼭 필요한<br>부분까지 <u>작업됩니다.</u>") +
@@ -214,7 +394,7 @@ const SECTIONS: { file: string; title: string; body: string }[] = [
       <b>배포와 도메인 연결</b></p></div>`,
   },
   {
-    file: "05_AI가_놓치는_것",
+    file: "06_AI가_놓치는_것",
     title: "AI가 놓치는 것",
     body:
       eye("TRAP", "AI는 이런 부분을<br><em>놓칠 수 있어요.</em>") +
@@ -226,7 +406,7 @@ const SECTIONS: { file: string; title: string; body: string }[] = [
       <span>그래서 이런 부분을 먼저 챙겨둔 AI팩입니다.</span></div>`,
   },
   {
-    file: "06_등급별_구성",
+    file: "07_등급별_구성",
     title: "등급별 구성",
     body:
       eye("FILES", "등급별로<br>이렇게 들어 있어요.") +
