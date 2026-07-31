@@ -10,8 +10,8 @@ export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_ALT =
   "카페인컬러 — 만들기 전엔 설계도, 오픈 전엔 검수";
 
-const PAPER = "#ece1c7";
-const PAPER_LINE = "#d9cca8";
+const PAPER = "#eae8de";
+const PAPER_LINE = "#d8d4c6";
 const INK = "#20261c";
 const INK_SOFT = "#4e4a3b";
 const ORANGE = "#c25d17";

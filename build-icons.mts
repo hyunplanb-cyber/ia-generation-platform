@@ -8,7 +8,7 @@ import sharp from "sharp";
 /** globals.css의 primary — 헤더 로고 원점과 같은 색 */
 const MARK = "#E4762C";
 /** 레트로모던 종이색. iOS는 투명을 검게 채우므로 배경을 꼭 깔아야 한다. */
-const PAPER = "#F4ECD8";
+const PAPER = "#F4F3EE";
 
 /* ── 1) favicon.ico — app/icon.svg를 그대로 굽는다 ───────────────── */
 const FAVICON_SIZE = 32;

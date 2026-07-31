@@ -17,7 +17,7 @@ export async function SiteHeader() {
 
   // 배경은 시안의 크림(종이) 색. 페이지 본문은 흰색이어도 상단 GNB만 크림 띠로 둔다.
   return (
-    <header className="sticky top-0 z-30 border-b border-[#D9CCA8] bg-[#ECE1C7]/85 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-[#D8D4C6] bg-[#EAE8DE]/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-6 py-3">
         <div className="flex items-center gap-2 sm:gap-4">
           {/* 좁은 화면에서는 글자를 줄여 메뉴 버튼 자리를 확보한다 */}

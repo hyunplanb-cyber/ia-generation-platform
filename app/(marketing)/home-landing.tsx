@@ -444,8 +444,8 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
 
       <style jsx>{`
         .cc {
-          --paper: #ece1c7;
-          --paper-2: #f4ecd8;
+          --paper: #eae8de;
+          --paper-2: #f4f3ee;
           --card: #fbf6e9;
           --ink: #20261c;
           --ink-soft: #4e4a3b;
@@ -457,7 +457,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           --green-2: #1e3228;
           --green-line: #2e4437;
           --tan: #9a8c68;
-          --paper-line: #d9cca8;
+          --paper-line: #d8d4c6;
           --mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
           background: var(--paper);
           color: var(--ink);

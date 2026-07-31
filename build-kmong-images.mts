@@ -11,9 +11,9 @@ const OUT = "판매용_템플릿/_배포/판매_6종/크몽_상세이미지";
 const W = 900;
 
 // 홈페이지와 같은 색·글꼴을 쓴다. 여기서 어긋나면 크몽과 홈페이지가 다른 브랜드로 보인다.
-const PAPER = "#F4ECD8";
-const PAPER_DEEP = "#ECE1C7";
-const LINE = "#D9CCA8";
+const PAPER = "#F4F3EE";
+const PAPER_DEEP = "#EAE8DE";
+const LINE = "#D8D4C6";
 const INK = "#1F2024";
 const ORANGE = "#E4762C";
 const ORANGE_SOFT = "#FBE7D3";

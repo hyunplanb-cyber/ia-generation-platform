@@ -70,7 +70,7 @@ for (const id of KEEP) {
 const BANNER = `
 <div id="cc-demo-note" style="position:fixed;left:16px;bottom:16px;z-index:2147483647;
   display:flex;align-items:center;gap:10px;max-width:calc(100vw - 32px);
-  padding:10px 14px;border-radius:999px;background:#20261c;color:#ece1c7;
+  padding:10px 14px;border-radius:999px;background:#20261c;color:#eae8de;
   font:500 13px/1.4 Pretendard,'Malgun Gothic',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.25)">
   <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e4762c;flex:none"></span>
   <span>카페인컬러 설계도로 <b>AI가 만든 데모</b>입니다. 실제 서비스가 아니에요.</span>
