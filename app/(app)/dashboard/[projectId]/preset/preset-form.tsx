@@ -105,7 +105,8 @@ export function PresetForm({
   const accent = theme[1] ?? cfg.primary; // 2번째 색 → 배지
   const highlight = theme[2] ?? cfg.primary; // 3번째 색 → 제목 형광펜
 
-  const willChargeGen = creditsOpen && !gen;
+  // 생성은 충전 개방 여부와 무관하게 항상 차감된다(다운로드만 아직 안 열렸다).
+  const willChargeGen = !gen;
   const willChargeDownload = creditsOpen && !down;
 
   function safeName(s: string) {

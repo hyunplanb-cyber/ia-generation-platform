@@ -94,7 +94,7 @@ export function VerifyPanel({
                 >
                   <span className="flex items-center gap-1.5 text-sm font-bold">
                     <Sparkles className="size-4" /> 주요 시나리오 생성
-                    {creditsOpen && <span className="opacity-80">· {basicCost}크레딧</span>}
+                    <span className="opacity-80">· {basicCost}크레딧</span>
                   </span>
                   <span className="text-[11px] opacity-80">약 30~50개</span>
                 </button>
@@ -107,7 +107,7 @@ export function VerifyPanel({
                 >
                   <span className="flex items-center gap-1.5 text-sm font-bold">
                     <Sparkles className="size-4" /> 상세 시나리오 생성
-                    {creditsOpen && <span className="opacity-80">· {detailCost}크레딧</span>}
+                    <span className="opacity-80">· {detailCost}크레딧</span>
                   </span>
                   <span className="text-[11px] opacity-80">약 100~150개</span>
                 </button>

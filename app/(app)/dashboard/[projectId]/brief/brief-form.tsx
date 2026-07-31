@@ -83,6 +83,9 @@ export function BriefForm({
   const boundAction = saveBriefAndGenerateAction.bind(null, project.id);
   const [state, formAction, pending] = useActionState(boundAction, initialState);
   const [scale, setScale] = useState<Scale>("basic");
+  // 버튼에 붙일 소모 크레딧. 규모 카드와 같은 출처를 써서 두 표기가 어긋나지 않게 한다.
+  const scaleCredit =
+    SCALE_OPTIONS.find((o) => o.key === scale)?.credit ?? SCALE_OPTIONS[0].credit;
   // 기존 프로젝트가 저장한 값이 3개 중 하나면 그걸 고르고, 아니면 첫 번째로.
   const [design, setDesign] = useState<DesignKey>(
     DESIGN_OPTIONS.find((d) => d.concept === project.designConcept)?.key ?? "navy",
@@ -210,17 +213,15 @@ export function BriefForm({
                       >
                         <span className="flex items-center justify-between gap-2">
                           <span className="font-semibold text-foreground">{opt.title}</span>
-                          {creditsOpen && (
-                            <span
-                              className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                                on
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted text-muted-foreground"
-                              }`}
-                            >
-                              {opt.credit}
-                            </span>
-                          )}
+                          <span
+                            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                              on
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            {opt.credit}
+                          </span>
                         </span>
                         <span className="text-xs leading-relaxed text-muted-foreground">
                           {opt.desc}
@@ -230,15 +231,15 @@ export function BriefForm({
                   })}
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  {creditsOpen
-                    ? "선택한 규모만큼 크레딧이 차감돼요."
-                    : "지금은 결제 준비 중이라 무료로 생성돼요."}
+                  선택한 규모만큼 크레딧이 차감돼요.
+                  {!creditsOpen && " 지금은 가입 시 드린 무료 크레딧에서 빠져요."}
                 </p>
               </div>
 
               <Button type="submit" size="lg" disabled={pending} className="self-start">
                 <Sparkles className="size-4" />
                 컨셉 분석해서 자동 생성
+                <span className="ml-1 font-normal opacity-80">· {scaleCredit}</span>
               </Button>
               {state.reason && (
                 <p className="text-sm text-danger">
