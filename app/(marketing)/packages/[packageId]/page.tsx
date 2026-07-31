@@ -22,7 +22,6 @@ import {
   formatKrw,
   DESIGN_PRESETS,
   BUILD_SCOPE,
-  withTopic,
   type PackagePlan,
 } from "@/lib/packages";
 
@@ -69,7 +68,7 @@ const FAQ = [
   },
   {
     q: "디자인 시안도 들어 있나요?",
-    a: "아니요. AI팩은 기획 문서입니다. 디자인 프리셋은 색상·글꼴·컴포넌트 규칙을 정리한 문서이지 시안 이미지가 아닙니다.",
+    a: "AI팩은 기획 산출물에 가까운 문서입니다. 디자인 프리셋은 색상·글꼴·컴포넌트 규칙을 정리한 문서이며 시안 이미지가 아닙니다. 다만 디자인 프리셋과 AI 빌드 스펙팩을 AI 도구에 넣거나, 프리미엄 등급에 들어 있는 HTML은 디자인 컨셉이 반영된 화면이라 디자인 목업으로 보실 수 있어요. (쓰시는 AI 도구에 따라 다른 결과물이 나올 수 있습니다.)",
   },
   {
     q: "AI로 만들면 바로 쓸 수 있는 사이트가 되나요?",
@@ -86,11 +85,8 @@ const NOTES = [
   "AI로 만들면 화면까지 나옵니다. 로그인·결제·지도·알림 등 외부 연동은 개발이 필요합니다.",
   "디자인 프리셋은 색상·글꼴·모서리·컴포넌트 규칙을 정리한 문서입니다.",
   "AI로 생성한 초안을 다듬은 자료로, 실제 서비스에 적용하기 전 검토가 필요합니다.",
-  "결제와 파일 전달은 크몽에서 진행됩니다.",
   "디지털 콘텐츠 특성상 파일 전달 후에는 환불이 제한됩니다.",
 ];
-
-// 예외·상태 화면 판별(lib/packages의 규칙과 같다). 잎사귀까지 걸러내는 데 쓴다.
 
 export default async function PackageDetailPage({
   params,
@@ -107,18 +103,14 @@ export default async function PackageDetailPage({
   const { menus } = pkg.data;
   const standard = pkg.plans[0];
   const premium = pkg.plans[pkg.plans.length - 1];
-  const lowest = Math.min(...pkg.plans.map((p) => p.priceKrw));
 
   // 고른 등급이 페이지 전체를 지배한다 — 지표·화면 목록·예외 화면·검수 수치까지.
   const selected = pkg.plans.find((p) => p.id === planParam) ?? standard;
-  // 비교 대상은 스탠다드. 단, 스탠다드를 보고 있으면 가장 큰 등급과 견준다.
-  const other = selected.id === "standard" ? premium : standard;
   // 3뎁스 화면 목록은 스탠다드가 아닐 때 편다.
   const isPremium = selected.id !== "standard";
   // 이 업종에 프리미엄 등급이 있는가. 없으면 그 등급 얘기를 꺼내지 않는다.
   const hasPremium = pkg.plans.some((p) => p.siteScreens);
 
-  // 화면 목록. 프리미엄이면 화면 밑에 3뎁스 잎사귀를 함께 편다.
   // ── 산출물 예시용 ─────────────────────────────────────────
   // 실제 산출물에서 뽑는다. 지어낸 값을 넣으면 받아보고 다르다고 느낀다.
   const cutText = (t: string, n: number) => (t.length > n ? `${t.slice(0, n)}…` : t);
@@ -201,10 +193,6 @@ export default async function PackageDetailPage({
     },
   ];
 
-
-
-
-
   const STATS = [
     { icon: Network, label: "메뉴", value: selected.stats.menus },
     { icon: LayoutList, label: "화면", value: selected.stats.screens },
@@ -229,11 +217,12 @@ export default async function PackageDetailPage({
             {pkg.industry}
           </span>
           <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
-            {pkg.title}
-            <br />
-            <span className="bg-primary-soft rounded-lg px-2 py-0.5">AI팩</span>
+            {pkg.title} <span className="bg-primary-soft rounded-lg px-2 py-0.5">AI팩</span>{" "}
+            <span className="align-middle text-lg font-bold text-primary sm:text-xl">
+              {selected.name}
+            </span>
           </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{pkg.tagline}</p>
+          <p className="mt-5 text-lg leading-8 text-muted-foreground">{pkg.tagline}</p>
 
           <dl className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {STATS.map(({ icon: Icon, label, value }) => (
@@ -249,17 +238,6 @@ export default async function PackageDetailPage({
               </div>
             ))}
           </dl>
-          <p className="mt-2 text-sm text-muted-foreground">
-            <b className="text-foreground">{selected.name}</b> 기준입니다.{" "}
-            {withTopic(other.name)} 화면 {other.stats.screens}개예요.
-          </p>
-
-          <p className="mt-6 text-lg font-bold text-foreground">
-            {formatKrw(lowest)}부터
-            <span className="ml-2 text-sm font-medium text-muted-foreground">
-              규모에 따라 두 가지
-            </span>
-          </p>
         </div>
       </section>
 
@@ -267,7 +245,12 @@ export default async function PackageDetailPage({
         {/* 플랜 비교 — 이 페이지의 핵심. 고르면 아래 내용 전체가 그 규모로 바뀐다. */}
         <section id="plans" className="flex scroll-mt-20 flex-col gap-5">
           <SectionTitle>어떤 규모로 만드시나요?</SectionTitle>
-          <div className="grid gap-4 md:grid-cols-2">
+          {/* 등급 수만큼 나눈다 — 셋일 때 프리미엄이 혼자 아래로 떨어지지 않게. */}
+          <div
+            className={`grid gap-4 ${
+              pkg.plans.length >= 3 ? "lg:grid-cols-3" : "md:grid-cols-2"
+            }`}
+          >
             {pkg.plans.map((plan) => (
               <PlanCard
                 key={plan.id}
@@ -681,15 +664,6 @@ export default async function PackageDetailPage({
               ))}
             </div>
           </div>
-          <p className="leading-relaxed text-muted-foreground">
-            <b className="text-foreground">
-              화면은 눌러서 돌아다닐 수 있는 상태로 나옵니다. 다만 로그인 버튼을 눌러도 실제로
-              로그인이 되지는 않습니다.
-            </b>{" "}
-            바깥 서비스를 불러야 하는 기능이기 때문입니다. 이 서비스에서 개발자에게 넘길 항목은{" "}
-            {pkg.integrations.length}가지 — {pkg.integrations.map((i) => i.area).join(" · ")}.
-            견적을 받거나 개발을 맡길 때 이 목록을 그대로 쓰시면 됩니다.
-          </p>
         </section>
 
         {/* 이런 분께 추천 */}
@@ -938,8 +912,6 @@ function PlanCard({
           <div className="rounded-lg border border-dashed border-border bg-background/60 px-4 py-4 text-center">
             <p className="text-sm font-semibold text-foreground">곧 판매를 시작해요</p>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              준비되면 가장 먼저 알려드릴게요.
-              <br />
               그동안 무료 샘플로 먼저 살펴보세요.
             </p>
             <Link
