@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <title>카페인컬러</title>
+  <!-- 헤더 브랜드 마크와 같은 주황 원점(globals.css의 primary 토큰 #E4762C).
+       탭에서 아주 작게 보이므로 여백을 최소로 두고 원을 꽉 채운다. -->
+  <circle cx="16" cy="16" r="15" fill="#E4762C" />
+</svg>
