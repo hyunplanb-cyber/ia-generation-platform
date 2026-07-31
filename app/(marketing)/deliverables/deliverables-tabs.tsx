@@ -97,11 +97,11 @@ export function DeliverablesTabs() {
 
   return (
     <div className="flex flex-col">
-      {/* 탭 전환 — 설계도 프롬프트 / 사이트 검수 */}
+      {/* 탭 전환 — AI팩 / 사이트 검수 */}
       <div className="border-b border-border">
         <div className="mx-auto flex max-w-5xl gap-1 px-6">
           <TabButton active={tab === "planning"} onClick={() => setTab("planning")} icon={PencilRuler}>
-            설계도 프롬프트
+            AI팩
           </TabButton>
           <TabButton active={tab === "verify"} onClick={() => setTab("verify")} icon={ShieldQuestion}>
             사이트 검수
@@ -141,7 +141,7 @@ function TabButton({
   );
 }
 
-// 설계도 프롬프트 산출물 6종
+// AI팩 산출물 6종
 function PlanningDeliverables() {
   return (
     <div className="flex flex-col">
@@ -184,11 +184,11 @@ function PlanningDeliverables() {
 const VERIFY_INPUTS = [
   {
     icon: PencilRuler,
-    name: "우리 설계도 산출물",
+    name: "우리 AI팩 산출물",
     badge: "가장 정확",
     badgeTone: "bg-warning-soft text-warning",
-    desc: "카페인컬러로 만든 설계도(IA 화면목록·스펙팩)를 그대로 넣으면, 화면과 요건을 100% 알기 때문에 재현 시나리오가 가장 촘촘하고 정확해요.",
-    out: ["가장 정확한 재현 시나리오", "설계도 대비 빠진 화면까지 점검"],
+    desc: "카페인컬러로 만든 AI팩(IA 화면목록·스펙팩)을 그대로 넣으면, 화면과 요건을 100% 알기 때문에 재현 시나리오가 가장 촘촘하고 정확해요.",
+    out: ["가장 정확한 재현 시나리오", "AI팩 대비 빠진 화면까지 점검"],
   },
   {
     icon: Link2,
@@ -282,7 +282,7 @@ function VerifyDeliverable() {
         <div className="mx-auto max-w-5xl px-6 py-14">
           <h3 className="text-lg font-bold text-foreground">무엇을 넣느냐에 따라 이렇게 나와요</h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            셋 다 재현 시나리오를 드려요. 카페인컬러로 만든 설계도를 넣으면 가장 정확해요.
+            셋 다 재현 시나리오를 드려요. 카페인컬러로 만든 AI팩을 넣으면 가장 정확해요.
           </p>
           <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
             {VERIFY_INPUTS.map((inp) => {

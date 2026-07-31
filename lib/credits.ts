@@ -47,14 +47,14 @@ export function packById(id: string): CreditPack | undefined {
 
 // 실행·다운로드 소모 크레딧(손님 화면엔 노출 최소화, FAQ·약관에 상세).
 export const CREDIT_COST = {
-  genBasic: 4, // 설계도 생성 · 기본(30~50)
-  genDetail: 8, // 설계도 생성 · 상세(100~150)
+  genBasic: 4, // AI팩 생성 · 기본(30~50)
+  genDetail: 8, // AI팩 생성 · 상세(100~150)
   genAdmin: 8, // 관리자 백오피스 생성
   verifyDoc: 4, // 검수 · 문서/설계도
   verifySite: 8, // 검수 · 사이트
   verifyDesignVs: 12, // 검수 · 설계 대비
-  downloadScreens30: 190, // 다운로드 · 설계도 30~50
-  downloadScreens150: 390, // 다운로드 · 설계도 100~150
+  downloadScreens30: 190, // 다운로드 · AI팩 30~50
+  downloadScreens150: 390, // 다운로드 · AI팩 100~150
   downloadAdmin: 290, // 다운로드 · 관리자
   downloadVerify: 99, // 다운로드 · 검수 시나리오
   optionPreset: 99, // 옵션 · 디자인 프리셋

@@ -51,7 +51,7 @@ export default async function FreePage() {
           <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
             내 콘텐츠 파는 사이트,
             <br />
-            <span className="bg-primary-soft rounded-lg px-2 py-0.5">설계도부터</span> 받아가세요
+            <span className="bg-primary-soft rounded-lg px-2 py-0.5">AI팩부터</span> 받아가세요
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
             전자책·템플릿·강의자료를 직접 파는 1인 사이트의 기획 산출물이에요. 화면{" "}

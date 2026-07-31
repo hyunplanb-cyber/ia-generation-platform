@@ -71,7 +71,7 @@ export async function runVerifyAction(
     if (file.size > MAX_DOC_BYTES) {
       return fail("파일이 너무 커요. 8MB 이하로 넣어주세요.");
     }
-    const result = await verifyText(file.name || "설계도 프롬프트", await file.text(), detail);
+    const result = await verifyText(file.name || "AI팩", await file.text(), detail);
     if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
     report = result.report;
   } else if (mode === "document") {

@@ -160,7 +160,7 @@ function VerifySteps({ active }: { active: 0 | 1 }) {
   );
 }
 
-// 우측 안내 패널 — 설계도 프롬프트의 '이 입력으로 만들어져요'와 같은 형태.
+// 우측 안내 패널 — AI팩 만들기의 '이 입력으로 만들어져요'와 같은 형태.
 const VERIFY_OUTPUTS: { icon: LucideIcon; label: string }[] = [
   { icon: Search, label: "공개 화면 자동 검사 · 통과/실패" },
   { icon: Lock, label: "로그인·결제 재현 시나리오" },
@@ -196,7 +196,7 @@ function HelperPanel() {
   );
 }
 
-// 검수하는 동안 보여주는 "시간이 흐르는" 전체 오버레이(설계도 프롬프트와 동일).
+// 검수하는 동안 보여주는 "시간이 흐르는" 전체 오버레이(AI팩 만들기와 동일).
 function LoadingScreen({ mode }: { mode: Mode }) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
@@ -362,11 +362,11 @@ export function VerifyForm({
         <form action={formAction} onSubmit={() => setDismissed(false)} className="flex flex-col gap-3">
           <input type="hidden" name="mode" value={mode} />
 
-          {/* 설계도 프롬프트 — 파일 등록 */}
+          {/* AI팩 — 파일 등록 */}
           <ModeSection
             active={mode === "spec"}
             onSelect={() => setMode("spec")}
-            title="설계도 프롬프트"
+            title="AI팩"
             hint="카페인컬러로 만든 IA·스펙팩을 넣으면 가장 정확한 검수 시나리오를 받을 수 있어요."
           >
             <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
@@ -441,7 +441,7 @@ export function VerifyForm({
 
           <input type="hidden" name="scale" value={scale} />
 
-          {/* 규모(기본/상세) 선택 + 생성 — 설계도 프롬프트 생성 영역과 같은 형태 */}
+          {/* 규모(기본/상세) 선택 + 생성 — AI팩 만들기 영역과 같은 형태 */}
           <div className="mt-1 rounded-2xl border-2 border-primary/25 bg-primary-soft/10 p-5">
             <div className="mb-1 flex items-center gap-2">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">

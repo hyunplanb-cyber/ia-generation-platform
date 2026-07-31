@@ -50,7 +50,7 @@ export async function saveBriefAndGenerateAction(
 
   const result = await generateIa(projectId, detail);
   if (result.ok) {
-    await spendCredits(cost, detail ? "설계도 생성(상세)" : "설계도 생성(기본)", { projectId });
+    await spendCredits(cost, detail ? "AI팩 생성(상세)" : "AI팩 생성(기본)", { projectId });
     revalidatePath(`/dashboard/${projectId}/menus`);
     revalidatePath(`/dashboard/${projectId}/screens`);
     redirect(`/dashboard/${projectId}/screens`);

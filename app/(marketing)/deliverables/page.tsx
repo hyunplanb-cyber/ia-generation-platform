@@ -5,7 +5,7 @@ import { DeliverablesTabs } from "./deliverables-tabs";
 
 export const metadata = {
   title: "산출물 소개 · 카페인컬러",
-  description: "설계도 프롬프트 산출물 6종과 사이트 검수 시나리오 — 역할과 샘플 화면 소개",
+  description: "AI팩 산출물 6종(메뉴 구조·화면설계·기능정의서)과 사이트 검수 시나리오 — 역할과 샘플 화면 소개",
 };
 
 export default function DeliverablesPage() {
@@ -18,7 +18,7 @@ export default function DeliverablesPage() {
             <LayoutList className="size-3.5" /> 산출물 소개
           </span>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            만들기 전엔 설계도, 오픈 전엔 검수
+            만들기 전엔 AI팩, 오픈 전엔 검수
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
             각 산출물이 어떤 역할을 하는지, 실제로 어떻게 생겼는지 샘플과 함께 소개해요.
@@ -26,7 +26,7 @@ export default function DeliverablesPage() {
         </div>
       </section>
 
-      {/* 탭: 설계도 프롬프트 / 사이트 검수 */}
+      {/* 탭: AI팩 / 사이트 검수 */}
       <DeliverablesTabs />
 
       {/* CTA */}
@@ -36,7 +36,7 @@ export default function DeliverablesPage() {
             내 프로젝트로 직접 만들어볼까요?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-primary-foreground/80">
-            컨셉과 메뉴만 입력하면 설계도 프롬프트 산출물이 몇 분 만에 완성돼요.
+            컨셉과 메뉴만 입력하면 AI팩 산출물이 몇 분 만에 완성돼요.
           </p>
           <Link
             href="/signup"

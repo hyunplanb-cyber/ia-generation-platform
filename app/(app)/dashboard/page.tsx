@@ -33,10 +33,10 @@ function formatDateTime(date: Date) {
   return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
-// 상단 탭 — 설계도 프롬프트 / 사이트 검수
+// 상단 탭 — AI팩 / 사이트 검수
 function DashboardTabs({ active }: { active: "planning" | "verify" }) {
   const tabs = [
-    { key: "planning", label: "설계도 프롬프트", href: "/dashboard", icon: PencilRuler },
+    { key: "planning", label: "AI팩", href: "/dashboard", icon: PencilRuler },
     { key: "verify", label: "사이트 검수", href: "/dashboard?tab=verify", icon: ShieldQuestion },
   ] as const;
   return (
@@ -136,7 +136,7 @@ export default async function DashboardPage({
   );
 }
 
-// ── 설계도 프롬프트 탭 ──────────────────────────────
+// ── AI팩 탭 ──────────────────────────────
 function PlanningTab({
   completed,
   results,

@@ -231,7 +231,7 @@ export function ChargeClient({
       {error && <p className="text-center text-sm text-danger">{error}</p>}
 
       <p className="text-center text-xs leading-relaxed text-muted-foreground">
-        미리보기는 언제나 무료예요. 크레딧으로 <b className="text-foreground">설계도 생성 · 사이트 검수 ·
+        미리보기는 언제나 무료예요. 크레딧으로 <b className="text-foreground">AI팩 생성 · 사이트 검수 ·
         파일 다운로드</b>를 이용해요. 각 기능의 크레딧 사용량과 환불·유효기간은 이용약관·FAQ에서 확인하세요.
       </p>
     </div>

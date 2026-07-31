@@ -45,7 +45,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               {/* /dashboard/new는 열리는 즉시 새 프로젝트를 만드는 라우트라,
                   프리페치가 켜져 있으면 마우스만 올려도 프로젝트가 생긴다. */}
               <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
-                설계도 프롬프트 만들기 <span aria-hidden="true">→</span>
+                AI팩 만들기 <span aria-hidden="true">→</span>
               </Link>
               <Link className="btn btn-teal" href="/verify">
                 내 사이트 검수하기 <span aria-hidden="true">→</span>
@@ -110,7 +110,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           <div className="moment">
             <span className="num">01</span>
             <div>
-              <div className="mt">만들기 전 — 설계도 프롬프트</div>
+              <div className="mt">만들기 전 — AI팩</div>
               <div className="ms">어떤 화면이 나올지 알고 시작</div>
             </div>
           </div>
@@ -133,7 +133,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           <div className="sec-eye">
             <span className="idx">01</span>
             <span className="mono" style={{ textTransform: "none" }}>
-              설계도 프롬프트
+              AI팩 만들기
             </span>
           </div>
           <h2>
@@ -206,7 +206,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               주장 → 증거 → 행동 순서가 되도록 CTA 바로 앞에 둔다. */}
           <div className="showcase">
             <div className="sc-cap">
-              <b>설계도를 주면 이렇게 됩니다</b>
+              <b>AI팩을 주면 이렇게 됩니다</b>
               <span>
                 스펙팩 하나를 Claude Code에 넣고 돌린 기록이에요. 화면 144개가 약 40분 만에
                 만들어졌고, 위에 적은 예외 화면들도 그 안에 들어 있어요.
@@ -215,7 +215,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             <div className="sc-frame">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${SHOWCASE_VIDEO_ID}`}
-                title="설계도(AI 빌드 스펙팩)로 화면 144개를 만드는 기록"
+                title="AI팩(빌드 스펙팩)으로 화면 144개를 만드는 기록"
                 allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
                 loading="lazy"
@@ -252,10 +252,10 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
 
           <div className="inputs">
             <div className="inbox">
-              <div className="in-n">01 · 설계도 산출물</div>
+              <div className="in-n">01 · AI팩 산출물</div>
               <div className="in-t">가장 정확</div>
               <div className="in-d">
-                이 프로젝트로 만든 설계도를 그대로. 화면·요건을 100% 알아 시나리오가 촘촘해요.
+                이 프로젝트로 만든 AI팩을 그대로. 화면·요건을 100% 알아 시나리오가 촘촘해요.
               </div>
             </div>
             <div className="inbox">
@@ -364,12 +364,12 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           <div className="sec-eye">
             <span className="idx">03</span>
             <span className="mono" style={{ textTransform: "none" }}>
-              AI팩
+              AI팩 구매
             </span>
           </div>
           <h2 style={{ textWrap: "normal" }}>
             바로 사용하는<br />
-            설계도 프롬프트 AI팩
+            업종별 AI팩
           </h2>
           <p className="lead">
             직접 만들기 전에, 이미 완성된 업종별 산출물 한 벌부터. 화면·예외까지 다 들어 있어요.
@@ -433,7 +433,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           </p>
           <div className="fc">
             <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
-              설계도 프롬프트 만들기 <span aria-hidden="true">→</span>
+              AI팩 만들기 <span aria-hidden="true">→</span>
             </Link>
             <Link className="btn btn-teal" href="/verify">
               내 사이트 검수하기 <span aria-hidden="true">→</span>

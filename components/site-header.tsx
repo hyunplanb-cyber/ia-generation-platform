@@ -30,7 +30,7 @@ export async function SiteHeader() {
             카페인컬러
           </Link>
           <span className="hidden h-5 w-px bg-border sm:block" />
-          {/* 설계도 프롬프트 → 새 프로젝트를 만들고 STEP 1로. 프리페치로 프로젝트가
+          {/* AI팩 만들기 → 새 프로젝트를 만들고 STEP 1로. 프리페치로 프로젝트가
               새로 생기지 않도록 prefetch를 끈다. */}
           <NavLink
             href="/dashboard/new"
@@ -38,7 +38,7 @@ export async function SiteHeader() {
             icon={<PencilRuler className="size-4" />}
             prefetch={false}
           >
-            설계도 프롬프트
+            AI팩 만들기
           </NavLink>
           <NavLink href="/verify" icon={<ShieldQuestion className="size-4" />}>
             사이트 검수하기
@@ -47,7 +47,7 @@ export async function SiteHeader() {
             산출물 소개
           </NavLink>
           <NavLink href="/packages" icon={<Package className="size-4" />}>
-            AI팩
+            AI팩 구매
           </NavLink>
         </div>
 

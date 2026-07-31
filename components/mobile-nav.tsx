@@ -24,7 +24,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 
 // 좁은 화면에서는 메뉴를 전부 이 안에 넣는다.
-// 인스타 유입은 대부분 휴대폰이라, 여기서 "AI팩"·"산출물 소개"에
+// 인스타 유입은 대부분 휴대폰이라, 여기서 "AI팩 구매"·"산출물 소개"에
 // 닿지 못하면 사실상 없는 메뉴가 된다.
 export function MobileNav({ email }: { email: string | null }) {
   const router = useRouter();
@@ -52,7 +52,7 @@ export function MobileNav({ email }: { email: string | null }) {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem onClick={() => go("/dashboard/new")}>
           <PencilRuler className="size-4" />
-          설계도 프롬프트
+          AI팩 만들기
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => go("/verify")}>
           <ShieldQuestion className="size-4" />
@@ -64,7 +64,7 @@ export function MobileNav({ email }: { email: string | null }) {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => go("/packages")}>
           <Package className="size-4" />
-          AI팩
+          AI팩 구매
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
