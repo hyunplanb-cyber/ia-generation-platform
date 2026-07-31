@@ -14,7 +14,8 @@ export async function GET() {
   const session = await getSession();
   if (!session) {
     // 로그인이 없으면 가입으로 — 계정이 있어야 프로젝트를 만든다.
-    redirect("/signup");
+    // next를 실어 보내, 가입을 마치면 원래 하려던 "새 설계도 만들기"로 이어지게 한다.
+    redirect("/signup?next=/dashboard/new");
   }
 
   const quota = await getProjectQuota();

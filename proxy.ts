@@ -15,7 +15,12 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/dashboard") && !hasSession) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    // 원래 가려던 곳을 실어 보낸다 — 로그인만 하면 하려던 일로 바로 이어진다.
+    // (없으면 랜딩에서 "설계도 만들기"를 눌러도 로그인 후 대시보드에 떨어져 흐름이 끊긴다.
+    //  login/signup 쪽에서 내부 경로인지 검사하므로 외부로는 못 보낸다.)
+    const url = new URL("/login", request.url);
+    url.searchParams.set("next", pathname + request.nextUrl.search);
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();

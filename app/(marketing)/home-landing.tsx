@@ -42,7 +42,9 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               URL 한 줄이면 → 오픈 전 검수 리포트.
             </p>
             <div className="hero-ctas">
-              <Link className="btn btn-o" href="/signup">
+              {/* /dashboard/new는 열리는 즉시 새 프로젝트를 만드는 라우트라,
+                  프리페치가 켜져 있으면 마우스만 올려도 프로젝트가 생긴다. */}
+              <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
                 설계도 프롬프트 만들기 <span aria-hidden="true">→</span>
               </Link>
               <Link className="btn btn-teal" href="/verify">
@@ -223,7 +225,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           </div>
 
           <div className="hero-ctas" style={{ marginTop: 36 }}>
-            <Link className="btn btn-o" href="/signup">
+            <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
               무료로 만들어보기 <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -430,7 +432,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             진짜 오픈해도 되는지 꼭 확인해보세요.
           </p>
           <div className="fc">
-            <Link className="btn btn-o" href="/signup">
+            <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
               설계도 프롬프트 만들기 <span aria-hidden="true">→</span>
             </Link>
             <Link className="btn btn-teal" href="/verify">
