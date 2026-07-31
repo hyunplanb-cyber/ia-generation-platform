@@ -64,8 +64,8 @@ const FAQ = [
     a: "화면마다 생성 프롬프트가 붙어 있어서 그대로 붙여넣으시면 됩니다. AI 빌드 스펙팩은 프로젝트 전체 맥락을 한 번에 넘기는 용도예요.",
   },
   {
-    q: "스탠다드와 프리미엄, 뭘 골라야 하나요?",
-    a: "만들려는 사이트 규모로 고르시면 됩니다. 핵심 기능만 빠르게 만들어볼 계획이면 스탠다드, 실제로 운영할 서비스를 만든다면 탭·상태·예외까지 들어 있는 프리미엄을 권해드려요.",
+    q: "등급은 어떻게 고르나요?",
+    a: "만들려는 사이트 규모로 고르시면 됩니다. 핵심 기능만 빠르게 만들어볼 계획이면 스탠다드, 실제로 운영할 서비스를 만든다면 탭·상태·예외까지 들어 있는 디럭스를 권해드려요. 프리미엄은 그 설계로 이미 만들어 둔 화면과 검수 시나리오까지 함께 드리는 등급으로, 업종에 따라 제공되지 않을 수 있습니다.",
   },
   {
     q: "디자인 시안도 들어 있나요?",
@@ -115,6 +115,8 @@ export default async function PackageDetailPage({
   const other = selected.id === "standard" ? premium : standard;
   // 3뎁스 화면 목록은 스탠다드가 아닐 때 편다.
   const isPremium = selected.id !== "standard";
+  // 이 업종에 프리미엄 등급이 있는가. 없으면 그 등급 얘기를 꺼내지 않는다.
+  const hasPremium = pkg.plans.some((p) => p.siteScreens);
 
   // 화면 목록. 프리미엄이면 화면 밑에 3뎁스 잎사귀를 함께 편다.
   // ── 산출물 예시용 ─────────────────────────────────────────
@@ -276,8 +278,9 @@ export default async function PackageDetailPage({
             ))}
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            전 등급에 디자인 프리셋 3종이 들어 있어요. 검수 시나리오와 만들어 둔 화면은
-            프리미엄에만 있습니다. 등급을 고르면 아래 내용이 전부 그 기준으로 바뀝니다.
+            전 등급에 디자인 프리셋 3종이 들어 있어요.
+            {hasPremium && " 검수 시나리오와 만들어 둔 화면은 프리미엄에만 있습니다."} 등급을
+            고르면 아래 내용이 전부 그 기준으로 바뀝니다.
           </p>
         </section>
 
@@ -751,7 +754,9 @@ export default async function PackageDetailPage({
                 </tr>
               </thead>
               <tbody>
-                {matrixRows.map((row) => (
+                {matrixRows
+                  .filter((row) => pkg.plans.some((p) => row.value(p) !== "—"))
+                  .map((row) => (
                   <tr
                     key={row.label}
                     className={`border-b border-border/60 ${row.only ? "bg-primary-soft/50" : ""}`}
