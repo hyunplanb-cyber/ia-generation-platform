@@ -181,12 +181,13 @@ const SECTIONS: { file: string; title: string; body: string }[] = [
     title: "어떻게 다른가",
     body:
       eye("HOW", "한 줄 프롬프트로 만든 사이트,<br>쉽게 나오지만<br><em>완벽할까요?</em>") +
-      `<p class="lead">우리는 <b>화면 ${prm.stats.screens}개의 프롬프트</b>와 <b>요건 ${prm.stats.reqs}개</b>를 근거로
-      AI에게 지시합니다. 무엇을 만들지가 이미 정해져 있으니, AI는 상상하지 않고 그대로 만들기만 하면 됩니다.</p>
+      `<p class="lead">우리는 <b>화면별 프롬프트 ${prm.stats.screens}개</b>, <b>기능 정의 ${prm.stats.reqs}개</b>,
+      <b>화면 이동 흐름 ${prm.stats.flows}개</b>를 근거로 AI에게 지시합니다.
+      무엇을 만들지가 이미 정해져 있으니, AI는 상상하지 않고 그대로 만들기만 하면 됩니다.</p>
       <div class="num">
         <div><b>${prm.stats.screens}</b><span>화면별 프롬프트</span></div>
-        <div><b>${prm.stats.reqs}</b><span>요건</span></div>
-        <div><b>${prm.stats.menus}</b><span>메뉴</span></div>
+        <div><b>${prm.stats.reqs}</b><span>기능 정의</span></div>
+        <div><b>${prm.stats.flows}</b><span>화면 이동 흐름도</span></div>
       </div>
       <p class="lead">화면마다 <b>고유 ID</b>가 붙어 있어서, 고칠 때도 정확히 짚을 수 있습니다.</p>
       <div class="chat">
