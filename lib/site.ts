@@ -8,4 +8,4 @@ export const SITE_URL =
  * 메인 랜딩과 AI팩 상세가 같이 쓰므로 여기 한 곳에서만 관리한다.
  * (랜딩은 클라이언트 컴포넌트라 lib/packages를 못 가져온다 — 템플릿 데이터가 통째로 딸려 온다.)
  */
-export const SHOWCASE_VIDEO_ID = "RmbiLbCQKEI";
+export const SHOWCASE_VIDEO_ID = "s1jr1_Qxja8";
