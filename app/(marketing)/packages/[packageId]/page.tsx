@@ -277,9 +277,63 @@ export default async function PackageDetailPage({
             ))}
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            두 플랜 모두 디자인 프리셋과 검수 시나리오가 들어 있어요. 차이는 설계의 깊이와
-            분량입니다. 규모를 고르면 아래 내용이 전부 그 기준으로 바뀝니다.
+            전 등급에 디자인 프리셋 3종이 들어 있어요. 검수 시나리오와 만들어 둔 화면은
+            프리미엄에만 있습니다. 등급을 고르면 아래 내용이 전부 그 기준으로 바뀝니다.
           </p>
+        </section>
+
+        {/* 값의 근거 — 문단만 이어지면 안 읽힌다. 숫자표와 인용으로 리듬을 끊는다. */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>이 문서 한 벌, 직접 만들면 얼마나 걸릴까요?</SectionTitle>
+          <div className="overflow-hidden rounded-xl border border-border bg-surface">
+            <table className="w-full text-sm">
+              <tbody>
+                {[
+                  ["요건 정의", "2주"],
+                  ["기능 정의", "2주"],
+                  ["화면 목록", "2주"],
+                  ["유저 플로우", "2주"],
+                  ["화면설계서 100페이지", "2~3개월"],
+                  ["검수 시나리오", "2주"],
+                ].map(([step, dur], i, arr) => {
+                  const hot = dur.includes("개월");
+                  return (
+                    <tr
+                      key={step}
+                      className={`${i < arr.length - 1 ? "border-b border-border/60" : ""} ${
+                        hot ? "bg-primary-soft" : ""
+                      }`}
+                    >
+                      <td className={`px-4 py-3 ${hot ? "font-bold text-foreground" : ""}`}>
+                        {step}
+                      </td>
+                      <td
+                        className={`px-4 py-3 text-right font-bold tabular-nums ${
+                          hot ? "text-primary-on-soft" : "text-foreground"
+                        }`}
+                      >
+                        {dur}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="leading-relaxed text-muted-foreground">
+            <b className="text-foreground">AI한테 시키면 되지 않냐고요?</b> 됩니다. 다만 문서
+            하나하나를 따로 지시해야 하고, 무엇보다{" "}
+            <b className="text-foreground">기준이 될 샘플이 없으면 원하는 대로 나오지 않습니다.</b>{" "}
+            요건 정의를 시켜본 적 없는 사람이 요건 정의를 검수할 수는 없으니까요.
+          </p>
+          <div className="rounded-xl bg-foreground px-6 py-5 text-background">
+            <p className="text-lg font-bold leading-snug sm:text-xl">
+              AI 구독료 3만 원으로 전문가가 될 수 있나요?
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-background/70">
+              도구는 실력을 대신해 주지 않습니다. 무엇을 만들지 아는 사람의 문서가 필요합니다.
+            </p>
+          </div>
         </section>
 
         {/* 증거 — 말보다 실물. 구매 결정 전에 보이도록 앞쪽에 둔다. */}
@@ -756,6 +810,29 @@ export default async function PackageDetailPage({
               </div>
             ))}
           </div>
+        </section>
+
+        {/* 화면ID — 말풍선으로 대비시킨다. 문장으로 설명하면 안 와닿는 대목이라. */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>전문가처럼 대화하세요</SectionTitle>
+          <p className="leading-relaxed text-muted-foreground">
+            화면마다 <b className="text-foreground">고유 ID</b>가 붙어 있습니다. AI에게든
+            개발사에게든 이렇게 말하세요.
+          </p>
+          <div className="flex flex-col gap-2.5">
+            <div className="max-w-[80%] self-start rounded-2xl border border-border bg-muted/50 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+              장바구니 그 화면 있잖아요, 거기 문구 좀…
+            </div>
+            <div className="max-w-[80%] self-end rounded-2xl bg-primary px-4 py-3 text-sm font-medium leading-relaxed text-primary-foreground">
+              <b className="font-bold">{screens[0]?.ref ?? "BK0102"}</b> 화면에서 빈 목록일 때
+              문구를 바꿔주세요.
+            </div>
+          </div>
+          <p className="leading-relaxed text-muted-foreground">
+            <b className="text-foreground">만들어 주는 대로 안주하지 마세요.</b> 기획 내용을
+            제대로 전달하지 못하면 이상한 사이트가 나옵니다. 그게 AI 탓 같지만, 대부분은 무엇을
+            원하는지 말하지 못해서 생기는 일입니다.
+          </p>
         </section>
 
         <section className="flex flex-col gap-4">
