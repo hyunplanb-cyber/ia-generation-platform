@@ -161,6 +161,12 @@ table.ex .dim{color:#7A756A}
 .sw .chips i{width:22px;height:22px;border-radius:5px;display:block}
 .sw b{font-size:15px;font-weight:800;display:block}
 .sw span{font-size:13px;color:#7A756A;line-height:1.5;display:block;margin-top:4px}
+.idx b{display:block;font-size:15px;font-weight:800;margin-bottom:12px;color:${TEAL}}
+.idx-g{margin-bottom:11px}
+.idx-g em{font-style:normal;display:inline-block;width:118px;font-size:13.5px;font-weight:800;color:#55534E;vertical-align:top}
+.idx-g span{display:inline-block;font-size:13px;padding:5px 10px;margin:0 5px 5px 0;border-radius:7px;
+  background:${PAPER_DEEP};color:#55534E}
+.idx-g span.more{background:transparent;color:#A9A396;font-weight:700}
 `;
 
 const page = (title: string, body: string) =>
@@ -334,14 +340,50 @@ const SECTIONS: { file: string; title: string; body: string }[] = [
           .join("")}
         </div><p class="note">스펙팩과 함께 넣으면 화면 ${prm.stats.screens}개가 같은 스타일로 나옵니다</p></div></div>`;
 
+      // 검수 시나리오 — lib/export/template-verify.ts의 실제 열 구성(테스트ID·화면구분·확인 항목·결과)을 따른다.
+      const vRows = rows.slice(0, 3).map((s, i) => ({
+        id: `SCN-${String(i + 1).padStart(3, "0")}`,
+        화면: s.name,
+        구분: /empty|error|closed|pending|expired/.test(s.role) ? "예외·상태" : "기본",
+        항목: splitItems(s.func)[0] ?? "화면이 정상적으로 열리는지 확인",
+      }));
+      const verify = `<div class="doc"><div class="doc-h"><b>검수 시나리오</b><i>xlsx · 시나리오 ${prm.verify!.scenarios}개</i><span class="sp"></span><span class="tag on">프리미엄</span></div>
+        <div class="doc-b"><table class="ex"><colgroup><col style="width:105px"><col style="width:150px"><col style="width:88px"><col><col style="width:112px"></colgroup>
+        <thead><tr><th>테스트ID</th><th>화면</th><th>화면구분</th><th>확인 항목</th><th>결과</th></tr></thead><tbody>
+        ${vRows
+          .map(
+            (r) =>
+              `<tr><td class="id">${r.id}</td><td>${r.화면}</td><td class="dim">${r.구분}</td>
+               <td class="dim">${cut(r.항목, 40)}</td><td class="dim">PASS·FAIL</td></tr>`,
+          )
+          .join("")}
+        </tbody></table><p class="note">화면 하나당 시나리오 하나 · 확인 항목 ${prm.verify!.checks}개 · 결과를 적어 개발자와 그대로 주고받습니다</p></div></div>`;
+
+      // 완성 화면 — 목록(index) 화면을 그대로 보여준다. "받으면 이렇게 생겼다"가 한눈에 온다.
+      const idxMenus = menus.slice(0, 4);
+      const html = `<div class="doc"><div class="doc-h"><b>완성 화면 HTML</b><i>${prm.siteScreens}개</i><span class="sp"></span><span class="tag on">프리미엄</span></div>
+        <div class="doc-b"><div class="idx"><b>${travel.title} — 전체 화면 목록</b>
+        ${idxMenus
+          .map(
+            (m) =>
+              `<div class="idx-g"><em>${m.code} ${m.nameKo}</em>${(m.screens as { ref: string; name: string }[])
+                .slice(0, 4)
+                .map((sc) => `<span>${sc.ref.toUpperCase()} ${cut(sc.name, 12)}</span>`)
+                .join("")}${m.screens.length > 4 ? `<span class="more">＋${m.screens.length - 4}</span>` : ""}</div>`,
+          )
+          .join("")}
+        </div><p class="note">각 항목을 눌러 화면을 확인할 수 있어요</p></div></div>`;
+
       return (
-        eye("SAMPLE", "말로 하지 않고<br><em>실물</em>로 보여드릴게요.") +
-        `<p class="lead">아래는 실제 산출물에서 그대로 가져온 화면입니다. 예시로 지어낸 게 아니에요.<br>아래 산출물은 <b>전 등급 공통</b>이고, 검수 시나리오와 완성 화면은 프리미엄에만 들어갑니다.</p>` +
+        eye("SAMPLE", "이런 산출물이<br><em>들어 있어요.</em>") +
+        `<p class="lead">산출물은 구매하시는 버전에 따라 다르게 구성되어 있습니다.<br>등급별 산출물 항목은 <b>등급별 포함 파일</b>에서 확인해 주세요.</p>` +
         ia +
         fd +
         `<div class="two-col">${tree}${flow}</div>` +
         wbs +
         spec +
+        verify +
+        html +
         preset
       );
     })(),
@@ -402,7 +444,7 @@ const SECTIONS: { file: string; title: string; body: string }[] = [
         .map((p, i) => `<div class="card"><h3>0${i + 1}</h3><p>${p}</p></div>`)
         .join("")}</div>
       <p class="lead">셋 다 만들다가 발견하면 <b>구조를 갈아엎게 되는</b> 것들입니다.</p>
-      <div class="close"><p>편한 건 좋지만,<br>부족한 건 싫잖아요.</p>
+      <div class="close"><p>편한 건 좋지만, 부족한 건 싫잖아요.</p>
       <span>그래서 이런 부분을 먼저 챙겨둔 AI팩입니다.</span></div>`,
   },
   {
