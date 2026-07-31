@@ -14,6 +14,7 @@ import { LMS_DEEP } from "@/template-data-lms-deep";
 import { BEAUTY_DEEP } from "@/template-data-beauty-deep";
 import { TRAVEL_DEEP } from "@/template-data-travel-deep";
 import type { DeepInput } from "@/template-deep";
+import { SHOWCASE_VIDEO_ID } from "@/lib/site";
 
 export interface TplData {
   project: { concept: string; designConcept: string; deviceMode: string };
@@ -321,7 +322,7 @@ export const PACKAGES: PackageDef[] = [
     ],
     // 프리미엄 스펙팩(144화면)을 Claude Code(Opus 5)로 그대로 구현한 결과.
     demoUrl: "/demo/travel/index.html",
-    videoId: "RmbiLbCQKEI",
+    videoId: SHOWCASE_VIDEO_ID,
     audience: [
       "마이리얼트립 같은 투어·티켓 예약 서비스를 만들려는 분",
       "현지 투어 상품을 온라인으로 팔려는 분",

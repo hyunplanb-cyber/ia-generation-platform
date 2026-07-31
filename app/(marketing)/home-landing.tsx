@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SHOWCASE_VIDEO_ID } from "@/lib/site";
 
 
 // 카페인컬러 메인 — 승인된 레트로모던 시안(홈페이지_리디자인_시안/template.html)을
@@ -180,6 +181,28 @@ export function HomeLanding() {
               <div className="ex-item">
                 <span className="x">✕</span> 검색 · 결과 없음
               </div>
+            </div>
+          </div>
+
+          {/* 위의 주장("AI는 잘 되는 화면만 만든다")을 바로 받는 증거.
+              주장 → 증거 → 행동 순서가 되도록 CTA 바로 앞에 둔다. */}
+          <div className="showcase">
+            <div className="sc-cap">
+              <b>설계도를 주면 이렇게 됩니다</b>
+              <span>
+                스펙팩 하나를 Claude Code에 넣고 돌린 기록이에요. 화면 144개가 약 40분 만에
+                만들어졌고, 위에 적은 예외 화면들도 그 안에 들어 있어요.
+              </span>
+            </div>
+            <div className="sc-frame">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${SHOWCASE_VIDEO_ID}`}
+                title="설계도(AI 빌드 스펙팩)로 화면 144개를 만드는 기록"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                loading="lazy"
+                allowFullScreen
+              />
             </div>
           </div>
 
@@ -662,6 +685,43 @@ export function HomeLanding() {
           font-weight: 400;
           line-height: 1.5;
         }
+        /* 시연 영상 — 주장 바로 뒤에 붙는 증거 */
+        .showcase {
+          margin-top: 40px;
+        }
+        .sc-cap {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          margin-bottom: 14px;
+        }
+        .sc-cap b {
+          font-size: 19px;
+          font-weight: 800;
+        }
+        .sc-cap span {
+          font-size: 16px;
+          font-weight: 400;
+          color: var(--ink-soft);
+          max-width: 760px;
+          line-height: 1.6;
+        }
+        .sc-frame {
+          position: relative;
+          aspect-ratio: 16 / 9;
+          border: 1px solid var(--paper-line);
+          border-radius: 14px;
+          overflow: hidden;
+          background: #000;
+        }
+        .sc-frame iframe {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          border: 0;
+        }
+
         .thesis {
           margin-top: 40px;
           background: var(--ink);
