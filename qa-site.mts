@@ -3,12 +3,29 @@
 // 고객에게 주는 검수 시나리오는 "고객이 자기 결과물을 확인하는 도구"다.
 // 우리가 파는 화면은 그 전에 우리가 통과시켜 놔야 한다. FAIL이 있는 걸 팔 수는 없다.
 //
-//   npx tsx qa-site.mts
-import { readFileSync, readdirSync, existsSync } from "node:fs";
+// AI로 만든 화면이면 무엇이든 검사한다. 화면이 든 폴더와 설계 목록을 주면 된다.
+//
+//   npm run qa                                  ← 여행 프리미엄(기본값)
+//   npm run qa -- <화면폴더> <02_IA_화면목록.xlsx>
+//
+// 화면 폴더는 pages/ 와 index.html 이 있는 곳을 가리킨다.
+import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import * as XLSX from "xlsx";
 
-const SITE = "판매용_템플릿/_배포/판매_6종/여행_프리미엄/여행_프리미엄_사이트";
-const IA = "판매용_템플릿/해외투어_티켓예약_상세IA/02_IA_화면목록.xlsx";
+const [argSite, argIa] = process.argv.slice(2);
+const SITE = argSite ?? "판매용_템플릿/_배포/판매_6종/여행_프리미엄/여행_프리미엄_사이트";
+const IA = argIa ?? "판매용_템플릿/해외투어_티켓예약_상세IA/02_IA_화면목록.xlsx";
+
+// 경로가 틀리면 "0건 통과"처럼 보일 수 있다. 검사 전에 먼저 막는다.
+for (const [label, path] of [
+  ["화면 폴더", SITE],
+  ["화면 폴더 안의 pages/", `${SITE}/pages`],
+  ["설계 목록 엑셀", IA],
+] as const) {
+  if (!existsSync(path)) throw new Error(`${label}를 못 찾았어요: ${path}`);
+}
+if (!statSync(`${SITE}/pages`).isDirectory()) throw new Error(`pages가 폴더가 아니에요: ${SITE}/pages`);
+console.log(`검사 대상: ${SITE}\n설계 목록: ${IA}\n`);
 
 type Issue = { level: "FAIL" | "WARN"; where: string; what: string };
 const issues: Issue[] = [];
