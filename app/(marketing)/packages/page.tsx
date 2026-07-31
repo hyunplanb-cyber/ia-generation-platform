@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, Layers, ShoppingBag, Sparkles } from "lucide-react";
+import { ArrowRight, Check, ShoppingBag, Sparkles } from "lucide-react";
 import { packageProducts, formatKrw } from "@/lib/packages";
 
 export const metadata: Metadata = {
   title: "AI팩 구매 — 업종별 화면설계서·기능정의서 완성본",
   description:
-    "이미 만들어진 업종별 AI팩(기획 산출물 한 벌)을 바로 받아보세요. 메뉴 구조, 화면 목록, 기능정의서, 흐름도, AI 빌드 스펙팩, 디자인 프리셋, 검수 시나리오까지 한 벌로 제공합니다.",
+    "이미 만들어진 업종별 AI팩(기획 산출물 한 벌)을 바로 받아보세요. 메뉴 구조, 화면 목록, 기능정의서, 흐름도, AI 빌드 스펙팩, 디자인 프리셋을 한 벌로 제공하고, 프리미엄은 만들어 둔 화면과 검수 시나리오까지 드립니다.",
   keywords: ["기획서 템플릿", "화면설계서 템플릿", "기능정의서 양식", "IA 템플릿", "웹기획 산출물"],
 };
 
@@ -29,14 +29,15 @@ export default function PackagesPage() {
           </h1>
           <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
             업종별로 완성된 기획 산출물입니다. 화면 목록부터 기능정의서, 흐름도, AI 빌드 스펙팩,
-            디자인 프리셋, 검수 시나리오까지 한 벌로 들어 있어요. 만들려는 사이트 규모에 맞춰
-            두 가지 중에 고르시면 됩니다.
+            디자인 프리셋까지 한 벌로 들어 있어요. 만들려는 사이트 규모에 맞춰 등급을
+            고르시면 됩니다. 프리미엄에는 그 설계로 이미 만들어 둔 화면과 검수 시나리오가
+            함께 들어 있어요.
           </p>
         </div>
       </section>
 
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 pb-14 pt-7">
-        {/* 상품 6종 — 업종 3 × 규모 2 */}
+        {/* 업종 × 등급. 프리미엄은 만들어 둔 화면이 있는 업종에만 생긴다. */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {products.map(({ pkg, plan, href }) => {
             const isPremium = plan.id === "premium";
@@ -50,24 +51,27 @@ export default function PackagesPage() {
                     : "border-border hover:border-primary/40"
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
+                {/* 업종과 등급을 나란히. 목록에서 "무엇을 파는가"보다 "어느 등급인가"가
+                    먼저 궁금하다 — 같은 상품이 등급만 달리 세 번 나오기 때문이다. */}
+                <div className="flex items-center gap-1.5">
                   <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
                     {pkg.industry}
                   </span>
-                  {plan.badge && (
-                    <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-primary-on-soft">
-                      {plan.badge}
-                    </span>
-                  )}
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                      plan.siteScreens
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-primary-soft text-primary-on-soft"
+                    }`}
+                  >
+                    {plan.name}
+                  </span>
                 </div>
 
                 <h2 className="mt-3 text-lg font-bold leading-snug text-foreground">
                   {pkg.title}
                 </h2>
-                <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-primary">
-                  <Layers className="size-4" />
-                  {plan.name} · {plan.depthLabel}
-                </p>
+                <p className="mt-1 text-sm font-semibold text-primary">{plan.depthLabel}</p>
 
                 <ul className="mt-4 flex flex-col gap-1.5 border-t border-border/60 pt-4">
                   {plan.highlights.map((h) => (
