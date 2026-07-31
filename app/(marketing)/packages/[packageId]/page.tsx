@@ -3,35 +3,24 @@ import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
-  AlertTriangle,
   ArrowLeft,
   ArrowRight,
-  CalendarRange,
   Check,
   FileText,
   LayoutList,
   Layers,
-  Lock,
   MonitorPlay,
   Network,
-  Package,
-  Palette,
-  ShieldCheck,
   ShoppingBag,
   Users,
   Workflow,
-  Wrench,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import {
   PACKAGES,
   getPackage,
   formatKrw,
-  exceptionScreens,
-  deepExceptionCount,
-  deepSample,
   DESIGN_PRESETS,
-  PRESET_CONTENTS,
   BUILD_SCOPE,
   withTopic,
   type PackagePlan,
@@ -60,18 +49,6 @@ export async function generateMetadata({
     alternates: { canonical: `/packages/${pkg.id}` },
   };
 }
-
-// 두 플랜 모두에 들어가는 산출물. 수량만 플랜에 따라 달라진다.
-const DELIVERABLES = [
-  { icon: Network, label: "메뉴 구조", desc: "메뉴 트리와 조직도 슬라이드" },
-  { icon: LayoutList, label: "IA · 화면 목록", desc: "화면ID 체계와 디바이스 구분" },
-  { icon: FileText, label: "기능정의서", desc: "화면마다 무엇이 되어야 하는지" },
-  { icon: Workflow, label: "FLOW · 흐름도", desc: "버튼을 누르면 어디로 가는지" },
-  { icon: CalendarRange, label: "WBS 일정", desc: "화면별 작업 일정표" },
-  { icon: Package, label: "AI 빌드 스펙팩", desc: "Cursor · Claude Code에 넣는 한 벌" },
-  { icon: Palette, label: "디자인 프리셋 3종", desc: "색 · 글꼴 · 컴포넌트 규칙" },
-  { icon: ShieldCheck, label: "검수 시나리오", desc: "오픈 전 점검 항목표" },
-];
 
 const FAQ = [
   {
@@ -114,8 +91,6 @@ const NOTES = [
 ];
 
 // 예외·상태 화면 판별(lib/packages의 규칙과 같다). 잎사귀까지 걸러내는 데 쓴다.
-const EXCEPTION_ROLE = /(empty|error|closed|pending|expired)/;
-const EXCEPTION_CHIP_LIMIT = 30;
 
 export default async function PackageDetailPage({
   params,
@@ -129,13 +104,10 @@ export default async function PackageDetailPage({
   const pkg = getPackage(packageId);
   if (!pkg) notFound();
 
-  const { menus, project } = pkg.data;
-  const screens = menus.flatMap((m) => m.screens);
-  const stateScreens = exceptionScreens(pkg.data);
+  const { menus } = pkg.data;
   const standard = pkg.plans[0];
   const premium = pkg.plans[pkg.plans.length - 1];
   const lowest = Math.min(...pkg.plans.map((p) => p.priceKrw));
-  const deepExceptions = deepExceptionCount(pkg.deep);
 
   // 고른 등급이 페이지 전체를 지배한다 — 지표·화면 목록·예외 화면·검수 수치까지.
   const selected = pkg.plans.find((p) => p.id === planParam) ?? standard;
@@ -145,64 +117,91 @@ export default async function PackageDetailPage({
   const isPremium = selected.id !== "standard";
 
   // 화면 목록. 프리미엄이면 화면 밑에 3뎁스 잎사귀를 함께 편다.
-  const viewMenus = menus.map((m) => {
-    const rows = m.screens.map((s) => ({
-      ref: s.ref,
-      name: s.name,
-      role: s.role,
-      func: s.func,
-      leaves: isPremium ? (pkg.deep.subs[s.ref] ?? []) : [],
-    }));
-    return {
-      code: m.code,
-      nameKo: m.nameKo,
-      desc: m.desc,
-      rows,
-      count: rows.reduce((n, r) => n + 1 + r.leaves.length, 0),
-    };
-  });
+  // ── 산출물 예시용 ─────────────────────────────────────────
+  // 실제 산출물에서 뽑는다. 지어낸 값을 넣으면 받아보고 다르다고 느낀다.
+  const cutText = (t: string, n: number) => (t.length > n ? `${t.slice(0, n)}…` : t);
+  const splitFunc = (f: string) =>
+    f
+      .split("·")
+      .map((x) => x.trim())
+      .filter(Boolean);
+  const sampleMenus = isPremium ? pkg.deep.menus : menus;
+  const allDeep = sampleMenus.flatMap((m) => m.screens);
+  const sampleScreens = [...new Set([...pkg.promptSamples, allDeep[0]?.ref ?? ""])]
+    .map((ref) => allDeep.find((x) => x.ref === ref))
+    .filter((x): x is NonNullable<typeof x> => Boolean(x))
+    .slice(0, 4);
 
-  // 예외·상태 화면 이름. 프리미엄은 잎사귀에서 나온 것까지 합친다.
-  const exceptionNames = isPremium
-    ? menus.flatMap((m) =>
-        m.screens.flatMap((s) => [
-          ...(EXCEPTION_ROLE.test(s.role) ? [s.name] : []),
-          ...(pkg.deep.subs[s.ref] ?? [])
-            .filter((l) => EXCEPTION_ROLE.test(l.role))
-            .map((l) => `${s.name} › ${l.name}`),
-        ]),
-      )
-    : stateScreens.map((s) => s.name);
-  const exceptionShown = exceptionNames.slice(0, EXCEPTION_CHIP_LIMIT);
-
-  // 3뎁스로 가장 많이 펼쳐지는 화면 3개 — 스탠다드를 볼 때 "위에는 이만큼 더 있다"로 쓴다.
-  const topRefs = Object.entries(pkg.deep.subs)
-    .sort((a, b) => b[1].length - a[1].length)
-    .slice(0, 3)
-    .map(([ref]) => ref);
-  const deepSamples = deepSample(pkg.deep, topRefs);
-
-  // 검수 시나리오 미리보기 — 실제 생성 규칙(화면당 시나리오 1개, 기능정의를 항목으로 분해)
-  // 그대로 앞부분만 보여준다. 예외 화면이 섞이도록 일반/예외를 하나씩 뽑는다.
-  const firstNormal = screens.find((s) => !stateScreens.includes(s));
-  const firstException = stateScreens[0];
-  const verifyPreview = [firstNormal, firstException]
-    .filter((s): s is NonNullable<typeof s> => Boolean(s))
-    .flatMap((s) => {
-      const idx = screens.indexOf(s) + 1;
-      const kind = stateScreens.includes(s) ? "예외·상태" : "기본";
-      return s.func
-        .split("·")
-        .map((x) => x.trim())
-        .filter(Boolean)
-        .slice(0, 3)
-        .map((check, j) => ({
-          id: `SCN-${String(idx).padStart(3, "0")}`,
-          screen: j === 0 ? s.name : "",
-          kind: j === 0 ? kind : "",
-          check,
-        }));
+  // 요구사항ID는 lib/export/requirements.ts와 같은 규칙(업무-기능-구성 3단)으로 계산한다.
+  const pad2 = (n: number) => String(n).padStart(2, "0");
+  const reqAll: { id: string; 업무: string; 구성: string; menu: number }[] = [];
+  sampleMenus.forEach((m, mi) => {
+    m.screens.forEach((sc, si) => {
+      splitFunc(sc.func).forEach((item, ii) => {
+        reqAll.push({
+          id: `${pad2(mi + 1)}-${pad2(si + 1)}-${pad2(ii + 1)}`,
+          업무: sc.name,
+          구성: item,
+          menu: mi,
+        });
+      });
     });
+  });
+  // 메뉴를 흩어서, 내용이 충실한 요건으로. 한 메뉴에서만 고르면 표본이 편중돼 보인다.
+  const sampleReqs = [0, 2, 4, 6]
+    .map(
+      (mi) =>
+        reqAll
+          .filter((r) => r.menu === mi && r.구성.length <= 34)
+          .sort((a, b) => b.구성.length - a.구성.length)[0],
+    )
+    .filter(Boolean)
+    .slice(0, 4);
+
+  const specSrc = sampleScreens[1] ?? sampleScreens[0];
+  const specPreview = specSrc
+    ? `### ${specSrc.ref.toUpperCase()} ${specSrc.name}\n· 역할: ${specSrc.role}\n· 요건: ${cutText(specSrc.func, 44)}\n· 프롬프트: ${cutText(specSrc.prompt, 60)}`
+    : "";
+
+  // 등급별 구성. 값은 플랜에서 직접 읽어 표기와 실제가 어긋나지 않게 한다.
+  const matrixRows: {
+    label: string;
+    sub: string;
+    only?: boolean;
+    value: (p: PackagePlan) => string;
+  }[] = [
+    { label: "01 메뉴구조", sub: "메뉴-화면 트리 · 조직도 pptx", value: () => "✓" },
+    {
+      label: "02 IA 화면목록",
+      sub: "화면ID · 화면별 AI 프롬프트",
+      value: (p) => `${p.stats.screens}개`,
+    },
+    { label: "03 기능정의서", sub: "요건", value: (p) => `${p.stats.reqs}개` },
+    { label: "04 WBS", sub: "화면별 개발 일정", value: () => "✓" },
+    { label: "05 FLOW 흐름도", sub: "html · drawio", value: () => "✓" },
+    { label: "07 AI 빌드 스펙팩", sub: "넣고 한 마디면 끝", value: () => "✓" },
+    {
+      label: "디자인 프리셋 3종",
+      sub: DESIGN_PRESETS.map((d) => d.name).join(" · "),
+      value: () => "✓",
+    },
+    {
+      label: "08 검수 시나리오",
+      sub: "오픈 전 점검표",
+      only: true,
+      value: (p) => (p.verify ? `${p.verify.scenarios}개` : "—"),
+    },
+    {
+      label: "완성 화면",
+      sub: "HTML · 다시 찍어내는 생성기",
+      only: true,
+      value: (p) => (p.siteScreens ? `${p.siteScreens}개` : "—"),
+    },
+  ];
+
+
+
+
 
   const STATS = [
     { icon: Network, label: "메뉴", value: selected.stats.menus },
@@ -282,60 +281,6 @@ export default async function PackageDetailPage({
           </p>
         </section>
 
-        {/* 값의 근거 — 문단만 이어지면 안 읽힌다. 숫자표와 인용으로 리듬을 끊는다. */}
-        <section className="flex flex-col gap-4">
-          <SectionTitle>이 문서 한 벌, 직접 만들면 얼마나 걸릴까요?</SectionTitle>
-          <div className="overflow-hidden rounded-xl border border-border bg-surface">
-            <table className="w-full text-sm">
-              <tbody>
-                {[
-                  ["요건 정의", "2주"],
-                  ["기능 정의", "2주"],
-                  ["화면 목록", "2주"],
-                  ["유저 플로우", "2주"],
-                  ["화면설계서 100페이지", "2~3개월"],
-                  ["검수 시나리오", "2주"],
-                ].map(([step, dur], i, arr) => {
-                  const hot = dur.includes("개월");
-                  return (
-                    <tr
-                      key={step}
-                      className={`${i < arr.length - 1 ? "border-b border-border/60" : ""} ${
-                        hot ? "bg-primary-soft" : ""
-                      }`}
-                    >
-                      <td className={`px-4 py-3 ${hot ? "font-bold text-foreground" : ""}`}>
-                        {step}
-                      </td>
-                      <td
-                        className={`px-4 py-3 text-right font-bold tabular-nums ${
-                          hot ? "text-primary-on-soft" : "text-foreground"
-                        }`}
-                      >
-                        {dur}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <p className="leading-relaxed text-muted-foreground">
-            <b className="text-foreground">AI한테 시키면 되지 않냐고요?</b> 됩니다. 다만 문서
-            하나하나를 따로 지시해야 하고, 무엇보다{" "}
-            <b className="text-foreground">기준이 될 샘플이 없으면 원하는 대로 나오지 않습니다.</b>{" "}
-            요건 정의를 시켜본 적 없는 사람이 요건 정의를 검수할 수는 없으니까요.
-          </p>
-          <div className="rounded-xl bg-foreground px-6 py-5 text-background">
-            <p className="text-lg font-bold leading-snug sm:text-xl">
-              AI 구독료 3만 원으로 전문가가 될 수 있나요?
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-background/70">
-              도구는 실력을 대신해 주지 않습니다. 무엇을 만들지 아는 사람의 문서가 필요합니다.
-            </p>
-          </div>
-        </section>
-
         {/* 증거 — 말보다 실물. 구매 결정 전에 보이도록 앞쪽에 둔다. */}
         {(pkg.videoId || pkg.demoUrl) && (
           <section className="flex flex-col gap-4">
@@ -384,6 +329,366 @@ export default async function PackageDetailPage({
           </section>
         )}
 
+        {/* WHY — 값의 근거. 실무 기간을 칩으로 훑게 한다(표로 두면 "이만큼 걸린다"로 읽혀 부담이 된다). */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>사이트 하나 만들 때 개발 단계에서 꼭 요구되는 내용입니다</SectionTitle>
+          <p className="leading-relaxed text-muted-foreground">
+            그 기간을 확실히 줄여 드려요. 실무에서 처음부터 만들면 이만큼 걸립니다.
+          </p>
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+            {[
+              ["요건 정의", "2주", false],
+              ["기능 정의", "2주", false],
+              ["화면 목록", "2주", false],
+              ["유저 플로우", "2주", false],
+              ["화면설계서 100p", "2~3개월", true],
+              ["검수 시나리오", "2주", false],
+            ].map(([step, dur, hot]) => (
+              <div
+                key={step as string}
+                className={`rounded-xl border px-4 py-3 ${
+                  hot ? "border-primary bg-primary-soft" : "border-border bg-surface"
+                }`}
+              >
+                <p className="text-sm font-semibold text-foreground">{step}</p>
+                <p
+                  className={`mt-1 text-lg font-bold tabular-nums ${
+                    hot ? "text-primary-on-soft" : "text-muted-foreground"
+                  }`}
+                >
+                  {dur}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-muted-foreground">＊ 서비스 기획 실무 기준</p>
+          <p className="leading-relaxed text-muted-foreground">
+            <b className="text-foreground">AI한테 시키면 되지 않냐고요?</b> 됩니다. 다만 문서
+            하나하나를 따로 지시해야 하고,{" "}
+            <b className="text-foreground">기준이 될 샘플이 없으면 원하는 대로 나오지 않습니다.</b>
+          </p>
+        </section>
+
+        {/* SAMPLE — 이 페이지에서 유일하게 '실물'을 보여주는 곳. 말로 하는 것보다 빠르다. */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>이런 산출물이 들어 있어요</SectionTitle>
+          <p className="leading-relaxed text-muted-foreground">
+            산출물은 구매하시는 등급에 따라 다르게 구성되어 있어요. 등급별 항목은 맨 아래{" "}
+            <b className="text-foreground">등급별 구성</b>에서 확인해 주세요.
+          </p>
+
+          <DocCard title="IA 화면목록" meta="xlsx">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[34rem] text-left text-xs">
+                <thead className="text-muted-foreground">
+                  <tr className="border-b border-border">
+                    {["화면ID", "화면명", "기능 정의", "AI 생성 프롬프트"].map((h) => (
+                      <th key={h} className="pb-2 pr-3 font-semibold">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sampleScreens.map((s) => (
+                    <tr key={s.ref} className="border-b border-border/50 align-top last:border-0">
+                      <td className="py-2.5 pr-3 font-bold text-primary">{s.ref.toUpperCase()}</td>
+                      <td className="py-2.5 pr-3 text-foreground">{s.name}</td>
+                      <td className="py-2.5 pr-3 leading-relaxed text-muted-foreground">
+                        {cutText(s.func, 46)}
+                      </td>
+                      <td className="py-2.5 leading-relaxed text-muted-foreground">
+                        {cutText(s.prompt, 62)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <DocNote>
+              외 {selected.stats.screens - sampleScreens.length}개 화면 · 화면마다 프롬프트가 붙어
+              있습니다
+            </DocNote>
+          </DocCard>
+
+          <DocCard title="기능정의서" meta={`xlsx · 요건 ${selected.stats.reqs}개`}>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[28rem] text-left text-xs">
+                <thead className="text-muted-foreground">
+                  <tr className="border-b border-border">
+                    {["요구사항ID", "업무 · 기능", "구성"].map((h) => (
+                      <th key={h} className="pb-2 pr-3 font-semibold">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sampleReqs.map((r) => (
+                    <tr key={r.id} className="border-b border-border/50 last:border-0">
+                      <td className="py-2.5 pr-3 font-bold text-primary">{r.id}</td>
+                      <td className="py-2.5 pr-3 text-foreground">{r.업무}</td>
+                      <td className="py-2.5 text-muted-foreground">{cutText(r.구성, 56)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <DocNote>
+              업무 → 기능 → 구성 3단계 · 유형(기능·콘텐츠·UI/UX·정책)은 자동 분류됩니다
+            </DocNote>
+          </DocCard>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <DocCard title="메뉴구조" meta="xlsx · pptx">
+              <p className="mb-2 text-sm font-bold text-foreground">{pkg.title}</p>
+              <ul className="flex flex-col gap-1 text-sm text-muted-foreground">
+                {menus.map((m) => (
+                  <li key={m.code}>
+                    ├ {m.code} {m.nameKo}
+                    <span className="ml-1.5 text-xs text-muted-foreground/70">
+                      화면 {m.screens.length}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </DocCard>
+
+            <DocCard title="FLOW 흐름도" meta="html · drawio">
+              <div className="flex flex-wrap items-center gap-1.5">
+                {["상품 상세", "날짜·인원", "결제"].map((n) => (
+                  <Fragment key={n}>
+                    <span className="rounded-lg bg-muted px-2.5 py-1.5 text-xs font-semibold text-muted-foreground">
+                      {n}
+                    </span>
+                    <span className="text-xs text-muted-foreground/50">→</span>
+                  </Fragment>
+                ))}
+                <span className="rounded-lg bg-foreground px-2.5 py-1.5 text-xs font-semibold text-background">
+                  예약 완료
+                </span>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                <span className="text-xs text-muted-foreground/70">예외 →</span>
+                {["결제 실패", "확정 대기", "마감"].map((n) => (
+                  <span
+                    key={n}
+                    className="rounded-lg bg-primary-soft px-2.5 py-1.5 text-xs font-semibold text-primary-on-soft"
+                  >
+                    {n}
+                  </span>
+                ))}
+              </div>
+              <DocNote>화면 이동 {selected.stats.flows}개 · draw.io에서 편집</DocNote>
+            </DocCard>
+          </div>
+
+          <DocCard title="AI 빌드 스펙팩" meta="md · json">
+            <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg bg-foreground px-4 py-3.5 text-xs leading-relaxed text-background/80">
+              {specPreview}
+            </pre>
+            <DocNote>이 파일 하나를 AI에 넣고 “이대로 만들어줘” 하면 됩니다</DocNote>
+          </DocCard>
+
+          {selected.verify && (
+            <DocCard
+              title="검수 시나리오"
+              meta={`xlsx · 시나리오 ${selected.verify.scenarios}개`}
+              badge="프리미엄"
+            >
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[30rem] text-left text-xs">
+                  <thead className="text-muted-foreground">
+                    <tr className="border-b border-border">
+                      {["테스트ID", "화면", "화면구분", "확인 항목", "결과"].map((h) => (
+                        <th key={h} className="pb-2 pr-3 font-semibold">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sampleScreens.slice(0, 3).map((s, i) => (
+                      <tr key={s.ref} className="border-b border-border/50 last:border-0">
+                        <td className="py-2.5 pr-3 font-bold text-primary">
+                          SCN-{String(i + 1).padStart(3, "0")}
+                        </td>
+                        <td className="py-2.5 pr-3 text-foreground">{s.name}</td>
+                        <td className="py-2.5 pr-3 text-muted-foreground">
+                          {/(empty|error|closed|pending|expired)/.test(s.role) ? "예외·상태" : "기본"}
+                        </td>
+                        <td className="py-2.5 pr-3 text-muted-foreground">
+                          {cutText(splitFunc(s.func)[0] ?? "화면이 정상적으로 열리는지 확인", 34)}
+                        </td>
+                        <td className="py-2.5 text-muted-foreground">PASS·FAIL</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <DocNote>
+                화면 하나당 시나리오 하나 · 확인 항목 {selected.verify.checks}개 · 결과를 적어
+                개발자와 그대로 주고받습니다
+              </DocNote>
+            </DocCard>
+          )}
+
+          {selected.siteScreens && (
+            <DocCard
+              title="완성 화면 HTML"
+              meta={`${selected.siteScreens}개`}
+              badge="프리미엄"
+            >
+              <p className="mb-3 text-sm font-bold text-foreground">{pkg.title} — 전체 화면 목록</p>
+              <div className="flex flex-col gap-2.5">
+                {menus.slice(0, 4).map((m) => (
+                  <div key={m.code} className="flex flex-wrap items-baseline gap-1.5">
+                    <span className="w-28 shrink-0 text-xs font-bold text-muted-foreground">
+                      {m.code} {m.nameKo}
+                    </span>
+                    {m.screens.slice(0, 4).map((sc) => (
+                      <span
+                        key={sc.ref}
+                        className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground"
+                      >
+                        {sc.ref.toUpperCase()} {cutText(sc.name, 10)}
+                      </span>
+                    ))}
+                    {m.screens.length > 4 && (
+                      <span className="text-xs font-bold text-muted-foreground/60">
+                        ＋{m.screens.length - 4}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <DocNote>각 항목을 눌러 화면을 확인할 수 있어요</DocNote>
+            </DocCard>
+          )}
+
+          <DocCard title="디자인 프리셋 3종" meta="md · json">
+            <div className="grid gap-3 sm:grid-cols-3">
+              {DESIGN_PRESETS.map((p, i) => (
+                <div key={p.no} className="rounded-xl border border-border p-3.5">
+                  <p className="text-sm font-bold text-foreground">
+                    {p.no} {p.name}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    {pkg.presetFits[i]}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <DocNote>
+              스펙팩과 함께 넣으면 화면 {selected.stats.screens}개가 같은 스타일로 나옵니다
+            </DocNote>
+          </DocCard>
+        </section>
+
+        {/* HOW — 왜 우리 결과가 다른가. 숫자와 대화로 보여준다. */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>한 줄 프롬프트로 만든 사이트, 완벽할까요?</SectionTitle>
+          <p className="leading-relaxed text-muted-foreground">
+            우리는 <b className="text-foreground">화면별 프롬프트 {selected.stats.screens}개</b>,{" "}
+            <b className="text-foreground">기능 정의 {selected.stats.reqs}개</b>,{" "}
+            <b className="text-foreground">화면 이동 흐름 {selected.stats.flows}개</b>를 근거로
+            AI에게 지시합니다. 무엇을 만들지가 이미 정해져 있으니, AI는 상상하지 않고 그대로
+            만들기만 하면 됩니다.
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              [selected.stats.screens, "화면별 프롬프트"],
+              [selected.stats.reqs, "기능 정의"],
+              [selected.stats.flows, "화면 이동 흐름도"],
+            ].map(([n, label]) => (
+              <div
+                key={label as string}
+                className="rounded-xl border border-border bg-surface p-4 text-center"
+              >
+                <p className="text-2xl font-bold tabular-nums text-primary">{n}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col gap-2.5 rounded-2xl border border-border bg-muted/40 p-5">
+            <div className="flex items-start gap-2.5">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted-foreground/30 text-xs font-bold text-background">
+                ✕
+              </span>
+              <p className="max-w-[80%] rounded-2xl border border-border bg-surface px-4 py-2.5 text-sm leading-relaxed text-muted-foreground">
+                장바구니 그 화면 있잖아요, 거기 문구 좀…
+              </p>
+            </div>
+            <div className="flex flex-row-reverse items-start gap-2.5">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                ✓
+              </span>
+              <p className="max-w-[80%] rounded-2xl bg-primary px-4 py-2.5 text-sm font-medium leading-relaxed text-primary-foreground">
+                <b className="font-bold">{sampleScreens[0]?.ref.toUpperCase()}</b> 화면, 문구
+                바꿔주세요.
+              </p>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            AI에게든 개발사든 <b className="text-foreground">고유 ID로 이야기하면 전달이 쉬워집니다.</b>
+          </p>
+        </section>
+
+        {/* SCOPE — 구매 전에 반드시 알아야 할 경계. 여기서 오해가 생기면 분쟁이 된다. */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>개발에 꼭 필요한 부분까지 작업됩니다</SectionTitle>
+          <div className="rounded-2xl border-2 border-foreground/25 bg-surface p-5">
+            <p className="mb-3 font-bold text-foreground">개발사에 그대로 전달하셔도 됩니다</p>
+            <ul className="flex flex-col gap-2">
+              {BUILD_SCOPE.made.map((x) => (
+                <li key={x} className="flex gap-2 text-sm leading-relaxed text-foreground/85">
+                  <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-foreground/40" />
+                  {x}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-surface p-5">
+              <p className="mb-3 font-bold text-foreground">개발사에게</p>
+              <ul className="flex flex-col gap-1.5 text-sm text-foreground/85">
+                {["01 메뉴구조", "02 화면목록", "03 기능정의서", "05 FLOW 흐름도", "완성화면 HTML"].map(
+                  (x) => (
+                    <li key={x}>· {x}</li>
+                  ),
+                )}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-border bg-surface p-5">
+              <p className="mb-3 font-bold text-primary">AI에게</p>
+              <ul className="flex flex-col gap-1.5 text-sm text-foreground/85">
+                {["07 AI 빌드 스펙팩", "디자인 프리셋", "완성화면 HTML"].map((x) => (
+                  <li key={x}>· {x}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-muted/40 p-5">
+            <p className="mb-3 font-bold text-muted-foreground">
+              개발에서는 이런 추가 작업이 진행돼요
+            </p>
+            <div className="flex flex-col gap-1.5 text-sm leading-relaxed text-muted-foreground">
+              {BUILD_SCOPE.needsDev.map((x) => (
+                <p key={x}>{x}</p>
+              ))}
+            </div>
+          </div>
+          <p className="leading-relaxed text-muted-foreground">
+            <b className="text-foreground">
+              화면은 눌러서 돌아다닐 수 있는 상태로 나옵니다. 다만 로그인 버튼을 눌러도 실제로
+              로그인이 되지는 않습니다.
+            </b>{" "}
+            바깥 서비스를 불러야 하는 기능이기 때문입니다. 이 서비스에서 개발자에게 넘길 항목은{" "}
+            {pkg.integrations.length}가지 — {pkg.integrations.map((i) => i.area).join(" · ")}.
+            견적을 받거나 개발을 맡길 때 이 목록을 그대로 쓰시면 됩니다.
+          </p>
+        </section>
+
         {/* 이런 분께 추천 */}
         <section className="flex flex-col gap-4">
           <SectionTitle>이런 분께 맞아요</SectionTitle>
@@ -402,463 +707,83 @@ export default async function PackageDetailPage({
           </ul>
         </section>
 
-        {/* 판매 논거 — 이 업종에서 놓치기 쉬운 것 */}
+        {/* TRAP — 이 업종에서 놓치기 쉬운 것. 가격의 마지막 근거다. */}
         <section className="flex flex-col gap-4">
-          <SectionTitle>이 업종에서 특히 자주 빠지는 것들</SectionTitle>
-          <ul className="flex flex-col gap-3">
-            {pkg.painPoints.map((p) => (
-              <li
-                key={p}
-                className="flex items-start gap-3 rounded-xl border border-border bg-surface px-5 py-4"
-              >
-                <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning" />
-                <p className="leading-relaxed text-foreground/85">{p}</p>
-              </li>
-            ))}
-          </ul>
-          <p className="rounded-xl bg-primary-soft/40 px-5 py-4 leading-relaxed text-foreground">
-            이 AI팩은 그 지점들을 빠뜨리지 않도록 <b>화면 단위까지 쪼개 놓은 설계 문서</b>입니다.
-            프리미엄에는 예외·상태 화면만 {deepExceptions}개가 정의돼 있어요. 화면 자체는 이
-            문서를 AI에 넣으면 만들어집니다.
-          </p>
-        </section>
-
-        {/* 포함 산출물 */}
-        <section className="flex flex-col gap-4">
-          <SectionTitle>받으시는 산출물</SectionTitle>
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {DELIVERABLES.map(({ icon: Icon, label, desc }) => (
-              <li key={label} className="rounded-xl border border-border bg-surface p-4">
-                <span className="flex size-9 items-center justify-center rounded-lg bg-primary-soft text-primary-on-soft">
-                  <Icon className="size-4" />
-                </span>
-                <p className="mt-3 font-bold text-foreground">{label}</p>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{desc}</p>
-              </li>
-            ))}
-          </ul>
-          <p className="text-sm text-muted-foreground">
-            엑셀(.xlsx) · 파워포인트(.pptx) · 마크다운(.md) 파일을 ZIP 한 벌로 받으시게 됩니다.
-          </p>
-        </section>
-
-        {/* 완성 화면 — 프리미엄에만. 설계만 파는 등급과 갈리는 지점이라 앞쪽에 둔다. */}
-        {selected.siteScreens && (
-          <section className="flex flex-col gap-4">
-            <SectionTitle>이미 만들어 둔 화면 {selected.siteScreens}개</SectionTitle>
-            <p className="leading-relaxed text-muted-foreground">
-              프리미엄은 설계만 드리지 않습니다.{" "}
-              <b className="text-foreground">이 스펙팩으로 실제로 만든 화면</b>이 함께 들어 있어요.
-              받아서 브라우저로 열면 바로 눌러볼 수 있습니다.
-            </p>
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                {
-                  t: `화면 ${selected.siteScreens}개 (HTML)`,
-                  d: "빈 목록, 결제 실패, 마감처럼 예외 상황 화면까지 전부 들어 있어요.",
-                },
-                {
-                  t: "개발자에게 그대로",
-                  d: "개발자는 문서보다 소스를 봅니다. 의도만 잘 오가면 착수에 충분한 자료가 돼요.",
-                },
-                {
-                  t: "다시 찍어내는 생성기",
-                  d: "사이트 이름·메뉴·가격이 파일 하나에 모여 있어요. 고치고 다시 돌리면 전부 갱신됩니다.",
-                },
-              ].map((x) => (
-                <div key={x.t} className="rounded-xl border border-border bg-surface p-4">
-                  <p className="text-sm font-semibold text-foreground">{x.t}</p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{x.d}</p>
-                </div>
-              ))}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              다만 서버와 데이터베이스는 붙어 있지 않습니다. 로그인·결제 버튼을 눌러도 실제로
-              동작하지는 않아요. 아래 &lsquo;어디까지 만들어지나요?&rsquo;를 꼭 읽어주세요.
-            </p>
-          </section>
-        )}
-
-        {/* 어디까지 만들어지는지 — 구매 전에 반드시 알아야 할 경계 */}
-        <section className="flex flex-col gap-4">
-          <SectionTitle>어디까지 만들어지나요?</SectionTitle>
-          <p className="leading-relaxed text-muted-foreground">
-            스펙팩을 AI 코딩 도구에 넣으면 <b className="text-foreground">화면이 만들어집니다.</b>{" "}
-            다만 로그인·결제·지도처럼 <b className="text-foreground">바깥 서비스를 불러야 하는
-            기능</b>은 눌러도 반응하지 않아요. 그 부분은 개발이 필요합니다. 사실대로 미리
-            알려드립니다.
-          </p>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-primary/30 bg-primary-soft/20 p-5">
-              <p className="flex items-center gap-2 font-bold text-foreground">
-                <Check className="size-4 text-primary" />
-                AI가 만들어 주는 것
-              </p>
-              <ul className="mt-3 flex flex-col gap-1.5">
-                {BUILD_SCOPE.made.map((x) => (
-                  <li key={x} className="flex items-start gap-2 text-sm leading-relaxed text-foreground/85">
-                    <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
-                    {x}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-xl border border-border bg-surface p-5">
-              <p className="flex items-center gap-2 font-bold text-foreground">
-                <Wrench className="size-4 text-warning" />
-                개발이 필요한 것
-              </p>
-              <ul className="mt-3 flex flex-col gap-1.5">
-                {BUILD_SCOPE.needsDev.map((x) => (
-                  <li key={x} className="flex items-start gap-2 text-sm leading-relaxed text-foreground/85">
-                    <Wrench className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
-                    {x}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-xl border border-border">
-            <div className="border-b border-border bg-muted/40 px-4 py-2.5">
-              <h3 className="font-bold text-foreground">
-                이 업종에서 개발자에게 넘길 항목 {pkg.integrations.length}가지
-              </h3>
-              <p className="mt-0.5 text-sm text-muted-foreground">
-                견적을 받거나 개발을 맡길 때 그대로 쓰실 수 있게 정리했어요.
-              </p>
-            </div>
-            <ul className="divide-y divide-border/60">
-              {pkg.integrations.map((it) => (
-                <li key={it.area} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:gap-4">
-                  <p className="w-40 shrink-0 font-semibold text-foreground">{it.area}</p>
-                  <p className="text-sm leading-relaxed text-foreground/80">{it.detail}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* 디자인 프리셋 3종 */}
-        <section className="flex flex-col gap-4">
-          <SectionTitle>디자인 프리셋 3종</SectionTitle>
-          <p className="leading-relaxed text-muted-foreground">
-            AI에 화면만 시키면 <b className="text-foreground">화면마다 디자인이 제각각</b>이
-            됩니다. 스펙팩과 프리셋을 함께 넣으면 {selected.name} 화면 {selected.stats.screens}개가
-            같은 스타일로 나와요. 세 가지 중 원하는 하나를 고르시면 됩니다.
-          </p>
-
+          <SectionTitle>AI는 이런 부분을 놓칠 수 있어요</SectionTitle>
           <div className="grid gap-3 sm:grid-cols-3">
-            {DESIGN_PRESETS.map((preset, i) => (
-              <div
-                key={preset.no}
-                className="flex flex-col gap-2 rounded-xl border border-border bg-surface p-5"
-              >
-                <span className="font-mono text-xs text-muted-foreground">{preset.no}</span>
-                <p className="text-lg font-bold text-foreground">{preset.name}</p>
-                <p className="text-sm leading-relaxed text-foreground/80">{preset.tagline}</p>
-                <p className="mt-1 border-t border-border/60 pt-2 text-sm leading-relaxed text-muted-foreground">
-                  <span className="font-semibold text-primary">어울리는 곳</span>
-                  <br />
-                  {pkg.presetFits[i]}
-                </p>
+            {pkg.painPoints.map((p, i) => (
+              <div key={p} className="rounded-xl border border-border bg-surface p-5">
+                <p className="text-lg font-bold text-primary">0{i + 1}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{p}</p>
               </div>
             ))}
           </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-border bg-surface p-5">
-              <p className="font-bold text-foreground">프리셋 한 벌에 들어 있는 것</p>
-              <ul className="mt-3 flex flex-col gap-1.5">
-                {PRESET_CONTENTS.map((c) => (
-                  <li
-                    key={c}
-                    className="flex items-start gap-2 text-sm leading-relaxed text-foreground/80"
-                  >
-                    <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
-                    {c}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-xl border border-border bg-surface p-5">
-              <p className="font-bold text-foreground">쓰는 법</p>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                AI 코딩 도구에 <b className="text-foreground">스펙팩과 프리셋 파일을 함께</b> 넣고
-                이렇게 주문하세요.
-              </p>
-              <pre className="mt-3 overflow-x-auto rounded-lg bg-muted/50 px-4 py-3 text-sm leading-relaxed text-foreground">
-                {`AI 빌드 스펙팩과 디자인 프리셋 01(모던 네이비)을
-확인해서 이 디자인 규칙대로 화면을 만들어줘.`}
-              </pre>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                스펙팩이 <b className="text-foreground">무엇을 만들지</b>를, 프리셋이{" "}
-                <b className="text-foreground">어떻게 보이게 할지</b>를 정합니다. 마크다운(.md)과
-                JSON 두 가지로 들어 있어요.
-              </p>
-            </div>
+          <p className="leading-relaxed text-muted-foreground">
+            셋 다 만들다가 발견하면 <b className="text-foreground">구조를 갈아엎게 되는</b>{" "}
+            것들입니다.
+          </p>
+          <div className="mt-2 text-2xl font-bold leading-snug text-foreground sm:text-3xl">
+            <p>편한 건 좋지만, 부족한 건 싫잖아요.</p>
+            <p>그래서 이런 부분을 먼저 챙겨둔 AI팩입니다.</p>
           </div>
         </section>
 
-        {/* 검수 시나리오 — 프리미엄에만 들어 있다 */}
-        {selected.verify && (
+        {/* FILES — 등급별 차이를 한눈에. 세부는 마지막에 본다. */}
         <section className="flex flex-col gap-4">
-          <SectionTitle>검수 시나리오 {selected.verify.scenarios}개</SectionTitle>
-          <p className="leading-relaxed text-muted-foreground">
-            AI로 화면을 다 만든 다음이 진짜 문제입니다. 뭐가 빠졌는지 모르니까요. 이 문서는{" "}
-            <b className="text-foreground">화면 하나당 시나리오 하나</b>로, 눌러보며 확인할 항목을
-            표로 정리한 점검표입니다.
-          </p>
-
-          <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              ["표지", "쓰는 법과 PASS · FAIL · WARN 판정 기준"],
-              ["검수 현황", "시나리오 수 · 확인 항목 수 · 예외 화면 수 집계"],
-              ["검수 시나리오", "화면별 확인 항목과 결과 기입란"],
-            ].map(([name, desc]) => (
-              <div key={name} className="rounded-xl border border-border bg-surface p-4">
-                <p className="font-bold text-foreground">{name}</p>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="overflow-x-auto rounded-xl border border-border">
-            <table className="w-full min-w-[40rem] text-left text-sm">
-              <thead className="bg-muted/40">
-                <tr>
-                  {["테스트ID", "화면", "화면구분", "확인 항목", "결과"].map((h) => (
-                    <th key={h} className="px-4 py-2.5 font-semibold text-foreground">
-                      {h}
+          <SectionTitle>등급별로 이렇게 들어 있어요</SectionTitle>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[32rem] text-left text-sm">
+              <thead>
+                <tr className="border-b-2 border-foreground">
+                  <th className="pb-3 pr-3 text-xs font-semibold text-muted-foreground">
+                    포함 내용
+                  </th>
+                  {pkg.plans.map((p) => (
+                    <th
+                      key={p.id}
+                      className={`pb-3 text-center text-xs font-bold ${
+                        p.siteScreens ? "text-primary" : "text-foreground"
+                      }`}
+                    >
+                      {p.name}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {verifyPreview.map((r, i) => (
-                  <tr key={i} className="border-t border-border/60 align-top">
-                    <td className="whitespace-nowrap px-4 py-2.5 font-mono text-xs text-muted-foreground">
-                      {r.id}
+                {matrixRows.map((row) => (
+                  <tr
+                    key={row.label}
+                    className={`border-b border-border/60 ${row.only ? "bg-primary-soft/50" : ""}`}
+                  >
+                    <td className="py-3 pr-3">
+                      <span className="font-semibold text-foreground">{row.label}</span>
+                      <span className="mt-0.5 block text-xs text-muted-foreground">{row.sub}</span>
                     </td>
-                    <td className="px-4 py-2.5 font-medium text-foreground">{r.screen}</td>
-                    <td className="whitespace-nowrap px-4 py-2.5">
-                      {r.kind && (
-                        <span
-                          className={`rounded-md px-2 py-0.5 text-xs font-medium ${
-                            r.kind === "예외·상태"
-                              ? "bg-warning-soft text-warning"
-                              : "bg-muted text-muted-foreground"
+                    {pkg.plans.map((p) => {
+                      const v = row.value(p);
+                      return (
+                        <td
+                          key={p.id}
+                          className={`py-3 text-center font-bold ${
+                            v === "—"
+                              ? "text-muted-foreground/40"
+                              : row.only
+                                ? "text-primary"
+                                : "text-foreground"
                           }`}
                         >
-                          {r.kind}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2.5 leading-relaxed text-foreground/80">{r.check}</td>
-                    <td className="whitespace-nowrap px-4 py-2.5 text-muted-foreground">
-                      <span className="rounded border border-dashed border-border px-2 py-0.5 text-xs">
-                        기입
-                      </span>
-                    </td>
+                          {v}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="text-sm text-muted-foreground">
-            {withTopic(selected.name)} 시나리오 {selected.verify.scenarios}개 · 확인 항목{" "}
-            {selected.verify.checks}개입니다. 엑셀이라 결과를 적어 개발자와 그대로 주고받을 수
-            있어요. 검수 시나리오는 프리미엄에만 들어 있습니다.
-          </p>
-        </section>
-        )}
-
-        {/* ── 여기부터 실제 내용 공개 ── */}
-        <section className="flex flex-col gap-3">
-          <SectionTitle>사이트 컨셉</SectionTitle>
-          <p className="leading-relaxed text-foreground/85">{project.concept}</p>
         </section>
 
-        <section className="flex flex-col gap-4">
-          <SectionTitle>메뉴 구조</SectionTitle>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {menus.map((m) => (
-              <div key={m.code} className="rounded-xl border border-border bg-surface p-4">
-                <p className="font-bold text-foreground">{m.nameKo}</p>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{m.desc}</p>
-                <p className="mt-2 text-xs font-semibold text-primary">
-                  화면 {m.screens.length}개
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 스탠다드를 볼 때만 — 프리미엄으로 올리면 뭐가 더 오는지 보여준다.
-            (프리미엄 화면에서는 아래 화면 목록이 이미 3뎁스를 전부 펼쳐 보여준다) */}
-        {!isPremium && deepSamples.length > 0 && (
-          <section className="flex flex-col gap-4">
-            <SectionTitle>프리미엄은 화면 하나를 이렇게 펼칩니다</SectionTitle>
-            <p className="leading-relaxed text-muted-foreground">
-              지금 보시는 스탠다드가 &ldquo;화면 하나&rdquo;로 두는 것을, 프리미엄은{" "}
-              탭·상태·예외까지 나눠 각각을 독립된 화면으로 설계합니다. 프롬프트도 그만큼 따로
-              붙어요.
-            </p>
-            <div className="flex flex-col gap-3">
-              {deepSamples.map(({ screen, leaves }) => (
-                <div key={screen.ref} className="overflow-hidden rounded-xl border border-border">
-                  <div className="flex flex-wrap items-baseline gap-2 border-b border-border bg-muted/40 px-4 py-2.5">
-                    <Layers className="size-4 shrink-0 text-primary" />
-                    <h3 className="font-bold text-foreground">{screen.name}</h3>
-                    <span className="text-xs text-muted-foreground">
-                      3뎁스 {leaves.length}개로 분해
-                    </span>
-                  </div>
-                  <ul className="divide-y divide-border/60">
-                    {leaves.map((l) => (
-                      <li key={l.name} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:gap-4">
-                        <p className="w-48 shrink-0 font-semibold text-foreground">
-                          {l.name}
-                          <span className="mt-0.5 block font-mono text-xs font-normal text-muted-foreground">
-                            {l.role}
-                          </span>
-                        </p>
-                        <p className="text-sm leading-relaxed text-foreground/80">{l.func}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <section className="flex flex-col gap-4">
-          <SectionTitle>AI가 빠뜨리기 쉬운 예외 화면 {exceptionNames.length}개</SectionTitle>
-          <p className="text-muted-foreground">
-            &ldquo;만들어줘&rdquo; 한 줄로는 잘 나오지 않는, 실제 서비스에 꼭 필요한 화면들입니다.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {exceptionShown.map((name) => (
-              <span
-                key={name}
-                className="rounded-lg border border-primary/25 bg-primary-soft/50 px-3 py-1.5 text-sm font-medium text-primary-on-soft"
-              >
-                {name}
-              </span>
-            ))}
-            {exceptionNames.length > exceptionShown.length && (
-              <span className="rounded-lg border border-dashed border-border px-3 py-1.5 text-sm font-medium text-muted-foreground">
-                외 {exceptionNames.length - exceptionShown.length}개
-              </span>
-            )}
-          </div>
-        </section>
-
-        <section className="flex flex-col gap-4">
-          <SectionTitle>
-            화면 목록 {selected.stats.screens}개 · 기능 정의
-          </SectionTitle>
-          <p className="text-muted-foreground">
-            {isPremium
-              ? "들여쓴 줄이 3뎁스입니다. 화면 하나를 탭·상태·예외로 나눠 각각 따로 설계했어요."
-              : "메뉴 아래 화면을 2뎁스로 정리했습니다."}
-          </p>
-          <div className="flex flex-col gap-6">
-            {viewMenus.map((menu) => (
-              <div key={menu.code} className="overflow-hidden rounded-xl border border-border">
-                <div className="flex items-baseline gap-2 border-b border-border bg-muted/40 px-4 py-2.5">
-                  <span className="font-mono text-xs text-muted-foreground">{menu.code}</span>
-                  <h3 className="font-bold text-foreground">{menu.nameKo}</h3>
-                  <span className="text-xs text-muted-foreground">화면 {menu.count}개</span>
-                </div>
-                <table className="w-full text-left text-sm">
-                  <tbody>
-                    {menu.rows.map((s, i) => (
-                      <Fragment key={s.ref}>
-                        <tr className={i > 0 ? "border-t border-border/60 align-top" : "align-top"}>
-                          <td className="w-56 px-4 py-3 font-semibold text-foreground">
-                            {s.name}
-                            <span className="mt-0.5 block font-mono text-xs font-normal text-muted-foreground">
-                              {s.role}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 leading-relaxed text-foreground/80">{s.func}</td>
-                        </tr>
-                        {s.leaves.map((l) => (
-                          <tr
-                            key={`${s.ref}-${l.name}`}
-                            className="border-t border-border/40 bg-muted/20 align-top"
-                          >
-                            <td className="w-56 py-2.5 pl-9 pr-4 text-foreground/90">
-                              <span className="text-muted-foreground">└ </span>
-                              {l.name}
-                              <span className="mt-0.5 block pl-4 font-mono text-xs text-muted-foreground">
-                                {l.role}
-                              </span>
-                            </td>
-                            <td className="px-4 py-2.5 leading-relaxed text-foreground/70">
-                              {l.func}
-                            </td>
-                          </tr>
-                        ))}
-                      </Fragment>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 화면ID — 말풍선으로 대비시킨다. 문장으로 설명하면 안 와닿는 대목이라. */}
-        <section className="flex flex-col gap-4">
-          <SectionTitle>전문가처럼 대화하세요</SectionTitle>
-          <p className="leading-relaxed text-muted-foreground">
-            화면마다 <b className="text-foreground">고유 ID</b>가 붙어 있습니다. AI에게든
-            개발사에게든 이렇게 말하세요.
-          </p>
-          <div className="flex flex-col gap-2.5">
-            <div className="max-w-[80%] self-start rounded-2xl border border-border bg-muted/50 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
-              장바구니 그 화면 있잖아요, 거기 문구 좀…
-            </div>
-            <div className="max-w-[80%] self-end rounded-2xl bg-primary px-4 py-3 text-sm font-medium leading-relaxed text-primary-foreground">
-              <b className="font-bold">{screens[0]?.ref ?? "BK0102"}</b> 화면에서 빈 목록일 때
-              문구를 바꿔주세요.
-            </div>
-          </div>
-          <p className="leading-relaxed text-muted-foreground">
-            <b className="text-foreground">만들어 주는 대로 안주하지 마세요.</b> 기획 내용을
-            제대로 전달하지 못하면 이상한 사이트가 나옵니다. 그게 AI 탓 같지만, 대부분은 무엇을
-            원하는지 말하지 못해서 생기는 일입니다.
-          </p>
-        </section>
-
-        <section className="flex flex-col gap-4">
-          <SectionTitle>화면별 AI 생성 프롬프트</SectionTitle>
-          <p className="text-muted-foreground">
-            화면마다 AI 코딩 도구에 그대로 넣는 프롬프트가 붙어 있습니다. 아래는{" "}
-            {pkg.promptSamples.length}개 예시예요.
-          </p>
-          <div className="flex flex-col gap-3">
-            {screens
-              .filter((s) => pkg.promptSamples.includes(s.ref))
-              .map((s) => (
-                <div key={s.ref} className="rounded-xl border border-border bg-surface p-5">
-                  <p className="font-bold text-foreground">{s.name}</p>
-                  <p className="mt-2 leading-relaxed text-foreground/80">{s.prompt}</p>
-                </div>
-              ))}
-            <div className="flex items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-5 py-6 text-muted-foreground">
-              <Lock className="size-5 shrink-0" />
-              <p className="text-sm leading-relaxed">
-                나머지 화면의 프롬프트는 AI팩에 들어 있어요. {withTopic(selected.name)} 총{" "}
-                {selected.stats.screens}개입니다.
-              </p>
-            </div>
-          </div>
-        </section>
 
         {/* FAQ */}
         <section className="flex flex-col gap-4">
@@ -1024,6 +949,38 @@ function PlanCard({
       </div>
     </div>
   );
+}
+
+// 산출물 예시 카드 — 제목·파일형식·등급 배지를 한 줄에 두고 내용을 아래에 편다.
+function DocCard({
+  title,
+  meta,
+  badge,
+  children,
+}: {
+  title: string;
+  meta: string;
+  badge?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+      <div className="flex items-center gap-2.5 border-b border-border px-5 py-3.5">
+        <b className="font-bold text-foreground">{title}</b>
+        <span className="text-xs font-semibold text-muted-foreground">{meta}</span>
+        {badge && (
+          <span className="ml-auto rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">
+            {badge}
+          </span>
+        )}
+      </div>
+      <div className="px-5 py-4">{children}</div>
+    </div>
+  );
+}
+
+function DocNote({ children }: { children: React.ReactNode }) {
+  return <p className="mt-3 text-xs text-muted-foreground">{children}</p>;
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
