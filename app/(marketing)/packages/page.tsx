@@ -4,7 +4,7 @@ import { ArrowRight, Check, Layers, ShoppingBag, Sparkles } from "lucide-react";
 import { packageProducts, formatKrw } from "@/lib/packages";
 
 export const metadata: Metadata = {
-  title: "AI팩 — 업종별 화면설계서·기능정의서 완성본",
+  title: "AI팩 구매 — 업종별 화면설계서·기능정의서 완성본",
   description:
     "이미 만들어진 업종별 AI팩(기획 산출물 한 벌)을 바로 받아보세요. 메뉴 구조, 화면 목록, 기능정의서, 흐름도, AI 빌드 스펙팩, 디자인 프리셋, 검수 시나리오까지 한 벌로 제공합니다.",
   keywords: ["기획서 템플릿", "화면설계서 템플릿", "기능정의서 양식", "IA 템플릿", "웹기획 산출물"],
@@ -19,7 +19,7 @@ export default function PackagesPage() {
         <div className="mx-auto max-w-5xl px-6 pb-7 pt-14">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground shadow-sm">
             <ShoppingBag className="size-4" />
-            AI팩
+            AI팩 구매
           </span>
           <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
             직접 만들지 않아도 돼요.
