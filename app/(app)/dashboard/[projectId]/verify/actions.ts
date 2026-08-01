@@ -30,7 +30,7 @@ export async function generateScenariosAction(
   formData: FormData,
 ): Promise<ProjectVerifyState> {
   const projectId = String(formData.get("projectId") ?? "");
-  // 규모: 주요(30~50개·4크레딧) / 상세(100~150개·8크레딧). IA 생성과 동일한 2단.
+  // 규모: 주요(30~50개) / 상세(100~150개). 크레딧은 IA 생성과 같은 genBasic·genDetail을 쓴다.
   const detailMode = String(formData.get("mode") ?? "basic") === "detail";
   if (!projectId) return fail("프로젝트 정보를 찾지 못했어요. 새로고침 후 다시 시도해 주세요.");
 

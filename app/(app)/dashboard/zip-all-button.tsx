@@ -80,6 +80,8 @@ export function ZipAllButton({
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  // 보강은 화면 수에 따라 1~3분까지 간다. 그동안 아무 말이 없으면 멈춘 줄 안다.
+  const [polishing, setPolishing] = useState(false);
   const [error, setError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [addPreset, setAddPreset] = useState(true);
@@ -133,6 +135,21 @@ export function ZipAllButton({
           return;
         }
         router.refresh();
+      }
+
+      // 파일을 만들기 전에 본문을 더 좋은 모델로 다시 쓴다.
+      // 화면 구성은 그대로고 설명만 촘촘해진다 — 그래서 "다듬는 중"이라고 쓴다.
+      // 실패해도 멈추지 않는다. 미리보기 그대로의 본문으로라도 파일은 나가야 한다.
+      setPolishing(true);
+      try {
+        await fetch(`/api/projects/${projectId}/enrich`, { method: "POST" });
+        // 화면에서 보던 본문도 같이 새로 고친다 — 받은 파일과 대시보드가
+        // 다르면 "내가 뭘 받은 거지"가 된다.
+        router.refresh();
+      } catch {
+        // 무시 — 아래에서 지금 있는 내용으로 zip을 만든다.
+      } finally {
+        setPolishing(false);
       }
 
       const res = await fetch(`/api/projects/${projectId}/export-data`);
@@ -277,11 +294,12 @@ export function ZipAllButton({
         ) : (
           <Download className={large ? "size-4" : "size-3"} />
         )}
-        전체 다운로드
+        {polishing ? "내용을 다듬는 중…" : "전체 다운로드"}
         {comingSoon ? (
           <span className="text-xs opacity-70">· 준비 중</span>
         ) : (
-          creditsOpen && (
+          creditsOpen &&
+          !polishing && (
             <span className="text-xs text-primary/70">· {gated ? (credits ?? 0) : 0}크레딧</span>
           )
         )}
@@ -357,8 +375,14 @@ export function ZipAllButton({
               className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
-              다운로드 · {total}크레딧
+              {polishing ? "내용을 다듬는 중…" : `다운로드 · ${total}크레딧`}
             </button>
+
+            <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground">
+              화면 구성은 미리보기 그대로예요. 각 화면의 설명만 더 좋은 모델로 다시 씁니다.
+              <br />
+              화면이 많으면 1~2분 걸릴 수 있어요.
+            </p>
           </div>
         </div>
       )}

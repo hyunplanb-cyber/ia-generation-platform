@@ -39,6 +39,16 @@ export interface ScheduleUpdate {
   scheduleEnd: string;
 }
 
+/**
+ * 다운로드 때 다시 쓴 본문 한 화면치.
+ * funcDef/prompt가 undefined면 그 칸은 손대지 않는다(사용자가 직접 고친 칸).
+ */
+export interface EnrichedFields {
+  id: string;
+  funcDef?: string;
+  prompt?: string;
+}
+
 export interface ScreenRepository {
   createMany(inputs: CreateScreenInput[]): Promise<Screen[]>;
   listByProject(projectId: string): Promise<Screen[]>;
@@ -51,6 +61,12 @@ export interface ScreenRepository {
     expectedUpdatedAt: Date,
   ): Promise<Screen | null>;
   setFuncDefSourceManual(id: string, projectId: string): Promise<void>;
+  /**
+   * 다운로드 보강 결과를 저장하고 enrichedAt을 찍는다.
+   * pageId·pageName·screenGroup·screenRole은 절대 건드리지 않는다(미리보기와 같아야 한다).
+   * funcDefSource/promptSource도 그대로 둔다 — 여전히 사람이 아니라 AI가 쓴 칸이다.
+   */
+  applyEnrichment(projectId: string, updates: EnrichedFields[]): Promise<void>;
   updateSchedules(projectId: string, updates: ScheduleUpdate[]): Promise<void>;
   quarantineByMenu(projectId: string, menuId: string): Promise<void>;
   setPromptFeedback(id: string, projectId: string, feedback: PromptFeedback): Promise<void>;

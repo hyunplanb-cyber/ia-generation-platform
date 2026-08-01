@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { FormSection } from "../form-shell";
 import { saveBriefAndGenerateAction, type GenerateState } from "./actions";
 import { DESIGN_OPTIONS, type DesignKey } from "@/lib/design-presets";
+import { CREDIT_COST } from "@/lib/credits";
 import type { Project } from "@/domain/project/project";
 
 const initialState: GenerateState = { reason: null };
@@ -56,17 +57,19 @@ const DELIVERABLES = [
 // 생성 규모 — 화면 수로 나뉘고, 크레딧(요금)도 다르다.
 // key "detail"이 true면 상세(3뎁스). 액션은 formData.get("detail")==="on"으로 읽는다.
 type Scale = "basic" | "detail";
+// 크레딧 값은 lib/credits.ts에서 가져온다. 손으로 적으면 값을 올릴 때 여기만 남는다
+// (실제로 4/8이 그대로 남아 화면에만 옛 값이 보였다).
 const SCALE_OPTIONS: { key: Scale; title: string; credit: string; desc: string }[] = [
   {
     key: "basic",
     title: "기본 · 30~50화면",
-    credit: "4크레딧",
+    credit: `${CREDIT_COST.genBasic}크레딧`,
     desc: "핵심 화면 위주로 빠르게(2뎁스). 처음엔 이걸로 충분해요.",
   },
   {
     key: "detail",
     title: "상세 · 100~150화면",
-    credit: "8크레딧",
+    credit: `${CREDIT_COST.genDetail}크레딧`,
     desc: "상태·탭·예외까지 촘촘히(3뎁스). 실무 산출물 수준, 조금 더 걸려요.",
   },
 ];

@@ -23,6 +23,8 @@ export interface Screen {
   scheduleEnd: string | null;
   scheduleLocked: boolean;
   promptFeedback: PromptFeedback;
+  // 다운로드 때 오푸스가 본문을 다시 쓴 시각(안 썼으면 null).
+  enrichedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

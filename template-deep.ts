@@ -137,6 +137,7 @@ export function expandDeep(input: DeepInput): DeepResult {
           scheduleEnd: end.toISOString().slice(0, 10),
           scheduleLocked: false,
           promptFeedback: null,
+          enrichedAt: null,
           createdAt: now,
           updatedAt: now,
         };

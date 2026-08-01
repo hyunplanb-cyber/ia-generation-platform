@@ -114,7 +114,7 @@ export function PresetForm({
   }
 
   async function persist() {
-    // 현재 설정 저장(첫 생성이면 4크레딧, 이후 무료). 부족하면 결과로 알림.
+    // 현재 설정 저장(첫 생성이면 PRESET_GEN_COST 크레딧, 이후 무료). 부족하면 결과로 알림.
     return generatePresetAction(projectId, cfg);
   }
 

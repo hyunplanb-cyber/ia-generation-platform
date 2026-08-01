@@ -4,6 +4,7 @@ import { screen } from "@/db/schema";
 import type { FieldSource, PromptFeedback, Screen, ScreenStatus } from "@/domain/screen/screen";
 import type {
   CreateScreenInput,
+  EnrichedFields,
   ScheduleUpdate,
   ScreenFieldsPatch,
   ScreenRepository,
@@ -30,6 +31,7 @@ function toDomain(row: typeof screen.$inferSelect): Screen {
     scheduleEnd: row.scheduleEnd,
     scheduleLocked: row.scheduleLocked,
     promptFeedback: row.promptFeedback as PromptFeedback,
+    enrichedAt: row.enrichedAt,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
@@ -107,6 +109,23 @@ export const drizzleScreenRepository: ScreenRepository = {
       .update(screen)
       .set({ funcDefSource: "manual" })
       .where(and(eq(screen.id, id), eq(screen.projectId, projectId)));
+  },
+
+  async applyEnrichment(projectId: string, updates: EnrichedFields[]): Promise<void> {
+    // neon-http 드라이버는 트랜잭션을 지원하지 않아 순차 UPDATE로 처리한다
+    // (updateSchedules와 같은 사정). 중간에 끊겨도 enrichedAt이 화면 단위라
+    // 다음 다운로드가 남은 화면부터 이어서 한다.
+    for (const update of updates) {
+      const patch: { funcDef?: string; prompt?: string; enrichedAt: Date } = {
+        enrichedAt: new Date(),
+      };
+      if (update.funcDef !== undefined) patch.funcDef = update.funcDef;
+      if (update.prompt !== undefined) patch.prompt = update.prompt;
+      await db
+        .update(screen)
+        .set(patch)
+        .where(and(eq(screen.id, update.id), eq(screen.projectId, projectId)));
+    }
   },
 
   async updateSchedules(projectId: string, updates: ScheduleUpdate[]): Promise<void> {

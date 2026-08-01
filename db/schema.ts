@@ -179,6 +179,10 @@ export const screen = pgTable(
     scheduleLocked: boolean("schedule_locked").default(false).notNull(),
     // 'up' | 'down' | null — Story 3.8
     promptFeedback: text("prompt_feedback"),
+    // 다운로드할 때 오푸스가 이 화면의 기능정의·프롬프트를 다시 쓴 시각.
+    // 화면 단위로 남기는 이유: 한 묶음이 실패해도 나머지는 이미 끝난 것으로 남고,
+    // 다시 받을 때 끝난 화면에 또 돈을 쓰지 않는다(뼈대는 절대 안 건드린다).
+    enrichedAt: timestamp("enriched_at"),
     createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
     // precision: 3(밀리초)로 고정 — JS Date는 밀리초 정밀도까지만 표현하므로,
     // 컬럼이 마이크로초 정밀도를 유지하면 AD-9 낙관적 동시성 비교(updated_at 완전 일치)가

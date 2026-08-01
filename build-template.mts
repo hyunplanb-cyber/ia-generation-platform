@@ -95,6 +95,8 @@ SRC_DATA.menus.forEach((m, mi) => {
       scheduleEnd: end.toISOString().slice(0, 10),
       scheduleLocked: false,
       promptFeedback: null,
+      // 판매 템플릿은 사람이 오푸스로 직접 만든 것이라 다운로드 보강 대상이 아니다.
+      enrichedAt: null,
       createdAt: now,
       updatedAt: now,
     });
