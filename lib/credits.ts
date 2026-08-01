@@ -10,7 +10,7 @@ export const WON_PER_CREDIT = 100;
 export function insufficientCreditMessage(creditsOpen: boolean): string {
   return creditsOpen
     ? "크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요."
-    : "무료 크레딧을 다 쓰셨어요. 충전 기능을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요.";
+    : "무료 크레딧을 다 쓰셨어요. 충전 기능을 준비하고 있어요.";
 }
 
 // 무료 체험 — 가입 시 지급.
@@ -20,7 +20,11 @@ export function insufficientCreditMessage(creditsOpen: boolean): string {
 // 오히려 유튜브·인스타로 들어온 사람이 며칠 뒤 돌아왔을 때 크레딧이 없으면
 // 출시일에 부를 명단이 그대로 죽는다.
 // PG를 열 때 3일로 되돌릴 것. 약관 제6조⑤의 표기도 함께 고쳐야 한다.
-export const FREE_CREDITS = 12;
+// 35로 잡은 이유: "만들고 미리보기까지는 마음껏, 다운로드는 못 하게"의 경계다.
+//   기본 생성(10) 3회 = 30 / 상세 생성(23) 1회 + 기본 1회 = 33 → 둘 다 된다.
+//   가장 싼 다운로드가 99(프리셋)라 무료로는 어떤 파일도 못 받는다.
+// 원가는 하이쿠 기준 1인당 최대 660원 — 신규 회원 유치비로 본다.
+export const FREE_CREDITS = 35;
 export const FREE_TTL_DAYS = 30;
 // 유상 크레딧 유효기간 — 최근 충전일 기준(여기선 지급 시점 +1년으로 단순화).
 export const PAID_TTL_DAYS = 365;
@@ -47,15 +51,15 @@ export function packById(id: string): CreditPack | undefined {
 
 // 실행·다운로드 소모 크레딧(손님 화면엔 노출 최소화, FAQ·약관에 상세).
 export const CREDIT_COST = {
-  genBasic: 4, // AI팩 생성 · 기본(30~50)
-  genDetail: 8, // AI팩 생성 · 상세(100~150)
-  genAdmin: 8, // 관리자 백오피스 생성
-  verifyDoc: 4, // 검수 · 문서/설계도
-  verifySite: 8, // 검수 · 사이트
-  verifyDesignVs: 12, // 검수 · 설계 대비
-  downloadScreens30: 190, // 다운로드 · AI팩 30~50
-  downloadScreens150: 390, // 다운로드 · AI팩 100~150
-  downloadAdmin: 290, // 다운로드 · 관리자
+  genBasic: 10, // AI팩 생성 · 기본(30~50) — 1,000원
+  genDetail: 23, // AI팩 생성 · 상세(100~150) — 2,300원
+  genAdmin: 23, // 관리자 백오피스 생성
+  verifyDoc: 10, // 검수 · 문서/설계도
+  verifySite: 23, // 검수 · 사이트
+  verifyDesignVs: 30, // 검수 · 설계 대비
+  downloadScreens30: 390, // 다운로드 · AI팩 30~50 — 39,000원
+  downloadScreens150: 690, // 다운로드 · AI팩 100~150 — 69,000원
+  downloadAdmin: 590, // 다운로드 · 관리자
   downloadVerify: 99, // 다운로드 · 검수 시나리오
   optionPreset: 99, // 옵션 · 디자인 프리셋
   optionVerify: 99, // 옵션 · 검수 시나리오

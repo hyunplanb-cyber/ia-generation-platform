@@ -106,10 +106,12 @@ export default async function PackageDetailPage({
 
   // 고른 등급이 페이지 전체를 지배한다 — 지표·화면 목록·예외 화면·검수 수치까지.
   const selected = pkg.plans.find((p) => p.id === planParam) ?? standard;
-  // 3뎁스 화면 목록은 스탠다드가 아닐 때 편다.
-  const isPremium = selected.id !== "standard";
-  // 이 업종에 프리미엄 등급이 있는가. 없으면 그 등급 얘기를 꺼내지 않는다.
-  const hasPremium = pkg.plans.some((p) => p.siteScreens);
+  // 3뎁스 화면 목록은 심화 등급(플러스·프리미엄)에서만 편다.
+  // 등급이 2×2라 "스탠다드가 아니면 심화"가 아니다 — 디럭스는 2뎁스에 완성 화면만 붙은 칸이다.
+  const isPremium = selected.id === "plus" || selected.id === "premium";
+  // 완성 화면·검수 시나리오가 붙는 등급들. 없으면 그 얘기를 꺼내지 않는다.
+  const builtPlans = pkg.plans.filter((p) => p.siteScreens);
+  const hasPremium = builtPlans.length > 0;
 
   // ── 산출물 예시용 ─────────────────────────────────────────
   // 실제 산출물에서 뽑는다. 지어낸 값을 넣으면 받아보고 다르다고 느낀다.
@@ -262,7 +264,9 @@ export default async function PackageDetailPage({
           </div>
           <p className="text-center text-sm text-muted-foreground">
             전 등급에 디자인 프리셋 3종이 들어 있어요.
-            {hasPremium && " 검수 시나리오와 만들어 둔 화면은 프리미엄에만 있습니다."} 등급을
+            {hasPremium &&
+              ` 검수 시나리오와 만들어 둔 화면은 ${builtPlans.map((p) => p.name).join("·")}에만 있습니다.`}{" "}
+            등급을
             고르면 아래 내용이 전부 그 기준으로 바뀝니다.
           </p>
         </section>
