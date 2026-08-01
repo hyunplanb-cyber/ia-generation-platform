@@ -154,11 +154,17 @@ function extractJson(text: string): string {
   return text.slice(start, end + 1);
 }
 
+// 실제 원가는 여기서만 알 수 있다. 부르는 쪽에서 모아 한 줄로 찍는다.
+// (다운로드 보강 쪽 claude-ia-enricher.ts도 같은 식으로 남긴다.)
+type Usage = { input: number; cacheRead: number; cacheWrite: number; output: number };
+const newUsage = (): Usage => ({ input: 0, cacheRead: 0, cacheWrite: 0, output: 0 });
+
 async function askJson(
   client: Anthropic,
   system: string,
   user: string,
   maxTokens: number,
+  usage: Usage,
 ): Promise<unknown> {
   const message = await client.messages.create({
     model: MODEL,
@@ -166,6 +172,11 @@ async function askJson(
     system,
     messages: [{ role: "user", content: user }],
   });
+  const u = message.usage;
+  usage.input += u.input_tokens ?? 0;
+  usage.cacheRead += u.cache_read_input_tokens ?? 0;
+  usage.cacheWrite += u.cache_creation_input_tokens ?? 0;
+  usage.output += u.output_tokens ?? 0;
   // 분량이 상한에 걸려 JSON이 잘린 경우 — 이 묶음은 신뢰할 수 없다.
   if (message.stop_reason === "max_tokens") {
     throw new Error("IA_GENERATOR_TRUNCATED");
@@ -221,6 +232,8 @@ export const claudeIaGenerator: IaGenerator = {
 
     const client = new Anthropic({ apiKey });
     const conceptBlock = buildConceptBlock(input);
+    const usage = newUsage();
+    const startedAt = Date.now();
 
     // ── 1단계: 메뉴·화면 뼈대 ────────────────────────────────────────────
     // 상세 모드는 3뎁스(화면→상태·탭)로, 더 긴 출력이 필요하다.
@@ -230,6 +243,7 @@ export const claudeIaGenerator: IaGenerator = {
       detail ? DETAIL_SKELETON_SYSTEM : SKELETON_SYSTEM,
       conceptBlock,
       detail ? DETAIL_SKELETON_MAX_TOKENS : SKELETON_MAX_TOKENS,
+      usage,
     );
     const rawMenus = (skeleton as { menus?: unknown })?.menus;
     if (!Array.isArray(rawMenus) || rawMenus.length === 0) {
@@ -293,6 +307,7 @@ export const claudeIaGenerator: IaGenerator = {
               .join("\n")}`,
           ].join("\n"),
           DETAIL_MAX_TOKENS,
+          usage,
         ),
       ),
     );
@@ -313,6 +328,13 @@ export const claudeIaGenerator: IaGenerator = {
     if (failed > 0) {
       console.error(`generateIa: 세부 생성 ${failed}/${chunks.length}묶음 실패(해당 화면은 요건 비움)`);
     }
+
+    // 실제 원가·소요 시간. 가격표를 이 숫자로 고친다.
+    console.log(
+      `generateIa(${detail ? "상세" : "기본"}): 화면 ${flat.length}개 · ${Math.round((Date.now() - startedAt) / 1000)}초 · ` +
+        `${chunks.length}묶음(실패 ${failed}) · ` +
+        `입력 ${usage.input} (캐시읽기 ${usage.cacheRead} / 캐시쓰기 ${usage.cacheWrite}) · 출력 ${usage.output}`,
+    );
 
     // 존재하지 않는 화면을 가리키는 버튼은 여기서 걸러 둔다.
     const validRefs = new Set(flat.map((screen) => screen.ref));

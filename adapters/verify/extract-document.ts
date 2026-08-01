@@ -40,6 +40,10 @@ async function extractPptx(bytes: ArrayBuffer): Promise<string> {
   return parts.join("\n");
 }
 
+// 한 문서에서 읽어 들이는 최대 길이. 부르는 쪽이 16,000자씩 8토막으로 나눠 본다
+// (verify-site.ts의 DOC_CHUNK_CHARS × MAX_DOC_CHUNKS와 맞춰 둔다).
+const MAX_DOC_CHARS = 128000;
+
 // 파일을 텍스트로. 지원하지 않는 형식이면 UNSUPPORTED_DOC, 내용이 없으면 EMPTY_DOC.
 export async function extractDocumentText(filename: string, bytes: ArrayBuffer): Promise<string> {
   const kind = detectDocKind(filename);
@@ -48,5 +52,8 @@ export async function extractDocumentText(filename: string, bytes: ArrayBuffer):
   const text = kind === "pdf" ? await extractPdf(bytes) : await extractPptx(bytes);
   const cleaned = text.replace(/\s+/g, " ").trim();
   if (cleaned.length < 20) throw new Error("EMPTY_DOC");
-  return cleaned.slice(0, 16000);
+  // 예전엔 여기서 16,000자로 잘라 뒷부분을 통째로 버렸다. 3뎁스까지 펼친 설계서는
+  // 그보다 훨씬 길어서, "상세" 등급을 골라도 뒷화면은 아예 못 보고 있었다.
+  // 지금은 부르는 쪽(verify-site.ts)이 토막으로 나눠 여러 번 본다.
+  return cleaned.slice(0, MAX_DOC_CHARS);
 }

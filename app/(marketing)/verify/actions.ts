@@ -4,7 +4,7 @@ import { verifySite, verifyDocument, verifyText } from "@/application/verify-sit
 import { requireSession } from "@/application/require-session";
 import { getCreditBalance, spendCredits } from "@/application/credit";
 import { CREDITS_OPEN } from "@/lib/flags";
-import { CREDIT_COST, insufficientCreditMessage } from "@/lib/credits";
+import { VERIFY_CHUNK, verifyGenCost, insufficientCreditMessage } from "@/lib/credits";
 import { drizzleVerifyRunRepository } from "@/adapters/repository/drizzle/verify-run-repository";
 import type { VerificationReport } from "@/domain/verify/report";
 
@@ -48,21 +48,21 @@ export async function runVerifyAction(
   const mode = String(formData.get("mode") ?? "url");
   const detail = String(formData.get("scale") ?? "basic") === "detail";
   const isUrl = mode === "url";
-  // 사이트는 자동검사+시나리오라 더 비싸다. 상세는 시나리오를 여러 번 뽑아 개수를 늘린다.
-  // 파일: 기본 4 / 상세 8, 사이트: 기본 8 / 상세 16.
-  const cost = isUrl
-    ? detail
-      ? CREDIT_COST.verifySite * 2
-      : CREDIT_COST.verifySite
-    : detail
-      ? CREDIT_COST.genDetail
-      : CREDIT_COST.genBasic;
+  // 값은 묶음(호출) 수에 비례한다 — 원가가 정확히 거기에 붙는다(verifyGenCost 주석 참고).
+  // 여기서는 문서를 읽거나 크롤하기 전이라 실제 묶음 수를 아직 모른다.
+  // 그래서 잔액은 '최대치'로 확인해 두고, 차감은 아래에서 실제 돈 묶음 수로 한다.
+  const maxChunks = !detail
+    ? 1
+    : isUrl
+      ? VERIFY_CHUNK.maxSitePages
+      : VERIFY_CHUNK.maxDocChunks;
   // 한도는 크레딧 하나로만 정한다(기능별 무료 횟수를 두지 않는다).
-  if ((await getCreditBalance()) < cost) {
+  if ((await getCreditBalance()) < verifyGenCost(maxChunks)) {
     return { report: null, error: insufficientCreditMessage(CREDITS_OPEN), limitReached: true };
   }
 
   let report: VerificationReport;
+  let doneChunks = 1;
   if (mode === "spec") {
     const file = formData.get("spec");
     if (!(file instanceof File) || file.size === 0) {
@@ -74,6 +74,7 @@ export async function runVerifyAction(
     const result = await verifyText(file.name || "AI팩", await file.text(), detail);
     if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
     report = result.report;
+    doneChunks = result.chunks;
   } else if (mode === "document") {
     const file = formData.get("document");
     if (!(file instanceof File) || file.size === 0) {
@@ -85,15 +86,18 @@ export async function runVerifyAction(
     const result = await verifyDocument(file.name, await file.arrayBuffer(), detail);
     if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
     report = result.report;
+    doneChunks = result.chunks;
   } else {
     const url = String(formData.get("url") ?? "").trim();
     if (!url) return fail("검사할 사이트 주소를 넣어주세요.");
     const result = await verifySite(url, detail);
     if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
     report = result.report;
+    doneChunks = result.chunks;
   }
 
-  // 검수가 성공했을 때만 차감한다(실패하면 무과금).
+  // 검수가 성공했을 때만, 실제로 돈 묶음 수만큼만 차감한다(실패하면 무과금).
+  const cost = verifyGenCost(doneChunks);
   await spendCredits(cost, mode === "url" ? "사이트 검수" : "문서·설계도 검수", {});
 
   // 결과 저장(무료 횟수 집계 + 내 프로젝트 연동 기반). 저장 실패가 결과를 막지 않게 방어.

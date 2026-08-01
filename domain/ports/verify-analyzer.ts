@@ -18,5 +18,6 @@ export interface VerifyAnalysis {
 
 // 사이트 내용을 읽고 검수 시나리오·요약을 만드는 분석기(구현은 어댑터).
 export interface VerifyAnalyzer {
-  analyze(input: VerifyAnalyzerInput): Promise<VerifyAnalysis>;
+  /** opts.model은 모델 비교용 — 평소엔 어댑터의 기본 모델을 쓴다. */
+  analyze(input: VerifyAnalyzerInput, opts?: { model?: string }): Promise<VerifyAnalysis>;
 }

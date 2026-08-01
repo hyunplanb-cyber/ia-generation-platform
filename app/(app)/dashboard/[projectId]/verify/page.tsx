@@ -1,11 +1,12 @@
 import { ShieldCheck, History, Check } from "lucide-react";
 import { listMenus } from "@/application/list-menus";
+import { countScreensByProject } from "@/application/count-screens-by-project";
 import { listProjectVerifyRuns } from "@/application/list-project-verify-runs";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { isVerifyDownloadUnlocked } from "@/application/download";
 import { CREDITS_OPEN } from "@/lib/flags";
-import { CREDIT_COST } from "@/lib/credits";
+import { CREDIT_COST, VERIFY_CHUNK, verifyGenCost } from "@/lib/credits";
 import { VerifyPanel } from "./verify-panel";
 
 // 검수는 여러 페이지를 돌며 자동 검사(수십~백여 건) + LLM 시나리오까지 하므로
@@ -44,10 +45,15 @@ export default async function ProjectVerifyPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const [menus, runs] = await Promise.all([
+  const [menus, runs, screenCounts] = await Promise.all([
     listMenus(projectId),
     listProjectVerifyRuns(projectId),
+    countScreensByProject([projectId]),
   ]);
+  // 값은 묶음 수에 비례한다. 이 경로는 우리가 만든 산출물이라 화면 수를 알고,
+  // 그래서 누르기 전에 정확한 크레딧을 보여줄 수 있다.
+  const screenCount = screenCounts[projectId] ?? 0;
+  const detailChunks = Math.max(1, Math.ceil(screenCount / VERIFY_CHUNK.screens));
   // 1뎁스 메뉴 상위 4개로 "이 메뉴에서 이런 걸 확인해요" 예시를 만든다.
   const menuChecks = [...menus]
     .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -78,8 +84,10 @@ export default async function ProjectVerifyPage({
 
       <VerifyPanel
         projectId={projectId}
-        basicCost={CREDIT_COST.genBasic}
-        detailCost={CREDIT_COST.genDetail}
+        basicCost={verifyGenCost(1)}
+        detailCost={verifyGenCost(detailChunks)}
+        screenCount={screenCount}
+        detailChunks={detailChunks}
         downloadCost={CREDIT_COST.downloadVerify}
         creditsOpen={CREDITS_OPEN}
       >

@@ -12,12 +12,23 @@ const HOME_ASSETS = 12; // 홈은 이미지·링크를 넉넉히 표본 확인
 const SUB_ASSETS = 6; // 하위 페이지는 표본을 줄여 시간을 아낀다
 const PAGE_CONCURRENCY = 4; // 페이지를 한 번에 몇 개씩 받아올지(대상 서버 부담 완화)
 
+export interface LlmPage {
+  url: string;
+  label: string; // 사람이 읽는 페이지 이름(예: /login)
+  html: string; // 축약 본문
+}
+
 export interface HttpCheckResult {
   finalUrl: string;
   ok: boolean; // 메인 페이지 자체 접속 성공 여부
   checks: Check[];
-  html: string; // LLM에 넘길 축약 본문(홈)
+  html: string; // LLM에 넘길 축약 본문(홈) — pages[0]과 같다
   links: string[]; // 찾은 내부 링크
+  /**
+   * LLM에 넘길 페이지들. 기본은 홈 하나, 상세는 홈+주요 화면(최대 6).
+   * 예전에는 홈만 넘겨서, "홈+주요 화면을 본다"는 판매 문구와 실제가 어긋났다.
+   */
+  pages: LlmPage[];
 }
 
 // SSRF 방지 — 내부/사설 주소는 검사하지 않는다.
@@ -196,6 +207,18 @@ async function sampleBroken(
 }
 
 // ── 한 페이지의 자동 검사 항목들 ──────────────────────────────────────────
+// 한 페이지가 LLM 한 번을 먹는 분량. 페이지마다 이만큼씩 넘어간다.
+const LLM_HTML_CHARS = 16000;
+
+function trimForLlm(html: string): string {
+  return html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\s+/g, " ")
+    .slice(0, LLM_HTML_CHARS);
+}
+
 interface PageData {
   url: string;
   label: string;
@@ -493,6 +516,7 @@ export async function runHttpChecks(rawUrl: string, detail = false): Promise<Htt
       ],
       html: "",
       links: [],
+      pages: [],
     };
   }
   const homeMs = Date.now() - t0;
@@ -572,12 +596,18 @@ export async function runHttpChecks(rawUrl: string, detail = false): Promise<Htt
   const checks: Check[] = [...siteFinal, ...perPageFinal];
 
   // LLM에 넘길 본문은 태그를 살리되 스크립트/스타일을 걷어내고 길이를 제한한다.
-  const trimmed = homeHtml
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "")
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/\s+/g, " ")
-    .slice(0, 16000);
+  const llmPages: LlmPage[] = pages.map((p) => ({
+    url: p.url,
+    label: p.label,
+    html: trimForLlm(p.html),
+  }));
 
-  return { finalUrl, ok: home.ok, checks, html: trimmed, links: uniqueInternal.slice(0, 40) };
+  return {
+    finalUrl,
+    ok: home.ok,
+    checks,
+    html: llmPages[0]?.html ?? "",
+    links: uniqueInternal.slice(0, 40),
+    pages: llmPages,
+  };
 }

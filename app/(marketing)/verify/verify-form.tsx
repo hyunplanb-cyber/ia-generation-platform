@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import type { VerificationReport } from "@/domain/verify/report";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
+import { VERIFY_CHUNK, verifyGenCost } from "@/lib/credits";
 import { runVerifyAction, type VerifyState } from "./actions";
 
 const initialState: VerifyState = { report: null, error: null, limitReached: false };
@@ -32,6 +33,8 @@ type ScaleCard = {
   key: "basic" | "detail";
   title: string;
   cost: number;
+  /** 실제 묶음 수를 미리 알 수 없어 이 값이 상한일 때 true */
+  costIsMax?: boolean;
   best?: boolean; // 더 촘촘한 추천 옵션
   desc?: string;
   checks?: string;
@@ -39,41 +42,46 @@ type ScaleCard = {
   scnDesc?: string;
   scnCount?: string;
 };
+// 값은 묶음 수에 비례한다(verifyGenCost). 상세는 문서를 읽거나 크롤해 봐야 실제
+// 묶음 수를 알기 때문에 여기서는 '최대'만 보여주고, 실제로는 돈 만큼만 받는다.
 const FILE_SCALES: ScaleCard[] = [
   {
     key: "basic",
-    title: "기본 · 30~50개 시나리오",
-    cost: 4,
-    desc: "핵심 화면 위주로 빠르게. 규모가 작은 사이트라면 충분해요.",
+    title: "기본 · 문서 앞부분 한 묶음",
+    cost: verifyGenCost(1),
+    desc: `문서 앞 ${VERIFY_CHUNK.docChars.toLocaleString()}자를 봅니다. 짧은 기획서라면 이걸로 충분해요.`,
   },
   {
     key: "detail",
-    title: "상세 · 100~150개 시나리오",
-    cost: 8,
+    title: "상세 · 문서를 끝까지",
+    cost: verifyGenCost(VERIFY_CHUNK.maxDocChunks),
+    costIsMax: true,
     best: true,
-    desc: "상세 화면과 기능까지 촘촘히. 실무 산출물 수준, 조금 더 걸려요.",
+    desc: `${VERIFY_CHUNK.docChars.toLocaleString()}자씩 최대 ${VERIFY_CHUNK.maxDocChunks}묶음으로 나눠 문서 뒷부분까지 봅니다. 짧은 문서면 묶음이 줄고, 그만큼 값도 줄어요.`,
   },
 ];
 const URL_SCALES: ScaleCard[] = [
   {
     key: "basic",
     title: "홈화면을 기준으로 7개 항목 검수",
-    cost: 8,
+    cost: verifyGenCost(1),
     checks: "사이트 접속, 보안 연결(HTTPS), 모바일 대응, 검색 기본(제목·설명), 첫 응답 속도, 이미지 깨짐, 내부 링크 깨짐",
     scnTitle: "민감화면 시나리오",
-    scnDesc: "핵심 기능 위주로 빠르게. 규모가 작은 사이트라면 충분해요.",
-    scnCount: "30~50개 시나리오",
+    scnDesc: "홈 화면을 읽어 확인할 절차를 뽑아요. 규모가 작은 사이트라면 충분해요.",
+    scnCount: "홈 1페이지 기준",
   },
   {
     key: "detail",
-    title: "홈+주요 화면을 기준으로 11개 항목 검수",
-    cost: 16,
+    title: `홈+주요 화면 최대 ${VERIFY_CHUNK.maxSitePages}페이지, 페이지마다 11개 항목 검수`,
+    cost: verifyGenCost(VERIFY_CHUNK.maxSitePages),
+    costIsMax: true,
     best: true,
     checks:
       "페이지 열림, 응답 속도, 모바일 대응, 검색 기본(제목·설명), SNS 공유 카드, 대표 제목, 인코딩·언어 설정, 이미지 대체 텍스트, 혼합 콘텐츠(http 리소스), 이미지 깨짐, 내부 링크 깨짐",
     scnTitle: "민감화면 시나리오",
-    scnDesc: "상세 화면과 기능까지 촘촘히. 실무 산출물 수준, 조금 더 걸려요.",
-    scnCount: "100~150개 시나리오",
+    scnDesc:
+      "홈만 보는 게 아니라 크롤한 페이지마다 하나씩 읽어 절차를 뽑아요. 내부 링크가 적으면 페이지가 줄고, 그만큼 값도 줄어요.",
+    scnCount: `최대 ${VERIFY_CHUNK.maxSitePages}페이지 기준`,
   },
 ];
 
@@ -343,7 +351,11 @@ export function VerifyForm({
 
   const isFile = mode === "spec" || mode === "document";
   // 파일: 기본 4 / 상세 8, 사이트: 기본 8 / 상세 16.
-  const genCost = isFile ? (scale === "detail" ? 8 : 4) : scale === "detail" ? 16 : 8;
+  // 상세는 상한값이다 — 실제로는 돈 묶음 수만큼만 차감된다(actions.ts).
+  const genCost =
+    scale === "detail"
+      ? verifyGenCost(isFile ? VERIFY_CHUNK.maxDocChunks : VERIFY_CHUNK.maxSitePages)
+      : verifyGenCost(1);
 
   // 크레딧이 모자라도 입력 화면은 그대로 보여준다 — 무엇을 넣는 자리인지 알 수 없으면
   // 처음 온 사람은 서비스를 이해할 수 없다. 막는 건 제출 버튼에서만.
@@ -486,6 +498,7 @@ export function VerifyForm({
                           active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                         }`}
                       >
+                        {c.costIsMax ? "최대 " : ""}
                         {c.cost}크레딧
                       </span>
                     </div>
@@ -508,8 +521,8 @@ export function VerifyForm({
 
             <ul className="mt-3 flex flex-col gap-1 text-[11px] leading-relaxed text-muted-foreground">
               <li>
-                · 검수 시나리오는 100~150개를 선택해도 규모가 작아 만들 시나리오가 없으면 더 적게 생성될 수 있어요.
-                규모에 맞게 선택하세요.
+                · 상세는 나눠 보는 <b className="font-semibold text-foreground">묶음 수</b>만큼 받아요. 규모가
+                작으면 묶음이 줄고 값도 함께 줄어듭니다. 위에 적힌 건 상한이에요.
               </li>
               <li>
                 · 검수 시나리오는 다운로드하여 사용 가능합니다. 검수 시나리오 다운로드 시 별도 비용이 발생하니 참고해
@@ -519,7 +532,7 @@ export function VerifyForm({
 
             {shortOfCredits && (
               <p className="mt-4 rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
-                <b className="font-semibold text-foreground">크레딧이 모자라요.</b> 이 검수에는{" "}
+                <b className="font-semibold text-foreground">크레딧이 모자라요.</b> 이 검수에는 최대{" "}
                 {genCost}크레딧이 필요한데 지금 {balance}크레딧 남았어요.
                 {creditsOpen
                   ? " 충전한 뒤 다시 시도해 주세요."

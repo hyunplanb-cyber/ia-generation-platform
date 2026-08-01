@@ -6,7 +6,11 @@ import type {
   VerifyAnalysis,
 } from "@/domain/ports/verify-analyzer";
 
-const MODEL = "claude-haiku-4-5";
+// 검수는 "뭐가 빠졌는지 찾는" 일이라 추론이 필요하고, 모델 차이가 가장 크게 벌어진다.
+// 같은 사이트로 비교했을 때 하이쿠는 확인 화면 22개·절차 75개, 오푸스는 33개·138개였다.
+// 하이쿠가 "홈 화면을 열어 잘 보이는지 확인하세요" 수준이라면, 오푸스는
+// "비밀번호를 일부러 틀리게 넣고 안내가 뜨는지", "결제 버튼을 두 번 눌러도 중복되지 않는지"를 적는다.
+const MODEL = "claude-opus-5";
 // 시나리오가 6~10개면 JSON이 길어져 4000토큰에서 잘려 파싱이 깨지곤 했다 → 넉넉히.
 const MAX_TOKENS = 8000;
 
@@ -67,17 +71,25 @@ function extractJson(text: string): string {
 }
 
 export const claudeVerifier: VerifyAnalyzer = {
-  async analyze(input: VerifyAnalyzerInput): Promise<VerifyAnalysis> {
+  async analyze(
+    input: VerifyAnalyzerInput,
+    opts?: { model?: string },
+  ): Promise<VerifyAnalysis> {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) throw new Error("ANTHROPIC_API_KEY_MISSING");
 
     const client = new Anthropic({ apiKey });
+    const model = opts?.model ?? MODEL;
 
     let message;
     try {
       message = await client.messages.create({
-        model: MODEL,
+        model,
         max_tokens: MAX_TOKENS,
+        // 하이쿠 4.5는 effort·adaptive thinking을 모른다(주면 400).
+        ...(model.startsWith("claude-haiku")
+          ? {}
+          : { thinking: { type: "adaptive" as const }, output_config: { effort: "medium" as const } }),
         system: systemPrompt(input.mode),
         messages: [{ role: "user", content: buildUserMessage(input) }],
       });
@@ -86,6 +98,13 @@ export const claudeVerifier: VerifyAnalyzer = {
       console.error("verify analyze: API 호출 실패", err);
       throw new Error("VERIFY_API_ERROR");
     }
+
+    // 실제 원가. 검수는 입력이 16,000자로 잘려 있어 화면 수와 무관하게 거의 고정이다
+    // (화면마다 도는 다운로드 보강과 원가 구조가 다르다).
+    const u = message.usage;
+    console.log(
+      `verify(${input.mode}${input.focus ? "·추가회차" : ""}): 입력 ${u.input_tokens ?? 0} · 출력 ${u.output_tokens ?? 0}`,
+    );
 
     const textBlock = message.content.find((b) => b.type === "text");
     const raw = textBlock?.type === "text" ? textBlock.text : "";

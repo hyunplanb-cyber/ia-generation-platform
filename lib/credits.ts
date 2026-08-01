@@ -51,18 +51,47 @@ export function packById(id: string): CreditPack | undefined {
 
 // 실행·다운로드 소모 크레딧(손님 화면엔 노출 최소화, FAQ·약관에 상세).
 export const CREDIT_COST = {
-  genBasic: 10, // AI팩 생성 · 기본(30~50) — 1,000원
-  genDetail: 23, // AI팩 생성 · 상세(100~150) — 2,300원
-  genAdmin: 23, // 관리자 백오피스 생성
-  verifyDoc: 10, // 검수 · 문서/설계도
-  verifySite: 23, // 검수 · 사이트
-  verifyDesignVs: 30, // 검수 · 설계 대비
+  // 2026-08-01 가격정책표 기준. 디자인 프리셋 생성도 genBasic을 쓴다(application/preset.ts).
+  genBasic: 12, // AI팩 생성 · 기본(30~50) — 1,200원
+  genDetail: 28, // AI팩 생성 · 상세(100~150) — 2,800원
+  genAdmin: 28, // 관리자 백오피스 생성
+  // 검수 생성값은 고정이 아니라 verifyGenCost(묶음 수)로 구한다(아래 참고).
+  // 아래 세 값은 옛 고정 요금 — 지금은 쓰지 않는다. 지우지 않은 이유는
+  // 예전 결제 기록의 메모를 읽을 때 대조할 것이 필요해서다.
+  verifyDoc: 10, // (미사용) 옛 문서 검수 고정값
+  verifySite: 23, // (미사용) 옛 사이트 검수 고정값
+  verifyDesignVs: 30, // (미구현) 설계 대비 검수 — 만들면 그때 값을 정한다
   downloadScreens30: 390, // 다운로드 · AI팩 30~50 — 39,000원
   downloadScreens150: 690, // 다운로드 · AI팩 100~150 — 69,000원
   downloadAdmin: 590, // 다운로드 · 관리자
   downloadVerify: 99, // 다운로드 · 검수 시나리오
   optionPreset: 99, // 옵션 · 디자인 프리셋
   optionVerify: 99, // 옵션 · 검수 시나리오
+} as const;
+
+/**
+ * 검수 생성값 — 묶음(호출) 수에 비례해 받는다.
+ *
+ * 검수는 한 번에 넣을 수 있는 양이 정해져 있어서(화면 10개 / 문서 16,000자 / 페이지 1개),
+ * 규모가 크면 그만큼 여러 번 나눠 본다. 원가도 딱 그 횟수에 비례한다 —
+ * 2026-08-01 실측으로 한 묶음이 약 200~300원이다.
+ *
+ * 그래서 값도 같은 축으로 매긴다. "화면 156개니까 16묶음, 138크레딧"은 손님에게
+ * 근거가 보이지만, "상세는 23크레딧"은 왜인지 알 수 없고 큰 프로젝트에서 적자가 났다.
+ */
+export const VERIFY_BASE_CREDITS = 10;
+export const VERIFY_PER_CHUNK_CREDITS = 8;
+
+export function verifyGenCost(chunks: number): number {
+  return VERIFY_BASE_CREDITS + VERIFY_PER_CHUNK_CREDITS * Math.max(1, chunks);
+}
+
+/** 검수 한 묶음이 담는 양 — 값 안내와 실제 분할이 어긋나지 않게 여기 모아 둔다. */
+export const VERIFY_CHUNK = {
+  screens: 10, // 스펙팩: 화면 N개씩
+  docChars: 16000, // 업로드 문서: 글자 N자씩
+  maxDocChunks: 8, // 문서는 최대 N토막까지만
+  maxSitePages: 6, // 사이트: 홈+주요 화면 최대 N페이지
 } as const;
 
 export function wonToCredits(won: number): number {
