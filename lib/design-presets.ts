@@ -1,6 +1,10 @@
-// 디자인 프리셋 3종 — 브리프의 "디자인 컨셉" 선택과 1:1로 이어진다.
-// 선택한 스타일의 디자인 시스템 스펙(색·타이포·컴포넌트)을 마크다운으로 만들어
-// 전체 다운로드 zip에 함께 담는다(AI 코딩 도구에 붙여 넣으면 그 스타일로 만들어짐).
+// 디자인 프리셋 — 브리프의 "디자인 컨셉" 선택과 1:1로 이어진다.
+// 선택한 스타일의 디자인 시스템 스펙(색·타이포·컴포넌트)을 마크다운으로 만든다
+// (AI 코딩 도구에 붙여 넣으면 그 스타일로 만들어짐).
+//
+// AI팩 zip과는 별개다 — /dashboard/[projectId]/preset 에서 따로 만들고 따로 받는다.
+// 생성·다운로드 크레딧도 각각 차감한다(application/preset.ts).
+// AI를 쓰지 않는다. 아래 데이터가 그대로 산출물이 되므로 모델을 바꿔도 결과가 같다.
 // UI·서버 공용(순수 데이터/문자열).
 
 export type DesignKey = "navy" | "mono" | "pastel" | "retro" | "forest" | "coral";
@@ -381,6 +385,22 @@ export function defaultPresetConfig(style: DesignKey): PresetConfig {
     density: "cozy",
     dark: false,
   };
+}
+
+/**
+ * 판매 AI팩에 넣는 "기본 프리셋 3종"의 사양(2026-08-01 확정).
+ *
+ * 유저가 만드는 프리셋은 글꼴·모서리·밀도까지 본인이 고른 값이 들어간다.
+ * 판매본은 손대지 않은 기본값이다.
+ *   포인트 색상 = 그 테마의 첫 번째 색 · 글꼴 = 프리텐다드
+ *   모서리 = 테마 기본값 · 밀도 = 넉넉하게 · 모드 = 라이트
+ *
+ * 모서리만 테마 기본값을 그대로 둔다 — 파스텔의 둥근 모서리, 모노의 각진 모서리는
+ * 그 테마의 성격이라, 통일하면 셋의 차이가 색뿐이 되어 나란히 놓았을 때 구분이 안 된다.
+ * 글꼴은 반대다. 판매본에 페이퍼로지·명조가 섞이면 "이 폰트를 어디서 받나"가 먼저 걸린다.
+ */
+export function salePresetConfig(style: DesignKey): PresetConfig {
+  return { ...defaultPresetConfig(style), font: "pretendard" };
 }
 
 export function parsePresetConfig(json: string | null, concept?: string | null): PresetConfig {
