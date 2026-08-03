@@ -82,26 +82,27 @@ export function ProjectDeliverablePreview({
         </div>
       </div>
 
-      {/* 미리보기 */}
+      {/* 미리보기 — 맛보기라 높이를 묶어 둔다. 전체는 [자세히 보기]에서 본다. */}
       <div className="rounded-xl border border-border bg-muted/10 p-4">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-foreground">{active.label} 미리보기</p>
-          <Link
-            href={`/dashboard/${projectId}/${active.href}`}
-            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-          >
-            자세히 열기 <ExternalLink className="size-3.5" />
-          </Link>
+        <p className="mb-3 text-sm font-semibold text-foreground">{active.label} 미리보기</p>
+        <div className="relative max-h-[280px] overflow-hidden">
+          {tab === "screens" && <ScreensPreview result={result} />}
+          {tab === "tree" && <TreePreview result={result} />}
+          {tab === "specs" && <SpecsPreview result={result} />}
+          {tab === "flow" && <FlowPreview result={result} />}
+          {tab === "wbs" && <WbsPreview result={result} />}
+          {tab === "preset" && <PresetPreview projectId={projectId} result={result} />}
+          {tab === "verify" && <VerifyPreview projectId={projectId} result={result} />}
+          {tab === "admin" && <AdminPreview />}
+          {/* 잘린 자리를 흐리게 — 아래에 더 있다는 걸 눈으로 알린다 */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-background to-transparent" />
         </div>
-
-        {tab === "screens" && <ScreensPreview result={result} />}
-        {tab === "tree" && <TreePreview result={result} />}
-        {tab === "specs" && <SpecsPreview result={result} />}
-        {tab === "flow" && <FlowPreview result={result} />}
-        {tab === "wbs" && <WbsPreview result={result} />}
-        {tab === "preset" && <PresetPreview projectId={projectId} result={result} />}
-        {tab === "verify" && <VerifyPreview projectId={projectId} result={result} />}
-        {tab === "admin" && <AdminPreview />}
+        <Link
+          href={`/dashboard/${projectId}/${active.href}`}
+          className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-primary bg-background px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+        >
+          {active.label} 자세히 보기 <ExternalLink className="size-4" />
+        </Link>
       </div>
     </div>
   );

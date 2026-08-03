@@ -51,7 +51,8 @@ export default async function TreePage({
         <DiagramView
           diagram={<MenuTreeChart menus={menus} screens={activeScreens} />}
           title="메뉴 구조 다이어그램"
-          hint="메뉴와 그 아래 화면을 트리로 보여줘요. 좁으면 옆으로 밀어 보세요."
+          fit
+          hint="메뉴와 그 아래 화면을 트리로 보여줘요. 자세히 보시려면 [크게 보기]를 눌러주세요."
         />
       )}
     </div>

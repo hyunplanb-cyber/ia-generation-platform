@@ -35,7 +35,12 @@ export default async function WbsPage({
     d.setUTCDate(d.getUTCDate() - shift);
     return d.toISOString().slice(0, 10);
   };
-  const fmt = (iso: string) => `${Number(iso.slice(5, 7))}월 ${Number(iso.slice(8, 10))}일`;
+  const fmt = (iso: string) => iso.slice(2).replace(/-/g, ".");
+  const plus6 = (iso: string) => {
+    const d = new Date(iso + "T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() + 6);
+    return d.toISOString().slice(0, 10);
+  };
   const byWeek = new Map<string, typeof activeScreens>();
   for (const s of activeScreens) {
     const key = s.scheduleStart ? monday(s.scheduleStart) : "";
@@ -73,7 +78,16 @@ export default async function WbsPage({
         <FoldList
           items={weeks.map(([weekStart, list], i) => ({
             key: weekStart || "none",
-            title: weekStart ? `${i + 1}주차 · ${fmt(weekStart)}부터` : "일정 미정",
+            title: weekStart ? (
+              <span className="flex flex-wrap items-baseline gap-2">
+                {i + 1}주차
+                <span className="text-xs font-normal text-muted-foreground">
+                  {fmt(weekStart)} ~ {fmt(plus6(weekStart))}
+                </span>
+              </span>
+            ) : (
+              <span>일정 미정</span>
+            ),
             meta: `작업 ${list.length}개`,
             body: (
               <div className="overflow-x-auto border-t border-border">

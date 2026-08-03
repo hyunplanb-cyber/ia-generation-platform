@@ -5,7 +5,7 @@
 // 메뉴 구조·FLOW는 목록으로 늘어놓으면 관계가 안 보이고 화면만 길어진다.
 // 그림을 기본으로 보여주고, 좁으면 가로로 밀어 보게 한다. 크게 볼 땐 팝업으로.
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Maximize, X, ZoomIn, ZoomOut } from "lucide-react";
 
 const MIN_ZOOM = 0.4;
@@ -16,13 +16,40 @@ export function DiagramView({
   diagram,
   title,
   hint,
+  /** 그림이 상자를 넘지 않게 줄여서 한 화면에 담는다. 자세히는 [크게 보기]에서 본다. */
+  fit,
+  /** fit일 때 상자 높이 */
+  fitHeight = 460,
 }: {
   diagram: React.ReactNode;
   title: string;
   hint?: string;
+  fit?: boolean;
+  fitHeight?: number;
 }) {
   const [open, setOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
+
+  // 그림의 실제 크기를 재서 상자에 들어갈 만큼만 줄인다. 키우지는 않는다.
+  const boxRef = useRef<HTMLDivElement>(null);
+  const inkRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const measure = useCallback(() => {
+    const box = boxRef.current;
+    const ink = inkRef.current;
+    if (!box || !ink) return;
+    const w = ink.scrollWidth;
+    const h = ink.scrollHeight;
+    if (!w || !h) return;
+    setScale(Math.min(1, (box.clientWidth - 2) / w, (fitHeight - 2) / h));
+  }, [fitHeight]);
+  useEffect(() => {
+    if (!fit) return;
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (boxRef.current) ro.observe(boxRef.current);
+    return () => ro.disconnect();
+  }, [fit, measure]);
 
   useEffect(() => {
     if (!open) return;
@@ -51,9 +78,25 @@ export function DiagramView({
         </button>
       </div>
 
-      <div className="overflow-auto rounded-xl border border-border bg-white p-5">
-        <div className="w-fit">{diagram}</div>
-      </div>
+      {fit ? (
+        <div
+          ref={boxRef}
+          className="flex items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-3"
+          style={{ height: fitHeight }}
+        >
+          <div
+            ref={inkRef}
+            className="w-fit origin-center"
+            style={{ transform: `scale(${scale})` }}
+          >
+            {diagram}
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-auto rounded-xl border border-border bg-white p-5">
+          <div className="w-fit">{diagram}</div>
+        </div>
+      )}
 
       {open && (
         <div
