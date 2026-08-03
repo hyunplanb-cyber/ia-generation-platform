@@ -17,7 +17,7 @@ import { buildFlowGroups } from "./lib/export/flow-groups";
 import { createMenuPptx, type PptMenu } from "./lib/export/ppt-export";
 import { buildSpecPackMarkdown, buildSpecPackJson } from "./lib/export/spec-pack";
 import { buildTemplateVerifySheets } from "./lib/export/template-verify";
-import type { Menu } from "./domain/menu/menu";
+import type { Menu, MenuAudience } from "./domain/menu/menu";
 import type { Screen } from "./domain/screen/screen";
 import type { ButtonAction } from "./domain/screen/button-action";
 import { sequentialWorkdaySlots } from "./domain/schedule/distribute-schedule";
@@ -68,6 +68,8 @@ SRC_DATA.menus.forEach((m, mi) => {
     nameEn: m.nameEn,
     menuCode: m.code,
     description: m.desc,
+    // 손님 것인지 운영자 것인지 — 스펙팩이 헤더를 나눌 때 쓴다.
+    audience: "audience" in m ? (m as { audience?: MenuAudience }).audience : undefined,
     desiredFeatures: null,
     sortOrder: mi,
     createdAt: now,

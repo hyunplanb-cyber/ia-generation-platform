@@ -9,11 +9,24 @@ export interface TplScreen {
   prompt: string;
   btns?: [string, string][];
 }
+/**
+ * 이 메뉴를 누가 쓰는가.
+ *
+ * 안 적으면 손님용으로 본다. 손님 메뉴와 운영자 메뉴가 한 헤더에 나란히 붙은
+ * 사이트가 나와서 생긴 값이다 — 손님과 사장이 같은 화면을 쓰는 서비스는 없다.
+ *   customer  손님(회원)이 쓰는 화면
+ *   owner     매장·판매자·강사 등 운영하는 쪽이 쓰는 화면
+ *   account   로그인·회원가입처럼 양쪽 공통이고 헤더 밖에 있는 화면
+ */
+export type Audience = "customer" | "owner" | "account";
+
 export interface TplMenu {
   code: string;
   nameKo: string;
   nameEn: string;
   desc: string;
+  /** 없으면 customer로 본다. */
+  audience?: Audience;
   screens: TplScreen[];
 }
 

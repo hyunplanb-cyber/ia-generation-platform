@@ -33,14 +33,34 @@ function checkPack(dir: string) {
   const menus = spec.menus ?? [];
 
   // ── 1. 손님/운영자 메뉴가 섞여 있나 ───────────────────────────
-  const adminMenus = menus.filter((m: { nameKo: string }) => ADMIN.test(m.nameKo));
-  if (adminMenus.length > 0 && adminMenus.length < menus.length) {
-    add(
-      dir,
-      "막음",
-      `한 GNB에 손님 메뉴 ${menus.length - adminMenus.length}개 + 운영자 메뉴 ${adminMenus.length}개가 섞임 ` +
-        `(운영자: ${adminMenus.map((m: { nameKo: string }) => m.nameKo).join("·")})`,
-    );
+  //
+  // 스펙팩이 영역을 나눠 두었으면(navByAudience) 그걸 믿는다. 없으면 메뉴 이름으로
+  // 짐작한다 — 아직 손대지 않은 팩을 찾아내기 위한 그물이다.
+  const nav = spec.common?.navByAudience;
+  if (nav) {
+    if (!nav.owner?.length) {
+      // 운영자 화면이 정말 없는 서비스(순수 B2C)면 정상이다.
+      const guess = menus.filter((m: { nameKo: string }) => ADMIN.test(m.nameKo));
+      if (guess.length) add(dir, "고칠 것", `운영자 메뉴로 보이는데 영역이 안 나뉨: ${guess.map((m: { nameKo: string }) => m.nameKo).join("·")}`);
+    }
+  } else {
+    const adminMenus = menus.filter((m: { nameKo: string }) => ADMIN.test(m.nameKo));
+    if (adminMenus.length > 0 && adminMenus.length < menus.length) {
+      add(
+        dir,
+        "막음",
+        `한 GNB에 손님 메뉴 ${menus.length - adminMenus.length}개 + 운영자 메뉴 ${adminMenus.length}개가 섞임 ` +
+          `(운영자: ${adminMenus.map((m: { nameKo: string }) => m.nameKo).join("·")})`,
+      );
+    }
+  }
+
+  // ── 1-2. 영역을 나눴다면 권한 전환 안내가 들어 있나 ───────────
+  if (nav?.owner?.length) {
+    const md0 = readFileSync(`${base}/07_AI빌드_스펙팩.md`, "utf8");
+    if (!md0.includes("매장 관리자로 전환") && !md0.includes("전환")) {
+      add(dir, "고칠 것", "영역은 나눴는데 권한 전환 안내가 없음");
+    }
   }
 
   // ── 2. 회원가입·로그인이 있나 ────────────────────────────────

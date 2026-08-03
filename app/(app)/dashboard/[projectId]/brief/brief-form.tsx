@@ -123,9 +123,12 @@ export function BriefForm({
             />
           </FormSection>
 
+          {/* 예전엔 "각 화면의 생성 프롬프트에 반영돼요"라고 적혀 있었다.
+              화면마다 색을 박았더니 나중에 고른 디자인 프리셋과 싸워서 그만뒀다(2026-08-04).
+              지금 이 선택이 가는 곳은 둘 — 디자인 프리셋의 출발점, 그리고 스펙팩 맨 앞 한 줄. */}
           <FormSection
             title="디자인 컨셉"
-            hint="원하는 분위기를 하나 고르면, 각 화면의 생성 프롬프트에 반영돼요."
+            hint="고른 분위기가 디자인 프리셋의 출발점이 되고, 스펙팩 첫 장에 적혀요. 나중에 프리셋에서 색·글꼴을 직접 손볼 수 있어요."
           >
             <input type="hidden" name="designConcept" value={designConcept} />
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">

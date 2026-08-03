@@ -38,6 +38,11 @@ function cleanPrompt(prompt: string | null | undefined): string {
     .trim();
 }
 
+/** 메뉴에 '누가 쓰는가'가 하나라도 적혀 있나. */
+function hasAudience(menus: Menu[]): boolean {
+  return menus.some((m) => m.audience && m.audience !== "customer");
+}
+
 // 문서 제목은 한 줄이어야 한다.
 //
 // 컨셉은 보통 여러 문장짜리 설명이라, 그대로 제목에 넣으면 문단이 통째로 제목이 된다
@@ -76,6 +81,17 @@ export function buildSpecPackModel(
     // 모든 화면이 공유하는 공통 요소 — 페이지마다 다시 만들지 말고 한 번 만들어 재사용.
     common: {
       globalNav: menus.map((m) => m.nameKo),
+      // 손님 영역과 운영자 영역은 헤더가 다르다. 한 줄로 주면 8개가 한 헤더에
+      // 나란히 붙어 "손님과 사장이 같은 화면을 쓰는" 사이트가 된다(2026-08-04).
+      // 메뉴에 audience가 하나도 없으면(사용자가 만든 프로젝트) 이 값은 비어 있고,
+      // 그때는 위 globalNav 하나만 쓴다.
+      navByAudience: hasAudience(menus)
+        ? {
+            customer: menus.filter((m) => (m.audience ?? "customer") === "customer").map((m) => m.nameKo),
+            owner: menus.filter((m) => m.audience === "owner").map((m) => m.nameKo),
+            account: menus.filter((m) => m.audience === "account").map((m) => m.nameKo),
+          }
+        : null,
       header: "로고 + 검색 + 상단 내비게이션(GNB)",
       footer: "저작권 · 기본 링크",
       // 사진이 없는 단계에서 이미지 자리를 어떻게 그릴지. 이걸 안 적어두면
@@ -165,7 +181,23 @@ export function buildSpecPackMarkdown(
 
   lines.push("## 2. 공통 요소 (모든 화면 공통)");
   lines.push("> 아래 요소는 **한 번만 만들어 모든 화면에서 재사용**하세요. 각 화면 스펙(4장)은 이 공통 요소 위에 올라가는 콘텐츠만 설명합니다.");
-  lines.push(`- **상단 내비게이션(GNB)**: ${m.common.globalNav.map((n) => `\`${n}\``).join(" · ") || "(없음)"} — 모든 화면 상단에 고정`);
+  // 쓰는 사람이 갈리면 헤더도 갈린다. 한 줄로 주면 손님 메뉴와 사장 메뉴가
+  // 한 헤더에 나란히 붙는다(2026-08-04).
+  const nav = m.common.navByAudience;
+  if (nav) {
+    const q = (arr: string[]) => arr.map((n) => `\`${n}\``).join(" · ");
+    lines.push("- **영역이 둘입니다. 헤더를 각각 따로 만드세요.**");
+    lines.push(`  - **손님 화면 GNB**: ${q(nav.customer) || "(없음)"}`);
+    lines.push(`  - **운영자 화면 GNB**: ${q(nav.owner) || "(없음)"} — 좌측 사이드바 + 상단 바 형태가 맞습니다`);
+    if (nav.account.length) {
+      lines.push(`  - **로그인·가입 화면**: ${q(nav.account)} — 헤더 없이 단독 화면으로 만드세요`);
+    }
+    lines.push(
+      "  - 두 영역을 오가는 길은 **하나만** 둡니다 — 손님 화면 우측 상단 `매장 관리자로 전환`, 운영자 화면 우측 상단 `고객 화면 보기`. 한 계정이 두 권한을 가지며, 권한이 없으면 전환 버튼 대신 입점 신청으로 보냅니다(크몽·숨고와 같은 방식).",
+    );
+  } else {
+    lines.push(`- **상단 내비게이션(GNB)**: ${m.common.globalNav.map((n) => `\`${n}\``).join(" · ") || "(없음)"} — 모든 화면 상단에 고정`);
+  }
   lines.push(`- **헤더**: ${m.common.header}`);
   lines.push(`- **푸터**: ${m.common.footer}`);
   lines.push(
@@ -245,6 +277,14 @@ export function buildSpecPackMarkdown(
   );
   lines.push(
     "  · 아무 것도 하지 않는 `<button>`을 남기지 마세요. 만들고 나서 **버튼을 하나씩 눌러 보고**, 반응이 없는 것이 있으면 위 둘 중 하나로 채우세요.",
+  );
+  // 서브 화면에서 돌아갈 길이 없어 갇히는 화면이 나왔다(2026-08-04).
+  // 목록·상세·단계처럼 깊이 들어가는 화면은 반드시 나오는 길이 함께 있어야 한다.
+  lines.push(
+    "- **깊이 들어간 화면에는 나오는 길을 두세요.** 상세·입력·단계 화면 좌측 상단에 뒤로가기(←)와 현재 위치(예: `매장 탐색 › 매장 상세`)를 두고, 여러 단계짜리 흐름은 이전 단계로 돌아갈 수 있게 하세요.",
+  );
+  lines.push(
+    "  · 빈 화면·오류·마감처럼 막다른 화면에는 **다음에 할 일 버튼**을 반드시 하나 두세요(예: `목록으로`, `다시 시도`, `둘러보기`).",
   );
   lines.push("### 화면 구현");
   lines.push("- 각 화면의 **생성 프롬프트**를 그 화면 구현 지시로 그대로 사용하세요.");

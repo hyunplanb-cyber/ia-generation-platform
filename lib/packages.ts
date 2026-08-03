@@ -370,11 +370,12 @@ export const PACKAGES: PackageDef[] = [
     data: BEAUTY,
     deep: BEAUTY_DEEP,
     promptSamples: ["re3", "mg1", "st5"],
-    presetStyles: ["coral", "mono", "forest"],
+    // 내추럴 그린은 뷰티에 안 어울려 소프트 파스텔로 바꿨다(2026-08-04).
+    presetStyles: ["coral", "mono", "pastel"],
     presetFits: [
       "네일·속눈썹·왁싱 등 캐주얼 뷰티, 20~30대 타깃 매장",
       "감각적인 편집숍형 살롱, 남성 전용 바버샵",
-      "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
+      "부드러운 인상이 중요한 피부관리·에스테틱, 아이·산모 대상 케어",
     ],
     layoutKeys: ["showcase", "list"],
     fileLabel: "뷰티샵",

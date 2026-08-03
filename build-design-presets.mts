@@ -29,13 +29,14 @@ const TARGETS = {
     ],
   },
   beauty: {
-    styles: ["coral", "mono", "forest"] as const,
+    // 내추럴 그린(forest)은 뷰티에 안 어울려 소프트 파스텔로 바꿨다(2026-08-04).
+    styles: ["coral", "mono", "pastel"] as const,
     layouts: ["showcase", "list"] as const,
     dir: "판매용_템플릿/뷰티샵_예약플랫폼/디자인프리셋",
     fits: [
       "네일·속눈썹·왁싱 등 캐주얼 뷰티, 20~30대 타깃 매장",
       "감각적인 편집숍형 살롱, 남성 전용 바버샵",
-      "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
+      "부드러운 인상이 중요한 피부관리·에스테틱, 아이·산모 대상 케어",
     ],
   },
   travel: {

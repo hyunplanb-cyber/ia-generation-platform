@@ -3,7 +3,7 @@
 // "3뎁스 잎사귀"로 붙여 실무 IA 해상도(1~3뎁스 + 화면ID 체계)로 펼친다.
 // lib/export(라이브 서비스 공용)는 건드리지 않고, 여기서 도메인 형태로 전개해
 // 기존 exporter(요건·WBS·플로우·PPT·스펙팩)를 그대로 재사용한다.
-import type { Menu } from "./domain/menu/menu";
+import type { Menu, MenuAudience } from "./domain/menu/menu";
 import type { Screen } from "./domain/screen/screen";
 import type { ButtonAction } from "./domain/screen/button-action";
 import { workdayStepper } from "./domain/schedule/distribute-schedule";
@@ -83,6 +83,8 @@ export function expandDeep(input: DeepInput): DeepResult {
       nameEn: m.nameEn,
       menuCode: m.code,
       description: m.desc,
+      // 손님 것인지 운영자 것인지 — 스펙팩이 헤더를 나눌 때 쓴다(2뎁스와 같은 값).
+      audience: "audience" in m ? (m as { audience?: MenuAudience }).audience : undefined,
       desiredFeatures: null,
       sortOrder: mi,
       createdAt: now,
