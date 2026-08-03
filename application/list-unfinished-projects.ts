@@ -11,11 +11,11 @@ import type { Project } from "@/domain/project/project";
  *
  * 최근에 만진 것부터. 화면이 하나라도 있으면 "만들다 만 것"이 아니라 완성본이다.
  */
-export async function listUnfinishedProjects(): Promise<Project[]> {
+export async function listUnfinishedProjects(exceptId?: string): Promise<Project[]> {
   const projects = await listMyProjects();
   if (projects.length === 0) return [];
   const counts = await countScreensByProject(projects.map((p) => p.id));
   return projects
-    .filter((p) => (counts[p.id] ?? 0) === 0)
+    .filter((p) => p.id !== exceptId && (counts[p.id] ?? 0) === 0)
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 }
