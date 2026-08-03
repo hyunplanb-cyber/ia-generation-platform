@@ -49,10 +49,5 @@ export default async function ConceptPage({
         };
       });
 
-  return (
-    <div className="flex flex-col gap-4">
-      <DraftPicker drafts={drafts} />
-      <ConceptForm project={project} hasScreens={hasScreens} />
-    </div>
-  );
+  return <ConceptForm project={project} hasScreens={hasScreens} aside={<DraftPicker drafts={drafts} />} />;
 }

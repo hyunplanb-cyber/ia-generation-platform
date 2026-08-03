@@ -36,7 +36,16 @@ const DELIVERABLES = [
   { icon: Package, label: "AI 빌드 스펙팩" },
 ];
 
-export function ConceptForm({ project, hasScreens }: { project: Project; hasScreens: boolean }) {
+export function ConceptForm({
+  project,
+  hasScreens,
+  aside,
+}: {
+  project: Project;
+  hasScreens: boolean;
+  /** 안내 문구 오른쪽 자리 — "만들다 만 AI팩이 있어요" 버튼이 들어온다. */
+  aside?: React.ReactNode;
+}) {
   const boundAction = saveConceptAndContinueAction.bind(null, project.id);
   const [state, formAction, pending] = useActionState(boundAction, initialState);
   const [overallStart, setOverallStart] = useState(project.overallStart);
@@ -55,10 +64,14 @@ export function ConceptForm({ project, hasScreens }: { project: Project; hasScre
 
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-sm text-muted-foreground">
-        어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을 바탕으로
-        산출물을 만들어요.
-      </p>
+      {/* 안내는 왼쪽, 이어서 만들기 버튼은 오른쪽 — 왼쪽 위에 두니 눈에 안 들어왔다. */}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <p className="max-w-xl text-sm text-muted-foreground">
+          어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을
+          바탕으로 산출물을 만들어요.
+        </p>
+        {aside}
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
         <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-8">

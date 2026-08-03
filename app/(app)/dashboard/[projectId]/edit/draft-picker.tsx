@@ -22,8 +22,13 @@ export interface Draft {
   href: string;
 }
 
+// 만들다 만 게 수십 개씩 쌓이기도 한다. 팝업에는 최근 것만 보여주고,
+// 전체 정리는 "내 프로젝트"에서 하게 한다.
+const MAX = 10;
+
 export function DraftPicker({ drafts }: { drafts: Draft[] }) {
   const [open, setOpen] = useState(false);
+  const shown = drafts.slice(0, MAX);
 
   useEffect(() => {
     if (!open) return;
@@ -39,7 +44,7 @@ export function DraftPicker({ drafts }: { drafts: Draft[] }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 self-start rounded-lg border border-primary bg-primary-soft/40 px-3.5 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary-soft"
+        className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary bg-primary-soft/50 px-3.5 py-2 text-sm font-semibold text-primary shadow-sm transition-colors hover:bg-primary-soft"
       >
         <History className="size-4" />
         만들다 만 AI팩이 있어요
@@ -75,7 +80,7 @@ export function DraftPicker({ drafts }: { drafts: Draft[] }) {
             </div>
 
             <ul className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-              {drafts.map((d) => (
+              {shown.map((d) => (
                 <li key={d.id}>
                   <Link
                     href={d.href}
@@ -107,6 +112,7 @@ export function DraftPicker({ drafts }: { drafts: Draft[] }) {
                 닫고 새로 만들기
               </button>
               <p className="mt-2 text-center text-xs text-muted-foreground">
+                {drafts.length > MAX && `${drafts.length}개 중 최근 ${MAX}개만 보여드려요. `}
                 안 쓸 초안은 <b className="font-semibold">내 프로젝트</b>에서 지울 수 있어요.
               </p>
             </div>
