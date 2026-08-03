@@ -1103,7 +1103,7 @@ function PlanCard({
           </a>
         ) : (
           // 결제(PG) 붙기 전까지 여기가 막다른 길이 되지 않게, 무료 샘플로 이어준다.
-          // 지금 온 사람을 회원으로 남겨야 출시일에 알릴 대상이 생긴다.
+          // 사려다 못 산 사람이 빈손으로 나가지 않게 하는 게 목적이다(가입은 요구하지 않는다).
           <div className="rounded-lg border border-dashed border-border bg-background/60 px-4 py-4 text-center">
             <p className="text-sm font-semibold text-foreground">곧 판매를 시작해요</p>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">

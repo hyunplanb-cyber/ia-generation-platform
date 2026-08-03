@@ -1,22 +1,14 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
-import {
-  Download,
-  Gift,
-  Lock,
-  FileSpreadsheet,
-  FileCode2,
-  Network,
-  Check,
-  ArrowRight,
-} from "lucide-react";
+import { Gift, FileSpreadsheet, FileCode2, Network, Check, ArrowRight } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { buttonVariants } from "@/components/ui/button";
 import { CREATOR } from "@/template-data-creator";
+import { DownloadCta } from "./download-cta";
 
-// 인스타 릴스 유입의 착지점. 파일만 주고 끝내지 않고 가입을 거치게 해
-// 방문자를 회원으로 남긴다(다운로드는 /api/free-sample 에서 세션을 확인).
+// 인스타 릴스 유입의 착지점. 가입 없이 바로 받게 하고, 가입 권유는 받은 뒤에 띄운다
+// (download-cta.tsx). 이유는 app/api/free-sample/route.ts 주석에 적어 뒀다.
 export const metadata: Metadata = {
   title: "무료 기획 샘플 — 콘텐츠 판매 사이트 화면 15개",
   description:
@@ -59,40 +51,7 @@ export default async function FreePage() {
           </p>
 
           <div className="mt-8 flex flex-col items-center gap-2">
-            {session ? (
-              <>
-                <a
-                  href="/api/free-sample"
-                  className={`${buttonVariants({ size: "lg" })} shadow-primary/30 shadow-lg transition-transform hover:scale-105`}
-                >
-                  <Download className="size-4" />
-                  무료로 다운로드
-                </a>
-                <p className="text-sm text-muted-foreground">zip 파일로 바로 받아집니다.</p>
-                {/* 샘플을 받은 다음 자연스러운 다음 행동 — 내 서비스로 만들어보기 */}
-                <Link
-                  href="/dashboard"
-                  className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
-                >
-                  내 서비스로 직접 만들어보기
-                  <ArrowRight className="size-3.5" />
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/signup?next=/free"
-                  className={`${buttonVariants({ size: "lg" })} shadow-primary/30 shadow-lg transition-transform hover:scale-105`}
-                >
-                  무료로 받기
-                  <ArrowRight className="size-4" />
-                </Link>
-                <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Lock className="size-3.5" />
-                  가입하면 바로 받으실 수 있어요 (무료)
-                </p>
-              </>
-            )}
+            <DownloadCta signedIn={Boolean(session)} />
           </div>
         </div>
       </section>
