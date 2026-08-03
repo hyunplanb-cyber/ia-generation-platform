@@ -25,7 +25,7 @@ export function VerifyScenarioDownloadButton({
   // 사용자가 직접 확인하며 고른 PASS/FAIL/WARN. 결과 칸에 채워진다.
   marks?: Record<string, string>;
   label?: string;
-  verifyRunId?: string;
+  verifyRunId?: string | null;
   credits?: number;
   unlocked?: boolean;
   creditsOpen?: boolean;
@@ -34,8 +34,10 @@ export function VerifyScenarioDownloadButton({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
-  // 베타(결제 전) — 프로젝트 검수 다운로드는 준비 중으로 둔다.
-  // (마케팅 무료 검수 다운로드는 verifyRunId가 없어 계속 이용 가능)
+  // 베타(결제 전) — 검수 다운로드는 준비 중으로 둔다. PG를 열면(CREDITS_OPEN)
+  // 여기가 자동으로 값 표시로 바뀐다. 손댈 곳은 없다.
+  // 예전에는 마케팅 검수 결과에 verifyRunId를 안 넘겨서 엑셀이 값 없이 받아졌다.
+  // 검수 생성 자체가 유료가 된 지금은 다운로드도 가격표(99크레딧)를 따른다.
   const comingSoon = !!verifyRunId && !creditsOpen;
   // 크레딧을 내야 열리는 상태인가(결제 켜짐 + 검수기록 id 있음 + 아직 안 열림 + 원가 있음).
   const gated = !!creditsOpen && !!verifyRunId && !unlocked && (credits ?? 0) > 0;

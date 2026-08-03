@@ -13,6 +13,11 @@ export interface VerifyState {
   error: string | null;
   // 무료 검수 횟수를 다 써서 막힌 상태(요금제 준비 중 안내를 띄운다)
   limitReached: boolean;
+  /**
+   * 저장된 검수 기록 id. 시나리오 엑셀 다운로드는 이 id 단위로 잠금·과금한다.
+   * 예전에는 이 값을 화면에 넘기지 않아, 검수 결과에서 엑셀이 값 없이 그냥 받아졌다.
+   */
+  runId: string | null;
 }
 
 const MAX_DOC_BYTES = 8 * 1024 * 1024; // 8MB
@@ -30,7 +35,7 @@ const REASON_MESSAGE: Record<string, string> = {
 };
 
 function fail(error: string): VerifyState {
-  return { report: null, error, limitReached: false };
+  return { report: null, error, limitReached: false, runId: null };
 }
 
 export async function runVerifyAction(
@@ -58,7 +63,7 @@ export async function runVerifyAction(
       : VERIFY_CHUNK.maxDocChunks;
   // 한도는 크레딧 하나로만 정한다(기능별 무료 횟수를 두지 않는다).
   if ((await getCreditBalance()) < verifyGenCost(maxChunks)) {
-    return { report: null, error: insufficientCreditMessage(CREDITS_OPEN), limitReached: true };
+    return { report: null, error: insufficientCreditMessage(CREDITS_OPEN), limitReached: true, runId: null };
   }
 
   let report: VerificationReport;
@@ -101,15 +106,18 @@ export async function runVerifyAction(
   await spendCredits(cost, mode === "url" ? "사이트 검수" : "문서·설계도 검수", {});
 
   // 결과 저장(무료 횟수 집계 + 내 프로젝트 연동 기반). 저장 실패가 결과를 막지 않게 방어.
+  // 여기서 나온 id를 화면까지 넘겨야 엑셀 다운로드에 잠금·과금이 걸린다.
+  let runId: string | null = null;
   try {
-    await drizzleVerifyRunRepository.create({
+    const run = await drizzleVerifyRunRepository.create({
       userId: session.user.id,
       projectId: null,
       report,
     });
+    runId = run.id;
   } catch (error) {
     console.error("verify 저장 실패", error);
   }
 
-  return { report, error: null, limitReached: false };
+  return { report, error: null, limitReached: false, runId };
 }

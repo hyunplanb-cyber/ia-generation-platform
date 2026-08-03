@@ -21,10 +21,10 @@ import { Input } from "@/components/ui/input";
 import type { VerificationReport } from "@/domain/verify/report";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
-import { VERIFY_CHUNK, verifyGenCost } from "@/lib/credits";
+import { CREDIT_COST, VERIFY_CHUNK, verifyGenCost } from "@/lib/credits";
 import { runVerifyAction, type VerifyState } from "./actions";
 
-const initialState: VerifyState = { report: null, error: null, limitReached: false };
+const initialState: VerifyState = { report: null, error: null, limitReached: false, runId: null };
 
 type Mode = "spec" | "url" | "document";
 
@@ -259,13 +259,31 @@ function LoadingScreen({ mode }: { mode: Mode }) {
 }
 
 // 결과 화면 — 리포트(읽기 전용) + 다운로드. 결과 기록(PASS/FAIL/WARN)은 엑셀에서.
-function ResultView({ report, onReset }: { report: VerificationReport; onReset: () => void }) {
+function ResultView({
+  report,
+  runId,
+  creditsOpen,
+  onReset,
+}: {
+  report: VerificationReport;
+  /** 검수 기록 id — 이게 있어야 엑셀 다운로드에 잠금·과금이 걸린다. */
+  runId: string | null;
+  creditsOpen: boolean;
+  onReset: () => void;
+}) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-semibold text-primary">검수 결과</p>
         <div className="flex items-center gap-2">
-          {report.scenarios.length > 0 && <VerifyScenarioDownloadButton report={report} />}
+          {report.scenarios.length > 0 && (
+            <VerifyScenarioDownloadButton
+              report={report}
+              verifyRunId={runId}
+              credits={CREDIT_COST.downloadVerify}
+              creditsOpen={creditsOpen}
+            />
+          )}
           <Button type="button" variant="outline" size="sm" onClick={onReset}>
             <RotateCcw className="size-4" />
             다시 검수하기
@@ -362,7 +380,12 @@ export function VerifyForm({
   const shortOfCredits = balance < genCost;
   const leftContent =
     onResult ? (
-      <ResultView report={report} onReset={() => setDismissed(true)} />
+      <ResultView
+        report={report}
+        runId={state.runId}
+        creditsOpen={creditsOpen}
+        onReset={() => setDismissed(true)}
+      />
     ) : (
       <div className="flex flex-col gap-6">
         {state.error && (
