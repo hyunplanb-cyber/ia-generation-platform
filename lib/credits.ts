@@ -68,8 +68,15 @@ export const CREDIT_COST = {
   downloadAdmin: 590, // 다운로드 · 관리자
   downloadVerify: 99, // 다운로드 · 검수 시나리오
   optionPreset: 99, // 옵션 · 디자인 프리셋
+  // 프리셋을 고쳐서 다시 받을 때. 프리셋은 프로젝트에 묶이지 않는 파일이라
+  // 한 번 받으면 다른 프로젝트에 그대로 넣어 쓸 수 있다 — 그래서 처음 값보다 싸게,
+  // 대신 횟수를 둔다(2026-08-04). 고치지 않고 그대로 다시 받는 건 계속 무료다.
+  optionPresetRevision: 30, // 옵션 · 디자인 프리셋 수정본
   optionVerify: 99, // 옵션 · 검수 시나리오
 } as const;
+
+/** 프리셋 수정본을 몇 번까지 받을 수 있나. */
+export const PRESET_REVISION_LIMIT = 2;
 
 /**
  * 검수 생성값 — 묶음(호출) 수에 비례해 받는다.

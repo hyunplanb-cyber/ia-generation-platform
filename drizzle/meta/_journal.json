@@ -92,6 +92,13 @@
       "when": 1785759649650,
       "tag": "0012_simple_pixie",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1785781229992,
+      "tag": "0013_luxuriant_hellfire_club",
+      "breakpoints": true
     }
   ]
 }

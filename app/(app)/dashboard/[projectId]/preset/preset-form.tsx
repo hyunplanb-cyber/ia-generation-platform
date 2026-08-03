@@ -143,6 +143,9 @@ export function PresetForm({
   creditsOpen,
   genCost,
   downloadCost,
+  revisionCost,
+  revisionLimit,
+  revisions,
   generated,
   downloaded,
 }: {
@@ -152,6 +155,9 @@ export function PresetForm({
   creditsOpen: boolean;
   genCost: number;
   downloadCost: number;
+  revisionCost: number;
+  revisionLimit: number;
+  revisions: number;
   generated: boolean;
   downloaded: boolean;
 }) {
@@ -160,6 +166,9 @@ export function PresetForm({
   const [busy, setBusy] = useState<"gen" | "save" | "download" | null>(null);
   const [gen, setGen] = useState(generated);
   const [down, setDown] = useState(downloaded);
+  // 마지막으로 받은 설정. 이것과 달라지면 다음 다운로드는 '수정본'이라 값이 붙는다.
+  const [downCfg, setDownCfg] = useState<PresetConfig | null>(downloaded ? initial : null);
+  const [revCount, setRevCount] = useState(revisions);
   const [savedTick, setSavedTick] = useState(false);
 
   const set = <K extends keyof PresetConfig>(key: K, value: PresetConfig[K]) => {
@@ -193,7 +202,15 @@ export function PresetForm({
 
   // 생성은 충전 개방 여부와 무관하게 항상 차감된다(다운로드만 아직 안 열렸다).
   const willChargeGen = !gen;
-  const willChargeDownload = creditsOpen && !down;
+
+  // 프리셋은 프로젝트에 묶이지 않는 파일이라 한 번 받으면 다른 프로젝트에도 넣어 쓸 수 있다.
+  // 그래서 고쳐서 다시 받는 것에만 값을 매기고 횟수를 둔다(2026-08-04).
+  //   처음 99 · 그대로 다시 받기 무료 · 고쳐 받기 30(2회까지)
+  const changed = down && downCfg !== null && JSON.stringify(downCfg) !== JSON.stringify(cfg);
+  const revLeft = Math.max(0, revisionLimit - revCount);
+  const revisionBlocked = changed && revLeft === 0;
+  const nextCost = !down ? downloadCost : changed ? revisionCost : 0;
+  const willChargeDownload = creditsOpen && nextCost > 0;
 
   function safeName(s: string) {
     return (s || "프로젝트").trim().slice(0, 20).replace(/[\\/:*?"<>|]/g, "_");
@@ -231,12 +248,21 @@ export function PresetForm({
       const r = await downloadPresetAction(projectId);
       if (!r.ok) {
         setBusy(null);
+        if (r.reason === "revision-limit") {
+          window.alert(
+            `수정본은 ${revisionLimit}번까지 받을 수 있어요. 마지막으로 받으신 프리셋은 언제든 다시 받으실 수 있습니다.`,
+          );
+          return;
+        }
         if (r.reason === "insufficient" && window.confirm("크레딧이 부족해요. 충전 페이지로 갈까요?")) {
           router.push("/dashboard/billing");
         }
         return;
       }
-      if (r.charged) setDown(true);
+      // 받은 내용을 기억해 둔다 — 이후 이 설정 그대로 다시 받는 건 무료다.
+      if (changed) setRevCount((n) => n + 1);
+      setDown(true);
+      setDownCfg(cfg);
 
       const md = buildDetailedPresetMarkdown(cfg, projectName);
       const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
@@ -511,14 +537,18 @@ export function PresetForm({
                   ? "준비 중"
                   : !creditsOpen
                     ? "프리셋 다운로드 · 준비 중"
-                    : willChargeDownload
-                      ? `프리셋 다운로드 · ${downloadCost}크레딧`
-                      : "프리셋 다운로드 · 0크레딧"}
+                    : revisionBlocked
+                      ? "수정본 횟수를 다 쓰셨어요"
+                      : willChargeDownload
+                        ? `${changed ? "수정본" : "프리셋"} 다운로드 · ${nextCost}크레딧`
+                        : "프리셋 다운로드 · 0크레딧"}
               </button>
               <ul className="mt-2 flex flex-col gap-1 text-xs text-muted-foreground">
-                <li>· 다운로드 크레딧은 처음 다운로드 시 한 번만 사용됩니다.</li>
-                {/* "색을 바꿔서 다시 받으면 또 내야 하나"를 묻는 사람이 있다. 안 낸다(2026-08-04). */}
-                <li>· <b className="font-semibold">색·글꼴을 고쳐서 다시 받아도 무료</b>입니다. 몇 번이든 바꿔 보세요.</li>
+                <li>· 처음 받을 때 {downloadCost}크레딧, <b className="font-semibold">같은 내용을 다시 받는 건 무료</b>입니다.</li>
+                <li>
+                  · 색·글꼴을 <b className="font-semibold">고쳐서 다시 받으면 {revisionCost}크레딧</b>이고,{" "}
+                  {revisionLimit}번까지 가능합니다{down && ` (남은 횟수 ${revLeft}번)`}.
+                </li>
                 <li>· 다시 받기는 ‘나의 프로젝트’에서도 가능합니다.</li>
               </ul>
             </div>

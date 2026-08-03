@@ -9,6 +9,10 @@ export interface Project {
   designConcept: string | null;
   presetConfig: string | null;
   presetDownloadedAt: Date | null;
+  /** 마지막으로 결제하고 받은 프리셋 설정(JSON). 지금 설정과 다르면 수정본이다. */
+  presetDownloadedConfig: string | null;
+  /** 수정본을 몇 번 받았나. */
+  presetRevisions: number;
   overallStart: string;
   overallEnd: string;
   deviceMode: DeviceMode;

@@ -5,6 +5,8 @@ import {
   getPresetState,
   PRESET_GEN_COST,
   PRESET_DOWNLOAD_COST,
+  PRESET_REVISION_COST,
+  PRESET_REVISION_LIMIT,
 } from "@/application/preset";
 import { ProjectNotFoundError } from "@/application/with-project-auth";
 import { CREDITS_OPEN } from "@/lib/flags";
@@ -30,6 +32,9 @@ export default async function PresetPage({
         creditsOpen={CREDITS_OPEN}
         genCost={PRESET_GEN_COST}
         downloadCost={PRESET_DOWNLOAD_COST}
+        revisionCost={PRESET_REVISION_COST}
+        revisionLimit={PRESET_REVISION_LIMIT}
+        revisions={state.revisions}
         generated={state.generated}
         downloaded={state.downloaded}
       />

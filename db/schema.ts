@@ -100,8 +100,16 @@ export const project = pgTable(
     designConcept: text("design_concept"),
     // 디자인 프리셋 상세 설정(JSON): { style, primary, font, radius, density, dark }
     presetConfig: text("preset_config"),
-    // 프리셋 md 다운로드를 처음 결제한 시각(있으면 재다운로드 무료)
+    // 프리셋 md 다운로드를 처음 결제한 시각(있으면 같은 내용 재다운로드는 무료)
     presetDownloadedAt: timestamp("preset_downloaded_at"),
+    // 마지막으로 결제하고 받은 프리셋 설정. 지금 설정과 다르면 '수정본'이다.
+    //
+    // 프리셋은 프로젝트에 묶이지 않는 파일이라, 한 번 받으면 다른 프로젝트에 그대로
+    // 넣어 쓸 수 있다. 그래서 고쳐서 다시 받는 건 값을 받되(처음보다 싸게) 횟수를 둔다.
+    // 고치지 않고 그대로 다시 받는 건 계속 무료다 — 산 것을 잃지 않게(2026-08-04).
+    presetDownloadedConfig: text("preset_downloaded_config"),
+    // 수정본을 몇 번 받았나(PRESET_REVISION_LIMIT까지).
+    presetRevisions: integer("preset_revisions").default(0).notNull(),
     overallStart: date("overall_start").notNull(),
     overallEnd: date("overall_end").notNull(),
     deviceMode: text("device_mode").default("responsive").notNull(),
