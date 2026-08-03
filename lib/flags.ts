@@ -26,3 +26,13 @@ export const CREDITS_OPEN = process.env.CREDITS_OPEN === "true";
  * 판매를 열 때 이 값을 true로 바꾸면 목록·상세·랜딩의 가격이 한 번에 나타난다.
  */
 export const PACKAGE_PRICES_PUBLIC = false;
+
+/**
+ * 화면 목록에서 화면을 직접 고칠 수 있게 하는가.
+ *
+ * 화면명·기능정의·프롬프트를 손으로 고치는 기능인데, 잘 쓰려면 기획 감각이 필요해
+ * 대부분의 사용자에게는 부담이었다(2026-08-03 보류). 우리가 주는 건 "이대로 만들면
+ * 되는 한 벌"이고, 그 뒤에 더 필요한 화면은 각자 쓰는 AI 도구나 개발사와 만드는 게 맞다.
+ * 기능은 그대로 두고 버튼만 감춘다 — 다시 열 때 이 값만 true로 바꾸면 된다.
+ */
+export const SCREEN_EDIT_OPEN = false;

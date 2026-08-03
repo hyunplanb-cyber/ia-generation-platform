@@ -17,8 +17,88 @@ import {
   type FontFeel,
   type RadiusFeel,
   type Density,
+  LAYOUTS,
+  defaultPresetConfig,
+  type LayoutKey,
 } from "@/lib/design-presets";
 import { generatePresetAction, downloadPresetAction } from "./actions";
+
+/**
+ * 레이아웃 골격 미리보기 — 색이 아니라 "무엇이 어디에 있는지"만 보여주는 회색 뼈대.
+ * 진한 칸이 그 골격에서 눈에 먼저 들어오는 자리다.
+ */
+function LayoutThumb({ kind, on }: { kind: string; on: boolean }) {
+  const bar = on ? "bg-primary/70" : "bg-muted-foreground/45";
+  const box = on ? "bg-primary/25" : "bg-muted-foreground/15";
+  const line = on ? "bg-primary/40" : "bg-muted-foreground/25";
+
+  return (
+    <div
+      aria-hidden="true"
+      className={`flex h-[72px] w-full flex-col gap-1 overflow-hidden rounded-lg border p-1.5 ${
+        on ? "border-primary/40 bg-background" : "border-border bg-muted/40"
+      }`}
+    >
+      {/* 상단 내비 — 대시보드형만 좌측 세로 */}
+      {kind !== "console" && <div className={`h-2 w-full shrink-0 rounded-sm ${bar}`} />}
+      {kind === "showcase" && <div className={`h-1 w-2/3 shrink-0 rounded-sm ${line}`} />}
+
+      {kind === "search" && (
+        <>
+          <div className={`h-4 w-full shrink-0 rounded-sm ${box}`} />
+          <div className="grid flex-1 grid-cols-3 gap-1">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className={`rounded-sm ${line}`} />
+            ))}
+          </div>
+        </>
+      )}
+
+      {kind === "showcase" && (
+        <div className="grid flex-1 grid-cols-3 grid-rows-2 gap-1">
+          <div className={`col-span-2 row-span-2 rounded-sm ${box}`} />
+          <div className={`rounded-sm ${line}`} />
+          <div className={`rounded-sm ${line}`} />
+        </div>
+      )}
+
+      {kind === "list" && (
+        <div className="flex flex-1 gap-1">
+          <div className={`w-1/4 rounded-sm ${line}`} />
+          <div className="flex flex-1 flex-col gap-1">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className={`flex-1 rounded-sm ${i === 0 ? box : line}`} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {kind === "split" && (
+        <div className="flex flex-1 gap-1">
+          <div className="flex flex-1 flex-col justify-center gap-1">
+            <div className={`h-2 w-full rounded-sm ${bar}`} />
+            <div className={`h-1 w-3/4 rounded-sm ${line}`} />
+          </div>
+          <div className={`w-2/5 rounded-sm ${box}`} />
+        </div>
+      )}
+
+      {kind === "console" && (
+        <div className="flex flex-1 gap-1">
+          <div className={`w-1/4 rounded-sm ${bar}`} />
+          <div className="flex flex-1 flex-col gap-1">
+            <div className="grid grid-cols-4 gap-1">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className={`h-3 rounded-sm ${box}`} />
+              ))}
+            </div>
+            <div className={`flex-1 rounded-sm ${line}`} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Choice({
   active,
@@ -87,7 +167,13 @@ export function PresetForm({
     setSavedTick(false);
   };
   const changeStyle = (style: DesignKey) => {
-    setCfg((c) => ({ ...c, style, primary: primarySwatchesFor(style)[0] }));
+    // 테마를 바꾸면 레이아웃도 그 테마 기본 골격으로 따라간다(원하면 아래에서 다시 고를 수 있다).
+    setCfg((c) => ({
+      ...c,
+      style,
+      primary: primarySwatchesFor(style)[0],
+      layout: defaultPresetConfig(style).layout,
+    }));
     setSavedTick(false);
   };
 
@@ -232,6 +318,37 @@ export function PresetForm({
               <span style={{ fontFamily: f.family }}>{f.label}</span>
             </Choice>
           ))}
+        </div>
+      </Section>
+
+      <Section
+        title="레이아웃 골격"
+        hint="색만 정하면 어느 테마로 만들어도 화면 뼈대가 같아집니다. 무엇을 어디에 놓을지 여기서 정해요."
+      >
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {LAYOUTS.map((l) => {
+            const on = cfg.layout === l.key;
+            return (
+              <button
+                key={l.key}
+                type="button"
+                onClick={() => set("layout", l.key as LayoutKey)}
+                aria-pressed={on}
+                className={`flex flex-col gap-1 rounded-xl border p-3 text-left transition-colors ${
+                  on
+                    ? "border-primary bg-primary-soft/40"
+                    : "border-border bg-background hover:border-primary/40 hover:bg-muted"
+                }`}
+              >
+                <LayoutThumb kind={l.key} on={on} />
+                <span className="mt-1 text-sm font-bold text-foreground">{l.label}</span>
+                <span className="text-xs leading-relaxed text-muted-foreground">{l.tagline}</span>
+                <span className="text-[11px] leading-relaxed text-muted-foreground/80">
+                  {l.fits}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </Section>
 
@@ -464,7 +581,7 @@ function PresetSummaryView({
           <div>
             <p className="mb-1 text-xs font-bold text-muted-foreground">모서리 · 밀도</p>
             <p className="text-xs text-foreground">
-              카드 {rad.card} · 버튼 {rad.button} · 배지 {rad.badge} · {sum.densityLabel}
+              카드 {rad.card} · 버튼 {rad.button} · 배지 {rad.badge} · {sum.densityLabel} · {sum.layoutLabel}
             </p>
           </div>
         </div>

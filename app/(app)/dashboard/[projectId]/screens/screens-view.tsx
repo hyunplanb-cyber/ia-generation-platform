@@ -8,6 +8,7 @@ import type { Menu } from "@/domain/menu/menu";
 import { ScreenListItem } from "./screen-list-item";
 import { ScreenDetailPanel } from "./screen-detail-panel";
 import { PREVIEW_PER_GROUP } from "../preview-limit";
+import { SCREEN_EDIT_OPEN } from "@/lib/flags";
 
 export function ScreensView({
   screens,
@@ -119,13 +120,15 @@ function MoreScreens({ hidden, onOpen }: { hidden: number; onOpen: () => void })
         나머지 화면 <b className="font-semibold text-foreground">{hidden}개</b>는 다운로드하시면
         파일에서 보실 수 있어요.
       </span>
-      <button
-        type="button"
-        onClick={onOpen}
-        className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
-      >
-        여기서 수정하려면 펼치기
-      </button>
+      {SCREEN_EDIT_OPEN && (
+        <button
+          type="button"
+          onClick={onOpen}
+          className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+        >
+          여기서 수정하려면 펼치기
+        </button>
+      )}
     </li>
   );
 }

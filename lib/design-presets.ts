@@ -725,6 +725,8 @@ export interface PresetSummary {
   fontFamily: string;
   radius: { card: string; button: string; badge: string };
   densityLabel: string;
+  /** 고른 레이아웃 골격 이름 — 요약 카드에 함께 보여준다. */
+  layoutLabel: string;
   dark: boolean;
   typeScale: [string, string][]; // [용도, 스펙]
   components: [string, string][]; // [이름, 규칙 요약]
@@ -749,6 +751,7 @@ export function buildPresetSummary(cfg: PresetConfig): PresetSummary {
     fontFamily: font.family,
     radius: { card: rad.card, button: rad.button, badge: rad.badge },
     densityLabel: den.label,
+    layoutLabel: layoutByKey(cfg.layout).label,
     dark: cfg.dark,
     typeScale: [
       ["페이지 제목", "32px / 800"],

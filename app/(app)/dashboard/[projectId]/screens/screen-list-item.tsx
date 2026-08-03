@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { ChevronDown, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SCREEN_EDIT_OPEN } from "@/lib/flags";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Screen } from "@/domain/screen/screen";
@@ -140,9 +141,12 @@ export function ScreenListItem({
 
         {/* 오른쪽: 관리 버튼. 좁은 화면에선 세로로, 넓은 화면에선 가로로 둔다. */}
         <div className="flex shrink-0 flex-col gap-1.5 sm:flex-row">
-          <Button type="button" variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
-            수정
-          </Button>
+          {/* 직접 고치는 기능은 보류 중(lib/flags.ts의 SCREEN_EDIT_OPEN). 내용은 상세에서 볼 수 있다. */}
+          {SCREEN_EDIT_OPEN && (
+            <Button type="button" variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
+              수정
+            </Button>
+          )}
           <Button type="button" variant="ghost" size="sm" onClick={() => onOpenDetail(screen.id)}>
             상세
           </Button>
