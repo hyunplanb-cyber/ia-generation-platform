@@ -517,7 +517,9 @@ export function PresetForm({
               </button>
               <ul className="mt-2 flex flex-col gap-1 text-xs text-muted-foreground">
                 <li>· 다운로드 크레딧은 처음 다운로드 시 한 번만 사용됩니다.</li>
-                <li>· 다시 받기는 무료이며, ‘나의 프로젝트’에서 가능합니다.</li>
+                {/* "색을 바꿔서 다시 받으면 또 내야 하나"를 묻는 사람이 있다. 안 낸다(2026-08-04). */}
+                <li>· <b className="font-semibold">색·글꼴을 고쳐서 다시 받아도 무료</b>입니다. 몇 번이든 바꿔 보세요.</li>
+                <li>· 다시 받기는 ‘나의 프로젝트’에서도 가능합니다.</li>
               </ul>
             </div>
           </div>

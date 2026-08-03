@@ -25,6 +25,7 @@ import {
   formatKrw,
   planContents,
   BUILD_SCOPE,
+  PRESET_WHY,
   type PackagePlan,
 } from "@/lib/packages";
 import {
@@ -642,6 +643,11 @@ export default async function PackageDetailPage({
           )}
 
           <DocCard title="디자인 프리셋" meta="md · json">
+            {/* "예쁜 색"으로 팔지 않는다 — AI도 색은 알아서 고른다. 프리셋이 하는 일은
+                화면 수십·수백 개가 끝까지 같은 얼굴을 유지하게 하는 것이다(2026-08-04). */}
+            <p className="mb-3 text-sm leading-relaxed text-foreground/85">
+              <b className="text-foreground">{PRESET_WHY}</b>
+            </p>
             <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
               디자인 프리셋에는 <b className="text-foreground">가이드 프리셋 3종</b>과{" "}
               <b className="text-foreground">레이아웃 프리셋 2종</b>이 들어 있어요. 완성된 HTML과

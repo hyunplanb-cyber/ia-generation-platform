@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FormSection } from "../form-shell";
 import { saveBriefAndGenerateAction, type GenerateState } from "./actions";
-import { DESIGN_OPTIONS, type DesignKey } from "@/lib/design-presets";
+import { DESIGN_OPTIONS, BRIEF_DESIGN_KEYS, type DesignKey } from "@/lib/design-presets";
 import { CREDIT_COST } from "@/lib/credits";
 import type { Project } from "@/domain/project/project";
 
@@ -89,11 +89,26 @@ export function BriefForm({
   // 버튼에 붙일 소모 크레딧. 규모 카드와 같은 출처를 써서 두 표기가 어긋나지 않게 한다.
   const scaleCredit =
     SCALE_OPTIONS.find((o) => o.key === scale)?.credit ?? SCALE_OPTIONS[0].credit;
-  // 기존 프로젝트가 저장한 값이 3개 중 하나면 그걸 고르고, 아니면 첫 번째로.
-  const [design, setDesign] = useState<DesignKey>(
-    DESIGN_OPTIONS.find((d) => d.concept === project.designConcept)?.key ?? "navy",
+  // 만들기 화면에는 셋만 놓고 '선택 안 함'을 더한다 — 여섯을 다 늘어놓으면
+  // 첫 화면이 복잡해 보이고, 고르는 것 자체가 문턱이 된다(2026-08-04).
+  // 세밀한 색·글꼴은 디자인 프리셋에서 여섯 종을 다 보고 고른다.
+  const briefOptions = [
+    ...BRIEF_DESIGN_KEYS.map((k) => DESIGN_OPTIONS.find((d) => d.key === k)!),
+    {
+      key: "none" as const,
+      title: "선택 안 함",
+      desc: "AI가 알아서 하나로 통일해요",
+      concept: "",
+      swatches: [] as string[],
+    },
+  ];
+  // 저장된 값이 셋 중 하나면 그걸 고르고, 비어 있으면 '선택 안 함'.
+  // 예전에 여섯 중 다른 걸 골라 둔 프로젝트도 그 값이 그대로 남아 있으면 그걸 쓴다.
+  const saved = DESIGN_OPTIONS.find((d) => d.concept === project.designConcept);
+  const [design, setDesign] = useState<DesignKey | "none">(
+    project.designConcept ? (saved?.key ?? "navy") : "none",
   );
-  const designConcept = DESIGN_OPTIONS.find((d) => d.key === design)!.concept;
+  const designConcept = design === "none" ? "" : (DESIGN_OPTIONS.find((d) => d.key === design)?.concept ?? "");
 
   return (
     <div className="flex flex-col gap-5">
@@ -131,8 +146,8 @@ export function BriefForm({
             hint="고른 분위기가 디자인 프리셋의 출발점이 되고, 스펙팩 첫 장에 적혀요. 나중에 프리셋에서 색·글꼴을 직접 손볼 수 있어요."
           >
             <input type="hidden" name="designConcept" value={designConcept} />
-            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-              {DESIGN_OPTIONS.map((opt) => {
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-4">
+              {briefOptions.map((opt) => {
                 const on = design === opt.key;
                 return (
                   <button
@@ -149,13 +164,17 @@ export function BriefForm({
                     <span className="font-semibold text-foreground">{opt.title}</span>
                     <span className="text-xs leading-relaxed text-muted-foreground">{opt.desc}</span>
                     <span className="mt-1.5 flex gap-1">
-                      {opt.swatches.map((c) => (
-                        <span
-                          key={c}
-                          className="size-4 rounded-full border border-black/10"
-                          style={{ backgroundColor: c }}
-                        />
-                      ))}
+                      {opt.swatches.length > 0 ? (
+                        opt.swatches.map((c) => (
+                          <span
+                            key={c}
+                            className="size-4 rounded-full border border-black/10"
+                            style={{ backgroundColor: c }}
+                          />
+                        ))
+                      ) : (
+                        <span className="size-4 rounded-full border border-dashed border-border" />
+                      )}
                     </span>
                   </button>
                 );

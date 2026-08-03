@@ -9,7 +9,16 @@
 
 export type DesignKey = "navy" | "mono" | "pastel" | "retro" | "forest" | "coral";
 
-// 브리프에서 보여줄 3개 선택지. concept 텍스트가 프로젝트에 저장되고, 그걸로 프리셋을 되찾는다.
+/**
+ * 만들기(브리프) 화면에서 보여줄 컨셉 — 여섯이 아니라 셋만.
+ *
+ * 여섯을 다 늘어놓으니 만들기 첫 화면이 복잡해 보이고, 고르는 것 자체가 문턱이 됐다
+ * (2026-08-04). 여기서는 방향만 크게 잡고, 세밀한 색·글꼴은 디자인 프리셋에서 고른다.
+ * 프리셋 화면에는 여섯 종을 그대로 다 보여준다.
+ */
+export const BRIEF_DESIGN_KEYS: DesignKey[] = ["navy", "mono", "pastel"];
+
+// concept 텍스트가 프로젝트에 저장되고, 그걸로 프리셋을 되찾는다.
 // swatches: 카드에 보여줄 대표 색(주색·강조·본문·배경 순).
 export const DESIGN_OPTIONS: {
   key: DesignKey;

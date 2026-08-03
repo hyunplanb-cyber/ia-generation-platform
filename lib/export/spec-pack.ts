@@ -174,7 +174,9 @@ export function buildSpecPackMarkdown(
 
   lines.push("## 1. 프로젝트 개요");
   lines.push(`- **컨셉**: ${m.project.concept}`);
-  lines.push(`- **디자인 컨셉**: ${m.project.designConcept || "(미입력)"}`);
+  // 안 골랐으면 줄을 아예 뺀다. "(미입력)"이 파는 문서에 남으면 만들다 만 것처럼 보이고,
+  // AI에게도 아무 말도 아니다. 없으면 6장 빌드 가이드가 알아서 하나로 통일하라고 안내한다.
+  if (m.project.designConcept) lines.push(`- **디자인 컨셉**: ${m.project.designConcept}`);
   lines.push(`- **디바이스**: ${m.project.deviceMode}`);
   lines.push(`- **전체 일정**: ${m.project.schedule.start} ~ ${m.project.schedule.end}`);
   lines.push("");
@@ -300,7 +302,9 @@ export function buildSpecPackMarkdown(
     "- 프리셋의 **레이아웃 골격**(히어로·목록·내비·상세를 어떻게 놓을지)을 먼저 잡고 색을 입히세요. 색만 맞추면 어떤 테마로 만들어도 같은 화면이 나옵니다.",
   );
   lines.push(
-    "- 프리셋이 없다면 1장의 **디자인 컨셉**을 전역 스타일(색·톤·라운드·여백)로 토큰화해 일관되게 적용하세요.",
+    m.project.designConcept
+      ? "- 프리셋이 없다면 1장의 **디자인 컨셉**을 전역 스타일(색·톤·라운드·여백)로 토큰화해 일관되게 적용하세요."
+      : "- 프리셋도 디자인 컨셉도 없다면, 색·글꼴·모서리·여백을 **먼저 한 벌 정해 토큰으로 고정한 뒤** 모든 화면에 그대로 쓰세요. 화면마다 다시 고르면 같은 사이트로 안 보입니다.",
   );
   lines.push("### 이미지 · 썸네일");
   lines.push(
