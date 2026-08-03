@@ -18,7 +18,6 @@ import {
   type RadiusFeel,
   type Density,
   LAYOUTS,
-  defaultPresetConfig,
   secondPreset,
   type LayoutKey,
 } from "@/lib/design-presets";
@@ -197,30 +196,11 @@ export function PresetForm({
     });
   };
 
-  const changeStyle = (style: DesignKey) => {
-    // 테마를 바꾸면 레이아웃도 그 테마 기본 골격으로 따라간다(원하면 아래에서 다시 고를 수 있다).
-    setCfg((c) => ({
-      ...c,
-      style,
-      primary: primarySwatchesFor(style)[0],
-      layout: defaultPresetConfig(style).layout,
-    }));
-    setSavedTick(false);
-  };
-
+  // 색·글꼴·모서리·밀도는 미리보기 카드가 자기 설정으로 직접 계산한다(PreviewCard).
+  // 두 벌을 그려야 해서, 바깥에서 한 벌 기준으로 미리 만들어 두면 쓸 수 없다.
   const swatches = useMemo(() => primarySwatchesFor(cfg.style), [cfg.style]);
   const rad = useMemo(() => RADIUS_FEELS.find((r) => r.key === cfg.radius)!, [cfg.radius]);
-  const font = useMemo(() => fontById(cfg.font), [cfg.font]);
-  const den = useMemo(() => DENSITIES.find((d) => d.key === cfg.density)!, [cfg.density]);
   const sum = useMemo(() => buildPresetSummary(cfg), [cfg]);
-  const pv = { bg: sum.bg, text: sum.text, muted: sum.muted, border: sum.border };
-  // 테마 대표 색 4개(주색·강조·본문·배경). 미리보기에서 강조/형광펜에 쓴다.
-  const theme = useMemo(
-    () => DESIGN_OPTIONS.find((o) => o.key === cfg.style)?.swatches ?? [cfg.primary],
-    [cfg.style, cfg.primary],
-  );
-  const accent = theme[1] ?? cfg.primary; // 2번째 색 → 배지
-  const highlight = theme[2] ?? cfg.primary; // 3번째 색 → 제목 형광펜
 
   // 생성은 충전 개방 여부와 무관하게 항상 차감된다(다운로드만 아직 안 열렸다).
   const willChargeGen = !gen;
@@ -472,45 +452,76 @@ export function PresetForm({
     </div>
   );
 
-  // ── 미리보기 카드(생성 전) ──
-  const preview = (
-    <div
-      className="flex flex-col gap-3"
-      style={{
-        background: pv.bg,
-        border: `2px solid ${highlight}`,
-        borderRadius: rad.card,
-        fontFamily: font.family,
-        padding: den.key === "cozy" ? "20px" : "14px",
-      }}
-    >
-      <div className="flex items-center justify-between" style={{ color: pv.text }}>
-        <strong style={{ fontSize: 15 }}>화면 제목</strong>
-        <span
+  // ── 미리보기 카드 ──
+  // 두 벌을 고르면 두 장을 위아래로 보여준다. 나란히 놓아야 고를 수 있고,
+  // 그러라고 두 벌을 주는 것이다(2026-08-04).
+  function PreviewCard({ config, badge }: { config: PresetConfig; badge?: string }) {
+    const s = buildPresetSummary(config);
+    const r = RADIUS_FEELS.find((x) => x.key === config.radius)!;
+    const f = fontById(config.font);
+    const d = DENSITIES.find((x) => x.key === config.density)!;
+    const th = DESIGN_OPTIONS.find((o) => o.key === config.style)?.swatches ?? [config.primary];
+    const ac = th[1] ?? config.primary;
+    const hl = th[2] ?? config.primary;
+    return (
+      <div className="flex flex-col gap-1.5">
+        {badge && (
+          <p className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+            <span className="rounded-full bg-primary px-1.5 text-[11px] font-bold text-primary-foreground">
+              {badge}
+            </span>
+            {styleTitle(config.style)}
+          </p>
+        )}
+        <div
+          className="flex flex-col gap-3"
           style={{
-            background: accent + "22",
-            color: accent,
-            borderRadius: rad.badge,
-            fontSize: 11,
-            padding: "2px 8px",
-            fontWeight: 700,
+            background: s.bg,
+            border: `2px solid ${hl}`,
+            borderRadius: r.card,
+            fontFamily: f.family,
+            padding: d.key === "cozy" ? "20px" : "14px",
           }}
         >
-          배지
-        </span>
+          <div className="flex items-center justify-between" style={{ color: s.text }}>
+            <strong style={{ fontSize: 15 }}>화면 제목</strong>
+            <span
+              style={{
+                background: ac + "22",
+                color: ac,
+                borderRadius: r.badge,
+                fontSize: 11,
+                padding: "2px 8px",
+                fontWeight: 700,
+              }}
+            >
+              배지
+            </span>
+          </div>
+          <p style={{ color: s.muted, fontSize: 13, lineHeight: 1.6, margin: 0 }}>
+            고른 색과 모서리가 이렇게 적용돼요. 생성하면 색 단계·타이포·컴포넌트 규칙 요약이 나와요.
+          </p>
+          <div className="flex gap-2">
+            <span style={{ background: config.primary, color: "#fff", borderRadius: r.button, fontSize: 13, fontWeight: 600, padding: "8px 14px" }}>
+              주요 버튼
+            </span>
+            <span style={{ background: "transparent", color: s.text, border: `1px solid ${s.border}`, borderRadius: r.button, fontSize: 13, fontWeight: 600, padding: "8px 14px" }}>
+              보조
+            </span>
+          </div>
+        </div>
       </div>
-      <p style={{ color: pv.muted, fontSize: 13, lineHeight: 1.6, margin: 0 }}>
-        고른 색과 모서리가 이렇게 적용돼요. 생성하면 색 단계·타이포·컴포넌트 규칙 요약이 나와요.
-      </p>
-      <div className="flex gap-2">
-        <span style={{ background: cfg.primary, color: "#fff", borderRadius: rad.button, fontSize: 13, fontWeight: 600, padding: "8px 14px" }}>
-          주요 버튼
-        </span>
-        <span style={{ background: "transparent", color: pv.text, border: `1px solid ${pv.border}`, borderRadius: rad.button, fontSize: 13, fontWeight: 600, padding: "8px 14px" }}>
-          보조
-        </span>
-      </div>
+    );
+  }
+
+  const secondCfg = secondPreset(cfg);
+  const preview = secondCfg ? (
+    <div className="flex flex-col gap-4">
+      <PreviewCard config={cfg} badge="1" />
+      <PreviewCard config={secondCfg} badge="2" />
     </div>
+  ) : (
+    <PreviewCard config={cfg} />
   );
 
   return (
