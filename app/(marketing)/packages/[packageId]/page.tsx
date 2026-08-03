@@ -286,9 +286,12 @@ export default async function PackageDetailPage({
         <section id="plans" className="flex scroll-mt-20 flex-col gap-5">
           <SectionTitle>어떤 규모로 만드시나요?</SectionTitle>
           {/* 넷이면 2×2로 둔다 — 등급이 원래 2×2(설계 깊이 × 완성 화면)라
-              한 줄로 늘어놓으면 사다리처럼 보인다. 배치가 구조를 말해주게. */}
+              한 줄로 늘어놓으면 사다리처럼 보인다. 배치가 구조를 말해주게.
+              좁은 화면에서는 그 배치가 어차피 안 되고 세로로 쌓으면 한없이 길어져서,
+              한 장씩 옆으로 넘긴다. 스크롤 스냅이라 손가락으로 그냥 밀면 된다.
+              바깥 여백만큼 좌우로 빼내 다음 장이 살짝 보이게 두면 넘길 수 있다는 게 읽힌다. */}
           <div
-            className={`grid gap-4 ${
+            className={`-mx-6 flex snap-x snap-mandatory items-start gap-4 overflow-x-auto px-6 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:items-stretch sm:overflow-visible sm:px-0 sm:pb-0 ${
               pkg.plans.length >= 4
                 ? "sm:grid-cols-2"
                 : pkg.plans.length === 3
@@ -950,7 +953,9 @@ function PlanCard({
   return (
     <div
       id={`plan-${plan.id}`}
-      className={`flex scroll-mt-24 flex-col gap-4 rounded-2xl border p-6 transition-colors ${
+      // 좁은 화면에서는 한 장이 화면의 대부분을 차지하고 스냅으로 멈춘다.
+      // 폭을 꽉 채우지 않는 건 다음 장 끝을 보여 넘길 수 있다는 걸 알리기 위해서다.
+      className={`flex w-[86%] shrink-0 snap-center scroll-mt-24 flex-col gap-4 rounded-2xl border p-6 transition-colors sm:w-auto sm:shrink ${
         selected
           ? "border-primary bg-primary-soft/20 ring-2 ring-primary/30"
           : "border-border bg-surface"
