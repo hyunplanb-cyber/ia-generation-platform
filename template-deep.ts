@@ -37,11 +37,17 @@ const pad2 = (n: number) => String(n).padStart(2, "0");
 const P = (s: string) => s.trim().replace(/\n\s+/g, " ");
 
 // 잎사귀(탭·상태) 프롬프트 자동 합성: 상위 화면 맥락을 유지하도록 지시.
-function leafPrompt(screenName: string, leaf: DeepLeaf, designConcept: string): string {
+//
+// 디자인 컨셉을 여기에 붙이지 않는다.
+// 붙였더니 화면 130개 중 90개꼴로 프롬프트 끝에 색이 박혔고("베이지 배경에 딥 플럼"),
+// 산 사람이 디자인 프리셋(가이드 3종 × 레이아웃 2종)에서 다른 걸 골라도 프롬프트가
+// 계속 그 색을 우겨 AI가 "지시가 충돌한다"고 멈췄다(2026-08-03).
+// 프롬프트는 **무엇을 만들지**만 말하고, **어떻게 보일지**는 프리셋이 맡는다.
+// 디자인 컨셉은 스펙팩 맨 앞(프로젝트 개요)에 한 번만 적힌다.
+function leafPrompt(screenName: string, leaf: DeepLeaf): string {
   return P(`'${screenName}' 화면의 '${leaf.name}' ${leaf.role.includes("tab") ? "탭" : "상태·세부 화면"}을 만들어줘.
     ${leaf.func}.
-    상위 화면(${screenName})의 레이아웃·컴포넌트·톤을 그대로 유지하면서 이 부분만 바뀐 상태를 보여줘.
-    ${designConcept}`);
+    상위 화면(${screenName})의 레이아웃·컴포넌트·톤을 그대로 유지하면서 이 부분만 바뀐 상태를 보여줘.`);
 }
 
 export interface DeepResult {
@@ -101,7 +107,7 @@ export function expandDeep(input: DeepInput): DeepResult {
           name: l.name,
           role: l.role,
           func: l.func,
-          prompt: leafPrompt(s.name, l, project.designConcept),
+          prompt: leafPrompt(s.name, l),
           label3: l.name,
         })),
       ];
