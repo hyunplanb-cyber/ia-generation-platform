@@ -3,6 +3,17 @@
 // 다른 템플릿(예약 서비스 등)에도 그대로 재사용한다.
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { PACKAGES } from "./lib/packages";
+// 레이아웃 골격과 이미지 자리 규칙은 플랫폼이 만드는 프리셋과 같은 값을 써야 한다.
+// 두 곳에 따로 적으면 "산 프리셋과 만든 프리셋이 다르다"는 말이 나온다.
+import { LAYOUTS, DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, type DesignKey } from "./lib/design-presets";
+
+/** 마크다운 표 안에 코드로 감싸 넣는다 — 중첩 백틱을 피하려고 함수로 뺐다. */
+const inCode = (s: string) => "`" + s + "`";
+
+const layoutOf = (key: string) => {
+  const k = DEFAULT_LAYOUT[key as DesignKey];
+  return LAYOUTS.find((l) => l.key === k) ?? LAYOUTS[0];
+};
 
 // 어떤 템플릿용으로 만들지 인자로 받는다: npx tsx build-design-presets.mts lms | beauty
 // 디자인 규칙(색·타이포·컴포넌트)은 업종 무관하게 같고, "어울리는 서비스" 문구만 갈라진다.
@@ -17,12 +28,12 @@ const TARGETS = {
     ],
   },
   beauty: {
-    styles: ["forest", "mono", "pastel"] as const,
+    styles: ["coral", "mono", "forest"] as const,
     dir: "판매용_템플릿/뷰티샵_예약플랫폼/디자인프리셋",
     fits: [
-      "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
+      "네일·속눈썹·왁싱 등 캐주얼 뷰티, 20~30대 타깃 매장",
       "감각적인 편집숍형 살롱, 남성 전용 바버샵",
-      "네일·속눈썹 등 캐주얼 뷰티, 20~30대 타깃 매장",
+      "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
     ],
   },
   travel: {
@@ -402,6 +413,39 @@ function md(p: Preset): string {
   L.push("| --- | --- |");
   for (const [a, b] of p.screens) L.push(`| ${a} | ${b} |`);
   L.push("");
+
+  const lay = layoutOf(p.key);
+  L.push(`## 6. 레이아웃 골격 — ${lay.label}`);
+  L.push("");
+  L.push(`> ${lay.tagline}`);
+  L.push("");
+  L.push("| 자리 | 어떻게 |");
+  L.push("| --- | --- |");
+  L.push(`| 첫 화면 위쪽 | ${lay.hero} |`);
+  L.push(`| 목록 화면 | ${lay.list} |`);
+  L.push(`| 내비게이션 | ${lay.nav} |`);
+  L.push(`| 상세 화면 | ${lay.detail} |`);
+  L.push("");
+  L.push(`어울리는 곳: ${lay.fits}`);
+  L.push("");
+  L.push("**세 프리셋은 색만 다른 게 아니라 뼈대가 다릅니다.** 색만 맞추고 이 표를 무시하면 어느 것으로 만들어도 같은 화면이 나옵니다.");
+  L.push("");
+
+  L.push("## 7. 이미지 자리");
+  L.push("");
+  L.push("아직 사진이 없으니 이미지 자리는 **테마 색이 아니라 옅은 파스텔**로 채우세요. 테마 색으로 칠하면 화면이 그 색 덩어리로 뒤덮여 디자인이 안 보입니다.");
+  L.push("");
+  L.push("| 항목 | 값 |");
+  L.push("| --- | --- |");
+  L.push(`| 배경 | ${IMAGE_PLACEHOLDER.tones.map(inCode).join(" · ")} 중 하나(카드마다 돌려 씀) |`);
+  L.push(`| 테두리 | \`${IMAGE_PLACEHOLDER.border}\` 1px |`);
+  L.push(`| 글자색 | \`${IMAGE_PLACEHOLDER.text}\` · 13px |`);
+  L.push(`| 적을 글자 | \`${IMAGE_PLACEHOLDER.labelFormat}\` |`);
+  L.push("");
+  L.push("예시: " + IMAGE_PLACEHOLDER.examples.map(inCode).join(" · "));
+  L.push("");
+  for (const r of IMAGE_PLACEHOLDER.rule) L.push(`- ${r}`);
+  L.push("");
   L.push("---");
   L.push("");
   L.push("## AI에게 그대로 넣는 지시문");
@@ -417,6 +461,9 @@ function md(p: Preset): string {
   L.push(`- 버튼(주요): ${p.comp[0][1]}`);
   L.push(`- 카드: ${p.comp[2][1]}`);
   L.push(`- 빈 화면: ${p.screens[3][1]}`);
+  L.push("");
+  L.push(`- 레이아웃(${lay.label}): 첫 화면 위쪽은 ${lay.hero} 목록은 ${lay.list} 내비는 ${lay.nav}`);
+  L.push(`- 이미지 자리: 테마 색 말고 ${IMAGE_PLACEHOLDER.tones[0]} 같은 옅은 파스텔 + ${IMAGE_PLACEHOLDER.border} 테두리. 안에 "${IMAGE_PLACEHOLDER.examples[0]}"처럼 무엇과 권장 크기를 적어줘`);
   L.push("");
   L.push("화면마다 다른 스타일을 쓰지 말고, 위 규칙을 끝까지 유지해줘.");
   L.push("```");
@@ -437,6 +484,18 @@ const tokens = (p: Preset) => ({
   shadow: p.shadow,
   components: Object.fromEntries(p.comp),
   screenGuides: Object.fromEntries(p.screens),
+  layout: (() => {
+    const l = layoutOf(p.key);
+    return { key: l.key, label: l.label, hero: l.hero, list: l.list, nav: l.nav, detail: l.detail, fits: l.fits };
+  })(),
+  imagePlaceholder: {
+    tones: IMAGE_PLACEHOLDER.tones,
+    border: IMAGE_PLACEHOLDER.border,
+    text: IMAGE_PLACEHOLDER.text,
+    labelFormat: IMAGE_PLACEHOLDER.labelFormat,
+    examples: IMAGE_PLACEHOLDER.examples,
+    rule: IMAGE_PLACEHOLDER.rule,
+  },
 });
 
 /**

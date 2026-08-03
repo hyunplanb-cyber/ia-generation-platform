@@ -4,9 +4,21 @@
     {
       "name": "dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "뷰티샵-디럭스",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/뷰티샵_예약플랫폼_완성화면_디럭스",
+      "port": 4173
     }
   ]
 }

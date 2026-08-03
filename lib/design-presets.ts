@@ -251,6 +251,164 @@ export function presetForConcept(concept: string | null | undefined): Preset {
   return PRESETS[opt?.key ?? "navy"];
 }
 
+/* ─────────────────────────────────────────────────────────────
+   레이아웃 골격
+   색만 정해 주면 테마를 바꿔도 뼈대가 똑같아서 결국 같은 사이트로 보인다.
+   실제로 여행 판매본과 뷰티 판매본을 만들어 보니 색만 다르고 히어로·목록·
+   내비가 똑같았다(2026-08-03). 그래서 "무엇을 어디에 놓을지"를 프리셋에 함께 넣는다.
+   ───────────────────────────────────────────────────────────── */
+export type LayoutKey = "search" | "showcase" | "list" | "split" | "console";
+
+export const LAYOUTS: {
+  key: LayoutKey;
+  label: string;
+  /** 이 골격을 한 줄로 */
+  tagline: string;
+  /** 첫 화면 위쪽 */
+  hero: string;
+  /** 목록 화면 */
+  list: string;
+  /** 내비게이션 */
+  nav: string;
+  /** 상세 화면 */
+  detail: string;
+  /** 이 골격이 어울리는 곳 */
+  fits: string;
+}[] = [
+  {
+    key: "search",
+    label: "검색 중심형",
+    tagline: "찾는 게 분명한 서비스. 검색창이 첫 화면의 주인공.",
+    hero: "화면 폭을 꽉 채운 배경 위에 큰 검색바 1개(입력칸 2~3개 + 검색 버튼). 아래에 숫자 지표 3개.",
+    list: "카드 그리드 3~4열. 카드마다 이미지 → 제목 → 보조정보 → 가격 순.",
+    nav: "상단 가로 GNB 한 줄. 로고 · 검색 · 메뉴 · 로그인.",
+    detail: "본문 왼쪽 + 오른쪽에 따라다니는 요약·액션 카드(sticky).",
+    fits: "예약·검색이 시작점인 서비스(숙소·강의·매장 찾기)",
+  },
+  {
+    key: "showcase",
+    label: "사진 중심형",
+    tagline: "결과물이 곧 상품. 사진을 먼저 보여주고 글은 나중에.",
+    hero: "검색바 없이 사진 모자이크(큰 1장 + 작은 4장). 문구는 사진 아래에 겹치지 않게.",
+    list: "매거진형 2열. 큰 이미지 위에 제목·태그를 얹고 설명은 짧게.",
+    nav: "상단 가로 GNB + 그 아래 카테고리 줄(2단 헤더).",
+    detail: "상단 전체 폭 갤러리 → 아래 정보. 액션은 하단 고정 바.",
+    fits: "보이는 게 중요한 서비스(뷰티·인테리어·포트폴리오·여행)",
+  },
+  {
+    key: "list",
+    label: "목록 중심형",
+    tagline: "훑어보고 비교한다. 한 화면에 많이 담는다.",
+    hero: "히어로를 두지 않는다. 제목 + 필터 칩 줄로 바로 시작.",
+    list: "좌측 필터 패널 + 우측 가로 리스트 행(썸네일 왼쪽, 정보 오른쪽, 액션 끝).",
+    nav: "상단 가로 GNB + 목록 화면에서만 좌측 필터 사이드바.",
+    detail: "상단 요약 바 + 탭으로 나눈 본문.",
+    fits: "비교해서 고르는 서비스(중개·구인·상품 비교)",
+  },
+  {
+    key: "split",
+    label: "좌우 분할형",
+    tagline: "말할 게 분명하다. 왼쪽은 글, 오른쪽은 행동.",
+    hero: "좌우 2단. 왼쪽에 큰 제목과 설명, 오른쪽에 폼 또는 대표 이미지.",
+    list: "2열 카드. 여백을 넓게 두고 카드 안은 글자 위계로만 나눈다.",
+    nav: "상단 가로 GNB. 로고 왼쪽, 액션 버튼 오른쪽 끝.",
+    detail: "본문 한 단(최대 폭 760px) + 하단 고정 액션 바.",
+    fits: "설득이 먼저인 서비스(랜딩·구독·B2B 소개)",
+  },
+  {
+    key: "console",
+    label: "대시보드형",
+    tagline: "매일 쓰는 도구. 지표부터 보이고 좌측 메뉴로 이동한다.",
+    hero: "히어로 없음. 화면 위쪽에 지표 카드 4개.",
+    list: "표 중심. 헤더 고정, 행 높이 일정, 상태는 배지로.",
+    nav: "좌측 세로 사이드바(그룹 제목 + 항목) + 상단에는 계정만.",
+    detail: "좌 본문 + 우 액션 패널 2단. 상태 변경 버튼을 우측에 모은다.",
+    fits: "관리자·백오피스·사장님 화면",
+  },
+];
+
+export const layoutByKey = (k: LayoutKey) => LAYOUTS.find((l) => l.key === k) ?? LAYOUTS[0];
+
+/** 테마별 기본 골격. 셋을 나란히 놓았을 때 색뿐 아니라 구조도 갈리도록 골랐다. */
+export const DEFAULT_LAYOUT: Record<DesignKey, LayoutKey> = {
+  navy: "console",
+  mono: "split",
+  pastel: "search",
+  retro: "showcase",
+  forest: "list",
+  coral: "showcase",
+};
+
+/* ─────────────────────────────────────────────────────────────
+   이미지 자리 규칙
+   사진이 없는 프로토타입에서 이미지 자리를 테마 색으로 채우면 화면이 그 색
+   덩어리로 뒤덮여 "빨간 사이트"처럼 보인다. 테마와 무관한 옅은 파스텔로 고정하고,
+   무엇이 들어갈 자리인지와 권장 크기를 글자로 적는다.
+   ───────────────────────────────────────────────────────────── */
+export const IMAGE_PLACEHOLDER = {
+  /** 옅은 파스텔 5종을 돌려 쓴다 — 카드가 전부 같은 색이 되지 않게만 */
+  tones: ["#EEF2F7", "#F2EFF7", "#EDF4F1", "#F7F1EC", "#F2F4F7"],
+  border: "#E3E8F0",
+  text: "#8B94A6",
+  /** 자리 안에 적는 글자 */
+  labelFormat: "이미지 영역 (무엇 · 권장 가로×세로)",
+  examples: [
+    "이미지 영역 (매장 대표 · 권장 1200×900)",
+    "이미지 영역 (프로필 · 권장 400×400)",
+    "이미지 영역 (배너 · 권장 1600×600)",
+  ],
+  rule: [
+    "이미지 자리는 테마 색으로 칠하지 않는다. 옅은 파스텔 한 톤 + 1px 테두리로 둔다.",
+    "자리 안에 무엇이 들어갈 이미지인지와 권장 크기를 글자로 적는다.",
+    "썸네일처럼 작아서 글자가 안 들어가면 크기만 적거나 아이콘 하나만 둔다.",
+    "실제 사진을 넣기 전까지 이 규칙을 유지한다 — 그래야 어디에 무엇을 넣어야 하는지 보인다.",
+  ],
+} as const;
+
+
+/** 레이아웃 골격 절 — 프리셋 문서 두 종류가 같은 문장을 쓴다. */
+function layoutSection(key: LayoutKey, no: number): string[] {
+  const l = layoutByKey(key);
+  return [
+    `## ${no}. 레이아웃 골격 — ${l.label}`,
+    "",
+    `> ${l.tagline}`,
+    "",
+    "| 자리 | 어떻게 |",
+    "| --- | --- |",
+    `| 첫 화면 위쪽 | ${l.hero} |`,
+    `| 목록 화면 | ${l.list} |`,
+    `| 내비게이션 | ${l.nav} |`,
+    `| 상세 화면 | ${l.detail} |`,
+    "",
+    `어울리는 곳: ${l.fits}`,
+    "",
+    "**색만 맞추고 이 골격을 무시하면 어느 테마로 만들어도 같은 사이트가 나옵니다.** 뼈대를 먼저 이 표대로 잡고 색을 입히세요.",
+    "",
+  ];
+}
+
+/** 이미지 자리 절 — 사진이 없는 단계에서 무엇을 어떻게 그릴지. */
+function imageSection(no: number): string[] {
+  return [
+    `## ${no}. 이미지 자리`,
+    "",
+    "아직 사진이 없으니 이미지 자리는 **테마 색이 아니라 옅은 파스텔**로 채우세요. 테마 색으로 칠하면 화면이 그 색 덩어리로 뒤덮여 디자인이 안 보입니다.",
+    "",
+    "| 항목 | 값 |",
+    "| --- | --- |",
+    `| 배경 | ${IMAGE_PLACEHOLDER.tones.map((c) => `\`${c}\``).join(" · ")} 중 하나(카드마다 돌려 씀) |`,
+    `| 테두리 | \`${IMAGE_PLACEHOLDER.border}\` 1px |`,
+    `| 글자색 | \`${IMAGE_PLACEHOLDER.text}\` · 13px |`,
+    `| 적을 글자 | \`${IMAGE_PLACEHOLDER.labelFormat}\` |`,
+    "",
+    "예시: " + IMAGE_PLACEHOLDER.examples.map((e) => `\`${e}\``).join(" · "),
+    "",
+    ...IMAGE_PLACEHOLDER.rule.map((r) => `- ${r}`),
+    "",
+  ];
+}
+
 // 프리셋을 AI 코딩 도구에 붙여 넣을 마크다운 스펙으로.
 export function buildPresetMarkdown(p: Preset): string {
   const L: string[] = [];
@@ -284,6 +442,8 @@ export function buildPresetMarkdown(p: Preset): string {
   L.push("| --- | --- |");
   for (const [a, b] of p.components) L.push(`| ${a} | ${b} |`);
   L.push("");
+  L.push(...layoutSection(DEFAULT_LAYOUT[p.key], 5));
+  L.push(...imageSection(6));
   L.push("화면마다 다른 스타일을 쓰지 말고, 위 규칙을 끝까지 일관되게 적용해줘.");
   L.push("");
   return L.join("\n");
@@ -308,6 +468,8 @@ export interface PresetConfig {
   radius: RadiusFeel;
   density: Density;
   dark: boolean;
+  /** 화면 뼈대. 색만 바꾸면 어느 테마든 같은 사이트로 보여서 함께 정한다. */
+  layout: LayoutKey;
 }
 
 // 고른 "큰 방향"에 어울리는 주 색상 후보. 각 세트의 첫 색이 그 방향의 기본 주색.
@@ -384,6 +546,7 @@ export function defaultPresetConfig(style: DesignKey): PresetConfig {
     radius: DEFAULT_RADIUS[style] ?? "normal",
     density: "cozy",
     dark: false,
+    layout: DEFAULT_LAYOUT[style] ?? "search",
   };
 }
 
@@ -411,6 +574,8 @@ export function parsePresetConfig(json: string | null, concept?: string | null):
         const cfg = { ...defaultPresetConfig(c.style), ...c } as PresetConfig;
         // 예전에 저장된 글꼴 값(sans/serif/rounded 등)은 기본값으로 교체.
         if (!FONT_FEELS.some((f) => f.key === cfg.font)) cfg.font = DEFAULT_FONT[cfg.style] ?? "pretendard";
+        // 레이아웃을 넣기 전에 저장된 프리셋에는 이 값이 없다. 테마 기본값으로 채운다.
+        if (!LAYOUTS.some((l) => l.key === cfg.layout)) cfg.layout = DEFAULT_LAYOUT[cfg.style] ?? "search";
         return cfg;
       }
     } catch {
@@ -475,7 +640,7 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   L.push(`> ${base.tagline}`);
   L.push("");
   L.push(
-    `설정: 주색상 \`${cfg.primary}\` · 폰트 ${font.label} · 모서리 ${rad.label} · 밀도 ${den.label} · ${cfg.dark ? "다크모드" : "라이트모드"}`,
+    `설정: 주색상 \`${cfg.primary}\` · 폰트 ${font.label} · 모서리 ${rad.label} · 밀도 ${den.label} · ${cfg.dark ? "다크모드" : "라이트모드"} · 레이아웃 ${layoutByKey(cfg.layout).label}`,
   );
   L.push("");
   L.push("AI 코딩 도구(Claude Code·Cursor 등)에 이 파일을 넣고 “이 디자인 시스템대로 만들어줘”라고 주문하세요.");
@@ -529,7 +694,9 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   L.push(`| 배지 | 상태색 10% 배경 + 같은 색 글자, radius ${rad.badge} |`);
   L.push(`| 표 | 헤더 muted 배경, 행 구분 border 1px, 행 높이 ${den.rowH} |`);
   L.push("");
-  L.push("## 5. 상태(꼭 지킬 것)");
+  L.push(...layoutSection(cfg.layout, 5));
+  L.push(...imageSection(6));
+  L.push("## 7. 상태(꼭 지킬 것)");
   L.push("");
   L.push("- hover/active/focus: 버튼·링크·행 모두 시각 피드백. focus는 키보드 접근성을 위해 링 필수.");
   L.push("- 비어 있음: 아이콘 + 한 줄 안내 + 주요 액션 하나.");

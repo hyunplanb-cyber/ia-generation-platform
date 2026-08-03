@@ -348,11 +348,11 @@ export const PACKAGES: PackageDef[] = [
     data: BEAUTY,
     deep: BEAUTY_DEEP,
     promptSamples: ["re3", "mg1", "st5"],
-    presetStyles: ["forest", "mono", "pastel"],
+    presetStyles: ["coral", "mono", "forest"],
     presetFits: [
-      "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
+      "네일·속눈썹·왁싱 등 캐주얼 뷰티, 20~30대 타깃 매장",
       "감각적인 편집숍형 살롱, 남성 전용 바버샵",
-      "네일·속눈썹 등 캐주얼 뷰티, 20~30대 타깃 매장",
+      "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
     ],
     integrations: [
       { area: "로그인·회원가입", detail: "이메일 가입, 카카오 등 소셜 로그인, 휴대폰 본인인증" },

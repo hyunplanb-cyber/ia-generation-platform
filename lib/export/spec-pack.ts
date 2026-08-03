@@ -3,6 +3,7 @@
 import type { Menu } from "@/domain/menu/menu";
 import type { Screen } from "@/domain/screen/screen";
 import type { ButtonAction } from "@/domain/screen/button-action";
+import { IMAGE_PLACEHOLDER } from "@/lib/design-presets";
 
 export interface SpecPackProject {
   concept: string;
@@ -38,6 +39,16 @@ export function buildSpecPackModel(
       globalNav: menus.map((m) => m.nameKo),
       header: "로고 + 검색 + 상단 내비게이션(GNB)",
       footer: "저작권 · 기본 링크",
+      // 사진이 없는 단계에서 이미지 자리를 어떻게 그릴지. 이걸 안 적어두면
+      // AI가 테마 색으로 이미지 자리를 채워서 화면이 그 색 덩어리가 된다.
+      imagePlaceholder: {
+        tones: IMAGE_PLACEHOLDER.tones,
+        border: IMAGE_PLACEHOLDER.border,
+        text: IMAGE_PLACEHOLDER.text,
+        labelFormat: IMAGE_PLACEHOLDER.labelFormat,
+        examples: IMAGE_PLACEHOLDER.examples,
+        rule: IMAGE_PLACEHOLDER.rule,
+      },
     },
     menus: menus.map((m) => ({
       code: m.menuCode,
@@ -178,6 +189,20 @@ export function buildSpecPackMarkdown(
   lines.push("- 필요하면 상태 화면(로딩·빈 결과·에러)도 함께 만드세요.");
   lines.push("### 디자인");
   lines.push("- **디자인 컨셉**을 전역 스타일(색·톤·라운드·여백)로 토큰화해 일관되게 적용하세요.");
+  lines.push(
+    "- 디자인 프리셋 파일을 함께 넣었다면 그 안의 **레이아웃 골격**(히어로·목록·내비·상세를 어떻게 놓을지)을 먼저 잡고 색을 입히세요. 색만 맞추면 어떤 테마로 만들어도 같은 화면이 나옵니다.",
+  );
+  lines.push("### 이미지 · 썸네일");
+  lines.push(
+    `- 아직 사진이 없으므로 이미지 자리는 **테마 색이 아니라 옅은 파스텔**로 채우세요. 테마 색으로 칠하면 화면이 그 색 덩어리로 뒤덮여 디자인이 안 보입니다.`,
+  );
+  lines.push(
+    `- 배경 ${m.common.imagePlaceholder.tones.map((c) => `\`${c}\``).join(" · ")} 중 하나를 카드마다 돌려 쓰고, 테두리 \`${m.common.imagePlaceholder.border}\` 1px, 글자색 \`${m.common.imagePlaceholder.text}\` 13px.`,
+  );
+  lines.push(
+    `- 자리 안에 \`${m.common.imagePlaceholder.labelFormat}\` 형식으로 적으세요. 예: ${m.common.imagePlaceholder.examples.map((e) => `\`${e}\``).join(" · ")}`,
+  );
+  for (const r of m.common.imagePlaceholder.rule) lines.push(`- ${r}`);
   lines.push("### 추천 스택");
   lines.push(
     "- 정적 다중 페이지(HTML/CSS) 또는 컴포넌트 기반(React·Next.js·Vue 등) 중 프로젝트 규모에 맞게 선택하세요. 화면이 많고 상태가 복잡하면 컴포넌트 기반을 권장합니다.",
