@@ -16,7 +16,10 @@
 //
 // 사용법: npx tsx package-template.mts              → 만들 수 있는 것 전부
 //         npx tsx package-template.mts travel-premium → 하나만
-import { statSync, readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from "node:fs";
+import {
+  statSync, readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync,
+  copyFileSync, rmSync,
+} from "node:fs";
 import JSZip from "jszip";
 import { PACKAGES, BUILD_SCOPE, PLAN_NAMES, type PlanId } from "./lib/packages";
 
@@ -116,6 +119,12 @@ for (const ind of INDUSTRIES) {
 const OUT = `${T}/_배포/00_판매팩`;
 // 홈페이지가 산 사람에게 내려줄 자리. 저장소에 함께 커밋되는 유일한 판매 파일이다.
 const SITE_PACKS = "packs";
+
+// 압축은 홈페이지에 상품을 올릴 때만 한다.
+//   npx tsx package-template.mts          → 폴더로만 (손보는 중)
+//   npx tsx package-template.mts --zip    → 폴더 + zip + packs/ 갱신 (팔 때)
+// 손보는 동안 zip으로 두면 열어야 보이고, 고치면 다시 묶어야 한다(2026-08-04).
+const MAKE_ZIP = process.argv.includes("--zip");
 
 // 업종별로 개발자에게 넘겨야 할 외부 연동 목록. 판매 페이지와 같은 출처를 쓴다.
 function integrationBlock(p: Product): string {
@@ -258,16 +267,20 @@ async function pack(p: Product) {
       /\.(xlsx|pptx|html|drawio|md|json)$/.test(f),
   );
 
-  const zip = new JSZip();
-  const folder = zip.folder(p.zipName)!;
-  for (const f of files) folder.file(f, readFileSync(`${p.src}/${f}`));
+  // 먼저 **폴더로** 만든다. 압축은 홈페이지에 상품을 올릴 때만 한다(--zip).
+  // 안을 들여다보며 손보는 동안에는 zip이 오히려 불편하다 — 열어야 보이고,
+  // 고치면 다시 묶어야 한다. 파는 순간에만 묶는 게 맞다(2026-08-04).
+  const outDir = `${OUT}/${p.zipName}`;
+  rmSync(outDir, { recursive: true, force: true });
+  mkdirSync(outDir, { recursive: true });
+  for (const f of files) copyFileSync(`${p.src}/${f}`, `${outDir}/${f}`);
 
   const presetDir = `${p.presetsFrom}/디자인프리셋`;
   let presetCount = 0;
   if (existsSync(presetDir)) {
-    const pf = folder.folder("디자인프리셋")!;
+    mkdirSync(`${outDir}/디자인프리셋`, { recursive: true });
     for (const f of readdirSync(presetDir)) {
-      pf.file(f, readFileSync(`${presetDir}/${f}`));
+      copyFileSync(`${presetDir}/${f}`, `${outDir}/디자인프리셋/${f}`);
       presetCount += 1;
     }
   }
@@ -276,13 +289,13 @@ async function pack(p: Product) {
   let siteCount = 0;
   if (p.sitePath) {
     if (!existsSync(p.sitePath)) throw new Error(`완성 화면 폴더가 없어요: ${p.sitePath}`);
-    const dst = folder.folder("완성화면")!;
     const walk = (dir: string, rel: string) => {
+      mkdirSync(`${outDir}/완성화면/${rel}`, { recursive: true });
       for (const name of readdirSync(dir)) {
         const abs = `${dir}/${name}`;
         if (statSync(abs).isDirectory()) walk(abs, `${rel}${name}/`);
         else {
-          dst.file(`${rel}${name}`, readFileSync(abs));
+          copyFileSync(abs, `${outDir}/완성화면/${rel}${name}`);
           siteCount += 1;
         }
       }
@@ -294,30 +307,45 @@ async function pack(p: Product) {
     }
   }
 
-  folder.file("README.txt", readme(p, stats));
+  writeFileSync(`${outDir}/README.txt`, readme(p, stats), "utf8");
 
-  const buf = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
-  writeFileSync(`${OUT}/${p.zipName}.zip`, buf);
+  let kb = 0;
+  if (MAKE_ZIP) {
+    const zip = new JSZip();
+    const folder = zip.folder(p.zipName)!;
+    const put = (dir: string, rel: string) => {
+      for (const name of readdirSync(dir)) {
+        const abs = `${dir}/${name}`;
+        if (statSync(abs).isDirectory()) put(abs, `${rel}${name}/`);
+        else folder.file(`${rel}${name}`, readFileSync(abs));
+      }
+    };
+    put(outDir, "");
+    const buf = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
+    writeFileSync(`${OUT}/${p.zipName}.zip`, buf);
+    kb = Math.round(buf.length / 1024);
 
-  // 홈페이지가 실제로 파는 칸이면, 사이트가 내려줄 자리에도 같이 둔다.
-  // 이름을 영문으로 바꾸는 이유는 adapters/storage/fs-pack-storage.ts 주석 참고.
-  const sellable = PACKAGES.find((x) => x.id === p.pkgId)?.plans.some((pl) => pl.id === p.tier);
-  if (sellable) {
-    mkdirSync(SITE_PACKS, { recursive: true });
-    writeFileSync(`${SITE_PACKS}/${p.pkgId}-${p.tier}.zip`, buf);
+    // 홈페이지가 실제로 파는 칸이면, 사이트가 내려줄 자리에도 같이 둔다.
+    // 이름을 영문으로 바꾸는 이유는 adapters/storage/fs-pack-storage.ts 주석 참고.
+    const sellable = PACKAGES.find((x) => x.id === p.pkgId)?.plans.some((pl) => pl.id === p.tier);
+    if (sellable) {
+      mkdirSync(SITE_PACKS, { recursive: true });
+      writeFileSync(`${SITE_PACKS}/${p.pkgId}-${p.tier}.zip`, buf);
+    }
   }
 
   console.log(
-    `  ✔ ${p.zipName}.zip — 문서 ${files.length}개 + 프리셋 ${presetCount}개` +
+    `  ✔ ${p.zipName}${MAKE_ZIP ? " (폴더 + zip)" : ""} — 문서 ${files.length}개 + 프리셋 ${presetCount}개` +
       (siteCount ? ` + 완성화면 ${siteCount}개` : "") +
-      `, 화면 ${stats.screens}개, ${Math.round(buf.length / 1024)}KB`,
+      `, 화면 ${stats.screens}개` +
+      (kb ? `, ${kb}KB` : ""),
   );
 
   // 무엇이 들어 있고 무엇이 비었는지 한눈에 보라고, 부족한 칸 목록을 만들 재료를 남긴다.
   const missing: string[] = [];
   if (p.withVerify && !stats.verifyScenarios) missing.push("검수 시나리오(08)");
   if (p.withVerify && !p.sitePath) missing.push("완성 화면(HTML)");
-  return { key: p.zipName, planLabel: p.planLabel, title: p.title, missing, kb: Math.round(buf.length / 1024) };
+  return { key: p.zipName, planLabel: p.planLabel, title: p.title, missing, kb };
 }
 
 const arg = process.argv[2];
