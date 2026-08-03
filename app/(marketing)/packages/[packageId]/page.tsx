@@ -20,11 +20,23 @@ import {
   getPackage,
   formatKrw,
   planContents,
-  DESIGN_PRESETS,
   BUILD_SCOPE,
   type PackagePlan,
 } from "@/lib/packages";
+import {
+  DESIGN_OPTIONS,
+  buildPresetSummary,
+  salePresetConfig,
+} from "@/lib/design-presets";
 import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
+
+// 흰 바탕에 글자로 써도 읽히는 색인지. 파스텔의 노란 강조처럼 밝은 색은 배경으로만 쓴다.
+// 기준을 낮추면 네이비의 주황 같은 멀쩡한 색까지 걸러져 테마 색이 사라진다.
+function isTooLightForText(hex: string): boolean {
+  const h = hex.replace("#", "");
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+  return 0.299 * r + 0.587 * g + 0.114 * b > 180;
+}
 
 // 판매 상세이자 검색 유입 페이지.
 // 앞쪽은 판매(플랜 비교·추천 대상·포함 산출물), 뒤쪽은 실제 산출물 공개로 신뢰를 준다.
@@ -179,7 +191,9 @@ export default async function PackageDetailPage({
     { label: "07 AI 빌드 스펙팩", sub: "넣고 한 마디면 끝", value: () => "✓" },
     {
       label: "디자인 프리셋 3종",
-      sub: DESIGN_PRESETS.map((d) => d.name).join(" · "),
+      sub: pkg.presetStyles
+        .map((s) => DESIGN_OPTIONS.find((o) => o.key === s)?.title ?? s)
+        .join(" · "),
       value: () => "✓",
     },
     {
@@ -195,6 +209,31 @@ export default async function PackageDetailPage({
       value: (p) => (p.siteScreens ? `${p.siteScreens}개` : "—"),
     },
   ];
+
+  // 프리셋 3종은 업종마다 다르다(lib/packages.ts의 presetStyles).
+  // 이름을 고정해 두면 LMS엔 코럴이 들어가는데 화면엔 파스텔이라 적히는 식으로 어긋난다.
+  // 미리보기 색·모서리는 판매본과 같은 사양(salePresetConfig)에서 뽑는다.
+  const presets = pkg.presetStyles.map((style, i) => {
+    const opt = DESIGN_OPTIONS.find((o) => o.key === style)!;
+    const sum = buildPresetSummary(salePresetConfig(style));
+    const accent = opt.swatches[1] ?? sum.primary;
+    return {
+      no: String(i + 1).padStart(2, "0"),
+      name: opt.title,
+      fit: pkg.presetFits[i],
+      primary: sum.primary,
+      accent,
+      // 밝은 강조색은 배경 틴트로만 쓰고 글자는 본문색으로 적는다.
+      // (테마마다 swatches[2]의 뜻이 달라서 — 네이비는 본문색, 파스텔은 민트 — 거기서 가져오면 안 된다.)
+      accentText: isTooLightForText(accent) ? sum.text : accent,
+      bg: opt.swatches[3] ?? sum.bg,
+      text: sum.text,
+      muted: sum.muted,
+      border: sum.border,
+      radius: sum.radius,
+      fontFamily: sum.fontFamily,
+    };
+  });
 
   const STATS = [
     { icon: Network, label: "메뉴", value: selected.stats.menus },
@@ -562,14 +601,88 @@ export default async function PackageDetailPage({
 
           <DocCard title="디자인 프리셋 3종" meta="md · json">
             <div className="grid gap-3 sm:grid-cols-3">
-              {DESIGN_PRESETS.map((p, i) => (
+              {presets.map((p) => (
                 <div key={p.no} className="rounded-xl border border-border p-3.5">
                   <p className="text-sm font-bold text-foreground">
                     {p.no} {p.name}
                   </p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    {pkg.presetFits[i]}
-                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{p.fit}</p>
+                  {/* 색·모서리만 글로 적으면 셋이 어떻게 다른지 안 그려진다.
+                      판매본과 같은 사양으로 작은 화면 조각을 그려 눈으로 비교하게 둔다. */}
+                  <div
+                    className="mt-3 flex flex-col gap-2 border p-3"
+                    style={{
+                      background: p.bg,
+                      borderColor: p.border,
+                      borderRadius: p.radius.card,
+                      fontFamily: p.fontFamily,
+                    }}
+                  >
+                    <div>
+                      <p className="text-[11px] font-bold leading-tight" style={{ color: p.text }}>
+                        제목입니다
+                      </p>
+                      <p className="mt-0.5 text-[10px] leading-tight" style={{ color: p.muted }}>
+                        서브 카피입니다
+                      </p>
+                    </div>
+                    <div className="flex gap-1">
+                      <span
+                        className="px-1.5 py-px text-[9px] font-bold"
+                        style={{
+                          background: `${p.accent}26`,
+                          color: p.accentText,
+                          borderRadius: p.radius.badge,
+                        }}
+                      >
+                        배지 1
+                      </span>
+                      <span
+                        className="px-1.5 py-px text-[9px] font-bold"
+                        style={{
+                          border: `1px solid ${p.border}`,
+                          color: p.muted,
+                          borderRadius: p.radius.badge,
+                        }}
+                      >
+                        배지 2
+                      </span>
+                    </div>
+                    <div
+                      className="px-2 py-1 text-[9px]"
+                      style={{
+                        border: `1px solid ${p.border}`,
+                        color: p.muted,
+                        borderRadius: p.radius.button,
+                        background: "#FFFFFF",
+                      }}
+                    >
+                      입력창입니다
+                    </div>
+                    <div className="flex gap-1.5">
+                      <span
+                        className="px-2 py-1 text-[9px] font-bold"
+                        style={{
+                          background: p.primary,
+                          color: "#FFFFFF",
+                          borderRadius: p.radius.button,
+                        }}
+                      >
+                        메인 버튼
+                      </span>
+                      <span
+                        className="px-2 py-1 text-[9px] font-bold"
+                        style={{
+                          border: `1px solid ${p.border}`,
+                          color: p.text,
+                          borderRadius: p.radius.button,
+                          background: "#FFFFFF",
+                        }}
+                      >
+                        보조 버튼
+                      </span>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
