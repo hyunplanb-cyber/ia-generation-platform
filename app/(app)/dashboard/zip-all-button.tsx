@@ -156,11 +156,12 @@ export function ZipAllButton({
       if (!res.ok) throw new Error("fetch failed");
       const data = await res.json();
 
-      const [{ default: JSZip }, XLSX, rowsLib, flowLib, pptLib, specLib, reqLib] = await Promise.all([
+      const [{ default: JSZip }, XLSX, rowsLib, flowLib, groupLib, pptLib, specLib, reqLib] = await Promise.all([
         import("jszip"),
         import("xlsx"),
         import("@/lib/export/excel-rows"),
         import("@/lib/export/flow-export"),
+        import("@/lib/export/flow-groups"),
         import("@/lib/export/ppt-export"),
         import("@/lib/export/spec-pack"),
         import("@/lib/export/requirements"),
@@ -177,11 +178,17 @@ export function ZipAllButton({
       };
 
       const scrIds = new Set(screens.map((s: { id: string }) => s.id));
-      const flowNodes = screens.map((s: { id: string; pageName: string; pageId: string }) => ({
-        id: s.id,
-        pageName: s.pageName,
-        pageId: s.pageId,
-      }));
+      // 화면명이 "기본"·"로딩"이라 그것만 적으면 어느 메뉴의 기본인지 알 수 없다.
+      const menuNameOf = new Map<string, string>(
+        menus.map((m: { id: string; nameKo: string }) => [m.id, m.nameKo]),
+      );
+      const flowNodes = screens.map(
+        (s: { id: string; pageName: string; pageId: string; menuId: string }) => ({
+          id: s.id,
+          pageName: `${menuNameOf.get(s.menuId) ?? "기타"} · ${s.pageName}`,
+          pageId: s.pageId,
+        }),
+      );
       const flowEdges = buttonActions
         .filter(
           (b: { screenId: string; targetScreenId: string }) =>
@@ -215,7 +222,28 @@ export function ZipAllButton({
       );
       zip.file(`WBS_${base}.xlsx`, sheetBuf(rowsLib.buildWbsRows(menus, screens), "WBS"));
       zip.file(`FLOW_${base}.html`, flowLib.buildFlowHtml(concept || "프로젝트", flowNodes, flowEdges));
-      zip.file(`FLOW_${base}.drawio`, flowLib.buildDrawioXml(flowNodes, flowEdges));
+      // drawio는 파일 하나에 탭을 여러 개 담을 수 있다. 메뉴 간 이동 한 장 +
+      // 메뉴별 한 장씩으로 나눠야 열어서 고칠 수 있는 크기가 된다.
+      const flowGroups = groupLib.buildFlowGroups(
+        menus.map((m: { id: string; menuCode: string; nameKo: string }) => ({
+          id: m.id,
+          menuCode: m.menuCode,
+          nameKo: m.nameKo,
+        })),
+        screens.map((s: { id: string; pageId: string; pageName: string; menuId: string }) => ({
+          id: s.id,
+          pageId: s.pageId,
+          pageName: s.pageName,
+          menuId: s.menuId,
+        })),
+        flowEdges,
+      );
+      zip.file(
+        `FLOW_${base}.drawio`,
+        flowGroups.length > 0
+          ? flowLib.buildDrawioTabs(flowGroups)
+          : flowLib.buildDrawioXml(flowNodes, flowEdges),
+      );
 
       const pptx = pptLib.createMenuPptx("사이트 전체", pptMenus);
       const pptBuf = (await pptx.write({ outputType: "arraybuffer" })) as ArrayBuffer;

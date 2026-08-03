@@ -184,15 +184,15 @@ export function buildFlowHtml(title: string, nodes: ExportNode[], edges: ExportE
 </html>`;
 }
 
-// draw.io(diagrams.net) 파일 — 압축하지 않은 mxGraphModel.
-export function buildDrawioXml(nodes: ExportNode[], edges: ExportEdge[]): string {
+// draw.io 한 장(diagram) 분량의 셀 묶음.
+function drawioCells(nodes: ExportNode[], edges: ExportEdge[], prefix: string): string {
   const { pos, valid, entry } = layout(nodes, edges);
   const cells: string[] = [
     `<mxCell id="0"/>`,
     `<mxCell id="1" parent="0"/>`,
   ];
   const idOf = new Map<string, string>();
-  nodes.forEach((n, i) => idOf.set(n.id, `n${i}`));
+  nodes.forEach((n, i) => idOf.set(n.id, `${prefix}n${i}`));
   nodes.forEach((n) => {
     const p = pos.get(n.id)!;
     const isEntry = entry.has(n.id);
@@ -206,10 +206,33 @@ export function buildDrawioXml(nodes: ExportNode[], edges: ExportEdge[]): string
   });
   valid.forEach((e, i) => {
     cells.push(
-      `<mxCell id="e${i}" value="${esc(e.label)}" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="${idOf.get(e.from)}" target="${idOf.get(e.to)}"><mxGeometry relative="1" as="geometry"/></mxCell>`,
+      `<mxCell id="${prefix}e${i}" value="${esc(e.label)}" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="${idOf.get(e.from)}" target="${idOf.get(e.to)}"><mxGeometry relative="1" as="geometry"/></mxCell>`,
     );
   });
-  return `<mxfile><diagram name="FLOW"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
-${cells.join("\n")}
-</root></mxGraphModel></diagram></mxfile>`;
+  return cells.join("\n");
+}
+
+const diagramXml = (name: string, body: string) =>
+  `<diagram name="${esc(name)}"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+${body}
+</root></mxGraphModel></diagram>`;
+
+/** 한 장짜리 — 예전 방식. 화면이 적을 때만 쓸 만하다. */
+export function buildDrawioXml(nodes: ExportNode[], edges: ExportEdge[]): string {
+  return `<mxfile>${diagramXml("FLOW", drawioCells(nodes, edges, ""))}</mxfile>`;
+}
+
+/**
+ * 여러 장짜리 — drawio는 파일 하나에 탭을 여러 개 담을 수 있다.
+ * 메뉴 간 이동 한 장 + 메뉴별 한 장씩으로 나누면 한 장이 5~15개라
+ * 열어서 옮기고 고칠 수 있는 크기가 된다.
+ */
+export function buildDrawioTabs(
+  groups: { label: string; nodes: ExportNode[]; edges: ExportEdge[] }[],
+): string {
+  const pages = groups
+    .filter((g) => g.nodes.length > 0)
+    .map((g, i) => diagramXml(g.label, drawioCells(g.nodes, g.edges, `g${i}_`)))
+    .join("\n");
+  return `<mxfile>${pages}</mxfile>`;
 }

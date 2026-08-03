@@ -1,54 +1,59 @@
 "use client";
 
+// 다이어그램을 화면에 바로 띄우는 틀.
+//
+// 메뉴 구조·FLOW는 목록으로 늘어놓으면 관계가 안 보이고 화면만 길어진다.
+// 그림을 기본으로 보여주고, 좁으면 가로로 밀어 보게 한다. 크게 볼 땐 팝업으로.
+
 import { useEffect, useState } from "react";
-import { Network, X, ZoomIn, ZoomOut, Maximize } from "lucide-react";
+import { Maximize, X, ZoomIn, ZoomOut } from "lucide-react";
 
 const MIN_ZOOM = 0.4;
 const MAX_ZOOM = 2;
-const ZOOM_STEP = 0.2;
+const STEP = 0.2;
 
-// 리스트를 기본으로 보여주고, [다이어그램으로 보기]를 누르면 큰 팝업(원본 크기, 스크롤)으로 다이어그램을 띄운다.
-export function DiagramOrList({
+export function DiagramView({
   diagram,
   title,
-  children,
+  hint,
 }: {
   diagram: React.ReactNode;
   title: string;
-  children: React.ReactNode;
+  hint?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const openModal = () => {
-    setZoom(1);
-    setOpen(true);
-  };
-
-  const zoomOut = () => setZoom((z) => Math.max(MIN_ZOOM, Math.round((z - ZOOM_STEP) * 10) / 10));
-  const zoomIn = () => setZoom((z) => Math.min(MAX_ZOOM, Math.round((z + ZOOM_STEP) * 10) / 10));
+  const zoomOut = () => setZoom((z) => Math.max(MIN_ZOOM, Math.round((z - STEP) * 10) / 10));
+  const zoomIn = () => setZoom((z) => Math.min(MAX_ZOOM, Math.round((z + STEP) * 10) / 10));
 
   return (
-    <div className="flex flex-col gap-3">
-      <button
-        type="button"
-        onClick={openModal}
-        className="inline-flex items-center gap-1.5 self-start rounded-lg border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-      >
-        <Network className="size-4" />
-        다이어그램으로 보기
-      </button>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : <span />}
+        <button
+          type="button"
+          onClick={() => {
+            setZoom(1);
+            setOpen(true);
+          }}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+        >
+          <Maximize className="size-4" />
+          크게 보기
+        </button>
+      </div>
 
-      {children}
+      <div className="overflow-auto rounded-xl border border-border bg-white p-5">
+        <div className="w-fit">{diagram}</div>
+      </div>
 
       {open && (
         <div
