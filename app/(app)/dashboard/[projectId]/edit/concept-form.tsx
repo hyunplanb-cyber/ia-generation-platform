@@ -64,14 +64,10 @@ export function ConceptForm({
 
   return (
     <div className="flex flex-col gap-5">
-      {/* 안내는 왼쪽, 이어서 만들기 버튼은 오른쪽 — 왼쪽 위에 두니 눈에 안 들어왔다. */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <p className="max-w-xl text-sm text-muted-foreground">
-          어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을
-          바탕으로 산출물을 만들어요.
-        </p>
-        {aside}
-      </div>
+      <p className="text-sm text-muted-foreground">
+        어떤 사이트를 만들지, 어떤 기기에 맞출지, 언제까지 할지를 알려주세요. AI가 이 내용을 바탕으로
+        산출물을 만들어요.
+      </p>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
         <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-8">
@@ -85,6 +81,7 @@ export function ConceptForm({
           <FormSection
             title="디바이스 대응 방식"
             hint="어떤 기기에 맞출지 정하면, 화면ID와 화면 구성이 그 기기 기준으로 생성돼요."
+            aside={aside}
           >
             <div className="grid gap-2.5 sm:grid-cols-3">
               {DEVICE_OPTIONS.map((opt) => (
