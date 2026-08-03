@@ -33,8 +33,6 @@ type ScaleCard = {
   key: "basic" | "detail";
   title: string;
   cost: number;
-  /** 실제 묶음 수를 미리 알 수 없어 이 값이 상한일 때 true */
-  costIsMax?: boolean;
   best?: boolean; // 더 촘촘한 추천 옵션
   desc?: string;
   checks?: string;
@@ -43,7 +41,8 @@ type ScaleCard = {
   scnCount?: string;
 };
 // 값은 묶음 수에 비례한다(verifyGenCost). 상세는 문서를 읽거나 크롤해 봐야 실제
-// 묶음 수를 알기 때문에 여기서는 '최대'만 보여주고, 실제로는 돈 만큼만 받는다.
+// 묶음 수를 알기 때문에, 뱃지에 적는 값은 시작할 때 필요한 양(상한)이다.
+// 규모가 작으면 그보다 적게 차감된다 — 그 설명은 카드 본문과 아래 안내에 적어 둔다.
 const FILE_SCALES: ScaleCard[] = [
   {
     key: "basic",
@@ -55,7 +54,6 @@ const FILE_SCALES: ScaleCard[] = [
     key: "detail",
     title: "상세 · 문서를 끝까지",
     cost: verifyGenCost(VERIFY_CHUNK.maxDocChunks),
-    costIsMax: true,
     best: true,
     desc: `${VERIFY_CHUNK.docChars.toLocaleString()}자씩 최대 ${VERIFY_CHUNK.maxDocChunks}묶음으로 나눠 문서 뒷부분까지 봅니다. 짧은 문서면 묶음이 줄고, 그만큼 값도 줄어요.`,
   },
@@ -74,7 +72,6 @@ const URL_SCALES: ScaleCard[] = [
     key: "detail",
     title: `홈+주요 화면 최대 ${VERIFY_CHUNK.maxSitePages}페이지, 페이지마다 11개 항목 검수`,
     cost: verifyGenCost(VERIFY_CHUNK.maxSitePages),
-    costIsMax: true,
     best: true,
     checks:
       "페이지 열림, 응답 속도, 모바일 대응, 검색 기본(제목·설명), SNS 공유 카드, 대표 제목, 인코딩·언어 설정, 이미지 대체 텍스트, 혼합 콘텐츠(http 리소스), 이미지 깨짐, 내부 링크 깨짐",
@@ -521,7 +518,6 @@ export function VerifyForm({
                           active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                         }`}
                       >
-                        {c.costIsMax ? "최대 " : ""}
                         {c.cost}크레딧
                       </span>
                     </div>
@@ -555,8 +551,8 @@ export function VerifyForm({
 
             {shortOfCredits && (
               <p className="mt-4 rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
-                <b className="font-semibold text-foreground">크레딧이 모자라요.</b> 이 검수에는 최대{" "}
-                {genCost}크레딧이 필요한데 지금 {balance}크레딧 남았어요.
+                <b className="font-semibold text-foreground">크레딧이 모자라요.</b> 이 검수를 시작하려면{" "}
+                {genCost}크레딧이 있어야 하는데 지금 {balance}크레딧 남았어요.
                 {creditsOpen
                   ? " 충전한 뒤 다시 시도해 주세요."
                   : " 충전 기능을 준비하고 있어요. 열리면 가장 먼저 알려드릴게요."}
