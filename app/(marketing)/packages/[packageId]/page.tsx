@@ -317,7 +317,7 @@ export default async function PackageDetailPage({
         {/* 증거 — 말보다 실물. 구매 결정 전에 보이도록 앞쪽에 둔다. */}
         {(pkg.videoId || pkg.demoUrl) && (
           <section className="flex flex-col gap-4">
-            <SectionTitle>말보다, 실제로 만든 걸 보여드릴게요</SectionTitle>
+            <SectionTitle>어떻게 만들어지는지 영상으로 확인해 보세요</SectionTitle>
             {pkg.videoId && (
               <>
                 <p className="leading-relaxed text-muted-foreground">
