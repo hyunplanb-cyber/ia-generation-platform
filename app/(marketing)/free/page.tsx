@@ -166,27 +166,32 @@ export default async function FreePage() {
           </div>
         </section>
 
-        {/* 업셀 */}
+        {/* 맺음 — 홈 하단과 같은 이야기로 닫는다.
+            무료 샘플만 받고 나가는 사람에게도 우리가 무엇을 하는 곳인지는 남겨야 한다. */}
         <section className="flex flex-col items-center gap-4 rounded-2xl bg-linear-to-br from-primary-soft/50 via-background to-muted/40 px-6 py-10 text-center">
-          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-            내 서비스는 어떤 화면이 나올까요?
+          <h2 className="text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl">
+            {/* 홈과 같은 색 대비 — '만들고'는 주황(설계), '오픈할 준비'는 녹색(검수). */}
+            바이브코딩으로 원하는 사이트 <span className="text-primary">만들고</span>,
+            <br />
+            <span className="text-success">오픈할 준비</span> 되셨나요?
           </h2>
           <p className="max-w-lg leading-relaxed text-muted-foreground">
-            위 샘플도 컨셉과 메뉴만 넣어서 자동으로 만든 거예요. 내 서비스로도{" "}
-            <b className="font-semibold text-foreground">프로젝트 1개를 무료로</b> 만들어볼 수
-            있습니다. 업종별로 완성된 AI팩도 있어요.
+            AI는 편리하고 빠르죠. 하지만 원하는 대로 나왔는지, 정말 오픈해도 되는지 하나씩 눌러보는
+            건 결국 우리 몫이에요. 내 서비스, 내 사이트잖아요 — 어떤 화면이 만들어질지 알고 만들고,
+            진짜 오픈해도 되는지 꼭 확인해보세요.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            {/* 이미 로그인했다면 가입 화면을 한 번 더 거치지 않도록 바로 대시보드로 보낸다. */}
             <Link
-              href={session ? "/dashboard" : "/signup?next=/dashboard"}
+              href="/dashboard/new"
+              prefetch={false}
               className={buttonVariants({ size: "lg" })}
             >
-              무료로 만들어보기
+              AI팩 만들기
               <ArrowRight className="size-4" />
             </Link>
-            <Link href="/packages" className={buttonVariants({ variant: "outline", size: "lg" })}>
-              AI팩 보기
+            <Link href="/verify" className={buttonVariants({ variant: "outline", size: "lg" })}>
+              내 사이트 검수하기
+              <ArrowRight className="size-4" />
             </Link>
           </div>
         </section>
