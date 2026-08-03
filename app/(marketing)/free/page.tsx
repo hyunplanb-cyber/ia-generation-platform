@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { Gift, FileSpreadsheet, FileCode2, Network, Check, ArrowRight } from "lucide-react";
+import {
+  Gift,
+  FileSpreadsheet,
+  FileCode2,
+  Network,
+  ListChecks,
+  CalendarDays,
+  Check,
+  ArrowRight,
+} from "lucide-react";
 import { auth } from "@/lib/auth";
 import { buttonVariants } from "@/components/ui/button";
+import { splitFuncDef } from "@/lib/export/requirements";
 import { CREATOR } from "@/template-data-creator";
 import { DownloadCta } from "./download-cta";
 
@@ -18,15 +28,17 @@ export const metadata: Metadata = {
 
 const screens = CREATOR.menus.flatMap((m) => m.screens);
 const exceptions = screens.filter((s) => /(empty|error|closed)/.test(s.role));
-const reqCount = screens.reduce(
-  (n, s) => n + s.func.split("·").filter((x) => x.trim()).length,
-  0,
-);
+// 기능정의서를 만들 때와 같은 방식으로 센다 — 여기서만 '·'로 자르면
+// 화면에 적힌 숫자와 받아본 파일의 줄 수가 어긋난다.
+const reqCount = screens.reduce((n, s) => n + splitFuncDef(s.func).length, 0);
 
 const FILES = [
   { icon: FileCode2, name: "AI 빌드 스펙팩", ext: "md", desc: "AI에 통째로 넣는 스펙 문서", hot: true },
   { icon: FileSpreadsheet, name: "IA 화면목록", ext: "xlsx", desc: `화면 ${screens.length}개 + 화면별 프롬프트`, hot: true },
-  { icon: Network, name: "메뉴구조", ext: "xlsx", desc: "메뉴와 화면 트리", hot: false },
+  { icon: ListChecks, name: "기능정의서", ext: "xlsx", desc: `요구사항 ${reqCount}개 · 업무 > 기능 > 구성`, hot: false },
+  { icon: Network, name: "FLOW 흐름도", ext: "html", desc: "화면 이동을 그림으로, 메뉴별 5장", hot: false },
+  { icon: CalendarDays, name: "WBS 일정표", ext: "xlsx", desc: "화면별 작업 일정 (주말 제외)", hot: false },
+  { icon: FileSpreadsheet, name: "메뉴구조", ext: "xlsx", desc: "메뉴와 화면 트리", hot: false },
 ];
 
 export default async function FreePage() {
@@ -59,7 +71,7 @@ export default async function FreePage() {
       <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-14">
         {/* 들어 있는 파일 */}
         <section className="flex flex-col gap-4">
-          <SectionTitle>무엇이 들어 있나요</SectionTitle>
+          <SectionTitle>무엇이 들어 있나요 — 문서 {FILES.length}종</SectionTitle>
           <div className="flex flex-col gap-3">
             {FILES.map(({ icon: Icon, name, ext, desc, hot }) => (
               <div

@@ -60,7 +60,7 @@ function pad(n: number): string {
 // 그 요건의 내용을 열거하는 것이므로 자르지 않는다.
 // (예: "필터(여행지·가격·소요시간)" 은 세 조각이 아니라 한 요건이다.
 //  괄호를 무시하고 자르면 "필터(여행지" / "소요시간)" 처럼 깨진 줄이 남는다.)
-function splitFuncDef(funcDef: string): string[] {
+export function splitFuncDef(funcDef: string): string[] {
   const items: string[] = [];
   let depth = 0;
   let buf = "";
