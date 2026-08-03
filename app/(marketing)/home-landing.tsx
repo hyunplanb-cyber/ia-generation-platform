@@ -5,7 +5,9 @@ import Link from "next/link";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
 import type { AiPackCard } from "@/lib/packages";
 
-const PER_PAGE = 3;
+// 한 업종이 4등급이라 2개씩 넘긴다. 3개씩이면 둘째 장에 한 개만 남아,
+// 특히 모바일에서 그 한 개가 첫 장 높이만큼 늘어나 보였다.
+const PER_PAGE = 2;
 const ROLL_MS = 5000;
 
 
@@ -1024,7 +1026,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         .tpls h2 {
           font-size: clamp(34px, 5vw, 58px);
         }
-        /* AI팩 6종 — 3개씩 두 페이지로 롤링 */
+        /* AI팩 — PER_PAGE개씩 넘기며 롤링 */
         .tpl-roll {
           margin-top: 38px;
         }
@@ -1038,8 +1040,12 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         .tpl-page {
           flex: 0 0 100%;
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 16px;
+          /* 장마다 카드 수가 다를 수 있다(등급이 홀수인 업종). 늘리지 말고 내용 높이로 둔다 —
+             트랙 높이는 가장 긴 장을 따라가서, 늘리면 짧은 장의 카드가 빈 채로 늘어난다. */
+          align-content: start;
+          align-items: start;
           /* 트랙이 옆으로 밀릴 때 카드 그림자가 잘리지 않게 살짝 여유를 준다 */
           padding: 4px;
         }
