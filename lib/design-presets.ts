@@ -491,6 +491,8 @@ export interface PresetConfig {
    * 판매팩의 가이드 3종도 같은 방식이라(사양 고정, 테마만 다름) 결과물이 서로 닮는다.
    */
   styleB?: DesignKey;
+  /** 두 번째 벌의 포인트 색. 없으면 그 테마의 기본 색을 쓴다. */
+  primaryB?: string;
 }
 
 /** 두 벌짜리 프리셋에서 두 번째 벌의 설정을 만든다(테마와 주색만 갈린다). */
@@ -499,8 +501,9 @@ export function secondPreset(cfg: PresetConfig): PresetConfig | null {
   return {
     ...cfg,
     style: cfg.styleB,
-    primary: PRIMARY_SWATCHES_BY_STYLE[cfg.styleB][0],
+    primary: cfg.primaryB || PRIMARY_SWATCHES_BY_STYLE[cfg.styleB][0],
     styleB: undefined,
+    primaryB: undefined,
   };
 }
 

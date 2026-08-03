@@ -126,6 +126,10 @@ function Choice({
 
 const styleTitleOf = (k: DesignKey) => DESIGN_OPTIONS.find((d) => d.key === k)?.title ?? k;
 
+/** 2번 벌의 포인트 색. 아직 안 골랐으면 그 테마의 첫 색. */
+const primaryBOf = (c: PresetConfig) =>
+  c.primaryB || (c.styleB ? primarySwatchesFor(c.styleB)[0] : c.primary);
+
 /**
  * 미리보기 카드 — 고른 색·글꼴·모서리·밀도가 실제로 어떻게 보이는지.
  *
@@ -256,18 +260,24 @@ export function PresetForm({
     setSavedTick(false);
     setCfg((c) => {
       if (c.style === style) {
-        // 1번을 해제 — 2번이 있으면 그게 1번이 된다.
+        // 1번을 해제 — 2번이 있으면 그게 1번이 된다(고른 색도 함께 올라온다).
         if (!c.styleB) return c; // 하나는 남아야 한다
-        return { ...c, style: c.styleB, primary: primarySwatchesFor(c.styleB)[0], styleB: undefined };
+        return {
+          ...c,
+          style: c.styleB,
+          primary: primaryBOf(c),
+          styleB: undefined,
+          primaryB: undefined,
+        };
       }
-      if (c.styleB === style) return { ...c, styleB: undefined };
-      return { ...c, styleB: style };
+      if (c.styleB === style) return { ...c, styleB: undefined, primaryB: undefined };
+      // 2번을 새로 고르면 그 테마의 첫 색으로 시작한다(아래에서 바꿀 수 있다).
+      return { ...c, styleB: style, primaryB: primarySwatchesFor(style)[0] };
     });
   };
 
   // 색·글꼴·모서리·밀도는 미리보기 카드가 자기 설정으로 직접 계산한다(PreviewCard).
   // 두 벌을 그려야 해서, 바깥에서 한 벌 기준으로 미리 만들어 두면 쓸 수 없다.
-  const swatches = useMemo(() => primarySwatchesFor(cfg.style), [cfg.style]);
   const rad = useMemo(() => RADIUS_FEELS.find((r) => r.key === cfg.radius)!, [cfg.radius]);
   const sum = useMemo(() => buildPresetSummary(cfg), [cfg]);
 
@@ -416,32 +426,59 @@ export function PresetForm({
         </p>
       </Section>
 
-      <Section title="포인트 색상" hint="고른 테마에 어울리는 색이에요. 버튼·강조에 쓰입니다.">
-        <div className="flex flex-wrap gap-2">
-          {swatches.map((hex) => (
-            <button
-              key={hex}
-              type="button"
-              onClick={() => set("primary", hex)}
-              aria-label={hex}
-              className={`size-9 rounded-full transition-transform hover:scale-110 ${
-                cfg.primary.toUpperCase() === hex.toUpperCase()
-                  ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
-                  : "ring-1 ring-black/10"
-              }`}
-              style={{ backgroundColor: hex }}
-            />
-          ))}
-          <label className="flex items-center gap-2 rounded-full border border-border px-3 text-xs text-muted-foreground">
-            직접
-            <input
-              type="color"
-              value={cfg.primary}
-              onChange={(e) => set("primary", e.target.value.toUpperCase())}
-              className="size-6 cursor-pointer rounded-full border-0 bg-transparent p-0"
-            />
-          </label>
-        </div>
+      {/* 두 벌이면 색도 각각 고른다. 예전엔 1번 색만 고를 수 있고 2번은 그 테마의
+          첫 색으로 고정돼서, 두 벌을 고른 보람이 반쪽이었다(2026-08-04). */}
+      <Section
+        title="포인트 색상"
+        hint={
+          cfg.styleB
+            ? "두 벌의 색을 각각 고르세요. 버튼·강조에 쓰입니다."
+            : "고른 테마에 어울리는 색이에요. 버튼·강조에 쓰입니다."
+        }
+      >
+        {(cfg.styleB
+          ? ([
+              { badge: "1", style: cfg.style, value: cfg.primary, key: "primary" as const },
+              { badge: "2", style: cfg.styleB, value: primaryBOf(cfg), key: "primaryB" as const },
+            ] as const)
+          : ([{ badge: "", style: cfg.style, value: cfg.primary, key: "primary" as const }] as const)
+        ).map((row) => (
+          <div key={row.key} className="flex flex-col gap-1.5">
+            {row.badge && (
+              <p className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                <span className="rounded-full bg-primary px-1.5 text-[11px] font-bold text-primary-foreground">
+                  {row.badge}
+                </span>
+                {styleTitleOf(row.style)}
+              </p>
+            )}
+            <div className="flex flex-wrap gap-2">
+              {primarySwatchesFor(row.style).map((hex) => (
+                <button
+                  key={hex}
+                  type="button"
+                  onClick={() => set(row.key, hex)}
+                  aria-label={hex}
+                  className={`size-9 rounded-full transition-transform hover:scale-110 ${
+                    row.value.toUpperCase() === hex.toUpperCase()
+                      ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
+                      : "ring-1 ring-black/10"
+                  }`}
+                  style={{ backgroundColor: hex }}
+                />
+              ))}
+              <label className="flex items-center gap-2 rounded-full border border-border px-3 text-xs text-muted-foreground">
+                직접
+                <input
+                  type="color"
+                  value={row.value}
+                  onChange={(e) => set(row.key, e.target.value.toUpperCase())}
+                  className="size-6 cursor-pointer rounded-full border-0 bg-transparent p-0"
+                />
+              </label>
+            </div>
+          </div>
+        ))}
       </Section>
 
       <Section
