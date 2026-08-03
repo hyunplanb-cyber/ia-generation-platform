@@ -8,6 +8,8 @@ import {
   Network,
   ListChecks,
   CalendarDays,
+  PenTool,
+  Presentation,
   Check,
   ArrowRight,
 } from "lucide-react";
@@ -32,13 +34,17 @@ const exceptions = screens.filter((s) => /(empty|error|closed)/.test(s.role));
 // 화면에 적힌 숫자와 받아본 파일의 줄 수가 어긋난다.
 const reqCount = screens.reduce((n, s) => n + splitFuncDef(s.func).length, 0);
 
+// 흐름도와 메뉴구조는 두 벌씩 들어 있다 — 하나는 보라고, 하나는 고쳐 쓰라고.
+// 쓰임이 다르므로 따로 센다.
 const FILES = [
   { icon: FileCode2, name: "AI 빌드 스펙팩", ext: "md", desc: "AI에 통째로 넣는 스펙 문서", hot: true },
   { icon: FileSpreadsheet, name: "IA 화면목록", ext: "xlsx", desc: `화면 ${screens.length}개 + 화면별 프롬프트`, hot: true },
   { icon: ListChecks, name: "기능정의서", ext: "xlsx", desc: `요구사항 ${reqCount}개 · 업무 > 기능 > 구성`, hot: false },
-  { icon: Network, name: "FLOW 흐름도", ext: "html", desc: "화면 이동을 그림으로, 메뉴별 5장", hot: false },
+  { icon: Network, name: "FLOW 흐름도", ext: "html", desc: "브라우저로 바로 열어 보기 · 메뉴별 5장", hot: false },
+  { icon: PenTool, name: "FLOW 흐름도", ext: "drawio", desc: "draw.io에서 직접 고쳐 쓰기", hot: false },
   { icon: CalendarDays, name: "WBS 일정표", ext: "xlsx", desc: "화면별 작업 일정 (주말 제외)", hot: false },
   { icon: FileSpreadsheet, name: "메뉴구조", ext: "xlsx", desc: "메뉴와 화면 트리", hot: false },
+  { icon: Presentation, name: "메뉴구조", ext: "pptx", desc: "장표 한 장 · 보고 자료에 그대로", hot: false },
 ];
 
 export default async function FreePage() {
@@ -75,7 +81,8 @@ export default async function FreePage() {
           <div className="flex flex-col gap-3">
             {FILES.map(({ icon: Icon, name, ext, desc, hot }) => (
               <div
-                key={name}
+                // 흐름도·메뉴구조는 이름이 같고 확장자만 다른 줄이 둘씩이라 함께 묶어야 한다.
+                key={`${name}.${ext}`}
                 className={`flex items-center gap-4 rounded-xl border p-4 ${
                   hot ? "border-primary/40 bg-primary-soft/25" : "border-border bg-surface"
                 }`}
