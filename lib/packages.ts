@@ -9,7 +9,7 @@
 // 디자인 프리셋은 전 등급 공통.
 // "만들기 전(설계)"과 "오픈 전(검수)"을 축으로 갈랐다.
 // 만들어 둔 화면이 있는 업종에만 디럭스·프리미엄이 생긴다(현재 여행의 3뎁스뿐).
-import type { DesignKey } from "@/lib/design-presets";
+import type { DesignKey, LayoutKey } from "@/lib/design-presets";
 import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
 import { LMS, type TplMenu } from "@/template-data-lms";
 import { BEAUTY } from "@/template-data-beauty";
@@ -99,6 +99,14 @@ export interface PackageDef {
   presetStyles: [DesignKey, DesignKey, DesignKey];
   /** 위 3종이 이 업종에서 어디에 어울리는지 (presetStyles와 같은 순서) */
   presetFits: [string, string, string];
+  /**
+   * 판매팩에 함께 넣는 레이아웃 골격 2종.
+   *
+   * 색과 골격을 한 파일에 묶어 두면 "코럴을 쓰려면 사진 중심형이어야 한다"가 되어
+   * 고를 수 있는 게 3가지뿐이다. 따로 넣으면 3 × 2 = 6가지가 된다(2026-08-03).
+   * 업종에 어울리는 둘을, 서로 확실히 다른 골격으로 고른다.
+   */
+  layoutKeys: [LayoutKey, LayoutKey];
   /**
    * AI는 화면(프로토타입)까지 만들어 준다. 그 뒤 개발자가 실제로 붙여야 하는 것들.
    * 구매 후 "버튼이 안 눌려요"가 나오지 않도록 구매 전에 명확히 알린다.
@@ -307,6 +315,7 @@ export const PACKAGES: PackageDef[] = [
       "전문가용 도구, 관리자 콘솔, 정보 밀도가 높은 화면",
       "B2C 강의 서비스, 취미·키즈 교육, 일반 사용자 대상",
     ],
+    layoutKeys: ["console", "search"],
     integrations: [
       { area: "로그인·회원가입", detail: "이메일 가입, 카카오·구글 등 소셜 로그인" },
       { area: "수강 결제", detail: "카드·간편결제(PG), 환불과 부분 취소" },
@@ -354,6 +363,7 @@ export const PACKAGES: PackageDef[] = [
       "감각적인 편집숍형 살롱, 남성 전용 바버샵",
       "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
     ],
+    layoutKeys: ["showcase", "list"],
     integrations: [
       { area: "로그인·회원가입", detail: "이메일 가입, 카카오 등 소셜 로그인, 휴대폰 본인인증" },
       { area: "예약금·결제", detail: "카드·간편결제(PG), 취소 수수료와 환불" },
@@ -408,6 +418,7 @@ export const PACKAGES: PackageDef[] = [
       "사진이 주인공인 감성 여행 브랜드, 소규모 프라이빗 투어",
       "액티비티·레저 예약, 20~30대 자유여행객 타깃",
     ],
+    layoutKeys: ["search", "showcase"],
     integrations: [
       { area: "로그인·회원가입", detail: "이메일 가입, 소셜 로그인, 비회원 예약 조회" },
       { area: "예약 결제", detail: "카드·간편결제(PG), 해외 결제와 환율, 부분 취소 환불" },

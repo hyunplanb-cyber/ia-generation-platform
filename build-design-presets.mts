@@ -20,6 +20,7 @@ const layoutOf = (key: string) => {
 const TARGETS = {
   lms: {
     styles: ["navy", "mono", "coral"] as const,
+    layouts: ["console", "search"] as const,
     dir: "판매용_템플릿/LMS_온라인강의플랫폼/디자인프리셋",
     fits: [
       "B2B 교육, 사내 LMS, 기업 대상 강의 플랫폼",
@@ -29,6 +30,7 @@ const TARGETS = {
   },
   beauty: {
     styles: ["coral", "mono", "forest"] as const,
+    layouts: ["showcase", "list"] as const,
     dir: "판매용_템플릿/뷰티샵_예약플랫폼/디자인프리셋",
     fits: [
       "네일·속눈썹·왁싱 등 캐주얼 뷰티, 20~30대 타깃 매장",
@@ -38,6 +40,7 @@ const TARGETS = {
   },
   travel: {
     styles: ["navy", "mono", "pastel"] as const,
+    layouts: ["search", "showcase"] as const,
     dir: "판매용_템플릿/해외투어_티켓예약/디자인프리셋",
     fits: [
       "신뢰가 중요한 해외 투어·티켓 예약, 대형 여행 플랫폼",
@@ -47,6 +50,7 @@ const TARGETS = {
   },
   admin: {
     styles: ["navy", "mono", "pastel"] as const,
+    layouts: ["console", "list"] as const,
     dir: "판매용_템플릿/비즈니스관리_관리자시스템/디자인프리셋",
     fits: [
       "정보 밀도가 높은 백오피스·ERP형 관리 시스템, 데이터 중심 화면",
@@ -56,6 +60,7 @@ const TARGETS = {
   },
   groupbuy: {
     styles: ["navy", "mono", "coral"] as const,
+    layouts: ["list", "showcase"] as const,
     dir: "판매용_템플릿/공동구매_공구플랫폼/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
@@ -65,6 +70,7 @@ const TARGETS = {
   },
   "groupbuy-deep": {
     styles: ["navy", "mono", "coral"] as const,
+    layouts: ["list", "showcase"] as const,
     dir: "판매용_템플릿/공동구매_공구플랫폼_상세IA/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
@@ -74,6 +80,7 @@ const TARGETS = {
   },
   "admin-deep": {
     styles: ["navy", "mono", "pastel"] as const,
+    layouts: ["console", "list"] as const,
     dir: "판매용_템플릿/비즈니스관리_관리자시스템_상세IA/디자인프리셋",
     fits: [
       "정보 밀도가 높은 백오피스·ERP형 관리 시스템, 데이터 중심 화면",
@@ -92,7 +99,7 @@ mkdirSync(OUT, { recursive: true });
 // 3종을 다른 테마로 바꾸면 옛 파일이 남는다(예: 파스텔 → 코럴로 바꿔도 파스텔 파일이 그대로).
 // 그대로 두면 판매 zip에 네 벌이 들어가 "3종"이라는 설명과 어긋난다. 매번 비우고 다시 쓴다.
 for (const f of readdirSync(OUT)) {
-  if (/^프리셋_/.test(f)) rmSync(`${OUT}/${f}`);
+  if (/^(프리셋_|레이아웃_)/.test(f)) rmSync(`${OUT}/${f}`);
 }
 
 interface Preset {
@@ -414,23 +421,13 @@ function md(p: Preset): string {
   for (const [a, b] of p.screens) L.push(`| ${a} | ${b} |`);
   L.push("");
 
-  const lay = layoutOf(p.key);
-  L.push(`## 6. 레이아웃 골격 — ${lay.label}`);
+  L.push("## 6. 화면 뼈대는 따로 고르세요");
   L.push("");
-  L.push(`> ${lay.tagline}`);
+  L.push("이 파일은 **색·글꼴·모서리·여백**만 정합니다. 무엇을 어디에 놓을지(화면 뼈대)는 같은 폴더의");
+  L.push("`레이아웃_A_*.md` · `레이아웃_B_*.md` 중 하나를 골라 **이 파일과 함께** AI에 넣으세요.");
   L.push("");
-  L.push("| 자리 | 어떻게 |");
-  L.push("| --- | --- |");
-  L.push(`| 첫 화면 위쪽 | ${lay.hero} |`);
-  L.push(`| 목록 화면 | ${lay.list} |`);
-  L.push(`| 내비게이션 | ${lay.nav} |`);
-  L.push(`| 상세 화면 | ${lay.detail} |`);
+  L.push("색 3종 × 뼈대 2종이라 **6가지 조합**이 나옵니다. 짝이 정해져 있지 않으니 마음에 드는 대로 섞으세요.");
   L.push("");
-  L.push(`어울리는 곳: ${lay.fits}`);
-  L.push("");
-  L.push("**세 프리셋은 색만 다른 게 아니라 뼈대가 다릅니다.** 색만 맞추고 이 표를 무시하면 어느 것으로 만들어도 같은 화면이 나옵니다.");
-  L.push("");
-
   L.push("## 7. 이미지 자리");
   L.push("");
   L.push("아직 사진이 없으니 이미지 자리는 **테마 색이 아니라 옅은 파스텔**로 채우세요. 테마 색으로 칠하면 화면이 그 색 덩어리로 뒤덮여 디자인이 안 보입니다.");
@@ -462,7 +459,6 @@ function md(p: Preset): string {
   L.push(`- 카드: ${p.comp[2][1]}`);
   L.push(`- 빈 화면: ${p.screens[3][1]}`);
   L.push("");
-  L.push(`- 레이아웃(${lay.label}): 첫 화면 위쪽은 ${lay.hero} 목록은 ${lay.list} 내비는 ${lay.nav}`);
   L.push(`- 이미지 자리: 테마 색 말고 ${IMAGE_PLACEHOLDER.tones[0]} 같은 옅은 파스텔 + ${IMAGE_PLACEHOLDER.border} 테두리. 안에 "${IMAGE_PLACEHOLDER.examples[0]}"처럼 무엇과 권장 크기를 적어줘`);
   L.push("");
   L.push("화면마다 다른 스타일을 쓰지 말고, 위 규칙을 끝까지 유지해줘.");
@@ -484,10 +480,7 @@ const tokens = (p: Preset) => ({
   shadow: p.shadow,
   components: Object.fromEntries(p.comp),
   screenGuides: Object.fromEntries(p.screens),
-  layout: (() => {
-    const l = layoutOf(p.key);
-    return { key: l.key, label: l.label, hero: l.hero, list: l.list, nav: l.nav, detail: l.detail, fits: l.fits };
-  })(),
+  // 골격은 이 파일에 넣지 않는다 — 레이아웃 프리셋 파일에서 따로 고른다.
   imagePlaceholder: {
     tones: IMAGE_PLACEHOLDER.tones,
     border: IMAGE_PLACEHOLDER.border,
@@ -496,6 +489,58 @@ const tokens = (p: Preset) => ({
     examples: IMAGE_PLACEHOLDER.examples,
     rule: IMAGE_PLACEHOLDER.rule,
   },
+});
+
+/* ─────────────────────────────────────────────────────────────
+   레이아웃 프리셋 — 색과 짝을 짓지 않는다.
+   색 3벌과 뼈대 2벌을 따로 넣으면 구매자가 6가지로 섞을 수 있다.
+   ───────────────────────────────────────────────────────────── */
+const layoutMd = (l: (typeof LAYOUTS)[number], no: string): string => {
+  const L: string[] = [];
+  L.push(`# 레이아웃 프리셋 ${no} — ${l.label}`);
+  L.push("");
+  L.push(`> ${l.tagline}`);
+  L.push("");
+  L.push("## 사용 방법");
+  L.push("");
+  L.push("1. 이 파일과 **디자인 프리셋 파일 하나**(색·글꼴)를 함께 AI 코딩 도구에 넣으세요.");
+  L.push("2. 스펙팩(07_AI빌드_스펙팩.json)과 함께 넣으면 그 화면들이 이 뼈대로 만들어집니다.");
+  L.push("3. 색 3종 × 뼈대 2종 = **6가지 조합** 중 마음에 드는 대로 고르시면 됩니다.");
+  L.push("");
+  L.push("## 자리별 규칙");
+  L.push("");
+  L.push("| 자리 | 어떻게 |");
+  L.push("| --- | --- |");
+  L.push(`| 첫 화면 위쪽 | ${l.hero} |`);
+  L.push(`| 목록 화면 | ${l.list} |`);
+  L.push(`| 내비게이션 | ${l.nav} |`);
+  L.push(`| 상세 화면 | ${l.detail} |`);
+  L.push("");
+  L.push(`**어울리는 곳** — ${l.fits}`);
+  L.push("");
+  L.push("---");
+  L.push("");
+  L.push("## AI에게 그대로 넣는 지시문");
+  L.push("");
+  L.push("```");
+  L.push(`화면 뼈대를 아래대로 잡아줘. 색과 글꼴은 함께 넣은 디자인 프리셋 파일을 따르고,`);
+  L.push(`뼈대는 이 규칙을 우선해줘.`);
+  L.push("");
+  L.push(`- 첫 화면 위쪽: ${l.hero}`);
+  L.push(`- 목록 화면: ${l.list}`);
+  L.push(`- 내비게이션: ${l.nav}`);
+  L.push(`- 상세 화면: ${l.detail}`);
+  L.push("");
+  L.push("색만 맞추고 이 뼈대를 무시하면 어떤 색으로 만들어도 같은 화면이 나와. 뼈대를 먼저 잡고 색을 입혀줘.");
+  L.push("```");
+  L.push("");
+  return L.join("\n");
+};
+
+const layoutTokens = (l: (typeof LAYOUTS)[number], no: string) => ({
+  layout: { no, key: l.key, name: l.label, tagline: l.tagline, fits: l.fits },
+  slots: { hero: l.hero, list: l.list, nav: l.nav, detail: l.detail },
+  note: "색·글꼴은 디자인 프리셋 파일을 따른다. 이 파일은 화면 뼈대만 정한다.",
 });
 
 /**
@@ -521,6 +566,21 @@ if (listed && listed.presetStyles.join() !== target.styles.join()) {
     `프리셋 3종이 lib/packages.ts와 달라요.\n` +
       `  이 스크립트: ${target.styles.join(", ")}\n` +
       `  packages.ts: ${listed.presetStyles.join(", ")}\n` +
+      `  둘을 맞춘 뒤 다시 돌리세요.`,
+  );
+}
+
+// 이 업종에 넣을 뼈대 2종.
+const chosenLayouts = target.layouts.map((key) => {
+  const found = LAYOUTS.find((l) => l.key === key);
+  if (!found) throw new Error(`레이아웃 정의가 없어요: ${key}`);
+  return found;
+});
+if (listed && listed.layoutKeys.join() !== target.layouts.join()) {
+  throw new Error(
+    `레이아웃 2종이 lib/packages.ts와 달라요.\n` +
+      `  이 스크립트: ${target.layouts.join(", ")}\n` +
+      `  packages.ts: ${listed.layoutKeys.join(", ")}\n` +
       `  둘을 맞춘 뒤 다시 돌리세요.`,
   );
 }
@@ -565,18 +625,18 @@ const card = (p: Preset) => {
       </div>
       <div class="dsw">${Object.values(p.c).slice(0, 7).map(v => `<i style="background:${v}"></i>`).join("")}</div>
     </div>
-    ${layoutBlock(p)}
   </div>`;
 };
 
-/* 색만 보면 셋이 비슷해 보인다. 뼈대가 어떻게 다른지 그림과 표로 함께 보여준다. */
-const layoutBlock = (p: Preset) => {
-  const l = layoutOf(p.key);
-  const pri = Object.values(p.c)[0];
-  const bd = p.c["border (구분선)"];
+/* 뼈대 카드 — 색 카드와 나란히 두지 않고 아래 줄에 따로 둔다.
+   나란히 두면 "이 색에는 이 뼈대"로 읽혀서 짝을 푼 뜻이 사라진다. */
+const layoutCard = (l: (typeof LAYOUTS)[number], no: string) => {
+  const pri = "#5A6470";
+  const bd = "#DEDEE4";
   return `
+  <div class="col">
+    <div class="lab"><b>${no}. ${l.label}</b><span>${l.tagline}</span></div>
     <div class="lay">
-      <div class="lay-hd"><b>레이아웃 골격 — ${l.label}</b><span>${l.tagline}</span></div>
       ${wire(l.key, pri, bd)}
       <dl class="lay-kv">
         <dt>첫 화면 위쪽</dt><dd>${l.hero}</dd>
@@ -585,7 +645,8 @@ const layoutBlock = (p: Preset) => {
         <dt>상세 화면</dt><dd>${l.detail}</dd>
       </dl>
       <p class="lay-fit">어울리는 곳: ${l.fits}</p>
-    </div>`;
+    </div>
+  </div>`;
 };
 
 /* 뼈대 그림 — 색이 아니라 "무엇이 어디에 있는지"만 보여준다 */
@@ -607,7 +668,7 @@ const wire = (kind: string, pri: string, bd: string) => {
 };
 
 const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8">
-<title>디자인 프리셋 3종 비교</title><style>
+<title>디자인 프리셋 · 레이아웃 프리셋</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Pretendard,"Malgun Gothic",sans-serif;background:#EFEFF2;padding:40px;color:#1F2024}
 h1{font-size:26px;font-weight:800;margin-bottom:6px}
@@ -618,9 +679,9 @@ h1{font-size:26px;font-weight:800;margin-bottom:6px}
 .lab span{display:block;font-size:13px;color:#6B6F76;margin-top:3px;line-height:1.5}
 .demo{border-radius:14px;padding:22px;min-height:330px;border:1px solid #E0E0E5}
 .dcard{padding:18px}
-.lay{margin-top:14px;border-top:1px dashed #D8D8DE;padding-top:14px}
-.lay-hd b{display:block;font-size:14px}
-.lay-hd span{display:block;font-size:12px;color:#6B6F76;margin-top:2px}
+.sec{font-size:17px;font-weight:800;margin:30px 0 12px}
+.grid2{grid-template-columns:repeat(2,1fr);max-width:820px}
+.lay{background:#fff;border:1px solid #DEDEE4;border-radius:12px;padding:16px}
 .wire{margin:10px 0;height:96px;border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:5px;background:#fff}
 .wire i{display:block;border-radius:3px;background:#E6E6EB}
 .wire .w3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;flex:1}
@@ -649,13 +710,30 @@ h1{font-size:26px;font-weight:800;margin-bottom:6px}
 .dsw{display:flex;gap:5px;margin-top:20px}
 .dsw i{width:26px;height:26px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
 </style></head><body>
-<h1>디자인 프리셋 3종</h1>
-<p class="sub">같은 구성요소를 세 가지 스타일로. 원하는 프리셋을 스펙팩과 함께 AI에 넣으면 그 스타일로 만들어집니다.<br>
-글자는 자리표시용이며, 색·굵기·모서리·여백이 프리셋마다 어떻게 달라지는지 보시면 됩니다.</p>
-<p class="note">세 프리셋은 <b>색만 다른 게 아니라 화면 뼈대가 다릅니다.</b> 아래 레이아웃 골격까지 함께 넣어야 서로 다른 사이트가 나옵니다.</p>
+<h1>디자인 프리셋 · 레이아웃 프리셋</h1>
+<p class="sub">색과 화면 뼈대를 따로 드립니다. 원하는 조합을 스펙팩과 함께 AI에 넣으면 그 모습으로 만들어집니다.<br>
+아래 글자는 자리표시용이며, 색·굵기·모서리·여백과 뼈대가 어떻게 달라지는지 보시면 됩니다.</p>
+<p class="note"><b>색 ${chosen.length}벌과 화면 뼈대 ${chosenLayouts.length}벌을 따로 드립니다.</b>
+짝이 정해져 있지 않아 마음에 드는 대로 섞으시면 됩니다 —
+색 ${chosen.length}종 × 뼈대 ${chosenLayouts.length}종 = <b>${chosen.length * chosenLayouts.length}가지</b>.
+쓰실 때는 <b>디자인 프리셋 1개 + 레이아웃 프리셋 1개</b>를 스펙팩과 함께 AI에 넣으세요.</p>
+
+<h2 class="sec">디자인 프리셋 ${chosen.length}벌 — 색 · 글꼴 · 모서리</h2>
 <div class="grid">${chosen.map(card).join("")}</div>
+
+<h2 class="sec">레이아웃 프리셋 ${chosenLayouts.length}벌 — 무엇을 어디에 놓을지</h2>
+<div class="grid grid2">${chosenLayouts.map((l, i) => layoutCard(l, String.fromCharCode(65 + i))).join("")}</div>
 </body></html>`;
 
 writeFileSync(`${OUT}/프리셋_미리보기.html`, html, "utf8");
 console.log("  ✔ 프리셋_미리보기.html");
+
+// 레이아웃 프리셋 2벌 — 색과 짝짓지 않는다.
+chosenLayouts.forEach((l, i) => {
+  const no = String.fromCharCode(65 + i); // A, B
+  const base = `${OUT}/레이아웃_${no}_${l.label.replace(/\s/g, "")}`;
+  writeFileSync(`${base}.md`, layoutMd(l, no), "utf8");
+  writeFileSync(`${base}.json`, JSON.stringify(layoutTokens(l, no), null, 2), "utf8");
+  console.log(`  ✔ 레이아웃_${no}_${l.label} (.md / .json)`);
+});
 console.log(`\n완료 → ${OUT}`);
