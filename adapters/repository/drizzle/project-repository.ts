@@ -1,4 +1,4 @@
-import { desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/client";
 import { project, screen, buttonAction } from "@/db/schema";
 import type { Project, DeviceMode } from "@/domain/project/project";
@@ -91,6 +91,13 @@ export const drizzleProjectRepository: ProjectRepository = {
       );
     }
     await db.delete(project).where(eq(project.id, id));
+  },
+
+  async deleteDrafts(ownerId: string, ids: string[]): Promise<void> {
+    if (ids.length === 0) return;
+    // 초안은 화면이 없어서 버튼 연결을 먼저 지울 필요가 없다(버튼은 화면을 참조한다).
+    // 메뉴는 project 캐스케이드로 함께 지워진다. 그래서 한 방이면 된다.
+    await db.delete(project).where(and(eq(project.ownerId, ownerId), inArray(project.id, ids)));
   },
 
   async softDeleteAllByOwner(ownerId: string, deletedAt: Date): Promise<void> {
