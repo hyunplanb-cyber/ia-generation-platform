@@ -221,7 +221,6 @@ export function ZipAllButton({
         sheetBuf(reqLib.buildRequirementRows(menus, screens), "기능정의서"),
       );
       zip.file(`WBS_${base}.xlsx`, sheetBuf(rowsLib.buildWbsRows(menus, screens), "WBS"));
-      zip.file(`FLOW_${base}.html`, flowLib.buildFlowHtml(concept || "프로젝트", flowNodes, flowEdges));
       // drawio는 파일 하나에 탭을 여러 개 담을 수 있다. 메뉴 간 이동 한 장 +
       // 메뉴별 한 장씩으로 나눠야 열어서 고칠 수 있는 크기가 된다.
       const flowGroups = groupLib.buildFlowGroups(
@@ -237,6 +236,12 @@ export function ZipAllButton({
           menuId: s.menuId,
         })),
         flowEdges,
+      );
+      zip.file(
+        `FLOW_${base}.html`,
+        flowGroups.length > 0
+          ? flowLib.buildFlowHtmlTabs(concept || "프로젝트", flowGroups)
+          : flowLib.buildFlowHtml(concept || "프로젝트", flowNodes, flowEdges),
       );
       zip.file(
         `FLOW_${base}.drawio`,

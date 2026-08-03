@@ -161,6 +161,61 @@ export function buildFlowSvg(nodes: ExportNode[], edges: ExportEdge[]): string {
 }
 
 // 단독 실행 가능한 HTML 파일(SVG 내장).
+/**
+ * 여러 장짜리 HTML — 위쪽 탭으로 메뉴를 오간다.
+ * 한 장에 100개를 그리면 이어지지 않은 화면이 첫 열에 쌓여 세로로 길게 늘어선다.
+ * (자바스크립트 없이 라디오 버튼 + CSS로만 전환한다 — 파일 하나로 어디서든 열리게)
+ */
+export function buildFlowHtmlTabs(
+  title: string,
+  groups: { label: string; nodes: ExportNode[]; edges: ExportEdge[] }[],
+): string {
+  const use = groups.filter((g) => g.nodes.length > 0);
+  if (use.length === 0) return buildFlowHtml(title, [], []);
+
+  const radios = use
+    .map(
+      (g, i) =>
+        `<input type="radio" name="tab" id="t${i}"${i === 0 ? " checked" : ""}><label for="t${i}">${esc(g.label)} <b>${g.edges.length}</b></label>`,
+    )
+    .join("\n");
+  const panes = use
+    .map((g, i) => `<section class="pane p${i}">${buildFlowSvg(g.nodes, g.edges)}</section>`)
+    .join("\n");
+  const showRules = use
+    .map((_, i) => `#t${i}:checked ~ .canvas .p${i} { display: block; }\n#t${i}:checked ~ .tabs label[for="t${i}"] { background: #E4762C; color: #fff; border-color: #E4762C; }`)
+    .join("\n");
+
+  return `<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>${esc(title)} · FLOW</title>
+<style>
+  body { margin: 0; font-family: sans-serif; background: #FAFAFA; color: #1F2024; }
+  header { padding: 20px 28px 0; }
+  h1 { margin: 0; font-size: 18px; }
+  p { margin: 4px 0 0; font-size: 13px; color: #6B6F76; }
+  input[name="tab"] { display: none; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 28px; border-bottom: 1px solid #E7E7EA; background: #fff; }
+  .tabs label { cursor: pointer; border: 1px solid #E2D3AE; border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; background: #fff; }
+  .tabs label b { font-weight: 500; opacity: .7; margin-left: 2px; }
+  .canvas { padding: 28px; overflow: auto; }
+  .pane { display: none; }
+${showRules}
+</style>
+</head>
+<body>
+<header><h1>${esc(title)} — 화면 이동 흐름(FLOW)</h1>
+<p>메뉴별로 나눠서 봅니다. 진한 카드는 그 장의 시작 화면이에요. 이동이 없는 화면은 빼서 그림을 읽기 쉽게 했습니다.</p></header>
+${use.map((_, i) => `<input type="radio" name="tab" id="t${i}"${i === 0 ? " checked" : ""}>`).join("")}
+<div class="tabs">${use.map((g, i) => `<label for="t${i}">${esc(g.label)} <b>${g.edges.length}</b></label>`).join("")}</div>
+<div class="canvas">${panes}</div>
+</body>
+</html>`;
+}
+
 export function buildFlowHtml(title: string, nodes: ExportNode[], edges: ExportEdge[]): string {
   const svg = buildFlowSvg(nodes, edges);
   return `<!doctype html>

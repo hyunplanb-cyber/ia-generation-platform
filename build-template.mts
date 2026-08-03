@@ -5,7 +5,15 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import * as XLSX from "xlsx";
 import { buildMenuTreeRows, buildScreenListRows, buildWbsRows } from "./lib/export/excel-rows";
 import { buildRequirementRows } from "./lib/export/requirements";
-import { buildFlowHtml, buildDrawioXml, type ExportNode, type ExportEdge } from "./lib/export/flow-export";
+import {
+  buildFlowHtml,
+  buildFlowHtmlTabs,
+  buildDrawioXml,
+  buildDrawioTabs,
+  type ExportNode,
+  type ExportEdge,
+} from "./lib/export/flow-export";
+import { buildFlowGroups } from "./lib/export/flow-groups";
 import { createMenuPptx, type PptMenu } from "./lib/export/ppt-export";
 import { buildSpecPackMarkdown, buildSpecPackJson } from "./lib/export/spec-pack";
 import { buildTemplateVerifySheets } from "./lib/export/template-verify";
@@ -145,11 +153,37 @@ xlsx("03_기능정의서.xlsx", "기능정의서", buildRequirementRows(menus, s
 xlsx("04_WBS.xlsx", "WBS", buildWbsRows(menus, screens), [8, 18, 28, 12, 12, 8]);
 
 // 4) FLOW (HTML + draw.io)
-const flowNodes: ExportNode[] = screens.map((s) => ({ id: s.id, pageName: s.pageName, pageId: s.pageId }));
+// 화면명이 "기본"·"로딩"이라 그것만 적으면 어느 메뉴의 기본인지 알 수 없다.
+const menuNameOf = new Map(menus.map((m) => [m.id, m.nameKo]));
+const flowNodes: ExportNode[] = screens.map((s) => ({
+  id: s.id,
+  pageName: `${menuNameOf.get(s.menuId) ?? "기타"} · ${s.pageName}`,
+  pageId: s.pageId,
+}));
 const flowEdges: ExportEdge[] = buttonActions.map((b) => ({ from: b.screenId, to: b.targetScreenId, label: b.label }));
-writeFileSync(`${OUT}/05_FLOW_흐름도.html`, buildFlowHtml(SRC_DATA.project.concept, flowNodes, flowEdges), "utf8");
-writeFileSync(`${OUT}/05_FLOW_흐름도.drawio`, buildDrawioXml(flowNodes, flowEdges), "utf8");
-console.log(`  ✔ 05_FLOW_흐름도.html / .drawio (노드 ${flowNodes.length}, 연결 ${flowEdges.length})`);
+
+// 한 장에 100개를 그리면 이어지지 않은 화면이 첫 열에 쌓여 세로로 늘어선다.
+// 메뉴 간 이동 한 장 + 메뉴별 한 장으로 나눈다.
+const flowGroups = buildFlowGroups(
+  menus.map((m) => ({ id: m.id, menuCode: m.menuCode, nameKo: m.nameKo })),
+  screens.map((s) => ({ id: s.id, pageId: s.pageId, pageName: s.pageName, menuId: s.menuId })),
+  flowEdges,
+);
+writeFileSync(
+  `${OUT}/05_FLOW_흐름도.html`,
+  flowGroups.length > 0
+    ? buildFlowHtmlTabs(SRC_DATA.project.concept, flowGroups)
+    : buildFlowHtml(SRC_DATA.project.concept, flowNodes, flowEdges),
+  "utf8",
+);
+writeFileSync(
+  `${OUT}/05_FLOW_흐름도.drawio`,
+  flowGroups.length > 0 ? buildDrawioTabs(flowGroups) : buildDrawioXml(flowNodes, flowEdges),
+  "utf8",
+);
+console.log(
+  `  ✔ 05_FLOW_흐름도.html / .drawio (${flowGroups.length}장, 연결 ${flowEdges.length})`,
+);
 
 // 5) 메뉴구조 PPT
 const pptMenus: PptMenu[] = menus.map((m) => ({

@@ -5,7 +5,15 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import * as XLSX from "xlsx";
 import { buildRequirementRows } from "./lib/export/requirements";
 import { buildWbsRows } from "./lib/export/excel-rows";
-import { buildFlowHtml, buildDrawioXml, type ExportNode, type ExportEdge } from "./lib/export/flow-export";
+import {
+  buildFlowHtml,
+  buildFlowHtmlTabs,
+  buildDrawioXml,
+  buildDrawioTabs,
+  type ExportNode,
+  type ExportEdge,
+} from "./lib/export/flow-export";
+import { buildFlowGroups } from "./lib/export/flow-groups";
 import { createMenuPptx, type PptMenu } from "./lib/export/ppt-export";
 import { buildSpecPackMarkdown, buildSpecPackJson } from "./lib/export/spec-pack";
 import { buildTemplateVerifySheets } from "./lib/export/template-verify";
@@ -56,11 +64,39 @@ xlsx("03_기능정의서.xlsx", "기능정의서", buildRequirementRows(deep.men
 xlsx("04_WBS.xlsx", "WBS", buildWbsRows(deep.menus, deep.leafScreens), [8, 18, 34, 12, 12, 12, 8]);
 
 // 05 — FLOW(화면 2뎁스 대표 기준)
-const flowNodes: ExportNode[] = deep.parentScreens.map((s) => ({ id: s.id, pageName: s.pageName, pageId: s.pageId }));
+// 화면명이 "기본"·"로딩"이라 그것만 적으면 어느 메뉴의 기본인지 알 수 없다.
+const menuNameOf = new Map(deep.menus.map((m) => [m.id, m.nameKo]));
+const flowNodes: ExportNode[] = deep.parentScreens.map((s) => ({
+  id: s.id,
+  pageName: `${menuNameOf.get(s.menuId) ?? "기타"} · ${s.pageName}`,
+  pageId: s.pageId,
+}));
 const flowEdges: ExportEdge[] = deep.buttonActions.map((b) => ({ from: b.screenId, to: b.targetScreenId, label: b.label }));
-writeFileSync(`${OUT}/05_FLOW_흐름도.html`, buildFlowHtml(deep.project.concept, flowNodes, flowEdges), "utf8");
-writeFileSync(`${OUT}/05_FLOW_흐름도.drawio`, buildDrawioXml(flowNodes, flowEdges), "utf8");
-console.log(`  ✔ 05_FLOW_흐름도.html / .drawio (노드 ${flowNodes.length}, 연결 ${flowEdges.length})`);
+
+// 한 장에 다 그리면 이어지지 않은 화면이 첫 열에 쌓여 세로로 늘어선다.
+const flowGroups = buildFlowGroups(
+  deep.menus.map((m) => ({ id: m.id, menuCode: m.menuCode, nameKo: m.nameKo })),
+  deep.parentScreens.map((s) => ({
+    id: s.id,
+    pageId: s.pageId,
+    pageName: s.pageName,
+    menuId: s.menuId,
+  })),
+  flowEdges,
+);
+writeFileSync(
+  `${OUT}/05_FLOW_흐름도.html`,
+  flowGroups.length > 0
+    ? buildFlowHtmlTabs(deep.project.concept, flowGroups)
+    : buildFlowHtml(deep.project.concept, flowNodes, flowEdges),
+  "utf8",
+);
+writeFileSync(
+  `${OUT}/05_FLOW_흐름도.drawio`,
+  flowGroups.length > 0 ? buildDrawioTabs(flowGroups) : buildDrawioXml(flowNodes, flowEdges),
+  "utf8",
+);
+console.log(`  ✔ 05_FLOW_흐름도.html / .drawio (${flowGroups.length}장, 연결 ${flowEdges.length})`);
 
 // 06 — 메뉴구조 PPT(화면 2뎁스 대표 기준)
 const pptMenus: PptMenu[] = deep.menus.map((m) => ({
