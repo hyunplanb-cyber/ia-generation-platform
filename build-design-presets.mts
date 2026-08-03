@@ -565,7 +565,45 @@ const card = (p: Preset) => {
       </div>
       <div class="dsw">${Object.values(p.c).slice(0, 7).map(v => `<i style="background:${v}"></i>`).join("")}</div>
     </div>
+    ${layoutBlock(p)}
   </div>`;
+};
+
+/* 색만 보면 셋이 비슷해 보인다. 뼈대가 어떻게 다른지 그림과 표로 함께 보여준다. */
+const layoutBlock = (p: Preset) => {
+  const l = layoutOf(p.key);
+  const pri = Object.values(p.c)[0];
+  const bd = p.c["border (구분선)"];
+  return `
+    <div class="lay">
+      <div class="lay-hd"><b>레이아웃 골격 — ${l.label}</b><span>${l.tagline}</span></div>
+      ${wire(l.key, pri, bd)}
+      <dl class="lay-kv">
+        <dt>첫 화면 위쪽</dt><dd>${l.hero}</dd>
+        <dt>목록 화면</dt><dd>${l.list}</dd>
+        <dt>내비게이션</dt><dd>${l.nav}</dd>
+        <dt>상세 화면</dt><dd>${l.detail}</dd>
+      </dl>
+      <p class="lay-fit">어울리는 곳: ${l.fits}</p>
+    </div>`;
+};
+
+/* 뼈대 그림 — 색이 아니라 "무엇이 어디에 있는지"만 보여준다 */
+const wire = (kind: string, pri: string, bd: string) => {
+  const box = `background:${pri}22`;
+  const line = `background:${pri}14`;
+  const bar = `background:${pri}55`;
+  const inner =
+    kind === "search"
+      ? `<i style="${box};height:22px"></i><div class="w3">${"<i></i>".repeat(3)}</div>`
+      : kind === "showcase"
+        ? `<i style="${line};height:8px;width:60%"></i><div class="wmo"><i class="big" style="${box}"></i><i style="${line}"></i><i style="${line}"></i></div>`
+        : kind === "list"
+          ? `<div class="wsp"><i class="side" style="${line}"></i><div class="wcol"><i style="${box}"></i><i style="${line}"></i><i style="${line}"></i></div></div>`
+          : kind === "split"
+            ? `<div class="wsp"><div class="wcol"><i style="${bar};height:10px"></i><i style="${line};height:6px;width:70%"></i></div><i class="half" style="${box}"></i></div>`
+            : `<div class="wsp"><i class="side" style="${bar}"></i><div class="wcol"><div class="w4">${`<i style="${box}"></i>`.repeat(4)}</div><i style="${line};flex:1"></i></div></div>`;
+  return `<div class="wire" style="border:1px solid ${bd}">${kind === "console" ? "" : `<i style="${bar};height:8px"></i>`}${inner}</div>`;
 };
 
 const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8">
@@ -573,12 +611,32 @@ const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8">
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Pretendard,"Malgun Gothic",sans-serif;background:#EFEFF2;padding:40px;color:#1F2024}
 h1{font-size:26px;font-weight:800;margin-bottom:6px}
+.note{font-size:13px;color:#4A4A52;background:#fff;border:1px solid #DEDEE4;border-radius:10px;padding:12px 14px;margin:14px 0 20px}
 .sub{color:#6B6F76;font-size:15px;margin-bottom:26px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1240px}
 .lab{margin-bottom:10px}.lab b{display:block;font-size:17px;font-weight:800}
 .lab span{display:block;font-size:13px;color:#6B6F76;margin-top:3px;line-height:1.5}
 .demo{border-radius:14px;padding:22px;min-height:330px;border:1px solid #E0E0E5}
 .dcard{padding:18px}
+.lay{margin-top:14px;border-top:1px dashed #D8D8DE;padding-top:14px}
+.lay-hd b{display:block;font-size:14px}
+.lay-hd span{display:block;font-size:12px;color:#6B6F76;margin-top:2px}
+.wire{margin:10px 0;height:96px;border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:5px;background:#fff}
+.wire i{display:block;border-radius:3px;background:#E6E6EB}
+.wire .w3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;flex:1}
+.wire .w4{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.wire .w4 i{height:14px}
+.wire .wmo{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:5px;flex:1}
+.wire .wmo .big{grid-row:span 2}
+.wire .wsp{display:flex;gap:5px;flex:1}
+.wire .wsp .side{width:24%}
+.wire .wsp .half{width:40%}
+.wire .wcol{display:flex;flex-direction:column;gap:5px;flex:1}
+.wire .wcol i{flex:1}
+.lay-kv{display:grid;grid-template-columns:78px 1fr;gap:4px 10px;font-size:11.5px;line-height:1.5}
+.lay-kv dt{color:#6B6F76}
+.lay-kv dd{color:#1F2024}
+.lay-fit{margin-top:8px;font-size:11.5px;color:#6B6F76}
 .dt{margin-bottom:4px}.dm{margin-bottom:14px}
 .drow{display:flex;gap:8px;margin-bottom:16px}
 .dbadge{font-size:11px;font-weight:700;padding:4px 10px}
@@ -594,6 +652,7 @@ h1{font-size:26px;font-weight:800;margin-bottom:6px}
 <h1>디자인 프리셋 3종</h1>
 <p class="sub">같은 구성요소를 세 가지 스타일로. 원하는 프리셋을 스펙팩과 함께 AI에 넣으면 그 스타일로 만들어집니다.<br>
 글자는 자리표시용이며, 색·굵기·모서리·여백이 프리셋마다 어떻게 달라지는지 보시면 됩니다.</p>
+<p class="note">세 프리셋은 <b>색만 다른 게 아니라 화면 뼈대가 다릅니다.</b> 아래 레이아웃 골격까지 함께 넣어야 서로 다른 사이트가 나옵니다.</p>
 <div class="grid">${chosen.map(card).join("")}</div>
 </body></html>`;
 
