@@ -124,6 +124,75 @@ function Choice({
   );
 }
 
+const styleTitleOf = (k: DesignKey) => DESIGN_OPTIONS.find((d) => d.key === k)?.title ?? k;
+
+/**
+ * 미리보기 카드 — 고른 색·글꼴·모서리·밀도가 실제로 어떻게 보이는지.
+ *
+ * 두 벌을 고르면 이 카드를 위아래로 두 장 그린다. 나란히 놓아야 고를 수 있고,
+ * 그러라고 두 벌을 주는 것이다(2026-08-04).
+ * 설정을 인자로 받아 스스로 계산한다 — 바깥에서 한 벌 기준으로 미리 만들어 두면
+ * 두 번째 벌을 그릴 수 없다.
+ */
+function PreviewCard({ config, badge }: { config: PresetConfig; badge?: string }) {
+  const s = buildPresetSummary(config);
+  const r = RADIUS_FEELS.find((x) => x.key === config.radius)!;
+  const f = fontById(config.font);
+  const d = DENSITIES.find((x) => x.key === config.density)!;
+  const th = DESIGN_OPTIONS.find((o) => o.key === config.style)?.swatches ?? [config.primary];
+  const ac = th[1] ?? config.primary; // 2번째 색 → 배지
+  const hl = th[2] ?? config.primary; // 3번째 색 → 테두리
+  return (
+    <div className="flex flex-col gap-1.5">
+      {badge && (
+        <p className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+          <span className="rounded-full bg-primary px-1.5 text-[11px] font-bold text-primary-foreground">
+            {badge}
+          </span>
+          {styleTitleOf(config.style)}
+        </p>
+      )}
+      <div
+        className="flex flex-col gap-3"
+        style={{
+          background: s.bg,
+          border: `2px solid ${hl}`,
+          borderRadius: r.card,
+          fontFamily: f.family,
+          padding: d.key === "cozy" ? "20px" : "14px",
+        }}
+      >
+        <div className="flex items-center justify-between" style={{ color: s.text }}>
+          <strong style={{ fontSize: 15 }}>화면 제목</strong>
+          <span
+            style={{
+              background: ac + "22",
+              color: ac,
+              borderRadius: r.badge,
+              fontSize: 11,
+              padding: "2px 8px",
+              fontWeight: 700,
+            }}
+          >
+            배지
+          </span>
+        </div>
+        <p style={{ color: s.muted, fontSize: 13, lineHeight: 1.6, margin: 0 }}>
+          고른 색과 모서리가 이렇게 적용돼요. 생성하면 색 단계·타이포·컴포넌트 규칙 요약이 나와요.
+        </p>
+        <div className="flex gap-2">
+          <span style={{ background: config.primary, color: "#fff", borderRadius: r.button, fontSize: 13, fontWeight: 600, padding: "8px 14px" }}>
+            주요 버튼
+          </span>
+          <span style={{ background: "transparent", color: s.text, border: `1px solid ${s.border}`, borderRadius: r.button, fontSize: 13, fontWeight: 600, padding: "8px 14px" }}>
+            보조
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-3">
@@ -451,68 +520,6 @@ export function PresetForm({
       </Section>
     </div>
   );
-
-  // ── 미리보기 카드 ──
-  // 두 벌을 고르면 두 장을 위아래로 보여준다. 나란히 놓아야 고를 수 있고,
-  // 그러라고 두 벌을 주는 것이다(2026-08-04).
-  function PreviewCard({ config, badge }: { config: PresetConfig; badge?: string }) {
-    const s = buildPresetSummary(config);
-    const r = RADIUS_FEELS.find((x) => x.key === config.radius)!;
-    const f = fontById(config.font);
-    const d = DENSITIES.find((x) => x.key === config.density)!;
-    const th = DESIGN_OPTIONS.find((o) => o.key === config.style)?.swatches ?? [config.primary];
-    const ac = th[1] ?? config.primary;
-    const hl = th[2] ?? config.primary;
-    return (
-      <div className="flex flex-col gap-1.5">
-        {badge && (
-          <p className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-            <span className="rounded-full bg-primary px-1.5 text-[11px] font-bold text-primary-foreground">
-              {badge}
-            </span>
-            {styleTitle(config.style)}
-          </p>
-        )}
-        <div
-          className="flex flex-col gap-3"
-          style={{
-            background: s.bg,
-            border: `2px solid ${hl}`,
-            borderRadius: r.card,
-            fontFamily: f.family,
-            padding: d.key === "cozy" ? "20px" : "14px",
-          }}
-        >
-          <div className="flex items-center justify-between" style={{ color: s.text }}>
-            <strong style={{ fontSize: 15 }}>화면 제목</strong>
-            <span
-              style={{
-                background: ac + "22",
-                color: ac,
-                borderRadius: r.badge,
-                fontSize: 11,
-                padding: "2px 8px",
-                fontWeight: 700,
-              }}
-            >
-              배지
-            </span>
-          </div>
-          <p style={{ color: s.muted, fontSize: 13, lineHeight: 1.6, margin: 0 }}>
-            고른 색과 모서리가 이렇게 적용돼요. 생성하면 색 단계·타이포·컴포넌트 규칙 요약이 나와요.
-          </p>
-          <div className="flex gap-2">
-            <span style={{ background: config.primary, color: "#fff", borderRadius: r.button, fontSize: 13, fontWeight: 600, padding: "8px 14px" }}>
-              주요 버튼
-            </span>
-            <span style={{ background: "transparent", color: s.text, border: `1px solid ${s.border}`, borderRadius: r.button, fontSize: 13, fontWeight: 600, padding: "8px 14px" }}>
-              보조
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const secondCfg = secondPreset(cfg);
   const preview = secondCfg ? (
