@@ -479,7 +479,7 @@ export function planContents(plan: PackagePlan): string[] {
     "WBS 개발 일정",
     "FLOW 흐름도",
     "AI 빌드 스펙팩",
-    "디자인 프리셋 3종",
+    "디자인 프리셋 3종 · 레이아웃 2종",
   ];
   if (plan.verify) items.push(`검수 시나리오 ${plan.verify.scenarios}개`);
   if (plan.siteScreens) items.push(`완성 화면 ${plan.siteScreens}개 (HTML)`);

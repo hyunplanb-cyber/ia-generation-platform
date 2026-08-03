@@ -25,6 +25,7 @@ import {
 } from "@/lib/packages";
 import {
   DESIGN_OPTIONS,
+  LAYOUTS,
   buildPresetSummary,
   salePresetConfig,
 } from "@/lib/design-presets";
@@ -81,11 +82,19 @@ const FAQ = [
   },
   {
     q: "디자인 시안도 들어 있나요?",
-    a: "AI팩은 기획 산출물에 가까운 문서입니다. 디자인 프리셋은 색상·글꼴·컴포넌트 규칙을 정리한 문서이며 시안 이미지가 아닙니다. 다만 디자인 프리셋과 AI 빌드 스펙팩을 AI 도구에 넣거나, 디럭스·프리미엄에 들어 있는 HTML은 디자인 컨셉이 반영된 화면이라 디자인 목업으로 보실 수 있어요. (쓰시는 AI 도구에 따라 다른 결과물이 나올 수 있습니다.)",
+    a: "AI팩은 기획 산출물에 가까운 문서입니다. 디자인 프리셋은 색상·글꼴·컴포넌트 규칙을, 레이아웃 프리셋은 무엇을 어디에 놓을지를 정리한 문서이며 시안 이미지가 아닙니다. 다만 이 파일들을 AI 빌드 스펙팩과 함께 AI 도구에 넣으면 그 스타일의 화면이 나오고, 디럭스·프리미엄에 들어 있는 HTML은 디자인이 반영된 화면이라 목업으로 보실 수 있어요. (쓰시는 AI 도구에 따라 다른 결과물이 나올 수 있습니다.)",
   },
   {
     q: "AI로 만들면 바로 쓸 수 있는 사이트가 되나요?",
     a: "화면까지는 됩니다. 눌러서 돌아다닐 수 있는 상태로 나와요. 다만 로그인 버튼을 눌러도 실제로 로그인이 되지는 않습니다. 로그인·결제·지도·알림처럼 바깥 서비스를 불러야 하는 기능은 개발자가 붙여야 해요. 위의 '어디까지 만들어지나요?'에 업종별로 정리해 두었습니다.",
+  },
+  {
+    q: "들어 있는 완성 화면 말고 다른 스타일로 만들 수 있나요?",
+    a: "네. 완성 화면은 색 3종과 레이아웃 2종 중 한 조합으로 미리 만들어 둔 것입니다. 바로 열어보고 흐름을 확인하시라고 넣었어요. 다른 스타일을 원하시면 AI 빌드 스펙팩과 원하는 디자인 프리셋 1개, 레이아웃 프리셋 1개를 함께 AI 코딩 도구에 넣고 만들어 달라고 하시면 됩니다. 화면 구성과 이동 흐름은 그대로 두고 모습만 바뀝니다. 조합은 모두 6가지예요.",
+  },
+  {
+    q: "디자인 프리셋과 레이아웃 프리셋은 뭐가 다른가요?",
+    a: "디자인 프리셋은 색·글꼴·모서리처럼 '어떤 느낌인지'를, 레이아웃 프리셋은 첫 화면과 목록·메뉴를 '어떻게 배치할지'를 정합니다. 둘을 따로 드리는 이유는 짝을 묶어 두면 고를 수 있는 게 3가지뿐이기 때문이에요. 따로 두면 3 × 2 = 6가지가 됩니다.",
   },
   {
     q: "만드는 데 얼마나 걸리나요?",
@@ -96,7 +105,8 @@ const FAQ = [
 const NOTES = [
   "기획 문서 한 벌(AI팩)입니다. 디자인 시안(GUI)과 개발 소스코드는 포함되지 않습니다.",
   "AI로 만들면 화면까지 나옵니다. 로그인·결제·지도·알림 등 외부 연동은 개발이 필요합니다.",
-  "디자인 프리셋은 색상·글꼴·모서리·컴포넌트 규칙을 정리한 문서입니다.",
+  "디자인 프리셋은 색상·글꼴·모서리·컴포넌트 규칙을, 레이아웃 프리셋은 화면 배치 규칙을 정리한 문서입니다.",
+  "완성 화면(디럭스·프리미엄)은 프리셋 조합 중 하나로 미리 만든 예시입니다. 다른 조합은 AI 코딩 도구로 직접 만드시면 됩니다.",
   "AI로 생성한 초안을 다듬은 자료로, 실제 서비스에 적용하기 전 검토가 필요합니다.",
   "디지털 콘텐츠 특성상 파일 전달 후에는 환불이 제한됩니다.",
 ];
@@ -197,6 +207,11 @@ export default async function PackageDetailPage({
       value: () => "✓",
     },
     {
+      label: "레이아웃 2종",
+      sub: pkg.layoutKeys.map((k) => LAYOUTS.find((l) => l.key === k)?.label ?? k).join(" · "),
+      value: () => "✓",
+    },
+    {
       label: "08 검수 시나리오",
       sub: "오픈 전 점검표",
       only: true,
@@ -233,6 +248,12 @@ export default async function PackageDetailPage({
       radius: sum.radius,
       fontFamily: sum.fontFamily,
     };
+  });
+
+  // 색과 뼈대는 짝이 정해져 있지 않다. 3 × 2 = 6가지로 섞어 쓸 수 있다.
+  const layouts = pkg.layoutKeys.map((key, i) => {
+    const l = LAYOUTS.find((x) => x.key === key)!;
+    return { no: String.fromCharCode(65 + i), ...l };
   });
 
   const STATS = [
@@ -575,6 +596,14 @@ export default async function PackageDetailPage({
               meta={`${selected.siteScreens}개`}
               badge={selected.name}
             >
+              <div className="mb-4 rounded-xl border border-dashed border-border bg-muted/20 p-3.5">
+                <p className="text-sm leading-relaxed text-foreground/85">
+                  <b className="text-foreground">이 화면들은 6가지 조합 중 하나로 만든 것입니다.</b>{" "}
+                  바로 열어보고 흐름을 확인하는 용도예요. 다른 스타일을 원하시면 스펙팩 · 디자인
+                  프리셋 · 레이아웃 프리셋을 함께 AI 코딩 도구에 넣어 직접 만들어 보세요. 화면 구성과
+                  이동 흐름은 그대로 두고 모습만 바뀝니다.
+                </p>
+              </div>
               <p className="mb-3 text-sm font-bold text-foreground">{pkg.title} — 전체 화면 목록</p>
               <div className="flex flex-col gap-2.5">
                 {menus.slice(0, 4).map((m) => (
@@ -602,7 +631,13 @@ export default async function PackageDetailPage({
             </DocCard>
           )}
 
-          <DocCard title="디자인 프리셋 3종" meta="md · json">
+          <DocCard title="디자인 프리셋 3종 + 레이아웃 2종" meta="md · json">
+            <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+              <b className="text-foreground">색과 화면 뼈대를 따로 드립니다.</b> 짝이 정해져 있지
+              않아 마음에 드는 대로 섞으시면 됩니다 — 색 3종 × 뼈대 2종 =
+{" "}<b className="text-foreground">6가지</b>. 쓰실 때는 디자인 1개 + 레이아웃 1개를
+              스펙팩과 함께 AI에 넣으세요.
+            </p>
             <div className="grid gap-3 sm:grid-cols-3">
               {presets.map((p) => (
                 <div key={p.no} className="rounded-xl border border-border p-3.5">
@@ -689,8 +724,34 @@ export default async function PackageDetailPage({
                 </div>
               ))}
             </div>
+            {/* 뼈대는 색과 나란히 두지 않는다 — 나란히 두면 "이 색엔 이 뼈대"로 읽힌다. */}
+            <p className="mb-3 mt-6 text-sm font-bold text-foreground">
+              레이아웃 2종 — 무엇을 어디에 놓을지
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {layouts.map((l) => (
+                <div key={l.key} className="rounded-xl border border-border p-3.5">
+                  <p className="text-sm font-bold text-foreground">
+                    {l.no} {l.label}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{l.tagline}</p>
+                  <dl className="mt-3 grid grid-cols-[64px_1fr] gap-x-2.5 gap-y-1 text-xs leading-relaxed">
+                    {[
+                      ["첫 화면", l.hero],
+                      ["목록", l.list],
+                      ["내비", l.nav],
+                    ].map(([k, v]) => (
+                      <Fragment key={k}>
+                        <dt className="text-muted-foreground">{k}</dt>
+                        <dd className="text-foreground/85">{v}</dd>
+                      </Fragment>
+                    ))}
+                  </dl>
+                </div>
+              ))}
+            </div>
             <DocNote>
-              스펙팩과 함께 넣으면 화면 {selected.stats.screens}개가 같은 스타일로 나옵니다
+              스펙팩과 함께 넣으면 화면 {selected.stats.screens}개가 고른 조합대로 나옵니다
             </DocNote>
           </DocCard>
         </section>
