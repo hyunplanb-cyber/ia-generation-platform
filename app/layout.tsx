@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { SITE_URL } from "@/lib/site";
@@ -75,7 +76,12 @@ export default function RootLayout({
       lang="ko"
       className={`${paperlogy.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        {/* 방문자·페이지뷰 집계. 지금은 가입한 사람만 보이고 왔다 간 사람은 안 보였다.
+            쿠키를 심지 않아 동의 배너 없이 쓸 수 있다. */}
+        <Analytics />
+      </body>
     </html>
   );
 }
