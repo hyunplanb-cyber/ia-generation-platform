@@ -99,7 +99,7 @@ mkdirSync(OUT, { recursive: true });
 // 3종을 다른 테마로 바꾸면 옛 파일이 남는다(예: 파스텔 → 코럴로 바꿔도 파스텔 파일이 그대로).
 // 그대로 두면 판매 zip에 네 벌이 들어가 "3종"이라는 설명과 어긋난다. 매번 비우고 다시 쓴다.
 for (const f of readdirSync(OUT)) {
-  if (/^(프리셋_|레이아웃_)/.test(f)) rmSync(`${OUT}/${f}`);
+  if (/^(가이드_|프리셋_|레이아웃_)/.test(f)) rmSync(`${OUT}/${f}`);
 }
 
 interface Preset {
@@ -423,10 +423,10 @@ function md(p: Preset): string {
 
   L.push("## 6. 화면 뼈대는 따로 고르세요");
   L.push("");
-  L.push("이 파일은 **색·글꼴·모서리·여백**만 정합니다. 무엇을 어디에 놓을지(화면 뼈대)는 같은 폴더의");
-  L.push("`레이아웃_A_*.md` · `레이아웃_B_*.md` 중 하나를 골라 **이 파일과 함께** AI에 넣으세요.");
+  L.push("이 파일은 **가이드 프리셋**입니다 — 색·글꼴·모서리·여백만 정합니다. 무엇을 어디에 놓을지(화면 뼈대)는");
+  L.push("같은 폴더의 `레이아웃_A_*.md` · `레이아웃_B_*.md` 중 하나를 골라 **이 파일과 함께** AI에 넣으세요.");
   L.push("");
-  L.push("색 3종 × 뼈대 2종이라 **6가지 조합**이 나옵니다. 짝이 정해져 있지 않으니 마음에 드는 대로 섞으세요.");
+  L.push("가이드 3종 × 레이아웃 2종이라 **6가지 조합**이 나옵니다. 짝이 정해져 있지 않으니 마음에 드는 대로 섞으세요.");
   L.push("");
   L.push("## 7. 이미지 자리");
   L.push("");
@@ -503,9 +503,9 @@ const layoutMd = (l: (typeof LAYOUTS)[number], no: string): string => {
   L.push("");
   L.push("## 사용 방법");
   L.push("");
-  L.push("1. 이 파일과 **디자인 프리셋 파일 하나**(색·글꼴)를 함께 AI 코딩 도구에 넣으세요.");
+  L.push("1. 이 파일과 **가이드 프리셋 하나**(색·글꼴)를 함께 AI 코딩 도구에 넣으세요.");
   L.push("2. 스펙팩(07_AI빌드_스펙팩.json)과 함께 넣으면 그 화면들이 이 뼈대로 만들어집니다.");
-  L.push("3. 색 3종 × 뼈대 2종 = **6가지 조합** 중 마음에 드는 대로 고르시면 됩니다.");
+  L.push("3. 가이드 3종 × 레이아웃 2종 = **6가지 조합** 중 마음에 드는 대로 고르시면 됩니다.");
   L.push("");
   L.push("## 자리별 규칙");
   L.push("");
@@ -523,7 +523,7 @@ const layoutMd = (l: (typeof LAYOUTS)[number], no: string): string => {
   L.push("## AI에게 그대로 넣는 지시문");
   L.push("");
   L.push("```");
-  L.push(`화면 뼈대를 아래대로 잡아줘. 색과 글꼴은 함께 넣은 디자인 프리셋 파일을 따르고,`);
+  L.push(`화면 뼈대를 아래대로 잡아줘. 색과 글꼴은 함께 넣은 가이드 프리셋을 따르고,`);
   L.push(`뼈대는 이 규칙을 우선해줘.`);
   L.push("");
   L.push(`- 첫 화면 위쪽: ${l.hero}`);
@@ -540,7 +540,7 @@ const layoutMd = (l: (typeof LAYOUTS)[number], no: string): string => {
 const layoutTokens = (l: (typeof LAYOUTS)[number], no: string) => ({
   layout: { no, key: l.key, name: l.label, tagline: l.tagline, fits: l.fits },
   slots: { hero: l.hero, list: l.list, nav: l.nav, detail: l.detail },
-  note: "색·글꼴은 디자인 프리셋 파일을 따른다. 이 파일은 화면 뼈대만 정한다.",
+  note: "색·글꼴은 가이드 프리셋을 따른다. 이 파일은 화면 뼈대만 정한다.",
 });
 
 /**
@@ -586,10 +586,10 @@ if (listed && listed.layoutKeys.join() !== target.layouts.join()) {
 }
 
 for (const p of chosen) {
-  const base = `${OUT}/프리셋_${p.no}_${p.name.replace(/\s/g, "")}`;
+  const base = `${OUT}/가이드_${p.no}_${p.name.replace(/\s/g, "")}`;
   writeFileSync(`${base}.md`, md(p), "utf8");
   writeFileSync(`${base}.json`, JSON.stringify(tokens(p), null, 2), "utf8");
-  console.log(`  ✔ 프리셋_${p.no}_${p.name} (.md / .json)`);
+  console.log(`  ✔ 가이드_${p.no}_${p.name} (.md / .json)`);
 }
 
 /* 비교 미리보기 HTML — 구매자가 세 가지를 눈으로 비교 */
@@ -668,7 +668,7 @@ const wire = (kind: string, pri: string, bd: string) => {
 };
 
 const html = `<!doctype html><html lang="ko"><head><meta charset="utf-8">
-<title>디자인 프리셋 · 레이아웃 프리셋</title><style>
+<title>가이드 프리셋 · 레이아웃 프리셋</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Pretendard,"Malgun Gothic",sans-serif;background:#EFEFF2;padding:40px;color:#1F2024}
 h1{font-size:26px;font-weight:800;margin-bottom:6px}
@@ -710,15 +710,15 @@ h1{font-size:26px;font-weight:800;margin-bottom:6px}
 .dsw{display:flex;gap:5px;margin-top:20px}
 .dsw i{width:26px;height:26px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
 </style></head><body>
-<h1>디자인 프리셋 · 레이아웃 프리셋</h1>
+<h1>가이드 프리셋 · 레이아웃 프리셋</h1>
 <p class="sub">색과 화면 뼈대를 따로 드립니다. 원하는 조합을 스펙팩과 함께 AI에 넣으면 그 모습으로 만들어집니다.<br>
 아래 글자는 자리표시용이며, 색·굵기·모서리·여백과 뼈대가 어떻게 달라지는지 보시면 됩니다.</p>
-<p class="note"><b>색 ${chosen.length}벌과 화면 뼈대 ${chosenLayouts.length}벌을 따로 드립니다.</b>
+<p class="note"><b>가이드 프리셋 ${chosen.length}벌과 레이아웃 프리셋 ${chosenLayouts.length}벌을 따로 드립니다.</b>
 짝이 정해져 있지 않아 마음에 드는 대로 섞으시면 됩니다 —
-색 ${chosen.length}종 × 뼈대 ${chosenLayouts.length}종 = <b>${chosen.length * chosenLayouts.length}가지</b>.
-쓰실 때는 <b>디자인 프리셋 1개 + 레이아웃 프리셋 1개</b>를 스펙팩과 함께 AI에 넣으세요.</p>
+가이드 ${chosen.length}종 × 레이아웃 ${chosenLayouts.length}종 = <b>${chosen.length * chosenLayouts.length}가지</b>.
+쓰실 때는 <b>가이드 프리셋 1종 + 레이아웃 프리셋 1종</b>을 스펙팩과 함께 AI에 넣으세요.</p>
 
-<h2 class="sec">디자인 프리셋 ${chosen.length}벌 — 색 · 글꼴 · 모서리</h2>
+<h2 class="sec">가이드 프리셋 ${chosen.length}벌 — 색 · 글꼴 · 모서리</h2>
 <div class="grid">${chosen.map(card).join("")}</div>
 
 <h2 class="sec">레이아웃 프리셋 ${chosenLayouts.length}벌 — 무엇을 어디에 놓을지</h2>
