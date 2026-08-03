@@ -18,7 +18,7 @@
 //         npx tsx package-template.mts travel-premium → 하나만
 import { statSync, readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from "node:fs";
 import JSZip from "jszip";
-import { PACKAGES, BUILD_SCOPE } from "./lib/packages";
+import { PACKAGES, BUILD_SCOPE, PLAN_NAMES, type PlanId } from "./lib/packages";
 
 const T = "판매용_템플릿";
 
@@ -78,14 +78,16 @@ for (const ind of INDUSTRIES) {
   const siteBase = "siteBase" in ind ? (ind.siteBase as string) : undefined;
   const siteDeep = "siteDeep" in ind ? (ind.siteDeep as string) : undefined;
   const common = { presetsFrom: ind.base, title: ind.title, pkgId: ind.key };
-  const tiers: [string, string, string, boolean, string | undefined][] = [
-    // [등급 키, 산출물 폴더, 등급 이름, 검수 포함, 완성 화면 폴더]
-    ["standard", ind.base, "스탠다드", false, undefined],
-    ["plus", ind.deep, "플러스", false, undefined],
-    ["deluxe", ind.base, "디럭스", true, siteBase],
-    ["premium", ind.deep, "프리미엄", true, siteDeep],
+  // 등급 이름은 lib/packages.ts에서 읽는다 — 홈페이지와 zip 폴더 이름이 갈라지지 않게.
+  const tiers: [PlanId, string, boolean, string | undefined][] = [
+    // [등급 키, 산출물 폴더, 검수 포함, 완성 화면 폴더]
+    ["standard", ind.base, false, undefined],
+    ["plus", ind.deep, false, undefined],
+    ["deluxe", ind.base, true, siteBase],
+    ["premium", ind.deep, true, siteDeep],
   ];
-  for (const [tier, src, planLabel, withVerify, sitePath] of tiers) {
+  for (const [tier, src, withVerify, sitePath] of tiers) {
+    const planLabel = PLAN_NAMES[tier];
     ALL_PRODUCTS[`${ind.key}-${tier}`] = {
       ...common,
       src,

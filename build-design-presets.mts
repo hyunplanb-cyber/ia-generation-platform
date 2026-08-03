@@ -1,12 +1,14 @@
 // 판매용 디자인 프리셋 생성기.
 // 스펙팩과 함께 AI에 넣으면 해당 스타일로 화면이 만들어지도록 하는 디자인 스펙 문서 3종 + 비교 미리보기.
 // 다른 템플릿(예약 서비스 등)에도 그대로 재사용한다.
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { PACKAGES } from "./lib/packages";
 
 // 어떤 템플릿용으로 만들지 인자로 받는다: npx tsx build-design-presets.mts lms | beauty
 // 디자인 규칙(색·타이포·컴포넌트)은 업종 무관하게 같고, "어울리는 서비스" 문구만 갈라진다.
 const TARGETS = {
   lms: {
+    styles: ["navy", "mono", "coral"] as const,
     dir: "판매용_템플릿/LMS_온라인강의플랫폼/디자인프리셋",
     fits: [
       "B2B 교육, 사내 LMS, 기업 대상 강의 플랫폼",
@@ -15,6 +17,7 @@ const TARGETS = {
     ],
   },
   beauty: {
+    styles: ["forest", "mono", "pastel"] as const,
     dir: "판매용_템플릿/뷰티샵_예약플랫폼/디자인프리셋",
     fits: [
       "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
@@ -23,6 +26,7 @@ const TARGETS = {
     ],
   },
   travel: {
+    styles: ["navy", "mono", "pastel"] as const,
     dir: "판매용_템플릿/해외투어_티켓예약/디자인프리셋",
     fits: [
       "신뢰가 중요한 해외 투어·티켓 예약, 대형 여행 플랫폼",
@@ -31,6 +35,7 @@ const TARGETS = {
     ],
   },
   admin: {
+    styles: ["navy", "mono", "pastel"] as const,
     dir: "판매용_템플릿/비즈니스관리_관리자시스템/디자인프리셋",
     fits: [
       "정보 밀도가 높은 백오피스·ERP형 관리 시스템, 데이터 중심 화면",
@@ -39,6 +44,7 @@ const TARGETS = {
     ],
   },
   groupbuy: {
+    styles: ["navy", "mono", "coral"] as const,
     dir: "판매용_템플릿/공동구매_공구플랫폼/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
@@ -47,6 +53,7 @@ const TARGETS = {
     ],
   },
   "groupbuy-deep": {
+    styles: ["navy", "mono", "coral"] as const,
     dir: "판매용_템플릿/공동구매_공구플랫폼_상세IA/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
@@ -55,6 +62,7 @@ const TARGETS = {
     ],
   },
   "admin-deep": {
+    styles: ["navy", "mono", "pastel"] as const,
     dir: "판매용_템플릿/비즈니스관리_관리자시스템_상세IA/디자인프리셋",
     fits: [
       "정보 밀도가 높은 백오피스·ERP형 관리 시스템, 데이터 중심 화면",
@@ -70,8 +78,15 @@ if (!target) {
 }
 const OUT = target.dir;
 mkdirSync(OUT, { recursive: true });
+// 3종을 다른 테마로 바꾸면 옛 파일이 남는다(예: 파스텔 → 코럴로 바꿔도 파스텔 파일이 그대로).
+// 그대로 두면 판매 zip에 네 벌이 들어가 "3종"이라는 설명과 어긋난다. 매번 비우고 다시 쓴다.
+for (const f of readdirSync(OUT)) {
+  if (/^프리셋_/.test(f)) rmSync(`${OUT}/${f}`);
+}
 
 interface Preset {
+  /** lib/design-presets.ts의 DesignKey와 같은 값 — 업종별로 3종을 고를 때 쓴다. */
+  key: string;
   no: string;
   name: string;
   tagline: string;
@@ -88,6 +103,7 @@ interface Preset {
 
 const PRESETS: Preset[] = [
   {
+    key: "navy",
     no: "01",
     name: "모던 네이비",
     tagline: "신뢰감과 밀도. 실무형 서비스의 기본값.",
@@ -135,6 +151,7 @@ const PRESETS: Preset[] = [
     ],
   },
   {
+    key: "mono",
     no: "02",
     name: "미니멀 모노",
     tagline: "여백과 활자. 색을 빼면 내용이 남는다.",
@@ -182,6 +199,7 @@ const PRESETS: Preset[] = [
     ],
   },
   {
+    key: "pastel",
     no: "03",
     name: "소프트 파스텔",
     tagline: "부드럽고 친근하게. 처음 쓰는 사람도 겁먹지 않게.",
@@ -227,6 +245,103 @@ const PRESETS: Preset[] = [
       ["폼", "1열, 입력 높이 44px로 크게. 도움말은 입력 아래 14px muted"],
       ["빈 화면", "일러스트 또는 큰 이모지 + 친근한 문구 + 큰 primary 버튼"],
       ["오류", "danger를 강하게 쓰지 않는다. 부드러운 안내 + 다음 행동 제시"],
+    ],
+  },
+  {
+    key: "forest",
+    no: "04",
+    name: "내추럴 그린",
+    tagline: "차분한 자연. 건강하고 정직한 인상.",
+    fits: "피부관리·클리닉, 건강·친환경을 내세우는 브랜드",
+    font: { family: "Pretendard", alt: "Noto Sans KR", note: "제목은 과하지 않게, 자간을 살짝 넓혀 여유 있게" },
+    c: {
+      "primary (주요 액션)": "#15803D",
+      "primary-hover": "#116632",
+      "accent (강조·배지)": "#65A30D",
+      "background (페이지)": "#F3F7F2",
+      "surface (카드)": "#FFFFFF",
+      "text (본문)": "#1C2B22",
+      "text-muted (보조)": "#5F7268",
+      "border (구분선)": "#DCE7DD",
+      success: "#15803D",
+      warning: "#A16207",
+      danger: "#B91C1C",
+    },
+    scale: [
+      ["페이지 제목", "32px", "700"],
+      ["섹션 제목", "22px", "600"],
+      ["카드 제목", "17px", "600"],
+      ["본문", "15px", "400"],
+      ["보조 설명", "13px", "400"],
+      ["표 헤더", "13px", "600"],
+    ],
+    radius: { card: "14px", button: "10px", input: "10px", badge: "8px" },
+    space: "4px 배수. 카드 내부 24px, 섹션 간격 40px. 숨 쉴 여백을 남긴다",
+    shadow: "0 1px 4px rgba(28,43,34,.07) — 카드에만. 그림자를 과하게 쓰지 않는다",
+    comp: [
+      ["버튼(주요)", "primary 배경, 흰 글자, 높이 42px, radius 10px, 굵기 600"],
+      ["버튼(보조)", "surface 배경, border 1px, primary 글자"],
+      ["카드", "surface 배경, border 1px, radius 14px, 아주 옅은 그림자"],
+      ["입력", "높이 42px, border 1px, focus 시 primary 테두리 2px"],
+      ["배지", "primary 10% 배경 + primary 진한 글자. radius 8px"],
+      ["표", "헤더는 background 색 채움, 행 구분 border 1px, 행 높이 46px"],
+      ["사이드바", "활성 항목만 primary 8% 배경 + primary 글자"],
+    ],
+    screens: [
+      ["대시보드", "지표 카드 3~4개. 숫자 30px/700 primary, 라벨 13px muted"],
+      ["목록", "카드와 표를 섞어도 좋다. 사진이 있으면 카드 우선"],
+      ["폼", "1열, 최대 폭 560px. 라벨 위·입력 아래"],
+      ["빈 화면", "선 아이콘 48px + 담백한 안내 문구 + 주요 버튼 하나"],
+      ["오류", "danger 색은 문구와 아이콘에만. 배경은 건드리지 않는다"],
+    ],
+  },
+  {
+    key: "coral",
+    no: "05",
+    name: "코럴 선셋",
+    tagline: "밝고 따뜻하게. 처음 오는 사람도 반기는 얼굴.",
+    fits: "취미·키즈 교육, 일반 사용자 대상 B2C 서비스",
+    font: { family: "Pretendard", alt: "Paperlogy", note: "제목을 크고 굵게. 친근한 인상이 먼저 오게" },
+    c: {
+      "primary (주요 액션)": "#F0654F",
+      "primary-hover": "#D9503B",
+      "accent (강조·배지)": "#F59E0B",
+      "background (페이지)": "#FFF6F3",
+      "surface (카드)": "#FFFFFF",
+      "text (본문)": "#33221E",
+      "text-muted (보조)": "#7A6560",
+      "border (구분선)": "#F2E2DD",
+      success: "#0F7A52",
+      warning: "#B45309",
+      danger: "#C0392B",
+    },
+    scale: [
+      ["페이지 제목", "36px", "800"],
+      ["섹션 제목", "24px", "700"],
+      ["카드 제목", "18px", "700"],
+      ["본문", "15px", "500"],
+      ["보조 설명", "14px", "400"],
+      ["표 헤더", "13px", "700"],
+    ],
+    radius: { card: "16px", button: "12px", input: "12px", badge: "999px" },
+    space: "4px 배수. 카드 내부 24px, 섹션 간격 40px. 답답하지 않게 띄운다",
+    shadow: "0 2px 8px rgba(51,34,30,.07) — 카드와 떠 있는 요소에만",
+    comp: [
+      ["버튼(주요)", "primary 배경, 흰 글자, 높이 44px, radius 12px, 굵기 700"],
+      ["버튼(보조)", "primary 10% 배경, primary 글자. 테두리 없음"],
+      ["카드", "surface 배경, radius 16px, 부드러운 그림자. 테두리는 연하게"],
+      ["입력", "높이 44px, background #FFF9F7, 테두리 연하게, focus 시 primary 2px"],
+      ["배지", "primary·accent 10% 배경 + 같은 계열 진한 글자. 알약 형태"],
+      ["표", "헤더 배경 background 색, 행 구분선 연하게, 행 높이 48px"],
+      ["사이드바", "활성 항목은 primary 10% 배경 + radius 12px로 감싸기"],
+      ["강조 문구", "accent 형광펜 효과: linear-gradient(transparent 54%, #FDE4B0 54%)"],
+    ],
+    screens: [
+      ["대시보드", "지표 카드를 크게. 숫자 40px/800 primary, 아이콘을 곁들인다"],
+      ["목록", "표보다 카드 그리드 우선. 썸네일 영역을 넉넉히"],
+      ["폼", "1열, 입력 높이 44px. 도움말은 입력 아래 14px muted"],
+      ["빈 화면", "큰 일러스트 또는 이모지 + 친근한 문구 + 큰 primary 버튼"],
+      ["오류", "danger를 강하게 쓰지 않는다. 무엇을 하면 되는지 먼저 말한다"],
     ],
   },
 ];
@@ -324,12 +439,34 @@ const tokens = (p: Preset) => ({
   screenGuides: Object.fromEntries(p.screens),
 });
 
-// 업종에 맞게 "어울리는 서비스" 문구를 바꾼다
-PRESETS.forEach((p, i) => {
-  p.fits = target.fits[i] ?? p.fits;
+/**
+ * 이 업종에 넣을 3종을 6종에서 고른다.
+ *
+ * 번호(01·02·03)는 고른 순서대로 다시 매긴다 — 파일명과 미리보기가 항상
+ * 01·02·03이라야 판매팩 구성이 업종마다 달라 보이지 않는다.
+ * "어울리는 서비스" 문구(fits)도 같은 순서로 갈아 끼운다.
+ */
+const chosen: Preset[] = target.styles.map((key, i) => {
+  const found = PRESETS.find((x) => x.key === key);
+  if (!found) {
+    throw new Error(`프리셋 정의가 없어요: ${key} (있는 것: ${PRESETS.map((x) => x.key).join(", ")})`);
+  }
+  return { ...found, no: String(i + 1).padStart(2, "0"), fits: target.fits[i] ?? found.fits };
 });
 
-for (const p of PRESETS) {
+// lib/packages.ts의 presetStyles와 어긋나면 판매 페이지 문구와 실제 파일이 달라진다.
+// 값을 두 곳에 적어 둔 대가라, 어긋나면 여기서 멈춘다.
+const listed = PACKAGES.find((x) => x.id === targetKey);
+if (listed && listed.presetStyles.join() !== target.styles.join()) {
+  throw new Error(
+    `프리셋 3종이 lib/packages.ts와 달라요.\n` +
+      `  이 스크립트: ${target.styles.join(", ")}\n` +
+      `  packages.ts: ${listed.presetStyles.join(", ")}\n` +
+      `  둘을 맞춘 뒤 다시 돌리세요.`,
+  );
+}
+
+for (const p of chosen) {
   const base = `${OUT}/프리셋_${p.no}_${p.name.replace(/\s/g, "")}`;
   writeFileSync(`${base}.md`, md(p), "utf8");
   writeFileSync(`${base}.json`, JSON.stringify(tokens(p), null, 2), "utf8");
@@ -398,7 +535,7 @@ h1{font-size:26px;font-weight:800;margin-bottom:6px}
 <h1>디자인 프리셋 3종</h1>
 <p class="sub">같은 구성요소를 세 가지 스타일로. 원하는 프리셋을 스펙팩과 함께 AI에 넣으면 그 스타일로 만들어집니다.<br>
 글자는 자리표시용이며, 색·굵기·모서리·여백이 프리셋마다 어떻게 달라지는지 보시면 됩니다.</p>
-<div class="grid">${PRESETS.map(card).join("")}</div>
+<div class="grid">${chosen.map(card).join("")}</div>
 </body></html>`;
 
 writeFileSync(`${OUT}/프리셋_미리보기.html`, html, "utf8");

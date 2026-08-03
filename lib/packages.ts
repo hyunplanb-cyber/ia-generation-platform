@@ -29,8 +29,8 @@ export interface TplData {
  * 등급은 사다리가 아니라 2×2다. 축이 둘이다 — 설계 깊이 × 완성 화면 유무.
  *
  *              문서만        + 검수 시나리오 + 완성 화면(HTML)
- *   2뎁스   standard 50,900        deluxe  106,800
- *   3뎁스   plus     82,200        premium 160,400
+ *   2뎁스   standard 51,300        deluxe  108,000
+ *   3뎁스   plus     82,900        premium 163,800
  *
  * 값은 "직접 만들면 드는 크레딧"과 같게 맞췄다(가격표 2026-08-01).
  * 재고는 남의 컨셉이라 직접 만들기보다 비싸면 살 이유가 없다.
@@ -41,6 +41,14 @@ export interface TplData {
  * deluxe·premium은 완성 화면(HTML)이 실제로 있는 업종에만 생긴다 — 없는 걸 팔지 않는다.
  */
 export type PlanId = "standard" | "plus" | "deluxe" | "premium";
+
+/** 등급 키 → 한국어 이름. 판매 zip 폴더 이름도 여기서 읽는다(package-template.mts). */
+export const PLAN_NAMES: Record<PlanId, string> = {
+  standard: "스탠다드",
+  plus: "플러스",
+  deluxe: "디럭스",
+  premium: "프리미엄",
+};
 
 export interface PackagePlan {
   id: PlanId;
@@ -82,9 +90,11 @@ export interface PackageDef {
   /** 전문 공개할 프롬프트 화면 ref (나머지는 잠금 안내) */
   promptSamples: string[];
   /**
-   * 이 업종의 판매팩에 넣는 기본 프리셋 3종. 사양은 salePresetConfig()로 고정한다
-   * (프리텐다드·기본 모서리·넉넉한 밀도·라이트) — 셋의 차이는 테마와 색뿐이다.
-   * 지금은 세 업종 모두 같은 조합이지만, 업종에 맞게 달리 골라도 된다.
+   * 이 업종의 판매팩에 넣는 기본 프리셋 3종. 테마 6종에서 업종에 맞게 고른다.
+   * 사양은 salePresetConfig()로 고정한다(프리텐다드·기본 모서리·넉넉한 밀도·라이트)
+   * — 셋의 차이는 테마와 색뿐이다.
+   * 바꾸면 build-design-presets.mts의 styles도 같이 바꾸고 그 업종 프리셋 파일을
+   * 다시 만들어야 한다. 어긋나면 그 스크립트가 멈춘다.
    */
   presetStyles: [DesignKey, DesignKey, DesignKey];
   /** 위 3종이 이 업종에서 어디에 어울리는지 (presetStyles와 같은 순서) */
@@ -209,8 +219,8 @@ function makePlans(
   const plans: PackagePlan[] = [
     {
       id: "standard",
-      name: "스탠다드",
-      priceKrw: 50900,
+      name: PLAN_NAMES.standard,
+      priceKrw: 51300,
       summary: `화면 ${s.screens}개 · 2뎁스 기본 설계`,
       depthLabel: "메뉴 → 화면 (2뎁스)",
       stats: s,
@@ -223,8 +233,8 @@ function makePlans(
     },
     {
       id: "plus",
-      name: "플러스",
-      priceKrw: 82200,
+      name: PLAN_NAMES.plus,
+      priceKrw: 82900,
       summary: `화면 ${p.screens}개 · 3뎁스 심화 설계`,
       depthLabel: "메뉴 → 화면 → 탭·상태 (3뎁스)",
       stats: p,
@@ -241,8 +251,8 @@ function makePlans(
   if (site?.base) {
     plans.push({
       id: "deluxe",
-      name: "디럭스",
-      priceKrw: 106800,
+      name: PLAN_NAMES.deluxe,
+      priceKrw: 108000,
       summary: `설계 ${s.screens}개 + 만들어 둔 화면 ${site.base}개`,
       depthLabel: "메뉴 → 화면 (2뎁스) + 완성 화면",
       stats: s,
@@ -261,8 +271,8 @@ function makePlans(
   if (site?.deep) {
     plans.push({
       id: "premium",
-      name: "프리미엄",
-      priceKrw: 160400,
+      name: PLAN_NAMES.premium,
+      priceKrw: 163800,
       summary: `설계 ${p.screens}개 + 만들어 둔 화면 ${site.deep}개`,
       depthLabel: "메뉴 → 화면 → 탭·상태 (3뎁스) + 완성 화면",
       stats: p,
@@ -291,7 +301,7 @@ export const PACKAGES: PackageDef[] = [
     data: LMS,
     deep: LMS_DEEP,
     promptSamples: ["cl3", "cu3", "co6"],
-    presetStyles: ["navy", "mono", "pastel"],
+    presetStyles: ["navy", "mono", "coral"],
     presetFits: [
       "B2B 교육, 사내 LMS, 기업 대상 강의 플랫폼",
       "전문가용 도구, 관리자 콘솔, 정보 밀도가 높은 화면",
@@ -338,7 +348,7 @@ export const PACKAGES: PackageDef[] = [
     data: BEAUTY,
     deep: BEAUTY_DEEP,
     promptSamples: ["re3", "mg1", "st5"],
-    presetStyles: ["navy", "mono", "pastel"],
+    presetStyles: ["forest", "mono", "pastel"],
     presetFits: [
       "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
       "감각적인 편집숍형 살롱, 남성 전용 바버샵",
@@ -444,6 +454,27 @@ export const PACKAGES: PackageDef[] = [
  */
 const LISTED_IDS = new Set(["travel"]);
 
+/**
+ * 이 등급 zip에 실제로 들어가는 것.
+ *
+ * 목록 카드와 메인 랜딩이 같은 출처를 쓴다 — 두 곳에 손으로 적어두면 등급을 고칠 때
+ * 한쪽만 바뀐다. 순서와 이름은 package-template.mts가 zip에 담는 파일과 맞춰 뒀다.
+ */
+export function planContents(plan: PackagePlan): string[] {
+  const items = [
+    "메뉴구조",
+    `IA 화면목록 ${plan.stats.screens}개`,
+    `기능정의서 ${plan.stats.reqs}개`,
+    "WBS 개발 일정",
+    "FLOW 흐름도",
+    "AI 빌드 스펙팩",
+    "디자인 프리셋 3종",
+  ];
+  if (plan.verify) items.push(`검수 시나리오 ${plan.verify.scenarios}개`);
+  if (plan.siteScreens) items.push(`완성 화면 ${plan.siteScreens}개 (HTML)`);
+  return items;
+}
+
 /** 목록에 진열되는 낱개 상품 (진열 업종 × 플랜). */
 export interface PackageProduct {
   pkg: PackageDef;
@@ -477,6 +508,10 @@ export interface AiPackCard {
   title: string;
   planName: string;
   screens: number;
+  /** 설계 깊이 한 줄 — 목록 카드와 같은 문구 */
+  depthLabel: string;
+  /** zip에 들어가는 것 — 목록 카드와 같은 출처(planContents) */
+  contents: string[];
   price: string;
   badge?: string;
 }
@@ -488,6 +523,8 @@ export function aiPackCards(): AiPackCard[] {
     title: pkg.title,
     planName: plan.name,
     screens: plan.stats.screens,
+    depthLabel: plan.depthLabel,
+    contents: planContents(plan),
     // 살 수 있는 길이 열리기 전까지는 값 대신 상태를 적는다(lib/flags.ts).
     price: PACKAGE_PRICES_PUBLIC ? formatKrw(plan.priceKrw) : "판매 준비 중",
     badge: plan.badge,

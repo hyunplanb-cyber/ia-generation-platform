@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, ShoppingBag, Sparkles } from "lucide-react";
-import { packageProducts, formatKrw } from "@/lib/packages";
+import { packageProducts, planContents, formatKrw } from "@/lib/packages";
 import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
 
 export const metadata: Metadata = {
@@ -52,12 +52,9 @@ export default function PackagesPage() {
                     : "border-border hover:border-primary/40"
                 }`}
               >
-                {/* 업종과 등급을 나란히. 목록에서 "무엇을 파는가"보다 "어느 등급인가"가
-                    먼저 궁금하다 — 같은 상품이 등급만 달리 세 번 나오기 때문이다. */}
+                {/* 등급만 단다. 업종은 바로 아래 제목에 이미 들어 있어서
+                    같은 말을 두 번 하는 셈이었다. */}
                 <div className="flex items-center gap-1.5">
-                  <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-                    {pkg.industry}
-                  </span>
                   <span
                     className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
                       plan.siteScreens
@@ -74,14 +71,19 @@ export default function PackagesPage() {
                 </h2>
                 <p className="mt-1 text-sm font-semibold text-primary">{plan.depthLabel}</p>
 
-                <ul className="mt-4 flex flex-col gap-1.5 border-t border-border/60 pt-4">
-                  {plan.highlights.map((h) => (
-                    <li key={h} className="flex items-start gap-1.5 text-sm text-foreground/80">
-                      <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
-                      {h}
+                {/* 무엇이 들어 있는지를 먼저 보여준다 — 등급이 넷이라 "가볍게 시작하는 분께"
+                    같은 문구보다 구성이 갈리는 지점이 눈에 들어와야 고를 수 있다. */}
+                <ul className="mt-4 flex flex-col gap-1 border-t border-border/60 pt-4">
+                  {planContents(plan).map((c) => (
+                    <li key={c} className="flex items-start gap-1.5 text-sm text-foreground/80">
+                      <Check className="mt-1 size-3 shrink-0 text-primary" />
+                      {c}
                     </li>
                   ))}
                 </ul>
+                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                  {plan.highlights[plan.highlights.length - 1]}
+                </p>
 
                 <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-4">
                   {PACKAGE_PRICES_PUBLIC ? (

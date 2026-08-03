@@ -216,10 +216,8 @@ export default async function PackageDetailPage({
             AI팩 목록
           </Link>
 
-          <span className="mt-5 inline-block rounded-full bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
-            {pkg.industry}
-          </span>
-          <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
+          {/* 업종 뱃지는 뺐다 — 바로 아래 제목이 이미 업종을 말하고 있어서 겹쳤다. */}
+          <h1 className="mt-6 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
             {pkg.title} <span className="bg-primary-soft rounded-lg px-2 py-0.5">AI팩</span>{" "}
             <span className="align-middle text-lg font-bold text-primary sm:text-xl">
               {selected.name}
@@ -248,12 +246,12 @@ export default async function PackageDetailPage({
         {/* 플랜 비교 — 이 페이지의 핵심. 고르면 아래 내용 전체가 그 규모로 바뀐다. */}
         <section id="plans" className="flex scroll-mt-20 flex-col gap-5">
           <SectionTitle>어떤 규모로 만드시나요?</SectionTitle>
-          {/* 등급 수만큼 나눈다 — 하나가 혼자 아래로 떨어지지 않게.
-              넷이면 2×2로 접었다가 넓은 화면에서 한 줄로 편다. */}
+          {/* 넷이면 2×2로 둔다 — 등급이 원래 2×2(설계 깊이 × 완성 화면)라
+              한 줄로 늘어놓으면 사다리처럼 보인다. 배치가 구조를 말해주게. */}
           <div
             className={`grid gap-4 ${
               pkg.plans.length >= 4
-                ? "sm:grid-cols-2 lg:grid-cols-4"
+                ? "sm:grid-cols-2"
                 : pkg.plans.length === 3
                   ? "lg:grid-cols-3"
                   : "md:grid-cols-2"

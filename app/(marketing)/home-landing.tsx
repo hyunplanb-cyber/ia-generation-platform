@@ -385,11 +385,15 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
                   <div className="tpl-page" key={i} aria-hidden={i !== page}>
                     {packs.slice(i * PER_PAGE, i * PER_PAGE + PER_PAGE).map((p) => (
                       <Link className="tpl" href={p.href} key={p.href}>
-                        <div className="tm">{p.code}</div>
+                        <div className="tg">{p.planName}</div>
                         <div className="tt">{p.title}</div>
-                        <div className="td">
-                          {p.planName} · 화면 {p.screens}개 + 화면별 프롬프트.
-                        </div>
+                        <div className="td">{p.depthLabel}</div>
+                        {/* 무엇이 들어 있는지 — 목록 페이지와 같은 출처(planContents). */}
+                        <ul className="tl">
+                          {p.contents.map((c) => (
+                            <li key={c}>{c}</li>
+                          ))}
+                        </ul>
                         <div className="tp">{p.price}</div>
                       </Link>
                     ))}
@@ -1098,10 +1102,36 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           font-size: 20px;
           font-weight: 700;
         }
-        .cc :global(.tpl) .tm {
-          font-family: var(--mono);
+        .cc :global(.tpl) .tg {
+          display: inline-block;
+          align-self: flex-start;
           font-size: 11.5px;
+          font-weight: 700;
+          letter-spacing: 0.02em;
+          color: var(--orange-deep);
+          background: var(--paper-2, rgba(0, 0, 0, 0.04));
+          border-radius: 999px;
+          padding: 3px 10px;
+          margin-bottom: 8px;
+        }
+        /* 구성 목록 — 등급이 넷이라 무엇이 더 들어가는지가 고르는 근거가 된다.
+           한 줄에 하나씩 쌓으면 카드가 너무 길어져, 폭 안에서 흘러가며 접히게 둔다. */
+        .cc :global(.tpl) .tl {
+          margin: 10px 0 0;
+          padding: 10px 0 0;
+          border-top: 1px solid rgba(0, 0, 0, 0.08);
+          list-style: none;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 2px 0;
+          font-size: 12.5px;
+          line-height: 1.6;
+          color: var(--ink-soft);
+        }
+        .cc :global(.tpl) .tl li:not(:last-child)::after {
+          content: "·";
           color: var(--tan);
+          margin: 0 7px;
         }
         .cc :global(.tpl) .td {
           font-size: 14px;
