@@ -483,6 +483,25 @@ export interface PresetConfig {
   dark: boolean;
   /** 화면 뼈대. 색만 바꾸면 어느 테마든 같은 사이트로 보여서 함께 정한다. */
   layout: LayoutKey;
+  /**
+   * 두 번째 테마. 있으면 프리셋이 두 벌 나온다.
+   *
+   * 한 벌만 주면 "이게 맞나" 판단할 수가 없다 — 나란히 놓아야 고를 수 있다(2026-08-04).
+   * 글꼴·모서리·밀도·레이아웃은 두 벌이 같이 쓰고, **테마와 색만 다르다.**
+   * 판매팩의 가이드 3종도 같은 방식이라(사양 고정, 테마만 다름) 결과물이 서로 닮는다.
+   */
+  styleB?: DesignKey;
+}
+
+/** 두 벌짜리 프리셋에서 두 번째 벌의 설정을 만든다(테마와 주색만 갈린다). */
+export function secondPreset(cfg: PresetConfig): PresetConfig | null {
+  if (!cfg.styleB || cfg.styleB === cfg.style) return null;
+  return {
+    ...cfg,
+    style: cfg.styleB,
+    primary: PRIMARY_SWATCHES_BY_STYLE[cfg.styleB][0],
+    styleB: undefined,
+  };
 }
 
 // 고른 "큰 방향"에 어울리는 주 색상 후보. 각 세트의 첫 색이 그 방향의 기본 주색.
@@ -589,6 +608,10 @@ export function parsePresetConfig(json: string | null, concept?: string | null):
         if (!FONT_FEELS.some((f) => f.key === cfg.font)) cfg.font = DEFAULT_FONT[cfg.style] ?? "pretendard";
         // 레이아웃을 넣기 전에 저장된 프리셋에는 이 값이 없다. 테마 기본값으로 채운다.
         if (!LAYOUTS.some((l) => l.key === cfg.layout)) cfg.layout = DEFAULT_LAYOUT[cfg.style] ?? "search";
+        // 두 번째 테마가 첫 번째와 같거나 이상한 값이면 없는 것으로 본다(한 벌짜리).
+        if (cfg.styleB && (cfg.styleB === cfg.style || !DESIGN_OPTIONS.some((d) => d.key === cfg.styleB))) {
+          cfg.styleB = undefined;
+        }
         return cfg;
       }
     } catch {

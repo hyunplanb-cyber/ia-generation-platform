@@ -19,6 +19,7 @@ import {
   type Density,
   LAYOUTS,
   defaultPresetConfig,
+  secondPreset,
   type LayoutKey,
 } from "@/lib/design-presets";
 import { generatePresetAction, downloadPresetAction } from "./actions";
@@ -175,6 +176,27 @@ export function PresetForm({
     setCfg((c) => ({ ...c, [key]: value }));
     setSavedTick(false);
   };
+  const styleTitle = (k: DesignKey) => DESIGN_OPTIONS.find((d) => d.key === k)?.title ?? k;
+
+  /**
+   * 테마를 둘까지 고른다.
+   *   안 골린 것을 누름 → 2번 자리에 넣는다(2번이 차 있으면 그것을 밀어낸다)
+   *   1번을 누름        → 2번이 1번이 되고, 두 벌이 한 벌로 준다
+   *   2번을 누름        → 2번만 뺀다
+   */
+  const toggleStyle = (style: DesignKey) => {
+    setSavedTick(false);
+    setCfg((c) => {
+      if (c.style === style) {
+        // 1번을 해제 — 2번이 있으면 그게 1번이 된다.
+        if (!c.styleB) return c; // 하나는 남아야 한다
+        return { ...c, style: c.styleB, primary: primarySwatchesFor(c.styleB)[0], styleB: undefined };
+      }
+      if (c.styleB === style) return { ...c, styleB: undefined };
+      return { ...c, styleB: style };
+    });
+  };
+
   const changeStyle = (style: DesignKey) => {
     // 테마를 바꾸면 레이아웃도 그 테마 기본 골격으로 따라간다(원하면 아래에서 다시 고를 수 있다).
     setCfg((c) => ({
@@ -214,6 +236,17 @@ export function PresetForm({
 
   function safeName(s: string) {
     return (s || "프로젝트").trim().slice(0, 20).replace(/[\\/:*?"<>|]/g, "_");
+  }
+
+  function saveBlob(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   }
 
   async function persist() {
@@ -264,16 +297,22 @@ export function PresetForm({
       setDown(true);
       setDownCfg(cfg);
 
-      const md = buildDetailedPresetMarkdown(cfg, projectName);
-      const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `디자인시스템_${safeName(projectName)}.md`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      // 두 벌이면 zip으로 묶는다. 파일이 둘인데 하나씩 내려받게 하면
+      // 두 번째를 놓치는 사람이 생긴다.
+      const second = secondPreset(cfg);
+      const base = safeName(projectName);
+      if (second) {
+        const { default: JSZip } = await import("jszip");
+        const zip = new JSZip();
+        const folder = zip.folder(`디자인프리셋_${base}`)!;
+        folder.file(`가이드_01_${styleTitle(cfg.style)}.md`, buildDetailedPresetMarkdown(cfg, projectName));
+        folder.file(`가이드_02_${styleTitle(second.style)}.md`, buildDetailedPresetMarkdown(second, projectName));
+        const buf = await zip.generateAsync({ type: "blob" });
+        saveBlob(buf, `디자인프리셋_${base}.zip`);
+      } else {
+        const md = buildDetailedPresetMarkdown(cfg, projectName);
+        saveBlob(new Blob([md], { type: "text/markdown;charset=utf-8" }), `디자인시스템_${base}.md`);
+      }
       router.refresh();
     } finally {
       setBusy(null);
@@ -283,27 +322,49 @@ export function PresetForm({
   // ── 설정 컨트롤(생성 전 화면 + 생성 후 "설정 수정"에서 공용) ──
   const controls = (
     <div className="flex flex-col gap-7">
-      <Section title="테마" hint="브리프에서 고른 컨셉이 기본으로 잡혀 있어요. 테마에 맞는 색이 아래에 나와요.">
+      {/* 테마를 둘까지 고른다. 한 벌만 주면 "이게 맞나" 판단할 수가 없다 —
+          나란히 놓아야 고를 수 있다(2026-08-04). 글꼴·모서리·밀도·레이아웃은
+          두 벌이 같이 쓰고 테마와 색만 갈린다. */}
+      <Section
+        title="테마 — 최대 2개"
+        hint="둘을 고르면 프리셋이 두 벌 나와요. 나머지 설정(글꼴·모서리·밀도·레이아웃)은 두 벌이 같이 씁니다."
+      >
         <div className="grid gap-2 sm:grid-cols-3">
-          {DESIGN_OPTIONS.map((opt) => (
-            <button
-              key={opt.key}
-              type="button"
-              onClick={() => changeStyle(opt.key)}
-              className={`flex flex-col gap-2 rounded-xl border p-3 text-left transition-colors ${
-                cfg.style === opt.key ? "border-primary bg-primary/5" : "border-border hover:bg-muted"
-              }`}
-            >
-              <div className="flex gap-1">
-                {opt.swatches.map((s, i) => (
-                  <span key={i} className="size-4 rounded-full ring-1 ring-black/5" style={{ backgroundColor: s }} />
-                ))}
-              </div>
-              <span className="text-sm font-bold text-foreground">{opt.title}</span>
-              <span className="text-xs text-muted-foreground">{opt.desc}</span>
-            </button>
-          ))}
+          {DESIGN_OPTIONS.map((opt) => {
+            const first = cfg.style === opt.key;
+            const second = cfg.styleB === opt.key;
+            const on = first || second;
+            return (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={() => toggleStyle(opt.key)}
+                aria-pressed={on}
+                className={`relative flex flex-col gap-2 rounded-xl border p-3 text-left transition-colors ${
+                  on ? "border-primary bg-primary/5" : "border-border hover:bg-muted"
+                }`}
+              >
+                {on && (
+                  <span className="absolute right-2 top-2 rounded-full bg-primary px-1.5 text-[11px] font-bold text-primary-foreground">
+                    {first ? "1" : "2"}
+                  </span>
+                )}
+                <div className="flex gap-1">
+                  {opt.swatches.map((s, i) => (
+                    <span key={i} className="size-4 rounded-full ring-1 ring-black/5" style={{ backgroundColor: s }} />
+                  ))}
+                </div>
+                <span className="text-sm font-bold text-foreground">{opt.title}</span>
+                <span className="text-xs text-muted-foreground">{opt.desc}</span>
+              </button>
+            );
+          })}
         </div>
+        <p className="text-xs text-muted-foreground">
+          {cfg.styleB
+            ? `두 벌로 받습니다 — ${styleTitle(cfg.style)} · ${styleTitle(cfg.styleB)}`
+            : "하나 더 고르면 두 벌로 받을 수 있어요. 같은 값은 다시 눌러 해제합니다."}
+        </p>
       </Section>
 
       <Section title="포인트 색상" hint="고른 테마에 어울리는 색이에요. 버튼·강조에 쓰입니다.">
