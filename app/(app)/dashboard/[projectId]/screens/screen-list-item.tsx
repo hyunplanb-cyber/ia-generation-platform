@@ -147,9 +147,11 @@ export function ScreenListItem({
               수정
             </Button>
           )}
-          <Button type="button" variant="ghost" size="sm" onClick={() => onOpenDetail(screen.id)}>
-            상세
-          </Button>
+          {SCREEN_EDIT_OPEN && (
+            <Button type="button" variant="ghost" size="sm" onClick={() => onOpenDetail(screen.id)}>
+              상세
+            </Button>
+          )}
         </div>
       </div>
 

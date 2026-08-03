@@ -14,6 +14,9 @@ export function limited<T>(list: T[], n: number = PREVIEW_PER_GROUP): { shown: T
   return { shown: list.slice(0, n), hidden: Math.max(0, list.length - n) };
 }
 
+// 남은 개수는 적지 않는다. "1개 남았다"처럼 적으면 아껴 둔 티가 나고,
+// 숫자가 작을 땐 오히려 받을 이유가 없어 보인다.
+
 /** 잘린 뒤 붙이는 안내 한 줄. 표 안이면 <tr>로 감싸야 하므로 colSpan을 준다. */
 export function MoreRow({ hidden, colSpan, what }: { hidden: number; colSpan: number; what: string }) {
   if (hidden <= 0) return null;
@@ -22,8 +25,7 @@ export function MoreRow({ hidden, colSpan, what }: { hidden: number; colSpan: nu
       <td colSpan={colSpan} className="px-4 py-3 text-sm text-muted-foreground">
         <span className="inline-flex items-center gap-1.5">
           <Lock className="size-3.5 shrink-0" />
-          나머지 {what} <b className="font-semibold text-foreground">{hidden}개</b>는 다운로드하시면
-          파일에서 보실 수 있어요.
+          다운로드하여 전체 {what}을 확인해 보세요.
         </span>
       </td>
     </tr>
@@ -36,8 +38,7 @@ export function MoreNote({ hidden, what }: { hidden: number; what: string }) {
   return (
     <p className="flex items-center gap-1.5 rounded-lg border border-dashed border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
       <Lock className="size-3.5 shrink-0" />
-      나머지 {what} <b className="font-semibold text-foreground">{hidden}개</b>는 다운로드하시면
-      파일에서 보실 수 있어요.
+      다운로드하여 전체 {what}을 확인해 보세요.
     </p>
   );
 }

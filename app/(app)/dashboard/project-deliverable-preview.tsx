@@ -351,7 +351,7 @@ function PresetPreview({ projectId, result }: { projectId: string; result: Proje
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm text-muted-foreground">
-        {sum.baseName} · {sum.fontLabel} · {sum.dark ? "다크" : "라이트"}
+        {sum.baseName} · {sum.layoutLabel} · {sum.fontLabel} · {sum.dark ? "다크" : "라이트"}
       </p>
       <div className="flex flex-wrap gap-x-4 gap-y-2">
         {sum.palette.map(([k, v]) => swatch(k, v))}
