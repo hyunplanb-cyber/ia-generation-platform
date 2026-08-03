@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { getProjectQuota } from "@/application/can-create-project";
 import { createProject } from "@/application/create-project";
+import { pruneDraftProjects } from "@/application/prune-draft-projects";
 
 function toDateStr(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -36,6 +37,10 @@ export async function GET() {
     overallStart: toDateStr(today),
     overallEnd: toDateStr(end),
   });
+
+  // 만들다 만 프로젝트는 최근 10개만 남긴다. 방금 만든 게 가장 최근이라 살아남는다.
+  // 화면이 하나라도 있는 프로젝트는 건드리지 않는다(prune-draft-projects.ts).
+  await pruneDraftProjects();
 
   redirect(`/dashboard/${project.id}/edit`);
 }

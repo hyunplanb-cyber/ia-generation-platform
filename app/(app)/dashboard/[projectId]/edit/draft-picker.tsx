@@ -9,6 +9,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, History, X } from "lucide-react";
+import { DRAFT_KEEP } from "@/lib/drafts";
 
 export interface Draft {
   id: string;
@@ -22,13 +23,8 @@ export interface Draft {
   href: string;
 }
 
-// 만들다 만 게 수십 개씩 쌓이기도 한다. 팝업에는 최근 것만 보여주고,
-// 전체 정리는 "내 프로젝트"에서 하게 한다.
-const MAX = 10;
-
 export function DraftPicker({ drafts }: { drafts: Draft[] }) {
   const [open, setOpen] = useState(false);
-  const shown = drafts.slice(0, MAX);
 
   useEffect(() => {
     if (!open) return;
@@ -66,7 +62,7 @@ export function DraftPicker({ drafts }: { drafts: Draft[] }) {
               <div>
                 <h2 className="font-bold text-foreground">임시 저장된 AI팩</h2>
                 <p className="mt-0.5 text-sm text-muted-foreground">
-                  아직 산출물을 만들지 않은 프로젝트예요. 고르면 그 단계로 이어서 갑니다.
+                  최근 임시저장된 {DRAFT_KEEP}건이 노출됩니다.
                 </p>
               </div>
               <button
@@ -80,7 +76,7 @@ export function DraftPicker({ drafts }: { drafts: Draft[] }) {
             </div>
 
             <ul className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-              {shown.map((d) => (
+              {drafts.map((d) => (
                 <li key={d.id}>
                   <Link
                     href={d.href}
@@ -112,7 +108,6 @@ export function DraftPicker({ drafts }: { drafts: Draft[] }) {
                 닫고 새로 만들기
               </button>
               <p className="mt-2 text-center text-xs text-muted-foreground">
-                {drafts.length > MAX && `${drafts.length}개 중 최근 ${MAX}개만 보여드려요. `}
                 안 쓸 초안은 <b className="font-semibold">내 프로젝트</b>에서 지울 수 있어요.
               </p>
             </div>
