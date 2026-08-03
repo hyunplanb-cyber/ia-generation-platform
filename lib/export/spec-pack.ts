@@ -7,10 +7,25 @@ import { IMAGE_PLACEHOLDER } from "@/lib/design-presets";
 
 export interface SpecPackProject {
   concept: string;
+  /** 문서 제목. 판매팩처럼 정해진 이름이 있을 때만 넘긴다. 없으면 컨셉에서 뽑는다. */
+  title?: string | null;
   designConcept: string | null;
   deviceMode: string;
   overallStart: string;
   overallEnd: string;
+}
+
+// 문서 제목은 한 줄이어야 한다.
+//
+// 컨셉은 보통 여러 문장짜리 설명이라, 그대로 제목에 넣으면 문단이 통째로 제목이 된다
+// (실제로 무료 샘플 스펙팩의 제목이 세 문장이었다 — 2026-08-03). 파일을 열었을 때
+// 맨 처음 보이는 줄이라 첫인상을 그대로 결정한다.
+// 정해진 이름이 있으면 그것을 쓰고, 없으면 컨셉의 첫 문장만 쓴다.
+function packTitle(p: SpecPackProject): string {
+  const given = p.title?.trim();
+  if (given) return given;
+  const first = p.concept.split(/(?<=[.!?。])\s+/)[0]?.trim() ?? "";
+  return (first || p.concept.trim()).replace(/[.。]$/, "") || "프로젝트";
 }
 
 function deviceLabel(mode: string): string {
@@ -29,6 +44,7 @@ export function buildSpecPackModel(
 
   return {
     project: {
+      title: packTitle(project),
       concept: project.concept,
       designConcept: project.designConcept ?? "",
       deviceMode: deviceLabel(project.deviceMode),
@@ -110,7 +126,7 @@ export function buildSpecPackMarkdown(
   const m = buildSpecPackModel(project, menus, screens, buttonActions);
   const lines: string[] = [];
 
-  lines.push(`# ${m.project.concept || "프로젝트"} — AI 빌드 스펙팩`);
+  lines.push(`# ${m.project.title} — AI 빌드 스펙팩`);
   lines.push("");
   lines.push(
     "> 이 문서 하나로 사이트를 만들 수 있게 정리한 스펙이에요. 화면별 **생성 프롬프트**를 그대로 사용하세요.",

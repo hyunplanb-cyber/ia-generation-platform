@@ -108,8 +108,10 @@ await createMenuPptx(picked.title, pptMenus).writeFile({ fileName: `${OUT}/06_�
 console.log("  ✔ 06_메뉴구조.pptx");
 
 // 07 — AI 빌드 스펙팩(잎사귀 전체 = 화면별 프롬프트 120~150종)
-writeFileSync(`${OUT}/07_AI빌드_스펙팩.md`, buildSpecPackMarkdown(deep.project, deep.menus, deep.leafScreens, deep.buttonActions), "utf8");
-writeFileSync(`${OUT}/07_AI빌드_스펙팩.json`, buildSpecPackJson(deep.project, deep.menus, deep.leafScreens, deep.buttonActions), "utf8");
+// 제목은 팩 이름을 넘긴다 — 안 넘기면 컨셉 문단이 통째로 제목이 된다(spec-pack.ts).
+const specProject = { ...deep.project, title: picked.title };
+writeFileSync(`${OUT}/07_AI빌드_스펙팩.md`, buildSpecPackMarkdown(specProject, deep.menus, deep.leafScreens, deep.buttonActions), "utf8");
+writeFileSync(`${OUT}/07_AI빌드_스펙팩.json`, buildSpecPackJson(specProject, deep.menus, deep.leafScreens, deep.buttonActions), "utf8");
 console.log("  ✔ 07_AI빌드_스펙팩.md / .json");
 
 // 08 — 검수 시나리오(화면 하나당 시나리오 하나)

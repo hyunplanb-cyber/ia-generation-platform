@@ -6,6 +6,7 @@
 import type { Menu } from "./domain/menu/menu";
 import type { Screen } from "./domain/screen/screen";
 import type { ButtonAction } from "./domain/screen/button-action";
+import { workdayStepper } from "./domain/schedule/distribute-schedule";
 import type { TplMenu } from "./template-data-lms";
 
 // 화면 하나에 매달리는 잎사귀(탭·상태·세부). 이름·역할·기능만 짧게 정의하면
@@ -56,7 +57,8 @@ export interface DeepResult {
 export function expandDeep(input: DeepInput): DeepResult {
   const { menus: tplMenus, subs, project } = input;
   const now = new Date();
-  const START = new Date(project.overallStart);
+  // 화면당 2일씩 차례로. 주말은 작업일로 잡지 않는다.
+  const nextSlot = workdayStepper(project.overallStart, 2);
 
   const menus: Menu[] = [];
   const parentScreens: Screen[] = [];
@@ -65,7 +67,6 @@ export function expandDeep(input: DeepInput): DeepResult {
   const refToBaseId = new Map<string, string>();
   const iaRows: Row[] = [];
   const menuTreeRows: Row[] = [];
-  let dayCursor = 0;
 
   tplMenus.forEach((m, mi) => {
     const menuId = `menu-${m.code}`;
@@ -110,11 +111,7 @@ export function expandDeep(input: DeepInput): DeepResult {
       leaves.forEach((leaf, li0) => {
         const li = li0 + 1;
         const pageId = `${m.code}${pad2(si)}${pad2(li)}`;
-        const start = new Date(START);
-        start.setDate(start.getDate() + dayCursor);
-        const end = new Date(start);
-        end.setDate(end.getDate() + 1);
-        dayCursor += 2;
+        const slot = nextSlot();
         const fullName = li === 1 ? s.name : `${s.name} > ${leaf.name}`;
 
         const scr: Screen = {
@@ -133,8 +130,8 @@ export function expandDeep(input: DeepInput): DeepResult {
           pageNameSource: "auto",
           funcDefSource: "auto",
           promptSource: "auto",
-          scheduleStart: start.toISOString().slice(0, 10),
-          scheduleEnd: end.toISOString().slice(0, 10),
+          scheduleStart: slot.scheduleStart,
+          scheduleEnd: slot.scheduleEnd,
           scheduleLocked: false,
           promptFeedback: null,
           enrichedAt: null,

@@ -20,6 +20,7 @@ import { buildTemplateVerifySheets } from "./lib/export/template-verify";
 import type { Menu } from "./domain/menu/menu";
 import type { Screen } from "./domain/screen/screen";
 import type { ButtonAction } from "./domain/screen/button-action";
+import { sequentialWorkdaySlots } from "./domain/schedule/distribute-schedule";
 import { LMS } from "./template-data-lms";
 import { BEAUTY } from "./template-data-beauty";
 import { CREATOR } from "./template-data-creator";
@@ -44,7 +45,6 @@ if (!picked) {
 }
 const SRC_DATA = picked.data;
 const OUT = picked.out;
-const START = new Date(SRC_DATA.project.overallStart);
 
 mkdirSync(OUT, { recursive: true });
 
@@ -54,8 +54,11 @@ const screens: Screen[] = [];
 const buttonActions: ButtonAction[] = [];
 const refToScreenId = new Map<string, string>();
 
-// 1) 메뉴·화면을 도메인 형태로 전개 (일정은 화면당 순차 배분)
-let dayCursor = 0;
+// 1) 메뉴·화면을 도메인 형태로 전개 (일정은 화면당 2일씩 순차 배분, 주말 제외)
+let screenCount = 0;
+for (const m of SRC_DATA.menus) screenCount += m.screens.length;
+const slots = sequentialWorkdaySlots(SRC_DATA.project.overallStart, screenCount, 2);
+let slotIndex = 0;
 SRC_DATA.menus.forEach((m, mi) => {
   const menuId = `menu-${m.code}`;
   menus.push({
@@ -77,11 +80,7 @@ SRC_DATA.menus.forEach((m, mi) => {
     const screenId = `scr-${pageId}`;
     refToScreenId.set(s.ref, screenId);
 
-    const start = new Date(START);
-    start.setDate(start.getDate() + dayCursor);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 1); // 화면당 2일
-    dayCursor += 2;
+    const slot = slots[slotIndex++];
 
     screens.push({
       id: screenId,
@@ -99,8 +98,8 @@ SRC_DATA.menus.forEach((m, mi) => {
       pageNameSource: "auto",
       funcDefSource: "auto",
       promptSource: "auto",
-      scheduleStart: start.toISOString().slice(0, 10),
-      scheduleEnd: end.toISOString().slice(0, 10),
+      scheduleStart: slot.scheduleStart,
+      scheduleEnd: slot.scheduleEnd,
       scheduleLocked: false,
       promptFeedback: null,
       // 판매 템플릿은 사람이 오푸스로 직접 만든 것이라 다운로드 보강 대상이 아니다.
@@ -195,8 +194,10 @@ await createMenuPptx(picked.title, pptMenus).writeFile({ fileName: `${OUT}/06_�
 console.log("  ✔ 06_메뉴구조.pptx");
 
 // 6) AI 빌드용 스펙팩
-writeFileSync(`${OUT}/07_AI빌드_스펙팩.md`, buildSpecPackMarkdown(SRC_DATA.project, menus, screens, buttonActions), "utf8");
-writeFileSync(`${OUT}/07_AI빌드_스펙팩.json`, buildSpecPackJson(SRC_DATA.project, menus, screens, buttonActions), "utf8");
+// 제목은 팩 이름을 넘긴다 — 안 넘기면 컨셉 문단이 통째로 제목이 된다(spec-pack.ts).
+const specProject = { ...SRC_DATA.project, title: picked.title };
+writeFileSync(`${OUT}/07_AI빌드_스펙팩.md`, buildSpecPackMarkdown(specProject, menus, screens, buttonActions), "utf8");
+writeFileSync(`${OUT}/07_AI빌드_스펙팩.json`, buildSpecPackJson(specProject, menus, screens, buttonActions), "utf8");
 console.log("  ✔ 07_AI빌드_스펙팩.md / .json");
 
 // 7) 검수 시나리오(화면 하나당 시나리오 하나)

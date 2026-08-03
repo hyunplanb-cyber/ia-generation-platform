@@ -5,12 +5,21 @@ import type { ButtonAction } from "@/domain/screen/button-action";
 
 type Row = Record<string, string | number>;
 
-function daysBetween(start?: string | null, end?: string | null): number | string {
+// WBS의 '기간(일)'은 실제로 일하는 날만 센다.
+// 일정 자체가 주말을 건너뛰므로(domain/schedule/distribute-schedule.ts),
+// 금요일~월요일을 달력으로 세면 4일이 되지만 실제 작업일은 2일이다.
+function workdaysBetween(start?: string | null, end?: string | null): number | string {
   if (!start || !end) return "";
-  const s = new Date(start).getTime();
-  const e = new Date(end).getTime();
+  const s = new Date(`${start}T00:00:00Z`).getTime();
+  const e = new Date(`${end}T00:00:00Z`).getTime();
   if (Number.isNaN(s) || Number.isNaN(e)) return "";
-  return Math.max(1, Math.round((e - s) / 86400000) + 1);
+
+  let count = 0;
+  for (let t = s; t <= e; t += 86400000) {
+    const day = new Date(t).getUTCDay();
+    if (day !== 0 && day !== 6) count++;
+  }
+  return Math.max(1, count);
 }
 
 // 메뉴 구조 — 메뉴별 화면을 한 행씩. 상세(3뎁스)면 화면/상태·탭 열로 나눈다.
@@ -91,6 +100,6 @@ export function buildWbsRows(menus: Menu[], screens: Screen[]): Row[] {
     화면ID: s.pageId,
     시작일: s.scheduleStart ?? "",
     종료일: s.scheduleEnd ?? "",
-    "기간(일)": daysBetween(s.scheduleStart, s.scheduleEnd),
+    "기간(일)": workdaysBetween(s.scheduleStart, s.scheduleEnd),
   }));
 }
