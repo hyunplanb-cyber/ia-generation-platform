@@ -1,4 +1,5 @@
 import { CalendarRange } from "lucide-react";
+import { Fragment } from "react";
 import { listMenus } from "@/application/list-menus";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
@@ -6,6 +7,7 @@ import { ZipAllButton } from "../../zip-all-button";
 import { CREDITS_OPEN } from "@/lib/flags";
 import { isDownloadUnlocked } from "@/application/download";
 import { downloadCost } from "@/lib/credits";
+import { PREVIEW_PER_GROUP, MoreRow } from "../preview-limit";
 
 export default async function WbsPage({
   params,
@@ -25,6 +27,22 @@ export default async function WbsPage({
     .sort((a, b) => (a.scheduleStart ?? "").localeCompare(b.scheduleStart ?? ""));
 
   const hasContent = activeScreens.length > 0;
+
+  // 미리보기는 메뉴마다 앞 3개만. 일정순 정렬은 그대로 두고 메뉴별로만 센다.
+  const seen = new Map<string, number>();
+  const rows: { screen: (typeof activeScreens)[number]; hiddenAfter: number }[] = [];
+  const perMenu = new Map<string, number>();
+  for (const s of activeScreens) perMenu.set(s.menuId, (perMenu.get(s.menuId) ?? 0) + 1);
+  for (const s of activeScreens) {
+    const n = (seen.get(s.menuId) ?? 0) + 1;
+    seen.set(s.menuId, n);
+    if (n > PREVIEW_PER_GROUP) continue;
+    const total = perMenu.get(s.menuId) ?? 0;
+    rows.push({
+      screen: s,
+      hiddenAfter: n === PREVIEW_PER_GROUP && total > PREVIEW_PER_GROUP ? total - PREVIEW_PER_GROUP : 0,
+    });
+  }
   const cost = downloadCost(activeScreens.some((s) => s.screenGroup));
 
   return (
@@ -63,8 +81,9 @@ export default async function WbsPage({
               </tr>
             </thead>
             <tbody>
-              {activeScreens.map((screen) => (
-                <tr key={screen.id} className="border-t border-border">
+              {rows.map(({ screen, hiddenAfter }) => (
+                <Fragment key={screen.id}>
+                <tr className="border-t border-border">
                   <td className="px-4 py-3">
                     <span className="font-medium text-foreground">{screen.pageName}</span>
                     <span className="ml-2 font-mono text-xs text-muted-foreground">
@@ -82,6 +101,8 @@ export default async function WbsPage({
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">UI정의서</td>
                 </tr>
+                <MoreRow hidden={hiddenAfter} colSpan={5} what="작업" />
+                </Fragment>
               ))}
             </tbody>
           </table>

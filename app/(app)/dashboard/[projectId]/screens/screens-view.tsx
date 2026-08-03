@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Folder } from "lucide-react";
+import { Folder, Lock } from "lucide-react";
 import type { Screen } from "@/domain/screen/screen";
 import type { ButtonAction } from "@/domain/screen/button-action";
 import type { Menu } from "@/domain/menu/menu";
 import { ScreenListItem } from "./screen-list-item";
 import { ScreenDetailPanel } from "./screen-detail-panel";
+import { PREVIEW_PER_GROUP } from "../preview-limit";
 
 export function ScreensView({
   screens,
@@ -24,6 +25,9 @@ export function ScreensView({
   reversedIds: string[];
 }) {
   const [selectedScreenId, setSelectedScreenId] = useState<string | null>(null);
+  // 미리보기는 메뉴마다 3개까지만. 고쳐야 할 화면이 뒤에 있을 수 있어 펼칠 수는 있게 둔다.
+  const [openedMenus, setOpenedMenus] = useState<Set<string>>(new Set());
+  const openMenu = (key: string) => setOpenedMenus((prev) => new Set(prev).add(key));
   const selectedScreen = screens.find((s) => s.id === selectedScreenId) ?? null;
 
   const outOfRangeSet = new Set(outOfRangeIds);
@@ -67,13 +71,27 @@ export function ScreensView({
             nameEn={menu.nameEn}
             count={list.length}
           >
-            {list.map(renderRow)}
+            {(openedMenus.has(menu.id) ? list : list.slice(0, PREVIEW_PER_GROUP)).map(renderRow)}
+            {!openedMenus.has(menu.id) && list.length > PREVIEW_PER_GROUP && (
+              <MoreScreens
+                hidden={list.length - PREVIEW_PER_GROUP}
+                onOpen={() => openMenu(menu.id)}
+              />
+            )}
           </MenuGroupCard>
         ))}
 
         {orphanScreens.length > 0 && (
           <MenuGroupCard code="ETC" name="기타" count={orphanScreens.length}>
-            {orphanScreens.map(renderRow)}
+            {(openedMenus.has("ETC") ? orphanScreens : orphanScreens.slice(0, PREVIEW_PER_GROUP)).map(
+              renderRow,
+            )}
+            {!openedMenus.has("ETC") && orphanScreens.length > PREVIEW_PER_GROUP && (
+              <MoreScreens
+                hidden={orphanScreens.length - PREVIEW_PER_GROUP}
+                onOpen={() => openMenu("ETC")}
+              />
+            )}
           </MenuGroupCard>
         )}
       </div>
@@ -88,6 +106,27 @@ export function ScreensView({
         />
       )}
     </>
+  );
+}
+
+// 잘린 화면 안내. 전체 내용은 파일에서 보게 하되, 고쳐야 할 화면이 뒤에 있을 수 있어
+// 이 자리에서 펼칠 수는 있게 둔다.
+function MoreScreens({ hidden, onOpen }: { hidden: number; onOpen: () => void }) {
+  return (
+    <li className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border/60 bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
+      <Lock className="size-3.5 shrink-0" />
+      <span>
+        나머지 화면 <b className="font-semibold text-foreground">{hidden}개</b>는 다운로드하시면
+        파일에서 보실 수 있어요.
+      </span>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+      >
+        여기서 수정하려면 펼치기
+      </button>
+    </li>
   );
 }
 
