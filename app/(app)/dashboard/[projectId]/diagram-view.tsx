@@ -16,10 +16,10 @@ export function DiagramView({
   diagram,
   title,
   hint,
-  /** 그림이 상자를 넘지 않게 줄여서 한 화면에 담는다. 자세히는 [크게 보기]에서 본다. */
+  /** 그림을 상자 가로폭에 맞춰 줄인다. 세로는 넘치면 스크롤한다. */
   fit,
-  /** fit일 때 상자 높이 */
-  fitHeight = 460,
+  /** fit일 때 상자 최대 높이 */
+  fitHeight = 560,
 }: {
   diagram: React.ReactNode;
   title: string;
@@ -30,10 +30,12 @@ export function DiagramView({
   const [open, setOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
 
-  // 그림의 실제 크기를 재서 상자에 들어갈 만큼만 줄인다. 키우지는 않는다.
+  // 그림의 실제 크기를 재서 "가로"에만 맞춘다. 세로까지 맞추면 메뉴가 많은
+  // 프로젝트에서 0.3배까지 줄어 글자가 안 보인다. 세로는 넘치면 스크롤한다.
   const boxRef = useRef<HTMLDivElement>(null);
   const inkRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [size, setSize] = useState({ w: 0, h: 0 });
   const measure = useCallback(() => {
     const box = boxRef.current;
     const ink = inkRef.current;
@@ -41,8 +43,10 @@ export function DiagramView({
     const w = ink.scrollWidth;
     const h = ink.scrollHeight;
     if (!w || !h) return;
-    setScale(Math.min(1, (box.clientWidth - 2) / w, (fitHeight - 2) / h));
-  }, [fitHeight]);
+    setSize({ w, h });
+    // p-3(12px) 양쪽 여백을 뺀 폭에 맞춘다. 키우지는 않는다.
+    setScale(Math.min(1, (box.clientWidth - 24) / w));
+  }, []);
   useEffect(() => {
     if (!fit) return;
     measure();
@@ -81,15 +85,21 @@ export function DiagramView({
       {fit ? (
         <div
           ref={boxRef}
-          className="flex items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-3"
-          style={{ height: fitHeight }}
+          className="overflow-auto rounded-xl border border-border bg-white p-3"
+          style={{ maxHeight: fitHeight }}
         >
+          {/* 줄인 그림은 자리(레이아웃)를 그대로 차지해서, 겉옷에 줄인 크기를 직접 준다 */}
           <div
-            ref={inkRef}
-            className="w-fit origin-center"
-            style={{ transform: `scale(${scale})` }}
+            className="relative mx-auto"
+            style={size.w ? { width: size.w * scale, height: size.h * scale } : undefined}
           >
-            {diagram}
+            <div
+              ref={inkRef}
+              className="absolute left-0 top-0 w-fit origin-top-left"
+              style={{ transform: `scale(${scale})` }}
+            >
+              {diagram}
+            </div>
           </div>
         </div>
       ) : (
