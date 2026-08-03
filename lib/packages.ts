@@ -10,6 +10,7 @@
 // "만들기 전(설계)"과 "오픈 전(검수)"을 축으로 갈랐다.
 // 만들어 둔 화면이 있는 업종에만 디럭스·프리미엄이 생긴다(현재 여행의 3뎁스뿐).
 import type { DesignKey, LayoutKey } from "@/lib/design-presets";
+import { splitFuncDef } from "@/lib/export/requirements";
 import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
 import { LMS, type TplMenu } from "@/template-data-lms";
 import { BEAUTY } from "@/template-data-beauty";
@@ -132,7 +133,12 @@ export interface PackageDef {
   seo: { title: string; description: string; keywords: string[] };
 }
 
-const countItems = (s: string) => s.split("·").filter((x) => x.trim()).length;
+// 요건·확인 항목을 세는 방식은 실제로 파일을 만드는 것과 **같은 함수**를 쓴다.
+//
+// 예전엔 여기서만 '·'로 잘라 세서, 괄호 안의 열거까지 한 개씩 세어졌다.
+// 판매 페이지에는 "확인 항목 368개"라고 적히는데 파일을 열면 다른 수가 나왔다
+// (2026-08-03). 세는 곳과 만드는 곳이 다르면 반드시 어긋난다.
+const countItems = (s: string) => splitFuncDef(s).length;
 
 // 모든 업종이 같은 프리셋 3종을 함께 받는다. 업종별로 다른 건 "어울리는 곳"뿐이라
 // 그 문구만 PackageDef.presetFits로 따로 둔다(판매본 디자인프리셋 폴더와 같은 순서).
