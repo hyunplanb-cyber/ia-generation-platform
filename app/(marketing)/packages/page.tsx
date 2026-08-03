@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, ShoppingBag, Sparkles } from "lucide-react";
+import { ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
 import { packageProducts, planContents, formatKrw } from "@/lib/packages";
 import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
 
@@ -72,11 +72,12 @@ export default function PackagesPage() {
                 <p className="mt-1 text-sm font-semibold text-primary">{plan.depthLabel}</p>
 
                 {/* 무엇이 들어 있는지를 먼저 보여준다 — 등급이 넷이라 "가볍게 시작하는 분께"
-                    같은 문구보다 구성이 갈리는 지점이 눈에 들어와야 고를 수 있다. */}
-                <ul className="mt-4 flex flex-col gap-1 border-t border-border/60 pt-4">
+                    같은 문구보다 구성이 갈리는 지점이 눈에 들어와야 고를 수 있다.
+                    한 줄에 하나씩 쌓으면 카드가 너무 길어져(홈과 같은 이유) 폭 안에서
+                    흘러가며 접히게 두고, 항목 사이는 가운뎃점으로 나눈다. */}
+                <ul className="mt-4 flex flex-wrap gap-y-0.5 border-t border-border/60 pt-4 text-[13px] leading-relaxed text-muted-foreground">
                   {planContents(plan).map((c) => (
-                    <li key={c} className="flex items-start gap-1.5 text-sm text-foreground/80">
-                      <Check className="mt-1 size-3 shrink-0 text-primary" />
+                    <li key={c} className="after:mx-[7px] after:text-border after:content-['·'] last:after:hidden">
                       {c}
                     </li>
                   ))}

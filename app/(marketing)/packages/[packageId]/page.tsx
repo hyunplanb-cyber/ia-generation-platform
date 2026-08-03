@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ArrowRight,
-  Check,
   FileText,
   LayoutList,
   Layers,
@@ -20,6 +19,7 @@ import {
   PACKAGES,
   getPackage,
   formatKrw,
+  planContents,
   DESIGN_PRESETS,
   BUILD_SCOPE,
   type PackagePlan,
@@ -886,14 +886,19 @@ function PlanCard({
         ))}
       </dl>
 
-      <ul className="flex flex-col gap-2">
-        {plan.highlights.map((h) => (
-          <li key={h} className="flex items-start gap-2 text-sm leading-relaxed text-foreground/85">
-            <Check className="mt-0.5 size-4 shrink-0 text-primary" />
-            {h}
+      {/* 구성 목록은 홈·목록·상세가 같은 출처(planContents)와 같은 모양을 쓴다.
+          세 곳이 다르게 보이면 같은 상품인지 헷갈린다. */}
+      <ul className="flex flex-wrap gap-y-0.5 text-[13px] leading-relaxed text-muted-foreground">
+        {planContents(plan).map((c) => (
+          <li key={c} className="after:mx-[7px] after:text-border after:content-['·'] last:after:hidden">
+            {c}
           </li>
         ))}
       </ul>
+      {/* 구성으로는 안 보이는 것 한 줄 — 예: 화면을 다시 찍어내는 생성기 */}
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        {plan.highlights[plan.highlights.length - 1]}
+      </p>
 
       {!selected && (
         <Link
