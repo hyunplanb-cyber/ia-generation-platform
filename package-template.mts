@@ -1,17 +1,21 @@
 // 판매 상품별 zip 패키징.
 //
-// 등급 사다리는 세 칸이다.
-//   스탠다드 = 2뎁스 기본판,  디럭스 = 3뎁스 심화판
-//   프리미엄 = 디럭스 + 그 스펙팩으로 실제로 만들어 둔 화면(HTML)
-// 세 등급 모두 문서 8종 + AI 빌드 스펙팩 + 디자인 프리셋 3종을 전부 담는다.
-// 스탠다드↔디럭스의 차이는 설계 깊이와 분량뿐이고, 프리미엄은 결과물이 더 붙는다.
-// 만들어 둔 사이트가 있는 업종만 프리미엄이 생긴다 — 없는 걸 팔지 않기 위해서.
+// 등급은 사다리가 아니라 2×2다(lib/packages.ts의 PlanId 주석과 같은 축).
+//
+//              문서만        + 검수 시나리오 + 완성 화면(HTML)
+//   2뎁스   스탠다드              디럭스
+//   3뎁스   플러스                프리미엄
+//
+// 가로축은 설계 깊이(2뎁스 / 3뎁스), 세로축은 "만들기 전(설계)"과 "오픈 전(검수)"이다.
+// 네 등급 모두 문서 + AI 빌드 스펙팩 + 디자인 프리셋을 담는다. 차이는 이 둘뿐이다.
+//
+// 디럭스·프리미엄은 그 깊이로 실제로 만들어 둔 화면(HTML)이 있는 업종에만 생긴다.
+// 없는 걸 팔지 않기 위해서다 — 지금은 해외투어 3뎁스(프리미엄) 하나뿐이다.
 //
 // 디자인 프리셋은 업종당 한 벌뿐이라 심화판도 기본판 폴더에서 가져다 쓴다.
 //
-// 사용법: npx tsx package-template.mts            → 6개 전부
+// 사용법: npx tsx package-template.mts              → 만들 수 있는 것 전부
 //         npx tsx package-template.mts travel-premium → 하나만
-//         npx tsx package-template.mts groupbuy    → 미판매 재고(구 3등급 방식)
 import { statSync, readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from "node:fs";
 import JSZip from "jszip";
 import { PACKAGES, BUILD_SCOPE } from "./lib/packages";
@@ -30,60 +34,70 @@ interface Product {
   /** lib/packages.ts의 PackageDef.id — 업종별 외부 연동 목록을 README에 넣을 때 쓴다. */
   pkgId?: string;
   /**
-   * 스펙팩으로 실제로 만들어 둔 화면 폴더(HTML). 이게 있으면 프리미엄 등급이 된다.
+   * 검수 시나리오를 넣는 등급인가(디럭스·프리미엄).
+   * 완성 화면 유무와는 따로 둔다 — 화면을 아직 안 만든 업종도 검수는 넣을 수 있다.
+   */
+  withVerify?: boolean;
+  /**
+   * 스펙팩으로 실제로 만들어 둔 화면 폴더(HTML). 있으면 완성화면/ 로 통째로 들어간다.
    * 설계만 파는 등급과 달리 "만들어진 결과"까지 들어가므로 README 안내 문구도 달라진다.
    */
   sitePath?: string;
 }
 
-// 사이트에서 파는 6종.
-const PRODUCTS: Record<string, Product> = {};
+/**
+ * 파는 업종.
+ *  base / deep — 2뎁스·3뎁스 산출물 폴더
+ *  siteBase / siteDeep — 그 깊이로 실제로 만들어 둔 화면(HTML) 폴더.
+ *    있는 것만 디럭스·프리미엄이 생긴다. 비즈니스관리(admin)는 판매 보류라 뺐다.
+ */
 const INDUSTRIES = [
-  { key: "lms", base: `${T}/LMS_온라인강의플랫폼`, deep: `${T}/LMS_온라인강의플랫폼_상세IA`, label: "LMS", title: "온라인 강의 플랫폼(LMS)" },
-  { key: "beauty", base: `${T}/뷰티샵_예약플랫폼`, deep: `${T}/뷰티샵_예약플랫폼_상세IA`, label: "뷰티샵", title: "뷰티샵 예약 플랫폼" },
-  { key: "travel", base: `${T}/해외투어_티켓예약`, deep: `${T}/해외투어_티켓예약_상세IA`, label: "여행", title: "해외 투어·티켓 예약 플랫폼" },
-];
+  { key: "lms", label: "LMS", title: "온라인 강의 플랫폼(LMS)",
+    base: `${T}/LMS_온라인강의플랫폼`, deep: `${T}/LMS_온라인강의플랫폼_상세IA` },
+  { key: "beauty", label: "뷰티샵", title: "뷰티샵 예약 플랫폼",
+    base: `${T}/뷰티샵_예약플랫폼`, deep: `${T}/뷰티샵_예약플랫폼_상세IA` },
+  { key: "travel", label: "여행", title: "해외 투어·티켓 예약 플랫폼",
+    base: `${T}/해외투어_티켓예약`, deep: `${T}/해외투어_티켓예약_상세IA`,
+    // 두 사이트는 프리셋이 다르다 — 디럭스는 소프트 파스텔, 프리미엄은 모던 네이비.
+    // 같은 설계로 얼마나 다른 얼굴이 나오는지 두 등급이 나란히 보여준다.
+    siteBase: `${T}/해외투어_티켓예약_완성화면_디럭스`,
+    siteDeep: `${T}/해외투어_티켓예약_완성화면` },
+  { key: "groupbuy", label: "공동구매", title: "공동구매(공구) 플랫폼",
+    base: `${T}/공동구매_공구플랫폼`, deep: `${T}/공동구매_공구플랫폼_상세IA` },
+] as const satisfies readonly {
+  key: string; label: string; title: string;
+  base: string; deep: string; siteBase?: string; siteDeep?: string;
+}[];
+
+// 2×2를 그대로 편다. 4업종 × 4등급 = 16칸을 모두 만든다.
+// 아직 없는 재료(완성 화면·검수)는 그 칸에서 빠질 뿐, 칸 자체는 만든다 —
+// 무엇이 비어 있는지 눈으로 보여야 채울 수 있어서다. 부족한 칸 목록은
+// 실행 끝에 _부족한구성.md로 남긴다.
+const ALL_PRODUCTS: Record<string, Product> = {};
 for (const ind of INDUSTRIES) {
-  PRODUCTS[`${ind.key}-standard`] = {
-    src: ind.base,
-    presetsFrom: ind.base,
-    zipName: `${ind.label}_스탠다드`,
-    title: ind.title,
-    planLabel: "스탠다드",
-    pkgId: ind.key,
-  };
-  PRODUCTS[`${ind.key}-deluxe`] = {
-    src: ind.deep,
-    presetsFrom: ind.base,
-    zipName: `${ind.label}_디럭스`,
-    title: ind.title,
-    planLabel: "디럭스",
-    pkgId: ind.key,
-  };
+  const siteBase = "siteBase" in ind ? (ind.siteBase as string) : undefined;
+  const siteDeep = "siteDeep" in ind ? (ind.siteDeep as string) : undefined;
+  const common = { presetsFrom: ind.base, title: ind.title, pkgId: ind.key };
+  const tiers: [string, string, string, boolean, string | undefined][] = [
+    // [등급 키, 산출물 폴더, 등급 이름, 검수 포함, 완성 화면 폴더]
+    ["standard", ind.base, "스탠다드", false, undefined],
+    ["plus", ind.deep, "플러스", false, undefined],
+    ["deluxe", ind.base, "디럭스", true, siteBase],
+    ["premium", ind.deep, "프리미엄", true, siteDeep],
+  ];
+  for (const [tier, src, planLabel, withVerify, sitePath] of tiers) {
+    ALL_PRODUCTS[`${ind.key}-${tier}`] = {
+      ...common,
+      src,
+      withVerify,
+      sitePath,
+      zipName: `${ind.label}_${planLabel}`,
+      planLabel,
+    };
+  }
 }
 
-// 프리미엄 = 디럭스 + 스펙팩으로 실제로 만들어 둔 화면.
-// 만들어 둔 사이트가 있는 업종만 이 등급이 생긴다. 없는 업종은 디럭스까지다.
-PRODUCTS["travel-premium"] = {
-  src: `${T}/해외투어_티켓예약_상세IA`,
-  presetsFrom: `${T}/해외투어_티켓예약`,
-  sitePath: `${T}/_배포/판매_6종/여행_프리미엄/여행_프리미엄_사이트`,
-  zipName: "여행_프리미엄",
-  title: "해외 투어·티켓 예약 플랫폼",
-  planLabel: "프리미엄",
-  pkgId: "travel",
-};
-
-// 아직 사이트에 안 올린 재고. 구 3등급 방식 그대로 한 벌만 묶는다.
-const LEGACY: Record<string, Product> = {
-  groupbuy: { src: `${T}/공동구매_공구플랫폼`, presetsFrom: `${T}/공동구매_공구플랫폼`, zipName: "공동구매_기본", title: "공동구매(공구) 플랫폼", planLabel: "기본" },
-  "groupbuy-deep": { src: `${T}/공동구매_공구플랫폼_상세IA`, presetsFrom: `${T}/공동구매_공구플랫폼`, zipName: "공동구매_상세", title: "공동구매(공구) 플랫폼", planLabel: "상세" },
-  admin: { src: `${T}/비즈니스관리_관리자시스템`, presetsFrom: `${T}/비즈니스관리_관리자시스템`, zipName: "관리자시스템_기본", title: "통합 비즈니스 관리자 시스템", planLabel: "기본" },
-  "admin-deep": { src: `${T}/비즈니스관리_관리자시스템_상세IA`, presetsFrom: `${T}/비즈니스관리_관리자시스템`, zipName: "관리자시스템_상세", title: "통합 비즈니스 관리자 시스템", planLabel: "상세" },
-};
-
-const ALL_PRODUCTS = { ...PRODUCTS, ...LEGACY };
-const OUT = `${T}/_배포/판매_6종`;
+const OUT = `${T}/_배포/00_판매팩`;
 
 // 업종별로 개발자에게 넘겨야 할 외부 연동 목록. 판매 페이지와 같은 출처를 쓴다.
 function integrationBlock(p: Product): string {
@@ -97,12 +111,12 @@ ${items.map((it) => `  · ${it.area} — ${it.detail}`).join("\n")}
 }
 
 function readme(p: Product, stats: { screens: number; requirements: number; verifyScenarios?: number }) {
-  // 검수 시나리오는 프리미엄 전용이다.
-  // "만들기 전(설계)"과 "오픈 전(검수)"을 등급으로 갈랐다 — 아래 두 등급은 설계까지만 판다.
-  const 검수 = p.sitePath && stats.verifyScenarios
-    ? ` 08_검수시나리오.xlsx     오픈 전 점검표 — 시나리오 ${stats.verifyScenarios}개  ★프리미엄\n`
+  // 검수 시나리오는 완성 화면이 붙는 등급(디럭스·프리미엄)에만 들어간다.
+  // "만들기 전(설계)"과 "오픈 전(검수)"을 축으로 갈랐다 — 스탠다드·플러스는 설계까지만 판다.
+  const 검수 = p.withVerify && stats.verifyScenarios
+    ? ` 08_검수시나리오.xlsx     오픈 전 점검표 — 시나리오 ${stats.verifyScenarios}개  ★디럭스·프리미엄\n`
     : "";
-  const 검수사용법 = p.sitePath
+  const 검수사용법 = p.withVerify && stats.verifyScenarios
     ? ` [검수] 08_검수시나리오.xlsx를 열어 화면을 하나씩 눌러보며
         '결과' 칸에 PASS / FAIL / WARN 을 적으세요. 빠진 화면이 드러납니다.
 
@@ -160,7 +174,7 @@ ${
  예외 상황 화면까지 다 들어 있습니다.
 
  이 화면들은 같이 들어 있는 07_AI빌드_스펙팩으로 만든 것입니다.
- Claude Code(Opus 5, 추론 높음)로 약 40분이 걸렸습니다.
+ Claude Code(Opus 5, 추론 높음)에 스펙팩을 넣어 만들었습니다.
 
  완성화면/build/ 안에는 화면을 찍어내는 생성기가 들어 있습니다.
  data.mjs에서 문구·가격 같은 내용을 고치고 generate.mjs를 다시 돌리면
@@ -212,11 +226,11 @@ async function pack(p: Product) {
   };
 
   // _패키지정보.json은 README 수치를 넘기기 위한 내부 파일이라 구매자에게 주지 않는다.
-  // 08_검수시나리오는 프리미엄에만 넣는다 — README 구성표와 실제 파일이 어긋나면 안 된다.
+  // 08_검수시나리오는 디럭스·프리미엄에만 넣는다 — README 구성표와 실제 파일이 어긋나면 안 된다.
   const files = readdirSync(p.src).filter(
     (f) =>
       f !== "_패키지정보.json" &&
-      (p.sitePath || !f.startsWith("08_검수시나리오")) &&
+      (p.withVerify || !f.startsWith("08_검수시나리오")) &&
       /\.(xlsx|pptx|html|drawio|md|json)$/.test(f),
   );
 
@@ -234,7 +248,7 @@ async function pack(p: Product) {
     }
   }
 
-  // 프리미엄만 — 스펙팩으로 실제로 만든 화면을 통째로 넣는다.
+  // 디럭스·프리미엄만 — 스펙팩으로 실제로 만든 화면을 통째로 넣는다.
   let siteCount = 0;
   if (p.sitePath) {
     if (!existsSync(p.sitePath)) throw new Error(`완성 화면 폴더가 없어요: ${p.sitePath}`);
@@ -265,15 +279,50 @@ async function pack(p: Product) {
       (siteCount ? ` + 완성화면 ${siteCount}개` : "") +
       `, 화면 ${stats.screens}개, ${Math.round(buf.length / 1024)}KB`,
   );
+
+  // 무엇이 들어 있고 무엇이 비었는지 한눈에 보라고, 부족한 칸 목록을 만들 재료를 남긴다.
+  const missing: string[] = [];
+  if (p.withVerify && !stats.verifyScenarios) missing.push("검수 시나리오(08)");
+  if (p.withVerify && !p.sitePath) missing.push("완성 화면(HTML)");
+  return { key: p.zipName, planLabel: p.planLabel, title: p.title, missing, kb: Math.round(buf.length / 1024) };
 }
 
 const arg = process.argv[2];
-const targets = arg ? { [arg]: ALL_PRODUCTS[arg] } : PRODUCTS;
 if (arg && !ALL_PRODUCTS[arg]) {
   throw new Error(`알 수 없는 상품: ${arg} (가능: ${Object.keys(ALL_PRODUCTS).join(", ")})`);
 }
+const targets: Record<string, Product> = arg ? { [arg]: ALL_PRODUCTS[arg] } : ALL_PRODUCTS;
 
 mkdirSync(OUT, { recursive: true });
 console.log("패키징 중...");
-for (const p of Object.values(targets)) await pack(p);
+const results = [];
+for (const p of Object.values(targets)) results.push(await pack(p));
+
+// 부족한 구성 정리 — 어느 칸이 왜 아직 못 파는지 한 장으로 남긴다.
+const 부족 = results.filter((r) => r.missing.length > 0);
+const md = [
+  "# 판매팩 — 부족한 구성",
+  "",
+  `${results.length}칸 중 **${부족.length}칸**이 아직 재료가 빠져 있습니다.`,
+  "",
+  "| 팩 | 등급 | 빠진 것 |",
+  "|---|---|---|",
+  ...results.map(
+    (r) => `| ${r.key} | ${r.planLabel} | ${r.missing.length ? r.missing.join(", ") : "— (다 있음)"} |`,
+  ),
+  "",
+  "## 무엇을 채워야 하나",
+  "",
+  "- **완성 화면(HTML)** — 그 등급의 스펙팩을 AI 코딩툴에 넣어 화면을 실제로 만들고,",
+  "  `판매용_템플릿/<업종>_완성화면/` 에 두면 됩니다. 해외투어 3뎁스가 그렇게 만들어졌습니다",
+  "  (Claude Code Opus 5, 144화면에 약 40분).",
+  "  그 뒤 이 파일 위쪽 INDUSTRIES에 `siteBase` / `siteDeep` 경로를 적어주세요.",
+  "- **검수 시나리오(08)** — `npx tsx build-template.mts <키>` 를 다시 돌리면 산출물 폴더에 생깁니다.",
+  "",
+  "재료를 채우고 `npx tsx package-template.mts` 를 다시 돌리면 이 표도 같이 갱신됩니다.",
+  "",
+].join("\n");
+writeFileSync(`${OUT}/_부족한구성.md`, md);
+
 console.log(`\n완료 → ${OUT}`);
+console.log(`  재료가 빠진 칸: ${부족.length}/${results.length} (_부족한구성.md 참고)`);

@@ -24,6 +24,7 @@ import {
   BUILD_SCOPE,
   type PackagePlan,
 } from "@/lib/packages";
+import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
 
 // 판매 상세이자 검색 유입 페이지.
 // 앞쪽은 판매(플랜 비교·추천 대상·포함 산출물), 뒤쪽은 실제 산출물 공개로 신뢰를 준다.
@@ -64,11 +65,11 @@ const FAQ = [
   },
   {
     q: "등급은 어떻게 고르나요?",
-    a: "만들려는 사이트 규모로 고르시면 됩니다. 핵심 기능만 빠르게 만들어볼 계획이면 스탠다드, 실제로 운영할 서비스를 만든다면 탭·상태·예외까지 들어 있는 디럭스를 권해드려요. 프리미엄은 그 설계로 이미 만들어 둔 화면과 검수 시나리오까지 함께 드리는 등급으로, 업종에 따라 제공되지 않을 수 있습니다.",
+    a: "두 가지만 정하시면 됩니다. 첫째, 설계를 어디까지 펼칠지 — 핵심 화면만 빠르게 보려면 2뎁스(스탠다드·디럭스), 탭·상태·예외까지 촘촘히 필요하면 3뎁스(플러스·프리미엄)입니다. 둘째, 만들어 둔 화면이 필요한지 — 필요하시면 디럭스나 프리미엄을 고르세요. 그 설계로 이미 만든 화면(HTML)과 오픈 전 점검용 검수 시나리오가 함께 들어갑니다. 만들어 둔 화면이 없는 업종에는 디럭스·프리미엄이 나타나지 않습니다.",
   },
   {
     q: "디자인 시안도 들어 있나요?",
-    a: "AI팩은 기획 산출물에 가까운 문서입니다. 디자인 프리셋은 색상·글꼴·컴포넌트 규칙을 정리한 문서이며 시안 이미지가 아닙니다. 다만 디자인 프리셋과 AI 빌드 스펙팩을 AI 도구에 넣거나, 프리미엄 등급에 들어 있는 HTML은 디자인 컨셉이 반영된 화면이라 디자인 목업으로 보실 수 있어요. (쓰시는 AI 도구에 따라 다른 결과물이 나올 수 있습니다.)",
+    a: "AI팩은 기획 산출물에 가까운 문서입니다. 디자인 프리셋은 색상·글꼴·컴포넌트 규칙을 정리한 문서이며 시안 이미지가 아닙니다. 다만 디자인 프리셋과 AI 빌드 스펙팩을 AI 도구에 넣거나, 디럭스·프리미엄에 들어 있는 HTML은 디자인 컨셉이 반영된 화면이라 디자인 목업으로 보실 수 있어요. (쓰시는 AI 도구에 따라 다른 결과물이 나올 수 있습니다.)",
   },
   {
     q: "AI로 만들면 바로 쓸 수 있는 사이트가 되나요?",
@@ -247,10 +248,15 @@ export default async function PackageDetailPage({
         {/* 플랜 비교 — 이 페이지의 핵심. 고르면 아래 내용 전체가 그 규모로 바뀐다. */}
         <section id="plans" className="flex scroll-mt-20 flex-col gap-5">
           <SectionTitle>어떤 규모로 만드시나요?</SectionTitle>
-          {/* 등급 수만큼 나눈다 — 셋일 때 프리미엄이 혼자 아래로 떨어지지 않게. */}
+          {/* 등급 수만큼 나눈다 — 하나가 혼자 아래로 떨어지지 않게.
+              넷이면 2×2로 접었다가 넓은 화면에서 한 줄로 편다. */}
           <div
             className={`grid gap-4 ${
-              pkg.plans.length >= 3 ? "lg:grid-cols-3" : "md:grid-cols-2"
+              pkg.plans.length >= 4
+                ? "sm:grid-cols-2 lg:grid-cols-4"
+                : pkg.plans.length === 3
+                  ? "lg:grid-cols-3"
+                  : "md:grid-cols-2"
             }`}
           >
             {pkg.plans.map((plan) => (
@@ -484,7 +490,7 @@ export default async function PackageDetailPage({
             <DocCard
               title="검수 시나리오"
               meta={`xlsx · 시나리오 ${selected.verify.scenarios}개`}
-              badge="프리미엄"
+              badge={selected.name}
             >
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[30rem] text-left text-xs">
@@ -527,7 +533,7 @@ export default async function PackageDetailPage({
             <DocCard
               title="완성 화면 HTML"
               meta={`${selected.siteScreens}개`}
-              badge="프리미엄"
+              badge={selected.name}
             >
               <p className="mb-3 text-sm font-bold text-foreground">{pkg.title} — 전체 화면 목록</p>
               <div className="flex flex-col gap-2.5">
@@ -855,7 +861,11 @@ function PlanCard({
         </div>
       </div>
 
-      <p className="text-3xl font-bold text-primary">{formatKrw(plan.priceKrw)}</p>
+      {PACKAGE_PRICES_PUBLIC ? (
+        <p className="text-3xl font-bold text-primary">{formatKrw(plan.priceKrw)}</p>
+      ) : (
+        <p className="text-xl font-bold text-warning">판매 준비 중</p>
+      )}
 
       <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
         <Layers className="size-4" />

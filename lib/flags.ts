@@ -17,3 +17,12 @@ export const BILLING_OPEN = false;
  * (테스트 키가 들어간 상태라, 켜도 실제 결제는 되지 않고 테스트 모드로만 동작한다.)
  */
 export const CREDITS_OPEN = process.env.CREDITS_OPEN === "true";
+
+/**
+ * AI팩 판매가를 손님에게 보여주는가.
+ *
+ * 아직 살 수 있는 길이 없어서(크몽 미등록·PG 전) 값을 먼저 내걸지 않는다.
+ * 값만 보이고 살 수 없으면 "비싸다"는 인상만 남고 돌아가기 때문이다.
+ * 판매를 열 때 이 값을 true로 바꾸면 목록·상세·랜딩의 가격이 한 번에 나타난다.
+ */
+export const PACKAGE_PRICES_PUBLIC = false;

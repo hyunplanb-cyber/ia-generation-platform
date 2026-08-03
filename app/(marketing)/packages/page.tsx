@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, ShoppingBag, Sparkles } from "lucide-react";
 import { packageProducts, formatKrw } from "@/lib/packages";
+import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
 
 export const metadata: Metadata = {
   title: "AI팩 구매 — 업종별 화면설계서·기능정의서 완성본",
@@ -83,14 +84,19 @@ export default function PackagesPage() {
                 </ul>
 
                 <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-4">
-                  <p className="text-lg font-bold text-foreground">{formatKrw(plan.priceKrw)}</p>
+                  {PACKAGE_PRICES_PUBLIC ? (
+                    <p className="text-lg font-bold text-foreground">{formatKrw(plan.priceKrw)}</p>
+                  ) : (
+                    // 살 수 없는 동안엔 값을 걸지 않는다 — 값만 남고 돌아가는 손님을 만들지 않으려고.
+                    <p className="text-sm font-semibold text-warning">판매 준비 중</p>
+                  )}
                   <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary">
                     자세히 보기
                     <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>
 
-                {!plan.kmongUrl && (
+                {PACKAGE_PRICES_PUBLIC && !plan.kmongUrl && (
                   <p className="mt-2 text-xs font-medium text-warning">판매 준비 중</p>
                 )}
               </Link>

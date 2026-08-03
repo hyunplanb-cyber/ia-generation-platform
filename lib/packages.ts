@@ -10,6 +10,7 @@
 // "만들기 전(설계)"과 "오픈 전(검수)"을 축으로 갈랐다.
 // 만들어 둔 화면이 있는 업종에만 디럭스·프리미엄이 생긴다(현재 여행의 3뎁스뿐).
 import type { DesignKey } from "@/lib/design-presets";
+import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
 import { LMS, type TplMenu } from "@/template-data-lms";
 import { BEAUTY } from "@/template-data-beauty";
 import { TRAVEL } from "@/template-data-travel";
@@ -380,8 +381,14 @@ export const PACKAGES: PackageDef[] = [
     industry: "여행·예약",
     tagline:
       "해외 투어·입장권·패스를 날짜와 인원을 골라 예약하고, 현지에서 쓸 바우처를 받는 여행 예약 플랫폼 AI팩",
-    // 여행만 스펙팩으로 화면 144개를 실제로 만들어 뒀다 → 프리미엄이 생긴다.
-    plans: makePlans(TRAVEL, TRAVEL_DEEP, { standard: null, plus: null, premium: null }, { deep: 144 }),
+    // 여행만 화면을 실제로 만들어 뒀다 → 디럭스·프리미엄이 둘 다 생긴다.
+    // 2뎁스 43화면은 소프트 파스텔, 3뎁스 144화면은 모던 네이비로 만들었다.
+    plans: makePlans(
+      TRAVEL,
+      TRAVEL_DEEP,
+      { standard: null, plus: null, deluxe: null, premium: null },
+      { base: 43, deep: 144 },
+    ),
     data: TRAVEL,
     deep: TRAVEL_DEEP,
     promptSamples: ["pr3", "bk6", "vc2"],
@@ -427,7 +434,17 @@ export const PACKAGES: PackageDef[] = [
   },
 ];
 
-/** 목록에 진열되는 낱개 상품 6개 (업종 3 × 플랜 2). */
+/**
+ * 목록·랜딩에 진열할 업종.
+ *
+ * 지금은 해외투어만 네 등급이 다 갖춰져 있다(완성 화면까지). LMS·뷰티샵은
+ * 스탠다드·플러스뿐이라 2×2가 반만 보이는데, 그 상태로 내걸면 "왜 이건 두 개뿐이지"가
+ * 먼저 걸린다. 여행을 본보기로 세우고, 나머지는 완성되는 대로 여기에 추가한다.
+ * (상세 주소 /packages/lms 는 그대로 살아 있다 — 링크만 걸지 않는다.)
+ */
+const LISTED_IDS = new Set(["travel"]);
+
+/** 목록에 진열되는 낱개 상품 (진열 업종 × 플랜). */
 export interface PackageProduct {
   pkg: PackageDef;
   plan: PackagePlan;
@@ -437,7 +454,7 @@ export interface PackageProduct {
 }
 
 export function packageProducts(): PackageProduct[] {
-  return PACKAGES.flatMap((pkg) =>
+  return PACKAGES.filter((pkg) => LISTED_IDS.has(pkg.id)).flatMap((pkg) =>
     pkg.plans.map((plan) => ({
       pkg,
       plan,
@@ -471,7 +488,8 @@ export function aiPackCards(): AiPackCard[] {
     title: pkg.title,
     planName: plan.name,
     screens: plan.stats.screens,
-    price: formatKrw(plan.priceKrw),
+    // 살 수 있는 길이 열리기 전까지는 값 대신 상태를 적는다(lib/flags.ts).
+    price: PACKAGE_PRICES_PUBLIC ? formatKrw(plan.priceKrw) : "판매 준비 중",
     badge: plan.badge,
   }));
 }
