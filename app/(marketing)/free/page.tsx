@@ -189,7 +189,9 @@ export default async function FreePage() {
               AI팩 만들기
               <ArrowRight className="size-4" />
             </Link>
-            <Link href="/verify" className={buttonVariants({ variant: "outline", size: "lg" })}>
+            {/* 검수 버튼은 홈과 같이 녹색으로 채운다 — 테두리만 두면 둘 중 하나가 곁다리로 보인다.
+                point-green이 이 버튼 안에서만 --primary를 검수 녹색으로 바꾼다(globals.css). */}
+            <Link href="/verify" className={`point-green ${buttonVariants({ size: "lg" })}`}>
               내 사이트 검수하기
               <ArrowRight className="size-4" />
             </Link>
