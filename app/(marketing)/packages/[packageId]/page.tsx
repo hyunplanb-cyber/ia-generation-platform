@@ -15,6 +15,10 @@ import {
   Workflow,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { getSession } from "@/lib/session";
+import { PACKAGE_SALE_OPEN } from "@/lib/flags";
+import { ownedPlans } from "@/application/pack-order";
+import { BuyButton } from "../buy-button";
 import {
   PACKAGES,
   getPackage,
@@ -126,6 +130,10 @@ export default async function PackageDetailPage({
   const { menus } = pkg.data;
   const standard = pkg.plans[0];
   const premium = pkg.plans[pkg.plans.length - 1];
+
+  // 이미 산 등급은 구매 버튼 대신 다운로드로 바뀐다 — 판매를 아직 열지 않았어도 그렇다.
+  const session = await getSession();
+  const owned = await ownedPlans(pkg.id);
 
   // 고른 등급이 페이지 전체를 지배한다 — 지표·화면 목록·예외 화면·검수 수치까지.
   const selected = pkg.plans.find((p) => p.id === planParam) ?? standard;
@@ -326,6 +334,12 @@ export default async function PackageDetailPage({
                 plan={plan}
                 pkgId={pkg.id}
                 selected={plan.id === selected.id}
+                owned={owned.has(plan.id)}
+                signedIn={Boolean(session)}
+                tossClientKey={process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? ""}
+                customerKey={session?.user.id ?? ""}
+                customerEmail={session?.user.email ?? null}
+                customerName={session?.user.name ?? null}
               />
             ))}
           </div>
@@ -1005,10 +1019,22 @@ function PlanCard({
   plan,
   pkgId,
   selected,
+  owned,
+  signedIn,
+  tossClientKey,
+  customerKey,
+  customerEmail,
+  customerName,
 }: {
   plan: PackagePlan;
   pkgId: string;
   selected: boolean;
+  owned: boolean;
+  signedIn: boolean;
+  tossClientKey: string;
+  customerKey: string;
+  customerEmail: string | null;
+  customerName: string | null;
 }) {
   return (
     <div
@@ -1088,35 +1114,43 @@ function PlanCard({
         </Link>
       )}
 
-      <div className="mt-auto pt-2">
-        {plan.kmongUrl ? (
+      <div className="mt-auto flex flex-col gap-2 pt-2">
+        {/* 우리 사이트에서 바로 산다. 결제가 끝나면 그 자리에서 파일을 받는다. */}
+        <BuyButton
+          packageId={pkgId}
+          planId={plan.id}
+          planName={plan.name}
+          owned={owned}
+          saleOpen={PACKAGE_SALE_OPEN}
+          signedIn={signedIn}
+          clientKey={tossClientKey}
+          customerKey={customerKey}
+          customerEmail={customerEmail}
+          customerName={customerName}
+          emphasis={plan.id === "premium"}
+        />
+
+        {/* 크몽은 별개 판로다 — 수수료 때문에 값이 다를 수 있어 함께 걸어만 둔다. */}
+        {plan.kmongUrl && (
           <a
             href={plan.kmongUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`${buttonVariants({ size: "lg" })} w-full ${
-              plan.id === "premium" ? "" : "bg-foreground hover:bg-foreground/90"
-            }`}
+            className="text-center text-xs font-medium text-muted-foreground underline-offset-2 hover:underline"
           >
-            <ShoppingBag className="size-4" />
-            {plan.name} 구매하기
+            크몽에서 보기
           </a>
-        ) : (
-          // 결제(PG) 붙기 전까지 여기가 막다른 길이 되지 않게, 무료 샘플로 이어준다.
-          // 사려다 못 산 사람이 빈손으로 나가지 않게 하는 게 목적이다(가입은 요구하지 않는다).
-          <div className="rounded-lg border border-dashed border-border bg-background/60 px-4 py-4 text-center">
-            <p className="text-sm font-semibold text-foreground">곧 판매를 시작해요</p>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              그동안 무료 샘플로 먼저 살펴보세요.
-            </p>
-            <Link
-              href="/free"
-              className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
-            >
-              무료 샘플 받기
-              <ArrowRight className="size-4" />
-            </Link>
-          </div>
+        )}
+
+        {/* 아직 못 사는 동안 여기가 막다른 길이 되지 않게, 무료 샘플로 이어준다. */}
+        {!owned && !PACKAGE_SALE_OPEN && (
+          <Link
+            href="/free"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+          >
+            그동안 무료 샘플 받기
+            <ArrowRight className="size-4" />
+          </Link>
         )}
       </div>
     </div>

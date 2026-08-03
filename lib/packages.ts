@@ -100,6 +100,12 @@ export interface PackageDef {
   /** 위 3종이 이 업종에서 어디에 어울리는지 (presetStyles와 같은 순서) */
   presetFits: [string, string, string];
   /**
+   * 판매팩 zip 파일 이름의 앞부분 — `여행_프리미엄.zip`의 "여행".
+   * package-template.mts가 만드는 파일명과 같아야 산 사람에게 파일을 줄 수 있다.
+   * 어긋나면 그 스크립트가 멈춘다.
+   */
+  fileLabel: string;
+  /**
    * 판매팩에 함께 넣는 레이아웃 골격 2종.
    *
    * 색과 골격을 한 파일에 묶어 두면 "코럴을 쓰려면 사진 중심형이어야 한다"가 되어
@@ -316,6 +322,7 @@ export const PACKAGES: PackageDef[] = [
       "B2C 강의 서비스, 취미·키즈 교육, 일반 사용자 대상",
     ],
     layoutKeys: ["console", "search"],
+    fileLabel: "LMS",
     integrations: [
       { area: "로그인·회원가입", detail: "이메일 가입, 카카오·구글 등 소셜 로그인" },
       { area: "수강 결제", detail: "카드·간편결제(PG), 환불과 부분 취소" },
@@ -364,6 +371,7 @@ export const PACKAGES: PackageDef[] = [
       "신뢰감이 중요한 피부관리·클리닉, 프랜차이즈 살롱",
     ],
     layoutKeys: ["showcase", "list"],
+    fileLabel: "뷰티샵",
     integrations: [
       { area: "로그인·회원가입", detail: "이메일 가입, 카카오 등 소셜 로그인, 휴대폰 본인인증" },
       { area: "예약금·결제", detail: "카드·간편결제(PG), 취소 수수료와 환불" },
@@ -419,6 +427,7 @@ export const PACKAGES: PackageDef[] = [
       "액티비티·레저 예약, 20~30대 자유여행객 타깃",
     ],
     layoutKeys: ["search", "showcase"],
+    fileLabel: "여행",
     integrations: [
       { area: "로그인·회원가입", detail: "이메일 가입, 소셜 로그인, 비회원 예약 조회" },
       { area: "예약 결제", detail: "카드·간편결제(PG), 해외 결제와 환율, 부분 취소 환불" },
@@ -588,4 +597,17 @@ export function withTopic(word: string): string {
   const code = word.charCodeAt(word.length - 1) - 0xac00;
   const hasFinalConsonant = code >= 0 && code <= 11171 && code % 28 !== 0;
   return `${word}${hasFinalConsonant ? "은" : "는"}`;
+}
+
+/**
+ * 산 사람에게 내려줄 zip 파일 이름 — `여행_프리미엄.zip`.
+ * package-template.mts가 만드는 이름과 같은 규칙이다(어긋나면 그 스크립트가 멈춘다).
+ */
+export function packFileName(pkg: PackageDef, planId: PlanId): string {
+  return `${pkg.fileLabel}_${PLAN_NAMES[planId]}.zip`;
+}
+
+/** 그 팩·등급이 실제로 파는 물건인가(디럭스·프리미엄은 완성 화면이 있는 업종에만 있다). */
+export function planOf(pkg: PackageDef, planId: string): PackagePlan | undefined {
+  return pkg.plans.find((p) => p.id === planId);
 }

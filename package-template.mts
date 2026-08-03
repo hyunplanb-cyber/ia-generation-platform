@@ -33,6 +33,8 @@ interface Product {
   planLabel: string;
   /** lib/packages.ts의 PackageDef.id — 업종별 외부 연동 목록을 README에 넣을 때 쓴다. */
   pkgId?: string;
+  /** 등급 키. 홈페이지가 파는 칸이면 packs/{pkgId}-{tier}.zip 으로도 함께 쓴다. */
+  tier: PlanId;
   /**
    * 검수 시나리오를 넣는 등급인가(디럭스·프리미엄).
    * 완성 화면 유무와는 따로 둔다 — 화면을 아직 안 만든 업종도 검수는 넣을 수 있다.
@@ -95,11 +97,25 @@ for (const ind of INDUSTRIES) {
       sitePath,
       zipName: `${ind.label}_${planLabel}`,
       planLabel,
+      tier,
     };
   }
 }
 
+// 업종 라벨이 lib/packages.ts와 어긋나면 홈페이지가 파일 이름을 못 찾는다.
+// 사고 나서야 알게 되는 종류라, 여기서 미리 멈춘다.
+for (const ind of INDUSTRIES) {
+  const pkg = PACKAGES.find((p) => p.id === ind.key);
+  if (pkg && pkg.fileLabel !== ind.label) {
+    throw new Error(
+      `업종 이름이 어긋나요: ${ind.key} — 여기는 "${ind.label}", lib/packages.ts는 "${pkg.fileLabel}"`,
+    );
+  }
+}
+
 const OUT = `${T}/_배포/00_판매팩`;
+// 홈페이지가 산 사람에게 내려줄 자리. 저장소에 함께 커밋되는 유일한 판매 파일이다.
+const SITE_PACKS = "packs";
 
 // 업종별로 개발자에게 넘겨야 할 외부 연동 목록. 판매 페이지와 같은 출처를 쓴다.
 function integrationBlock(p: Product): string {
@@ -282,6 +298,15 @@ async function pack(p: Product) {
 
   const buf = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
   writeFileSync(`${OUT}/${p.zipName}.zip`, buf);
+
+  // 홈페이지가 실제로 파는 칸이면, 사이트가 내려줄 자리에도 같이 둔다.
+  // 이름을 영문으로 바꾸는 이유는 adapters/storage/fs-pack-storage.ts 주석 참고.
+  const sellable = PACKAGES.find((x) => x.id === p.pkgId)?.plans.some((pl) => pl.id === p.tier);
+  if (sellable) {
+    mkdirSync(SITE_PACKS, { recursive: true });
+    writeFileSync(`${SITE_PACKS}/${p.pkgId}-${p.tier}.zip`, buf);
+  }
+
   console.log(
     `  ✔ ${p.zipName}.zip — 문서 ${files.length}개 + 프리셋 ${presetCount}개` +
       (siteCount ? ` + 완성화면 ${siteCount}개` : "") +

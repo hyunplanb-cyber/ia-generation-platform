@@ -36,3 +36,15 @@ export const PACKAGE_PRICES_PUBLIC = false;
  * 기능은 그대로 두고 버튼만 감춘다 — 다시 열 때 이 값만 true로 바꾸면 된다.
  */
 export const SCREEN_EDIT_OPEN = false;
+
+/**
+ * AI팩을 우리 사이트에서 직접 살 수 있게 하는가.
+ *
+ * "구매하기 → 결제 → 바로 다운로드"까지 뒤쪽은 다 만들어 두고, 화면에서만 막는다.
+ * PG 승인이 1~2달 걸리는 동안 버튼을 열어두면 살 수 없는 값만 보이기 때문이다.
+ * 승인이 나면 이 값을 true로 바꾸는 것만으로 판매가 열린다.
+ *
+ * 크몽은 별개 판로다 — 수수료 때문에 값이 다를 수 있고, 승인도 우리 손 밖이다.
+ * 크몽 링크(kmongUrl)가 있으면 그건 그것대로 함께 노출한다.
+ */
+export const PACKAGE_SALE_OPEN = process.env.PACKAGE_SALE_OPEN === "true";

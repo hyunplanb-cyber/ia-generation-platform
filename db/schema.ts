@@ -437,3 +437,35 @@ export const verifyDownloadUnlockRelations = relations(verifyDownloadUnlock, ({ 
   user: one(user, { fields: [verifyDownloadUnlock.userId], references: [user.id] }),
   run: one(verifyRun, { fields: [verifyDownloadUnlock.verifyRunId], references: [verifyRun.id] }),
 }));
+
+// AI팩 구매 주문. 크레딧 충전(creditOrder)과 같은 흐름이지만 사는 물건이 다르다 —
+// 크레딧은 잔액이 늘고, 이쪽은 그 팩의 zip을 받을 권리가 생긴다.
+//
+// 크몽은 별개 판로다. 수수료 때문에 값이 다를 수 있고 승인 여부도 우리 손 밖이라,
+// 우리 사이트는 "구매하기 → 바로 다운로드"가 되어야 한다(2026-08-03).
+export const packOrder = pgTable(
+  "pack_order",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orderId: text("order_id").notNull().unique(), // 토스에 보내는 주문번호
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    packageId: text("package_id").notNull(), // lib/packages.ts의 PackageDef.id
+    planId: text("plan_id").notNull(), // standard | plus | deluxe | premium
+    amountKrw: integer("amount_krw").notNull(),
+    status: text("status").notNull().default("pending"), // pending | paid | failed
+    paymentKey: text("payment_key"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    paidAt: timestamp("paid_at"),
+  },
+  (table) => [
+    index("pack_order_user_idx").on(table.userId),
+    // 산 것을 다시 찾을 때 쓰는 길 — "이 사람이 이 팩을 샀나"를 바로 본다.
+    index("pack_order_owned_idx").on(table.userId, table.packageId, table.planId, table.status),
+  ],
+);
+
+export const packOrderRelations = relations(packOrder, ({ one }) => ({
+  user: one(user, { fields: [packOrder.userId], references: [user.id] }),
+}));

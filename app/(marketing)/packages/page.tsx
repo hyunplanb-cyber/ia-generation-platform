@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
 import { packageProducts, planContents, formatKrw } from "@/lib/packages";
-import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
+import { PACKAGE_PRICES_PUBLIC, PACKAGE_SALE_OPEN } from "@/lib/flags";
 
 export const metadata: Metadata = {
   title: "AI팩 구매 — 업종별 화면설계서·기능정의서 완성본",
@@ -99,7 +99,9 @@ export default function PackagesPage() {
                   </span>
                 </div>
 
-                {PACKAGE_PRICES_PUBLIC && !plan.kmongUrl && (
+                {/* 판매를 열기 전에는 값이 보여도 살 수 없다는 걸 카드에서 미리 알린다.
+                    크몽 링크가 아니라 우리 판매 여부가 기준이다 — 크몽은 별개 판로다. */}
+                {PACKAGE_PRICES_PUBLIC && !PACKAGE_SALE_OPEN && (
                   <p className="mt-2 text-xs font-medium text-warning">판매 준비 중</p>
                 )}
               </Link>
