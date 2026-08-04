@@ -11,6 +11,7 @@
 // 만들어 둔 화면이 있는 업종에만 디럭스·프리미엄이 생긴다(현재 여행의 3뎁스뿐).
 import type { DesignKey, LayoutKey } from "@/lib/design-presets";
 import { splitFuncDef } from "@/lib/export/requirements";
+import { COMMON_VERIFY_CHECKS } from "@/lib/export/template-verify";
 import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
 import { LMS, type TplMenu } from "@/template-data-lms";
 import { BEAUTY } from "@/template-data-beauty";
@@ -168,7 +169,6 @@ export const BUILD_SCOPE = {
   ],
 } as const;
 
-/** 프리셋 문서 한 벌에 들어 있는 항목. */
 /**
  * 프리셋 한 벌에 들어 있는 항목.
  *
@@ -195,7 +195,10 @@ export const PRESET_WHY =
 function verifyOf(funcs: string[]) {
   return {
     scenarios: funcs.length,
-    checks: funcs.reduce((n, f) => n + Math.max(1, countItems(f)), 0),
+    // 화면별 항목 + 사이트 전체를 두고 보는 공통 점검(뒤로가기·헤더·죽은 버튼 등).
+    // 공통 점검은 화면 수와 무관하게 고정이라 그 개수를 더한다(template-verify.ts).
+    checks:
+      funcs.reduce((n, f) => n + Math.max(1, countItems(f)), 0) + COMMON_VERIFY_CHECKS,
   };
 }
 

@@ -135,12 +135,91 @@ export interface VerifySheets {
   scenarios: Row[];
 }
 
+/**
+ * 화면 하나하나가 아니라 **사이트 전체**를 두고 봐야 하는 것들.
+ *
+ * 검수 항목은 화면별 기능정의에서 뽑는데, 기능정의에는 뒤로가기·헤더처럼 모든 화면이
+ * 공유하는 것이 안 적혀 있다. 그래서 실제로 만들어진 사이트에서 화면 136개 중 105개에
+ * 뒤로가기가 없었는데도 검수표에는 그걸 볼 칸이 없었다(2026-08-04).
+ *
+ * 여기 적힌 것은 **빌드 가이드(스펙팩 6장)에 지시한 규칙과 짝**이다.
+ * 가이드에 규칙을 더하면 여기에도 확인 항목을 더한다 — 시킨 것과 보는 것이 같아야 한다.
+ */
+const COMMON_CHECKS: { item: string; how: string; expect: string }[] = [
+  {
+    item: "뒤로가기 — 홈과 각 메뉴 첫 화면을 뺀 모든 화면",
+    how: "화면을 하나씩 열어 좌측 상단에 '‹ 상위 화면' 이 있는지 세어 본다.",
+    expect: "빠진 화면이 하나도 없다. 눌러 보면 실제로 상위 화면으로 돌아간다.",
+  },
+  {
+    item: "현재 위치 표시",
+    how: "상세·입력 화면에서 지금 어디에 있는지 적혀 있는지 본다(예: 매장 탐색 › 매장 상세).",
+    expect: "어느 메뉴의 어느 화면인지 글로 보인다.",
+  },
+  {
+    item: "여러 단계 흐름의 이전 단계",
+    how: "1→2→3 흐름에서 2단계, 3단계로 간 뒤 이전으로 돌아가 본다.",
+    expect: "이전 단계로 가지고, 앞서 고른 값이 그대로 남아 있다.",
+  },
+  {
+    item: "막다른 화면의 다음 행동",
+    how: "빈 목록·오류·마감·완료 화면을 열어 본다.",
+    expect: "'목록으로'·'다시 시도' 같은 다음에 할 일 버튼이 하나 이상 있다.",
+  },
+  {
+    item: "전체 화면 목록으로 가는 길",
+    how: "아무 화면에서나 전체 목록으로 갈 수 있는지, 그 이름만 보고 알 수 있는지 본다.",
+    expect: "모든 화면에 있고, 이름에 목적이 드러난다(접힌 패널 안에 숨어 있지 않다).",
+  },
+  {
+    item: "손님 화면과 운영자 화면의 헤더 분리",
+    how: "손님 메뉴와 운영자 메뉴가 함께 있는 서비스라면, 두 영역의 헤더를 나란히 본다.",
+    expect: "헤더가 서로 다르고, 오가는 길은 전환 버튼 하나뿐이다.",
+  },
+  {
+    item: "눌러도 반응 없는 버튼",
+    how: "화면마다 버튼을 하나씩 눌러 본다.",
+    expect: "모든 버튼이 화면을 옮기거나, 화면 안 상태를 바꾸거나, 안내를 띄운다. 아무 일도 없는 버튼이 없다.",
+  },
+  {
+    item: "이미지 자리의 비율",
+    how: "'400×400' 처럼 크기가 적힌 이미지 자리가 실제로 그 비율인지 본다.",
+    expect: "적힌 대로 보인다. 목록 안에서 늘어나 타원이 되지 않는다.",
+  },
+  {
+    item: "공통 요소가 모든 화면에서 같은지",
+    how: "여러 화면을 오가며 헤더·푸터·버튼 모양이 같은지 본다.",
+    expect: "화면마다 다시 만든 흔적 없이 같은 모습이다.",
+  },
+  {
+    item: "좁은 화면(모바일)에서 가로 스크롤",
+    how: "브라우저 폭을 375px로 좁혀 화면을 훑는다.",
+    expect: "가로 스크롤이 생기지 않고, 내용이 화면 밖으로 나가지 않는다.",
+  },
+];
+
 export function buildTemplateVerifySheets(
   title: string,
   screens: VerifyTemplateScreen[],
 ): VerifySheets {
   const scenarios: Row[] = [];
   let exceptionCount = 0;
+
+  // 공통 점검을 맨 앞에 둔다. 화면을 다 본 뒤에 하면 이미 지쳐서 안 하게 된다.
+  COMMON_CHECKS.forEach((c, i) => {
+    scenarios.push({
+      테스트ID: "SCN-000",
+      메뉴: i === 0 ? "공통" : "",
+      화면: i === 0 ? "사이트 전체" : "",
+      화면ID: "",
+      화면구분: i === 0 ? "공통" : "",
+      "확인 항목": c.item,
+      "확인 방법": c.how,
+      "기대 결과": c.expect,
+      결과: "",
+      비고: "",
+    });
+  });
 
   screens.forEach((s, i) => {
     const isException = EXCEPTION_ROLE.test(s.role);
@@ -191,6 +270,8 @@ export function buildTemplateVerifySheets(
     ["검수 대상", title],
     ["시나리오 수(화면 수)", screens.length],
     ["확인 항목 수", scenarios.length],
+    ["  └ 공통(사이트 전체)", COMMON_CHECKS.length],
+    ["  └ 화면별", scenarios.length - COMMON_CHECKS.length],
     ["예외·상태 화면", exceptionCount],
     [],
     ["PASS", ""],
@@ -203,3 +284,6 @@ export function buildTemplateVerifySheets(
 
   return { filename: "08_검수시나리오.xlsx", cover, status, scenarios };
 }
+
+/** 공통 점검 항목 수 — 판매 페이지가 확인 항목을 셀 때 함께 더한다(lib/packages.ts). */
+export const COMMON_VERIFY_CHECKS = COMMON_CHECKS.length;

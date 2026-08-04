@@ -19,6 +19,15 @@
       ],
       "cwd": "판매용_템플릿/뷰티샵_예약플랫폼_완성화면_디럭스",
       "port": 4173
+    },
+    {
+      "name": "뷰티샵-프리미엄",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/뷰티샵_프리미엄_완성화면",
+      "port": 4174
     }
   ]
 }
