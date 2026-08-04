@@ -43,6 +43,37 @@ function hasAudience(menus: Menu[]): boolean {
   return menus.some((m) => m.audience && m.audience !== "customer");
 }
 
+/**
+ * 화면마다 뒤로가기가 어디로 가는지 미리 정해 준다.
+ *
+ * "깊이 들어간 화면에는 나오는 길을 두세요"라고 글로 적었더니, 만들어진 사이트에서
+ * 2뎁스 이상 125개 중 **125개 전부**에 뒤로가기가 없었다(2026-08-04). 어디까지가
+ * '깊이 들어간' 것인지 판단을 맡기면 안 붙인다. 그래서 판단을 없앤다 —
+ * 화면마다 "뒤로가기는 이 화면으로"를 스펙에 박아 두면 그대로 만들기만 하면 된다.
+ *
+ * 규칙은 둘뿐이다.
+ *   · 메뉴의 첫 화면      → 뒤로가기 없음 (GNB로 오간다)
+ *   · 상태·탭 화면        → 그 화면의 기본 상태로   (이름이 "예약 상세 > 완료 탭" 꼴)
+ *   · 그 밖의 모든 화면   → 그 메뉴의 첫 화면으로
+ */
+function backTargets(menus: Menu[], screens: Screen[]): Map<string, Screen> {
+  const back = new Map<string, Screen>();
+  for (const menu of menus) {
+    const mine = screens.filter((s) => s.menuId === menu.id);
+    const top = mine[0];
+    if (!top) continue;
+    const byName = new Map(mine.map((s) => [s.pageName, s]));
+    for (const s of mine) {
+      if (s.id === top.id) continue; // 메뉴 첫 화면은 나갈 길이 GNB다
+      // "예약 상세 > 완료 탭" 이면 "예약 상세"가 상위다.
+      const cut = s.pageName.lastIndexOf(" > ");
+      const parent = cut > 0 ? byName.get(s.pageName.slice(0, cut)) : undefined;
+      back.set(s.id, parent && parent.id !== s.id ? parent : top);
+    }
+  }
+  return back;
+}
+
 // 문서 제목은 한 줄이어야 한다.
 //
 // 컨셉은 보통 여러 문장짜리 설명이라, 그대로 제목에 넣으면 문단이 통째로 제목이 된다
@@ -69,6 +100,7 @@ export function buildSpecPackModel(
 ) {
   const menuName = new Map(menus.map((m) => [m.id, m.nameKo]));
   const scrById = new Map(screens.map((s) => [s.id, s]));
+  const back = backTargets(menus, screens);
 
   return {
     project: {
@@ -117,6 +149,11 @@ export function buildSpecPackModel(
       pageId: s.pageId,
       pageName: s.pageName,
       menu: menuName.get(s.menuId) ?? "",
+      // 이 화면의 뒤로가기가 가는 곳. 메뉴 첫 화면이면 null(나갈 길이 GNB다).
+      // 판단을 맡기지 않으려고 미리 정해 준다 — 이유는 backTargets 주석 참고.
+      backTo: back.get(s.id)
+        ? { pageId: back.get(s.id)!.pageId, pageName: back.get(s.id)!.pageName }
+        : null,
       funcDef: s.funcDef ?? "",
       prompt: cleanPrompt(s.prompt),
       buttons: buttonActions
@@ -222,6 +259,13 @@ export function buildSpecPackMarkdown(
   for (const s of m.screens) {
     lines.push(`### ${s.pageId} · ${s.pageName}`);
     lines.push(`- **소속 메뉴**: ${s.menu}`);
+    // 뒤로가기를 화면마다 못 박는다. 글로만 적었을 때는 2뎁스 이상 125개 중
+    // 125개 전부에 안 붙었다(2026-08-04). 판단할 것을 남기지 않는다.
+    lines.push(
+      s.backTo
+        ? `- **뒤로가기**: 좌측 상단에 \`‹ ${s.backTo.pageName}\` — 누르면 \`${s.backTo.pageId}\`로 간다`
+        : `- **뒤로가기**: 없음 (메뉴의 첫 화면 — GNB로 오간다)`,
+    );
     if (s.schedule.start || s.schedule.end) {
       lines.push(`- **일정**: ${s.schedule.start} ~ ${s.schedule.end}`);
     }
@@ -253,6 +297,7 @@ export function buildSpecPackMarkdown(
   lines.push("");
 
   lines.push("## 6. 빌드 가이드");
+  const backCount = m.screens.filter((s) => s.backTo).length;
   lines.push("### 구조");
   lines.push("- 각 **화면ID**를 하나의 라우트/페이지로 만드세요 (예: `PCHOME0110` → `/home`).");
   lines.push("- 화면명은 페이지 제목·컴포넌트 이름의 기준으로 사용하세요.");
@@ -279,6 +324,14 @@ export function buildSpecPackMarkdown(
   lines.push(
     "  · **서버가 있어야 하는 것만** 짧은 안내(토스트)로 대신합니다 — 저장·삭제·발송·결제·전화 걸기·이의 신청 등.",
   );
+  // 안내로 때운 버튼이 378개나 나왔다. '선택'·'모두 보기'처럼 화면 안에서 끝나는
+  // 것까지 토스트로 넘겨서, 눌러도 아무것도 안 일어나는 것과 다름없었다(2026-08-04).
+  lines.push(
+    "  · **이런 것은 토스트로 때우지 마세요** — `모두 보기`(펼치기), `선택`·`적용`(고른 상태로 바꾸기), `추가`(줄 하나 늘리기), `닫기`·`✕`(정말 닫기), `도움이 됐어요`(숫자 올리기), 탭·필터·정렬. 전부 화면 안에서 끝나는 일이라 실제로 되어야 합니다.",
+  );
+  lines.push(
+    "  · **모달·팝업은 뜨는 것만으로 끝이 아닙니다.** `취소`와 `✕`는 정말 닫히고, `확인`은 눌렀을 때 무엇이 달라지는지 보여야 합니다(다음 화면으로 가거나, 목록이 바뀌거나, 안내가 뜨거나). 닫히지 않는 팝업은 갇힌 화면이 됩니다.",
+  );
   lines.push(
     "  · 아무 것도 하지 않는 `<button>`을 남기지 마세요. 만들고 나서 **버튼을 하나씩 눌러 보고**, 반응이 없는 것이 있으면 위 둘 중 하나로 채우세요.",
   );
@@ -287,7 +340,7 @@ export function buildSpecPackMarkdown(
   lines.push(
     // "깊이 들어간 화면"이라고만 썼더니 136개 중 105개에 뒤로가기가 없었다(2026-08-04).
     // 어디까지가 '깊이 들어간' 것인지 AI가 알아서 좁게 잡는다. 범위를 못 박는다.
-    "- **홈과 각 메뉴의 첫 화면을 뺀 나머지 화면에는 전부 뒤로가기를 두세요.** 상세·입력·단계·상태·오류·완료 화면이 모두 해당합니다. 좌측 상단에 `‹ 상위 화면 이름`과 현재 위치(예: `매장 탐색 › 매장 상세`)를 둡니다.",
+    `- **뒤로가기는 화면마다 정해져 있습니다. 4장 각 화면 스펙의 \`뒤로가기\` 항목을 그대로 만드세요.** ${backCount}개 화면에 붙고, 나머지 ${m.screens.length - backCount}개(메뉴 첫 화면)에는 없습니다. 좌측 상단에 \`‹ 상위 화면 이름\`과 현재 위치(예: \`매장 탐색 › 매장 상세\`)를 둡니다.`,
   );
   lines.push(
     "  · 여러 단계짜리 흐름(1→2→3)은 **이전 단계로 돌아갈 수 있게** 하세요. 되돌아갔을 때 앞서 고른 값이 남아 있어야 합니다.",

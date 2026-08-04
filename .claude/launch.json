@@ -12,22 +12,22 @@
       "autoPort": true
     },
     {
-      "name": "뷰티샵-디럭스",
+      "name": "뷰티샵-완성화면",
       "runtimeExecutable": "node",
       "runtimeArgs": [
         "build/serve.mjs"
       ],
-      "cwd": "판매용_템플릿/뷰티샵_예약플랫폼_완성화면_디럭스",
-      "port": 4173
+      "cwd": "판매용_템플릿/뷰티샵_예약_완성화면",
+      "port": 4174
     },
     {
-      "name": "뷰티샵-프리미엄",
+      "name": "해외투어-완성화면",
       "runtimeExecutable": "node",
       "runtimeArgs": [
         "build/serve.mjs"
       ],
-      "cwd": "판매용_템플릿/뷰티샵_프리미엄_완성화면",
-      "port": 4174
+      "cwd": "판매용_템플릿/해외투어_티켓예약_완성화면",
+      "port": 4173
     }
   ]
 }

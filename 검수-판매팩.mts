@@ -7,7 +7,7 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import * as XLSX from "xlsx";
 
-const OUT = "판매용_템플릿/_배포/00_판매팩";
+const OUT = "판매용_템플릿/_판매팩";
 
 interface Finding {
   pack: string;
@@ -79,6 +79,18 @@ function checkPack(dir: string) {
     add(dir, "고칠 것", `화면 ${screens.length}개 중 ${withBtn}개(${ratio}%)에만 버튼 이동이 있음`);
   }
 
+  // ── 4-2. 뒤로가기가 화면마다 정해져 있나 ─────────────────────
+  //
+  // 글로만 적었을 때는 만들어진 사이트에서 하나도 안 붙었다. 화면 스펙에 목적지를
+  // 박아 두는 것이 유일하게 통하는 방법이라, 그게 들어 있는지 본다(2026-08-04).
+  const withBack = screens.filter((s: { backTo?: unknown }) => s.backTo).length;
+  const topScreens = (nav ? menus.length : menus.length) || 1;
+  if (withBack === 0) {
+    add(dir, "막음", "화면 스펙에 뒤로가기 목적지가 하나도 없음");
+  } else if (screens.length - withBack > topScreens) {
+    add(dir, "고칠 것", `뒤로가기가 없는 화면이 ${screens.length - withBack}개 (메뉴 첫 화면 ${topScreens}개보다 많음)`);
+  }
+
   // ── 5. 빌드 가이드에 오늘 정한 규칙이 들어 있나 ──────────────
   const md = readFileSync(`${base}/07_AI빌드_스펙팩.md`, "utf8");
   const rules: [string, string][] = [
@@ -86,6 +98,8 @@ function checkPack(dir: string) {
     ["화면 안에서 끝나는 조작은 진짜로 동작", "버튼 규칙"],
     ["비율을 실제로 지킨다", "이미지 비율 규칙"],
     ["프리셋 파일을 함께 넣었다면 그것이 우선", "프리셋 우선 규칙"],
+    ["뒤로가기는 화면마다 정해져 있습니다", "뒤로가기 규칙"],
+    ["토스트로 때우지 마세요", "안내로 때우지 말 것"],
   ];
   for (const [needle, label] of rules) {
     if (!md.includes(needle)) add(dir, "막음", `빌드 가이드에 ${label}이 없음`);
