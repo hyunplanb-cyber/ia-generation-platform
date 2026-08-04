@@ -381,7 +381,14 @@ export const PACKAGES: PackageDef[] = [
     industry: "뷰티·예약",
     tagline:
       "미용실·네일·왁싱·피부관리 매장을 찾아 예약하고, 매장은 예약·디자이너 일정·정산을 관리하는 예약 플랫폼 AI팩",
-    plans: makePlans(BEAUTY, BEAUTY_DEEP, { standard: null, plus: null }),
+    // 화면을 실제로 만들어 뒀다 → 디럭스·프리미엄이 둘 다 생긴다.
+    // 2뎁스 49화면은 소프트 파스텔, 3뎁스 136화면은 코럴 선셋으로 만들었다.
+    plans: makePlans(
+      BEAUTY,
+      BEAUTY_DEEP,
+      { standard: null, plus: null, deluxe: null, premium: null },
+      { base: 49, deep: 136 },
+    ),
     data: BEAUTY,
     deep: BEAUTY_DEEP,
     promptSamples: ["re3", "mg1", "st5"],
@@ -489,12 +496,12 @@ export const PACKAGES: PackageDef[] = [
 /**
  * 목록·랜딩에 진열할 업종.
  *
- * 지금은 해외투어만 네 등급이 다 갖춰져 있다(완성 화면까지). LMS·뷰티샵은
- * 스탠다드·플러스뿐이라 2×2가 반만 보이는데, 그 상태로 내걸면 "왜 이건 두 개뿐이지"가
- * 먼저 걸린다. 여행을 본보기로 세우고, 나머지는 완성되는 대로 여기에 추가한다.
+ * 네 등급이 다 갖춰진 업종만 올린다. 스탠다드·플러스뿐이면 2×2가 반만 보여
+ * "왜 이건 두 개뿐이지"가 먼저 걸리기 때문이다. LMS·공동구매는 디럭스·프리미엄의
+ * 완성 화면(HTML)이 아직 없어 빠져 있다 — 만들면 여기에 더한다.
  * (상세 주소 /packages/lms 는 그대로 살아 있다 — 링크만 걸지 않는다.)
  */
-const LISTED_IDS = new Set(["travel"]);
+const LISTED_IDS = new Set(["travel", "beauty"]);
 
 /**
  * 이 등급 zip에 실제로 들어가는 것.
