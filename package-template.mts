@@ -63,7 +63,9 @@ const INDUSTRIES = [
   { key: "lms", label: "LMS", title: "온라인 강의 플랫폼(LMS)",
     base: `${W}/LMS_온라인강의플랫폼`, deep: `${W}/LMS_온라인강의플랫폼_상세IA` },
   { key: "beauty", label: "뷰티샵", title: "뷰티샵 예약 플랫폼",
-    base: `${W}/뷰티샵_예약플랫폼`, deep: `${W}/뷰티샵_예약플랫폼_상세IA` },
+    base: `${W}/뷰티샵_예약플랫폼`, deep: `${W}/뷰티샵_예약플랫폼_상세IA`,
+    // 디럭스(2뎁스 49화면)는 아직 화면을 안 만들었다 — 만들면 siteBase 를 채운다.
+    siteDeep: `${T}/뷰티샵_예약_완성화면` },
   { key: "travel", label: "여행", title: "해외 투어·티켓 예약 플랫폼",
     base: `${W}/해외투어_티켓예약`, deep: `${W}/해외투어_티켓예약_상세IA`,
     // 두 사이트는 프리셋이 다르다 — 디럭스는 소프트 파스텔, 프리미엄은 모던 네이비.
@@ -351,7 +353,8 @@ async function pack(p: Product) {
   return { key: p.zipName, planLabel: p.planLabel, title: p.title, missing, kb };
 }
 
-const arg = process.argv[2];
+// --zip 같은 깃발은 상품 이름이 아니다. 골라내지 않으면 `--zip`만 줬을 때 상품으로 읽힌다.
+const arg = process.argv.slice(2).find((a) => !a.startsWith("--"));
 if (arg && !ALL_PRODUCTS[arg]) {
   throw new Error(`알 수 없는 상품: ${arg} (가능: ${Object.keys(ALL_PRODUCTS).join(", ")})`);
 }
