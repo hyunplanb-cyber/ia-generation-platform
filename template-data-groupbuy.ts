@@ -366,6 +366,7 @@ export const GROUPBUY = {
     },
     {
       code: "AC",
+      audience: "account" as const,
       nameKo: "계정",
       nameEn: "Account",
       desc: "로그인·내 정보·배송지·알림을 관리한다",
@@ -420,6 +421,7 @@ export const GROUPBUY = {
     },
     {
       code: "HS",
+      audience: "owner" as const,
       nameKo: "공구 개설(총대)",
       nameEn: "Host",
       desc: "총대가 되어 새 공구를 열고 검수를 받는다",
@@ -477,6 +479,7 @@ export const GROUPBUY = {
     },
     {
       code: "HM",
+      audience: "owner" as const,
       nameKo: "공구 관리(총대)",
       nameEn: "HostManage",
       desc: "내가 연 공구의 참여 현황과 발주·배송을 관리한다",
@@ -565,6 +568,7 @@ export const GROUPBUY = {
     },
     {
       code: "SE",
+      audience: "owner" as const,
       nameKo: "정산(총대)",
       nameEn: "Settlement",
       desc: "성사된 공구의 매출을 정산받고 세금 정보를 관리한다",
