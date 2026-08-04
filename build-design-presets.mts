@@ -21,7 +21,7 @@ const TARGETS = {
   lms: {
     styles: ["navy", "mono", "coral"] as const,
     layouts: ["console", "search"] as const,
-    dir: "판매용_템플릿/LMS_온라인강의플랫폼/디자인프리셋",
+    dir: "_작업/LMS_온라인강의플랫폼/디자인프리셋",
     fits: [
       "B2B 교육, 사내 LMS, 기업 대상 강의 플랫폼",
       "전문가용 도구, 관리자 콘솔, 정보 밀도가 높은 화면",
@@ -32,7 +32,7 @@ const TARGETS = {
     // 내추럴 그린(forest)은 뷰티에 안 어울려 소프트 파스텔로 바꿨다(2026-08-04).
     styles: ["coral", "mono", "pastel"] as const,
     layouts: ["showcase", "list"] as const,
-    dir: "판매용_템플릿/뷰티샵_예약플랫폼/디자인프리셋",
+    dir: "_작업/뷰티샵_예약플랫폼/디자인프리셋",
     fits: [
       "네일·속눈썹·왁싱 등 캐주얼 뷰티, 20~30대 타깃 매장",
       "감각적인 편집숍형 살롱, 남성 전용 바버샵",
@@ -42,7 +42,7 @@ const TARGETS = {
   travel: {
     styles: ["navy", "mono", "pastel"] as const,
     layouts: ["search", "showcase"] as const,
-    dir: "판매용_템플릿/해외투어_티켓예약/디자인프리셋",
+    dir: "_작업/해외투어_티켓예약/디자인프리셋",
     fits: [
       "신뢰가 중요한 해외 투어·티켓 예약, 대형 여행 플랫폼",
       "사진이 주인공인 감성 여행 브랜드, 소규모 프라이빗 투어",
@@ -52,7 +52,7 @@ const TARGETS = {
   admin: {
     styles: ["navy", "mono", "pastel"] as const,
     layouts: ["console", "list"] as const,
-    dir: "판매용_템플릿/비즈니스관리_관리자시스템/디자인프리셋",
+    dir: "_작업/비즈니스관리_관리자시스템/디자인프리셋",
     fits: [
       "정보 밀도가 높은 백오피스·ERP형 관리 시스템, 데이터 중심 화면",
       "병의원·클리닉·전문 서비스업의 신뢰감 있는 관리자 콘솔",
@@ -62,7 +62,7 @@ const TARGETS = {
   groupbuy: {
     styles: ["navy", "mono", "coral"] as const,
     layouts: ["list", "showcase"] as const,
-    dir: "판매용_템플릿/공동구매_공구플랫폼/디자인프리셋",
+    dir: "_작업/공동구매_공구플랫폼/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
       "감각적인 셀렉트 공구·인플루언서 공구, 편집숍형 큐레이션",
@@ -72,7 +72,7 @@ const TARGETS = {
   "groupbuy-deep": {
     styles: ["navy", "mono", "coral"] as const,
     layouts: ["list", "showcase"] as const,
-    dir: "판매용_템플릿/공동구매_공구플랫폼_상세IA/디자인프리셋",
+    dir: "_작업/공동구매_공구플랫폼_상세IA/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
       "감각적인 셀렉트 공구·인플루언서 공구, 편집숍형 큐레이션",
@@ -82,7 +82,7 @@ const TARGETS = {
   "admin-deep": {
     styles: ["navy", "mono", "pastel"] as const,
     layouts: ["console", "list"] as const,
-    dir: "판매용_템플릿/비즈니스관리_관리자시스템_상세IA/디자인프리셋",
+    dir: "_작업/비즈니스관리_관리자시스템_상세IA/디자인프리셋",
     fits: [
       "정보 밀도가 높은 백오피스·ERP형 관리 시스템, 데이터 중심 화면",
       "병의원·클리닉·전문 서비스업의 신뢰감 있는 관리자 콘솔",

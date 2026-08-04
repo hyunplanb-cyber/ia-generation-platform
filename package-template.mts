@@ -23,7 +23,10 @@ import {
 import JSZip from "jszip";
 import { PACKAGES, BUILD_SCOPE, PLAN_NAMES, type PlanId } from "./lib/packages";
 
+// 파는 것이 놓이는 곳. 여기에는 **팔 물건만** 둔다.
 const T = "판매용_템플릿";
+// 중간 작업물(업종별 산출물·프리셋)이 만들어지는 곳. 언제든 다시 만들 수 있다.
+const W = "_작업";
 
 interface Product {
   /** 산출물 폴더 */
@@ -58,17 +61,17 @@ interface Product {
  */
 const INDUSTRIES = [
   { key: "lms", label: "LMS", title: "온라인 강의 플랫폼(LMS)",
-    base: `${T}/LMS_온라인강의플랫폼`, deep: `${T}/LMS_온라인강의플랫폼_상세IA` },
+    base: `${W}/LMS_온라인강의플랫폼`, deep: `${W}/LMS_온라인강의플랫폼_상세IA` },
   { key: "beauty", label: "뷰티샵", title: "뷰티샵 예약 플랫폼",
-    base: `${T}/뷰티샵_예약플랫폼`, deep: `${T}/뷰티샵_예약플랫폼_상세IA` },
+    base: `${W}/뷰티샵_예약플랫폼`, deep: `${W}/뷰티샵_예약플랫폼_상세IA` },
   { key: "travel", label: "여행", title: "해외 투어·티켓 예약 플랫폼",
-    base: `${T}/해외투어_티켓예약`, deep: `${T}/해외투어_티켓예약_상세IA`,
+    base: `${W}/해외투어_티켓예약`, deep: `${W}/해외투어_티켓예약_상세IA`,
     // 두 사이트는 프리셋이 다르다 — 디럭스는 소프트 파스텔, 프리미엄은 모던 네이비.
     // 같은 설계로 얼마나 다른 얼굴이 나오는지 두 등급이 나란히 보여준다.
     siteBase: `${T}/해외투어_티켓예약_완성화면_디럭스`,
     siteDeep: `${T}/해외투어_티켓예약_완성화면` },
   { key: "groupbuy", label: "공동구매", title: "공동구매(공구) 플랫폼",
-    base: `${T}/공동구매_공구플랫폼`, deep: `${T}/공동구매_공구플랫폼_상세IA` },
+    base: `${W}/공동구매_공구플랫폼`, deep: `${W}/공동구매_공구플랫폼_상세IA` },
 ] as const satisfies readonly {
   key: string; label: string; title: string;
   base: string; deep: string; siteBase?: string; siteDeep?: string;
@@ -116,7 +119,7 @@ for (const ind of INDUSTRIES) {
   }
 }
 
-const OUT = `${T}/_배포/00_판매팩`;
+const OUT = `${T}/_판매팩`;
 // 홈페이지가 산 사람에게 내려줄 자리. 저장소에 함께 커밋되는 유일한 판매 파일이다.
 const SITE_PACKS = "packs";
 

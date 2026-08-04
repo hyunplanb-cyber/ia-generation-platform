@@ -13,7 +13,7 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import JSZip from "jszip";
 
 const SRC = "판매용_템플릿/_무료샘플_콘텐츠판매사이트";
-const OUT = "판매용_템플릿/_배포/3_마케팅";
+const OUT = "판매용_템플릿";
 const EMBED = "lib/free-sample-data.ts";
 const ZIP_NAME = "무료샘플_콘텐츠판매사이트.zip";
 mkdirSync(OUT, { recursive: true });

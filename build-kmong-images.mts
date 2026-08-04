@@ -10,7 +10,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { PACKAGES, DESIGN_PRESETS, formatKrw } from "./lib/packages";
 
-const OUT = "판매용_템플릿/_배포/판매_6종/크몽_상세이미지";
+const OUT = "판매용_템플릿/_판매팩/00. 크몽_상세이미지";
 const W = 900;
 
 // 홈페이지와 같은 색·글꼴을 쓴다. 여기서 어긋나면 크몽과 홈페이지가 다른 브랜드로 보인다.
