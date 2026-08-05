@@ -1,0 +1,68 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>레이아웃 골격 미리보기</title>
+<style>body{font-family:Pretendard,system-ui,sans-serif;margin:0;padding:28px;background:#fff;color:#16181d;max-width:1100px}
+h1{font-size:24px;margin:0 0 22px}h2{font-size:15px;margin:26px 0 10px;display:flex;align-items:baseline;gap:8px}
+.hint{font-size:12px;font-weight:400;color:#6b7280}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{border:1px solid #e3e6ec;border-radius:12px;padding:12px;background:#fff}
+.nm{font-size:14px;font-weight:700;margin-top:8px;display:flex;align-items:center;gap:6px}
+.tag{font-size:10px;font-weight:500;color:#6b7280;border:1px solid #e3e6ec;border-radius:4px;padding:1px 5px}
+.tl{font-size:12px;color:#4b5563;margin:5px 0 0;line-height:1.5}
+.ft{font-size:11px;color:#9ca3af;margin:4px 0 0;line-height:1.5}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}</style></head><body><h1>레이아웃 골격 9종</h1>
+<section>
+  <h2>보여주는 화면 <span class="hint">사진과 분위기가 먼저인 서비스</span></h2>
+  <div class="grid">
+    <div class="card"><div style="height:110px;display:flex;flex-direction:column;gap:4px;border:1px solid #e3e6ec;border-radius:8px;padding:6px;background:#f7f8fa"><div style="background:#9aa3b2;border-radius:3px;height:8px;flex:none"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:4px;width:66%;flex:none"></div><div style="display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:4px;flex:1">
+      <div style="background:rgba(154,163,178,.35);border-radius:3px;grid-column:span 2;grid-row:span 2"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div></div></div>
+        <div class="nm">사진 중심형 <span class="tag">여러 단</span></div>
+        <p class="tl">결과물이 곧 상품. 사진을 먼저 보여주고 글은 나중에.</p><p class="ft">보이는 게 중요한 서비스(뷰티·인테리어·포트폴리오·여행)</p></div><div class="card"><div style="height:110px;display:flex;flex-direction:column;gap:4px;border:1px solid #e3e6ec;border-radius:8px;padding:6px;background:#f7f8fa"><div style="background:#9aa3b2;border-radius:3px;height:8px;flex:none"></div><div style="display:flex;gap:4px;flex:1"><div style="width:20%;display:flex;flex-direction:column;gap:3px">
+      <div style="background:#9aa3b2;border-radius:3px;height:3px;border-radius:99px"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:3px;width:75%;border-radius:99px"></div>
+      <div style="background:rgba(154,163,178,.22);border-radius:3px;height:3px;width:80%;border-radius:99px"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:3px;width:66%;border-radius:99px"></div></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="background:rgba(154,163,178,.35);border-radius:3px;height:16px"></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;flex:1"><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div></div></div></div></div>
+        <div class="nm">에디토리얼형 <span class="tag">사이드바 + 본문</span></div>
+        <p class="tl">읽히는 화면. 글이 먼저 오고 사진이 뒤를 받친다.</p><p class="ft">고르는 데 설명이 필요한 것(큐레이션·전시·매거진·브랜드 소개)</p></div><div class="card"><div style="height:110px;display:flex;flex-direction:column;gap:4px;border:1px solid #e3e6ec;border-radius:8px;padding:6px;background:#f7f8fa"><div style="background:#9aa3b2;border-radius:3px;height:8px;flex:none"></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 12px">
+      <div style="background:#9aa3b2;border-radius:3px;height:6px;width:33%;border-radius:99px"></div><div style="background:rgba(154,163,178,.35);border-radius:3px;height:28px;width:100%"></div></div></div>
+        <div class="nm">여백 중심형 <span class="tag">한 단</span></div>
+        <p class="tl">덜 넣는다. 큰 사진 한 장과 넉넉한 빈 자리로 말한다.</p><p class="ft">차분한 인상이 중요한 것(공방·클리닉·프리미엄 브랜드·전시)</p></div>
+  </div></section><section>
+  <h2>훑어보는 화면 <span class="hint">여럿을 비교해 고르는 서비스</span></h2>
+  <div class="grid">
+    <div class="card"><div style="height:110px;display:flex;flex-direction:column;gap:4px;border:1px solid #e3e6ec;border-radius:8px;padding:6px;background:#f7f8fa"><div style="background:#9aa3b2;border-radius:3px;height:8px;flex:none"></div><div style="background:rgba(154,163,178,.35);border-radius:3px;height:16px;flex:none"></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;flex:1"><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div></div></div>
+        <div class="nm">검색 중심형 <span class="tag">균일 그리드</span></div>
+        <p class="tl">찾는 게 분명한 서비스. 검색창이 첫 화면의 주인공.</p><p class="ft">예약·검색이 시작점인 서비스(숙소·강의·매장 찾기)</p></div><div class="card"><div style="height:110px;display:flex;flex-direction:column;gap:4px;border:1px solid #e3e6ec;border-radius:8px;padding:6px;background:#f7f8fa"><div style="background:#9aa3b2;border-radius:3px;height:8px;flex:none"></div><div style="display:flex;gap:4px;flex:1"><div style="width:25%;display:flex;flex-direction:column;gap:3px">
+      <div style="display:flex;align-items:center;gap:3px">
+        <div style="width:5px;height:5px;border-radius:1px;background:#9aa3b2"></div>
+        <div style="height:3px;flex:1;border-radius:99px;background:rgba(154,163,178,.22)"></div></div><div style="display:flex;align-items:center;gap:3px">
+        <div style="width:5px;height:5px;border-radius:1px;background:#9aa3b2"></div>
+        <div style="height:3px;flex:1;border-radius:99px;background:rgba(154,163,178,.22)"></div></div><div style="display:flex;align-items:center;gap:3px">
+        <div style="width:5px;height:5px;border-radius:1px;background:rgba(154,163,178,.22)"></div>
+        <div style="height:3px;flex:1;border-radius:99px;background:rgba(154,163,178,.22)"></div></div><div style="display:flex;align-items:center;gap:3px">
+        <div style="width:5px;height:5px;border-radius:1px;background:rgba(154,163,178,.22)"></div>
+        <div style="height:3px;flex:1;border-radius:99px;background:rgba(154,163,178,.22)"></div></div>
+      </div><div style="display:flex;flex-direction:column;gap:4px;flex:1"><div style="background:rgba(154,163,178,.35);border-radius:3px;flex:1"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;flex:1"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;flex:1"></div></div></div></div>
+        <div class="nm">목록 중심형 <span class="tag">사이드바 + 본문</span></div>
+        <p class="tl">훑어보고 비교한다. 한 화면에 많이 담는다.</p><p class="ft">비교해서 고르는 서비스(중개·구인·상품 비교)</p></div><div class="card"><div style="height:110px;display:flex;flex-direction:column;gap:4px;border:1px solid #e3e6ec;border-radius:8px;padding:6px;background:#f7f8fa"><div style="background:#9aa3b2;border-radius:3px;height:8px;flex:none"></div><div style="display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3px;flex:1">
+      <div style="background:rgba(154,163,178,.35);border-radius:3px;grid-column:span 2;grid-row:span 2"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;"></div>
+      <div style="background:rgba(154,163,178,.22);border-radius:3px;grid-column:span 2"></div></div></div>
+        <div class="nm">벤토 그리드형 <span class="tag">벤토 그리드</span></div>
+        <p class="tl">크기로 말한다. 중요한 건 크게, 곁다리는 작게 한 판에 담는다.</p><p class="ft">기능이 여럿인 것(서비스 소개·기능 안내·요약 대시보드)</p></div>
+  </div></section><section>
+  <h2>다루는 화면 <span class="hint">매일 쓰거나, 숫자로 설득하는 서비스</span></h2>
+  <div class="grid">
+    <div class="card"><div style="height:110px;display:flex;flex-direction:column;gap:4px;border:1px solid #e3e6ec;border-radius:8px;padding:6px;background:#f7f8fa"><div style="background:#9aa3b2;border-radius:3px;height:8px;flex:none"></div><div style="display:flex;gap:4px;flex:1"><div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px">
+      <div style="background:#9aa3b2;border-radius:3px;height:8px"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:4px;width:75%"></div></div><div style="background:rgba(154,163,178,.35);border-radius:3px;width:40%"></div></div></div>
+        <div class="nm">좌우 분할형 <span class="tag">여러 단</span></div>
+        <p class="tl">말할 게 분명하다. 왼쪽은 글, 오른쪽은 행동.</p><p class="ft">설득이 먼저인 서비스(랜딩·구독·B2B 소개)</p></div><div class="card"><div style="height:110px;display:flex;flex-direction:column;gap:4px;border:1px solid #e3e6ec;border-radius:8px;padding:6px;background:#f7f8fa"><div style="display:flex;gap:4px;flex:1"><div style="width:25%;background:rgba(154,163,178,.35);border-radius:3px;padding:3px;display:flex;flex-direction:column;gap:3px">
+      <div style="background:#9aa3b2;border-radius:3px;height:3px;width:66%;border-radius:99px"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:3px;border-radius:99px"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:3px;border-radius:99px"></div>
+      <div style="background:#9aa3b2;border-radius:3px;height:3px;width:66%;border-radius:99px;margin-top:2px"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:3px;border-radius:99px"></div></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px">
+      <div style="background:rgba(154,163,178,.35);border-radius:3px;height:12px"></div><div style="background:rgba(154,163,178,.35);border-radius:3px;height:12px"></div><div style="background:rgba(154,163,178,.35);border-radius:3px;height:12px"></div><div style="background:rgba(154,163,178,.35);border-radius:3px;height:12px"></div></div><div style="background:rgba(154,163,178,.22);border-radius:3px;flex:1"></div></div></div></div>
+        <div class="nm">대시보드형 <span class="tag">사이드바 + 본문</span></div>
+        <p class="tl">매일 쓰는 도구. 지표부터 보이고 좌측 메뉴로 이동한다.</p><p class="ft">관리자·백오피스·사장님 화면</p></div><div class="card"><div style="height:110px;display:flex;flex-direction:column;gap:4px;border:1px solid #e3e6ec;border-radius:8px;padding:6px;background:#f7f8fa"><div style="background:#9aa3b2;border-radius:3px;height:8px;flex:none"></div><div style="display:flex;flex-direction:column;gap:4px;flex:1"><div style="background:#9aa3b2;border-radius:3px;height:10px;width:80%"></div><div style="background:#9aa3b2;border-radius:3px;height:10px;width:60%"></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px"><div style="background:rgba(154,163,178,.35);border-radius:3px;height:8px"></div><div style="background:rgba(154,163,178,.35);border-radius:3px;height:8px"></div><div style="background:rgba(154,163,178,.35);border-radius:3px;height:8px"></div><div style="background:rgba(154,163,178,.35);border-radius:3px;height:8px"></div></div>
+      <div style="display:flex;gap:4px;flex:1;align-items:flex-start"><div style="background:rgba(154,163,178,.22);border-radius:3px;height:16px;flex:1;margin-top:0px"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:16px;flex:1;margin-top:3px"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:16px;flex:1;margin-top:1px"></div><div style="background:rgba(154,163,178,.22);border-radius:3px;height:16px;flex:1;margin-top:4px"></div></div></div></div>
+        <div class="nm">타이포 강조형 <span class="tag">벤토 그리드</span></div>
+        <p class="tl">글자가 그림이다. 숫자와 큰 글씨로 밀어붙인다.</p><p class="ft">숫자가 설득하는 것(공동구매·펀딩·챌린지·부트캠프)</p></div>
+  </div></section></body></html>

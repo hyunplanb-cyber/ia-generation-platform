@@ -7,6 +7,14 @@
 // AI를 쓰지 않는다. 아래 데이터가 그대로 산출물이 되므로 모델을 바꿔도 결과가 같다.
 // UI·서버 공용(순수 데이터/문자열).
 
+/** 콘텐츠 영역 배경 — 클라우드 댄서(Pantone 11-4201 TCX).
+ *
+ * 전에는 테마마다 주색을 옅게 깐 배경을 썼다(코럴 #FFF6F3, 네이비 #F5F7FA).
+ * 그러면 테마를 바꿀 때마다 화면 전체 색조가 흔들리고, 카드(흰색)와 배경의
+ * 차이가 테마마다 달라져 어떤 테마에서는 카드가 안 떠 보였다(2026-08-05).
+ * 배경은 중립으로 고정하고, 색은 주색·강조가 내게 한다. */
+export const CONTENT_BG = "#F0EFEB";
+
 export type DesignKey = "navy" | "mono" | "pastel" | "retro" | "forest" | "coral";
 
 /**
@@ -91,7 +99,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#2B4A8B",
       "accent(강조·배지)": "#FF7A30",
-      "background(페이지)": "#F5F7FA",
+      "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#16233F",
       "text-muted(보조)": "#5A6B8C",
@@ -119,7 +127,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#111111",
       "accent(강조)": "#111111",
-      "background(페이지)": "#FFFFFF",
+      "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#111111",
       "text-muted(보조)": "#767676",
@@ -147,7 +155,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#5B4FE5",
       "accent(강조)": "#FFD54A",
-      "background(페이지)": "#FAFAFA",
+      "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#1F2024",
       "text-muted(보조)": "#6B6F76",
@@ -176,7 +184,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#DE6F26",
       "accent(강조·배지)": "#0E6F60",
-      "background(페이지)": "#F7F1E6",
+      "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFDF8",
       "text(본문)": "#2A2320",
       "text-muted(보조)": "#6B5E4F",
@@ -204,7 +212,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#15803D",
       "accent(강조·배지)": "#65A30D",
-      "background(페이지)": "#F3F7F2",
+      "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#1C2B22",
       "text-muted(보조)": "#5B6B60",
@@ -232,7 +240,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#F0654F",
       "accent(강조·배지)": "#F59E0B",
-      "background(페이지)": "#FFF6F3",
+      "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#33221E",
       "text-muted(보조)": "#8A6F68",
@@ -268,7 +276,22 @@ export function presetForConcept(concept: string | null | undefined): Preset {
    ───────────────────────────────────────────────────────────── */
 export type LayoutKey =
   | "search" | "showcase" | "list" | "split" | "console"
-  | "magazine" | "bold" | "calm";
+  | "magazine" | "bold" | "calm" | "bento";
+
+/* 화면 전체를 어떻게 나누는가 — 아홉 골격이 저마다 하나씩 가진다.
+   "목록은 매거진형 2열"처럼 설명만 있고 이름이 없으면, 만드는 사람이
+   몇 단짜리인지 매번 눈치로 정한다. 실제로 사이드바(2단) 안에 또 2단을
+   넣어 표가 짜부라진 적이 있다(2026-08-05). 이름을 붙여 둔다. */
+export type StructureKey = "single" | "multi" | "grid" | "bento" | "sidebar" | "fullscreen";
+
+export const STRUCTURES: { key: StructureKey; label: string; desc: string }[] = [
+  { key: "single", label: "한 단", desc: "화면 가운데 한 줄기로만 쌓는다. 위에서 아래로 읽힌다." },
+  { key: "multi", label: "여러 단", desc: "화면을 세로로 2~3칸 갈라 나란히 놓는다." },
+  { key: "grid", label: "균일 그리드", desc: "같은 크기 칸을 격자로 채운다." },
+  { key: "bento", label: "벤토 그리드", desc: "크기가 다른 칸을 섞어 중요한 것을 크게 둔다." },
+  { key: "sidebar", label: "사이드바 + 본문", desc: "한쪽에 고정 영역, 나머지에 본문." },
+  { key: "fullscreen", label: "풀스크린", desc: "화면 전체를 사진·영상 한 장으로 채운다." },
+];
 
 /* 썸네일(카드) 모양.
    골격만 정하고 카드 모양을 안 정했더니, 어느 레이아웃을 골라도 카드가 똑같이
@@ -343,6 +366,8 @@ export const LAYOUTS: {
   nav: string;
   /** 상세 화면 */
   detail: string;
+  /** 이 골격이 화면을 어떻게 나누는가 */
+  structure: StructureKey;
   /** 이 골격이 기본으로 쓰는 카드 모양 */
   thumb: ThumbKey;
   /** 이 골격이 어울리는 곳 */
@@ -356,6 +381,7 @@ export const LAYOUTS: {
     list: "카드 그리드 3~4열. 카드마다 이미지 → 제목 → 보조정보 → 가격 순.",
     nav: "상단 가로 GNB 한 줄. 로고 · 검색 · 메뉴 · 로그인.",
     detail: "본문 왼쪽 + 오른쪽에 따라다니는 요약·액션 카드(sticky).",
+    structure: "grid",
     thumb: "square",
     fits: "예약·검색이 시작점인 서비스(숙소·강의·매장 찾기)",
   },
@@ -367,6 +393,7 @@ export const LAYOUTS: {
     list: "매거진형 2열. 큰 이미지 위에 제목·태그를 얹고 설명은 짧게.",
     nav: "상단 가로 GNB + 그 아래 카테고리 줄(2단 헤더).",
     detail: "상단 전체 폭 갤러리 → 아래 정보. 액션은 하단 고정 바.",
+    structure: "multi",
     thumb: "overlay",
     fits: "보이는 게 중요한 서비스(뷰티·인테리어·포트폴리오·여행)",
   },
@@ -378,6 +405,7 @@ export const LAYOUTS: {
     list: "좌측 필터 패널 + 우측 가로 리스트 행(썸네일 왼쪽, 정보 오른쪽, 액션 끝).",
     nav: "상단 가로 GNB + 목록 화면에서만 좌측 필터 사이드바.",
     detail: "상단 요약 바 + 탭으로 나눈 본문.",
+    structure: "sidebar",
     thumb: "row",
     fits: "비교해서 고르는 서비스(중개·구인·상품 비교)",
   },
@@ -389,6 +417,7 @@ export const LAYOUTS: {
     list: "2열 카드. 여백을 넓게 두고 카드 안은 글자 위계로만 나눈다.",
     nav: "상단 가로 GNB. 로고 왼쪽, 액션 버튼 오른쪽 끝.",
     detail: "본문 한 단(최대 폭 760px) + 하단 고정 액션 바.",
+    structure: "multi",
     thumb: "wide",
     fits: "설득이 먼저인 서비스(랜딩·구독·B2B 소개)",
   },
@@ -400,6 +429,7 @@ export const LAYOUTS: {
     list: "표 중심. 헤더 고정, 행 높이 일정, 상태는 배지로.",
     nav: "좌측 세로 사이드바(그룹 제목 + 항목) + 상단에는 계정만.",
     detail: "좌 본문 + 우 액션 패널 2단. 상태 변경 버튼을 우측에 모은다.",
+    structure: "sidebar",
     thumb: "text",
     fits: "관리자·백오피스·사장님 화면",
   },
@@ -411,6 +441,7 @@ export const LAYOUTS: {
     list: "3열 갤러리. 사진 아래 제목과 함께 두세 줄짜리 설명을 붙인다. 카드 사이 간격을 넓게.",
     nav: "상단 가로 GNB + 그 아래 얇은 구분선. 카테고리는 목록 화면 왼쪽에 세로로.",
     detail: "본문 한 단(최대 폭 720px) 가운데 정렬. 사진은 본문 폭을 넘겨 좌우로 튀어나오게.",
+    structure: "sidebar",
     thumb: "tall",
     fits: "고르는 데 설명이 필요한 것(큐레이션·전시·매거진·브랜드 소개)",
   },
@@ -422,6 +453,7 @@ export const LAYOUTS: {
     list: "카드를 나란히 두지 않고 위아래로 조금씩 어긋나게(계단) 배치. 카드마다 큰 숫자를 하나씩 얹는다.",
     nav: "상단 가로 GNB. 어두운 배경에 흰 글자, 오른쪽 끝에 밝은 버튼 하나.",
     detail: "상단 어두운 띠에 제목과 핵심 숫자 → 아래는 밝은 배경 본문. 액션은 하단 고정 바.",
+    structure: "grid",
     thumb: "square",
     fits: "숫자가 설득하는 것(공동구매·펀딩·챌린지·부트캠프)",
   },
@@ -433,8 +465,21 @@ export const LAYOUTS: {
     list: "2열. 카드 테두리와 그림자를 쓰지 않고 여백으로만 나눈다. 한 화면에 4~6개까지만.",
     nav: "상단 가로 GNB. 메뉴 글자를 작게 하고 자간을 넓힌다. 로고는 가운데.",
     detail: "본문 한 단 가운데 정렬(최대 폭 680px). 구분선 대신 빈 줄로 나눈다.",
+    structure: "single",
     thumb: "overlay",
     fits: "차분한 인상이 중요한 것(공방·클리닉·프리미엄 브랜드·전시)",
+  },
+  {
+    key: "bento",
+    label: "벤토 그리드형",
+    tagline: "크기로 말한다. 중요한 건 크게, 곁다리는 작게 한 판에 담는다.",
+    hero: "히어로를 따로 두지 않는다. 첫 화면부터 크기가 다른 블록을 한 판에 짠다 — 큰 블록 1개(대표)에 작은 블록 3~4개를 붙인다.",
+    list: "블록 크기를 2:1:1로 섞는다. 첫 항목만 두 칸을 차지하고 나머지는 한 칸씩. 칸 사이 간격은 일정하게.",
+    nav: "상단 가로 GNB 한 줄. 블록이 이미 복잡하므로 내비는 최대한 단순하게.",
+    detail: "위에 큰 블록으로 핵심 정보, 아래에 작은 블록으로 세부. 액션은 큰 블록 안에 둔다.",
+    structure: "bento",
+    thumb: "square",
+    fits: "기능이 여럿인 것(서비스 소개·기능 안내·요약 대시보드)",
   },
 ];
 
@@ -811,7 +856,7 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   const rad = RADIUS_FEELS.find((r) => r.key === cfg.radius)!;
   const den = DENSITIES.find((d) => d.key === cfg.density)!;
   const pal = palette(cfg.primary);
-  const bg = cfg.dark ? "#0E1116" : "#FFFFFF";
+  const bg = cfg.dark ? "#0E1116" : "#F0EFEB";
   const surface = cfg.dark ? "#171B22" : "#FFFFFF";
   const text = cfg.dark ? "#E8EAED" : "#16181D";
   const muted = cfg.dark ? "#9AA0A8" : "#6B7280";
@@ -925,7 +970,7 @@ export function buildPresetSummary(cfg: PresetConfig): PresetSummary {
     baseName: base.name,
     primary: cfg.primary,
     palette: Object.entries(pal),
-    bg: cfg.dark ? "#0E1116" : "#FFFFFF",
+    bg: cfg.dark ? "#0E1116" : "#F0EFEB",
     surface: cfg.dark ? "#171B22" : "#FFFFFF",
     text: cfg.dark ? "#E8EAED" : "#16181D",
     muted: cfg.dark ? "#9AA0A8" : "#6B7280",

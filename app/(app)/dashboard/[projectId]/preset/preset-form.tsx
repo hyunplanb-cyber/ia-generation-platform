@@ -18,6 +18,7 @@ import {
   type RadiusFeel,
   type Density,
   LAYOUTS,
+  STRUCTURES,
   secondPreset,
   type LayoutKey,
 } from "@/lib/design-presets";
@@ -27,6 +28,26 @@ import { generatePresetAction, downloadPresetAction } from "./actions";
  * 레이아웃 골격 미리보기 — 색이 아니라 "무엇이 어디에 있는지"만 보여주는 회색 뼈대.
  * 진한 칸이 그 골격에서 눈에 먼저 들어오는 자리다.
  */
+/* 아홉을 한 벽에 깔면 전부 비교해야 해서 오히려 고르기 어렵다.
+   쓰임으로 먼저 좁히고 그 안에서 고르게 묶는다(2026-08-05). */
+const LAYOUT_GROUPS: { title: string; hint: string; keys: string[] }[] = [
+  {
+    title: '보여주는 화면',
+    hint: '사진과 분위기가 먼저인 서비스',
+    keys: ['showcase', 'calm', 'magazine'],
+  },
+  {
+    title: '훑어보는 화면',
+    hint: '여럿을 비교해 고르는 서비스',
+    keys: ['search', 'list', 'bento'],
+  },
+  {
+    title: '다루는 화면',
+    hint: '매일 쓰거나, 숫자로 설득하는 서비스',
+    keys: ['console', 'bold', 'split'],
+  },
+];
+
 function LayoutThumb({ kind, on }: { kind: string; on: boolean }) {
   const bar = on ? "bg-primary/70" : "bg-muted-foreground/45";
   const box = on ? "bg-primary/25" : "bg-muted-foreground/15";
@@ -62,9 +83,17 @@ function LayoutThumb({ kind, on }: { kind: string; on: boolean }) {
         </div>
       )}
 
+      {/* 목록 중심형 — 사이드바에 '필터'가 들어간다. 체크박스 줄로 그린다. */}
       {kind === "list" && (
         <div className="flex flex-1 gap-1">
-          <div className={`w-1/4 rounded-sm ${line}`} />
+          <div className="flex w-1/4 flex-col gap-[3px]">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-[3px]">
+                <div className={`h-[5px] w-[5px] shrink-0 rounded-[1px] ${i < 2 ? bar : line}`} />
+                <div className={`h-[3px] flex-1 rounded-full ${line}`} />
+              </div>
+            ))}
+          </div>
           <div className="flex flex-1 flex-col gap-1">
             {[0, 1, 2].map((i) => (
               <div key={i} className={`flex-1 rounded-sm ${i === 0 ? box : line}`} />
@@ -83,9 +112,16 @@ function LayoutThumb({ kind, on }: { kind: string; on: boolean }) {
         </div>
       )}
 
+      {/* 대시보드형 — 사이드바에 '메뉴'가 들어간다. 그룹 제목 + 항목 줄로 그린다. */}
       {kind === "console" && (
         <div className="flex flex-1 gap-1">
-          <div className={`w-1/4 rounded-sm ${bar}`} />
+          <div className={`flex w-1/4 flex-col gap-[3px] rounded-sm p-[3px] ${box}`}>
+            <div className={`h-[3px] w-2/3 rounded-full ${bar}`} />
+            <div className={`h-[3px] w-full rounded-full ${line}`} />
+            <div className={`h-[3px] w-full rounded-full ${line}`} />
+            <div className={`mt-[2px] h-[3px] w-2/3 rounded-full ${bar}`} />
+            <div className={`h-[3px] w-full rounded-full ${line}`} />
+          </div>
           <div className="flex flex-1 flex-col gap-1">
             <div className="grid grid-cols-4 gap-1">
               {[0, 1, 2, 3].map((i) => (
@@ -94,6 +130,63 @@ function LayoutThumb({ kind, on }: { kind: string; on: boolean }) {
             </div>
             <div className={`flex-1 rounded-sm ${line}`} />
           </div>
+        </div>
+      )}
+
+      {/* 에디토리얼형 — 사이드바에 '목차'. 짧은 글머리 몇 줄 + 우측은 큰 배너와 3열 갤러리 */}
+      {kind === "magazine" && (
+        <div className="flex flex-1 gap-1">
+          <div className="flex w-1/5 flex-col gap-[3px]">
+            <div className={`h-[3px] w-full rounded-full ${bar}`} />
+            <div className={`h-[3px] w-3/4 rounded-full ${line}`} />
+            <div className={`h-[3px] w-4/5 rounded-full ${line}`} />
+            <div className={`h-[3px] w-2/3 rounded-full ${line}`} />
+          </div>
+          <div className="flex flex-1 flex-col gap-1">
+            <div className={`h-4 w-full rounded-sm ${box}`} />
+            <div className="grid flex-1 grid-cols-3 gap-1">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className={`rounded-sm ${line}`} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 타이포 강조형 — 큰 글씨 두 줄 + 지표 4칸, 카드는 계단처럼 어긋나게 */}
+      {kind === "bold" && (
+        <div className="flex flex-1 flex-col gap-1">
+          <div className={`h-2.5 w-4/5 rounded-sm ${bar}`} />
+          <div className={`h-2.5 w-3/5 rounded-sm ${bar}`} />
+          <div className="grid grid-cols-4 gap-[3px]">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className={`h-2 rounded-sm ${box}`} />
+            ))}
+          </div>
+          <div className="flex flex-1 items-start gap-1">
+            {[0, 8, 3, 12].map((mt, i) => (
+              <div key={i} className={`h-4 flex-1 rounded-sm ${line}`} style={{ marginTop: mt }} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 여백 중심형 — 가운데 짧은 문구 하나와 큰 사진 한 장. 빈 자리가 주인공 */}
+      {kind === "calm" && (
+        <div className="flex flex-1 flex-col items-center justify-center gap-1.5 px-3">
+          <div className={`h-1.5 w-1/3 rounded-full ${bar}`} />
+          <div className={`h-7 w-full rounded-sm ${box}`} />
+        </div>
+      )}
+
+      {/* 벤토 그리드형 — 크기가 다른 블록을 한 판에. 큰 것 하나에 작은 것들 */}
+      {kind === "bento" && (
+        <div className="grid flex-1 grid-cols-3 grid-rows-3 gap-[3px]">
+          <div className={`col-span-2 row-span-2 rounded-sm ${box}`} />
+          <div className={`rounded-sm ${line}`} />
+          <div className={`rounded-sm ${line}`} />
+          <div className={`rounded-sm ${line}`} />
+          <div className={`col-span-2 rounded-sm ${line}`} />
         </div>
       )}
     </div>
@@ -498,31 +591,49 @@ export function PresetForm({
         title="레이아웃 골격"
         hint="색만 정하면 어느 테마로 만들어도 화면 뼈대가 같아집니다. 무엇을 어디에 놓을지 여기서 정해요."
       >
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {LAYOUTS.map((l) => {
-            const on = cfg.layout === l.key;
-            return (
-              <button
-                key={l.key}
-                type="button"
-                onClick={() => set("layout", l.key as LayoutKey)}
-                aria-pressed={on}
-                className={`flex flex-col gap-1 rounded-xl border p-3 text-left transition-colors ${
-                  on
-                    ? "border-primary bg-primary-soft/40"
-                    : "border-border bg-background hover:border-primary/40 hover:bg-muted"
-                }`}
-              >
-                <LayoutThumb kind={l.key} on={on} />
-                <span className="mt-1 text-sm font-bold text-foreground">{l.label}</span>
-                <span className="text-xs leading-relaxed text-muted-foreground">{l.tagline}</span>
-                <span className="text-[11px] leading-relaxed text-muted-foreground/80">
-                  {l.fits}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        {/* 아홉을 한 벽에 깔면 다 비교해야 해서 고르기 어렵다.
+            "내 서비스는 어느 쪽인가"부터 정하고 그 안에서 고르게 묶는다. */}
+        {LAYOUT_GROUPS.map((g) => (
+          <div key={g.title} className="mt-4 first:mt-0">
+            <div className="mb-2 flex items-baseline gap-2">
+              <h4 className="text-sm font-bold text-foreground">{g.title}</h4>
+              <span className="text-xs text-muted-foreground">{g.hint}</span>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {LAYOUTS.filter((l) => g.keys.includes(l.key)).map((l) => {
+                const on = cfg.layout === l.key;
+                const st = STRUCTURES.find((s) => s.key === l.structure);
+                return (
+                  <button
+                    key={l.key}
+                    type="button"
+                    onClick={() => set("layout", l.key as LayoutKey)}
+                    aria-pressed={on}
+                    className={`flex flex-col gap-1 rounded-xl border p-3 text-left transition-colors ${
+                      on
+                        ? "border-primary bg-primary-soft/40"
+                        : "border-border bg-background hover:border-primary/40 hover:bg-muted"
+                    }`}
+                  >
+                    <LayoutThumb kind={l.key} on={on} />
+                    <span className="mt-1 flex items-center gap-1.5">
+                      <span className="text-sm font-bold text-foreground">{l.label}</span>
+                      {st && (
+                        <span className="rounded border border-border px-1 py-px text-[10px] font-medium text-muted-foreground">
+                          {st.label}
+                        </span>
+                      )}
+                    </span>
+                    <span className="text-xs leading-relaxed text-muted-foreground">{l.tagline}</span>
+                    <span className="text-[11px] leading-relaxed text-muted-foreground/80">
+                      {l.fits}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </Section>
 
       <Section title="모서리">

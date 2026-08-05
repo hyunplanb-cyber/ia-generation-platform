@@ -20,6 +20,11 @@ const layoutOf = (key: string) => {
 
 // 어떤 템플릿용으로 만들지 인자로 받는다: npx tsx build-design-presets.mts lms | beauty
 // 디자인 규칙(색·타이포·컴포넌트)은 업종 무관하게 같고, "어울리는 서비스" 문구만 갈라진다.
+/* 콘텐츠 영역 배경은 클라우드 댄서(#F0EFEB)로 고정한다.
+   전에는 테마마다 주색을 옅게 깐 배경을 썼는데(코럴 #FFF6F3, 네이비 #F5F7FA),
+   테마를 바꿀 때마다 화면 전체 색조가 흔들리고 카드가 배경에서 안 떠 보였다.
+   배경은 중립으로 두고 색은 주색·강조가 낸다(2026-08-05). */
+
 const TARGETS = {
   lms: {
     styles: ["navy", "mono", "coral"] as const,
@@ -135,7 +140,7 @@ const PRESETS: Preset[] = [
       "primary (주요 액션)": "#2B4A8B",
       "primary-hover": "#1F3A73",
       "accent (강조·배지)": "#FF7A30",
-      "background (페이지)": "#F5F7FA",
+      "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#16233F",
       "text-muted (보조)": "#5A6B8C",
@@ -183,7 +188,7 @@ const PRESETS: Preset[] = [
       "primary (주요 액션)": "#111111",
       "primary-hover": "#000000",
       "accent (강조·배지)": "#111111",
-      "background (페이지)": "#FFFFFF",
+      "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#111111",
       "text-muted (보조)": "#767676",
@@ -231,7 +236,7 @@ const PRESETS: Preset[] = [
       "primary (주요 액션)": "#5B4FE5",
       "primary-hover": "#4A3DD1",
       "accent (강조·배지)": "#FFD54A",
-      "background (페이지)": "#FAFAFA",
+      "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#1F2024",
       "text-muted (보조)": "#6B6F76",
@@ -280,7 +285,7 @@ const PRESETS: Preset[] = [
       "primary (주요 액션)": "#15803D",
       "primary-hover": "#116632",
       "accent (강조·배지)": "#65A30D",
-      "background (페이지)": "#F3F7F2",
+      "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#1C2B22",
       "text-muted (보조)": "#5F7268",
@@ -328,7 +333,7 @@ const PRESETS: Preset[] = [
       "primary (주요 액션)": "#F0654F",
       "primary-hover": "#D9503B",
       "accent (강조·배지)": "#F59E0B",
-      "background (페이지)": "#FFF6F3",
+      "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#33221E",
       "text-muted (보조)": "#7A6560",
