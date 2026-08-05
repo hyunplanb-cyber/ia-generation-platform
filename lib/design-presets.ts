@@ -646,15 +646,57 @@ export const RADIUS_FEELS: {
   { key: "normal", label: "기본", card: "12px", button: "8px", badge: "6px" },
   { key: "round", label: "둥근", card: "20px", button: "14px", badge: "999px" },
 ];
+/* 간격은 밀도에서 나온다.
+   전에는 카드 안쪽·행 높이·섹션 사이 셋만 정해 두고 나머지는 만드는 사람이
+   그때그때 골랐다. 그러다 눈금에 없는 값(--s7)을 쓴 자리가 생겼고, CSS는
+   정의 없는 변수를 만나면 그 속성을 통째로 버려서 간격이 0이 됐다.
+   조용히 사라지는 종류의 사고라 눈으로만 찾을 수 있었다(2026-08-05).
+   그래서 자리마다 값을 밀도별로 다 정해 둔다. 고정 표가 아니라 밀도별 눈금이다. */
 export const DENSITIES: {
   key: Density;
   label: string;
+  /** 카드 안쪽 여백 */
   cardPad: string;
+  /** 표 한 줄 높이 */
   rowH: string;
+  /** 섹션과 섹션 사이 */
   sectionGap: string;
+  /** 화면 좌우 여백 */
+  wrapPad: string;
+  /** 카드와 카드 사이 */
+  cardGap: string;
+  /** 제목과 그 아래 내용 사이 */
+  titleGap: string;
+  /** 한 묶음 안에서 요소끼리 */
+  itemGap: string;
+  /** 한 덩어리(지표 줄·표 등)와 그 아래 버튼 사이 */
+  blockGap: string;
+  /** 버튼끼리 */
+  btnGap: string;
 }[] = [
-  { key: "cozy", label: "넉넉하게", cardPad: "24px", rowH: "48px", sectionGap: "40px" },
-  { key: "compact", label: "컴팩트", cardPad: "16px", rowH: "40px", sectionGap: "28px" },
+  {
+    key: "cozy", label: "넉넉하게",
+    cardPad: "24px", rowH: "48px", sectionGap: "40px",
+    wrapPad: "24px", cardGap: "20px", titleGap: "16px", itemGap: "12px", blockGap: "28px", btnGap: "8px",
+  },
+  {
+    key: "compact", label: "컴팩트",
+    cardPad: "16px", rowH: "40px", sectionGap: "28px",
+    wrapPad: "16px", cardGap: "14px", titleGap: "12px", itemGap: "8px", blockGap: "20px", btnGap: "6px",
+  },
+];
+
+/** 간격 자리 이름 — 프리셋 문서의 표와 JSON이 같은 순서로 쓴다 */
+export const SPACING_SLOTS: { key: keyof (typeof DENSITIES)[number]; label: string; when: string }[] = [
+  { key: "wrapPad", label: "화면 좌우 여백", when: "본문이 화면 가장자리에 닿지 않게" },
+  { key: "sectionGap", label: "섹션과 섹션 사이", when: "화면 안에서 이야기가 바뀌는 자리" },
+  { key: "cardPad", label: "카드 안쪽 여백", when: "카드·박스 테두리와 내용 사이" },
+  { key: "cardGap", label: "카드와 카드 사이", when: "그리드·목록에서 카드끼리" },
+  { key: "titleGap", label: "제목과 그 아래 내용", when: "제목 바로 밑" },
+  { key: "itemGap", label: "묶음 안 요소끼리", when: "한 카드 안의 줄과 줄" },
+  { key: "blockGap", label: "덩어리와 그 아래 버튼", when: "지표 줄·표 다음에 오는 액션" },
+  { key: "btnGap", label: "버튼끼리", when: "나란히 놓인 버튼 사이" },
+  { key: "rowH", label: "표 한 줄 높이", when: "표의 행" },
 ];
 
 // 방향별 기본 글꼴/모서리 느낌.

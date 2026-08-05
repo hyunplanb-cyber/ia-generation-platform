@@ -144,12 +144,38 @@ function checkPack(dir: string) {
   const pCount = existsSync(pDir) ? readdirSync(pDir).length : 0;
   if (pCount < 11) add(dir, "막음", `디자인프리셋이 ${pCount}개 (11개여야 함)`);
 
+  // ── 9-2. 프리셋에 간격 눈금이 실려 있나 ─────────────────────
+  //
+  // 간격을 "4px 배수" 한 줄로만 적어 뒀더니, 만드는 사람이 자리마다 값을
+  // 그때그때 골랐다. 자리별 값이 문서에 있어야 눈금 밖의 값을 안 쓴다(2026-08-05).
+  const guide = existsSync(pDir)
+    ? readdirSync(pDir).find((f) => f.startsWith("가이드_01") && f.endsWith(".md"))
+    : undefined;
+  if (guide) {
+    const g = readFileSync(`${pDir}/${guide}`, "utf8");
+    if (!g.includes("간격 눈금")) add(dir, "고칠 것", "가이드 프리셋에 간격 눈금 표가 없음");
+  }
+
   // ── 10. 완성화면 ────────────────────────────────────────────
   const sDir = `${base}/완성화면`;
   if (isPaidTier && !existsSync(sDir)) add(dir, "참고", "완성 화면(HTML)이 아직 없음");
   if (existsSync(sDir)) {
     const html = readdirSync(`${sDir}/pages`).filter((f) => f.endsWith(".html")).length;
     if (html !== screens.length) add(dir, "막음", `완성 화면 ${html}개 ≠ 설계 ${screens.length}개`);
+
+    // 정의하지 않은 CSS 변수를 쓰면 브라우저가 그 속성을 통째로 버린다. 조용히.
+    // --s7 하나 때문에 히어로 버튼 위 간격이 0이 됐는데 눈으로만 찾을 수 있었다.
+    // 이건 세면 나온다(2026-08-05).
+    const cssPath = `${sDir}/assets/css/base.css`;
+    if (existsSync(cssPath)) {
+      const css = readFileSync(cssPath, "utf8");
+      const defined = new Set([...css.matchAll(/--([a-z0-9-]+)\s*:/g)].map((m) => m[1]));
+      const used = new Set([...css.matchAll(/var\(\s*--([a-z0-9-]+)/g)].map((m) => m[1]));
+      const missing = [...used].filter((u) => !defined.has(u));
+      if (missing.length) {
+        add(dir, "막음", `정의하지 않은 CSS 값을 씀 ${missing.length}개 (${missing.join(", ")}) — 그 속성이 통째로 무시됩니다`);
+      }
+    }
   }
 }
 

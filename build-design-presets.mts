@@ -5,7 +5,10 @@ import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { PACKAGES } from "./lib/packages";
 // 레이아웃 골격과 이미지 자리 규칙은 플랫폼이 만드는 프리셋과 같은 값을 써야 한다.
 // 두 곳에 따로 적으면 "산 프리셋과 만든 프리셋이 다르다"는 말이 나온다.
-import { LAYOUTS, THUMBS, thumbByKey, DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, type DesignKey } from "./lib/design-presets";
+import {
+  LAYOUTS, THUMBS, thumbByKey, DENSITIES, SPACING_SLOTS,
+  DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, type DesignKey,
+} from "./lib/design-presets";
 
 /** 마크다운 표 안에 코드로 감싸 넣는다 — 중첩 백틱을 피하려고 함수로 뺐다. */
 const inCode = (s: string) => "`" + s + "`";
@@ -406,8 +409,28 @@ function md(p: Preset): string {
   L.push("## 3. 모서리 · 여백 · 그림자");
   L.push("");
   L.push(`- 카드 \`${p.radius.card}\` · 버튼 \`${p.radius.button}\` · 입력 \`${p.radius.input}\` · 배지 \`${p.radius.badge}\``);
-  L.push(`- 여백: ${p.space}`);
+  L.push(`- 여백 원칙: ${p.space}`);
+  L.push("");
+  L.push("### 간격 눈금 — 밀도에서 나옵니다");
+  L.push("");
+  L.push("자리마다 값을 정해 뒀습니다. **이 눈금 밖의 값을 쓰지 마세요.** 눈금에 없는 값을 쓰면");
+  L.push("화면마다 간격이 조금씩 달라지고, 여러 번 나눠 만들 때 그 차이가 눈에 띕니다.");
+  L.push("");
+  L.push(`| 자리 | ${DENSITIES.map((d) => d.label).join(" | ")} | 언제 |`);
+  L.push(`| --- | ${DENSITIES.map(() => "---").join(" | ")} | --- |`);
+  for (const slot of SPACING_SLOTS) {
+    L.push(`| ${slot.label} | ${DENSITIES.map((d) => `\`${d[slot.key]}\``).join(" | ")} | ${slot.when} |`);
+  }
+  L.push("");
+  L.push("좁은 화면(720px 이하)에서는 화면 좌우 여백과 섹션 사이를 한 단계씩 줄입니다.");
   L.push(`- 그림자: ${p.shadow}`);
+  L.push("");
+  L.push("### 지켜 주세요");
+  L.push("");
+  L.push("- 간격은 위 눈금에서만 고르세요. 눈금에 없는 값을 새로 만들지 마세요.");
+  L.push("- CSS 변수를 쓸 때는 **정의된 것만** 쓰세요. 정의 없는 변수를 쓰면 브라우저가 그 속성을 통째로 버려, 간격이 조용히 0이 됩니다.");
+  L.push("- 가운데 정렬은 `text-align`만으로 안 되는 곳이 있습니다. flex로 늘어놓은 버튼 줄은 `justify-content`로 모으세요.");
+  L.push("- 가로로 넘치는 줄에는 좌우 화살표를 두세요. 아래 스크롤바만 있으면 넘길 게 있다는 걸 모르고 지나칩니다.");
   L.push("");
   L.push("## 4. 컴포넌트 규칙");
   L.push("");
@@ -478,6 +501,13 @@ const tokens = (p: Preset) => ({
   },
   radius: p.radius,
   spacing: p.space,
+  // 간격은 밀도에서 나온다. 자리마다 값을 정해 둬야 눈금 밖의 값을 쓰지 않는다.
+  spacingScale: Object.fromEntries(
+    DENSITIES.map((d) => [
+      d.label,
+      Object.fromEntries(SPACING_SLOTS.map((slot) => [slot.label, d[slot.key]])),
+    ]),
+  ),
   shadow: p.shadow,
   components: Object.fromEntries(p.comp),
   screenGuides: Object.fromEntries(p.screens),
