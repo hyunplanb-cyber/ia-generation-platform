@@ -5,7 +5,7 @@ import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { PACKAGES } from "./lib/packages";
 // 레이아웃 골격과 이미지 자리 규칙은 플랫폼이 만드는 프리셋과 같은 값을 써야 한다.
 // 두 곳에 따로 적으면 "산 프리셋과 만든 프리셋이 다르다"는 말이 나온다.
-import { LAYOUTS, DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, type DesignKey } from "./lib/design-presets";
+import { LAYOUTS, THUMBS, thumbByKey, DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, type DesignKey } from "./lib/design-presets";
 
 /** 마크다운 표 안에 코드로 감싸 넣는다 — 중첩 백틱을 피하려고 함수로 뺐다. */
 const inCode = (s: string) => "`" + s + "`";
@@ -20,7 +20,7 @@ const layoutOf = (key: string) => {
 const TARGETS = {
   lms: {
     styles: ["navy", "mono", "coral"] as const,
-    layouts: ["console", "search"] as const,
+    layouts: ["console", "magazine"] as const,
     dir: "_작업/LMS_온라인강의플랫폼/디자인프리셋",
     fits: [
       "B2B 교육, 사내 LMS, 기업 대상 강의 플랫폼",
@@ -31,7 +31,7 @@ const TARGETS = {
   beauty: {
     // 내추럴 그린(forest)은 뷰티에 안 어울려 소프트 파스텔로 바꿨다(2026-08-04).
     styles: ["coral", "mono", "pastel"] as const,
-    layouts: ["showcase", "list"] as const,
+    layouts: ["showcase", "calm"] as const,
     dir: "_작업/뷰티샵_예약플랫폼/디자인프리셋",
     fits: [
       "네일·속눈썹·왁싱 등 캐주얼 뷰티, 20~30대 타깃 매장",
@@ -61,7 +61,7 @@ const TARGETS = {
   },
   groupbuy: {
     styles: ["navy", "mono", "coral"] as const,
-    layouts: ["list", "showcase"] as const,
+    layouts: ["bold", "list"] as const,
     dir: "_작업/공동구매_공구플랫폼/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
@@ -71,7 +71,7 @@ const TARGETS = {
   },
   "groupbuy-deep": {
     styles: ["navy", "mono", "coral"] as const,
-    layouts: ["list", "showcase"] as const,
+    layouts: ["bold", "list"] as const,
     dir: "_작업/공동구매_공구플랫폼_상세IA/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
@@ -516,8 +516,17 @@ const layoutMd = (l: (typeof LAYOUTS)[number], no: string): string => {
   L.push(`| 목록 화면 | ${l.list} |`);
   L.push(`| 내비게이션 | ${l.nav} |`);
   L.push(`| 상세 화면 | ${l.detail} |`);
+  L.push(`| 카드(썸네일) | ${thumbByKey(l.thumb).shape} (비율 ${thumbByKey(l.thumb).ratio}) |`);
   L.push("");
   L.push(`**어울리는 곳** — ${l.fits}`);
+  L.push("");
+  L.push("### 카드 모양을 바꾸고 싶다면");
+  L.push("");
+  L.push("이 뼈대의 기본 카드는 **" + thumbByKey(l.thumb).label + "**입니다. 아래 중 다른 것으로 바꿔 쓰셔도 됩니다 — 뼈대는 그대로 두고 카드만 갈아 끼우면 인상이 크게 달라집니다.");
+  L.push("");
+  L.push("| 카드 모양 | 비율 | 어떻게 | 어울리는 곳 |");
+  L.push("| --- | --- | --- | --- |");
+  for (const t of THUMBS) L.push(`| ${t.label}${t.key === l.thumb ? " **(기본)**" : ""} | ${t.ratio} | ${t.shape} | ${t.fits} |`);
   L.push("");
   L.push("---");
   L.push("");
@@ -531,6 +540,7 @@ const layoutMd = (l: (typeof LAYOUTS)[number], no: string): string => {
   L.push(`- 목록 화면: ${l.list}`);
   L.push(`- 내비게이션: ${l.nav}`);
   L.push(`- 상세 화면: ${l.detail}`);
+  L.push(`- 카드(썸네일): ${thumbByKey(l.thumb).shape} 이미지 비율은 ${thumbByKey(l.thumb).ratio} 를 지켜줘.`);
   L.push("");
   L.push("색만 맞추고 이 뼈대를 무시하면 어떤 색으로 만들어도 같은 화면이 나와. 뼈대를 먼저 잡고 색을 입혀줘.");
   L.push("```");
@@ -541,6 +551,8 @@ const layoutMd = (l: (typeof LAYOUTS)[number], no: string): string => {
 const layoutTokens = (l: (typeof LAYOUTS)[number], no: string) => ({
   layout: { no, key: l.key, name: l.label, tagline: l.tagline, fits: l.fits },
   slots: { hero: l.hero, list: l.list, nav: l.nav, detail: l.detail },
+  card: { key: l.thumb, name: thumbByKey(l.thumb).label, ratio: thumbByKey(l.thumb).ratio, shape: thumbByKey(l.thumb).shape },
+  cardOptions: THUMBS.map((t) => ({ key: t.key, name: t.label, ratio: t.ratio, shape: t.shape, fits: t.fits })),
   note: "색·글꼴은 가이드 프리셋을 따른다. 이 파일은 화면 뼈대만 정한다.",
 });
 

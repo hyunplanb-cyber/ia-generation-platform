@@ -342,7 +342,7 @@ export const PACKAGES: PackageDef[] = [
       "전문가용 도구, 관리자 콘솔, 정보 밀도가 높은 화면",
       "B2C 강의 서비스, 취미·키즈 교육, 일반 사용자 대상",
     ],
-    layoutKeys: ["console", "search"],
+    layoutKeys: ["console", "magazine"],
     fileLabel: "LMS",
     integrations: [
       { area: "로그인·회원가입", detail: "이메일 가입, 카카오·구글 등 소셜 로그인" },
@@ -399,7 +399,7 @@ export const PACKAGES: PackageDef[] = [
       "감각적인 편집숍형 살롱, 남성 전용 바버샵",
       "부드러운 인상이 중요한 피부관리·에스테틱, 아이·산모 대상 케어",
     ],
-    layoutKeys: ["showcase", "list"],
+    layoutKeys: ["showcase", "calm"],
     fileLabel: "뷰티샵",
     integrations: [
       { area: "로그인·회원가입", detail: "이메일 가입, 카카오 등 소셜 로그인, 휴대폰 본인인증" },
