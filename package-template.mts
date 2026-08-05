@@ -61,7 +61,9 @@ interface Product {
  */
 const INDUSTRIES = [
   { key: "lms", label: "LMS", title: "온라인 강의 플랫폼(LMS)",
-    base: `${W}/LMS_온라인강의플랫폼`, deep: `${W}/LMS_온라인강의플랫폼_상세IA` },
+    base: `${W}/LMS_온라인강의플랫폼`, deep: `${W}/LMS_온라인강의플랫폼_상세IA`,
+    // 프리미엄(3뎁스 132화면)은 아직 화면을 안 만들었다 — 만들면 siteDeep 을 채운다.
+    siteBase: `${T}/LMS_온라인강의_완성화면_디럭스` },
   { key: "beauty", label: "뷰티샵", title: "뷰티샵 예약 플랫폼",
     base: `${W}/뷰티샵_예약플랫폼`, deep: `${W}/뷰티샵_예약플랫폼_상세IA`,
     // 여행과 같이 두 등급의 프리셋을 다르게 뒀다 — 디럭스는 소프트 파스텔,
@@ -75,7 +77,9 @@ const INDUSTRIES = [
     siteBase: `${T}/해외투어_티켓예약_완성화면_디럭스`,
     siteDeep: `${T}/해외투어_티켓예약_완성화면` },
   { key: "groupbuy", label: "공동구매", title: "공동구매(공구) 플랫폼",
-    base: `${W}/공동구매_공구플랫폼`, deep: `${W}/공동구매_공구플랫폼_상세IA` },
+    base: `${W}/공동구매_공구플랫폼`, deep: `${W}/공동구매_공구플랫폼_상세IA`,
+    // 프리미엄(3뎁스 125화면)은 아직 화면을 안 만들었다 — 만들면 siteDeep 을 채운다.
+    siteBase: `${T}/공동구매_공구_완성화면_디럭스` },
 ] as const satisfies readonly {
   key: string; label: string; title: string;
   base: string; deep: string; siteBase?: string; siteDeep?: string;
