@@ -144,6 +144,8 @@ interface Preset {
   radius: { card: string; button: string; input: string; badge: string };
   space: string;
   shadow: string;
+  /** 강조색을 어떻게 다뤄야 하는지 — 모노처럼 색을 절제한 테마에서만 쓴다 */
+  accentNote?: string;
   comp: [string, string][]; // 컴포넌트, 규칙
   screens: [string, string][]; // 화면 유형, 적용 지침
 }
@@ -201,13 +203,14 @@ const PRESETS: Preset[] = [
     key: "mono",
     no: "02",
     name: "미니멀 모노",
-    tagline: "여백과 활자. 색을 빼면 내용이 남는다.",
+    tagline: "여백과 활자. 색은 한 곳에만 남긴다.",
     fits: "전문가용 도구, 관리자 콘솔, 정보 밀도가 높은 화면",
     font: { family: "Pretendard", alt: "Inter + Noto Sans KR", note: "글자 크기 차이보다 굵기와 여백으로 위계를 만든다" },
     c: {
       "primary (주요 액션)": "#111111",
       "primary-hover": "#000000",
-      "accent (강조·배지)": "#111111",
+      "accent (강조·배지)": "#D97757",
+      "accent-text (강조 글자용)": "#A84B28",
       "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#111111",
@@ -228,12 +231,14 @@ const PRESETS: Preset[] = [
     radius: { card: "6px", button: "6px", input: "6px", badge: "4px" },
     space: "8px 배수. 여백을 넉넉히 — 카드 내부 24px, 섹션 간격 48px",
     shadow: "사용하지 않는다. 깊이는 border와 배경 대비로만 표현",
+    accentNote: "무채색이 바탕이고 색은 강조 한 곳에만 쓴다. 강조색은 배경으로 쓰고 그 위 글자는 검정 — 글자색으로 쓰면 흰 배경에서 3.1:1 이라 안 읽힌다. 글자로 써야 하면 accent-text 를 쓴다.",
     comp: [
       ["버튼(주요)", "검정 배경, 흰 글자, 높이 36px, radius 6px, 굵기 500"],
+      ["버튼(강조)", "accent 배경 + 검정 글자. 주요 버튼과 나란히 놓지 않는다 — 한 화면에 하나"],
       ["버튼(보조)", "흰 배경 + border 1px. hover 시 background #F6F6F6"],
       ["카드", "border 1px만. 그림자·배경색 없음. 제목과 본문은 여백으로 구분"],
       ["입력", "높이 36px, border 1px, focus 시 검정 테두리 1px + 외곽선"],
-      ["배지", "테두리만 있는 형태(outline). 배경 없음, 11px 글자"],
+      ["배지", "보통은 테두리만(outline). 강조 배지만 accent 채움 + 검정 글자로 한 화면에 한둘"],
       ["표", "헤더에 배경 없이 하단 border 2px. 행 구분선은 1px, 행 높이 40px"],
       ["사이드바", "배경 없음. 활성 항목은 좌측 2px 검정 바 + 굵기 600"],
     ],
@@ -449,6 +454,12 @@ function md(p: Preset): string {
   L.push("");
   L.push("좁은 화면(720px 이하)에서는 화면 좌우 여백과 섹션 사이를 한 단계씩 줄입니다.");
   L.push(`- 그림자: ${p.shadow}`);
+  if (p.accentNote) {
+    L.push("");
+    L.push("### 강조색 쓰는 법");
+    L.push("");
+    L.push(p.accentNote);
+  }
   L.push("");
   L.push("### 줄 간격 — 글줄 사이");
   L.push("");
@@ -543,6 +554,7 @@ const tokens = (p: Preset) => ({
   radius: p.radius,
   spacing: p.space,
   // 간격은 밀도에서 나온다. 자리마다 값을 정해 둬야 눈금 밖의 값을 쓰지 않는다.
+  ...(p.accentNote ? { accentNote: p.accentNote } : {}),
   lineHeight: Object.fromEntries(
       DENSITIES.map((d) => [
         d.label,

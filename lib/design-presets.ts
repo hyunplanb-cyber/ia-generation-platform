@@ -46,8 +46,8 @@ export const DESIGN_OPTIONS: {
     key: "mono",
     title: "미니멀 모노",
     desc: "색을 뺀 여백·활자 중심",
-    concept: "색을 절제한 미니멀 모노톤. 넉넉한 여백과 활자 위계로 정리된 깔끔한 디자인.",
-    swatches: ["#111111", "#767676", "#E5E5E5", "#FFFFFF"],
+    concept: "색을 절제한 미니멀 모노톤. 넉넉한 여백과 활자 위계로 정리하고, 색은 강조 한 곳에만 쓴다.",
+    swatches: ["#111111", "#D97757", "#767676", "#E5E5E5"],
   },
   {
     key: "pastel",
@@ -122,11 +122,12 @@ const PRESETS: Record<DesignKey, Preset> = {
   mono: {
     key: "mono",
     name: "미니멀 모노",
-    tagline: "여백과 활자. 색을 빼면 내용이 남는다.",
+    tagline: "여백과 활자. 색은 한 곳에만 남긴다.",
     font: "Pretendard (대체: Inter + Noto Sans KR). 크기보다 굵기·여백으로 위계.",
     colors: {
       "primary(주요 액션)": "#111111",
-      "accent(강조)": "#111111",
+      "accent(강조)": "#D97757",
+      "accent-text(강조 글자용)": "#A84B28",
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#111111",
