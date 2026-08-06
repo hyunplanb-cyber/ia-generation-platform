@@ -67,6 +67,16 @@ const TARGETS = {
       "미용실·공방·소규모 매장 사장님이 매일 쓰는 가벼운 관리 도구",
     ],
   },
+  matching: {
+    styles: ["navy", "mono", "forest"] as const,
+    layouts: ["split", "list"] as const,
+    dir: "_작업/동네서비스_매칭플랫폼/디자인프리셋",
+    fits: [
+      "신뢰가 먼저인 매칭·중개 서비스, 이사·인테리어처럼 금액이 큰 분야",
+      "과외·레슨·컨설팅처럼 사람 자체가 상품인 분야",
+      "청소·수리·돌봄처럼 생활에 가까운 분야, 안심이 중요한 서비스",
+    ],
+  },
   groupbuy: {
     styles: ["navy", "mono", "coral"] as const,
     layouts: ["bold", "list"] as const,
@@ -75,6 +85,16 @@ const TARGETS = {
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
       "감각적인 셀렉트 공구·인플루언서 공구, 편집숍형 큐레이션",
       "생활밀착 저가 공구·맘카페형, 20~30대 모바일 타깃",
+    ],
+  },
+  "matching-deep": {
+    styles: ["navy", "mono", "forest"] as const,
+    layouts: ["split", "list"] as const,
+    dir: "_작업/동네서비스_매칭플랫폼_상세IA/디자인프리셋",
+    fits: [
+      "신뢰가 먼저인 매칭·중개 서비스, 이사·인테리어처럼 금액이 큰 분야",
+      "과외·레슨·컨설팅처럼 사람 자체가 상품인 분야",
+      "청소·수리·돌봄처럼 생활에 가까운 분야, 안심이 중요한 서비스",
     ],
   },
   "groupbuy-deep": {
