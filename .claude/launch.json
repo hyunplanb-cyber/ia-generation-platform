@@ -46,6 +46,15 @@
       ],
       "cwd": "판매용_템플릿/공동구매_공구_완성화면_프리미엄",
       "port": 4179
+    },
+    {
+      "name": "LMS-디럭스",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/LMS_온라인강의_완성화면_디럭스",
+      "port": 4180
     }
   ]
 }
