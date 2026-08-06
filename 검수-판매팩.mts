@@ -377,6 +377,16 @@ function checkPack(dir: string) {
       // 카드를 늘어놓는 격자는 사이 간격이 하나여야 한다.
       // 재 보니 사이트마다 4~6가지였다(8·12·16·24·32·40px) — 눈금을 정해 놓고도
       // 격자마다 숫자를 직접 골랐다. 여백에서 겪은 "숫자 손잡이"가 gap 에도 있었다(2026-08-06).
+      // overflow-x:auto 를 주면 세로축이 visible 로 못 남고 auto 가 된다.
+      // 안의 것이 1px만 넘쳐도 빈 세로 스크롤바가 하나 서서, 쓸데없는
+      // 하늘색 막대가 붙어 있는 것처럼 보인다. 세로를 명시하지 않은 곳을 센다(2026-08-06).
+      const strips = [...css.matchAll(/(^|\n)([^{}\n]+)\{([^}]*overflow-x:\s*(?:auto|scroll)[^}]*)\}/g)]
+        .filter((m) => !/overflow-y:/.test(m[3]))
+        .map((m) => m[2].trim().split(",")[0].trim());
+      if (strips.length) {
+        add(dir, "고칠 것", `가로 스크롤 상자에 세로축을 안 정한 곳 ${strips.length}곳 (${strips.slice(0, 4).join(", ")}) — 빈 세로 스크롤바가 섭니다`);
+      }
+
       // 좌우와 위아래를 따로 센다. `column-gap:` 안에도 "gap:" 이 들어 있어서
       // 한 덩어리로 세면 가로만 잡히고 세로는 조용히 빠진다(2026-08-06).
       const CARD_GRID = /^\.(mag|gal|cats|g2|g3|g4|g5|g6|pro-g2|stair|carousel)\b/;
