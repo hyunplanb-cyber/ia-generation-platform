@@ -301,6 +301,23 @@ function checkPack(dir: string) {
         add(dir, "고칠 것", `마지막 줄에 카드가 하나만 남는 격자 ${straggler}곳 — 항목 수를 열 수에 맞추세요`);
       }
 
+      // 가격은 낼 돈부터 읽힌다 — 판매가 · 정가 · 할인율 순서다.
+      // 할인율을 앞에 두면 눈이 "20%"에 먼저 걸려 얼마인지를 뒤늦게 찾는다.
+      // 할인율을 배지로 두면 정가·판매가와 무게가 비슷해져 셋이 서로 다툰다(2026-08-06).
+      let priceOrder = 0, offBadge = 0;
+      for (const h of htmls) {
+        // 정가가 판매가보다 앞에 오면 순서가 뒤집힌 것
+        for (const m of h.matchAll(/<span class="price-old"[^>]*>[\s\S]{0,80}?<\/span>\s*<span class="price(?:-lg)?"/g)) priceOrder++;
+        // 할인율을 배지로 단 곳 — 숫자와 % 만 든 배지를 센다
+        for (const m of h.matchAll(/<span class="badge b-acc">\s*\d{1,2}%/g)) offBadge++;
+      }
+      if (priceOrder) {
+        add(dir, "고칠 것", `정가가 판매가보다 앞에 온 곳 ${priceOrder}곳 — 낼 돈부터 보여 주세요`);
+      }
+      if (offBadge) {
+        add(dir, "고칠 것", `할인율을 배지로 단 곳 ${offBadge}곳 — 배지가 아니라 강조색 글자입니다`);
+      }
+
       // 위 카테고리 줄과 왼쪽 LNB 가 같은 곳을 가리키면 같은 길이 두 번이다.
       // LNB 가 있는 화면은 접힌 채로 시작해야 하고, 없는 화면은 접으면 안 된다 —
       // 접으면 갈 길이 통째로 사라진다(2026-08-06).
