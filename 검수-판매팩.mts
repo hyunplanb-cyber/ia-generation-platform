@@ -377,6 +377,37 @@ function checkPack(dir: string) {
       // 카드를 늘어놓는 격자는 사이 간격이 하나여야 한다.
       // 재 보니 사이트마다 4~6가지였다(8·12·16·24·32·40px) — 눈금을 정해 놓고도
       // 격자마다 숫자를 직접 골랐다. 여백에서 겪은 "숫자 손잡이"가 gap 에도 있었다(2026-08-06).
+      // 콘텐츠 영역을 잡는 상자는 좌우 패딩이 하나여야 한다.
+      // 뒤로가기 줄만 20px 이라 위아래 줄과 4px 어긋나 있었다 —
+      // 눈에는 "살짝 튀어나온" 정도로만 보여서 못 찾는다(2026-08-06).
+      // padding 은 값 개수에 따라 좌우가 어느 자리인지 달라진다.
+      // 1개면 그 값, 2·3·4개면 두 번째가 좌우다. 첫 값만 보면 세로를 좌우로 잘못 센다.
+      const padVars = new Set<string>();
+      for (const m of css.matchAll(/max-width:\s*var\(--wrap\)[^}]*?padding:\s*([^;}]+)/g)) {
+        const parts = m[1].trim().split(/\s+/);
+        const x = parts.length === 1 ? parts[0] : parts[1];
+        const v = /var\(--([a-z0-9-]+)\)/.exec(x);
+        padVars.add(v ? v[1] : x);
+      }
+      if (padVars.size > 1) {
+        add(dir, "고칠 것", `콘텐츠 영역 좌우 패딩이 ${padVars.size}가지 (--${[...padVars].join(", --")}) — 줄끼리 어긋납니다`);
+      }
+
+      // 격자는 사진을 늘어놓는 부품이지 단락을 감싸는 부품이 아니다.
+      // 사진 3장 격자(.detail-gal)를 바깥 섹션에 썼더니 안의 .wrap 이 첫 칸에 갇혀
+      // 콘텐츠 영역의 절반 폭으로 나왔다(2026-08-06).
+      const gridClasses = [...css.matchAll(/(^|\n)\.([a-z][a-z0-9-]*)\s*\{[^}]*grid-template-columns/g)]
+        .map((m) => m[2]);
+      let boxedWrap = 0;
+      for (const h of htmls) {
+        for (const g of gridClasses) {
+          for (const m of h.matchAll(new RegExp(`<section class="[^"]*\\b${g}\\b[^"]*">\\s*<div class="wrap`, "g"))) boxedWrap++;
+        }
+      }
+      if (boxedWrap) {
+        add(dir, "고칠 것", `격자로 콘텐츠 영역을 감싼 곳 ${boxedWrap}곳 — 안의 내용이 첫 칸에 갇혀 폭이 줄어듭니다`);
+      }
+
       // 자리를 빠져나가도록 만든 부품(position:absolute)의 이름을 줄 안의 버튼에
       // 붙이면, 그 버튼이 줄을 빠져나가 엉뚱한 데 앉는다. 찜 버튼이 가격 위에
       // 겹쳐 앉은 적이 있다. 세 번 나온 병이라 센다(2026-08-06).
