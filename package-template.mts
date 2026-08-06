@@ -18,7 +18,7 @@
 //         npx tsx package-template.mts travel-premium → 하나만
 import {
   statSync, readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync,
-  copyFileSync, rmSync, renameSync,
+  copyFileSync, rmSync,
 } from "node:fs";
 import JSZip from "jszip";
 import { PACKAGES, BUILD_SCOPE, PLAN_NAMES, type PlanId } from "./lib/packages";
@@ -298,30 +298,12 @@ async function pack(p: Product) {
   // 고치면 다시 묶어야 한다. 파는 순간에만 묶는 게 맞다(2026-08-04).
   const outDir = `${OUT}/${p.zipName}`;
 
-  /* 문서는 매번 다시 만들지만 완성 화면은 손으로 만든 것이라 성격이 다르다.
-     원본이 없어졌는데도 목적지를 먼저 지워서, 팩 안에 있던 완성 화면 한 벌을
-     통째로 날린 적이 있다. 지우는 일은 되돌릴 수 없다(2026-08-06).
-
-     그래서 원본이 없으면 팩에 이미 있는 완성 화면을 옆에 빼 두었다가 도로 넣는다.
-     팩 안의 그 한 벌이 곧 결과물이고, 원본은 복사해 오는 자리일 뿐이다. */
+  /* 완성 화면은 원본 폴더에 있는 것을 복사해 온다. 원본이 없으면 그냥 안 넣는다.
+     화면은 스펙팩으로 다시 만드는 것이라 팩 안의 옛 사본을 붙들 이유가 없다. */
   let siteCount = 0;
-  const sitePath = `${outDir}/완성화면`;
-  const keepSite = p.sitePath && !existsSync(p.sitePath) && existsSync(sitePath);
-  const stash = `${OUT}/.완성화면-옮기는중`;
-  if (keepSite) {
-    rmSync(stash, { recursive: true, force: true });
-    renameSync(sitePath, stash);
-  }
-
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
   for (const f of files) copyFileSync(`${p.src}/${f}`, `${outDir}/${f}`);
-
-  if (keepSite) {
-    renameSync(stash, sitePath);
-    siteCount = readdirSync(`${sitePath}/pages`).filter((f) => f.endsWith(".html")).length;
-    console.log(`     · 완성 화면은 팩에 있던 것을 그대로 둡니다 (원본 폴더 없음)`);
-  }
 
   const presetDir = `${p.presetsFrom}/디자인프리셋`;
   let presetCount = 0;
@@ -334,10 +316,9 @@ async function pack(p: Product) {
   }
 
   // 디럭스·프리미엄만 — 스펙팩으로 실제로 만든 화면을 통째로 넣는다.
-  // 원본이 없어 팩에 있던 것을 그대로 둔 경우(keepSite)는 이미 자리에 있으니 건너뛴다.
-  if (p.sitePath && !keepSite) {
+  if (p.sitePath) {
     if (!existsSync(p.sitePath)) {
-      console.log(`     · 완성 화면 원본도 팩의 사본도 없습니다 — 이 칸은 화면 없이 나갑니다`);
+      console.log(`     · 완성 화면 없음 — 문서만 나갑니다`);
     } else {
     const walk = (dir: string, rel: string) => {
       mkdirSync(`${outDir}/완성화면/${rel}`, { recursive: true });

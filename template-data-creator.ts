@@ -9,7 +9,7 @@ export const CREATOR = {
   project: {
     concept:
       "전자책·템플릿·강의자료 같은 디지털 콘텐츠를 직접 파는 1인 크리에이터 판매 사이트. 방문자는 콘텐츠를 둘러보고 미리보기를 확인한 뒤 결제하면 바로 내려받는다. 판매자는 콘텐츠를 등록하고 판매 현황을 확인한다.",
-    designConcept: "깔끔한 화이트 배경에 포인트 컬러 하나, 콘텐츠 표지가 돋보이는 카드형 레이아웃. 글꼴은 Pretendard 한 벌만 쓰고(없으면 Noto Sans KR), 굵기는 400·600·700 셋만 쓴다. 본문 15px·카드 제목 18px·섹션 제목 22px·페이지 제목 32px",
+    designConcept: "깔끔한 화이트 배경에 포인트 컬러 하나, 콘텐츠 표지가 돋보이는 카드형 레이아웃. 글꼴은 Paperlogy 한 벌만 쓰고(없으면 Pretendard), 굵기는 400·600·700 셋만 쓴다. 본문 15px·카드 제목 18px·섹션 제목 22px·페이지 제목 32px",
     deviceMode: "responsive",
     overallStart: "2026-08-03",
     overallEnd: "2026-09-11",

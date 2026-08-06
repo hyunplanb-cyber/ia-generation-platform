@@ -160,7 +160,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     key: "pastel",
     name: "소프트 파스텔",
     tagline: "부드럽고 친근하게. 처음 쓰는 사람도 겁먹지 않게.",
-    font: "Pretendard (대체: Paperlogy). 제목을 과감히 키우고 자간을 좁혀 경쾌하게.",
+    font: "한 벌만 쓴다. 제목을 과감히 키우고 자간을 좁혀 경쾌하게.",
     colors: {
       "primary(주요 액션)": "#5B4FE5",
       "accent(강조)": "#FFD54A",
@@ -189,7 +189,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     key: "retro",
     name: "레트로 페이퍼",
     tagline: "종이 질감과 따뜻한 오렌지·틸. 편집숍 같은 감성.",
-    font: "제목은 명조/Paperlogy로 개성 있게, 본문은 Pretendard로 읽기 편하게.",
+    font: "한 벌만 쓴다. 위계는 글꼴이 아니라 크기와 굵기로 만든다.",
     colors: {
       "primary(주요 액션)": "#DE6F26",
       "accent(강조·배지)": "#0E6F60",
@@ -245,7 +245,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     key: "coral",
     name: "코럴 선셋",
     tagline: "밝고 따뜻한 코럴. 생기 있고 친근한 브랜드에.",
-    font: "Paperlogy 또는 Pretendard. 제목을 둥글고 크게, 경쾌하게.",
+    font: "한 벌만 쓴다. 제목을 둥글고 크게, 경쾌하게.",
     colors: {
       "primary(주요 액션)": "#F0654F",
       "accent(강조·배지)": "#F59E0B",
@@ -866,6 +866,18 @@ export const COMMON_RULES: string[] = [
   "- **가격·평점처럼 정확히 읽어야 하는 것은 얹지 마세요.** 사진 위에서는 숫자가 잘 안 읽힙니다.",
   "- **한 화면에 두 가지를 섞어도 됩니다.** 위는 혼합형 특집, 아래는 분리형 목록 — 하는 일이 다르므로 어수선하지 않습니다.",
   "",
+  "### 글꼴은 한 벌입니다",
+  "",
+  "**기본은 `Paperlogy`**, 못 불러오면 `Pretendard` → `Noto Sans KR` 순으로 물러납니다.",
+  "CSS로는 `font-family: Paperlogy, Pretendard, 'Noto Sans KR', sans-serif` 한 줄입니다.",
+  "",
+  "- **제목과 본문에 다른 글꼴을 쓰지 마세요.** 두 벌이 되는 순간 어디에 무엇을 쓸지가",
+  "  화면마다 갈립니다. 처음엔 「제목만 다르게」로 시작해서, 나중엔 세 벌 네 벌이 됩니다.",
+  "- **위계는 글꼴이 아니라 크기와 굵기로 만듭니다.** 굵기는 400·600·700 셋만 쓰세요.",
+  "- 크기는 본문 15 · 카드 제목 18 · 섹션 제목 22 · 페이지 제목 32이 기준입니다.",
+  "- **숫자가 많은 표에는 고정폭 숫자**(`font-variant-numeric: tabular-nums`)를 켜세요.",
+  "  안 켜면 값이 바뀔 때 자릿수가 흔들려 칸이 들썩입니다.",
+  "",
   "### 움직임 — 바뀌었다는 걸 눈이 알아채게",
   "",
   "값이 바뀌었는데 **딱 하고 갈아 끼우면 사람은 그걸 못 봅니다.** 숫자가 12에서 3으로",
@@ -1079,15 +1091,16 @@ export function defaultPresetConfig(style: DesignKey): PresetConfig {
  *
  * 유저가 만드는 프리셋은 글꼴·모서리·밀도까지 본인이 고른 값이 들어간다.
  * 판매본은 손대지 않은 기본값이다.
- *   포인트 색상 = 그 테마의 첫 번째 색 · 글꼴 = 프리텐다드
+ *   포인트 색상 = 그 테마의 첫 번째 색 · 글꼴 = 페이퍼로지
  *   모서리 = 테마 기본값 · 밀도 = 넉넉하게 · 모드 = 라이트
  *
  * 모서리만 테마 기본값을 그대로 둔다 — 파스텔의 둥근 모서리, 모노의 각진 모서리는
  * 그 테마의 성격이라, 통일하면 셋의 차이가 색뿐이 되어 나란히 놓았을 때 구분이 안 된다.
- * 글꼴은 반대다. 판매본에 페이퍼로지·명조가 섞이면 "이 폰트를 어디서 받나"가 먼저 걸린다.
+ * 글꼴은 반대로 한 벌로 묶는다. 세 벌에 다른 글꼴이 섞이면 "이 폰트를 어디서 받나"가
+ * 먼저 걸린다. 기본은 페이퍼로지고, 못 불러오면 프리텐다드로 물러난다(2026-08-06).
  */
 export function salePresetConfig(style: DesignKey): PresetConfig {
-  return { ...defaultPresetConfig(style), font: "pretendard" };
+  return { ...defaultPresetConfig(style), font: "paperlogy" };
 }
 
 export function parsePresetConfig(json: string | null, concept?: string | null): PresetConfig {

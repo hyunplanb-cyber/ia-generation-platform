@@ -161,7 +161,7 @@ const PRESETS: Preset[] = [
     name: "모던 네이비",
     tagline: "신뢰감과 밀도. 실무형 서비스의 기본값.",
     fits: "B2B 교육, 사내 LMS, 기업 대상 강의 플랫폼",
-    font: { family: "Pretendard", alt: "Noto Sans KR", note: "숫자는 tabular-nums로 표 정렬을 맞춘다" },
+    font: { family: "Paperlogy", alt: "Pretendard", note: "숫자는 tabular-nums로 표 정렬을 맞춘다" },
     c: {
       "primary (주요 액션)": "#2B4A8B",
       "primary-hover": "#1F3A73",
@@ -209,7 +209,7 @@ const PRESETS: Preset[] = [
     name: "미니멀 모노",
     tagline: "여백과 활자. 색은 한 곳에만 남긴다.",
     fits: "전문가용 도구, 관리자 콘솔, 정보 밀도가 높은 화면",
-    font: { family: "Pretendard", alt: "Inter + Noto Sans KR", note: "글자 크기 차이보다 굵기와 여백으로 위계를 만든다" },
+    font: { family: "Paperlogy", alt: "Pretendard", note: "글자 크기 차이보다 굵기와 여백으로 위계를 만든다" },
     c: {
       "primary (주요 액션)": "#111111",
       "primary-hover": "#000000",
@@ -260,7 +260,7 @@ const PRESETS: Preset[] = [
     name: "소프트 파스텔",
     tagline: "부드럽고 친근하게. 처음 쓰는 사람도 겁먹지 않게.",
     fits: "B2C 강의 서비스, 취미·키즈 교육, 일반 사용자 대상",
-    font: { family: "Pretendard", alt: "Paperlogy", note: "제목을 과감하게 키우고 자간을 좁혀 경쾌하게" },
+    font: { family: "Paperlogy", alt: "Pretendard", note: "제목을 과감하게 키우고 자간을 좁혀 경쾌하게" },
     c: {
       "primary (주요 액션)": "#5B4FE5",
       "primary-hover": "#4A3DD1",
@@ -309,7 +309,7 @@ const PRESETS: Preset[] = [
     name: "내추럴 그린",
     tagline: "차분한 자연. 건강하고 정직한 인상.",
     fits: "피부관리·클리닉, 건강·친환경을 내세우는 브랜드",
-    font: { family: "Pretendard", alt: "Noto Sans KR", note: "제목은 과하지 않게, 자간을 살짝 넓혀 여유 있게" },
+    font: { family: "Paperlogy", alt: "Pretendard", note: "제목은 과하지 않게, 자간을 살짝 넓혀 여유 있게" },
     c: {
       "primary (주요 액션)": "#15803D",
       "primary-hover": "#116632",
@@ -357,7 +357,7 @@ const PRESETS: Preset[] = [
     name: "코럴 선셋",
     tagline: "밝고 따뜻하게. 처음 오는 사람도 반기는 얼굴.",
     fits: "취미·키즈 교육, 일반 사용자 대상 B2C 서비스",
-    font: { family: "Pretendard", alt: "Paperlogy", note: "제목을 크고 굵게. 친근한 인상이 먼저 오게" },
+    font: { family: "Paperlogy", alt: "Pretendard", note: "제목을 크고 굵게. 친근한 인상이 먼저 오게" },
     c: {
       "primary (주요 액션)": "#F0654F",
       "primary-hover": "#D9503B",
