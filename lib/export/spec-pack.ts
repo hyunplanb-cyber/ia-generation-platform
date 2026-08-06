@@ -3,7 +3,7 @@
 import type { Menu } from "@/domain/menu/menu";
 import type { Screen } from "@/domain/screen/screen";
 import type { ButtonAction } from "@/domain/screen/button-action";
-import { IMAGE_PLACEHOLDER, CONTENT_WIDTH } from "@/lib/design-presets";
+import { IMAGE_PLACEHOLDER, CONTENT_WIDTH, COMMON_RULES } from "@/lib/design-presets";
 
 export interface SpecPackProject {
   concept: string;
@@ -419,6 +419,14 @@ export function buildSpecPackMarkdown(
       ? "- 프리셋이 없다면 1장의 **디자인 컨셉**을 전역 스타일(색·톤·라운드·여백)로 토큰화해 일관되게 적용하세요."
       : "- 프리셋도 디자인 컨셉도 없다면, 색·글꼴·모서리·여백을 **먼저 한 벌 정해 토큰으로 고정한 뒤** 모든 화면에 그대로 쓰세요. 화면마다 다시 고르면 같은 사이트로 안 보입니다.",
   );
+
+  /* 색·밀도와 상관없는 규칙은 디자인 프리셋에도 같은 한 벌이 실려 있다.
+     그런데 프리셋은 "색을 고르는 파일"로 보여서, 이 스펙팩만 AI에게 건네는 사람이 있다.
+     게다가 「버튼이냐 링크냐」·「견본으로 가는 버튼」·「LNB」는 색 규칙이 아니라
+     동작 규칙이라 원래 여기가 제자리다. 한 상수를 양쪽이 읽으니 갈라지지 않는다(2026-08-06). */
+  lines.push("");
+  lines.push(...COMMON_RULES.map((r) => (r.startsWith("### ") ? `#### ${r.slice(4)}` : r)));
+
   lines.push("### 이미지 · 썸네일");
   lines.push(
     `- 아직 사진이 없으므로 이미지 자리는 **테마 색이 아니라 옅은 파스텔**로 채우세요. 테마 색으로 칠하면 화면이 그 색 덩어리로 뒤덮여 디자인이 안 보입니다.`,

@@ -139,6 +139,16 @@ function checkPack(dir: string) {
     if (!md.includes(needle)) add(dir, "막음", `빌드 가이드에 ${label}이 없음`);
   }
 
+  // 공용 규칙은 디자인 프리셋에도 있지만, 프리셋은 "색 고르는 파일"로 보여서
+  // 이 스펙팩만 AI에게 건네는 사람이 있다. 게다가 버튼·LNB·견본 규칙은
+  // 색이 아니라 동작이라 원래 여기가 제자리다(2026-08-06).
+  const specMissing = COMMON_RULES.filter((r) => r.startsWith("### "))
+    .map((r) => r.slice(4))
+    .filter((h) => !md.includes(h));
+  if (specMissing.length) {
+    add(dir, "막음", `스펙팩 빌드 가이드에 공용 규칙이 빠짐: ${specMissing.map((m) => m.split(" —")[0]).join(", ")}`);
+  }
+
   // ── 6. WBS가 주말에 걸치나 ───────────────────────────────────
   const wbs = sheet(`${base}/04_WBS.xlsx`);
   const weekend = wbs.filter((r) =>
