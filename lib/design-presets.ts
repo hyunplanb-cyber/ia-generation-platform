@@ -762,6 +762,9 @@ export const SPACING_SLOTS: { key: keyof (typeof DENSITIES)[number]; label: stri
   { key: "sectionGap", label: "섹션과 섹션 사이", when: "화면 안에서 이야기가 바뀌는 자리" },
   { key: "cardPad", label: "카드 안쪽 여백", when: "카드·박스 테두리와 내용 사이" },
   { key: "cardGap", label: "카드와 카드 사이 (가로)", when: "격자로 나란히 늘어놓을 때" },
+  // 카드에 상자가 없으면 좌우와 같은 값으로는 줄이 안 갈린다.
+  // 위 카드의 가격과 아래 카드의 사진이 붙어 한 덩어리로 읽힌다(2026-08-06).
+  { key: "blockGap", label: "카드 줄과 줄 사이 (세로)", when: "격자가 두 줄 넘게 이어질 때" },
   { key: "stackGap", label: "항목과 항목 사이 (세로)", when: "목록처럼 위아래로 이어 붙일 때" },
   { key: "titleGap", label: "제목과 그 아래 내용", when: "제목 바로 밑" },
   { key: "itemGap", label: "묶음 안 요소끼리", when: "한 카드 안의 줄과 줄" },

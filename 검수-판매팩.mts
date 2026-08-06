@@ -355,15 +355,23 @@ function checkPack(dir: string) {
       // 카드를 늘어놓는 격자는 사이 간격이 하나여야 한다.
       // 재 보니 사이트마다 4~6가지였다(8·12·16·24·32·40px) — 눈금을 정해 놓고도
       // 격자마다 숫자를 직접 골랐다. 여백에서 겪은 "숫자 손잡이"가 gap 에도 있었다(2026-08-06).
+      // 좌우와 위아래를 따로 센다. `column-gap:` 안에도 "gap:" 이 들어 있어서
+      // 한 덩어리로 세면 가로만 잡히고 세로는 조용히 빠진다(2026-08-06).
       const CARD_GRID = /^\.(mag|gal|cats|g2|g3|g4|g5|g6|pro-g2|stair|carousel)\b/;
-      const gridGaps = new Set<string>();
+      const gapX = new Set<string>(), gapY = new Set<string>();
       for (const m of css.matchAll(/(^|\n)([^{}\n]+)\{([^}]*)\}/g)) {
         const first = m[2].trim().split(",")[0].trim();
-        const gap = /gap:\s*var\(--([a-z0-9-]+)\)/.exec(m[3]);
-        if (gap && CARD_GRID.test(first)) gridGaps.add(gap[1]);
+        if (!CARD_GRID.test(first)) continue;
+        for (const g of m[3].matchAll(/(^|[;\s])(column-|row-)?gap:\s*var\(--([a-z0-9-]+)\)/g)) {
+          if (g[2] === "row-") gapY.add(g[3]);
+          else gapX.add(g[3]);          // column-gap 과 gap 은 둘 다 좌우를 정한다
+        }
       }
-      if (gridGaps.size > 1) {
-        add(dir, "고칠 것", `카드 격자 사이 간격이 ${gridGaps.size}가지 (--${[...gridGaps].join(", --")}) — 한 값으로 모으세요`);
+      if (gapX.size > 1) {
+        add(dir, "고칠 것", `카드 격자 좌우 간격이 ${gapX.size}가지 (--${[...gapX].join(", --")}) — 한 값으로 모으세요`);
+      }
+      if (gapY.size > 1) {
+        add(dir, "고칠 것", `카드 격자 위아래 간격이 ${gapY.size}가지 (--${[...gapY].join(", --")}) — 한 값으로 모으세요`);
       }
 
       // 콘텐츠 영역은 한 사이트에 하나여야 한다. 헤더는 1200 인데 본문만 1440 이라
