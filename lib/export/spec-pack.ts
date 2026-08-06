@@ -473,6 +473,38 @@ export function buildSpecPackMarkdown(
     `- 자리 안에 \`${m.common.imagePlaceholder.labelFormat}\` 형식으로 적으세요. 예: ${m.common.imagePlaceholder.examples.map((e) => `\`${e}\``).join(" · ")}`,
   );
   for (const r of m.common.imagePlaceholder.rule) lines.push(`- ${r}`);
+
+  /* 파일을 어디에 두고 어떻게 부를지가 한 줄도 없었다.
+     그래서 화면 44장이 pages/ 안에서 assets/... 를 불렀는데 자산은 한 층 위에 있었고,
+     CSS 가 통째로 안 붙었다 — 글꼴도 콘텐츠 영역도 격자도 전부 날아갔다.
+     경로만 고치니 눌러서 값이 바뀌는 비율이 23% 에서 58% 로 올랐다.
+     저장소 안에서 만들 때는 옆에 있는 사이트를 보고 따라 해서 안 깨졌을 뿐,
+     빈 폴더에서 만들면 깨진다. 사는 분은 빈 폴더 쪽이다(2026-08-07). */
+  lines.push("### 파일을 어디에 두나");
+  lines.push("");
+  lines.push("```");
+  lines.push("완성화면/");
+  lines.push("  index.html              전체 화면 목록 (여기서 화면으로 들어간다)");
+  lines.push("  pages/");
+  lines.push("    HO-01.html            화면 하나에 파일 하나 · 이름은 화면 ID 그대로");
+  lines.push("    CO-03.html");
+  lines.push("  assets/");
+  lines.push("    css/style.css         스타일 한 벌");
+  lines.push("    js/app.js             동작 한 벌");
+  lines.push("```");
+  lines.push("");
+  lines.push(
+    "- **`pages/` 안에서는 `../assets/css/style.css` 로 부릅니다.** `assets/...` 라고 쓰면 " +
+    "`pages/assets/...` 를 찾다가 못 찾아서 **스타일이 통째로 안 붙습니다** — 글꼴도 여백도 격자도 전부 날아갑니다.",
+  );
+  lines.push("- **`index.html` 은 `완성화면/` 바로 아래**에 둡니다. 거기서는 `assets/...` 그대로 부르면 됩니다.");
+  lines.push("- **스타일과 동작은 각각 한 벌**입니다. 화면마다 따로 만들면 44장이 서로 달라집니다.");
+  lines.push("- 화면끼리 오갈 때는 `CO-03.html` 처럼 **같은 폴더 안 이름**으로 겁니다.");
+  lines.push(
+    "- 다 만든 뒤 **화면 하나를 브라우저로 직접 열어 보세요.** 글꼴이 기본 고딕으로 보이면 경로가 틀린 것입니다.",
+  );
+  lines.push("");
+
   lines.push("### 추천 스택");
   lines.push(
     "- 정적 다중 페이지(HTML/CSS) 또는 컴포넌트 기반(React·Next.js·Vue 등) 중 프로젝트 규모에 맞게 선택하세요. 화면이 많고 상태가 복잡하면 컴포넌트 기반을 권장합니다.",
