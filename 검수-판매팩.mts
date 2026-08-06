@@ -301,6 +301,25 @@ function checkPack(dir: string) {
         add(dir, "고칠 것", `마지막 줄에 카드가 하나만 남는 격자 ${straggler}곳 — 항목 수를 열 수에 맞추세요`);
       }
 
+      // 위 카테고리 줄과 왼쪽 LNB 가 같은 곳을 가리키면 같은 길이 두 번이다.
+      // LNB 가 있는 화면은 접힌 채로 시작해야 하고, 없는 화면은 접으면 안 된다 —
+      // 접으면 갈 길이 통째로 사라진다(2026-08-06).
+      let dupNav = 0, deadNav = 0;
+      for (const f of pageFiles) {
+        const h = readFileSync(`${sDir}/pages/${f}`, "utf8");
+        if (!/class="catbar/.test(h)) continue;
+        const lnb = /<aside class="side\b/.test(h) || /<nav class="toc"/.test(h);
+        const folded = /class="catbar is-folded"/.test(h);
+        if (lnb && !folded) dupNav++;
+        if (!lnb && folded) deadNav++;
+      }
+      if (dupNav) {
+        add(dir, "고칠 것", `LNB 와 위 카테고리 줄이 함께 보이는 화면 ${dupNav}개 — 같은 길이 두 번입니다`);
+      }
+      if (deadNav) {
+        add(dir, "막음", `LNB 가 없는데 카테고리 줄을 접은 화면 ${deadNav}개 — 갈 길이 사라집니다`);
+      }
+
       // 사진 위에 글자를 얹는 혼합형은 어둠막이 없으면 밝은 사진에서 글자가 사라진다.
       // 사진은 사는 분이 바꿀 것이라 우리가 밝기를 미리 알 수 없다(2026-08-06).
       if (/\.ocard\s*\{/.test(css) && !/\.ocard::(after|before)/.test(css)) {
