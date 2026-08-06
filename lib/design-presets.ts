@@ -15,6 +15,14 @@
  * 배경은 중립으로 고정하고, 색은 주색·강조가 내게 한다. */
 export const CONTENT_BG = "#F0EFEB";
 
+/** 콘텐츠 영역 — PC에서 내용이 놓이는 폭.
+ *
+ * 헤더·본문·푸터가 **모두 같은 폭**을 써야 위아래가 한 줄로 선다.
+ * 실제로 헤더는 1200, 본문은 화면에 따라 1200 또는 1440이라 시작 지점이
+ * 120px씩 어긋난 사이트가 있었다(2026-08-06). 폭을 한 곳에서 정하고
+ * 헤더 안쪽·본문·푸터 안쪽·고정 바가 모두 그 값을 참조하게 한다. */
+export const CONTENT_WIDTH = { max: "1440px", padX: "24px" } as const;
+
 export type DesignKey = "navy" | "mono" | "pastel" | "retro" | "forest" | "coral";
 
 /**

@@ -3,7 +3,7 @@
 import type { Menu } from "@/domain/menu/menu";
 import type { Screen } from "@/domain/screen/screen";
 import type { ButtonAction } from "@/domain/screen/button-action";
-import { IMAGE_PLACEHOLDER } from "@/lib/design-presets";
+import { IMAGE_PLACEHOLDER, CONTENT_WIDTH } from "@/lib/design-presets";
 
 export interface SpecPackProject {
   concept: string;
@@ -149,6 +149,13 @@ export function buildSpecPackModel(
             account: menus.filter((m) => m.audience === "account").map((m) => m.nameKo),
           }
         : null,
+      /* 콘텐츠 영역은 한 사이트에 하나여야 한다. 헤더는 1200 인데 본문만 1440 이라
+         위아래가 120px 어긋난 사이트가 있었다 — 폭을 한 곳에서 정하게 못 박는다(2026-08-06). */
+      contentWidth: {
+        max: CONTENT_WIDTH.max,
+        paddingX: CONTENT_WIDTH.padX,
+        note: "헤더·본문·푸터·하단 고정 바가 모두 이 폭을 쓴다. 화면마다 따로 정하지 않는다.",
+      },
       header: "로고 + 검색 + 상단 내비게이션(GNB)",
       footer: "저작권 · 기본 링크",
       // 사진이 없는 단계에서 이미지 자리를 어떻게 그릴지. 이걸 안 적어두면
@@ -264,6 +271,10 @@ export function buildSpecPackMarkdown(
   } else {
     lines.push(`- **상단 내비게이션(GNB)**: ${m.common.globalNav.map((n) => `\`${n}\``).join(" · ") || "(없음)"} — 모든 화면 상단에 고정`);
   }
+  lines.push(
+    `- **콘텐츠 영역**: 최대 ${m.common.contentWidth.max}, 좌우 여백 ${m.common.contentWidth.paddingX} — ` +
+      `${m.common.contentWidth.note} 화면마다 폭을 새로 정하면 위아래가 어긋납니다.`,
+  );
   lines.push(`- **헤더**: ${m.common.header}`);
   lines.push(`- **푸터**: ${m.common.footer}`);
   lines.push(

@@ -7,7 +7,7 @@ import { PACKAGES } from "./lib/packages";
 // 두 곳에 따로 적으면 "산 프리셋과 만든 프리셋이 다르다"는 말이 나온다.
 import {
   LAYOUTS, THUMBS, thumbByKey, DENSITIES, SPACING_SLOTS, LINE_SLOTS,
-  DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, type DesignKey,
+  DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, CONTENT_WIDTH, type DesignKey,
 } from "./lib/design-presets";
 
 /** 마크다운 표 안에 코드로 감싸 넣는다 — 중첩 백틱을 피하려고 함수로 뺐다. */
@@ -440,6 +440,19 @@ function md(p: Preset): string {
   L.push("");
   L.push(`- 카드 \`${p.radius.card}\` · 버튼 \`${p.radius.button}\` · 입력 \`${p.radius.input}\` · 배지 \`${p.radius.badge}\``);
   L.push(`- 여백 원칙: ${p.space}`);
+  L.push("");
+  L.push("### 콘텐츠 영역 — 한 사이트에 하나");
+  L.push("");
+  L.push(`PC에서 내용이 놓이는 폭은 **최대 ${CONTENT_WIDTH.max}, 좌우 여백 ${CONTENT_WIDTH.padX}** 하나로 갑니다.`);
+  L.push("");
+  L.push("**헤더·본문·푸터·하단 고정 바가 모두 같은 폭을 써야** 위아래가 한 줄로 섭니다.");
+  L.push("한 곳에서만 폭을 정하고(예: `--wrap`), 나머지는 모두 그 값을 참조하세요.");
+  L.push("화면마다 따로 정하면 반드시 갈라집니다 — 헤더는 1200인데 본문만 1440이라");
+  L.push("시작 지점이 120px씩 어긋난 사이트가 실제로 있었습니다.");
+  L.push("");
+  L.push("- 더 넓게 쓰고 싶은 화면이 있어도 폭을 새로 만들지 마세요. 같은 폭 안에서 열 수를 늘리세요.");
+  L.push("- 읽기용으로 좁힌 한 단(예: 상세 본문 720px)은 이 폭 **안에서** 가운데 정렬합니다. 바깥 폭을 바꾸는 게 아닙니다.");
+  L.push("- 좁은 화면에서는 좌우 여백만 한 단계 줄이고, 폭은 화면을 따라갑니다.");
   L.push("");
   L.push("### 간격 눈금 — 밀도에서 나옵니다");
   L.push("");

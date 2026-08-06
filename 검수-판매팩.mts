@@ -227,6 +227,28 @@ function checkPack(dir: string) {
         if (asDiv) add(dir, "고칠 것", `목록 카드(.${cls})가 링크가 아님 — 눌러도 아무 일이 없습니다`);
       }
 
+      // 링크 안에 링크를 넣으면 브라우저가 바깥 링크를 그 자리에서 닫는다.
+      // 그러면 뒤에 오던 가격·버튼이 행 밖으로 튀어나가는데, 눈으로는
+      // "왜 줄이 깨졌지"로만 보여 원인을 못 찾는다(2026-08-06).
+      let nested = 0;
+      for (const h of htmls) {
+        for (const m of h.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)) {
+          if (/<a\b/.test(m[1])) nested++;
+        }
+      }
+      if (nested) {
+        add(dir, "막음", `링크 안에 링크가 든 곳 ${nested}개 — 브라우저가 바깥 링크를 끊어 줄이 깨집니다`);
+      }
+
+      // 콘텐츠 영역은 한 사이트에 하나여야 한다. 헤더는 1200 인데 본문만 1440 이라
+      // 위아래가 120px 어긋난 사이트가 있었다 — 폭이 여럿이면 반드시 갈라진다(2026-08-06).
+      const widths = new Set(
+        [...css.matchAll(/max-width:\s*(\d{4})px/g)].map((m) => m[1]).filter((w) => +w >= 1000),
+      );
+      if (widths.size > 1) {
+        add(dir, "고칠 것", `콘텐츠 영역 폭이 ${widths.size}가지 (${[...widths].join("px, ")}px) — 헤더와 본문이 어긋납니다`);
+      }
+
       // 큰 제목이 두 줄로 넘어가면 윗줄과 아랫줄이 부딪힌다. 밑줄·형광펜을 얹었으면 더 그렇다.
       const tight = [...css.matchAll(/([^{}]*h1[^{}]*)\{([^}]*)\}/g)]
         .filter(([, sel, body]) => {
