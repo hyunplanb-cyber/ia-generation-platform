@@ -377,6 +377,21 @@ function checkPack(dir: string) {
       // 카드를 늘어놓는 격자는 사이 간격이 하나여야 한다.
       // 재 보니 사이트마다 4~6가지였다(8·12·16·24·32·40px) — 눈금을 정해 놓고도
       // 격자마다 숫자를 직접 골랐다. 여백에서 겪은 "숫자 손잡이"가 gap 에도 있었다(2026-08-06).
+      // 자리를 빠져나가도록 만든 부품(position:absolute)의 이름을 줄 안의 버튼에
+      // 붙이면, 그 버튼이 줄을 빠져나가 엉뚱한 데 앉는다. 찜 버튼이 가격 위에
+      // 겹쳐 앉은 적이 있다. 세 번 나온 병이라 센다(2026-08-06).
+      const floating = [...css.matchAll(/(^|\n)\.([a-z][a-z0-9-]*)\s*\{[^}]*position:\s*absolute/g)]
+        .map((m) => m[2]);
+      const clash = new Set<string>();
+      for (const h of htmls) {
+        for (const m of h.matchAll(/class="([^"]*\bbtn\b[^"]*)"/g)) {
+          for (const f of floating) if (new RegExp(`\\b${f}\\b`).test(m[1])) clash.add(f);
+        }
+      }
+      if (clash.size) {
+        add(dir, "고칠 것", `떠 있는 부품 이름을 줄 안 버튼에 붙인 곳 (.${[...clash].join(", .")}) — 버튼이 줄을 빠져나갑니다`);
+      }
+
       // overflow-x:auto 를 주면 세로축이 visible 로 못 남고 auto 가 된다.
       // 안의 것이 1px만 넘쳐도 빈 세로 스크롤바가 하나 서서, 쓸데없는
       // 하늘색 막대가 붙어 있는 것처럼 보인다. 세로를 명시하지 않은 곳을 센다(2026-08-06).
