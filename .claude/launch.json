@@ -91,6 +91,32 @@
       ],
       "cwd": "판매용_템플릿/_판매팩/LMS_디럭스/완성화면",
       "port": 4192
+    },
+    {
+      "name": "가이드-A",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "4193",
+        "."
+      ],
+      "cwd": "판매용_템플릿/_가이드용/LMS_A_대시보드형",
+      "port": 4193
+    },
+    {
+      "name": "가이드-B",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "4194",
+        "."
+      ],
+      "cwd": "판매용_템플릿/_가이드용/LMS_B_에디토리형",
+      "port": 4194
     }
   ]
 }

@@ -476,6 +476,42 @@ function checkPack(dir: string) {
           else gapX.add(g[3]);          // column-gap 과 gap 은 둘 다 좌우를 정한다
         }
       }
+      /* 격자에 gap 을 날숫자로 적으면 그 자리만 달라진다.
+         위 셈은 var(--x) 만 세어서, 숫자를 직접 적은 격자는 조용히 빠졌다.
+         실제로 한 사이트에서 좌우가 3·8·16·20·24px 다섯 가지로 갈라져 있었다.
+         클래스 이름이 아니라 display:grid 인 규칙을 본다 — 남이 만든 사이트는
+         우리 이름을 안 쓴다(2026-08-07). */
+      const rawGaps = new Set<string>();
+      for (const m of css.matchAll(/(^|\n)([^{}\n]+)\{([^}]*)\}/g)) {
+        if (!/display:\s*grid/.test(m[3])) continue;
+        for (const g of m[3].matchAll(/(^|[;\s])(?:column-|row-)?gap:\s*([^;}]+)/g)) {
+          for (const v of g[2].trim().split(/\s+/)) {
+            if (/^\d+(\.\d+)?(px|rem)$/.test(v) && v !== "0px") rawGaps.add(v);
+          }
+        }
+      }
+      if (rawGaps.size) {
+        add(
+          dir,
+          "고칠 것",
+          `격자 간격을 숫자로 직접 적은 곳 ${rawGaps.size}가지 (${[...rawGaps].join(", ")}) — ` +
+          `--card-gap · --card-gap-y 두 변수만 쓰세요`,
+        );
+      }
+
+      /* 변수를 쓰긴 했는데 이름이 제각각이면 결국 값이 갈린다.
+         한 사이트는 --grid-x/--grid-y, 다른 사이트는 --gap-col/--gap-row 를 썼다.
+         이름이 다르면 "같은 자리"라는 걸 아무도 모른다 — 이름까지 못 박는다(2026-08-07). */
+      if (!/--card-gap\s*:/.test(css) || !/--card-gap-y\s*:/.test(css)) {
+        const 있는것 = [...new Set([...css.matchAll(/--([a-z0-9-]*gap[a-z0-9-]*|grid-[xy])\s*:/g)].map((m) => "--" + m[1]))];
+        add(
+          dir,
+          "고칠 것",
+          `격자 간격 변수 이름이 우리 것과 다름${있는것.length ? ` (${있는것.slice(0, 4).join(", ")})` : ""} — ` +
+          `--card-gap · --card-gap-y 로 맞추세요`,
+        );
+      }
+
       if (gapX.size > 1) {
         add(dir, "고칠 것", `카드 격자 좌우 간격이 ${gapX.size}가지 (--${[...gapX].join(", --")}) — 한 값으로 모으세요`);
       }
