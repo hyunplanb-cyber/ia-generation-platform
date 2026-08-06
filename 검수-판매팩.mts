@@ -253,6 +253,60 @@ function checkPack(dir: string) {
         add(dir, "고칠 것", `자기 자신으로 가는 버튼 ${selfLinks}개 — 눌러도 같은 화면이 다시 열립니다. 화면 안에서 끝나는 조작은 버튼으로 두세요`);
       }
 
+      // 박스형 콘텐츠는 한 단락에 하나만 두지 않는다. 마지막 줄도 마찬가지다.
+      //
+      // 규칙은 문서에 있었는데 검수가 못 봤다. 카드 이름(.mcard·.scard…)을 적어
+      // 두고 셌더니, 그 이름이 아닌 상자로 채운 격자 162개가 "0개"로 잡혔다.
+      // 이름을 세지 말고 격자의 바로 아래 자식을 세야 한다.
+      // 격자가 아닌 가로 배너 한 장도 같은 이유로 그냥 지나갔다(2026-08-06).
+      const colsOf = (cls: string) => {
+        const m = /\b(?:mag|g|gal)-(\d)\b/.exec(cls);
+        if (m) return +m[1];
+        if (/\bg([234])\b/.test(cls)) return +/\bg([234])\b/.exec(cls)![1];
+        if (/\bmag\b/.test(cls)) return 3;
+        return 0;
+      };
+      // 격자를 열고 태그 깊이를 세며 제 짝을 찾는다 — 깊이 0인 것만 자식이다.
+      const gridsIn = (h: string) => {
+        const out: { cls: string; kids: number }[] = [];
+        const open = /<div class="(?:mag|g2|g3|g4)[^"]*">/g;
+        let m: RegExpExecArray | null;
+        while ((m = open.exec(h))) {
+          let depth = 0, kids = 0;
+          const tag = /<(\/?)(div|a|section)\b[^>]*?(\/?)>/g;
+          tag.lastIndex = m.index + m[0].length;
+          let t: RegExpExecArray | null;
+          while ((t = tag.exec(h))) {
+            if (t[3] === "/") { if (depth === 0) kids++; continue; }
+            if (t[1] === "/") { if (depth === 0) break; depth--; }
+            else { if (depth === 0) kids++; depth++; }
+          }
+          out.push({ cls: /class="([^"]*)"/.exec(m[0])![1], kids });
+        }
+        return out;
+      };
+      let lonely = 0, straggler = 0;
+      for (const h of htmls) {
+        for (const g of gridsIn(h)) {
+          if (g.kids === 1) { lonely++; continue; }
+          const cols = colsOf(g.cls);
+          if (cols && g.kids > 1 && g.kids % cols === 1) straggler++;
+        }
+        lonely += [...h.matchAll(/<a class="hero-banner"/g)].length;
+      }
+      if (lonely) {
+        add(dir, "고칠 것", `한 단락에 박스형 콘텐츠가 하나뿐인 곳 ${lonely}곳 — 둘 이상으로 나누세요`);
+      }
+      if (straggler) {
+        add(dir, "고칠 것", `마지막 줄에 카드가 하나만 남는 격자 ${straggler}곳 — 항목 수를 열 수에 맞추세요`);
+      }
+
+      // 사진 위에 글자를 얹는 혼합형은 어둠막이 없으면 밝은 사진에서 글자가 사라진다.
+      // 사진은 사는 분이 바꿀 것이라 우리가 밝기를 미리 알 수 없다(2026-08-06).
+      if (/\.ocard\s*\{/.test(css) && !/\.ocard::(after|before)/.test(css)) {
+        add(dir, "막음", "사진 위에 글자를 얹는데 어둠막이 없음 — 밝은 사진이 오면 글자가 안 보입니다");
+      }
+
       // 예외 화면을 보여주려고 넣은 안내 버튼·단락은 진짜 사이트에 없는 것이다.
       // 검색창 옆에 "결과가 없을 때"가 서 있으면 사는 분은 그게 기능인 줄 안다.
       // 빈 화면은 화면 목록에 따로 한 장으로 두면 된다(2026-08-06).
