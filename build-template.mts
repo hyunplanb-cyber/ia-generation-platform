@@ -16,7 +16,21 @@ import {
 import { buildFlowGroups } from "./lib/export/flow-groups";
 import { createMenuPptx, type PptMenu } from "./lib/export/ppt-export";
 import { buildSpecPackMarkdown, buildSpecPackJson } from "./lib/export/spec-pack";
-import { buildTemplateVerifySheets } from "./lib/export/template-verify";
+import { buildTemplateVerifySheets, AI_CHECK_NOTE } from "./lib/export/template-verify";
+/* 화면목록은 모든 등급에 들어간다 — 검수시나리오가 없는 스탠다드·플러스에서는
+   이 안내가 "눌러 보라"고 말하는 유일한 자리다. */
+const SCREEN_LIST_NOTE = [
+  "이 파일로 화면을 만든 뒤 — 만들고 끝내지 마세요",
+  "",
+  ...AI_CHECK_NOTE,
+  "",
+  "어떻게 보나요",
+  "1. '화면목록' 시트의 화면을 위에서부터 하나씩 엽니다.",
+  "2. '기능정의' 칸에 적힌 것이 화면에 실제로 있는지 봅니다.",
+  "3. '화면이동' 칸의 버튼을 눌러 그 화면으로 가는지 확인합니다.",
+  "4. 다른 것이 있으면 그 화면의 '생성 프롬프트'만 다시 넣어 고칩니다.",
+];
+
 import type { Menu, MenuAudience } from "./domain/menu/menu";
 import type { Screen } from "./domain/screen/screen";
 import type { ButtonAction } from "./domain/screen/button-action";
@@ -138,10 +152,22 @@ SRC_DATA.menus.forEach((m) => {
 });
 
 // 3) 엑셀 저장 헬퍼
-function xlsx(name: string, sheet: string, rows: Record<string, string | number>[], widths: number[]) {
+function xlsx(
+  name: string,
+  sheet: string,
+  rows: Record<string, string | number>[],
+  widths: number[],
+  note?: string[],
+) {
   const ws = XLSX.utils.json_to_sheet(rows);
   ws["!cols"] = widths.map((w) => ({ wch: w }));
   const wb = XLSX.utils.book_new();
+  // 안내를 첫 시트로 둔다 — 뒤에 두면 안 본다.
+  if (note) {
+    const nws = XLSX.utils.aoa_to_sheet(note.map((l) => [l]));
+    nws["!cols"] = [{ wch: 96 }];
+    XLSX.utils.book_append_sheet(wb, nws, "먼저 읽어 주세요");
+  }
   XLSX.utils.book_append_sheet(wb, ws, sheet);
   // ESM 빌드의 writeFile은 Node에서 fs가 없어 실패한다 → 버퍼로 받아 직접 기록.
   writeFileSync(`${OUT}/${name}`, XLSX.write(wb, { type: "buffer", bookType: "xlsx" }));
@@ -151,7 +177,7 @@ function xlsx(name: string, sheet: string, rows: Record<string, string | number>
 console.log("생성 중...");
 
 xlsx("01_메뉴구조.xlsx", "메뉴구조", buildMenuTreeRows(menus, screens), [12, 20, 12, 30]);
-xlsx("02_IA_화면목록.xlsx", "화면목록", buildScreenListRows(menus, screens, buttonActions), [16, 12, 28, 12, 12, 50, 30, 60]);
+xlsx("02_IA_화면목록.xlsx", "화면목록", buildScreenListRows(menus, screens, buttonActions), [16, 12, 28, 12, 12, 50, 30, 60], SCREEN_LIST_NOTE);
 xlsx("03_기능정의서.xlsx", "기능정의서", buildRequirementRows(menus, screens), [12, 16, 18, 48, 10]);
 xlsx("04_WBS.xlsx", "WBS", buildWbsRows(menus, screens), [8, 18, 28, 12, 12, 8]);
 

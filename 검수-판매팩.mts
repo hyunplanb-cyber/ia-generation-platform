@@ -108,6 +108,19 @@ function checkPack(dir: string) {
     add(dir, "고칠 것", `탭 화면 ${tabParent.length}개가 형제인 기본 탭을 뒤로가기 목적지로 삼음 — 탭은 같은 계위입니다`);
   }
 
+  // ── 4-3. "만들고 나서 눌러 보라"는 안내가 들어 있나 ──────────
+  //
+  // 우리가 만든 스펙팩으로 우리가 화면을 만들었는데도 매번 고칠 것이 나왔다.
+  // 그걸 안 적으면 사는 사람은 안 눌러 보고 이상한 채로 오픈한다(2026-08-06).
+  // 검수시나리오가 없는 스탠다드·플러스에서는 화면목록이 유일한 자리다.
+  const iaPath = `${base}/02_IA_화면목록.xlsx`;
+  if (existsSync(iaPath)) {
+    const names = XLSX.read(readFileSync(iaPath)).SheetNames;
+    if (!names.includes("먼저 읽어 주세요")) {
+      add(dir, "고칠 것", "화면목록에 '만들고 나서 눌러 보라'는 안내 시트가 없음");
+    }
+  }
+
   // ── 5. 빌드 가이드에 오늘 정한 규칙이 들어 있나 ──────────────
   const md = readFileSync(`${base}/07_AI빌드_스펙팩.md`, "utf8");
   const rules: [string, string][] = [
