@@ -87,8 +87,25 @@ function checkPack(dir: string) {
   const topScreens = (nav ? menus.length : menus.length) || 1;
   if (withBack === 0) {
     add(dir, "막음", "화면 스펙에 뒤로가기 목적지가 하나도 없음");
-  } else if (screens.length - withBack > topScreens) {
-    add(dir, "고칠 것", `뒤로가기가 없는 화면이 ${screens.length - withBack}개 (메뉴 첫 화면 ${topScreens}개보다 많음)`);
+  } else {
+    // 탭은 형제라 뒤로가기가 없는 게 맞다 — 메뉴 첫 화면과 함께 셈에서 뺀다.
+    const noBack = screens.filter(
+      (s: { pageName: string; backTo?: unknown }) => !s.backTo && !/탭$/.test(s.pageName.trim()),
+    ).length;
+    if (noBack > topScreens) {
+      add(dir, "고칠 것", `뒤로가기가 없는 화면이 ${noBack}개 (메뉴 첫 화면 ${topScreens}개보다 많음)`);
+    }
+  }
+
+  // 탭은 같은 계위다. 기본 탭을 뒤로가기 목적지로 삼으면 탭을 오가는 데 뒤로가기가 끼어들고,
+  // 기본 탭에만 뒤로가기가 없어서 같은 줄에 있는 화면인데 있다 없다 한다(2026-08-06).
+  const tabParent = screens.filter((s: { pageName: string; backTo?: { pageName: string } }) => {
+    if (!s.backTo || !/탭$/.test(s.pageName.trim())) return false;
+    const cut = s.pageName.lastIndexOf(" > ");
+    return cut > 0 && s.backTo.pageName === s.pageName.slice(0, cut);
+  });
+  if (tabParent.length) {
+    add(dir, "고칠 것", `탭 화면 ${tabParent.length}개가 형제인 기본 탭을 뒤로가기 목적지로 삼음 — 탭은 같은 계위입니다`);
   }
 
   // ── 5. 빌드 가이드에 오늘 정한 규칙이 들어 있나 ──────────────
@@ -160,8 +177,10 @@ function checkPack(dir: string) {
   const sDir = `${base}/완성화면`;
   if (isPaidTier && !existsSync(sDir)) add(dir, "참고", "완성 화면(HTML)이 아직 없음");
   if (existsSync(sDir)) {
-    const html = readdirSync(`${sDir}/pages`).filter((f) => f.endsWith(".html")).length;
+    const pageFiles = readdirSync(`${sDir}/pages`).filter((f) => f.endsWith(".html"));
+    const html = pageFiles.length;
     if (html !== screens.length) add(dir, "막음", `완성 화면 ${html}개 ≠ 설계 ${screens.length}개`);
+    const htmls = pageFiles.map((f) => readFileSync(`${sDir}/pages/${f}`, "utf8"));
 
     // 정의하지 않은 CSS 변수를 쓰면 브라우저가 그 속성을 통째로 버린다. 조용히.
     // --s7 하나 때문에 히어로 버튼 위 간격이 0이 됐는데 눈으로만 찾을 수 있었다.
@@ -180,6 +199,19 @@ function checkPack(dir: string) {
       // 감싸는 걸 잊는 순간 0이 되어 버튼끼리 달라붙는다. 버튼 자신에게도 걸어야 한다(2026-08-06).
       if (/\.btn-block\s*\{/.test(css) && !/\.btn-block\s*\+\s*\.btn-block/.test(css)) {
         add(dir, "고칠 것", "세로로 쌓은 버튼에 간격 규칙이 없음 — .btns 로 감싸는 걸 잊으면 버튼끼리 달라붙습니다");
+      }
+
+      // 목록 카드는 눌러서 상세로 가야 한다. div 로 두면 눌러도 아무 일이 없다(2026-08-06).
+      // `.card` 는 일반 상자라 빼야 한다 — 목록 한 칸을 뜻하는 이름만 본다.
+      const deadCards = [...css.matchAll(/\.(scard|deal|pro-card|course-card|list-card)\s*\{/g)].map((m) => m[1]);
+      for (const cls of new Set(deadCards)) {
+        // 불러오는 중 자리(스켈레톤)는 링크가 없는 게 맞다 — 셈에서 뺀다.
+        const asDiv = htmls.some((h) =>
+          // 템플릿 문자열 안이라 \s 는 한 번 더 감싸야 정규식까지 살아 온다.
+          [...h.matchAll(new RegExp(`<div class="${cls}"[^>]*>([\\s\\S]{0,220})`, "g"))]
+            .some((m) => !m[1].includes('class="sk')),
+        );
+        if (asDiv) add(dir, "고칠 것", `목록 카드(.${cls})가 링크가 아님 — 눌러도 아무 일이 없습니다`);
       }
 
       // 큰 제목이 두 줄로 넘어가면 윗줄과 아랫줄이 부딪힌다. 밑줄·형광펜을 얹었으면 더 그렇다.

@@ -51,24 +51,49 @@ function hasAudience(menus: Menu[]): boolean {
  * '깊이 들어간' 것인지 판단을 맡기면 안 붙인다. 그래서 판단을 없앤다 —
  * 화면마다 "뒤로가기는 이 화면으로"를 스펙에 박아 두면 그대로 만들기만 하면 된다.
  *
- * 규칙은 둘뿐이다.
+ * 규칙은 셋이다.
  *   · 메뉴의 첫 화면      → 뒤로가기 없음 (GNB로 오간다)
- *   · 상태·탭 화면        → 그 화면의 기본 상태로   (이름이 "예약 상세 > 완료 탭" 꼴)
- *   · 그 밖의 모든 화면   → 그 메뉴의 첫 화면으로
+ *   · 탭 화면             → 형제다. 기본 탭이 가는 곳으로 똑같이 간다
+ *   · 그 밖의 하위 화면   → 이름 앞부분이 가리키는 상위 화면으로, 없으면 메뉴 첫 화면
  */
 function backTargets(menus: Menu[], screens: Screen[]): Map<string, Screen> {
   const back = new Map<string, Screen>();
+  // 이름이 "… 탭"으로 끝나면 탭으로 갈라진 화면이다.
+  const isTab = (s: Screen) => /탭$/.test(s.pageName.trim());
+
   for (const menu of menus) {
     const mine = screens.filter((s) => s.menuId === menu.id);
     const top = mine[0];
     if (!top) continue;
     const byName = new Map(mine.map((s) => [s.pageName, s]));
-    for (const s of mine) {
-      if (s.id === top.id) continue; // 메뉴 첫 화면은 나갈 길이 GNB다
-      // "예약 상세 > 완료 탭" 이면 "예약 상세"가 상위다.
+
+    // "예약 상세 > 완료 탭" 이면 "예약 상세"를 가리킨다.
+    const namedParent = (s: Screen): Screen | undefined => {
       const cut = s.pageName.lastIndexOf(" > ");
-      const parent = cut > 0 ? byName.get(s.pageName.slice(0, cut)) : undefined;
-      back.set(s.id, parent && parent.id !== s.id ? parent : top);
+      if (cut <= 0) return undefined;
+      const p = byName.get(s.pageName.slice(0, cut));
+      return p && p.id !== s.id ? p : undefined;
+    };
+
+    /* 탭은 상위가 아니라 형제다.
+       "이용 안내 > 진행자용 탭"이 가리키는 "이용 안내"는 한 단계 위가 아니라
+       그냥 기본 탭이다. 그걸 뒤로가기 목적지로 삼으면 두 가지가 어긋난다 —
+       탭을 오가는 데 뒤로가기가 끼어들고, 기본 탭에만 뒤로가기가 없어서
+       같은 계위인데 있다 없다 하는 화면이 된다.
+       그래서 탭이면 형제를 건너뛰고 그 위가 가는 곳을 그대로 쓴다(2026-08-06). */
+    const resolve = (s: Screen, seen: Set<string>): Screen | undefined => {
+      if (s.id === top.id) return undefined; // 메뉴 첫 화면은 나갈 길이 GNB다
+      if (seen.has(s.id)) return top; // 이름이 서로를 물면 여기서 끊는다
+      seen.add(s.id);
+      const p = namedParent(s);
+      if (!p) return top;
+      return isTab(s) ? resolve(p, seen) : p;
+    };
+
+    for (const s of mine) {
+      if (s.id === top.id) continue;
+      const t = resolve(s, new Set());
+      if (t) back.set(s.id, t);
     }
   }
   return back;
