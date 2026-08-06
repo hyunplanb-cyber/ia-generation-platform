@@ -70,7 +70,7 @@ const INDUSTRIES = [
     // 여행과 같이 두 등급의 프리셋을 다르게 뒀다 — 디럭스는 소프트 파스텔,
     // 프리미엄은 코럴 선셋. 같은 설계로 얼마나 다른 얼굴이 나오는지 보여준다.
     siteBase: `${T}/뷰티샵_예약_완성화면_디럭스`,
-    siteDeep: `${T}/뷰티샵_예약_완성화면` },
+    siteDeep: `${T}/뷰티샵_예약_완성화면_프리미엄` },
   { key: "travel", label: "여행", title: "해외 투어·티켓 예약 플랫폼",
     base: `${W}/해외투어_티켓예약`, deep: `${W}/해외투어_티켓예약_상세IA`,
     // 두 사이트는 프리셋이 다르다 — 디럭스는 소프트 파스텔, 프리미엄은 모던 네이비.
@@ -297,6 +297,17 @@ async function pack(p: Product) {
   // 안을 들여다보며 손보는 동안에는 zip이 오히려 불편하다 — 열어야 보이고,
   // 고치면 다시 묶어야 한다. 파는 순간에만 묶는 게 맞다(2026-08-04).
   const outDir = `${OUT}/${p.zipName}`;
+
+  /* 지우기 전에 재료가 다 있는지 먼저 본다.
+     원본 폴더가 없어졌는데도 목적지를 먼저 지워서, 그 안에 있던
+     완성 화면 한 벌을 통째로 날린 적이 있다. 지우는 일은 되돌릴 수 없으니
+     확인이 항상 앞에 와야 한다(2026-08-06). */
+  if (p.sitePath && !existsSync(p.sitePath)) {
+    throw new Error(
+      `완성 화면 원본이 없어요: ${p.sitePath}\n` +
+      `  → ${outDir} 는 건드리지 않았습니다. 원본을 제자리에 두고 다시 돌리세요.`,
+    );
+  }
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
   for (const f of files) copyFileSync(`${p.src}/${f}`, `${outDir}/${f}`);

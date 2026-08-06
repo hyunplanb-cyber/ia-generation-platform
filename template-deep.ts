@@ -15,6 +15,8 @@ export interface DeepLeaf {
   name: string;
   role: string;
   func: string;
+  /** 눌렀을 때 이 화면 안에서 끝나는 것 — [무엇을 누르면, 무엇이 바뀐다] */
+  acts?: [string, string][];
 }
 // key = 화면 ref, value = 그 화면에 추가로 붙일 잎사귀들(기본 화면은 자동 포함).
 export type SubsMap = Record<string, DeepLeaf[]>;
@@ -97,13 +99,18 @@ export function expandDeep(input: DeepInput): DeepResult {
       const extra = subs[s.ref] ?? [];
       const hasSubs = extra.length > 0;
       // 기본 잎사귀(01)는 기존 화면의 풍부한 기능·프롬프트를 그대로 물려받는다.
-      const leaves: { name: string; role: string; func: string; prompt: string; label3: string }[] = [
+      /* 「눌렀을 때」도 함께 물려준다.
+         기본 잎사귀는 상위 화면 그 자체라 동작도 같아야 하는데, acts 만 안 따라가서
+         프리미엄에는 화면 안 동작이 하나도 안 실렸다(2026-08-06). */
+      const leaves: { name: string; role: string; func: string; prompt: string; label3: string;
+        acts: [string, string][] }[] = [
         {
           name: s.name,
           role: s.role,
           func: s.func,
           prompt: s.prompt,
           label3: hasSubs ? "기본" : "",
+          acts: s.acts ?? [],
         },
         ...extra.map((l) => ({
           name: l.name,
@@ -111,6 +118,7 @@ export function expandDeep(input: DeepInput): DeepResult {
           func: l.func,
           prompt: leafPrompt(s.name, l),
           label3: l.name,
+          acts: l.acts ?? [],
         })),
       ];
 
@@ -134,6 +142,7 @@ export function expandDeep(input: DeepInput): DeepResult {
           deviceCode: "R",
           funcDef: leaf.func,
           prompt: leaf.prompt,
+          acts: leaf.acts,
           pageIdSource: "auto",
           pageNameSource: "auto",
           funcDefSource: "auto",

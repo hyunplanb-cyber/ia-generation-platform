@@ -79,7 +79,9 @@ const TARGETS = {
   },
   groupbuy: {
     styles: ["navy", "mono", "coral"] as const,
-    layouts: ["bold", "list"] as const,
+    // 목록 중심형은 매칭이 이미 쓴다. 9종을 겹치지 않게 나누려고 공구는 벤토 그리드형을 받는다.
+    // 크기가 다른 타일을 짜맞추는 뼈대라 딜을 늘어놓는 공구에 어울린다(2026-08-06).
+    layouts: ["bold", "bento"] as const,
     dir: "_작업/공동구매_공구플랫폼/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
@@ -99,7 +101,9 @@ const TARGETS = {
   },
   "groupbuy-deep": {
     styles: ["navy", "mono", "coral"] as const,
-    layouts: ["bold", "list"] as const,
+    // 목록 중심형은 매칭이 이미 쓴다. 9종을 겹치지 않게 나누려고 공구는 벤토 그리드형을 받는다.
+    // 크기가 다른 타일을 짜맞추는 뼈대라 딜을 늘어놓는 공구에 어울린다(2026-08-06).
+    layouts: ["bold", "bento"] as const,
     dir: "_작업/공동구매_공구플랫폼_상세IA/디자인프리셋",
     fits: [
       "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",

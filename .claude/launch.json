@@ -64,6 +64,24 @@
       ],
       "cwd": "판매용_템플릿/해외투어_티켓예약_완성화면",
       "port": 4181
+    },
+    {
+      "name": "뷰티-새것",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_판매팩/뷰티샵_디럭스/완성화면",
+      "port": 4190
+    },
+    {
+      "name": "뷰티-올드",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_판매팩/뷰티샵_디럭스/완성화면_올드",
+      "port": 4191
     }
   ]
 }
