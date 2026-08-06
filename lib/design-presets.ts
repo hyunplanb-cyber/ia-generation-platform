@@ -729,6 +729,8 @@ export const DENSITIES: {
   btnGap: string;
   /** 세로로 쌓은 버튼끼리 — 옆으로 놓을 때보다 조금 더 벌린다 */
   btnStackGap: string;
+  /** 세로로 이어 붙인 항목끼리 — 목록 줄, 쌓인 카드. 가로보다 훨씬 좁다 */
+  stackGap: string;
   /** 큰 제목(30px 이상)의 줄 간격 */
   lineDisplay: string;
   /** 일반 제목의 줄 간격 */
@@ -742,14 +744,14 @@ export const DENSITIES: {
     key: "cozy", label: "넉넉하게",
     cardPad: "24px", rowH: "48px", sectionGap: "40px",
     wrapPad: "24px", cardGap: "20px", titleGap: "16px", itemGap: "12px", blockGap: "28px", btnGap: "8px",
-    btnStackGap: "10px",
+    btnStackGap: "10px", stackGap: "8px",
     lineDisplay: "1.25", lineTitle: "1.35", lineBody: "1.7", lineDense: "1.45",
   },
   {
     key: "compact", label: "컴팩트",
     cardPad: "16px", rowH: "40px", sectionGap: "28px",
     wrapPad: "16px", cardGap: "14px", titleGap: "12px", itemGap: "8px", blockGap: "20px", btnGap: "6px",
-    btnStackGap: "8px",
+    btnStackGap: "8px", stackGap: "6px",
     lineDisplay: "1.2", lineTitle: "1.3", lineBody: "1.6", lineDense: "1.35",
   },
 ];
@@ -759,7 +761,8 @@ export const SPACING_SLOTS: { key: keyof (typeof DENSITIES)[number]; label: stri
   { key: "wrapPad", label: "화면 좌우 여백", when: "본문이 화면 가장자리에 닿지 않게" },
   { key: "sectionGap", label: "섹션과 섹션 사이", when: "화면 안에서 이야기가 바뀌는 자리" },
   { key: "cardPad", label: "카드 안쪽 여백", when: "카드·박스 테두리와 내용 사이" },
-  { key: "cardGap", label: "카드와 카드 사이", when: "그리드·목록에서 카드끼리" },
+  { key: "cardGap", label: "카드와 카드 사이 (가로)", when: "격자로 나란히 늘어놓을 때" },
+  { key: "stackGap", label: "항목과 항목 사이 (세로)", when: "목록처럼 위아래로 이어 붙일 때" },
   { key: "titleGap", label: "제목과 그 아래 내용", when: "제목 바로 밑" },
   { key: "itemGap", label: "묶음 안 요소끼리", when: "한 카드 안의 줄과 줄" },
   { key: "blockGap", label: "덩어리와 그 아래 버튼", when: "지표 줄·표 다음에 오는 액션" },
