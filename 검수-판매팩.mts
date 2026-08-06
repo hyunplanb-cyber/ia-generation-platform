@@ -83,6 +83,22 @@ function checkPack(dir: string) {
     add(dir, "고칠 것", `화면 ${screens.length}개 중 ${withBtn}개(${ratio}%)에만 버튼 이동이 있음`);
   }
 
+  // ── 4-1. 화면 안에서 끝나는 동작이 적혀 있나 ─────────────────
+  //
+  // 버튼에 적을 수 있는 것이 "어느 화면으로 가는가" 하나뿐이던 동안,
+  // 만들어진 사이트는 눌러도 값이 안 바뀌는 포스터가 됐다.
+  // 우리가 안 시킨 것을 AI 가 알아서 해 주지는 않는다.
+  // 그래서 이동만 세지 않고 화면 안 동작도 함께 센다(2026-08-06).
+  const withAct = screens.filter((s: { acts?: unknown[] }) => (s.acts?.length ?? 0) > 0).length;
+  const actPct = screens.length ? Math.round((withAct / screens.length) * 100) : 0;
+  if (actPct < 50) {
+    add(
+      dir,
+      "고칠 것",
+      `화면 ${screens.length}개 중 ${withAct}개(${actPct}%)에만 「눌렀을 때」가 적혀 있음 — 화면 안에서 끝나는 조작을 적어 주세요`,
+    );
+  }
+
   // ── 4-2. 뒤로가기가 화면마다 정해져 있나 ─────────────────────
   //
   // 글로만 적었을 때는 만들어진 사이트에서 하나도 안 붙었다. 화면 스펙에 목적지를

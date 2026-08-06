@@ -111,6 +111,8 @@ SRC_DATA.menus.forEach((m, mi) => {
       deviceCode: "R",
       funcDef: s.func,
       prompt: s.prompt,
+      // 눌렀을 때 이 화면 안에서 끝나는 것 — 화면이 바뀌는 것(버튼 이동)과 나란히 간다.
+      acts: s.acts ?? [],
       pageIdSource: "auto",
       pageNameSource: "auto",
       funcDefSource: "auto",
