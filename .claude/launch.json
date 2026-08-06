@@ -82,6 +82,15 @@
       ],
       "cwd": "판매용_템플릿/_판매팩/뷰티샵_디럭스/완성화면_올드",
       "port": 4191
+    },
+    {
+      "name": "LMS-새것",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_판매팩/LMS_디럭스/완성화면",
+      "port": 4192
     }
   ]
 }

@@ -18,7 +18,7 @@
 //         npx tsx package-template.mts travel-premium → 하나만
 import {
   statSync, readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync,
-  copyFileSync, rmSync,
+  copyFileSync, rmSync, renameSync,
 } from "node:fs";
 import JSZip from "jszip";
 import { PACKAGES, BUILD_SCOPE, PLAN_NAMES, type PlanId } from "./lib/packages";
@@ -166,9 +166,12 @@ function readme(p: Product, stats: { screens: number; requirements: number; veri
 
 `
     : "";
-  // 프리미엄에만 붙는다 — 설계뿐 아니라 그 설계로 실제로 만든 화면이 함께 들어간다.
+  // 디럭스·프리미엄에 붙는다 — 설계뿐 아니라 그 설계로 실제로 만든 화면이 함께 들어간다.
   const 사이트구성 = p.sitePath
-    ? ` 완성화면/               이 스펙팩으로 실제로 만든 화면 ${stats.screens}개 (HTML)  ★프리미엄\n`
+    // 완성 화면은 디럭스·프리미엄 둘 다에 들어간다(2×2의 세로축).
+    // 라벨을 ★프리미엄으로 박아 둬서, 디럭스를 산 사람이 "이건 프리미엄 것 아닌가"
+    // 하고 되물었다. 등급 이름을 그 칸의 것으로 찍는다(2026-08-07).
+    ? ` 완성화면/               이 스펙팩으로 실제로 만든 화면 ${stats.screens}개 (HTML)  ★${p.planLabel}\n`
     : "";
   const 부제 = p.sitePath ? "AI팩 — 기획 산출물 한 벌 + 완성 화면" : "AI팩 — 기획 산출물 한 벌";
   return `${p.title} — ${p.planLabel}
@@ -298,12 +301,32 @@ async function pack(p: Product) {
   // 고치면 다시 묶어야 한다. 파는 순간에만 묶는 게 맞다(2026-08-04).
   const outDir = `${OUT}/${p.zipName}`;
 
-  /* 완성 화면은 원본 폴더에 있는 것을 복사해 온다. 원본이 없으면 그냥 안 넣는다.
-     화면은 스펙팩으로 다시 만드는 것이라 팩 안의 옛 사본을 붙들 이유가 없다. */
+  /* 팩 폴더를 통째로 지우지 않는다.
+     예전에는 rmSync(outDir) 로 싹 지우고 다시 채웠다. 그 바람에 팩 안에 사람이
+     만들어 둔 완성 화면을 두 번 날렸다 — 뷰티 49장, LMS 44장.
+     문서는 우리가 다시 만들지만 완성 화면은 사람이 만든 것이라, 지울 권한이 없다.
+
+     그래서 **우리가 넣는 파일만** 골라서 덮어쓴다. 우리가 안 넣은 것은 손대지 않는다.
+     폴더를 어디에 두든 안전해야 한다 — 자리를 사람이 맞출 일이 아니다
+     (2026-08-06 처음, 2026-08-07 되풀이하고 나서 구조를 바꿈). */
   let siteCount = 0;
-  rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
+
+  // 우리가 만드는 문서만 지우고 새로 쓴다. 완성화면/ 같은 남의 것은 그대로 둔다.
+  if (existsSync(outDir)) {
+    for (const f of readdirSync(outDir)) {
+      const mine = /^(0\d_|README\.txt$|_패키지정보\.json$)/.test(f);
+      if (mine) rmSync(`${outDir}/${f}`, { recursive: true, force: true });
+    }
+  }
+  rmSync(`${outDir}/디자인프리셋`, { recursive: true, force: true });
   for (const f of files) copyFileSync(`${p.src}/${f}`, `${outDir}/${f}`);
+
+  const packSite = `${outDir}/완성화면`;
+  if (!p.sitePath && existsSync(packSite)) {
+    // 원본 자리를 안 정해 둔 칸인데 화면이 들어 있다 — 사람이 직접 넣은 것이다. 센다.
+    siteCount = readdirSync(`${packSite}/pages`).filter((f) => f.endsWith(".html")).length;
+  }
 
   const presetDir = `${p.presetsFrom}/디자인프리셋`;
   let presetCount = 0;
@@ -315,10 +338,16 @@ async function pack(p: Product) {
     }
   }
 
-  // 디럭스·프리미엄만 — 스펙팩으로 실제로 만든 화면을 통째로 넣는다.
+  /* 디럭스·프리미엄만 — 원본 폴더에 화면이 있으면 팩으로 복사해 온다.
+     원본이 없으면 아무것도 안 한다. 팩에 이미 들어 있는 화면은 그대로 둔다 —
+     사람이 팩 안에 직접 만들어 넣은 것일 수 있다(실제로 그랬다). */
   if (p.sitePath) {
     if (!existsSync(p.sitePath)) {
-      console.log(`     · 완성 화면 없음 — 문서만 나갑니다`);
+      const has = existsSync(packSite);
+      console.log(has
+        ? `     · 완성 화면은 팩에 있던 것을 그대로 둡니다 (${siteCount}장)`
+        : `     · 완성 화면 없음 — 문서만 나갑니다`);
+      if (has) siteCount = readdirSync(`${packSite}/pages`).filter((f) => f.endsWith(".html")).length;
     } else {
     const walk = (dir: string, rel: string) => {
       mkdirSync(`${outDir}/완성화면/${rel}`, { recursive: true });
