@@ -449,6 +449,38 @@ export default async function PackageDetailPage({
             <b className="text-foreground">등급별 구성</b>에서 확인해 주세요.
           </p>
 
+          {/* 화면목록·검수 시나리오가 왜 있는지 — 이게 이 상품의 값어치다.
+              "AI가 만들어 줍니다"만 말하면 만든 뒤에 확인할 방법이 없다는 걸 모르고 산다. */}
+          <div className="rounded-2xl border-l-4 border-primary bg-muted/40 px-5 py-5 sm:px-6">
+            <h3 className="text-base font-bold text-foreground">
+              만든 뒤에 확인할 방법까지 함께 드립니다
+            </h3>
+            <div className="mt-3 flex flex-col gap-3 text-sm leading-relaxed text-muted-foreground">
+              <p>
+                한 사이트를 만들기 위해서는 복잡한 흐름과 기능들이 있어요. 스펙에서 작성되는
+                지시문은 <b className="text-foreground">3,000줄 ~ 5,000줄 이상</b>입니다. AI가
+                스펙을 읽고 화면으로 옮기는 사이에 어긋남이 발생할 수 있어요.
+              </p>
+              <p>
+                그래서 <b className="text-foreground">&lsquo;내 서비스 내가 확인할 수 있도록&rsquo;</b>{" "}
+                화면목록을 작성하고 검수 시나리오를 준비했습니다.
+              </p>
+              <p>
+                📌 전문 에이전시에서는 웹사이트를 제작할 때 가장 먼저 하는 일이{" "}
+                <b className="text-foreground">화면목록(IA) 작성</b>이고, 배포 전에는 빠짐없는 검수를
+                위해 <b className="text-foreground">검수(테스트) 시나리오</b>를 작성합니다.
+                바이브코딩은 이 과정을 생략하고 있지요. 그래서 제작 후 검수가 어렵고, 체계적으로
+                진행할 수 없어 오히려 시간이 많이 걸려요.
+              </p>
+              <p>
+                화면목록에 접속하여 화면이 잘 구성됐는지 확인하고, 배포 전에는 검수 시나리오대로
+                테스트해 보세요. 어긋나는 부분, 오류가 발생하는 부분은 AI 도구에{" "}
+                <b className="text-foreground">&lsquo;화면 ID, ~~ 고쳐줘.&rsquo;</b> 라고 하면 AI가
+                쉽게 찾아 수정할 수 있어요.
+              </p>
+            </div>
+          </div>
+
           <DocCard title="IA 화면목록" meta="xlsx">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[34rem] text-left text-xs">
