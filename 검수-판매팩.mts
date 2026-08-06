@@ -240,6 +240,20 @@ function checkPack(dir: string) {
         add(dir, "막음", `링크 안에 링크가 든 곳 ${nested}개 — 브라우저가 바깥 링크를 끊어 줄이 깨집니다`);
       }
 
+      // 카드를 늘어놓는 격자는 사이 간격이 하나여야 한다.
+      // 재 보니 사이트마다 4~6가지였다(8·12·16·24·32·40px) — 눈금을 정해 놓고도
+      // 격자마다 숫자를 직접 골랐다. 여백에서 겪은 "숫자 손잡이"가 gap 에도 있었다(2026-08-06).
+      const CARD_GRID = /^\.(mag|gal|cats|g2|g3|g4|g5|g6|pro-g2|stair|carousel)\b/;
+      const gridGaps = new Set<string>();
+      for (const m of css.matchAll(/(^|\n)([^{}\n]+)\{([^}]*)\}/g)) {
+        const first = m[2].trim().split(",")[0].trim();
+        const gap = /gap:\s*var\(--([a-z0-9-]+)\)/.exec(m[3]);
+        if (gap && CARD_GRID.test(first)) gridGaps.add(gap[1]);
+      }
+      if (gridGaps.size > 1) {
+        add(dir, "고칠 것", `카드 격자 사이 간격이 ${gridGaps.size}가지 (--${[...gridGaps].join(", --")}) — 한 값으로 모으세요`);
+      }
+
       // 콘텐츠 영역은 한 사이트에 하나여야 한다. 헤더는 1200 인데 본문만 1440 이라
       // 위아래가 120px 어긋난 사이트가 있었다 — 폭이 여럿이면 반드시 갈라진다(2026-08-06).
       const widths = new Set(
