@@ -6,7 +6,7 @@ import { PACKAGES } from "./lib/packages";
 // 레이아웃 골격과 이미지 자리 규칙은 플랫폼이 만드는 프리셋과 같은 값을 써야 한다.
 // 두 곳에 따로 적으면 "산 프리셋과 만든 프리셋이 다르다"는 말이 나온다.
 import {
-  LAYOUTS, THUMBS, thumbByKey, DENSITIES, SPACING_SLOTS,
+  LAYOUTS, THUMBS, thumbByKey, DENSITIES, SPACING_SLOTS, LINE_SLOTS,
   DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, type DesignKey,
 } from "./lib/design-presets";
 
@@ -450,11 +450,27 @@ function md(p: Preset): string {
   L.push("좁은 화면(720px 이하)에서는 화면 좌우 여백과 섹션 사이를 한 단계씩 줄입니다.");
   L.push(`- 그림자: ${p.shadow}`);
   L.push("");
+  L.push("### 줄 간격 — 글줄 사이");
+  L.push("");
+  L.push("위 눈금이 **덩어리 사이**라면, 이건 **글줄 사이**입니다. 덩어리 간격만 정해 두면");
+  L.push("큰 제목이 두 줄로 넘어갈 때 윗줄과 아랫줄이 부딪힙니다. 밑줄·형광펜을 얹은 글자는 특히 그렇습니다.");
+  L.push("");
+  L.push(`| 자리 | ${DENSITIES.map((d) => d.label).join(" | ")} | 언제 |`);
+  L.push(`| --- | ${DENSITIES.map(() => "---").join(" | ")} | --- |`);
+  for (const slot of LINE_SLOTS) {
+    L.push(`| ${slot.label} | \`${DENSITIES.map((d) => d[slot.key]).join("` | `")}\` | ${slot.when} |`);
+  }
+  L.push("");
+  L.push("- 한국어는 영어보다 줄 간격이 넉넉해야 읽힙니다. 본문을 1.5 아래로 좁히지 마세요.");
+  L.push("- 큰 제목에 밑줄·형광펜을 얹었다면 줄 간격을 **한 단계 더** 벌리세요. 장식이 아랫줄을 침범합니다.");
+  L.push("");
   L.push("### 지켜 주세요");
   L.push("");
   L.push("- 간격은 위 눈금에서만 고르세요. 눈금에 없는 값을 새로 만들지 마세요.");
   L.push("- CSS 변수를 쓸 때는 **정의된 것만** 쓰세요. 정의 없는 변수를 쓰면 브라우저가 그 속성을 통째로 버려, 간격이 조용히 0이 됩니다.");
   L.push("- 가운데 정렬은 `text-align`만으로 안 되는 곳이 있습니다. flex로 늘어놓은 버튼 줄은 `justify-content`로 모으세요.");
+  L.push("- **버튼 사이 간격은 감싸는 상자에 기대지 마세요.** 폭 꽉 찬 버튼을 위아래로 쌓을 때 감싸는 걸 잊으면 간격이 0이 되어 버튼끼리 달라붙습니다.");
+  L.push("  `버튼 + 버튼` 자체에 간격을 주는 규칙을 하나 깔아 두면, 감싸는 걸 잊어도 붙지 않습니다.");
   L.push("- 가로로 넘치는 줄에는 좌우 화살표를 두세요. 아래 스크롤바만 있으면 넘길 게 있다는 걸 모르고 지나칩니다.");
   L.push("");
   L.push("## 4. 컴포넌트 규칙");
@@ -527,6 +543,12 @@ const tokens = (p: Preset) => ({
   radius: p.radius,
   spacing: p.space,
   // 간격은 밀도에서 나온다. 자리마다 값을 정해 둬야 눈금 밖의 값을 쓰지 않는다.
+  lineHeight: Object.fromEntries(
+      DENSITIES.map((d) => [
+        d.label,
+        Object.fromEntries(LINE_SLOTS.map((slot) => [slot.label, d[slot.key]])),
+      ]),
+    ),
   spacingScale: Object.fromEntries(
     DENSITIES.map((d) => [
       d.label,

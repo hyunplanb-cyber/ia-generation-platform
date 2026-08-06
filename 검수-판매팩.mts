@@ -175,6 +175,24 @@ function checkPack(dir: string) {
       if (missing.length) {
         add(dir, "막음", `정의하지 않은 CSS 값을 씀 ${missing.length}개 (${missing.join(", ")}) — 그 속성이 통째로 무시됩니다`);
       }
+
+      // 폭 꽉 찬 버튼을 위아래로 쌓을 때, 감싸는 상자에만 간격을 걸어 두면
+      // 감싸는 걸 잊는 순간 0이 되어 버튼끼리 달라붙는다. 버튼 자신에게도 걸어야 한다(2026-08-06).
+      if (/\.btn-block\s*\{/.test(css) && !/\.btn-block\s*\+\s*\.btn-block/.test(css)) {
+        add(dir, "고칠 것", "세로로 쌓은 버튼에 간격 규칙이 없음 — .btns 로 감싸는 걸 잊으면 버튼끼리 달라붙습니다");
+      }
+
+      // 큰 제목이 두 줄로 넘어가면 윗줄과 아랫줄이 부딪힌다. 밑줄·형광펜을 얹었으면 더 그렇다.
+      const tight = [...css.matchAll(/([^{}]*h1[^{}]*)\{([^}]*)\}/g)]
+        .filter(([, sel, body]) => {
+          const lh = /line-height:\s*([\d.]+)\s*[;}]/.exec(body);
+          const size = /font-size:\s*(?:clamp\([^)]*?,\s*)?(\d+)px/.exec(body);
+          return lh && +lh[1] < 1.2 && (!size || +size[1] >= 30) && !sel.includes("--");
+        })
+        .map(([, sel]) => sel.trim().slice(0, 30));
+      if (tight.length) {
+        add(dir, "고칠 것", `큰 제목 줄 간격이 1.2보다 좁음 (${tight.join(", ")}) — 두 줄로 넘어가면 글줄이 부딪힙니다`);
+      }
     }
   }
 }

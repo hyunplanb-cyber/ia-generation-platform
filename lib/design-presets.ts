@@ -716,18 +716,32 @@ export const DENSITIES: {
   itemGap: string;
   /** 한 덩어리(지표 줄·표 등)와 그 아래 버튼 사이 */
   blockGap: string;
-  /** 버튼끼리 */
+  /** 나란히 놓인 버튼끼리 */
   btnGap: string;
+  /** 세로로 쌓은 버튼끼리 — 옆으로 놓을 때보다 조금 더 벌린다 */
+  btnStackGap: string;
+  /** 큰 제목(30px 이상)의 줄 간격 */
+  lineDisplay: string;
+  /** 일반 제목의 줄 간격 */
+  lineTitle: string;
+  /** 본문 줄 간격 */
+  lineBody: string;
+  /** 표·배지처럼 빽빽한 자리의 줄 간격 */
+  lineDense: string;
 }[] = [
   {
     key: "cozy", label: "넉넉하게",
     cardPad: "24px", rowH: "48px", sectionGap: "40px",
     wrapPad: "24px", cardGap: "20px", titleGap: "16px", itemGap: "12px", blockGap: "28px", btnGap: "8px",
+    btnStackGap: "10px",
+    lineDisplay: "1.25", lineTitle: "1.35", lineBody: "1.7", lineDense: "1.45",
   },
   {
     key: "compact", label: "컴팩트",
     cardPad: "16px", rowH: "40px", sectionGap: "28px",
     wrapPad: "16px", cardGap: "14px", titleGap: "12px", itemGap: "8px", blockGap: "20px", btnGap: "6px",
+    btnStackGap: "8px",
+    lineDisplay: "1.2", lineTitle: "1.3", lineBody: "1.6", lineDense: "1.35",
   },
 ];
 
@@ -740,8 +754,18 @@ export const SPACING_SLOTS: { key: keyof (typeof DENSITIES)[number]; label: stri
   { key: "titleGap", label: "제목과 그 아래 내용", when: "제목 바로 밑" },
   { key: "itemGap", label: "묶음 안 요소끼리", when: "한 카드 안의 줄과 줄" },
   { key: "blockGap", label: "덩어리와 그 아래 버튼", when: "지표 줄·표 다음에 오는 액션" },
-  { key: "btnGap", label: "버튼끼리", when: "나란히 놓인 버튼 사이" },
+  { key: "btnGap", label: "버튼끼리 (가로)", when: "나란히 놓인 버튼 사이" },
+  { key: "btnStackGap", label: "버튼끼리 (세로)", when: "폭 꽉 찬 버튼을 위아래로 쌓을 때" },
   { key: "rowH", label: "표 한 줄 높이", when: "표의 행" },
+];
+
+/** 줄 간격 — 위 눈금이 "덩어리 사이"라면, 이건 "글줄 사이"다.
+   덩어리 간격만 정해 두면 큰 제목이 두 줄로 넘어갈 때 줄끼리 부딪힌다. */
+export const LINE_SLOTS: { key: keyof (typeof DENSITIES)[number]; label: string; when: string }[] = [
+  { key: "lineDisplay", label: "큰 제목", when: "30px 이상. 히어로 제목처럼 두 줄로 넘어가는 글" },
+  { key: "lineTitle", label: "제목", when: "섹션·카드 제목" },
+  { key: "lineBody", label: "본문", when: "설명 문단. 한국어는 영어보다 넉넉해야 읽힌다" },
+  { key: "lineDense", label: "빽빽한 자리", when: "표 칸·배지·버튼 안 글자" },
 ];
 
 // 방향별 기본 글꼴/모서리 느낌.

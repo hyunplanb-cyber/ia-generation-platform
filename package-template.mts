@@ -77,12 +77,14 @@ const INDUSTRIES = [
     siteBase: `${T}/해외투어_티켓예약_완성화면_디럭스`,
     siteDeep: `${T}/해외투어_티켓예약_완성화면` },
   { key: "matching", label: "매칭", title: "동네 서비스 매칭 플랫폼",
-    // 완성 화면은 아직 없다 — 만들면 siteBase / siteDeep 을 채운다.
-    base: `${W}/동네서비스_매칭플랫폼`, deep: `${W}/동네서비스_매칭플랫폼_상세IA` },
+    base: `${W}/동네서비스_매칭플랫폼`, deep: `${W}/동네서비스_매칭플랫폼_상세IA`,
+    // 프리미엄(3뎁스 159화면)은 아직 화면을 안 만들었다 — 만들면 siteDeep 을 채운다.
+    siteBase: `${T}/동네서비스_매칭_완성화면_디럭스` },
   { key: "groupbuy", label: "공동구매", title: "공동구매(공구) 플랫폼",
     base: `${W}/공동구매_공구플랫폼`, deep: `${W}/공동구매_공구플랫폼_상세IA`,
-    // 프리미엄(3뎁스 125화면)은 아직 화면을 안 만들었다 — 만들면 siteDeep 을 채운다.
-    siteBase: `${T}/공동구매_공구_완성화면_디럭스` },
+    // 두 등급의 프리셋이 다르다 — 디럭스는 코럴 선셋, 프리미엄은 미니멀 모노.
+    siteBase: `${T}/공동구매_공구_완성화면_디럭스`,
+    siteDeep: `${T}/공동구매_공구_완성화면_프리미엄` },
 ] as const satisfies readonly {
   key: string; label: string; title: string;
   base: string; deep: string; siteBase?: string; siteDeep?: string;

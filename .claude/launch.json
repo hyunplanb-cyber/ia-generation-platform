@@ -28,6 +28,24 @@
       ],
       "cwd": "판매용_템플릿/해외투어_티켓예약_완성화면",
       "port": 4173
+    },
+    {
+      "name": "매칭-완성화면",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/동네서비스_매칭_완성화면_디럭스",
+      "port": 4178
+    },
+    {
+      "name": "공구-프리미엄",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/공동구매_공구_완성화면_프리미엄",
+      "port": 4179
     }
   ]
 }
