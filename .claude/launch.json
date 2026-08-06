@@ -55,6 +55,15 @@
       ],
       "cwd": "판매용_템플릿/LMS_온라인강의_완성화면_디럭스",
       "port": 4180
+    },
+    {
+      "name": "여행-프리미엄",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/해외투어_티켓예약_완성화면",
+      "port": 4181
     }
   ]
 }
