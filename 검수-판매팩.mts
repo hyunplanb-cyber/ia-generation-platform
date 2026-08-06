@@ -240,6 +240,28 @@ function checkPack(dir: string) {
         add(dir, "막음", `링크 안에 링크가 든 곳 ${nested}개 — 브라우저가 바깥 링크를 끊어 줄이 깨집니다`);
       }
 
+      // 필터 적용·정렬·다음 차시처럼 화면 안에서 끝나는 조작을 링크로 만들면
+      // 자기 자신으로 가는 링크가 된다. 눌러도 같은 화면이 다시 열려서
+      // "눌렀는데 아무 일도 안 나네"로 보인다. 이 화면 안에서 끝나면 버튼이다(2026-08-06).
+      let selfLinks = 0;
+      for (const f of pageFiles) {
+        const id = f.replace(/\.html$/, "");
+        const h = readFileSync(`${sDir}/pages/${f}`, "utf8");
+        selfLinks += [...h.matchAll(new RegExp(`<a class="btn [^"]*" href="${id}\\.html"`, "g"))].length;
+      }
+      if (selfLinks) {
+        add(dir, "고칠 것", `자기 자신으로 가는 버튼 ${selfLinks}개 — 눌러도 같은 화면이 다시 열립니다. 화면 안에서 끝나는 조작은 버튼으로 두세요`);
+      }
+
+      // 예외 화면을 보여주려고 넣은 안내 버튼·단락은 진짜 사이트에 없는 것이다.
+      // 검색창 옆에 "결과가 없을 때"가 서 있으면 사는 분은 그게 기능인 줄 안다.
+      // 빈 화면은 화면 목록에 따로 한 장으로 두면 된다(2026-08-06).
+      const SAMPLE = /(결과가 없을 때|없을 때는 이렇게 보여요|비어 있을 때는 이렇게)/;
+      const samples = htmls.reduce((n, h) => n + [...h.matchAll(new RegExp(SAMPLE, "g"))].length, 0);
+      if (samples) {
+        add(dir, "고칠 것", `견본 화면으로 가는 안내가 화면 안에 ${samples}곳 — 진짜 사이트에 없는 것입니다. 화면 목록에서 보게 하세요`);
+      }
+
       // 카드를 늘어놓는 격자는 사이 간격이 하나여야 한다.
       // 재 보니 사이트마다 4~6가지였다(8·12·16·24·32·40px) — 눈금을 정해 놓고도
       // 격자마다 숫자를 직접 골랐다. 여백에서 겪은 "숫자 손잡이"가 gap 에도 있었다(2026-08-06).
