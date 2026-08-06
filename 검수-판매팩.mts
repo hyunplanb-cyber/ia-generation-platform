@@ -6,6 +6,10 @@
 // 쓰는 법: npx tsx 검수-판매팩.mts
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import * as XLSX from "xlsx";
+import {
+  COMMON_RULES, DESIGN_OPTIONS, PRIMARY_SWATCHES_BY_STYLE, FONT_FEELS,
+  DENSITIES, LAYOUTS, buildDetailedPresetMarkdown,
+} from "./lib/design-presets";
 
 const OUT = "판매용_템플릿/_판매팩";
 
@@ -184,6 +188,14 @@ function checkPack(dir: string) {
   if (guide) {
     const g = readFileSync(`${pDir}/${guide}`, "utf8");
     if (!g.includes("간격 눈금")) add(dir, "고칠 것", "가이드 프리셋에 간격 눈금 표가 없음");
+
+    // 파는 팩과 유저가 받는 팩이 각자 문서를 만들다가, 규칙 열 가지가 파는 쪽에만
+    // 실린 적이 있다. 유저 문서는 오히려 반대로 말하고 있었다.
+    // 두 벌로 적으면 반드시 갈라지므로, 공용 규칙이 통째로 들어 있는지 센다(2026-08-06).
+    const missing = COMMON_RULES.filter((r) => r.startsWith("### ")).filter((h) => !g.includes(h));
+    if (missing.length) {
+      add(dir, "막음", `가이드 프리셋에 공용 규칙이 빠짐: ${missing.map((m) => m.replace(/^###\s*/, "").split(" —")[0]).join(", ")}`);
+    }
   }
 
   // ── 10. 완성화면 ────────────────────────────────────────────
@@ -407,7 +419,45 @@ function sheet(path: string, name?: string): Record<string, unknown>[] {
 const packs = readdirSync(OUT).filter((d) => existsSync(`${OUT}/${d}/07_AI빌드_스펙팩.md`));
 for (const d of packs) checkPack(d);
 
-console.log(`판매팩 ${packs.length}칸 검수\n`);
+/* 유저가 받는 문서도 같이 본다.
+   파는 팩만 검수하는 동안, 유저가 받는 프리셋 문서에는 오늘 정한 규칙이
+   하나도 안 실려 있었다. 오히려 "카드 = border 1px"라고 반대로 말했다.
+   파는 것만 세면 파는 것만 맞는다(2026-08-06). */
+{
+  const heads = COMMON_RULES.filter((r) => r.startsWith("### "));
+  for (const d of DESIGN_OPTIONS) {
+    const md = buildDetailedPresetMarkdown(
+      {
+        style: d.key,
+        primary: PRIMARY_SWATCHES_BY_STYLE[d.key][0],
+        font: FONT_FEELS[0].key,
+        radius: "normal",
+        density: DENSITIES[1].key,
+        dark: false,
+        layout: LAYOUTS[0].key,
+      },
+      "검수",
+    );
+    const miss = heads.filter((h) => !md.includes(h));
+    if (miss.length) {
+      found.push({
+        pack: `유저 프리셋 · ${d.title}`,
+        level: "막음",
+        what: `공용 규칙이 빠짐: ${miss.map((m) => m.slice(4).split(" —")[0]).join(", ")}`,
+      });
+    }
+    // 공용 규칙과 정면으로 어긋나는 문장이 남아 있는지도 본다.
+    if (/\| 카드 \| surface 배경, border 1px/.test(md) || /높이 44px/.test(md)) {
+      found.push({
+        pack: `유저 프리셋 · ${d.title}`,
+        level: "막음",
+        what: "공용 규칙과 반대로 적힌 문장이 있음 (사진 카드에 테두리 / 높이 44px 고정)",
+      });
+    }
+  }
+}
+
+console.log(`판매팩 ${packs.length}칸 + 유저 프리셋 ${DESIGN_OPTIONS.length}종 검수\n`);
 for (const level of ["막음", "고칠 것", "참고"] as const) {
   const rows = found.filter((f) => f.level === level);
   if (!rows.length) continue;
