@@ -29,7 +29,9 @@ export async function SiteHeader() {
             <span className="size-5 shrink-0 rounded-full bg-primary" />
             카페인컬러
           </Link>
-          <span className="hidden h-5 w-px bg-border sm:block" />
+          {/* 메뉴가 펼쳐지는 폭(lg)에 맞춰 함께 나타난다 — 아래 로그인·프로필도 같다.
+              한 곳만 sm으로 남으면 메뉴는 감춰졌는데 구분선만 떠 있게 된다. */}
+          <span className="hidden h-5 w-px bg-border lg:block" />
           {/* AI팩 만들기 → 새 프로젝트를 만들고 STEP 1로. 프리페치로 프로젝트가
               새로 생기지 않도록 prefetch를 끈다. */}
           <NavLink
@@ -70,7 +72,7 @@ export async function SiteHeader() {
               >
                 나의 프로젝트
               </NavLink>
-              <span className="hidden sm:block">
+              <span className="hidden lg:block">
                 <ProfileMenu email={session.user.email} balance={balance} showCharge={CREDITS_OPEN} />
               </span>
             </>
@@ -78,7 +80,7 @@ export async function SiteHeader() {
             <>
               <Link
                 href="/login"
-                className="hidden rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted sm:block"
+                className="hidden rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-muted lg:block"
               >
                 로그인
               </Link>

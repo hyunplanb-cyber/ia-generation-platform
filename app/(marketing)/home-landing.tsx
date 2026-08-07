@@ -184,27 +184,46 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
+          {/* 「AI는 잘 되는 화면만 만든다」는 우리 주장이었는데, 이제 재 본 기록이 있다
+              (2026-08-08). 같은 컨셉 한 줄을 다른 AI 기획 도구에 넣었더니 화면 22개가
+              나왔고 그 안에 안 되는 길이 하나도 없었다.
+
+              여기에 우리 숫자(133개·61개)를 적지 않는 이유: 그 도구의 실사용 후기 중
+              가장 잦은 불만이 "AI가 과도하게 방대한 내용을 생성한다"였다. 양을 자랑하면
+              같은 화살을 우리가 맞는다. 파는 것은 분량이 아니라 「빠짐없음」이다.
+
+              경쟁사 이름도 쓰지 않는다 — 비교광고가 되면 우리가 감당할 수 없다. */}
           <div className="thesis">
             <div>
               <h3>
-                AI는 <span className="o">잘 되는 화면</span>만 만들어요.
+                같은 컨셉 한 줄을 <span className="o">다른 AI 기획 도구</span>에도 넣어봤어요.
               </h3>
               <p>
-                정작 서비스를 무너뜨리는 건 그 나머지예요. 어떤 화면을 빠뜨렸는지, 만들기 전에 알고
-                시작하세요.
+                돌아온 화면 목록에 이런 게 없었어요. 손님이 볼 화면은 그럴듯했는데, 정작 내가 매일
+                열어야 할 화면이 통째로 비어 있었습니다.
               </p>
             </div>
             <div className="ex-list">
               <div className="ex-item">
-                <span className="x">✕</span> 장바구니 · 비어 있음
+                <span className="x">✕</span> 팝업을 등록할 화면
               </div>
               <div className="ex-item">
-                <span className="x">✕</span> 결제 · 실패
+                <span className="x">✕</span> 예약을 승인할 화면
+              </div>
+              <div className="ex-item">
+                <span className="x">✕</span> 정산 화면
               </div>
               <div className="ex-item">
                 <span className="x">✕</span> 검색 · 결과 없음
               </div>
+              <div className="ex-item">
+                <span className="x">✕</span> 저장함 · 비어 있음
+              </div>
             </div>
+            <p className="thesis-note">
+              ＊ 팝업스토어 앱 컨셉 한 줄로 직접 비교했어요(2026년 8월). 그 도구가 낸 관리자
+              화면은 「콘텐츠 관리」 하나뿐이었고, 화면마다 AI에 넣을 프롬프트는 없었습니다.
+            </p>
           </div>
 
           {/* 위의 주장("AI는 잘 되는 화면만 만든다")을 바로 받는 증거.
@@ -212,9 +231,11 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           <div className="showcase">
             <div className="sc-cap">
               <b>AI팩을 주면 이렇게 됩니다</b>
+              {/* 바로 위에서 「빠진 것」으로 말해 놓고 여기서 144개를 자랑하면 힘이 상쇄된다.
+                  숫자를 근거가 아니라 배경으로 밀어낸다 — 앞에 오는 것은 「빠뜨린 화면까지」다. */}
               <span>
-                스펙팩 하나를 Claude Code에 넣고 돌린 기록이에요. 화면 144개가 약 40분 만에
-                만들어졌고, 위에 적은 예외 화면들도 그 안에 들어 있어요.
+                스펙팩 하나를 Claude Code에 넣고 돌린 기록이에요. 위에 적은 빠지기 쉬운 화면까지
+                한 벌로 넣어 돌렸고, 약 40분 만에 화면 144개가 만들어졌습니다.
               </span>
             </div>
             <div className="sc-frame">
@@ -804,11 +825,27 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           margin-top: 10px;
           max-width: 440px;
         }
+        /* 각주는 두 칸을 가로질러 아래에 깔린다 — 그냥 두면 왼쪽 글 칸에 끼어
+           ✕ 목록과 나란히 서면서 문단이 두 동강 난다. */
+        /* .thesis p (글자 하나 + 클래스 하나)가 .thesis-note (클래스 하나)를 이겨서
+           max-width:440px 가 그대로 걸린다 — 앞에 .thesis 를 붙여 무게를 맞춘다.
+           (이 주석 안에 역따옴표를 쓰면 styled-jsx 템플릿이 거기서 닫혀 빌드가 깨진다.) */
+        .thesis .thesis-note {
+          grid-column: 1 / -1;
+          font-size: 13px;
+          line-height: 1.7;
+          color: #a49b83;
+          font-weight: 400;
+          margin-top: 4px;
+          max-width: none;
+        }
         .ex-list {
           display: flex;
           flex-direction: column;
           gap: 8px;
-          min-width: 230px;
+          /* ✕ 가 셋에서 다섯으로 늘어 왼쪽 글보다 키가 커졌다 — 조금 넓혀
+             오른쪽 칸이 세로로만 긴 띠처럼 보이지 않게 한다. */
+          min-width: 260px;
         }
         .ex-item {
           display: flex;
