@@ -21,14 +21,16 @@ import { DownloadCta } from "./download-cta";
 
 // 인스타 릴스 유입의 착지점. 가입 없이 바로 받게 하고, 가입 권유는 받은 뒤에 띄운다
 // (download-cta.tsx). 이유는 app/api/free-sample/route.ts 주석에 적어 뒀다.
+const screens = CREATOR.menus.flatMap((m) => m.screens);
+
+// 화면 수를 제목에 손으로 적어 뒀더니 샘플이 15개에서 16개로 늘었을 때
+// 본문만 바뀌고 제목·설명은 15로 남았다 — 검색 결과와 브라우저 탭에는
+// 아직도 옛 숫자가 뜬다. 세는 곳을 한 군데로 모은다.
 export const metadata: Metadata = {
-  title: "무료 기획 샘플 — 콘텐츠 판매 사이트 화면 15개",
-  description:
-    "전자책·템플릿을 파는 1인 사이트를 AI로 만들 때 쓰는 기획 산출물을 무료로 받아보세요. 화면 15개와 화면별 AI 프롬프트가 들어 있습니다.",
+  title: `무료 기획 샘플 — 콘텐츠 판매 사이트 화면 ${screens.length}개`,
+  description: `전자책·템플릿을 파는 1인 사이트를 AI로 만들 때 쓰는 기획 산출물을 무료로 받아보세요. 화면 ${screens.length}개와 화면별 AI 프롬프트가 들어 있습니다.`,
   keywords: ["무료 기획서", "AI 프롬프트 무료", "화면설계서 샘플", "바이브코딩 기획"],
 };
-
-const screens = CREATOR.menus.flatMap((m) => m.screens);
 const exceptions = screens.filter((s) => /(empty|error|closed)/.test(s.role));
 // 기능정의서를 만들 때와 같은 방식으로 센다 — 여기서만 '·'로 자르면
 // 화면에 적힌 숫자와 받아본 파일의 줄 수가 어긋난다.
