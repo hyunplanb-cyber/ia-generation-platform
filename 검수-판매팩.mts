@@ -399,6 +399,42 @@ function checkPack(dir: string) {
         add(dir, "고칠 것", `견본 화면으로 가는 안내가 화면 안에 ${samples}곳 — 진짜 사이트에 없는 것입니다. 화면 목록에서 보게 하세요`);
       }
 
+      /* 화면 ID 는 우리가 화면을 세는 이름이지 서비스의 말이 아니다.
+         만든 화면을 훑어보라고 `CO-01 · 강의 목록` 같은 줄을 화면 위쪽에 늘어놓은 적이 있는데,
+         사는 분 눈에는 그게 사이트의 일부로 보인다.
+         목록으로 가는 길은 한 귀퉁이에 떠 있는 단추 하나면 된다.
+
+         HTML 만 보면 못 잡는다 — 그 줄을 자바스크립트가 만들어 붙인 사이트가 있었다.
+         붙이는 코드까지 함께 본다(2026-08-07). */
+      const idStrip = (t: string) =>
+        [...t.matchAll(/[A-Z]{2}-?\d{2}\s*(·|—)\s*[가-힣]/g)].length;
+
+      let idInBody = 0;
+      for (const h of htmls) {
+        // 떠 있는 껍데기(귀퉁이 단추)는 맞게 둔 것이라 뺀다
+        idInBody += idStrip(
+          h.replace(/<[^>]*class="[^"]*(dev|devbar|screeninfo|float)[^"]*"[\s\S]{0,400}?<\/\w+>/g, ""),
+        );
+      }
+      // 자바스크립트가 만들어 붙이는 경우 — 화면 목록 줄을 통째로 그려 넣는다
+      const jsDir = `${sDir}/assets/js`;
+      let idInJs = 0;
+      if (existsSync(jsDir)) {
+        for (const f of readdirSync(jsDir).filter((x) => x.endsWith(".js"))) {
+          const js = readFileSync(`${jsDir}/${f}`, "utf8");
+          if (/screentab|pagetab|화면\s*목록\s*탭/.test(js)) idInJs += 1;
+        }
+      }
+      if (idInBody || idInJs) {
+        const 어디 = idInJs ? "자바스크립트가 만들어 붙임" : `${idInBody}곳`;
+        add(
+          dir,
+          "고칠 것",
+          `화면 ID 가 손님이 보는 자리에 나옴 (${어디}) — 예: \`CO-01 · 강의 목록\`. ` +
+          `목록으로 가는 길은 한 귀퉁이에 단추 하나만 두세요`,
+        );
+      }
+
       // 카드를 늘어놓는 격자는 사이 간격이 하나여야 한다.
       // 재 보니 사이트마다 4~6가지였다(8·12·16·24·32·40px) — 눈금을 정해 놓고도
       // 격자마다 숫자를 직접 골랐다. 여백에서 겪은 "숫자 손잡이"가 gap 에도 있었다(2026-08-06).

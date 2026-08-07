@@ -117,6 +117,19 @@
       ],
       "cwd": "판매용_템플릿/_가이드용/LMS_B_에디토리형",
       "port": 4194
+    },
+    {
+      "name": "가이드-A2",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "4195",
+        "."
+      ],
+      "cwd": "판매용_템플릿/_가이드용/LMS_디럭스_레이아웃_A_대시보드형/site",
+      "port": 4195
     }
   ]
 }
