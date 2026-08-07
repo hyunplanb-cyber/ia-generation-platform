@@ -16,7 +16,8 @@ const ROLL_MS = 5000;
 // (일반 element 선택자 section/h2/a 등이 다른 페이지로 새지 않게).
 // 상단 네비·하단 푸터는 마케팅 레이아웃(SiteHeader/footer)이 담당하므로 여기선 본문만.
 export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
-  // AI팩 6종을 3개씩 두 페이지로 굴린다. 마우스를 올리면 멈춰서 읽을 시간을 준다.
+  // 진열 중인 팩을 PER_PAGE개씩 굴린다(지금은 2업종×4등급=8장 → 4페이지).
+  // 마우스를 올리면 멈춰서 읽을 시간을 준다.
   const pageCount = Math.max(1, Math.ceil(packs.length / PER_PAGE));
   const [page, setPage] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -46,8 +47,10 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             <div className="hero-ctas">
               {/* /dashboard/new는 열리는 즉시 새 프로젝트를 만드는 라우트라,
                   프리페치가 켜져 있으면 마우스만 올려도 프로젝트가 생긴다. */}
+              {/* 첫 화면에 "무료"가 없으면 값이 드는지 안 드는지 모르는 채로 누르게 된다.
+                  가입 시 35크레딧이 있어 만들고 미리보기까지는 값을 안 받는다 — 그 말을 여기서 한다. */}
               <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
-                AI팩 만들기 <span aria-hidden="true">→</span>
+                무료로 AI팩 만들기 <span aria-hidden="true">→</span>
               </Link>
               <Link className="btn btn-teal" href="/verify">
                 내 사이트 검수하기 <span aria-hidden="true">→</span>
@@ -300,8 +303,11 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               </div>
             </div>
             <div className="report">
+              {/* 예시 도메인은 남의 것도 우리 것도 아닌 가상의 주소를 쓴다.
+                  우리 주소를 쓰면 아래 실패 세 줄이 검수 예시가 아니라
+                  "이 사이트는 지금 이렇게 망가져 있다"로 읽힌다. */}
               <div className="rh">
-                <span>검수 결과 · caffeinecolor.com</span>
+                <span>검수 결과 · myshop.co.kr</span>
                 <span>공개 12화면</span>
               </div>
               <div className="rb">
@@ -319,7 +325,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
                   ✕ 모바일에서 신청 버튼이 화면 밖으로 나감
                 </div>
                 <div className="rfail">✕ &lsquo;장바구니 비어 있음&rsquo; 화면 없음</div>
-                <div className="rfail">✕ /free 대표 이미지 깨짐</div>
+                <div className="rfail">✕ 상품 목록 대표 이미지 깨짐</div>
               </div>
             </div>
           </div>

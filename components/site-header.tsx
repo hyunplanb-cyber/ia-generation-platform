@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutGrid, LayoutList, Package, ShieldQuestion, PencilRuler } from "lucide-react";
+import { LayoutGrid, LayoutList, Package, ShieldQuestion, PencilRuler, Gift } from "lucide-react";
 import { ProfileMenu } from "@/components/profile-menu";
 import { MobileNav } from "@/components/mobile-nav";
 import { NavLink } from "@/components/nav-link";
@@ -48,6 +48,12 @@ export async function SiteHeader() {
           </NavLink>
           <NavLink href="/packages" icon={<Package className="size-4" />}>
             AI팩 구매
+          </NavLink>
+          {/* 무료 샘플은 처음 온 사람이 가장 먼저 닿아야 할 곳인데, 여기 없으면
+              결제 실패 화면과 팩 상세 맨 아래에서만 만날 수 있다 — 사실상 없는 페이지였다.
+              지금 당장 줄 수 있는 유일한 물건이라 값을 안 받는다는 걸 글자로 적는다. */}
+          <NavLink href="/free" icon={<Gift className="size-4" />}>
+            무료 샘플
           </NavLink>
         </div>
 

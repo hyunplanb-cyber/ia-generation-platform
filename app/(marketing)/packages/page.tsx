@@ -31,7 +31,7 @@ export default function PackagesPage() {
           <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
             업종별로 완성된 기획 산출물입니다. 화면 목록부터 기능정의서, 흐름도, AI 빌드 스펙팩,
             디자인 프리셋까지 한 벌로 들어 있어요. 만들려는 사이트 규모에 맞춰 등급을
-            고르시면 됩니다. 프리미엄에는 그 설계로 이미 만들어 둔 화면과 검수 시나리오가
+            고르시면 됩니다. 디럭스·프리미엄에는 그 설계로 이미 만들어 둔 화면과 검수 시나리오가
             함께 들어 있어요.
           </p>
         </div>

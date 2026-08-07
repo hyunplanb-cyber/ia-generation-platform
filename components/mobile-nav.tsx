@@ -11,6 +11,7 @@ import {
   LogOut,
   ShieldQuestion,
   PencilRuler,
+  Gift,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -65,6 +66,10 @@ export function MobileNav({ email }: { email: string | null }) {
         <DropdownMenuItem onClick={() => go("/packages")}>
           <Package className="size-4" />
           AI팩 구매
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => go("/free")}>
+          <Gift className="size-4" />
+          무료 샘플
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
