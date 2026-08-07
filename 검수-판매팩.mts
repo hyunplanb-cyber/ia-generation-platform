@@ -495,6 +495,40 @@ function checkPack(dir: string) {
           for (const f of floating) if (new RegExp(`\\b${f}\\b`).test(m[1])) clash.add(f);
         }
       }
+      /* 사진과 글자로 된 카드는 상자를 두르지 않는다.
+         우리 클래스 이름(.mcard·.scard)으로 찾으면 남이 만든 사이트는 못 잡는다.
+         "카드 같은 이름 + 배경·테두리·그림자"로 찾는다 — 사진 없는 상자
+         (설정 패널·안내 상자)는 규칙 밖이라 card 라는 이름이 붙은 것만 본다(2026-08-07). */
+      const boxedCards = new Set<string>();
+      for (const m of css.matchAll(/(^|\n)\.([a-z][a-z0-9_-]*card[a-z0-9_-]*)\s*(,[^{]*)?\{([^}]*)\}/gi)) {
+        const name = m[2];
+        const body = m[4];
+        // 안쪽 요소(.card .body 같은 것)가 아니라 카드 자신만 본다
+        if (/__|\s/.test(m[0].split("{")[0].replace(/^[\n]/, "").trim().slice(1))) continue;
+        const 배경 = /background(-color)?:\s*(var\(--surface\)|#fff|#ffffff|white)/i.test(body);
+        const 테두리 = /border:\s*1px\s+solid/i.test(body);
+        const 그림자 = /box-shadow:\s*var\(--sh|box-shadow:\s*0\s/i.test(body);
+        if (배경 || 테두리 || 그림자) boxedCards.add(`.${name}`);
+      }
+      if (boxedCards.size) {
+        add(
+          dir,
+          "고칠 것",
+          `사진 카드에 상자를 두른 곳 (${[...boxedCards].slice(0, 4).join(", ")}) — ` +
+          `background·border·box-shadow 를 걷고 모서리는 사진이 갖게 하세요`,
+        );
+      }
+
+      /* 가로로 넘기는 줄에 화살표를 뒀으면 아래 스크롤바는 감춘다.
+         둘 다 나오면 줄 밑에 회색 막대가 하나 더 생겨 지저분하다.
+         반대로 화살표가 없는데 감추면 넘길 게 있다는 걸 아무도 모른다 — 둘은 한 벌이다. */
+      const 가로줄 = /overflow-x:\s*(auto|scroll)/.test(css);
+      const 화살표 = htmls.some((h) => /(car-nav|carousel__(prev|next)|[가-힣]*화살표|aria-label="(이전|다음)")/.test(h));
+      const 스크롤바감춤 = /scrollbar-width:\s*none|::-webkit-scrollbar\s*\{[^}]*display:\s*none/.test(css);
+      if (가로줄 && 화살표 && !스크롤바감춤) {
+        add(dir, "고칠 것", "가로로 넘기는 줄에 화살표와 스크롤바가 함께 보임 — 스크롤바는 감추세요");
+      }
+
       if (clash.size) {
         add(dir, "고칠 것", `떠 있는 부품 이름을 줄 안 버튼에 붙인 곳 (.${[...clash].join(", .")}) — 버튼이 줄을 빠져나갑니다`);
       }

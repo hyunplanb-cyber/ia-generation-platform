@@ -848,6 +848,15 @@ export const COMMON_RULES: string[] = [
   "  배너 한 장이 있던 자리는 **두 장으로 나누고** 4:3으로 맞추세요.",
   "- **가로로 넘기는 줄(캐러셀)도 몇 개 보이느냐로 셉니다.** 뒤에 더 있어도 눈에 4개가 보이면 4개 — 비율도 1:1입니다.",
   "  카드 폭을 `260px`처럼 박아 두면 화면 폭이 바뀔 때 3.4개씩 어정쩡하게 걸치니, **칸 수로 나눠서** 정하세요.",
+  "- **가로로 넘기는 줄에는 좌우 화살표를 두고, 아래 스크롤바는 감춥니다.** 넘길 게 있다는 건",
+  "  화살표가 알려 줍니다. 스크롤바까지 나오면 줄 밑에 회색 막대가 하나 더 생겨 지저분합니다.",
+  "",
+  "```css",
+  ".carousel{ scrollbar-width:none; -ms-overflow-style:none; }",
+  ".carousel::-webkit-scrollbar{ display:none; }",
+  "```",
+  "",
+  "  화살표가 **없는데** 스크롤바까지 감추면 넘길 게 있다는 걸 아무도 모릅니다. 둘은 한 벌입니다.",
   "",
   "### 분리형과 혼합형 — 글자를 사진 아래 두느냐 위에 얹느냐",
   "",
@@ -864,6 +873,21 @@ export const COMMON_RULES: string[] = [
   "선을 한 번 더 치는 셈입니다. 격자로 늘어놓으면 그 선이 줄줄이 겹쳐 화면이 답답해집니다.",
   "**모서리는 사진이 가집니다** — 상자를 없앤 자리에서 사진이 카드 노릇을 합니다.",
   "(혼합형은 사진이 곧 배경이라 이 규칙 밖입니다.)",
+  "",
+  "```css",
+  "/* 사진 + 글자로 된 카드 — 상자를 두르지 않는다 */",
+  ".card{",
+  "  background: none;   /* surface 나 흰색을 깔지 않는다 */",
+  "  border: 0;",
+  "  box-shadow: none;",
+  "}",
+  ".card .thumb{ border-radius: 12px; }  /* 모서리는 사진이 가진다 */",
+  ".card .body{ padding: 16px 0 0; }     /* 좌우 여백 0 — 상자가 없으니 안쪽 여백도 없다 */",
+  "```",
+  "",
+  "**`background: var(--surface)` 나 `border: 1px solid` 를 카드에 쓰면 이 규칙을 어긴 것입니다.**",
+  "사진이 없는 상자(설정 패널·안내 상자·표를 감싼 것)는 이 규칙 밖입니다 — 거기는 배경이 있어야",
+  "덩어리로 읽힙니다. **사진과 글자로 된 카드**만 걷어냅니다.",
   "",
   "상자를 걷어내면 두 가지가 따라옵니다.",
   "",
@@ -1097,12 +1121,15 @@ export const LINE_SLOTS: { key: keyof (typeof DENSITIES)[number]; label: string;
 ];
 
 // 방향별 기본 글꼴/모서리 느낌.
+/* 아무것도 안 고른 사람이 받는 글꼴. 테마마다 다르게 뒀더니 같은 서비스인데
+   테마를 바꿀 때마다 글꼴까지 갈렸다. 기본은 하나로 모은다 —
+   고르고 싶은 사람은 여섯 벌 중에서 직접 고르면 된다(2026-08-07). */
 const DEFAULT_FONT: Record<DesignKey, FontFeel> = {
-  navy: "pretendard",
-  mono: "pretendard",
+  navy: "paperlogy",
+  mono: "paperlogy",
   pastel: "paperlogy",
-  retro: "noto-serif",
-  forest: "noto-sans",
+  retro: "paperlogy",
+  forest: "paperlogy",
   coral: "paperlogy",
 };
 const DEFAULT_RADIUS: Record<DesignKey, RadiusFeel> = {
@@ -1118,7 +1145,7 @@ export function defaultPresetConfig(style: DesignKey): PresetConfig {
   return {
     style,
     primary: primarySwatchesFor(style)[0],
-    font: DEFAULT_FONT[style] ?? "sans",
+    font: DEFAULT_FONT[style] ?? "paperlogy",
     radius: DEFAULT_RADIUS[style] ?? "normal",
     density: "cozy",
     dark: false,
@@ -1150,7 +1177,7 @@ export function parsePresetConfig(json: string | null, concept?: string | null):
       if (c.style) {
         const cfg = { ...defaultPresetConfig(c.style), ...c } as PresetConfig;
         // 예전에 저장된 글꼴 값(sans/serif/rounded 등)은 기본값으로 교체.
-        if (!FONT_FEELS.some((f) => f.key === cfg.font)) cfg.font = DEFAULT_FONT[cfg.style] ?? "pretendard";
+        if (!FONT_FEELS.some((f) => f.key === cfg.font)) cfg.font = DEFAULT_FONT[cfg.style] ?? "paperlogy";
         // 레이아웃을 넣기 전에 저장된 프리셋에는 이 값이 없다. 테마 기본값으로 채운다.
         if (!LAYOUTS.some((l) => l.key === cfg.layout)) cfg.layout = DEFAULT_LAYOUT[cfg.style] ?? "search";
         // 두 번째 테마가 첫 번째와 같거나 이상한 값이면 없는 것으로 본다(한 벌짜리).
