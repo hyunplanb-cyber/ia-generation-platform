@@ -159,7 +159,7 @@ export const BUILD_SCOPE = {
     "화면 레이아웃과 구성요소 — 목록·상세·폼·표·모달",
     "화면 사이 이동 — 버튼을 누르면 설계한 화면으로",
     "예외·상태 화면 — 빈 목록, 오류, 마감 등",
-    "디자인 프리셋을 함께 넣으면 전 화면 스타일 통일",
+    "디자인 규칙을 함께 넣으면 전 화면 스타일 통일",
   ],
   needsDev: [
     "바깥 서비스를 부르는 기능 — 로그인·결제·지도·알림 등",
@@ -188,7 +188,7 @@ export const PRESET_CONTENTS = [
 
 /** 프리셋이 왜 필요한지 — 판매 화면에서 한 줄로 쓰는 문구. */
 export const PRESET_WHY =
-  "화면을 여러 번 나눠 만들면 AI가 매번 조금씩 다른 색과 간격을 씁니다. 프리셋은 그 값을 고정해, 첫 화면부터 마지막 화면까지 같은 얼굴을 유지하게 합니다.";
+  "화면을 여러 번 나눠 만들면 AI가 매번 조금씩 다른 색과 간격을 씁니다. 디자인 규칙은 그 값을 고정해, 첫 화면부터 마지막 화면까지 같은 얼굴을 유지하게 합니다.";
 
 // 검수 시나리오 수치. lib/export/template-verify.ts의 생성 규칙과 같은 계산이라
 // 판매 페이지에 적힌 숫자와 실제 파일이 어긋나지 않는다.
@@ -256,8 +256,8 @@ function makePlans(
       id: "standard",
       name: PLAN_NAMES.standard,
       priceKrw: 51300,
-      summary: `화면 ${s.screens}개 · 2뎁스 기본 설계`,
-      depthLabel: "메뉴 → 화면 (2뎁스)",
+      summary: `화면 ${s.screens}개 · 기본 설계`,
+      depthLabel: "메뉴 → 화면까지",
       stats: s,
       highlights: [
         `화면 ${s.screens}개와 화면별 프롬프트 ${s.screens}개`,
@@ -270,12 +270,12 @@ function makePlans(
       id: "plus",
       name: PLAN_NAMES.plus,
       priceKrw: 82900,
-      summary: `화면 ${p.screens}개 · 3뎁스 심화 설계`,
-      depthLabel: "메뉴 → 화면 → 탭·상태 (3뎁스)",
+      summary: `화면 ${p.screens}개 · 상세 설계`,
+      depthLabel: "메뉴 → 화면 → 화면 속 탭·예외까지",
       stats: p,
       highlights: [
         `화면 ${p.screens}개와 화면별 프롬프트 ${p.screens}개`,
-        "탭·상태·예외까지 3뎁스로 분해",
+        "화면 안의 탭과 예외 화면까지 따로 세워요",
         "실무에서 2~3개월 걸리는 분량",
       ],
       kmongUrl: kmong.plus,
@@ -289,14 +289,14 @@ function makePlans(
       name: PLAN_NAMES.deluxe,
       priceKrw: 108000,
       summary: `설계 ${s.screens}개 + 만들어 둔 화면 ${site.base}개`,
-      depthLabel: "메뉴 → 화면 (2뎁스) + 완성 화면",
+      depthLabel: "메뉴 → 화면까지 + 완성 화면",
       stats: s,
       verify: sv,
       siteScreens: site.base,
       highlights: [
         `이미 만들어 둔 화면 ${site.base}개 (HTML)`,
         `검수 시나리오 ${sv.scenarios}개 · 확인 항목 ${sv.checks}개`,
-        "화면을 다시 찍어내는 생성기 포함",
+        "화면을 고쳐서 다시 뽑는 도구 포함",
       ],
       kmongUrl: kmong.deluxe ?? null,
     });
@@ -309,14 +309,14 @@ function makePlans(
       name: PLAN_NAMES.premium,
       priceKrw: 163800,
       summary: `설계 ${p.screens}개 + 만들어 둔 화면 ${site.deep}개`,
-      depthLabel: "메뉴 → 화면 → 탭·상태 (3뎁스) + 완성 화면",
+      depthLabel: "메뉴 → 화면 → 화면 속 탭·예외까지 + 완성 화면",
       stats: p,
       verify: pv,
       siteScreens: site.deep,
       highlights: [
         `이미 만들어 둔 화면 ${site.deep}개 (HTML)`,
         `검수 시나리오 ${pv.scenarios}개 · 확인 항목 ${pv.checks}개`,
-        "화면을 다시 찍어내는 생성기 포함",
+        "화면을 고쳐서 다시 뽑는 도구 포함",
       ],
       kmongUrl: kmong.premium ?? null,
       badge: "전부 들어 있음",
@@ -510,14 +510,18 @@ const LISTED_IDS = new Set(["travel", "beauty"]);
  * 한쪽만 바뀐다. 순서와 이름은 package-template.mts가 zip에 담는 파일과 맞춰 뒀다.
  */
 export function planContents(plan: PackagePlan): string[] {
+  // 손님 말로 부른다 — 「IA」·「WBS」·「프리셋」은 웹 기획 실무자만 아는 말이라,
+  // 개발자가 아닌 손님에게는 빈칸이나 마찬가지다(2026-08-08).
+  // 다만 「기능정의서」는 그대로 둔다: zip 안 파일 이름이 그렇고, 손님이 개발사에
+  // 넘길 때 개발사가 이 이름으로 부른다. 우리가 바꾸면 손님이 다시 통역해야 한다.
   const items = [
     "메뉴구조",
-    `IA 화면목록 ${plan.stats.screens}개`,
-    `기능정의서 ${plan.stats.reqs}개`,
-    "WBS 개발 일정",
+    `화면 목록 ${plan.stats.screens}개`,
+    `기능정의서 ${plan.stats.reqs}개 — 화면마다 뭘 해야 하는지`,
+    "개발 일정표",
     "FLOW 흐름도",
-    "AI 빌드 스펙팩",
-    "디자인 프리셋 (가이드 3종 · 레이아웃 2종)",
+    "AI 빌드 지시서",
+    "디자인 규칙 (색·글꼴 3종 · 화면 배치 2종)",
   ];
   if (plan.verify) items.push(`검수 시나리오 ${plan.verify.scenarios}개`);
   if (plan.siteScreens) items.push(`완성 화면 ${plan.siteScreens}개 (HTML)`);

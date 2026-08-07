@@ -28,7 +28,7 @@ const screens = CREATOR.menus.flatMap((m) => m.screens);
 // 아직도 옛 숫자가 뜬다. 세는 곳을 한 군데로 모은다.
 export const metadata: Metadata = {
   title: `무료 기획 샘플 — 콘텐츠 판매 사이트 화면 ${screens.length}개`,
-  description: `전자책·템플릿을 파는 1인 사이트를 AI로 만들 때 쓰는 기획 산출물을 무료로 받아보세요. 화면 ${screens.length}개와 화면별 AI 프롬프트가 들어 있습니다.`,
+  description: `전자책·템플릿을 파는 1인 사이트를 AI로 만들 때 쓰는 기획 결과물을 무료로 받아보세요. 화면 ${screens.length}개와 화면별 AI 프롬프트가 들어 있습니다.`,
   keywords: ["무료 기획서", "AI 프롬프트 무료", "화면설계서 샘플", "바이브코딩 기획"],
 };
 const exceptions = screens.filter((s) => /(empty|error|closed)/.test(s.role));
@@ -39,12 +39,12 @@ const reqCount = screens.reduce((n, s) => n + splitFuncDef(s.func).length, 0);
 // 흐름도와 메뉴구조는 두 벌씩 들어 있다 — 하나는 보라고, 하나는 고쳐 쓰라고.
 // 쓰임이 다르므로 따로 센다.
 const FILES = [
-  { icon: FileCode2, name: "AI 빌드 스펙팩", ext: "md", desc: "AI에 통째로 넣는 스펙 문서", hot: true },
-  { icon: FileSpreadsheet, name: "IA 화면목록", ext: "xlsx", desc: `화면 ${screens.length}개 + 화면별 프롬프트`, hot: true },
+  { icon: FileCode2, name: "AI 빌드 지시서", ext: "md", desc: "AI에 통째로 넣는 지시 문서", hot: true },
+  { icon: FileSpreadsheet, name: "화면 목록", ext: "xlsx", desc: `화면 ${screens.length}개 + 화면별 프롬프트`, hot: true },
   { icon: ListChecks, name: "기능정의서", ext: "xlsx", desc: `요구사항 ${reqCount}개 · 업무 > 기능 > 구성`, hot: false },
   { icon: Network, name: "FLOW 흐름도", ext: "html", desc: "브라우저로 바로 열어 보기 · 메뉴별 5장", hot: false },
   { icon: PenTool, name: "FLOW 흐름도", ext: "drawio", desc: "draw.io에서 직접 고쳐 쓰기", hot: false },
-  { icon: CalendarDays, name: "WBS 일정표", ext: "xlsx", desc: "화면별 작업 일정 (주말 제외)", hot: false },
+  { icon: CalendarDays, name: "개발 일정표", ext: "xlsx", desc: "화면별 작업 일정 (주말 제외)", hot: false },
   { icon: FileSpreadsheet, name: "메뉴구조", ext: "xlsx", desc: "메뉴와 화면 트리", hot: false },
   { icon: Presentation, name: "메뉴구조", ext: "pptx", desc: "장표 한 장 · 보고 자료에 그대로", hot: false },
 ];
@@ -66,7 +66,7 @@ export default async function FreePage() {
             <span className="bg-primary-soft rounded-lg px-2 py-0.5">AI팩부터</span> 받아가세요
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
-            전자책·템플릿·강의자료를 직접 파는 1인 사이트의 기획 산출물이에요. 화면{" "}
+            전자책·템플릿·강의자료를 직접 파는 1인 사이트의 기획 결과물이에요. 화면{" "}
             {screens.length}개와 화면별 AI 프롬프트가 들어 있습니다.
           </p>
 
@@ -159,7 +159,7 @@ export default async function FreePage() {
           <SectionTitle>어떻게 쓰나요</SectionTitle>
           <div className="rounded-xl border-2 border-primary bg-primary-soft/30 p-5">
             <p className="text-sm font-semibold text-muted-foreground">
-              스펙팩(.md) 하나를 Claude Code나 Cursor에 넣고
+              AI 빌드 지시서(.md) 하나를 Claude Code나 Cursor에 넣고
             </p>
             <p className="mt-2 text-lg font-bold text-primary-on-soft">
               &ldquo;AI 빌드 스펙팩 확인해서 콘텐츠 판매 사이트 만들어줘&rdquo;

@@ -75,19 +75,19 @@ const FAQ = [
   },
   {
     q: "구매한 뒤 제 마음대로 고쳐 써도 되나요?",
-    a: "네. 산출물에 대한 권리는 구매자에게 있고, 상업적 목적으로도 자유롭게 쓰실 수 있습니다.",
+    a: "네. 결과물에 대한 권리는 구매자에게 있고, 상업적 목적으로도 자유롭게 쓰실 수 있습니다.",
   },
   {
     q: "Cursor나 Claude Code에 바로 쓸 수 있나요?",
-    a: "화면마다 생성 프롬프트가 붙어 있어서 그대로 붙여넣으시면 됩니다. AI 빌드 스펙팩은 프로젝트 전체 맥락을 한 번에 넘기는 용도예요.",
+    a: "화면마다 생성 프롬프트가 붙어 있어서 그대로 붙여넣으시면 됩니다. AI 빌드 지시서는 프로젝트 전체를 한 번에 넘기는 용도예요.",
   },
   {
     q: "등급은 어떻게 고르나요?",
-    a: "두 가지만 정하시면 됩니다. 첫째, 설계를 어디까지 펼칠지 — 핵심 화면만 빠르게 보려면 2뎁스(스탠다드·디럭스), 탭·상태·예외까지 촘촘히 필요하면 3뎁스(플러스·프리미엄)입니다. 둘째, 만들어 둔 화면이 필요한지 — 필요하시면 디럭스나 프리미엄을 고르세요. 그 설계로 이미 만든 화면(HTML)과 오픈 전 점검용 검수 시나리오가 함께 들어갑니다. 만들어 둔 화면이 없는 업종에는 디럭스·프리미엄이 나타나지 않습니다.",
+    a: "두 가지만 정하시면 됩니다. 첫째, 설계를 어디까지 펼칠지 — 핵심 화면만 빠르게 보려면 기본 설계(스탠다드·디럭스), 화면 안의 탭과 예외 화면까지 촘촘히 필요하면 상세 설계(플러스·프리미엄)입니다. 둘째, 만들어 둔 화면이 필요한지 — 필요하시면 디럭스나 프리미엄을 고르세요. 그 설계로 이미 만든 화면(HTML)과 오픈 전 점검용 검수 시나리오가 함께 들어갑니다. 만들어 둔 화면이 없는 업종에는 디럭스·프리미엄이 나타나지 않습니다.",
   },
   {
     q: "디자인 시안도 들어 있나요?",
-    a: "AI팩은 기획 산출물에 가까운 문서입니다. 가이드 프리셋은 색상·글꼴·컴포넌트 규칙을, 레이아웃 프리셋은 무엇을 어디에 놓을지를 정리한 문서이며 시안 이미지가 아닙니다. 다만 이 파일들을 AI 빌드 스펙팩과 함께 AI 도구에 넣으면 그 스타일의 화면이 나오고, 디럭스·프리미엄에 들어 있는 HTML은 디자인이 반영된 화면이라 목업으로 보실 수 있어요. (쓰시는 AI 도구에 따라 다른 결과물이 나올 수 있습니다.)",
+    a: "AI팩은 기획 결과물에 가까운 문서입니다. 색·글꼴 규칙은 색상·글꼴과 버튼·카드 모양을, 화면 배치 규칙은 무엇을 어디에 놓을지를 정리한 문서이며 시안 이미지가 아닙니다. 다만 이 파일들을 AI 빌드 지시서와 함께 AI 도구에 넣으면 그 스타일의 화면이 나오고, 디럭스·프리미엄에 들어 있는 HTML은 디자인이 입혀진 화면이라 미리 보기로 열어보실 수 있어요. (쓰시는 AI 도구에 따라 다른 결과물이 나올 수 있습니다.)",
   },
   {
     q: "AI로 만들면 바로 쓸 수 있는 사이트가 되나요?",
@@ -95,11 +95,11 @@ const FAQ = [
   },
   {
     q: "들어 있는 완성 화면 말고 다른 스타일로 만들 수 있나요?",
-    a: "네. 완성 화면은 가이드 프리셋 3종과 레이아웃 프리셋 2종 중 한 조합으로 미리 만들어 둔 것입니다(Claude Code Opus 5 이상으로 제작). 바로 열어보고 흐름을 확인하시라고 넣었어요. 다른 스타일을 원하시면 AI 빌드 스펙팩과 원하는 가이드 프리셋 1종, 레이아웃 프리셋 1종을 함께 AI 코딩 도구에 넣고 만들어 달라고 하시면 됩니다. 화면 구성과 이동 흐름은 그대로 두고 모습만 바뀝니다. 조합은 모두 6가지예요.",
+    a: "네. 완성 화면은 색·글꼴 규칙 3종과 화면 배치 규칙 2종 중 한 조합으로 미리 만들어 둔 것입니다(Claude Code Opus 5 이상으로 제작). 바로 열어보고 흐름을 확인하시라고 넣었어요. 다른 스타일을 원하시면 AI 빌드 지시서와 원하는 색·글꼴 규칙 1종, 화면 배치 규칙 1종을 함께 AI 코딩 도구에 넣고 만들어 달라고 하시면 됩니다. 화면 구성과 이동 흐름은 그대로 두고 모습만 바뀝니다. 조합은 모두 6가지예요.",
   },
   {
-    q: "가이드 프리셋과 레이아웃 프리셋은 뭐가 다른가요?",
-    a: "가이드 프리셋은 색·글꼴·모서리처럼 '어떤 느낌인지'를, 레이아웃 프리셋은 첫 화면과 목록·메뉴를 '어떻게 배치할지'를 정합니다. 둘을 따로 드리는 이유는 짝을 묶어 두면 고를 수 있는 게 3가지뿐이기 때문이에요. 따로 두면 3 × 2 = 6가지가 됩니다.",
+    q: "색·글꼴 규칙과 화면 배치 규칙은 뭐가 다른가요?",
+    a: "색·글꼴 규칙은 색·글꼴·모서리처럼 '어떤 느낌인지'를, 화면 배치 규칙은 첫 화면과 목록·메뉴를 '어떻게 배치할지'를 정합니다. 둘을 따로 드리는 이유는 짝을 묶어 두면 고를 수 있는 게 3가지뿐이기 때문이에요. 따로 두면 3 × 2 = 6가지가 됩니다.",
   },
   {
     q: "만드는 데 얼마나 걸리나요?",
@@ -108,10 +108,10 @@ const FAQ = [
 ];
 
 const NOTES = [
-  "기획 문서 한 벌(AI팩)입니다. 디자인 시안(GUI)과 개발 소스코드는 포함되지 않습니다.",
+  "기획 문서 한 벌(AI팩)입니다. 색과 이미지가 입혀진 완성 디자인, 그리고 개발 소스코드는 들어 있지 않습니다.",
   "AI로 만들면 화면까지 나옵니다. 로그인·결제·지도·알림 등 외부 연동은 개발이 필요합니다.",
-  "가이드 프리셋은 색상·글꼴·모서리·컴포넌트 규칙을, 레이아웃 프리셋은 화면 배치 규칙을 정리한 문서입니다.",
-  "완성 화면(디럭스·프리미엄)은 프리셋 조합 중 하나로 미리 만든 예시입니다. 다른 조합은 AI 코딩 도구로 직접 만드시면 됩니다.",
+  "색·글꼴 규칙 문서는 색상·글꼴·모서리와 버튼·카드 모양을, 화면 배치 규칙 문서는 무엇을 어디에 놓을지를 정리한 문서입니다.",
+  "완성 화면(디럭스·프리미엄)은 이 규칙 조합 중 하나로 미리 만든 예시입니다. 다른 조합은 AI 코딩 도구로 직접 만드시면 됩니다.",
   "AI로 생성한 초안을 다듬은 자료로, 실제 서비스에 적용하기 전 검토가 필요합니다.",
   "디지털 콘텐츠 특성상 파일 전달 후에는 환불이 제한됩니다.",
 ];
@@ -200,23 +200,23 @@ export default async function PackageDetailPage({
   }[] = [
     { label: "01 메뉴구조", sub: "메뉴-화면 트리 · 조직도 pptx", value: () => "✓" },
     {
-      label: "02 IA 화면목록",
+      label: "02 화면 목록",
       sub: "화면ID · 화면별 AI 프롬프트",
       value: (p) => `${p.stats.screens}개`,
     },
     { label: "03 기능정의서", sub: "요건", value: (p) => `${p.stats.reqs}개` },
-    { label: "04 WBS", sub: "화면별 개발 일정", value: () => "✓" },
+    { label: "04 개발 일정표", sub: "화면마다 며칠 걸리는지", value: () => "✓" },
     { label: "05 FLOW 흐름도", sub: "html · drawio", value: () => "✓" },
-    { label: "07 AI 빌드 스펙팩", sub: "넣고 한 마디면 끝", value: () => "✓" },
+    { label: "07 AI 빌드 지시서", sub: "넣고 한 마디면 끝", value: () => "✓" },
     {
-      label: "가이드 프리셋 3종",
+      label: "색·글꼴 규칙 3종",
       sub: pkg.presetStyles
         .map((s) => DESIGN_OPTIONS.find((o) => o.key === s)?.title ?? s)
         .join(" · "),
       value: () => "✓",
     },
     {
-      label: "레이아웃 프리셋 2종",
+      label: "화면 배치 규칙 2종",
       sub: pkg.layoutKeys.map((k) => LAYOUTS.find((l) => l.key === k)?.label ?? k).join(" · "),
       value: () => "✓",
     },
@@ -345,7 +345,7 @@ export default async function PackageDetailPage({
             ))}
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            전 등급에 디자인 프리셋(가이드 3종 · 레이아웃 2종)이 들어 있어요.
+            전 등급에 디자인 규칙(색·글꼴 3종 · 화면 배치 2종)이 들어 있어요.
             {hasPremium &&
               ` 검수 시나리오와 만들어 둔 화면은 ${builtPlans.map((p) => p.name).join("·")}에만 있습니다.`}{" "}
             등급을
@@ -360,7 +360,7 @@ export default async function PackageDetailPage({
             {pkg.videoId && (
               <>
                 <p className="leading-relaxed text-muted-foreground">
-                  이 AI팩의 프리미엄 스펙팩을 Claude Code에 넣고 돌린 기록입니다. 화면{" "}
+                  이 AI팩의 프리미엄 지시서를 Claude Code에 넣고 돌린 기록입니다. 화면{" "}
                   {premium.stats.screens}개가 약 40분 만에 만들어졌어요.
                 </p>
                 <div className="aspect-video overflow-hidden rounded-xl border border-border bg-muted">
@@ -443,9 +443,9 @@ export default async function PackageDetailPage({
 
         {/* SAMPLE — 이 페이지에서 유일하게 '실물'을 보여주는 곳. 말로 하는 것보다 빠르다. */}
         <section className="flex flex-col gap-4">
-          <SectionTitle>이런 산출물이 들어 있어요</SectionTitle>
+          <SectionTitle>이런 결과물이 들어 있어요</SectionTitle>
           <p className="leading-relaxed text-muted-foreground">
-            산출물은 구매하시는 등급에 따라 다르게 구성되어 있어요. 등급별 항목은 맨 아래{" "}
+            결과물은 구매하시는 등급에 따라 다르게 구성되어 있어요. 등급별 항목은 맨 아래{" "}
             <b className="text-foreground">등급별 구성</b>에서 확인해 주세요.
           </p>
 
@@ -481,7 +481,7 @@ export default async function PackageDetailPage({
             </div>
           </div>
 
-          <DocCard title="IA 화면목록" meta="xlsx">
+          <DocCard title="화면 목록" meta="02_IA_화면목록.xlsx">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[34rem] text-left text-xs">
                 <thead className="text-muted-foreground">
@@ -539,7 +539,7 @@ export default async function PackageDetailPage({
               </table>
             </div>
             <DocNote>
-              업무 → 기능 → 구성 3단계 · 유형(기능·콘텐츠·UI/UX·정책)은 자동 분류됩니다
+              업무 → 기능 → 구성 3단 · 종류(기능·콘텐츠·화면·정책)는 알아서 붙습니다
             </DocNote>
           </DocCard>
 
@@ -587,7 +587,7 @@ export default async function PackageDetailPage({
             </DocCard>
           </div>
 
-          <DocCard title="AI 빌드 스펙팩" meta="md · json">
+          <DocCard title="AI 빌드 지시서" meta="07_AI빌드_스펙팩.md · json">
             <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg bg-foreground px-4 py-3.5 text-xs leading-relaxed text-background/80">
               {specPreview}
             </pre>
@@ -619,7 +619,7 @@ export default async function PackageDetailPage({
                         </td>
                         <td className="py-2.5 pr-3 text-foreground">{s.name}</td>
                         <td className="py-2.5 pr-3 text-muted-foreground">
-                          {/(empty|error|closed|pending|expired)/.test(s.role) ? "예외·상태" : "기본"}
+                          {/(empty|error|closed|pending|expired)/.test(s.role) ? "예외 화면" : "기본 화면"}
                         </td>
                         <td className="py-2.5 pr-3 text-muted-foreground">
                           {cutText(splitFunc(s.func)[0] ?? "화면이 정상적으로 열리는지 확인", 34)}
@@ -674,20 +674,20 @@ export default async function PackageDetailPage({
             </DocCard>
           )}
 
-          <DocCard title="디자인 프리셋" meta="md · json">
+          <DocCard title="디자인 규칙" meta="md · json">
             {/* "예쁜 색"으로 팔지 않는다 — AI도 색은 알아서 고른다. 프리셋이 하는 일은
                 화면 수십·수백 개가 끝까지 같은 얼굴을 유지하게 하는 것이다(2026-08-04). */}
             <p className="mb-3 text-sm leading-relaxed text-foreground/85">
               <b className="text-foreground">{PRESET_WHY}</b>
             </p>
             <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-              디자인 프리셋에는 <b className="text-foreground">가이드 프리셋 3종</b>과{" "}
-              <b className="text-foreground">레이아웃 프리셋 2종</b>이 들어 있어요. 완성된 HTML과
-              다른 스타일을 원하시면 IA 스펙팩 + 가이드 프리셋 1종 + 레이아웃 프리셋 1종을 AI 코딩
+              디자인 규칙에는 <b className="text-foreground">색·글꼴 규칙 3종</b>과{" "}
+              <b className="text-foreground">화면 배치 규칙 2종</b>이 들어 있어요. 완성된 HTML과
+              다른 스타일을 원하시면 AI 빌드 지시서 + 색·글꼴 규칙 1종 + 화면 배치 규칙 1종을 AI 코딩
               도구에 넣어 만들어보세요.
             </p>
             <p className="mb-3 text-sm font-bold text-foreground">
-              가이드 프리셋 3종 — 색 · 글꼴 · 모서리
+              색·글꼴 규칙 3종 — 어떤 느낌으로 보일지
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
               {presets.map((p) => (
@@ -777,7 +777,7 @@ export default async function PackageDetailPage({
             </div>
             {/* 뼈대는 색과 나란히 두지 않는다 — 나란히 두면 "이 색엔 이 뼈대"로 읽힌다. */}
             <p className="mb-3 mt-6 text-sm font-bold text-foreground">
-              레이아웃 프리셋 2종 — 무엇을 어디에 놓을지
+              화면 배치 규칙 2종 — 무엇을 어디에 놓을지
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
               {layouts.map((l) => (
@@ -802,7 +802,7 @@ export default async function PackageDetailPage({
               ))}
             </div>
             <DocNote>
-              스펙팩과 함께 넣으면 화면 {selected.stats.screens}개가 고른 조합대로 나옵니다
+              지시서와 함께 넣으면 화면 {selected.stats.screens}개가 고른 조합대로 나옵니다
             </DocNote>
           </DocCard>
         </section>
@@ -884,7 +884,7 @@ export default async function PackageDetailPage({
             <div className="rounded-2xl border border-border bg-surface p-5">
               <p className="mb-3 font-bold text-primary">AI에게</p>
               <ul className="flex flex-col gap-1.5 text-sm text-foreground/85">
-                {["07 AI 빌드 스펙팩", "디자인 프리셋", "완성화면 HTML"].map((x) => (
+                {["07 AI 빌드 지시서", "디자인 규칙", "완성화면 HTML"].map((x) => (
                   <li key={x}>· {x}</li>
                 ))}
               </ul>

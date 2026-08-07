@@ -49,7 +49,7 @@ export function MenuTreeMockup() {
 export function ScreenListMockup() {
   const rows = [
     { id: "PCHOME0110", name: "메인 홈", tone: "bg-pastel-mint text-pastel-mint-foreground", t: "콘텐츠" },
-    { id: "PCPROD0110", name: "상품 목록", tone: "bg-muted text-muted-foreground", t: "UI/UX" },
+    { id: "PCPROD0110", name: "상품 목록", tone: "bg-muted text-muted-foreground", t: "화면" },
     { id: "PCPROD0210", name: "상품 상세", tone: "bg-primary-soft text-primary-on-soft", t: "기능" },
   ];
   return (
@@ -74,8 +74,8 @@ export function ScreenListMockup() {
 
 export function SpecMockup() {
   const rows = [
-    { id: "01-01-01", work: "상품", fn: "상품 목록", item: "3열 그리드 표시", tone: "bg-muted text-muted-foreground", t: "UI/UX" },
-    { id: "01-01-02", work: "", fn: "", item: "카테고리 필터", tone: "bg-muted text-muted-foreground", t: "UI/UX" },
+    { id: "01-01-01", work: "상품", fn: "상품 목록", item: "3열 그리드 표시", tone: "bg-muted text-muted-foreground", t: "화면" },
+    { id: "01-01-02", work: "", fn: "", item: "카테고리 필터", tone: "bg-muted text-muted-foreground", t: "화면" },
     { id: "02-01-01", work: "회원", fn: "로그인", item: "약관 동의", tone: "bg-warning-soft text-warning", t: "정책" },
   ];
   return (

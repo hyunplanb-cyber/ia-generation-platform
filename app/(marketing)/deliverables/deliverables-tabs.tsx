@@ -60,7 +60,7 @@ const DELIVERABLES: Deliverable[] = [
     icon: FileText,
     tone: "bg-muted text-foreground",
     name: "기능정의서",
-    role: "사이트에 필요한 요건을 업무 · 기능 · 구성 계층으로 분해하고, 유형(기능·콘텐츠·UI/UX·정책)을 붙여 정리한 요구사항 정의서예요. 실무 문서 형식 그대로 내려받을 수 있어요.",
+    role: "사이트에 필요한 요건을 업무 · 기능 · 구성 계층으로 분해하고, 종류(기능·콘텐츠·화면·정책)를 붙여 정리한 문서예요. 실무 문서 형식 그대로 내려받을 수 있어요.",
     formats: ["엑셀"],
     mockup: <SpecMockup />,
   },
@@ -75,7 +75,7 @@ const DELIVERABLES: Deliverable[] = [
   {
     icon: CalendarRange,
     tone: "bg-muted text-foreground",
-    name: "WBS · 일정",
+    name: "개발 일정표",
     role: "화면(작업)별 제작 일정을 정리해요. 전체 일정을 입력하면 화면 수에 맞춰 일정 초안을 자동으로 나눠주고, 손으로 조정한 화면은 그대로 유지돼요.",
     formats: ["엑셀"],
     mockup: <WbsMockup />,
@@ -83,7 +83,7 @@ const DELIVERABLES: Deliverable[] = [
   {
     icon: Bot,
     tone: "bg-primary-soft text-primary-on-soft",
-    name: "AI 빌드 스펙팩",
+    name: "AI 빌드 지시서",
     role: "위 모든 걸 한 벌로 정리한 마크다운·JSON이에요. 이 파일을 Claude Code·Cowork 같은 AI 코딩 도구에 그대로 넘기면, 화면 구성·이동·화면별 지시가 확정된 상태로 사이트가 만들어져요.",
     formats: ["마크다운", "JSON"],
     mockup: <SpecPackMockup />,
@@ -141,7 +141,7 @@ function TabButton({
   );
 }
 
-// AI팩 산출물 6종
+// AI팩 결과물 6종
 function PlanningDeliverables() {
   return (
     <div className="flex flex-col">
@@ -180,14 +180,14 @@ function PlanningDeliverables() {
   );
 }
 
-// 입력 방식별 — 무엇을 넣으면 어떤 산출물이 나오는지
+// 입력 방식별 — 무엇을 넣으면 무엇이 나오는지
 const VERIFY_INPUTS = [
   {
     icon: PencilRuler,
-    name: "우리 AI팩 산출물",
+    name: "카페인컬러 AI팩",
     badge: "가장 정확",
     badgeTone: "bg-warning-soft text-warning",
-    desc: "카페인컬러로 만든 AI팩(IA 화면목록·스펙팩)을 그대로 넣으면, 화면과 요건을 100% 알기 때문에 재현 시나리오가 가장 촘촘하고 정확해요.",
+    desc: "카페인컬러로 만든 AI팩(화면 목록·AI 빌드 지시서)을 그대로 넣으면, 화면과 요건을 100% 알기 때문에 재현 시나리오가 가장 촘촘하고 정확해요.",
     out: ["가장 정확한 재현 시나리오", "AI팩 대비 빠진 화면까지 점검"],
   },
   {
@@ -253,7 +253,7 @@ function KindTag({ kind }: { kind: string }) {
   );
 }
 
-// 사이트 검수 산출물 — 입력 3가지 + 나오는 산출물 샘플
+// 사이트 검수 결과물 — 입력 3가지 + 나오는 결과물 샘플
 function VerifyDeliverable() {
   return (
     <div className="flex flex-col">
@@ -277,7 +277,7 @@ function VerifyDeliverable() {
         </div>
       </section>
 
-      {/* 입력 3가지 → 나오는 산출물 */}
+      {/* 입력 3가지 → 나오는 결과물 */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-5xl px-6 py-14">
           <h3 className="text-lg font-bold text-foreground">무엇을 넣느냐에 따라 이렇게 나와요</h3>
@@ -317,12 +317,12 @@ function VerifyDeliverable() {
         </div>
       </section>
 
-      {/* 나오는 산출물 샘플 — 자동 검사 리포트 + 재현 시나리오 */}
+      {/* 나오는 결과물 샘플 — 자동 검사 결과서 + 재현 시나리오 */}
       <section className="border-b border-border bg-surface">
         <div className="mx-auto max-w-5xl px-6 py-14">
-          <h3 className="text-lg font-bold text-foreground">이런 산출물을 받아요</h3>
+          <h3 className="text-lg font-bold text-foreground">이런 결과물을 받아요</h3>
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* 자동 검사 리포트 */}
+            {/* 자동 검사 결과서 */}
             <div className="rounded-2xl border border-border bg-background p-6">
               <h4 className="flex items-center gap-2 font-semibold text-foreground">
                 <Search className="size-4 text-primary" /> 자동 검사 리포트

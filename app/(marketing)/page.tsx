@@ -30,7 +30,7 @@ const JSON_LD = {
       operatingSystem: "Web",
       url: SITE_URL,
       description:
-        "컨셉 한 줄이면 화면 목록·화면별 프롬프트·AI 빌드 스펙팩을 만들어 바이브코딩(Cursor·Claude Code)에 바로 쓰고, 오픈 전엔 사이트 검수 리포트까지 받는 서비스.",
+        "컨셉 한 줄이면 화면 목록·화면별 프롬프트·AI 빌드 지시서를 만들어 바이브코딩(Cursor·Claude Code)에 바로 쓰고, 오픈 전엔 사이트 검수 결과서까지 받는 서비스.",
       offers: { "@type": "Offer", price: "0", priceCurrency: "KRW" },
     },
   ],

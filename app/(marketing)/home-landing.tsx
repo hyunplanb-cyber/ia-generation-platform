@@ -41,8 +41,8 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             <div className="hero-rule" />
             <p className="sub">
               바이브코딩으로 사이트 만드는 사람을 위한 두 가지.<br />
-              컨셉 한 줄이면 → 화면별 프롬프트·스펙팩 (Cursor·Claude Code에 바로).<br />
-              URL 한 줄이면 → 오픈 전 검수 리포트.
+              컨셉 한 줄이면 → 화면별 프롬프트와 AI 빌드 지시서 (Cursor·Claude Code에 바로).<br />
+              URL 한 줄이면 → 오픈 전 검수 결과서.
             </p>
             <div className="hero-ctas">
               {/* /dashboard/new는 열리는 즉시 새 프로젝트를 만드는 라우트라,
@@ -147,7 +147,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           </h2>
           <p className="lead">
             메뉴 구조·화면 목록·기능정의·흐름·일정까지 자동으로. 여기서 끝이 아니라{" "}
-            <b>화면별 프롬프트와 AI 빌드 스펙팩</b>까지 나와, Cursor·Claude Code에 그대로 넣으면 화면이
+            <b>화면별 프롬프트와 AI 빌드 지시서</b>까지 나와, Cursor·Claude Code에 그대로 넣으면 화면이
             됩니다.
           </p>
 
@@ -159,13 +159,13 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
             <div className="chip">
               <div className="ci">02 · XLSX</div>
-              <div className="cn">IA 화면목록</div>
-              <div className="cd">화면 + 화면별 프롬프트</div>
+              <div className="cn">화면 목록</div>
+              <div className="cd">화면 하나하나 + AI 프롬프트</div>
             </div>
             <div className="chip">
               <div className="ci">03 · XLSX</div>
               <div className="cn">기능정의서</div>
-              <div className="cd">업무·기능·구성·유형</div>
+              <div className="cd">화면마다 뭘 해야 하는지</div>
             </div>
             <div className="chip">
               <div className="ci">04 · HTML</div>
@@ -174,12 +174,12 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
             <div className="chip">
               <div className="ci">05 · XLSX</div>
-              <div className="cn">WBS 일정</div>
+              <div className="cn">개발 일정표</div>
               <div className="cd">화면별 개발 일정</div>
             </div>
             <div className="chip">
               <div className="ci">06 · MD</div>
-              <div className="cn">AI 빌드 스펙팩</div>
+              <div className="cn">AI 빌드 지시서</div>
               <div className="cd">넣고 한 마디면 끝</div>
             </div>
           </div>
@@ -234,14 +234,14 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               {/* 바로 위에서 「빠진 것」으로 말해 놓고 여기서 144개를 자랑하면 힘이 상쇄된다.
                   숫자를 근거가 아니라 배경으로 밀어낸다 — 앞에 오는 것은 「빠뜨린 화면까지」다. */}
               <span>
-                스펙팩 하나를 Claude Code에 넣고 돌린 기록이에요. 위에 적은 빠지기 쉬운 화면까지
+                지시서 파일 하나를 Claude Code에 넣고 돌린 기록이에요. 위에 적은 빠지기 쉬운 화면까지
                 한 벌로 넣어 돌렸고, 약 40분 만에 화면 144개가 만들어졌습니다.
               </span>
             </div>
             <div className="sc-frame">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${SHOWCASE_VIDEO_ID}`}
-                title="AI팩(빌드 스펙팩)으로 화면 144개를 만드는 기록"
+                title="AI팩(빌드 지시서)으로 화면 144개를 만드는 기록"
                 allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
                 loading="lazy"
@@ -273,12 +273,12 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           </h2>
           <p className="lead">
             기획으로 끝나는 도구는 여기까지 안 와요. URL이나 설계 문서를 넣으면 확인할 것을 시나리오로
-            짚어주고, 공개 화면은 검수 결과(Pass/Fail)까지 냅니다. 개발자가 아니어도 읽는 리포트로요.
+            짚어주고, 공개 화면은 검수 결과(Pass/Fail)까지 냅니다. 개발자가 아니어도 읽는 결과서로요.
           </p>
 
           <div className="inputs">
             <div className="inbox">
-              <div className="in-n">01 · AI팩 산출물</div>
+              <div className="in-n">01 · 카페인컬러 AI팩</div>
               <div className="in-t">가장 정확</div>
               <div className="in-d">
                 이 프로젝트로 만든 AI팩을 그대로. 화면·요건을 100% 알아 시나리오가 촘촘해요.
@@ -351,13 +351,13 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
-          {/* 검수 산출물 — 받는 것 */}
+          {/* 검수 결과물 — 받는 것 */}
           <div className="sec-eye" style={{ marginTop: 48 }}>
             <span className="idx" style={{ color: "var(--teal)" }}>
               ✓
             </span>
             <span className="mono" style={{ textTransform: "none", color: "var(--teal)" }}>
-              이런 산출물을 받아요
+              이런 결과물을 받아요
             </span>
           </div>
           <div className="vout">
@@ -366,7 +366,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               <div className="vc-d">통과·실패·주의 한눈에</div>
             </div>
             <div className="vchip">
-              <div className="vc-h">자동 검사 리포트</div>
+              <div className="vc-h">자동 검사 결과서</div>
               <div className="vc-d">항목마다 UI·기능 구분</div>
             </div>
             <div className="vchip">
@@ -401,7 +401,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             업종별 AI팩
           </h2>
           <p className="lead">
-            직접 만들기 전에, 이미 완성된 업종별 산출물 한 벌부터. 화면·예외까지 다 들어 있어요.
+            직접 만들기 전에, 이미 완성된 업종별 결과물 한 벌부터. 화면·예외까지 다 들어 있어요.
           </p>
           <div
             className="tpl-roll"

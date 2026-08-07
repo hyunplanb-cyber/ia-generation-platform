@@ -7,7 +7,7 @@ import { PACKAGE_PRICES_PUBLIC, PACKAGE_SALE_OPEN } from "@/lib/flags";
 export const metadata: Metadata = {
   title: "AI팩 구매 — 업종별 화면설계서·기능정의서 완성본",
   description:
-    "이미 만들어진 업종별 AI팩(기획 산출물 한 벌)을 바로 받아보세요. 메뉴 구조, 화면 목록, 기능정의서, 흐름도, AI 빌드 스펙팩, 디자인 프리셋을 한 벌로 제공하고, 프리미엄은 만들어 둔 화면과 검수 시나리오까지 드립니다.",
+    "이미 만들어진 업종별 AI팩(기획 결과물 한 벌)을 바로 받아보세요. 메뉴 구조, 화면 목록, 기능정의서, 흐름도, AI 빌드 지시서, 디자인 규칙을 한 벌로 제공하고, 프리미엄은 만들어 둔 화면과 검수 시나리오까지 드립니다.",
   keywords: ["기획서 템플릿", "화면설계서 템플릿", "기능정의서 양식", "IA 템플릿", "웹기획 산출물"],
 };
 
@@ -29,8 +29,8 @@ export default function PackagesPage() {
             바로 받으세요.
           </h1>
           <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
-            업종별로 완성된 기획 산출물입니다. 화면 목록부터 기능정의서, 흐름도, AI 빌드 스펙팩,
-            디자인 프리셋까지 한 벌로 들어 있어요. 만들려는 사이트 규모에 맞춰 등급을
+            업종별로 완성된 기획 결과물입니다. 화면 목록부터 기능정의서, 흐름도, AI 빌드 지시서,
+            디자인 규칙까지 한 벌로 들어 있어요. 만들려는 사이트 규모에 맞춰 등급을
             고르시면 됩니다. 디럭스·프리미엄에는 그 설계로 이미 만들어 둔 화면과 검수 시나리오가
             함께 들어 있어요.
           </p>
@@ -116,7 +116,7 @@ export default function PackagesPage() {
           </span>
           <h2 className="text-xl font-bold text-foreground">찾는 업종이 없나요?</h2>
           <p className="max-w-lg leading-relaxed text-muted-foreground">
-            컨셉과 메뉴만 입력하면 내 서비스에 맞는 산출물을 직접 만들 수 있어요.
+            컨셉과 메뉴만 입력하면 내 서비스에 맞는 결과물을 직접 만들 수 있어요.
           </p>
           <Link href="/signup" className="font-semibold text-primary hover:underline">
             무료로 만들어보기 →

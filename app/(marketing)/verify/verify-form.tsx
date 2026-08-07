@@ -77,7 +77,7 @@ const URL_SCALES: ScaleCard[] = [
       "페이지 열림, 응답 속도, 모바일 대응, 검색 기본(제목·설명), SNS 공유 카드, 대표 제목, 인코딩·언어 설정, 이미지 대체 텍스트, 혼합 콘텐츠(http 리소스), 이미지 깨짐, 내부 링크 깨짐",
     scnTitle: "민감화면 시나리오",
     scnDesc:
-      "홈만 보는 게 아니라 크롤한 페이지마다 하나씩 읽어 절차를 뽑아요. 내부 링크가 적으면 페이지가 줄고, 그만큼 값도 줄어요.",
+      "홈만 보는 게 아니라 돌아본 페이지마다 하나씩 읽어 절차를 뽑아요. 내부 링크가 적으면 페이지가 줄고, 그만큼 값도 줄어요.",
     scnCount: `최대 ${VERIFY_CHUNK.maxSitePages}페이지 기준`,
   },
 ];
@@ -215,13 +215,13 @@ function LoadingScreen({ mode }: { mode: Mode }) {
           "사이트에 접속하고 있어요",
           "공개 화면을 하나씩 확인하고 있어요",
           "로그인·결제 화면 시나리오를 정리하고 있어요",
-          "검수 리포트를 만들고 있어요",
+          "검수 결과서를 만들고 있어요",
         ]
       : [
           "넣어주신 내용을 읽고 있어요",
           "화면과 요건을 정리하고 있어요",
           "확인할 시나리오를 만들고 있어요",
-          "검수 리포트를 만들고 있어요",
+          "검수 결과서를 만들고 있어요",
         ];
   const step = Math.min(Math.floor(elapsed / 6), steps.length - 1);
 
@@ -399,15 +399,15 @@ export function VerifyForm({
             active={mode === "spec"}
             onSelect={() => setMode("spec")}
             title="AI팩"
-            hint="카페인컬러로 만든 IA·스펙팩을 넣으면 가장 정확한 검수 시나리오를 받을 수 있어요."
+            hint="카페인컬러로 만든 화면 목록·AI 빌드 지시서를 넣으면 가장 정확한 검수 시나리오를 받을 수 있어요."
           >
             <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:bg-muted/50">
               <PencilRuler className="size-6 text-muted-foreground" />
               <span className="text-sm font-medium text-foreground">
-                {specFileName ?? "스펙팩 파일을 넣으세요 (.md·.json·.txt)"}
+                {specFileName ?? "AI 빌드 지시서 파일을 넣으세요 (.md·.json·.txt)"}
               </span>
               <span className="text-xs text-muted-foreground">
-                AI 빌드 스펙팩(마크다운·JSON)을 그대로 올리면 가장 정확해요 · 8MB 이하
+                AI 빌드 지시서(07_AI빌드_스펙팩.md)를 그대로 올리면 가장 정확해요 · 8MB 이하
               </span>
               <input
                 type="file"

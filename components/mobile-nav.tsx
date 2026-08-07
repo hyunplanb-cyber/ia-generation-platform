@@ -25,7 +25,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 
 // 좁은 화면에서는 메뉴를 전부 이 안에 넣는다.
-// 인스타 유입은 대부분 휴대폰이라, 여기서 "AI팩 구매"·"산출물 소개"에
+// 인스타 유입은 대부분 휴대폰이라, 여기서 "AI팩 구매"·"무엇을 받나요"에
 // 닿지 못하면 사실상 없는 메뉴가 된다.
 //
 // 1024px(lg) 아래까지 이 버튼이 맡는다 — 이유는 nav-link.tsx 주석 참고.
@@ -63,7 +63,7 @@ export function MobileNav({ email }: { email: string | null }) {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => go("/deliverables")}>
           <LayoutList className="size-4" />
-          산출물 소개
+          무엇을 받나요
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => go("/packages")}>
           <Package className="size-4" />
