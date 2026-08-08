@@ -8,6 +8,7 @@ import { PACKAGES } from "./lib/packages";
 import {
   LAYOUTS, THUMBS, thumbByKey, DENSITIES, SPACING_SLOTS, LINE_SLOTS,
   DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, CONTENT_WIDTH, COMMON_RULES, type DesignKey,
+  STRUCTURES, STRUCTURE_COLS, GRID_GAP, gridBaseCss, cardWidth,
 } from "./lib/design-presets";
 
 /** 마크다운 표 안에 코드로 감싸 넣는다 — 중첩 백틱을 피하려고 함수로 뺐다. */
@@ -647,6 +648,64 @@ const layoutMd = (l: (typeof LAYOUTS)[number], no: string): string => {
   L.push(`| 카드(썸네일) | ${thumbByKey(l.thumb).shape} (비율 ${thumbByKey(l.thumb).ratio}) |`);
   L.push("");
   L.push(`**어울리는 곳** — ${l.fits}`);
+  L.push("");
+
+  /* 여기서부터가 이 문서의 알맹이다.
+     전에는 위의 「자리별 규칙」 표 넉 줄이 전부였고 숫자가 하나도 없었다(픽셀값 0개).
+     그래서 같은 스펙팩으로 만든 세 벌이 브레이크포인트를 각자 지어냈다 —
+     오퍼스 1024·860·720 / 소넷 980·900·720·640·560 / 페이블 1100·1024·720·560.
+     글로 적은 규칙은 무시되고 코드로 준 규칙은 지켜진다는 걸 여러 번 겪었으므로,
+     이 뼈대를 붙여 넣을 수 있는 CSS로 준다(2026-08-08). */
+  const st = STRUCTURES.find((x) => x.key === l.structure)!;
+  const th = thumbByKey(l.thumb);
+  const [c1, c2, c3] = STRUCTURE_COLS[l.structure];
+
+  L.push("## 칸이 몇 개이고, 카드가 몇 px인가");
+  L.push("");
+  L.push("| 화면 폭 | 좌우 여백 | 칸 사이 | 칸 수 | 카드 한 장 |");
+  L.push("| --- | --- | --- | --- | --- |");
+  /* 대표 폭은 「경계값」이 아니라 「실제로 많이 쓰는 폭」으로 적는다.
+     720을 그대로 쓰면 카드가 338px로 나오는데, 그건 태블릿 세로에 가깝고
+     손님이 떠올리는 휴대폰이 아니다. 375는 아이폰 기본 폭이다. */
+  L.push(`| 1440px 이상 (노트북) | 24px | ${GRID_GAP.x}px | ${c1}칸 | ${cardWidth(c1, 1440)}px |`);
+  L.push(`| 1024px (태블릿 가로) | 24px | ${GRID_GAP.x}px | ${c2}칸 | ${cardWidth(c2, 1024)}px |`);
+  L.push(`| 375px (휴대폰) | 16px | ${GRID_GAP.xNarrow}px | ${c3}칸 | ${cardWidth(c3, 375)}px |`);
+  L.push("");
+  if (th.aspect) {
+    L.push(`카드 사진은 **${th.ratio}**입니다. 위 폭에 맞추면 사진 크기는 이렇게 됩니다.`);
+    L.push("");
+    const [rw, rh] = th.aspect.split("/").map((x) => Number(x.trim()));
+    const 줄 = ([c, vw]: [number, number]) => {
+      const w = cardWidth(c, vw);
+      return `${w}×${Math.round((w * rh) / rw)}`;
+    };
+    L.push(`- 노트북 ${줄([c1, 1440])} · 태블릿 ${줄([c2, 1024])} · 휴대폰 ${줄([c3, 375])}`);
+    L.push("");
+    L.push("> 이미지를 준비하실 때는 가장 큰 값의 **2배**로 만드세요(고해상도 화면 대비).");
+    L.push("");
+  }
+
+  L.push("## 그대로 붙여 넣는 CSS");
+  L.push("");
+  L.push("아래 두 덩이를 **그대로** 쓰세요. 간격·칸 수·비율을 손으로 다시 적지 마세요 — 자리마다 값이 갈립니다.");
+  L.push("");
+  L.push(`**① 공통 격자** (어느 뼈대를 골라도 같습니다)`);
+  L.push("");
+  L.push("```css");
+  L.push(gridBaseCss());
+  L.push("```");
+  L.push("");
+  L.push(`**② ${st.label} 뼈대**`);
+  L.push("");
+  L.push("```css");
+  L.push(st.css);
+  L.push("```");
+  L.push("");
+  L.push(`**③ ${th.label}**`);
+  L.push("");
+  L.push("```css");
+  L.push(th.css);
+  L.push("```");
   L.push("");
   L.push("### 카드 모양을 바꾸고 싶다면");
   L.push("");

@@ -23,6 +23,60 @@ export const CONTENT_BG = "#F0EFEB";
  * 헤더 안쪽·본문·푸터 안쪽·고정 바가 모두 그 값을 참조하게 한다. */
 export const CONTENT_WIDTH = { max: "1440px", padX: "24px" } as const;
 
+/**
+ * 화면이 줄어드는 지점 — 딱 두 곳.
+ *
+ * 지금까지 이 값을 아무 데도 안 적어 뒀더니, 같은 스펙팩으로 만든 세 벌이
+ * 각자 다른 값을 지어냈다(실측 2026-08-08):
+ *   오퍼스 1024·860·720 / 소넷 980·900·720·640·560 / 페이블 1100·1024·720·560
+ * 손님이 뼈대를 바꿔 끼울 때마다 줄어드는 지점이 달라지면 같은 사이트로 안 보인다.
+ *
+ * 두 곳만 두는 이유: 여기서 더 잘게 나눠도 사람 눈에는 안 보이고,
+ * 대신 만드는 쪽이 지킬 곳만 늘어난다. 1024는 태블릿 가로, 720은 세로다.
+ */
+export const BREAKPOINTS = {
+  /** 이 아래로는 칸이 한 번 줄어든다 (태블릿) */
+  mid: 1024,
+  /** 이 아래로는 좌우 여백이 16px로 줄고 칸이 한 번 더 줄어든다 (휴대폰) */
+  narrow: 720,
+  /** 휴대폰에서의 좌우 여백 — 24는 좁은 화면에서 본문을 너무 갉아먹는다 */
+  padXNarrow: "16px",
+} as const;
+
+/**
+ * 칸과 칸 사이. 좌우와 위아래가 다르다 —
+ * 카드가 줄바꿈될 때 위아래가 좌우와 같으면 줄이 안 갈려 보인다(2026-08-05).
+ */
+export const GRID_GAP = { x: 16, y: 28, xNarrow: 12 } as const;
+
+/**
+ * 몇 열로 놓는가 — 뼈대(structure)마다, 화면 폭마다.
+ *
+ * [넓은 화면, 1024 아래, 720 아래] 순서다.
+ * 이 표가 없어서 지금까지 "카드 그리드 3~4열"처럼 글로만 적혀 있었고,
+ * 그래서 만드는 쪽이 매번 다르게 잡았다.
+ */
+export const STRUCTURE_COLS: Record<StructureKey, [number, number, number]> = {
+  single: [1, 1, 1],
+  multi: [3, 2, 1],
+  grid: [4, 3, 2],
+  bento: [4, 2, 1], // 큰 칸이 2칸을 먹으므로 좁아지면 빨리 무너뜨린다
+  sidebar: [3, 2, 1], // 본문 쪽 칸 수. 사이드바는 720 아래에서 위로 접힌다
+  fullscreen: [1, 1, 1],
+};
+
+/** 화면 폭에서 좌우 여백을 뺀 «쓸 수 있는 폭» — 칸 폭 계산의 기준. */
+function 안쪽폭(vw: number): number {
+  const pad = vw <= BREAKPOINTS.narrow ? 16 : 24;
+  return Math.min(vw, 1440) - pad * 2;
+}
+
+/** N열일 때 카드 한 장의 폭(px). 문서에 실제 숫자를 적기 위한 것. */
+export function cardWidth(cols: number, vw = 1440): number {
+  const gap = vw <= BREAKPOINTS.narrow ? GRID_GAP.xNarrow : GRID_GAP.x;
+  return Math.floor((안쪽폭(vw) - gap * (cols - 1)) / cols);
+}
+
 export type DesignKey = "navy" | "mono" | "pastel" | "retro" | "forest" | "coral";
 
 /**
@@ -293,14 +347,103 @@ export type LayoutKey =
    넣어 표가 짜부라진 적이 있다(2026-08-05). 이름을 붙여 둔다. */
 export type StructureKey = "single" | "multi" | "grid" | "bento" | "sidebar" | "fullscreen";
 
-export const STRUCTURES: { key: StructureKey; label: string; desc: string }[] = [
-  { key: "single", label: "한 단", desc: "화면 가운데 한 줄기로만 쌓는다. 위에서 아래로 읽힌다." },
-  { key: "multi", label: "여러 단", desc: "화면을 세로로 2~3칸 갈라 나란히 놓는다." },
-  { key: "grid", label: "균일 그리드", desc: "같은 크기 칸을 격자로 채운다." },
-  { key: "bento", label: "벤토 그리드", desc: "크기가 다른 칸을 섞어 중요한 것을 크게 둔다." },
-  { key: "sidebar", label: "사이드바 + 본문", desc: "한쪽에 고정 영역, 나머지에 본문." },
-  { key: "fullscreen", label: "풀스크린", desc: "화면 전체를 사진·영상 한 장으로 채운다." },
+export const STRUCTURES: {
+  key: StructureKey;
+  label: string;
+  desc: string;
+  /** 이 뼈대만의 CSS. 공용 격자(gridBaseCss)에 이어 붙인다.
+   *  글로 적으면 안 지켜지고 코드로 주면 지켜진다 — 격자 간격·카드 상자에서 겪은 그대로다. */
+  css: string;
+}[] = [
+  {
+    key: "single",
+    label: "한 단",
+    desc: "화면 가운데 한 줄기로만 쌓는다. 위에서 아래로 읽힌다.",
+    css: `/* 한 단 — 읽는 폭을 좁혀야 글이 눈에 들어온다 */
+.wrap > section { max-width: 760px; margin-inline: auto; }
+.cards { grid-template-columns: 1fr; }`,
+  },
+  {
+    key: "multi",
+    label: "여러 단",
+    desc: "화면을 세로로 2~3칸 갈라 나란히 놓는다.",
+    css: `.cards { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 1024px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px)  { .cards { grid-template-columns: 1fr; } }`,
+  },
+  {
+    key: "grid",
+    label: "균일 그리드",
+    desc: "같은 크기 칸을 격자로 채운다.",
+    css: `.cards { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 1024px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 720px)  { .cards { grid-template-columns: repeat(2, 1fr); } }`,
+  },
+  {
+    key: "bento",
+    label: "벤토 그리드",
+    desc: "크기가 다른 칸을 섞어 중요한 것을 크게 둔다.",
+    css: `.cards { grid-template-columns: repeat(4, 1fr); grid-auto-flow: dense; }
+/* 크게 둘 칸에만 붙인다. 한 화면에 두 개까지 — 셋을 넘으면 「큰 것」이 없어진다. */
+.card.wide { grid-column: span 2; }
+.card.tall { grid-row: span 2; }
+@media (max-width: 1024px) {
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .card.tall { grid-row: auto; }        /* 2열에서 세로로 겹치면 빈칸이 생긴다 */
+}
+@media (max-width: 720px) {
+  .cards { grid-template-columns: 1fr; }
+  .card.wide { grid-column: auto; }
+}`,
+  },
+  {
+    key: "sidebar",
+    label: "사이드바 + 본문",
+    desc: "한쪽에 고정 영역, 나머지에 본문.",
+    css: `/* 사이드바는 폭을 고정한다 — 비율(fr)로 두면 화면이 넓어질수록 같이 넓어져 빈다 */
+.layout { display: grid; grid-template-columns: var(--side-w) minmax(0, 1fr); gap: var(--side-gap); }
+.side { position: sticky; top: 72px; align-self: start; }
+.cards { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 1024px) {
+  :root { --side-w: 220px; --side-gap: 24px; }
+  .cards  { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; }   /* 사이드바가 본문 위로 접힌다 */
+  .side   { position: static; }
+  .cards  { grid-template-columns: 1fr; }
+}`,
+  },
+  {
+    key: "fullscreen",
+    label: "풀스크린",
+    desc: "화면 전체를 사진·영상 한 장으로 채운다.",
+    css: `/* 100vh 를 쓰지 않는다 — 휴대폰 주소창 때문에 화면이 잘린다 */
+.hero-full { min-height: 100svh; display: grid; place-items: center; position: relative; }
+.hero-full > .bg { position: absolute; inset: 0; object-fit: cover; width: 100%; height: 100%; }
+/* 사진 위에 글자를 얹으므로 어둠막이 필수다. 가장 밝은 사진이 와도 4.5:1을 넘긴다. */
+.hero-full::after { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.42) 45%, rgba(0,0,0,.15) 100%); }
+.hero-full > .copy { position: relative; z-index: 1; color: #fff; text-align: center; max-width: 720px; }`,
+  },
 ];
+
+/** 여섯 뼈대가 모두 딛고 서는 격자. 뼈대별 CSS 앞에 이것이 먼저 온다. */
+export const gridBaseCss = (): string => `:root{
+  --wrap: ${CONTENT_WIDTH.max};      /* 콘텐츠 폭 — 헤더·본문·푸터·고정바가 모두 이 값을 쓴다 */
+  --pad-x: ${CONTENT_WIDTH.padX};    /* 좌우 여백 */
+  --card-gap:   ${GRID_GAP.x}px;     /* 카드와 카드 사이 — 좌우 */
+  --card-gap-y: ${GRID_GAP.y}px;     /* 카드 줄과 줄 사이 — 위아래 */
+  --side-w:     260px;               /* 사이드바 폭 (사이드바 뼈대에서만) */
+  --side-gap:   32px;                /* 사이드바와 본문 사이 */
+  --row-gap:    14px;                /* 가로 행 카드 안: 썸네일과 글자 사이 */
+}
+@media (max-width: ${BREAKPOINTS.narrow}px){
+  :root{ --pad-x: ${BREAKPOINTS.padXNarrow}; --card-gap: ${GRID_GAP.xNarrow}px; }
+}
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--pad-x); }
+.cards{ display: grid; column-gap: var(--card-gap); row-gap: var(--card-gap-y); }
+/* 간격은 반드시 이 변수로 쓴다. gap:16px 처럼 숫자를 직접 적으면 자리마다 값이 갈린다. */`;
 
 /* 썸네일(카드) 모양.
    골격만 정하고 카드 모양을 안 정했더니, 어느 레이아웃을 골라도 카드가 똑같이
@@ -312,51 +455,95 @@ export const THUMBS: {
   label: string;
   /** 이미지 비율 (가로:세로) */
   ratio: string;
+  /** CSS aspect-ratio 값. 비율을 글로만 적으면 flex가 잡아당겨 타원이 된다 —
+   *  실제로 그 사고가 나서 「만든 뒤 눈으로 확인하라」는 규칙까지 적었는데,
+   *  눈으로 확인하라는 규칙은 지켜지지 않는다. 값으로 박는다. */
+  aspect: string | null;
   /** 카드 안에서 무엇이 어디에 놓이나 */
   shape: string;
   fits: string;
+  /** 이 카드의 CSS. 사진 자리 비율과 글자 자리를 함께 정한다. */
+  css: string;
 }[] = [
   {
     key: "square",
     label: "정사각 카드",
     ratio: "1:1",
+    aspect: "1 / 1",
     shape: "사진이 카드 위쪽을 정사각으로 채우고, 아래에 제목 → 보조정보 → 가격.",
     fits: "상품·공구처럼 물건 자체를 보여줄 때",
+    css: `.card { background: none; border: 0; box-shadow: none; display: block; }
+.card .body { padding: 16px 0 0; }
+.card .thumb { aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden; position: relative; }
+.card .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }`,
   },
   {
     key: "wide",
     label: "와이드 카드",
     ratio: "16:9",
+    aspect: "16 / 9",
     shape: "가로로 넓은 사진 아래 제목 두 줄까지. 재생 시간·배지는 사진 위 우하단에.",
     fits: "강의·영상처럼 화면을 담는 것",
+    css: `.card { background: none; border: 0; box-shadow: none; display: block; }
+.card .body { padding: 16px 0 0; }
+.card .thumb { aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; position: relative; }
+.card .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* 재생 시간·배지는 사진 안 우하단 */
+.card .thumb .badge { position: absolute; right: 8px; bottom: 8px; }`,
   },
   {
     key: "tall",
     label: "세로 카드",
     ratio: "3:4",
+    aspect: "3 / 4",
     shape: "세로로 긴 사진에 제목을 아래 얹는다. 한 줄에 적게 넣는다.",
     fits: "패션·인테리어처럼 분위기를 파는 것",
+    css: `.card { background: none; border: 0; box-shadow: none; display: block; }
+.card .body { padding: 16px 0 0; }
+.card .thumb { aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; }
+.card .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }`,
   },
   {
     key: "overlay",
     label: "사진 위 겹침",
     ratio: "4:3",
+    aspect: "4 / 3",
     shape: "사진 위에 어두운 그라데이션을 깔고 제목·태그를 그 위에 얹는다. 카드 밖에 글자가 없다.",
     fits: "여행지·매장처럼 사진 한 장으로 설명되는 것",
+    css: `.card { background: none; border: 0; box-shadow: none; display: block; }
+.card .thumb { aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; position: relative; }
+.card .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* 글자가 사진 위에 놓이므로 어둠막이 없으면 밝은 사진에서 안 읽힌다 */
+.card .thumb::after { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.45) 38%, rgba(0,0,0,0) 72%); }
+.card .body { position: absolute; left: 14px; right: 14px; bottom: 12px; padding: 0; color: #fff; z-index: 1; }`,
   },
   {
     key: "row",
     label: "가로 행",
     ratio: "1:1 (왼쪽 고정)",
+    aspect: "1 / 1",
     shape: "왼쪽에 작은 정사각 썸네일, 오른쪽에 제목·정보, 맨 끝에 액션 버튼.",
     fits: "비교하며 훑는 목록",
+    css: `.card.row { background: none; border: 0; box-shadow: none;
+  display: flex; align-items: center; gap: var(--row-gap); padding: 12px 0; }
+/* 썸네일은 폭을 고정한다 — flex 가 잡아당기면 정사각이 깨진다 */
+.card.row .thumb { flex: none; width: 96px; aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden; }
+.card.row .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card.row .body { flex: 1; min-width: 0; padding: 0; }
+@media (max-width: 720px) { .card.row .thumb { width: 72px; } }`,
   },
   {
     key: "text",
     label: "사진 없는 카드",
     ratio: "없음",
+    aspect: null,
     shape: "사진을 쓰지 않는다. 제목·숫자·배지만으로 위계를 만든다. 좌측에 색 띠 한 줄.",
     fits: "표·대시보드처럼 숫자가 주인공인 화면",
+    css: `/* 사진이 없으므로 왼쪽 색 띠가 카드의 경계를 대신한다 */
+.card.text { background: none; border: 0; box-shadow: none;
+  border-left: 3px solid var(--primary); padding: 4px 0 4px 14px; }
+.card.text .num { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }`,
   },
 ];
 

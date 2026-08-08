@@ -93,6 +93,42 @@
       "port": 4192
     },
     {
+      "name": "모델비교",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "4198",
+        "C:/Users/glim0/AppData/Local/Temp/cc-model-test"
+      ],
+      "port": 4198
+    },
+    {
+      "name": "비교-페이블",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "4196",
+        "C:/Users/glim0/AppData/Local/Temp/cc-model-test/fable/완성화면"
+      ],
+      "port": 4196
+    },
+    {
+      "name": "비교-소넷",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "4197",
+        "C:/Users/glim0/AppData/Local/Temp/cc-model-test/sonnet/완성화면"
+      ],
+      "port": 4197
+    },
+    {
       "name": "가이드-A",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
