@@ -9,7 +9,7 @@
  *
  * 글자로 재는 것 (빠르다)
  *   1. 간격에 날숫자를 썼나            gap:20px 처럼
- *   2. 정해준 값과 다른 값을 넣었나     --btn-gap 이 10px 이 아닌 8px
+ *   2. 정해준 값과 다른 값을 넣었나     --card-pad 가 24px 이 아닌 다른 값
  *   3. 사진 자리에 비율이 없나          .thumb 에 aspect-ratio 없음 → 늘어나 타원이 된다
  *   4. 카드 구조가 맞나                .card 안에 .thumb/.body 가 없음
  *   5. 한국어 줄바꿈 규칙이 있나        word-break:keep-all 없으면 어절이 잘린다
@@ -107,9 +107,9 @@ const 짧게 = (p: string) => p.replace(SITE, "").replace(/^[\\/]/, "");
 const 정해진값: Record<string, string> = {
   "--card-gap": `${GRID_GAP.x}px`,
   "--card-gap-y": `${GRID_GAP.y}px`,
-  "--card-pad": "16px",
+  "--card-pad": "24px",
   "--row-h": "52px",
-  "--btn-gap": "10px",
+  "--btn-gap": "8px",
 };
 for (const f of css들) {
   const 글 = readFileSync(f, "utf8");

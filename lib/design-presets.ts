@@ -462,6 +462,10 @@ export const STRUCTURES: {
  *   - 주석 안에 백틱을 쓰면 문자열이 거기서 끊긴다. 한 번 겪었다.
  *
  * 2026-08-08 에 늘어난 것들과 그 까닭 (손님 문서에는 안 나가는 기록)
+ *   --card-pad 24 · --btn-gap 8   처음엔 16·10 으로 적었는데, 그건 내가 견본을 만들며
+ *                                 지어낸 값이었다. 완성화면 일곱 칸을 재 보니 전부 24·8 로
+ *                                 만들어져 있었다. 일곱 번 만들어 정착한 값이 내가 한 번
+ *                                 지어낸 값보다 근거가 세다. 그래서 가이드를 옮겼다.
  *   --card-pad·--row-h·--btn-gap  sidebar 뼈대로 실물 다섯 장을 만들다가, 이 셋이 없어서
  *                                 내가 16·52·10 을 지어냈다. 반응형 기준 px 이 없어서
  *                                 모델 셋이 각자 숫자를 만든 것과 같은 일이다.
@@ -482,9 +486,9 @@ export const gridBaseCss = (): string => `:root{
   --side-gap:   32px;                /* 사이드바와 본문 사이 */
   --row-gap:    14px;                /* 가로 행 카드 안: 썸네일과 글자 사이 */
 
-  --card-pad:   16px;                /* 카드 안쪽 여백 */
+  --card-pad:   24px;                /* 카드 안쪽 여백 */
   --row-h:      52px;                /* 표 한 줄 높이 — 안 정하면 줄마다 들쭉날쭉해진다 */
-  --btn-gap:    10px;                /* 나란히 놓은 버튼 사이 */
+  --btn-gap:    8px;                 /* 나란히 놓은 버튼 사이 */
 }
 @media (max-width: ${BREAKPOINTS.narrow}px){
   :root{ --pad-x: ${BREAKPOINTS.padXNarrow}; --card-gap: ${GRID_GAP.xNarrow}px; }
