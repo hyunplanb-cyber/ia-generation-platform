@@ -667,16 +667,16 @@ const layoutMd = (l: (typeof LAYOUTS)[number], no: string): string => {
   /* 대표 폭은 「경계값」이 아니라 「실제로 많이 쓰는 폭」으로 적는다.
      720을 그대로 쓰면 카드가 338px로 나오는데, 그건 태블릿 세로에 가깝고
      손님이 떠올리는 휴대폰이 아니다. 375는 아이폰 기본 폭이다. */
-  L.push(`| 1440px 이상 (노트북) | 24px | ${GRID_GAP.x}px | ${c1}칸 | ${cardWidth(c1, 1440)}px |`);
-  L.push(`| 1024px (태블릿 가로) | 24px | ${GRID_GAP.x}px | ${c2}칸 | ${cardWidth(c2, 1024)}px |`);
-  L.push(`| 375px (휴대폰) | 16px | ${GRID_GAP.xNarrow}px | ${c3}칸 | ${cardWidth(c3, 375)}px |`);
+  L.push(`| 1440px 이상 (노트북) | 24px | ${GRID_GAP.x}px | ${c1}칸 | ${cardWidth(c1, 1440, l.structure)}px |`);
+  L.push(`| 1024px (태블릿 가로) | 24px | ${GRID_GAP.x}px | ${c2}칸 | ${cardWidth(c2, 1024, l.structure)}px |`);
+  L.push(`| 375px (휴대폰) | 16px | ${GRID_GAP.xNarrow}px | ${c3}칸 | ${cardWidth(c3, 375, l.structure)}px |`);
   L.push("");
   if (th.aspect) {
     L.push(`카드 사진은 **${th.ratio}**입니다. 위 폭에 맞추면 사진 크기는 이렇게 됩니다.`);
     L.push("");
     const [rw, rh] = th.aspect.split("/").map((x) => Number(x.trim()));
     const 줄 = ([c, vw]: [number, number]) => {
-      const w = cardWidth(c, vw);
+      const w = cardWidth(c, vw, l.structure);
       return `${w}×${Math.round((w * rh) / rw)}`;
     };
     L.push(`- 노트북 ${줄([c1, 1440])} · 태블릿 ${줄([c2, 1024])} · 휴대폰 ${줄([c3, 375])}`);

@@ -71,10 +71,32 @@ function 안쪽폭(vw: number): number {
   return Math.min(vw, 1440) - pad * 2;
 }
 
-/** N열일 때 카드 한 장의 폭(px). 문서에 실제 숫자를 적기 위한 것. */
-export function cardWidth(cols: number, vw = 1440): number {
+/** 뼈대가 본문 폭을 더 좁히는 경우 — 카드가 놓이는 실제 폭.
+ *
+ * 2026-08-08 에 찾았다. 카드 폭을 쓸 수 있는 폭 전체로 계산하고 있었는데,
+ * 뼈대 둘은 본문을 더 좁힌다.
+ *   single  — `.wrap > section { max-width: 760px }` 로 읽는 폭을 가둔다
+ *   sidebar — 왼쪽에 --side-w(260) + --side-gap(32) 을 떼어 준다
+ * 그래서 가이드에 「카드 1392px」(여백중심형) · 「453px」(사이드바 쓰는 셋)이
+ * 적혀 나갔다. 실제로는 760px 과 356px 이다. 그대로 만들면 화면이 안 맞는다.
+ */
+function 본문폭(vw: number, structure?: StructureKey): number {
+  const 폭 = 안쪽폭(vw);
+  if (structure === "single") return Math.min(폭, 760);
+  if (structure === "sidebar") {
+    if (vw <= BREAKPOINTS.narrow) return 폭;          // 사이드바가 위로 접힌다
+    const side = vw <= BREAKPOINTS.mid ? 220 : 260;   // 뼈대 CSS 의 --side-w
+    const gap = vw <= BREAKPOINTS.mid ? 24 : 32;      // 뼈대 CSS 의 --side-gap
+    return 폭 - side - gap;
+  }
+  return 폭;
+}
+
+/** N열일 때 카드 한 장의 폭(px). 문서에 실제 숫자를 적기 위한 것.
+ *  뼈대를 넘기지 않으면 본문을 안 좁히는 뼈대로 친다. */
+export function cardWidth(cols: number, vw = 1440, structure?: StructureKey): number {
   const gap = vw <= BREAKPOINTS.narrow ? GRID_GAP.xNarrow : GRID_GAP.x;
-  return Math.floor((안쪽폭(vw) - gap * (cols - 1)) / cols);
+  return Math.floor((본문폭(vw, structure) - gap * (cols - 1)) / cols);
 }
 
 export type DesignKey = "navy" | "mono" | "pastel" | "retro" | "forest" | "coral";
@@ -384,16 +406,21 @@ export const STRUCTURES: {
     label: "벤토 그리드",
     desc: "크기가 다른 칸을 섞어 중요한 것을 크게 둔다.",
     css: `.cards { grid-template-columns: repeat(4, 1fr); grid-auto-flow: dense; }
+/* 이름이 span-x / span-y 인 이유 — 원래 .card.wide / .card.tall 이었는데
+   wide 와 tall 은 카드 「종류」 이름이기도 하다(16:9 와이드 카드, 3:4 세로 카드).
+   벤토에 와이드 카드를 쓰는 조합이 생기면 두 규칙이 같은 선택자에 걸려 터진다.
+   지금은 벤토가 정사각 카드를 써서 사고가 안 났을 뿐이다(2026-08-08 발견).
+   칸을 몇 개 먹느냐는 카드 모양과 다른 축이므로 이름을 갈랐다. */
+.card.span-x { grid-column: span 2; }   /* 가로로 두 칸 */
+.card.span-y { grid-row: span 2; }      /* 세로로 두 칸 */
 /* 크게 둘 칸에만 붙인다. 한 화면에 두 개까지 — 셋을 넘으면 「큰 것」이 없어진다. */
-.card.wide { grid-column: span 2; }
-.card.tall { grid-row: span 2; }
 @media (max-width: 1024px) {
   .cards { grid-template-columns: repeat(2, 1fr); }
-  .card.tall { grid-row: auto; }        /* 2열에서 세로로 겹치면 빈칸이 생긴다 */
+  .card.span-y { grid-row: auto; }      /* 2열에서 세로로 겹치면 빈칸이 생긴다 */
 }
 @media (max-width: 720px) {
   .cards { grid-template-columns: 1fr; }
-  .card.wide { grid-column: auto; }
+  .card.span-x { grid-column: auto; }
 }`,
   },
   {
@@ -428,7 +455,24 @@ export const STRUCTURES: {
   },
 ];
 
-/** 여섯 뼈대가 모두 딛고 서는 격자. 뼈대별 CSS 앞에 이것이 먼저 온다. */
+/** 여섯 뼈대가 모두 딛고 서는 격자. 뼈대별 CSS 앞에 이것이 먼저 온다.
+ *
+ * ⚠ 이 함수는 통째로 템플릿 문자열이고, **손님에게 그대로 나간다**(스펙팩·무료샘플).
+ *   - 안쪽 주석은 손님이 읽는 글이다. 우리 작업 일지를 적지 않는다. 그건 여기 바깥에 적는다.
+ *   - 주석 안에 백틱을 쓰면 문자열이 거기서 끊긴다. 한 번 겪었다.
+ *
+ * 2026-08-08 에 늘어난 것들과 그 까닭 (손님 문서에는 안 나가는 기록)
+ *   --card-pad·--row-h·--btn-gap  sidebar 뼈대로 실물 다섯 장을 만들다가, 이 셋이 없어서
+ *                                 내가 16·52·10 을 지어냈다. 반응형 기준 px 이 없어서
+ *                                 모델 셋이 각자 숫자를 만든 것과 같은 일이다.
+ *   .stats                        지표 카드가 넷인데 뼈대는 .cards 를 3칸으로 고정한다.
+ *                                 인라인으로 덮어써야 했다 — 즉 뼈대를 어겨야 했다.
+ *   .mosaic                       showcase.hero 는 모자이크라는데 뼈대에 규칙이 없었다.
+ *                                 큰 칸 사진이 646px, 두 줄 높이가 628px 이라 18px 넘쳐
+ *                                 제목이 밀려나는 것도 같이 잡았다.
+ *   .detail-img                   카드 비율 4:3 을 본문 폭에 쓰면 사진 세로가 1044px 이 되어
+ *                                 노트북 화면을 통째로 덮었다.
+ */
 export const gridBaseCss = (): string => `:root{
   --wrap: ${CONTENT_WIDTH.max};      /* 콘텐츠 폭 — 헤더·본문·푸터·고정바가 모두 이 값을 쓴다 */
   --pad-x: ${CONTENT_WIDTH.padX};    /* 좌우 여백 */
@@ -437,12 +481,50 @@ export const gridBaseCss = (): string => `:root{
   --side-w:     260px;               /* 사이드바 폭 (사이드바 뼈대에서만) */
   --side-gap:   32px;                /* 사이드바와 본문 사이 */
   --row-gap:    14px;                /* 가로 행 카드 안: 썸네일과 글자 사이 */
+
+  --card-pad:   16px;                /* 카드 안쪽 여백 */
+  --row-h:      52px;                /* 표 한 줄 높이 — 안 정하면 줄마다 들쭉날쭉해진다 */
+  --btn-gap:    10px;                /* 나란히 놓은 버튼 사이 */
 }
 @media (max-width: ${BREAKPOINTS.narrow}px){
   :root{ --pad-x: ${BREAKPOINTS.padXNarrow}; --card-gap: ${GRID_GAP.xNarrow}px; }
 }
 .wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--pad-x); }
 .cards{ display: grid; column-gap: var(--card-gap); row-gap: var(--card-gap-y); }
+
+/* 지표 줄 — 화면 맨 위에 숫자 카드를 나란히 놓는 자리.
+   카드 격자(.cards)와 다른 물건이므로 .cards 를 쓰지 않는다. 지표는 넷이 기본이다. */
+.stats{ display: grid; grid-template-columns: repeat(4, 1fr);
+        column-gap: var(--card-gap); row-gap: var(--card-gap-y); }
+@media (max-width: ${BREAKPOINTS.mid}px){ .stats{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: ${BREAKPOINTS.narrow}px){ .stats{ grid-template-columns: 1fr; } }
+
+/* 모자이크 — 홈 첫 화면에 「큰 1장 + 작은 4장」을 놓는 자리.
+   첫 장이 2칸×2줄, 나머지 넷이 옆을 채운다.
+   어느 것을 크게 할지 class 로 정하지 않는다 — 맨 앞에 둔 것이 큰 것이다. */
+.mosaic{ display: grid; grid-template-columns: repeat(4, 1fr);
+         column-gap: var(--card-gap); row-gap: var(--card-gap-y); }
+.mosaic > :first-child{ grid-column: span 2; grid-row: span 2;
+                        display: flex; flex-direction: column; }
+/* 큰 칸의 사진은 카드 비율을 따르지 않는다 — 두 줄 높이와 안 맞아 제목이 밀려난다.
+   큰 칸에서는 사진이 남는 자리를 채운다. */
+.mosaic > :first-child > .thumb{ aspect-ratio: auto; flex: 1; min-height: 0; }
+@media (max-width: ${BREAKPOINTS.mid}px){
+  .mosaic{ grid-template-columns: repeat(2, 1fr); }
+  .mosaic > :first-child{ grid-row: auto; }   /* 2열에서 세로로 겹치면 빈칸이 생긴다 */
+}
+@media (max-width: ${BREAKPOINTS.narrow}px){
+  .mosaic{ grid-template-columns: 1fr; }
+  .mosaic > :first-child{ grid-column: auto; }
+}
+
+/* 상세 화면의 대표 사진 — 카드 비율을 그대로 쓰지 않는다.
+   4:3 을 본문 폭 1392px 에 적용하면 세로가 1044px 이 되어 노트북 화면을 통째로 덮는다.
+   가로로 눕히고(16:9) 세로를 420px 로 막는다 — 사진 아래 내용이 같이 보이는 선이다. */
+.detail-img{ aspect-ratio: 16 / 9; max-height: 420px; width: 100%;
+             border-radius: 12px; overflow: hidden; }
+.detail-img > img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+
 /* 간격은 반드시 이 변수로 쓴다. gap:16px 처럼 숫자를 직접 적으면 자리마다 값이 갈린다. */`;
 
 /* 썸네일(카드) 모양.
@@ -464,6 +546,13 @@ export const THUMBS: {
   fits: string;
   /** 이 카드의 CSS. 사진 자리 비율과 글자 자리를 함께 정한다. */
   css: string;
+  /** 이 CSS 가 요구하는 HTML 구조.
+   *
+   *  CSS 만 주면 `.thumb` · `.body` 같은 이름을 만드는 쪽이 지어낸다.
+   *  실제로 그랬다 — 견본을 만들면서 overlay 카드의 글자를 사진 「아래」에 뒀고,
+   *  겹침이 아닌데도 아무 경고 없이 그럴듯하게 나왔다(2026-08-08).
+   *  틀린 줄 모르는 게 제일 위험하므로, 구조를 값으로 준다. */
+  html: string;
 }[] = [
   {
     key: "square",
@@ -476,6 +565,14 @@ export const THUMBS: {
 .card .body { padding: 16px 0 0; }
 .card .thumb { aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden; position: relative; }
 .card .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }`,
+    html: `<article class="card square">
+  <div class="thumb"><img src="사진.jpg" alt=""></div>
+  <div class="body">
+    <h3>제목</h3>
+    <p class="meta">보조정보</p>
+    <p class="price">29,000원</p>
+  </div>
+</article>`,
   },
   {
     key: "wide",
@@ -490,6 +587,13 @@ export const THUMBS: {
 .card .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }
 /* 재생 시간·배지는 사진 안 우하단 */
 .card .thumb .badge { position: absolute; right: 8px; bottom: 8px; }`,
+    html: `<article class="card wide">
+  <div class="thumb">
+    <img src="사진.jpg" alt="">
+    <span class="badge">12:40</span>   <!-- 배지는 반드시 .thumb 안 -->
+  </div>
+  <div class="body"><h3>제목</h3><p class="meta">보조정보</p></div>
+</article>`,
   },
   {
     key: "tall",
@@ -502,6 +606,10 @@ export const THUMBS: {
 .card .body { padding: 16px 0 0; }
 .card .thumb { aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; }
 .card .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }`,
+    html: `<article class="card tall">
+  <div class="thumb"><img src="사진.jpg" alt=""></div>
+  <div class="body"><h3>제목</h3><p class="meta">보조정보</p></div>
+</article>`,
   },
   {
     key: "overlay",
@@ -517,6 +625,14 @@ export const THUMBS: {
 .card .thumb::after { content: ""; position: absolute; inset: 0;
   background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.45) 38%, rgba(0,0,0,0) 72%); }
 .card .body { position: absolute; left: 14px; right: 14px; bottom: 12px; padding: 0; color: #fff; z-index: 1; }`,
+    html: `<article class="card overlay">
+  <div class="thumb">
+    <img src="사진.jpg" alt="">
+    <div class="body">          <!-- .thumb 「안」이다. 밖에 두면 안 겹친다 -->
+      <h3>제목</h3><p class="meta">태그 · 태그</p>
+    </div>
+  </div>
+</article>`,
   },
   {
     key: "row",
@@ -532,6 +648,11 @@ export const THUMBS: {
 .card.row .thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .card.row .body { flex: 1; min-width: 0; padding: 0; }
 @media (max-width: 720px) { .card.row .thumb { width: 72px; } }`,
+    html: `<article class="card row">
+  <div class="thumb"><img src="사진.jpg" alt=""></div>
+  <div class="body"><h3>제목</h3><p class="meta">보조정보</p></div>
+  <button class="btn">예약</button>   <!-- 액션은 맨 끝 -->
+</article>`,
   },
   {
     key: "text",
@@ -544,6 +665,10 @@ export const THUMBS: {
 .card.text { background: none; border: 0; box-shadow: none;
   border-left: 3px solid var(--primary); padding: 4px 0 4px 14px; }
 .card.text .num { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }`,
+    html: `<article class="card text">
+  <p class="lb">오늘 예약</p>
+  <p class="num">14</p>
+</article>`,
   },
 ];
 
@@ -586,7 +711,7 @@ export const LAYOUTS: {
     label: "사진 중심형",
     tagline: "결과물이 곧 상품. 사진을 먼저 보여주고 글은 나중에.",
     hero: "검색바 없이 사진 모자이크(큰 1장 + 작은 4장). 문구는 사진 아래에 겹치지 않게.",
-    list: "매거진형 2열. 큰 이미지 위에 제목·태그를 얹고 설명은 짧게.",
+    list: "3열(1440px에서 카드 453px). 큰 이미지 위에 제목·태그를 얹고 설명은 짧게. 1024px에서 2열, 720px 아래로는 1열.",
     nav: "상단 가로 GNB + 그 아래 카테고리 줄(2단 헤더).",
     detail: "상단 전체 폭 갤러리 → 아래 정보. 액션은 하단 고정 바.",
     structure: "multi",
@@ -610,7 +735,7 @@ export const LAYOUTS: {
     label: "좌우 분할형",
     tagline: "말할 게 분명하다. 왼쪽은 글, 오른쪽은 행동.",
     hero: "좌우 2단. 왼쪽에 큰 제목과 설명, 오른쪽에 폼 또는 대표 이미지.",
-    list: "2열 카드. 카드 안은 사진 없이 글자 위계로만 나눈다.",
+    list: "3열(1440px에서 카드 453px). 카드 안은 사진 없이 글자 위계로만 나눈다. 1024px에서 2열, 720px 아래로는 1열.",
     nav: "상단 가로 GNB. 로고 왼쪽, 액션 버튼 오른쪽 끝.",
     detail: "본문 한 단(최대 폭 760px) + 하단 고정 액션 바.",
     structure: "multi",
@@ -658,7 +783,7 @@ export const LAYOUTS: {
     label: "여백 중심형",
     tagline: "덜 넣는다. 큰 사진 한 장과 넉넉한 빈 자리로 말한다.",
     hero: "가운데 정렬. 짧은 문구 한 줄 위에 여백을 크게 두고, 아래에 큰 사진 딱 한 장.",
-    list: "2열. 카드 테두리와 그림자를 쓰지 않고 여백으로만 나눈다. 한 화면에 4~6개까지만.",
+    list: "1열(본문 폭 760px). 카드 테두리와 그림자를 쓰지 않고 여백으로만 나눈다. 한 화면에 4~6개까지만.",
     nav: "상단 가로 GNB. 메뉴 글자를 작게 하고 자간을 넓힌다. 로고는 가운데.",
     detail: "본문 한 단 가운데 정렬(최대 폭 680px). 구분선 대신 빈 줄로 나눈다.",
     structure: "single",
@@ -991,16 +1116,21 @@ export const COMMON_RULES: string[] = [
   "  말하는 층이고, *얼마나 벌릴지*는 이 눈금이 정합니다. 실제로 그 한 줄 때문에 40px을 쓴 격자가 있었고,",
   "  같은 화면의 다른 격자는 16px이라 두 값이 나란히 놓였습니다.",
   "",
-  "**격자 간격은 변수 두 개로 못 박고, 격자마다 그것만 씁니다.** CSS 맨 위에 이렇게 두세요.",
+  "**간격은 변수로 못 박고, 자리마다 그것만 씁니다.** CSS 맨 위에 이걸 그대로 붙여 넣으세요.",
   "",
   "```css",
-  ":root{",
-  "  --card-gap:   16px;  /* 카드와 카드 사이 — 좌우 */",
-  "  --card-gap-y: 28px;  /* 카드 줄과 줄 사이 — 위아래 */",
-  "}",
-  "/* 카드를 늘어놓는 모든 격자는 이 두 줄만 씁니다 */",
-  ".cards{ display:grid; column-gap:var(--card-gap); row-gap:var(--card-gap-y); }",
+  /* 손으로 다시 적지 않는다.
+     원래 여기에 --card-gap 두 줄만 손으로 적어 뒀는데, gridBaseCss() 에 값을 더 넣어도
+     이쪽은 안 따라와서 무료 샘플만 옛 값을 들고 있었다(2026-08-08).
+     한 군데서 나오게 한다. */
+  gridBaseCss(),
   "```",
+  "",
+  "- **`--card-pad`·`--row-h`·`--btn-gap` 도 꼭 쓰세요.** 카드 안쪽 여백, 표 한 줄 높이,",
+  "  버튼 사이 간격입니다. 이 셋을 안 정해주면 화면마다 다르게 나옵니다 — 저희도 겪었습니다.",
+  "- **`.stats`·`.mosaic`·`.detail-img` 는 카드 격자와 다른 자리입니다.** 지표 숫자 줄,",
+  "  홈의 큰 사진 한 장 + 작은 넷, 상세 화면의 대표 사진. 카드 규칙을 여기 갖다 쓰면",
+  "  사진이 화면을 다 덮습니다.",
   "",
   "- **격자에 `gap: 20px` 처럼 숫자를 직접 쓰지 마세요.** 한 번 쓰는 순간 그 자리만 달라지고,",
   "  나중에 값을 바꿀 때 그 자리만 안 바뀝니다. 실제로 한 사이트에서 좌우가 3·8·16·20·24px",
