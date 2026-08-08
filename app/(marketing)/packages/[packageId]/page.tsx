@@ -250,7 +250,11 @@ export default async function PackageDetailPage({
       // 밝은 강조색은 배경 틴트로만 쓰고 글자는 본문색으로 적는다.
       // (테마마다 swatches[2]의 뜻이 달라서 — 네이비는 본문색, 파스텔은 민트 — 거기서 가져오면 안 된다.)
       accentText: isTooLightForText(accent) ? sum.text : accent,
-      bg: opt.swatches[3] ?? sum.bg,
+      // swatches[3]은 테마마다 주색을 옅게 깐 옛 배경(네이비 #F5F7FA, 코럴 #FFF6F3)이다.
+      // 2026-08-05에 "테마를 바꿀 때마다 화면 색조가 흔들린다"는 이유로 버리고
+      // 배경을 종이색 하나로 고정했는데, 이 미리보기만 옛 값을 그대로 쓰고 있었다.
+      // 손님이 판매 페이지에서 본 배경과 실제로 받는 팩의 배경이 달랐다.
+      bg: sum.bg,
       text: sum.text,
       muted: sum.muted,
       border: sum.border,

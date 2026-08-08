@@ -59,7 +59,7 @@ export const DESIGN_OPTIONS: {
   },
   {
     key: "pastel",
-    title: "소프트 파스텔",
+    title: "일렉트릭 바이올렛",
     desc: "부드럽고 친근한 분위기",
     concept: "부드럽고 친근한 파스텔 톤. 둥근 모서리와 넉넉한 여백으로 편안한 느낌.",
     swatches: ["#5B4FE5", "#FFD54A", "#DFF5EC", "#FAFAFA"],
@@ -139,7 +139,7 @@ const PRESETS: Record<DesignKey, Preset> = {
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#111111",
-      "text-muted(보조)": "#767676",
+      "text-muted(보조)": "#666666",
       "border(구분선)": "#E5E5E5",
     },
     scale: [
@@ -158,7 +158,7 @@ const PRESETS: Record<DesignKey, Preset> = {
   },
   pastel: {
     key: "pastel",
-    name: "소프트 파스텔",
+    name: "일렉트릭 바이올렛",
     tagline: "부드럽고 친근하게. 처음 쓰는 사람도 겁먹지 않게.",
     font: "한 벌만 쓴다. 제목을 과감히 키우고 자간을 좁혀 경쾌하게.",
     colors: {
@@ -167,9 +167,9 @@ const PRESETS: Record<DesignKey, Preset> = {
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#1F2024",
-      "text-muted(보조)": "#6B6F76",
-      "pastel-mint": "#DFF5EC",
-      "pastel-lavender": "#EDE9FE",
+      "text-muted(보조)": "#5F636A",
+      "soft-mint": "#DFF5EC",
+      "soft-lavender": "#EDE9FE",
     },
     scale: [
       ["페이지 제목", "36px / 800"],
@@ -252,7 +252,7 @@ const PRESETS: Record<DesignKey, Preset> = {
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#33221E",
-      "text-muted(보조)": "#8A6F68",
+      "text-muted(보조)": "#6E5450",
       "border(구분선)": "#F6E0D8",
     },
     scale: [
