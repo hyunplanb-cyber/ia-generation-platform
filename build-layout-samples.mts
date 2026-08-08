@@ -82,6 +82,12 @@ h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -.02em; }
 .card { background: var(--surface); border: 1px solid var(--line);
   border-radius: 12px; padding: var(--card-pad); }
 .card .lb { font-size: 13px; color: var(--muted); }
+/* 그냥 네모 상자 — 카드 격자에 놓는 .card 와 다른 물건이다.
+   견본에서 빈 화면·입력폼의 상자에 .card 를 썼더니 검사기가
+   「.thumb 이 없다」고 잡았다. 잡은 게 맞다(2026-08-08). */
+.box { background: var(--surface); border: 1px solid var(--line);
+  border-radius: 12px; padding: var(--card-pad); }
+.box .lb { font-size: 13px; color: var(--muted); }
 table { width: 100%; border-collapse: collapse; background: var(--surface);
   border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
 th, td { text-align: left; padding: 0 14px; height: var(--row-h);
@@ -240,7 +246,7 @@ const 관리자화면: 화면[] = [
         <div class="card text"><div class="lb">결제 예정</div><div class="num" style="font-size:18px">90,000</div></div>
       </div>
       <div style="height:24px"></div>
-      <div class="card">
+      <div class="box">
         <div class="lb" style="margin-bottom:8px">고객 요청</div>
         <p style="margin:0;font-size:14px;line-height:1.7">지난번보다 조금 짧게 부탁드려요. 자연스러운 컬로요.</p>
       </div>
@@ -261,7 +267,7 @@ const 관리자화면: 화면[] = [
     파일: "05_입력폼.html", 제목: "직원 등록", 켠곳: "form",
     본문: `      <h1>직원 등록</h1>
       <p class="sub">입력 칸 간격·라벨 위치는 안 정해주면 매번 다르게 나온다. 여기서 정한다.</p>
-      <div class="card" style="max-width:560px">
+      <div class="box" style="max-width:560px">
         <div class="field"><label>이름</label><input placeholder="정하은"><div class="help">고객에게 보이는 이름입니다.</div></div>
         <div class="field"><label>담당 시술</label><select><option>속눈썹 연장</option><option>젤네일</option></select></div>
         <div class="field"><label>연락처</label><input placeholder="010-0000-0000"></div>
@@ -324,7 +330,7 @@ const 손님화면: 화면[] = [
       <p class="sub">${L.detail}</p>
       <div class="detail-img"><div class="ph"></div></div>
       <div style="height:20px"></div>
-      <div class="card">
+      <div class="box">
         <div class="lb" style="margin-bottom:8px">소개</div>
         <p style="margin:0;font-size:14px;line-height:1.7">경력 12년. 상담 본질 3년.<br>모발 손상도를 먼저 보고 시술 범위를 정하는 편이에요.</p>
       </div>
@@ -345,7 +351,7 @@ const 손님화면: 화면[] = [
     파일: "05_입력폼.html", 제목: "예약하기", 켠곳: "form",
     본문: `      <h1>예약하기</h1>
       <p class="sub">입력 칸 간격·라벨 위치는 안 정해주면 매번 다르게 나온다. 여기서 정한다.</p>
-      <div class="card" style="max-width:560px">
+      <div class="box" style="max-width:560px">
         <div class="field"><label>날짜</label><input placeholder="2026-08-12"></div>
         <div class="field"><label>시술</label><select><option>젤네일</option><option>속눈썹 연장</option></select></div>
         <div class="field"><label>연락처</label><input placeholder="010-0000-0000"><div class="help">예약 확정 문자를 보내드려요.</div></div>
