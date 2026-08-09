@@ -3,13 +3,14 @@ import Link from "next/link";
 import { Download, Package, ShoppingBag } from "lucide-react";
 import { listPurchasedPacks } from "@/application/pack-order";
 import { formatKrw } from "@/lib/packages";
+import { 날짜 } from "@/lib/when";
 import { buttonVariants } from "@/components/ui/button";
 
 export const metadata: Metadata = { title: "내 AI팩" };
 
+// 시간대를 못 박은 한 벌을 쓴다 — 직접 포맷하면 서버(UTC)에서 9시간 밀린다(lib/when.ts).
 function formatDate(d: Date | null): string {
-  if (!d) return "";
-  return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(d);
+  return d ? 날짜(d) : "";
 }
 
 // 산 AI팩을 다시 받는 곳.

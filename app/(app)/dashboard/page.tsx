@@ -24,14 +24,11 @@ import { isDownloadUnlocked, isVerifyDownloadUnlocked } from "@/application/down
 import { downloadCost, CREDIT_COST } from "@/lib/credits";
 import { ProjectDeliverablePreview } from "./project-deliverable-preview";
 import { createDraftProjectAction } from "./actions";
+import { 날짜, 날짜시각 } from "@/lib/when";
 
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(date);
-}
-
-function formatDateTime(date: Date) {
-  return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeStyle: "short" }).format(date);
-}
+// 시간대를 못 박은 한 벌을 쓴다 — 직접 포맷하면 서버(UTC)에서 9시간 밀린다(lib/when.ts).
+const formatDate = 날짜;
+const formatDateTime = 날짜시각;
 
 // 상단 탭 — AI팩 / 사이트 검수
 function DashboardTabs({ active }: { active: "planning" | "verify" }) {

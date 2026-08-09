@@ -7,6 +7,7 @@ import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenari
 import { isVerifyDownloadUnlocked } from "@/application/download";
 import { creditsOpenForMe } from "@/application/billing-gate";
 import { CREDIT_COST, VERIFY_CHUNK, verifyGenCost } from "@/lib/credits";
+import { 날짜시각 } from "@/lib/when";
 import { VerifyPanel } from "./verify-panel";
 
 // 검수는 여러 페이지를 돌며 자동 검사(수십~백여 건) + LLM 시나리오까지 하므로
@@ -31,13 +32,8 @@ function checkQuestionFor(name: string): string {
   return `${n}의 핵심 기능이 정상 동작하나요?`;
 }
 
-function formatDate(d: Date): string {
-  // 서버에서 고정 포맷으로. (예: 2026. 7. 28. 15:04)
-  return new Intl.DateTimeFormat("ko-KR", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(d);
-}
+// 서버에서 고정 «포맷»으로 그렸지만 «시간대»는 안 박아서 9시간 밀렸다(lib/when.ts).
+const formatDate = 날짜시각;
 
 export default async function ProjectVerifyPage({
   params,

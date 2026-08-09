@@ -3,10 +3,8 @@ import { Coins, Info } from "lucide-react";
 import { listCredits, getCreditBalance } from "@/application/credit";
 import { creditsOpenForMe } from "@/application/billing-gate";
 import type { CreditEntry, CreditKind } from "@/domain/credit/credit";
-
-function formatDate(d: Date): string {
-  return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeStyle: "short" }).format(d);
-}
+// 시간대를 못 박은 한 벌을 쓴다 — 직접 포맷하면 서버(UTC)에서 9시간 밀린다(lib/when.ts).
+import { 날짜시각 as formatDate } from "@/lib/when";
 
 const KIND: Record<CreditKind, { label: string; tone: string }> = {
   free: { label: "무료 지급", tone: "bg-success-soft text-success" },
