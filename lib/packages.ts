@@ -765,6 +765,7 @@ export function planContents(plan: PackagePlan): string[] {
     "FLOW 흐름도",
     "AI 빌드 지시서",
     "디자인 규칙 (색·글꼴 3종 · 화면 배치 2종)",
+    "사이트 내놓는 법 안내서 — 배포·도메인·로그인·결제",
   ];
   if (plan.verify) items.push(`검수 시나리오 ${plan.verify.scenarios}개`);
   if (plan.siteScreens) items.push(`완성 화면 ${plan.siteScreens}개 (HTML)`);

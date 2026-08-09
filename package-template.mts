@@ -151,6 +151,11 @@ for (const ind of INDUSTRIES) {
 }
 
 const OUT = `${T}/_판매팩`;
+
+/* 「사이트 내놓는 법」 안내서 — 원본은 한 벌뿐이다(_마케팅/부록_사이트_내놓는_법.html).
+   판매팩에도 들어가고, 손님이 직접 만들어 받는 zip 에도 들어간다.
+   두 곳에 각각 두면 반드시 갈라지므로 여기서 public/ 으로도 한 번 복사한다. */
+const 내놓는법 = `${T}/_마케팅/부록_사이트_내놓는_법.html`;
 // 홈페이지가 산 사람에게 내려줄 자리. 저장소에 함께 커밋되는 유일한 판매 파일이다.
 const SITE_PACKS = "packs";
 
@@ -209,6 +214,7 @@ ${검수} 디자인프리셋/
           가이드_01~03          색·글꼴·모서리 3벌 (.md / .json)
           레이아웃_A~B          화면 뼈대 2벌 (.md / .json)
           프리셋_미리보기.html   3벌 × 2벌 한눈에 비교
+ 09_사이트_내놓는_법.html   배포·도메인·로그인·결제까지 내놓는 법 (브라우저로 열기)
 ${사이트구성}
 ■ 사용법 - 파일 하나, 한 마디면 됩니다
 
@@ -339,6 +345,11 @@ async function pack(p: Product) {
   rmSync(`${outDir}/디자인프리셋`, { recursive: true, force: true });
   for (const f of files) copyFileSync(`${p.src}/${f}`, `${outDir}/${f}`);
 
+  /* 모든 등급에 «인터넷에 올리는 법» 안내를 함께 넣는다(2026-08-10).
+     화면까지 만들어 드려도 «내 컴퓨터에서만 보이는» 데서 멈추시는 분이 많다.
+     팩마다 다시 쓰지 않고 한 벌을 복사한다 — 두 벌로 적으면 반드시 갈라진다. */
+  copyFileSync(내놓는법, `${outDir}/09_사이트_내놓는_법.html`);
+
   const packSite = `${outDir}/완성화면`;
   if (!p.sitePath && existsSync(packSite)) {
     // 원본 자리를 안 정해 둔 칸인데 화면이 들어 있다 — 사람이 직접 넣은 것이다. 센다.
@@ -438,6 +449,15 @@ if (arg && !ALL_PRODUCTS[arg]) {
 const targets: Record<string, Product> = arg ? { [arg]: ALL_PRODUCTS[arg] } : ALL_PRODUCTS;
 
 mkdirSync(OUT, { recursive: true });
+
+/* 손님이 직접 만들어 받는 zip 에도 같은 안내서를 넣는다.
+   브라우저에서 만드는 zip 이라 public/ 에 있어야 가져다 쓸 수 있다.
+   원본은 한 벌(_마케팅) — 여기서 복사해 오므로 갈라지지 않는다. */
+mkdirSync("public/guide", { recursive: true });
+/* ⚠ 파일 이름을 영문으로 둔다. 한글 이름은 주소로 만들 때 인코딩이 어긋나
+   404 가 난다(2026-08-10 에 실제로 났다). 손님이 받는 zip 안에서는
+   다시 한글 이름으로 넣으므로 보이는 이름은 그대로다. */
+copyFileSync(내놓는법, "public/guide/deploy-guide.html");
 console.log("패키징 중...");
 const results = [];
 for (const p of Object.values(targets)) results.push(await pack(p));

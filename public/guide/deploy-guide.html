@@ -1,0 +1,1344 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>만든 사이트를 세상에 내놓는 법 — 카페인컬러</title>
+<meta name="description" content="AI로 화면은 만들었는데, 그다음이 막힐 때. 배포·도메인·로그인·데이터·결제·AI까지 순서대로 따라 하는 안내서.">
+<style>
+/* ─────────────────────────────────────────────
+   카페인컬러 — 레트로모던 · 종이 느낌
+   외부에서 아무것도 불러오지 않는다. 이 파일 하나로 끝난다.
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#EAE8DE; --paper-2:#F4F3EE; --card:#FBF6E9;
+  --ink:#20261C; --ink-soft:#4E4A3B;
+  --orange:#E4762C; --orange-deep:#C25D17;
+  --teal:#1AA48F; --teal-deep:#0E6F60;
+  --line:#D8D4C6;
+
+  --code-bg:#20261C; --code-fg:#F4F3EE; --code-dim:#A9B49C;
+  --shadow:0 1px 0 rgba(32,38,28,.06), 0 8px 24px rgba(32,38,28,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#15180F; --paper-2:#1C2016; --card:#23271B;
+    --ink:#ECE9DE; --ink-soft:#B3AD99;
+    --orange:#F08A48; --orange-deep:#F5A874;
+    --teal:#3ECFB6; --teal-deep:#7FE0CE;
+    --line:#3A3F31;
+    --code-bg:#0D1008; --code-fg:#E8E5D8; --code-dim:#8E9683;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family: Paperlogy, Pretendard, "Noto Sans KR", "맑은 고딕", sans-serif;
+  font-size:17px;
+  line-height:1.85;
+  letter-spacing:-.01em;
+  word-break:keep-all;
+  overflow-wrap:anywhere;
+}
+img{max-width:100%;height:auto}
+
+.wrap{max-width:740px;margin:0 auto;padding:0 20px}
+
+/* ── 표지 ───────────────────────────────── */
+.cover{
+  padding:72px 20px 64px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--paper-2) 0%, transparent 62%);
+}
+.cover .kicker{
+  display:inline-block;
+  font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--teal-deep);
+  border:1px solid var(--teal);
+  border-radius:999px;
+  padding:5px 14px;
+  margin-bottom:26px;
+}
+.cover h1{
+  margin:0 0 18px;
+  font-size:clamp(30px,7.5vw,50px);
+  line-height:1.22;
+  letter-spacing:-.035em;
+  font-weight:800;
+}
+.cover h1 em{font-style:normal;color:var(--orange-deep)}
+.cover .sub{
+  margin:0 auto 30px;
+  max-width:26em;
+  font-size:clamp(15px,3.6vw,19px);
+  color:var(--ink-soft);
+  line-height:1.7;
+}
+.cover .rule{width:64px;height:3px;background:var(--orange);margin:0 auto 26px;border-radius:2px}
+.cover .brand{font-size:14px;letter-spacing:.06em;color:var(--ink-soft)}
+.cover .brand b{color:var(--ink)}
+.cover .free{
+  margin-top:22px;font-size:13px;color:var(--ink-soft);
+}
+
+/* ── 목차 ───────────────────────────────── */
+.toc{padding:52px 0 8px}
+.toc h2{
+  font-size:13px;letter-spacing:.2em;color:var(--ink-soft);
+  margin:0 0 20px;font-weight:700;text-transform:uppercase;
+}
+.toc ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.toc li{border-bottom:1px solid var(--line)}
+.toc a{
+  display:flex;gap:16px;align-items:baseline;
+  padding:15px 4px;text-decoration:none;color:inherit;
+}
+.toc a:hover{background:var(--paper-2)}
+.toc .n{
+  flex:0 0 2.1em;
+  font-size:15px;font-weight:800;color:var(--orange-deep);
+  font-variant-numeric:tabular-nums;
+}
+.toc .t{flex:1 1 auto;font-weight:700;font-size:16px}
+.toc .w{flex:0 0 auto;font-size:13px;color:var(--ink-soft);text-align:right;max-width:44%}
+@media (max-width:520px){
+  .toc a{flex-wrap:wrap}
+  .toc .w{flex:1 0 100%;text-align:left;max-width:none;padding-left:calc(2.1em + 16px)}
+}
+
+/* ── 장 ─────────────────────────────────── */
+.chapter{padding:56px 0 8px;border-top:1px solid var(--line);margin-top:44px}
+.chapter:first-of-type{border-top:0}
+.chapter > .num{
+  display:block;
+  font-size:clamp(40px,11vw,68px);
+  line-height:1;
+  font-weight:800;
+  color:var(--orange);
+  letter-spacing:-.04em;
+  margin-bottom:6px;
+}
+.chapter > h2{
+  margin:0 0 8px;
+  font-size:clamp(23px,5.4vw,31px);
+  line-height:1.32;
+  letter-spacing:-.03em;
+  font-weight:800;
+}
+.chapter > .when{
+  margin:0 0 34px;
+  font-size:15px;
+  color:var(--teal-deep);
+  font-weight:700;
+}
+h3{
+  margin:40px 0 12px;
+  font-size:20px;line-height:1.45;letter-spacing:-.02em;font-weight:800;
+  padding-bottom:8px;border-bottom:2px solid var(--line);
+}
+h4{margin:28px 0 8px;font-size:17px;font-weight:800}
+p{margin:0 0 16px}
+ul,ol{margin:0 0 18px;padding-left:1.35em}
+li{margin:0 0 8px}
+strong,b{font-weight:800}
+a{color:var(--teal-deep)}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+small{font-size:13px;color:var(--ink-soft)}
+
+/* ── 코드 ───────────────────────────────── */
+pre{
+  margin:0 0 8px;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:16px 18px;
+  border-radius:10px;
+  overflow-x:auto;
+  font-size:14px;
+  line-height:1.7;
+  max-width:100%;
+}
+pre code{
+  font-family:ui-monospace,"Consolas","D2Coding","Courier New",monospace;
+  white-space:pre;
+  background:none;border:0;padding:0;color:inherit;font-size:inherit;
+}
+pre .c{color:var(--code-dim)}
+code{
+  font-family:ui-monospace,"Consolas","D2Coding","Courier New",monospace;
+  font-size:.88em;
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-radius:5px;
+  padding:1px 5px;
+}
+.means{
+  margin:0 0 20px;
+  padding:9px 14px;
+  font-size:14.5px;
+  color:var(--ink-soft);
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-top:0;
+  border-radius:0 0 10px 10px;
+}
+.means b{color:var(--ink)}
+
+/* ── 상자들 ─────────────────────────────── */
+.tip{
+  margin:0 0 22px;
+  background:var(--card);
+  border-left:6px solid var(--orange);
+  border-radius:0 10px 10px 0;
+  padding:16px 18px;
+}
+.tip .lb{
+  display:block;font-size:12.5px;font-weight:800;letter-spacing:.06em;
+  color:var(--orange-deep);margin-bottom:6px;
+}
+.tip p:last-child,.tip ul:last-child,.tip ol:last-child{margin-bottom:0}
+
+.ours{
+  margin:30px 0 26px;
+  background:var(--card);
+  border:2px solid var(--teal);
+  border-radius:12px;
+  padding:20px 20px 18px;
+  box-shadow:var(--shadow);
+  position:relative;
+}
+.ours .lb{
+  display:inline-block;
+  background:var(--teal-deep);
+  color:#FBF6E9;
+  font-size:12px;font-weight:800;letter-spacing:.1em;
+  padding:4px 11px;border-radius:999px;
+  margin-bottom:12px;
+}
+.ours h4{margin:0 0 10px;font-size:18.5px;line-height:1.45}
+.ours p:last-child,.ours ul:last-child{margin-bottom:0}
+
+.note{
+  margin:0 0 22px;padding:14px 16px;
+  border:1px dashed var(--line);
+  border-radius:10px;
+  background:var(--paper-2);
+  font-size:15px;color:var(--ink-soft);
+}
+.note b{color:var(--ink)}
+
+/* ── 캡처 자리 ──────────────────────────── */
+.shot{
+  margin:22px 0;
+  padding:26px 20px;
+  border:2px dashed var(--orange);
+  border-radius:12px;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 12px, rgba(228,118,44,.06) 12px 24px);
+  text-align:center;
+}
+.shot .cam{font-size:24px;line-height:1;display:block;margin-bottom:8px}
+.shot .lb{
+  display:block;font-size:12.5px;font-weight:800;letter-spacing:.1em;
+  color:var(--orange-deep);margin-bottom:6px;
+}
+.shot .what{display:block;font-size:14.5px;color:var(--ink-soft);line-height:1.6}
+
+/* ── 표 ─────────────────────────────────── */
+.tablewrap{
+  overflow-x:auto;
+  margin:0 0 24px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--paper-2);
+}
+table{border-collapse:collapse;width:100%;min-width:460px;font-size:15px}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{background:var(--card);font-weight:800;font-size:14px;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+
+/* ── 체크리스트 ─────────────────────────── */
+.check{list-style:none;padding-left:0}
+.check li{
+  padding:10px 12px 10px 40px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:var(--paper-2);
+  margin-bottom:8px;
+  position:relative;
+}
+.check li::before{
+  content:"";
+  position:absolute;left:13px;top:15px;
+  width:15px;height:15px;
+  border:2px solid var(--teal-deep);
+  border-radius:4px;
+}
+
+/* ── 길잡이(0장) ────────────────────────── */
+.guide{list-style:none;padding-left:0;margin:0 0 24px}
+.guide li{
+  border-left:4px solid var(--teal);
+  background:var(--paper-2);
+  border-radius:0 9px 9px 0;
+  padding:12px 14px;
+  margin-bottom:9px;
+}
+.guide q{font-weight:800;quotes:"“" "”"}
+.guide .go{display:block;margin-top:4px;font-size:15px;color:var(--ink-soft)}
+.guide .go a{font-weight:800}
+
+/* ── 꼬리말 ─────────────────────────────── */
+.end{
+  margin:60px 0 0;
+  padding:34px 0 70px;
+  border-top:3px double var(--line);
+  text-align:center;
+  font-size:14px;color:var(--ink-soft);
+}
+.backtop{
+  display:inline-block;margin-top:14px;font-size:13px;
+}
+
+/* ── 인쇄 ───────────────────────────────── */
+@media print{
+  :root{
+    --paper:#fff; --paper-2:#fff; --card:#fff;
+    --ink:#000; --ink-soft:#333;
+    --orange:#000; --orange-deep:#000;
+    --teal:#000; --teal-deep:#000;
+    --line:#999;
+    --code-bg:#fff; --code-fg:#000; --code-dim:#555;
+    --shadow:none;
+  }
+  body{font-size:11pt;line-height:1.65;background:#fff;color:#000}
+  .wrap{max-width:none;padding:0}
+  .cover{padding:26% 0 0;border:0;background:none;break-after:page}
+  .toc{break-after:page}
+  .chapter{break-before:page;border-top:0;margin-top:0;padding-top:0}
+  .chapter > .num{font-size:34pt;color:#000}
+  h3,h4{break-after:avoid}
+  pre{border:1px solid #999;background:#fff;color:#000}
+  .ours{border:2px solid #000}
+  .ours .lb{background:#000;color:#fff}
+  .tip{border-left:5px solid #000;background:#fff;border-top:1px solid #ccc;border-right:1px solid #ccc;border-bottom:1px solid #ccc}
+  .shot{border:2px dashed #666;background:#fff}
+  .note,.guide li,.check li,.tablewrap{background:#fff}
+  a{color:#000;text-decoration:underline}
+  .backtop,.toc a:hover{display:none}
+  pre,.ours,.tip,.shot,table{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ 표지 ══════════════ -->
+<header class="cover">
+  <span class="kicker">카페인컬러 부록</span>
+  <h1>만든 사이트를<br><em>세상에 내놓는 법</em></h1>
+  <div class="rule"></div>
+  <p class="sub">AI로 화면은 만들었는데, 그다음이 막힐 때<br>배포 · 도메인 · 로그인 · 데이터 · 결제까지 순서대로</p>
+  <p class="brand"><b>카페인컬러</b> · caffeinecolor.com</p>
+  <p class="free">무료로 읽고, 자유롭게 나눠 보셔도 됩니다. 브라우저에서 <b>인쇄 → PDF로 저장</b>하면 전자책이 됩니다.</p>
+</header>
+
+<div class="wrap">
+
+<!-- ══════════════ 목차 ══════════════ -->
+<nav class="toc" id="toc">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#ch0"><span class="n">0</span><span class="t">골라 읽는 길잡이</span><span class="w">맨 먼저</span></a></li>
+    <li><a href="#ch1"><span class="n">1</span><span class="t">내 컴퓨터에서만 보이는 사이트</span><span class="w">만들었는데 나만 보임</span></a></li>
+    <li><a href="#ch2"><span class="n">2</span><span class="t">세상에 올리기 (Vercel)</span><span class="w">남에게 주소를 보내고 싶을 때</span></a></li>
+    <li><a href="#ch3"><span class="n">3</span><span class="t">내 도메인 붙이기 + 자물쇠(HTTPS)</span><span class="w">.vercel.app 말고 내 주소</span></a></li>
+    <li><a href="#ch4"><span class="n">4</span><span class="t">회원가입 · 로그인 붙이기</span><span class="w">로그인이 필요할 때</span></a></li>
+    <li><a href="#ch5"><span class="n">5</span><span class="t">데이터 저장하기 (Neon)</span><span class="w">새로고침하면 다 사라질 때</span></a></li>
+    <li><a href="#ch6"><span class="n">6</span><span class="t">결제 받기 (토스) + 심사 두 달의 진실</span><span class="w">돈을 받아야 할 때</span></a></li>
+    <li><a href="#ch7"><span class="n">7</span><span class="t">사진 · 영상 만들기 (힉스필드)</span><span class="w">넣을 이미지가 없을 때</span></a></li>
+    <li><a href="#ch8"><span class="n">8</span><span class="t">AI 기능 붙이기 (Claude API)</span><span class="w">사이트 안에서 AI를 쓸 때</span></a></li>
+    <li><a href="#ch9"><span class="n">9</span><span class="t">안 망가지게 지키기</span><span class="w">고칠 때마다 다른 데가 깨질 때</span></a></li>
+    <li><a href="#ch10"><span class="n">10</span><span class="t">오픈 전 마지막 점검</span><span class="w">문 열기 직전</span></a></li>
+    <li><a href="#chA"><span class="n">부록</span><span class="t">그런데 화면은 어떻게 만드나요?</span><span class="w">AI팩에 들어 있는 것</span></a></li>
+  </ol>
+</nav>
+
+
+<!-- ══════════════ 0장 ══════════════ -->
+<section class="chapter" id="ch0">
+  <span class="num">0</span>
+  <h2>골라 읽는 길잡이</h2>
+  <p class="when">언제 필요한가 — 맨 먼저</p>
+
+  <p>이 부록은 <b>Claude Code나 Cursor 같은 AI 도구로 화면은 만들었는데, 그다음이 막힌 분</b>을 위해 썼습니다. 개발자가 아니어도 됩니다. 터미널(까만 창)을 처음 봐도 됩니다. 명령어는 전부 통째로 복사할 수 있게 넣었고, 바로 아래에 "이건 무슨 뜻이에요"를 붙였습니다.</p>
+
+  <p>순서대로 읽어도 되고, 지금 막힌 곳부터 펴도 됩니다.</p>
+
+  <ul class="guide">
+    <li><q>남한테 주소를 보내고 싶어요</q><span class="go">→ <a href="#ch2">2장</a>. 30분이면 됩니다.</span></li>
+    <li><q>회원가입이 필요한가요?</q><span class="go">→ <a href="#ch4">4장</a>. 그전에 <a href="#ch5">5장</a>(데이터 저장)이 먼저 있어야 합니다. 로그인은 결국 "누가 누구인지 어딘가에 적어 두는 일"이라서요.</span></li>
+    <li><q>결제를 받아야 하나요?</q><span class="go">→ <a href="#ch6">6장</a>. 다만 <a href="#ch3">3장</a>을 먼저 읽으세요. <b>HTTPS(주소창 자물쇠)가 없으면 결제가 아예 붙지 않습니다.</b> 그리고 6장 맨 앞의 "심사 두 달" 이야기는 <b>지금 당장</b> 읽으세요. 나중에 알면 늦습니다.</span></li>
+    <li><q>새로고침하면 입력한 게 다 사라져요</q><span class="go">→ <a href="#ch5">5장</a>.</span></li>
+    <li><q>넣을 사진이 하나도 없어요</q><span class="go">→ <a href="#ch7">7장</a>.</span></li>
+    <li><q>사이트 안에서 AI를 쓰고 싶어요</q><span class="go">→ <a href="#ch8">8장</a>.</span></li>
+    <li><q>한 군데 고치면 다른 데가 깨져요</q><span class="go">→ <a href="#ch9">9장</a>.</span></li>
+    <li><q>내일 문 열어요</q><span class="go">→ <a href="#ch10">10장</a>의 체크리스트만 훑으세요.</span></li>
+    <li><q>아무것도 모르겠어요</q><span class="go">→ <a href="#ch1">1장</a>부터 그냥 쭉. 중간에 안 쓰는 장은 건너뛰어도 사이트는 뜹니다.</span></li>
+  </ul>
+
+  <h3>이 문서에서 쓰는 말</h3>
+  <p>낯선 단어는 나올 때마다 다시 풀어 드리지만, 자주 나오는 것만 미리 모았습니다.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>말</th><th>쉬운 뜻</th></tr></thead>
+    <tbody>
+      <tr><td>배포 (deploy)</td><td>내 컴퓨터 안에 있던 사이트를 남들도 볼 수 있는 곳에 올리는 일.</td></tr>
+      <tr><td>깃허브 (GitHub)</td><td>코드를 보관하고 변경 기록을 남기는 온라인 창고. "구글 드라이브인데 되돌리기가 아주 잘 되는 것"이라고 보면 됩니다.</td></tr>
+      <tr><td>커밋 / 푸시</td><td>커밋 = 지금 상태에 이름표를 붙여 저장. 푸시 = 그 저장분을 온라인 창고로 올리기.</td></tr>
+      <tr><td>환경변수</td><td>프로그램에 몰래 넘기는 비밀 쪽지. 비밀번호·API 키처럼 코드에 적으면 안 되는 값을 여기에 담습니다.</td></tr>
+      <tr><td>API 키</td><td>어떤 서비스를 쓸 때 "나야"라고 증명하는 긴 문자열. <b>남에게 보이면 남이 내 돈으로 씁니다.</b></td></tr>
+      <tr><td>도메인</td><td>사이트 주소(예: caffeinecolor.com). 매년 돈을 내고 빌리는 이름입니다.</td></tr>
+      <tr><td>DNS</td><td>"이 이름은 저 서버로 가세요"라고 적어 두는 전화번호부.</td></tr>
+      <tr><td>DB (데이터베이스)</td><td>회원·글·주문 같은 걸 적어 두는 표. 여기 적어야 새로고침해도 남습니다.</td></tr>
+      <tr><td>PG</td><td>카드 결제를 대신 처리해 주는 회사(토스페이먼츠 등). 심사를 통과해야 실제 결제를 받을 수 있습니다.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <b>이 부록이 다루지 않는 것.</b> 화면을 어떻게 설계하고 무엇을 만들지는 다루지 않습니다. 그건 이미 만드셨다고 보고 시작합니다. (아직 그 단계라면 맨 뒤 <a href="#chA">부록</a>을 보세요.)
+  </div>
+</section>
+
+
+<!-- ══════════════ 1장 ══════════════ -->
+<section class="chapter" id="ch1">
+  <span class="num">1</span>
+  <h2>내 컴퓨터에서만 보이는 사이트</h2>
+  <p class="when">언제 필요한가 — 만들었는데 나만 보일 때</p>
+
+  <p>AI에게 시켜서 화면이 나왔습니다. 그런데 주소창에 <code>localhost:3000</code>이라고 적혀 있고, 친구에게 이 주소를 보내면 아무것도 안 뜹니다. 정상입니다.</p>
+
+  <h3>localhost가 뭔가요</h3>
+  <p><b>localhost는 "이 컴퓨터"라는 뜻입니다.</b> 내 컴퓨터 안에서만 통하는 주소예요. 친구가 <code>localhost:3000</code>을 열면 <b>친구의</b> 컴퓨터를 찾아가고, 거기엔 아무것도 없으니 안 뜹니다.</p>
+  <p>뒤의 <code>3000</code>은 <b>포트 번호</b>입니다. 한 건물(컴퓨터) 안의 방 번호라고 보면 됩니다. 방마다 다른 프로그램이 삽니다.</p>
+
+  <h3>일단 내 컴퓨터에서 띄우기</h3>
+  <p>AI가 만들어 준 폴더를 터미널(윈도우는 PowerShell, 맥은 터미널)에서 연 다음, 두 줄만 칩니다.</p>
+
+<pre><code>npm install</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "이 사이트가 필요로 하는 부품들을 인터넷에서 받아다 <code>node_modules</code> 폴더에 깔아라." 처음 한 번, 그리고 부품 목록이 바뀔 때만 하면 됩니다. 몇 분 걸리고 글자가 폭포처럼 쏟아지는 게 정상입니다.</p>
+
+<pre><code>npm run dev</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "개발용으로 사이트를 켜라." 켜 두면 코드를 고칠 때마다 브라우저가 알아서 새로 그려 줍니다. 끄려면 그 창에서 <code>Ctrl</code>+<code>C</code>.</p>
+
+  <p>잘 되면 이렇게 나옵니다.</p>
+<pre><code>  ▲ Next.js 16.2.10
+  - Local:        http://localhost:3000
+  <span class="c">✓ Ready in 2.1s</span></code></pre>
+
+  <div class="tip">
+    <span class="lb">이 오류가 뜨면</span>
+    <p><b><code>npm : 'npm' 용어가 cmdlet ... 인식되지 않습니다</code> / <code>command not found: npm</code></b><br>
+    Node.js가 안 깔려 있습니다. <a href="https://nodejs.org">nodejs.org</a>에서 LTS 버전을 받아 설치하고, <b>터미널을 완전히 껐다 다시 켜세요.</b> 껐다 켜지 않으면 설치했는데도 똑같은 소리를 합니다.</p>
+    <p><b><code>Port 3000 is in use</code></b><br>
+    3000번 방에 이미 다른 게 살고 있습니다. 대개 Next.js가 알아서 3001로 옮겨 줍니다. 주소창의 숫자를 그대로 따라가면 됩니다.</p>
+    <p><b>화면은 뜨는데 글자만 잔뜩 있고 디자인이 없다</b><br>
+    <code>npm install</code>이 끝나기 전에 열었을 가능성이 큽니다. 터미널에서 설치가 끝난 걸 확인하고 새로고침하세요.</p>
+  </div>
+
+  <h3>비밀 쪽지 — <code>.env.local</code></h3>
+  <p>사이트가 커지면 "코드에 적으면 안 되는 값"이 생깁니다. 데이터베이스 주소, 로그인 열쇠, AI 사용 키 같은 것들이요. 이걸 <b>환경변수</b>(프로그램에 몰래 넘기는 비밀 쪽지)라고 부르고, 보통 프로젝트 맨 위에 <code>.env.local</code>이라는 파일을 만들어 한 줄에 하나씩 적습니다.</p>
+
+<pre><code><span class="c"># .env.local — 이름=값 형식. 따옴표 없이.</span>
+DATABASE_URL=postgresql://...
+BETTER_AUTH_SECRET=아주_길고_아무도_모르는_문자열
+ANTHROPIC_API_KEY=sk-ant-...</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "이 값들을 프로그램이 실행될 때 몰래 손에 쥐여 줘라." 파일 이름 앞의 점(<code>.</code>)을 빼먹으면 안 됩니다. 값을 고쳤으면 <code>npm run dev</code>를 껐다 켜야 반영됩니다.</p>
+
+  <p>같이 두는 게 <code>.env.example</code>입니다. 여기엔 <b>값을 비운 채 이름만</b> 적습니다. 나중에 다른 사람이(또는 반년 뒤의 내가) "뭘 채워야 하지?"를 알 수 있게요. 우리 사이트의 <code>.env.example</code>은 이렇게 생겼습니다.</p>
+
+<pre><code><span class="c"># Neon Postgres 연결 문자열 (Neon 대시보드 → Connect에서 복사)</span>
+DATABASE_URL=
+
+<span class="c"># Better Auth</span>
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
+
+<span class="c"># 소셜 로그인 (설정하지 않으면 해당 버튼은 자동으로 숨겨짐)</span>
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=</code></pre>
+
+  <h3>절대 올리면 안 되는 것</h3>
+  <p>비밀 쪽지가 온라인 창고(깃허브)에 그대로 올라가면 큰일 납니다. 그래서 <code>.gitignore</code>라는 파일에 "얘네는 창고에 넣지 마"라고 적어 둡니다.</p>
+
+<pre><code><span class="c"># .gitignore</span>
+.env*
+!.env.example
+node_modules
+.next
+client_secret_*.json</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "<code>.env</code>로 시작하는 파일은 전부 무시해라. 단 <code>.env.example</code>만은 예외로 올려라(<code>!</code>가 예외 표시). 부품 폴더와 빌드 찌꺼기도 무시해라."</p>
+
+  <div class="ours">
+    <span class="lb">우리가 겪은 것</span>
+    <h4>구글이 던져 준 파일이 폴더에 굴러다닙니다</h4>
+    <p>소셜 로그인을 붙이려고 구글 클라우드 콘솔에서 설정을 마치면, <code>client_secret_960122....apps.googleusercontent.com.json</code> 같은 파일이 자동으로 다운로드됩니다. 이걸 프로젝트 폴더에 그대로 두면, 아무 생각 없이 <code>git add .</code> 한 번에 <b>구글 로그인 열쇠가 통째로 인터넷에 공개됩니다.</b></p>
+    <p>그래서 우리는 <code>.gitignore</code>에 아예 못을 박아 뒀습니다.</p>
+<pre><code><span class="c"># 구글 OAuth 클라이언트 시크릿 파일 — 절대 커밋되면 안 됨</span>
+client_secret_*.json</code></pre>
+    <p><b>지금 바로 하세요.</b> 다음 장에서 깃허브에 올리기 전에, 프로젝트 폴더에 <code>client_secret</code>이나 <code>.pem</code>, <code>.key</code>로 끝나는 파일이 없는지 한 번 훑어보고 <code>.gitignore</code>에 넣으세요. 한 번 올라간 비밀은 지워도 기록에 남습니다.</p>
+  </div>
+</section>
+
+
+<!-- ══════════════ 2장 ══════════════ -->
+<section class="chapter" id="ch2">
+  <span class="num">2</span>
+  <h2>세상에 올리기 (Vercel)</h2>
+  <p class="when">언제 필요한가 — 남에게 주소를 보내고 싶을 때</p>
+
+  <p>여기가 이 부록의 첫 고비이자, 사실 제일 쉬운 곳입니다. 순서는 이렇습니다.</p>
+  <p><b>내 컴퓨터 → 깃허브(창고) → Vercel(서버)</b></p>
+  <p>Vercel은 깃허브 창고를 쳐다보고 있다가, 새 코드가 올라오면 <b>알아서</b> 사이트를 다시 지어 올립니다. 그래서 한 번 연결해 두면 그다음부터는 "고치고 → 올리고 → 끝"입니다.</p>
+
+  <h3>1) 깃허브에 창고 만들기</h3>
+  <p><a href="https://github.com">github.com</a>에 가입하고, 오른쪽 위 <b>+ → New repository</b>를 누릅니다. 이름은 아무거나(예: <code>my-site</code>), <b>Private(비공개)</b>로 두세요. 나머지 체크박스는 전부 건드리지 않는 게 편합니다.</p>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">GitHub의 New repository 화면. 이름 입력칸과 Private 선택이 보이게, 다른 옵션은 체크 안 된 상태로.</span>
+  </div>
+
+  <h3>2) 내 폴더를 창고에 올리기</h3>
+  <p>프로젝트 폴더에서 터미널을 열고 아래를 차례로 칩니다. 마지막 줄의 주소는 방금 만든 창고 주소로 바꾸세요.</p>
+
+<pre><code>git init
+git add .
+git commit -m "첫 커밋"
+git branch -M main
+git remote add origin https://github.com/내계정/my-site.git
+git push -u origin main</code></pre>
+  <p class="means"><b>한 줄씩 이런 뜻이에요.</b><br>
+  <code>git init</code> — 이 폴더에 "변경 기록장"을 만들어라.<br>
+  <code>git add .</code> — 이 폴더의 모든 파일을 기록 대상에 올려라. (<code>.gitignore</code>에 적은 건 알아서 빠집니다.)<br>
+  <code>git commit -m "첫 커밋"</code> — 지금 상태를 "첫 커밋"이라는 이름으로 저장해라.<br>
+  <code>git branch -M main</code> — 기본 줄기 이름을 <code>main</code>으로 해라.<br>
+  <code>git remote add origin ...</code> — 온라인 창고 주소를 <code>origin</code>이라는 별명으로 등록해라.<br>
+  <code>git push -u origin main</code> — 저장한 걸 그 창고로 올려라.</p>
+
+  <div class="tip">
+    <span class="lb">이 오류가 뜨면</span>
+    <p><b><code>Author identity unknown</code> / <code>Please tell me who you are</code></b><br>
+    이름과 메일을 한 번만 등록하면 됩니다.</p>
+<pre><code>git config --global user.name "내이름"
+git config --global user.email "내메일@example.com"</code></pre>
+    <p><b>비밀번호를 물어보는데 넣어도 계속 틀렸다고 함</b><br>
+    깃허브는 더 이상 계정 비밀번호를 받지 않습니다. 브라우저 로그인 창이 뜨면 그걸로 하시고, 안 뜨면 <a href="https://cli.github.com">GitHub CLI</a>를 깔아 <code>gh auth login</code> 한 번이 제일 빠릅니다.</p>
+    <p><b>올리고 나서 <code>.env.local</code>이 창고에 보인다</b><br>
+    <code>.gitignore</code>를 나중에 만들었을 때 생깁니다. 그 파일에 든 <b>키를 전부 새로 발급받아 갈아 끼우세요.</b> 지우는 걸로는 부족합니다 — 기록에 남아 있습니다.</p>
+  </div>
+
+  <h3>3) Vercel에 연결하기</h3>
+  <ol>
+    <li><a href="https://vercel.com">vercel.com</a>에 <b>깃허브 계정으로</b> 가입합니다. (따로 가입하면 창고를 못 봅니다.)</li>
+    <li><b>Add New → Project</b>를 누릅니다.</li>
+    <li>방금 만든 창고를 고르고 <b>Import</b>.</li>
+    <li>Next.js 프로젝트면 설정은 건드릴 게 없습니다. 그대로 <b>Deploy</b>.</li>
+  </ol>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">Vercel의 Import Git Repository 화면. 내 깃허브 저장소 목록과 Import 버튼이 보이게.</span>
+  </div>
+
+  <p>1~3분 뒤 <code>내프로젝트이름.vercel.app</code> 같은 주소가 나옵니다. <b>이 주소는 이제 누구에게나 보입니다.</b> 친구에게 보내 보세요.</p>
+
+  <h3>4) 비밀 쪽지를 Vercel에도 넣기 — 여기서 제일 많이 막힙니다</h3>
+  <p><code>.env.local</code>은 <b>깃허브에 올라가지 않습니다.</b> (1장에서 일부러 막았죠.) 그래서 Vercel은 그 값을 모릅니다. 직접 넣어 줘야 합니다.</p>
+  <p>Vercel 프로젝트 → <b>Settings → Environment Variables</b>에서 <code>.env.local</code>에 적은 이름과 값을 하나씩 넣습니다. (여러 줄을 한 번에 붙여넣는 것도 됩니다.)</p>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">Vercel Settings → Environment Variables 화면. Key/Value 입력칸과 Production/Preview/Development 선택이 보이게.</span>
+  </div>
+
+  <div class="tip">
+    <span class="lb">놓치기 쉬운 것</span>
+    <p><b>환경변수를 넣은 뒤에는 다시 배포해야 반영됩니다.</b> 이미 지어진 사이트는 옛 값을 들고 있습니다. Deployments 탭에서 맨 위 배포의 <b>⋯ → Redeploy</b>를 누르세요.</p>
+    <p><b><code>NEXT_PUBLIC_</code>으로 시작하는 이름은 브라우저에 그대로 노출됩니다.</b> 비밀 키에는 절대 이 접두사를 붙이지 마세요. 반대로 결제창 클라이언트 키처럼 <b>원래 공개해도 되는 값</b>은 이 접두사가 있어야 화면 쪽에서 쓸 수 있습니다.</p>
+  </div>
+
+  <div class="ours">
+    <span class="lb">우리가 겪은 것</span>
+    <h4>"내 컴퓨터에선 되는데 Vercel에선 안 돼요"의 3대 범인</h4>
+    <p><b>① 환경변수를 안 넣었다.</b> 대부분 이겁니다. 빌드는 성공했는데 열면 500 오류가 납니다.</p>
+    <p><b>② 파일 이름 대소문자.</b> 윈도우와 맥은 <code>Header.tsx</code>와 <code>header.tsx</code>를 같은 파일로 봅니다. Vercel이 도는 리눅스는 <b>다른 파일</b>로 봅니다. 그래서 내 컴퓨터에선 멀쩡한데 Vercel에서만 "그런 파일 없다"고 합니다.</p>
+    <p><b>③ 코드가 아닌 파일은 배포에 안 실린다.</b> 우리는 손님이 내려받을 zip 파일들을 <code>packs/</code> 폴더에 두는데, 이건 코드가 아니라 데이터라서 Vercel이 "안 쓰는 파일"로 보고 빼 버렸습니다. 내 컴퓨터에선 다운로드가 되는데 실서버에서만 파일을 못 찾았죠. 다운로드 경로에만 그 폴더를 같이 실어 보내도록 못 박아서 풀었습니다.</p>
+<pre><code><span class="c">// next.config.ts</span>
+outputFileTracingIncludes: {
+  "/api/packages/[packageId]/[planId]/download": ["./packs/**/*"],
+}</code></pre>
+    <p>엑셀·PDF·zip처럼 <b>코드가 직접 import 하지 않는 파일</b>을 쓰신다면 같은 일이 생깁니다.</p>
+  </div>
+
+  <h3>그다음부터는 이 세 줄이 전부입니다</h3>
+<pre><code>git add .
+git commit -m "무엇을 고쳤는지 한 줄"
+git push</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "고친 걸 전부 담아 → 이름표를 붙여 저장하고 → 창고로 올려라." 올리는 순간 Vercel이 알아서 다시 짓습니다. 1~2분 뒤 실제 사이트가 바뀝니다.</p>
+
+  <div class="note">
+    <b>요금.</b> Vercel에는 개인이 쓸 수 있는 무료 범위가 있고, 우리도 그 안에서 시작했습니다. 다만 무료 범위의 조건(트래픽·함수 실행 시간·상업적 사용 가능 여부 등)은 자주 바뀌므로, <b>vercel.com의 요금 안내를 직접 확인하세요.</b> 이 문서에 숫자를 적어 두면 그게 곧 거짓말이 됩니다.
+  </div>
+</section>
+
+
+<!-- ══════════════ 3장 ══════════════ -->
+<section class="chapter" id="ch3">
+  <span class="num">3</span>
+  <h2>내 도메인 붙이기 + 자물쇠(HTTPS)</h2>
+  <p class="when">언제 필요한가 — <code>.vercel.app</code> 말고 내 주소를 쓰고 싶을 때</p>
+
+  <p><code>my-site-8fk2.vercel.app</code>은 명함에 못 적습니다. 그리고 <b>결제를 받으려면 내 도메인이 사실상 필수</b>입니다(6장). 이 장은 30분이면 끝나지만, 마지막에 반나절 기다리는 구간이 있습니다.</p>
+
+  <h3>1) 이름 사기</h3>
+  <p>도메인은 <b>사는 게 아니라 매년 빌리는</b> 겁니다. 파는 곳(등록대행사)은 여러 곳입니다.</p>
+  <ul>
+    <li><b>가비아, 후이즈</b> 등 국내 업체 — 한국어 고객센터, 세금계산서 발행이 편합니다.</li>
+    <li><b>Cloudflare Registrar, Namecheap</b> 등 해외 업체 — 대개 더 쌉니다.</li>
+    <li><b>Vercel Domains</b> — Vercel 안에서 바로 살 수 있어 설정이 제일 간단합니다.</li>
+  </ul>
+  <p>가격은 <code>.com</code>이냐 <code>.kr</code>이냐, 어디서 사느냐에 따라 다르고 자주 바뀝니다. <b>사기 전에 그 사이트에서 직접 확인하세요.</b> 특히 "첫해 할인가"와 "갱신가"가 다른 경우가 많으니 갱신가를 보세요.</p>
+
+  <h3>2) Vercel에 붙이기</h3>
+  <p>Vercel 프로젝트 → <b>Settings → Domains</b> → 산 주소를 입력하고 <b>Add</b>.</p>
+  <p>그러면 Vercel이 "당신의 도메인 관리 화면에 이 값을 넣으세요"라고 알려 줍니다. 보통 둘 중 하나입니다.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>넣을 곳</th><th>종류</th><th>이름</th><th>값</th></tr></thead>
+    <tbody>
+      <tr><td>도메인 산 곳의 DNS 관리</td><td>A</td><td>@ (또는 비움)</td><td>Vercel이 알려 주는 IP</td></tr>
+      <tr><td>도메인 산 곳의 DNS 관리</td><td>CNAME</td><td>www</td><td>Vercel이 알려 주는 주소</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="means"><b>이게 무슨 일이냐면.</b> DNS는 "이 이름으로 찾아오면 저 서버로 보내 주세요"라고 적어 두는 전화번호부입니다. 그 전화번호부에 Vercel 주소를 적어 넣는 것뿐입니다.</p>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">Vercel Settings → Domains 화면. 도메인이 추가되고 "Invalid Configuration" 또는 체크 표시가 뜬 상태와, 아래에 넣어야 할 A/CNAME 레코드 값이 보이게.</span>
+  </div>
+
+  <div class="tip">
+    <span class="lb">이 오류가 뜨면</span>
+    <p><b><code>Invalid Configuration</code></b><br>
+    거의 항상 ① 값을 잘못 넣었거나 ② <b>아직 퍼지지 않은</b> 것입니다. DNS는 전 세계에 반영되는 데 보통 몇 분~몇 시간, 길면 하루가 걸립니다. 값을 다시 한 번 대조하고, 맞다면 <b>커피 한 잔 마시고 새로고침</b>하세요.</p>
+    <p><b>기존에 있던 레코드와 충돌한다고 함</b><br>
+    도메인을 사면 업체가 자기네 안내 페이지로 가는 레코드를 미리 넣어 둡니다. 그 <code>@</code>와 <code>www</code> 레코드를 지우고 Vercel 값으로 갈아 끼우세요.</p>
+  </div>
+
+  <h3>3) 자물쇠(HTTPS)는 저절로 붙습니다</h3>
+  <p>주소창의 자물쇠 = <b>HTTPS</b> = 나와 서버 사이의 대화를 남이 못 엿보게 암호로 감싸는 것입니다. 예전엔 인증서를 사서 서버에 설치하는 성가신 일이었지만, <b>Vercel은 도메인 연결이 확인되면 무료로 알아서 발급하고 자동으로 갱신</b>합니다. 할 일이 없습니다.</p>
+  <p>다만 <b>DNS가 다 퍼지기 전까지는</b> "안전하지 않음"이라고 뜰 수 있습니다. 잠시 기다리면 됩니다.</p>
+
+  <h3>4) apex냐 www냐 — 지금 정하세요</h3>
+  <p><code>caffeinecolor.com</code>(apex, 점 없는 맨 앞) 과 <code>www.caffeinecolor.com</code>은 <b>기술적으로 다른 주소</b>입니다. 둘 다 등록하되 <b>어느 쪽을 대표로 쓸지</b> 정하고, 나머지는 그쪽으로 넘겨주게(리다이렉트) 설정하세요. Vercel Domains 화면에서 고를 수 있습니다.</p>
+
+  <div class="ours">
+    <span class="lb">우리가 겪은 것</span>
+    <h4>로그아웃 버튼이 안 눌리는데 오류도 안 뜹니다</h4>
+    <p>도메인을 붙인 뒤, 로그인은 잘 되는데 <b>로그아웃만</b> 안 됐습니다. 화면엔 아무 말도 없고, 개발자 도구를 열어야 <code>403</code>이 보였습니다.</p>
+    <p>원인은 이랬습니다. 로그인 라이브러리는 보안을 위해 <b>"신뢰하는 주소 목록"</b>을 두고, 상태를 바꾸는 요청(로그아웃 같은)이 그 목록에 없는 주소에서 오면 거부합니다. 우리는 목록에 <code>https://caffeinecolor.com</code>만 적어 뒀는데, 실제 서비스는 <code>www</code>가 붙은 주소로 돌고 있었습니다. 그래서 "모르는 곳에서 온 요청"으로 튕긴 겁니다.</p>
+    <p>지금은 주소 하나만 적어 두면 apex와 www 두 형태가 <b>함께 따라오도록</b> 계산해서 넣습니다.</p>
+<pre><code><span class="c">// lib/auth.ts — 두 형태를 모두 신뢰 출처에 넣는다</span>
+function productionOrigins() {
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "https://caffeinecolor.com";
+  const host = new URL(site).host.replace(/^www\./, "");
+  return [`https://${host}`, `https://www.${host}`];
+}</code></pre>
+    <p><b>교훈.</b> 도메인을 붙이고 나면 <b>로그인만 확인하고 끝내지 마세요.</b> 로그아웃, 글쓰기, 결제처럼 "누르면 서버 상태가 바뀌는" 동작을 한 번씩 눌러 보세요. 조용히 실패하는 것들이 여기 숨어 있습니다.</p>
+  </div>
+</section>
+
+
+<!-- ══════════════ 4장 ══════════════ -->
+<section class="chapter" id="ch4">
+  <span class="num">4</span>
+  <h2>회원가입 · 로그인 붙이기</h2>
+  <p class="when">언제 필요한가 — 사람마다 다른 걸 보여줘야 할 때</p>
+
+  <div class="tip">
+    <span class="lb">먼저 읽으세요</span>
+    <p>로그인은 <b>"누가 가입했는지 어딘가에 적어 두는 일"</b>입니다. 적어 둘 곳, 즉 데이터베이스가 먼저 있어야 합니다. <a href="#ch5">5장</a>을 먼저 하고 오시는 게 순서상 맞습니다. (이미 있다면 그냥 진행하세요.)</p>
+  </div>
+
+  <h3>비밀번호를 직접 다루지 마세요</h3>
+  <p>회원가입 폼을 만들고 비밀번호를 받는 순간, 당신은 <b>남의 비밀번호를 보관하는 사람</b>이 됩니다. 제대로 하려면 암호화·재설정 메일·유출 대응·무차별 대입 방어까지 전부 필요합니다. 1인 사업자가 감당할 일이 아닙니다.</p>
+
+  <p><b>우리가 고른 길: 비밀번호를 아예 안 받습니다.</b> 구글·네이버·카카오 로그인만 씁니다. 그러면 우리 DB에 비밀번호가 <b>한 줄도</b> 없습니다. 유출될 것 자체가 없죠.</p>
+
+<pre><code><span class="c">// lib/auth.ts</span>
+<span class="c">// 이메일·비밀번호는 가입도 로그인도 받지 않는다 — 비밀번호를 아예 보관하지 않기 위해서.</span>
+<span class="c">// 화면에서 폼을 지우는 것만으로는 API 직접 호출을 막지 못하므로 서버에서도 잠근다.</span>
+emailAndPassword: { enabled: false },</code></pre>
+  <p class="means"><b>주석의 뒷문장이 핵심이에요.</b> 화면에서 입력칸을 지워도, 서버 주소를 아는 사람은 직접 요청을 보낼 수 있습니다. <b>막을 거면 서버에서 막아야</b> 진짜로 막힌 겁니다. 이건 로그인만이 아니라 모든 기능에 해당합니다.</p>
+
+  <h3>붙이는 순서</h3>
+  <ol>
+    <li><b>라이브러리를 고릅니다.</b> 우리는 <a href="https://better-auth.com">Better Auth</a>를 씁니다. Next.js와 잘 맞고, 데이터를 우리 DB에 그대로 넣어 줍니다. (다른 선택지도 많습니다.)</li>
+    <li><b>비밀 열쇠를 만듭니다.</b> 세션(로그인 상태)을 서명하는 데 쓰는 긴 문자열입니다.</li>
+  </ol>
+
+<pre><code>npx better-auth secret</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "아무도 못 맞힐 긴 임의 문자열을 하나 만들어 줘." 나온 값을 <code>.env.local</code>의 <code>BETTER_AUTH_SECRET=</code> 뒤에 붙입니다. 이 명령이 안 되면 아무 비밀번호 생성기로 40자 이상 만들어도 됩니다. <b>이 값이 바뀌면 로그인한 사람들이 전부 로그아웃됩니다.</b> 한 번 정하고 건드리지 마세요.</p>
+
+  <ol start="3">
+    <li><b>소셜 로그인 앱을 등록합니다.</b> 각 회사 개발자 콘솔에서 앱을 만들고 <b>클라이언트 ID</b>와 <b>시크릿</b> 두 개를 받습니다.
+      <ul>
+        <li>구글 — Google Cloud Console → API 및 서비스 → 사용자 인증 정보</li>
+        <li>네이버 — 네이버 개발자 센터</li>
+        <li>카카오 — 카카오 디벨로퍼스</li>
+      </ul>
+    </li>
+    <li><b>돌아올 주소(리다이렉트 URI)를 등록합니다.</b> 여기가 제일 자주 틀립니다.</li>
+  </ol>
+
+  <div class="tip">
+    <span class="lb">이 오류가 뜨면</span>
+    <p><b><code>redirect_uri_mismatch</code> / "등록되지 않은 Callback URL"</b><br>
+    구글 로그인 붙일 때 열에 아홉은 이 오류를 봅니다. 사용자가 로그인을 마치면 소셜 회사가 <b>다시 우리 사이트로 돌려보내는데</b>, 그 돌아올 주소를 미리 등록해 두지 않으면 거부합니다.</p>
+    <p><b>내 컴퓨터용과 실서버용, 둘 다 등록해야 합니다.</b></p>
+<pre><code>http://localhost:3000/api/auth/callback/google
+https://내도메인.com/api/auth/callback/google</code></pre>
+    <p>글자 하나, 슬래시 하나까지 똑같아야 합니다. <code>http</code>/<code>https</code>도 구분합니다. 3장에서 www를 대표로 쓰기로 했다면 <b>www가 붙은 주소</b>로 등록하세요.</p>
+  </div>
+
+  <div class="ours">
+    <span class="lb">우리가 겪은 것</span>
+    <h4>키가 없으면 버튼이 저절로 사라지게 만들어 뒀습니다</h4>
+    <p>소셜 로그인은 보통 한꺼번에 붙이지 못합니다. 구글은 오늘 되고, 네이버는 심사가 남았고, 카카오는 다음 주에 하고… 그동안 <b>눌러도 아무 일 없는 버튼</b>이 로그인 화면에 남아 있으면, 손님은 "고장 난 사이트"라고 판단하고 나갑니다.</p>
+    <p>그래서 키가 들어 있는 소셜만 켜지고, 없으면 <b>버튼 자체가 화면에서 사라지게</b> 만들었습니다.</p>
+<pre><code><span class="c">// lib/social-providers.ts — 키가 다 있는 것만 true</span>
+export function getEnabledSocialProviders() {
+  return {
+    google: !!(process.env.GOOGLE_CLIENT_ID &amp;&amp; process.env.GOOGLE_CLIENT_SECRET),
+    naver:  !!(process.env.NAVER_CLIENT_ID  &amp;&amp; process.env.NAVER_CLIENT_SECRET),
+    kakao:  !!(process.env.KAKAO_CLIENT_ID  &amp;&amp; process.env.KAKAO_CLIENT_SECRET),
+  };
+}</code></pre>
+    <p>서버 쪽 설정도 같은 조건으로 짜서, <b>환경변수를 넣는 것만으로 그 소셜이 켜지고</b> 화면에도 버튼이 나타납니다. 코드를 다시 고칠 일이 없습니다.</p>
+    <p><b>이 발상은 로그인 밖에서도 그대로 씁니다.</b> "아직 안 되는 것은 화면에서 지운다." 6장의 결제 스위치도 같은 생각입니다.</p>
+  </div>
+
+  <div class="tip">
+    <span class="lb">알아 두면 편한 것</span>
+    <p><b>포트가 매번 바뀌어서 로그인이 깨진다면.</b> 다른 프로젝트가 3000번을 쓰고 있으면 3001, 3002로 뜹니다. 그때마다 리다이렉트 URI를 다시 등록할 순 없으니, 우리는 개발 중에는 <b>localhost의 모든 포트</b>를 신뢰하도록 열어 뒀습니다. 실서버는 <a href="#ch3">3장</a>에서 계산한 실제 도메인만 신뢰합니다.</p>
+<pre><code>trustedOrigins: ["http://localhost:*", ...productionOrigins()],</code></pre>
+  </div>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">구글 클라우드 콘솔의 "승인된 리디렉션 URI" 입력 화면. localhost와 실제 도메인 두 줄이 함께 들어간 상태.</span>
+  </div>
+</section>
+
+
+<!-- ══════════════ 5장 ══════════════ -->
+<section class="chapter" id="ch5">
+  <span class="num">5</span>
+  <h2>데이터 저장하기 (Neon)</h2>
+  <p class="when">언제 필요한가 — 새로고침하면 입력한 게 다 사라질 때</p>
+
+  <p>AI가 만들어 준 화면은 대개 데이터를 <b>메모리</b>에 들고 있습니다. 새로고침하면 그 메모리가 비워지니 전부 사라집니다. 남기려면 <b>데이터베이스</b>에 적어야 합니다.</p>
+
+  <h3>Neon이 뭔가요</h3>
+  <p>PostgreSQL(줄여서 Postgres)이라는 데이터베이스를 <b>내가 서버를 관리하지 않고</b> 쓰게 해 주는 서비스입니다. 가입하고 몇 번 누르면 "연결 문자열" 하나가 나오고, 그걸 환경변수에 넣으면 끝입니다.</p>
+  <p>우리가 Neon을 고른 이유는 Vercel 같은 곳과 궁합이 좋아서입니다. 자세한 이유는 뒤의 "우리가 겪은 것"에서 설명합니다.</p>
+
+  <h3>1) 연결 문자열 받기</h3>
+  <ol>
+    <li><a href="https://neon.tech">neon.tech</a>에 가입 → 프로젝트 생성. 지역(Region)은 <b>손님이 있는 곳과 가까운 데</b>로 고르세요. 한국이면 <code>ap-southeast-1</code>(싱가포르)처럼 아시아 쪽이 낫습니다.</li>
+    <li>대시보드의 <b>Connect</b> 버튼 → 연결 문자열 복사.</li>
+    <li><code>.env.local</code>에 붙입니다.</li>
+  </ol>
+
+<pre><code>DATABASE_URL=postgresql://사용자:비밀번호@ep-xxxx.aws.neon.tech/neondb?sslmode=require</code></pre>
+  <p class="means"><b>이 한 줄을 풀면.</b> "이 사용자와 비밀번호로, 저 주소의 <code>neondb</code>라는 데이터베이스에, <b>암호화된 연결로</b>(<code>sslmode=require</code>) 접속해라." 맨 뒤 <code>?sslmode=require</code>를 실수로 지우면 접속이 거부됩니다.</p>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">Neon 대시보드의 Connect 화면. 연결 문자열과 복사 버튼이 보이게(비밀번호 부분은 가려서).</span>
+  </div>
+
+  <p><b>Vercel에도 같은 값을 넣으세요.</b> (2장 4번을 잊지 마세요. 안 넣으면 배포된 사이트만 500 오류가 납니다.)</p>
+
+  <h3>2) 표를 만들고, 바꾼 걸 기록으로 남기기</h3>
+  <p>데이터베이스는 결국 <b>표</b>입니다. "회원 표", "주문 표"처럼요. 그 표의 모양을 코드로 적어 두고(스키마), 그걸 실제 데이터베이스에 반영하는 게 <b>마이그레이션</b>입니다.</p>
+  <p>우리는 Drizzle이라는 도구를 씁니다. 표 모양은 <code>db/schema.ts</code>에 적고, 두 줄을 칩니다.</p>
+
+<pre><code>npx drizzle-kit generate</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "내가 적은 표 모양과 지금 데이터베이스를 비교해서, <b>차이만큼의 명령서</b>를 파일로 만들어 줘." <code>drizzle/</code> 폴더에 <code>0000_...sql</code> 같은 파일이 생깁니다.</p>
+
+<pre><code>npx drizzle-kit migrate</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "그 명령서를 실제 데이터베이스에 실행해라." 이제 진짜 표가 만들어집니다.</p>
+
+  <p>표를 고칠 때마다 이 두 줄을 반복하면, <code>drizzle/</code> 폴더에 변경 기록이 번호순으로 쌓입니다. 우리 프로젝트엔 지금 <code>0000</code>부터 <code>0013</code>까지 열네 개가 쌓여 있습니다. <b>이 폴더를 지우지 마세요.</b> "지금까지 무엇을 어떻게 바꿨는지"의 유일한 기록입니다.</p>
+
+  <div class="tip">
+    <span class="lb">이 오류가 뜨면</span>
+    <p><b><code>relation "user" does not exist</code></b><br>
+    표가 아직 안 만들어졌습니다. <code>migrate</code>를 안 돌렸거나, 다른 데이터베이스에 돌렸습니다. <code>DATABASE_URL</code>이 지금 보고 있는 곳과 같은지 확인하세요.</p>
+    <p><b>배포한 사이트만 <code>500 Internal Server Error</code></b><br>
+    거의 <code>DATABASE_URL</code>이 Vercel에 없는 겁니다. 데이터베이스 주소는 <b>빌드할 땐 없어도 통과하고, 실제로 접속할 때 터집니다.</b> 그래서 "빌드는 성공했는데 열면 오류"라는 헷갈리는 모양이 됩니다.</p>
+    <p><b><code>too many connections</code></b><br>
+    아래 "우리가 겪은 것"을 보세요.</p>
+  </div>
+
+  <div class="ours">
+    <span class="lb">우리가 겪은 것</span>
+    <h4>서버리스에서는 "평범한 DB 연결"이 오히려 사고를 냅니다</h4>
+    <p>Vercel 같은 곳은 요청이 올 때마다 <b>아주 작은 서버를 잠깐 켰다 끄는</b> 방식으로 돕니다(서버리스). 문제는 데이터베이스 연결이에요. 보통의 방식은 "연결을 하나 맺어 두고 계속 재사용"하는 건데, 매번 켰다 꺼지는 환경에서는 재사용이 안 되고 <b>연결만 계속 새로 쌓입니다.</b> 손님이 몰리면 <code>too many connections</code>로 사이트가 멈춥니다.</p>
+    <p>그래서 우리는 Neon이 주는 <b>서버리스 전용 드라이버</b>를 씁니다. 연결을 붙들고 있는 대신 HTTP로 질문하고 답을 받는 방식이라, 켰다 꺼지는 환경에서 안전합니다. 코드는 이 두 줄이 전부입니다.</p>
+<pre><code><span class="c">// db/client.ts</span>
+const sql = neon(process.env.DATABASE_URL!);
+export const db = drizzle({ client: sql, schema });</code></pre>
+    <p><b>알아 두실 것.</b> "Postgres 쓰는 법" 튜토리얼을 그대로 따라 하면 대개 일반 드라이버(<code>pg</code>)를 쓰라고 합니다. 내 컴퓨터에선 잘 되고, 배포하면 <b>사람이 몰릴 때만</b> 터집니다. 제일 나쁜 종류의 버그죠. 서버리스에 올릴 거면 처음부터 서버리스용 드라이버로 시작하세요.</p>
+  </div>
+
+  <div class="note">
+    <b>백업.</b> Neon에는 과거 시점으로 되돌리는 기능과, 데이터베이스를 통째로 복제해 실험용으로 쓰는 <b>브랜치</b> 기능이 있습니다. 표 구조를 크게 바꾸기 전엔 브랜치를 하나 떠 놓고 거기서 먼저 해 보세요. 보관 기간·개수 같은 조건은 요금제마다 다르니 <b>Neon 사이트에서 직접 확인하세요.</b>
+  </div>
+</section>
+
+
+<!-- ══════════════ 6장 ══════════════ -->
+<section class="chapter" id="ch6">
+  <span class="num">6</span>
+  <h2>결제 받기 (토스) + 심사 두 달의 진실</h2>
+  <p class="when">언제 필요한가 — 돈을 받아야 할 때</p>
+
+  <div class="tip">
+    <span class="lb">먼저 읽으세요</span>
+    <p><a href="#ch3">3장</a>(도메인 + HTTPS)을 먼저 끝내세요. <b>PG 심사는 실제로 도는 사이트 주소를 보고 합니다.</b> <code>.vercel.app</code> 임시 주소나 자물쇠 없는 사이트로는 시작조차 못 합니다.</p>
+  </div>
+
+  <div class="ours">
+    <span class="lb">우리가 겪은 것</span>
+    <h4>PG 심사는 1~2달 걸립니다. 이걸 모르고 두 달을 날렸습니다</h4>
+    <p>우리는 <b>"사업자등록증만 있으면 결제는 며칠이면 붙는다"</b>고 생각했습니다. 아니었습니다.</p>
+    <p>카드 결제를 받으려면 PG사(토스페이먼츠 등)와 계약해야 하고, 그 전에 <b>심사</b>가 있습니다. 서류를 내고, 보완 요청을 받고, 다시 내고, 카드사 쪽 확인을 기다립니다. 우리 경우 <b>두 달</b>이 걸렸습니다. 업종과 서류 상태에 따라 더 짧을 수도, 더 길 수도 있습니다.</p>
+    <p>더 나쁜 건 <b>순서</b>가 있다는 겁니다. 심사를 넣으려면 그 앞에 통신판매업 신고가 되어 있어야 하고, 통신판매업 신고를 하려면 사업자등록이 있어야 합니다. 이 셋은 동시에 못 하고 <b>줄줄이</b> 걸립니다. 우리는 통신판매업 신고를 2026년 7월 27일에 마쳤고, 그제서야 전자상거래법상 표시해야 할 항목이 다 갖춰졌습니다.</p>
+<pre><code><span class="c">// 표시 항목은 흩어 두지 말고 한곳에서 관리하세요.</span>
+<span class="c">// 푸터·문의·약관·개인정보처리방침이 전부 여기를 봅니다.</span>
+export const BUSINESS = {
+  name: "카페인컬러",
+  ceo: "최현",
+  registrationNo: "608-79-25359",
+  mailOrderNo: "제 2026-서울강남-04184 호",  <span class="c">// 통신판매업 신고번호</span>
+  address: "서울특별시 강남구 ...",
+  email: "...", phone: "...",
+};</code></pre>
+    <p><b>지금 결제를 붙일 생각이 조금이라도 있다면, 다른 걸 만들기 전에 서류부터 넣으세요.</b> 기다리는 두 달 동안 코드는 얼마든지 만들 수 있지만, 서류는 기다리는 것 말고 할 수 있는 게 없습니다.</p>
+  </div>
+
+  <h3>기다리는 동안 하면 안 되는 것 — 살 수 없는 값을 보여주는 일</h3>
+  <p>여기가 진짜 함정입니다. 사이트는 다 만들었고, 가격표도 예쁘게 나왔습니다. <b>그런데 결제가 안 붙었습니다.</b></p>
+  <p>이때 가격표를 그냥 띄워 두면 어떻게 될까요.</p>
+  <ul>
+    <li>손님이 값을 봅니다. "89,000원이구나."</li>
+    <li>사려고 버튼을 누릅니다. 아무 일도 안 일어나거나, "준비 중입니다"가 뜹니다.</li>
+    <li>손님은 <b>값만 기억하고</b> 나갑니다. 우리는 <b>지키지 못할 약속</b>을 한 셈이 됩니다.</li>
+  </ul>
+  <p>그래서 우리는 <b>스위치</b>를 만들었습니다. 뒤쪽(주문 만들기 → 결제 → 다운로드)은 <b>전부 다 만들어 두고</b>, 화면에서만 막습니다. 승인이 나면 값 하나를 <code>true</code>로 바꾸는 것만으로 판매가 열립니다.</p>
+
+<pre><code><span class="c">// lib/flags.ts — 아직 열지 않은 기능의 스위치</span>
+
+<span class="c">/**
+ * AI팩을 우리 사이트에서 직접 살 수 있게 하는가.
+ *
+ * "구매하기 → 결제 → 바로 다운로드"까지 뒤쪽은 다 만들어 두고, 화면에서만 막는다.
+ * PG 승인이 1~2달 걸리는 동안 버튼을 열어두면 살 수 없는 값만 보이기 때문이다.
+ * 승인이 나면 이 값을 true로 바꾸는 것만으로 판매가 열린다.
+ */</span>
+export const PACKAGE_SALE_OPEN = process.env.PACKAGE_SALE_OPEN === "true";
+
+<span class="c">/**
+ * AI팩 판매가를 손님에게 보여주는가.
+ * 값만 보이고 살 수 없으면 "비싸다"는 인상만 남고 돌아가기 때문이다.
+ */</span>
+export const PACKAGE_PRICES_PUBLIC = false;</code></pre>
+  <p class="means"><b>이 방식의 좋은 점.</b> <code>process.env....=== "true"</code> 로 써 두면 <b>코드를 안 고치고</b> Vercel 환경변수만 바꿔서 켤 수 있습니다. 잘못되면 다시 끄면 되고요. 값이 <code>false</code>인 동안 화면은 값 대신 상태를 적습니다 — 우리는 "판매 준비 중"이라고 씁니다.</p>
+
+  <div class="tip">
+    <span class="lb">스위치를 만들 때의 요령</span>
+    <p><b>왜 껐는지를 주석에 적으세요.</b> 반년 뒤에 이 <code>false</code>를 보면 "이거 왜 꺼져 있지? 켜도 되나?"가 됩니다. 우리 <code>flags.ts</code>는 스위치마다 문단짜리 설명이 붙어 있고, 그게 코드보다 훨씬 값집니다.</p>
+    <p><b>화면만 막지 말고 서버도 막으세요.</b> 우리는 충전 페이지에 직접 주소로 들어와도 대시보드로 돌려보냅니다. 버튼만 숨기면 주소를 아는 사람은 그냥 들어갑니다.</p>
+  </div>
+
+  <div class="ours">
+    <span class="lb">우리가 겪은 것</span>
+    <h4>무료 체험 기간을 3일로 뒀다가, 90일로 늘렸습니다</h4>
+    <p>처음엔 가입하면 무료 크레딧을 주고 <b>3일</b> 안에 쓰게 했습니다. "빨리 써 보고 결제하세요"라는 흔한 설계죠.</p>
+    <p>그런데 결제 자체가 막혀 있었습니다. 누를 대상이 없는 압박이었던 겁니다. 그리고 더 큰 문제가 있었습니다 — <b>PG 심사가 두 달인데 체험이 3일이면, 지금 가입한 사람은 문 여는 날 이미 크레딧이 사라져 있습니다.</b> 유튜브·인스타를 보고 찾아와 준 사람들을 불러 놓고 아무것도 못 하게 만드는 셈이었죠.</p>
+    <p>3일 → 30일 → 90일로 두 번 늘렸습니다. 30일도 부족했거든요. 심사가 두 달인데 30일이면 결과는 똑같습니다.</p>
+<pre><code><span class="c">// lib/credits.ts</span>
+<span class="c">// 유효기간이 90일인 이유: 결제(PG)가 붙기 전까지의 한시 설정이다.
+// 30일로 뒀다가 90일로 늘린 이유: PG 승인이 1~2달 걸린다. 30일이면 지금 가입한
+// 사람은 문 여는 날 이미 크레딧이 소멸해 있고, 불러 놓고 아무것도 못 하게 된다.
+// PG를 열 때 3일로 되돌릴 것. 약관의 표기도 함께 고쳐야 한다.</span>
+export const FREE_CREDITS = 35;
+export const FREE_TTL_DAYS = 90;</code></pre>
+    <p><b>같이 챙길 것 두 가지.</b> ① 되돌릴 때 <b>약관에 적어 둔 기간도 같이</b> 고쳐야 합니다. 코드만 고치면 약관이 거짓말이 됩니다. ② 안내 문구도 상태를 따라가야 합니다. 충전이 안 열렸는데 "충전하세요"라고 하면 손님은 갈 곳이 없습니다.</p>
+<pre><code>return creditsOpen
+  ? "크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요."
+  : "무료 크레딧을 다 쓰셨어요. 충전 기능을 준비하고 있어요.";</code></pre>
+  </div>
+
+  <h3>테스트 키로는 지금 당장 전부 만들 수 있습니다</h3>
+  <p>심사를 기다리며 손 놓고 있을 필요가 없습니다. <b>토스페이먼츠는 가입만 하면 테스트 키를 바로 줍니다.</b> 테스트 키로 결제창을 띄우고, 카드번호를 넣고, 성공 화면까지 <b>실제와 똑같이</b> 동작시켜 볼 수 있습니다. 돈만 안 빠져나갑니다.</p>
+  <p>우리도 그렇게 했습니다. 결제 연동을 다 붙여 놓고, 스위치는 닫아 두고, 환경변수로만 켜서 테스트했습니다.</p>
+
+<pre><code><span class="c">// 결제 연동은 붙였지만, 검증 전까지 기본은 닫아둔다.
+// 환경변수 CREDITS_OPEN=true 로 켜서 테스트하고, 준비되면 유지한다.
+// (테스트 키가 들어간 상태라, 켜도 실제 결제는 되지 않고 테스트 모드로만 동작한다.)</span>
+export const CREDITS_OPEN = process.env.CREDITS_OPEN === "true";</code></pre>
+
+  <h3>결제가 실제로 도는 모양</h3>
+  <p>카드 결제는 생각보다 단계가 많습니다. 이 흐름만 이해하면 어느 PG를 쓰든 비슷합니다.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>단계</th><th>어디서</th><th>무슨 일</th></tr></thead>
+    <tbody>
+      <tr><td>① 주문 만들기</td><td><b>내 서버</b></td><td>"이 사람이 이걸 이 금액에 사려 한다"를 DB에 먼저 적는다. 주문번호를 만든다.</td></tr>
+      <tr><td>② 결제창 열기</td><td>손님 브라우저</td><td>주문번호·금액·상품명을 들고 토스 결제창을 띄운다.</td></tr>
+      <tr><td>③ 카드 입력</td><td>토스</td><td>카드사와 토스가 처리. 우리는 카드번호를 보지도 않는다.</td></tr>
+      <tr><td>④ 돌아오기</td><td>손님 브라우저</td><td>성공하면 우리가 지정한 <code>successUrl</code>로, 실패하면 <code>failUrl</code>로 돌아온다.</td></tr>
+      <tr><td>⑤ <b>승인</b></td><td><b>내 서버</b></td><td>시크릿 키로 토스에 "이 결제 진짜 맞아?"라고 물어 최종 승인한다. <b>여기까지 해야 결제 완료다.</b></td></tr>
+      <tr><td>⑥ 지급</td><td>내 서버</td><td>승인이 성공한 뒤에야 크레딧을 주거나 파일을 열어 준다.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="tip">
+    <span class="lb">여기서 사고가 납니다 — 꼭 지키세요</span>
+    <p><b>④에서 돌아온 것만 믿고 물건을 주면 안 됩니다.</b> 브라우저 주소창은 누구나 손으로 고칠 수 있습니다. <code>?success=true&amp;amount=10</code> 같은 주소를 직접 쳐 넣으면, 검증 없는 사이트는 10원에 물건을 내줍니다.</p>
+    <p><b>⑤의 서버 승인이 성공했을 때만</b> 물건을 주세요. 그리고 승인할 때 넘기는 금액은 <b>주소창에서 받은 값이 아니라 ①에서 DB에 적어 둔 금액</b>과 대조해야 합니다.</p>
+  </div>
+
+  <p>승인은 서버에서 이렇게 부릅니다. 어렵지 않습니다.</p>
+
+<pre><code><span class="c">// adapters/payment/toss.ts (서버 전용)</span>
+const CONFIRM_URL = "https://api.tosspayments.com/v1/payments/confirm";
+
+<span class="c">// Basic 인증: base64("{시크릿키}:") — 비밀번호 자리는 비운다.</span>
+const auth = Buffer.from(`${process.env.TOSS_SECRET_KEY}:`).toString("base64");
+
+const res = await fetch(CONFIRM_URL, {
+  method: "POST",
+  headers: { Authorization: `Basic ${auth}`, "Content-Type": "application/json" },
+  body: JSON.stringify({ paymentKey, orderId, amount }),
+});</code></pre>
+  <p class="means"><b>주석의 콜론(<code>:</code>)을 빼먹지 마세요.</b> 시크릿 키 뒤에 콜론을 붙여서 base64로 바꿔야 합니다. 이걸 빠뜨려서 <code>401 UNAUTHORIZED</code>가 나는 경우가 흔합니다.</p>
+
+  <h3>키 두 개를 구분하세요</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>키</th><th>어디에 두나</th><th>공개돼도 되나</th></tr></thead>
+    <tbody>
+      <tr><td>클라이언트 키</td><td><code>NEXT_PUBLIC_TOSS_CLIENT_KEY</code> — 결제창을 띄우는 데 씀</td><td><b>네.</b> 원래 브라우저에 노출됩니다.</td></tr>
+      <tr><td>시크릿 키</td><td><code>TOSS_SECRET_KEY</code> — 서버에서 승인할 때만 씀</td><td><b>절대 안 됩니다.</b> <code>NEXT_PUBLIC_</code>을 붙이면 안 됩니다.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="tip">
+    <span class="lb">이 오류가 뜨면</span>
+    <p><b>결제창이 안 뜨고 아무 반응 없음</b><br>
+    클라이언트 키가 비어 있는 경우가 대부분입니다. 환경변수를 넣고 <b>다시 배포</b>했는지 확인하세요.</p>
+    <p><b>손님이 결제창을 그냥 닫았는데 빨간 오류가 뜬다</b><br>
+    취소는 오류가 아닙니다. 우리는 취소로 보이는 메시지는 화면에 띄우지 않습니다.</p>
+<pre><code>if (!/취소|cancel|close|USER_CANCEL/i.test(msg)) setError(msg);</code></pre>
+    <p><b>승인 단계에서 시간 초과</b><br>
+    결제 승인은 네트워크를 여러 번 왕복합니다. 서버 함수의 제한 시간을 넉넉히 주세요. 우리는 결제 관련 페이지에 <code>export const maxDuration = 60;</code>을 붙여 뒀습니다.</p>
+  </div>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">토스페이먼츠 개발자센터에서 테스트 키(클라이언트 키·시크릿 키)를 확인하는 화면. 시크릿 키는 일부 가려서.</span>
+  </div>
+
+  <div class="note">
+    <b>수수료.</b> PG 수수료는 업종·매출 규모·결제 수단에 따라 다르고 계약할 때 정해집니다. 이 문서에 숫자를 적어 드릴 수 없습니다 — <b>계약 전에 반드시 직접 확인하세요.</b> 정산 주기(며칠 뒤에 내 통장에 들어오는지)도 함께 물어보세요. 생각보다 늦습니다.
+  </div>
+</section>
+
+
+<!-- ══════════════ 7장 ══════════════ -->
+<section class="chapter" id="ch7">
+  <span class="num">7</span>
+  <h2>사진 · 영상 만들기 (힉스필드)</h2>
+  <p class="when">언제 필요한가 — 화면은 다 됐는데 넣을 이미지가 없을 때</p>
+
+  <p>완성된 사이트가 초라해 보이는 이유는 대개 디자인이 아니라 <b>이미지</b>입니다. 회색 네모와 <code>lorem ipsum</code>이 남아 있으면 아무리 잘 만들어도 미완성으로 보입니다.</p>
+
+  <h3>세 가지 길</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>방법</th><th>좋은 점</th><th>걸리는 점</th></tr></thead>
+    <tbody>
+      <tr><td>직접 촬영</td><td>내 물건·내 공간 그대로. 신뢰가 다르다.</td><td>시간과 장비. 실제 상품이 없으면 불가능.</td></tr>
+      <tr><td>무료 스톡 (Unsplash, Pexels 등)</td><td>공짜, 품질 좋음.</td><td>남들도 다 씀. 톤이 제각각. 원하는 장면이 없음.</td></tr>
+      <tr><td>AI 생성 (힉스필드 등)</td><td>원하는 장면을 원하는 톤으로. 영상까지.</td><td>손·글자가 깨질 때가 있음. 요금이 듦.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>우리는 <b>힉스필드(Higgsfield)</b>로 이미지와 짧은 영상을 만듭니다. 홈페이지의 분위기 컷, 마케팅 카드뉴스, SNS 릴스가 여기서 나옵니다.</p>
+
+  <h3>실제로 써 보고 배운 요령</h3>
+  <ul>
+    <li><b>한 장씩 뽑지 말고 "한 벌"로 뽑으세요.</b> 사이트 안의 이미지가 톤이 제각각이면 오히려 더 어수선해 보입니다. 조명·색감·화각을 문장으로 고정해 두고(예: "따뜻한 자연광, 종이 질감, 카메라는 눈높이") 그 문장을 모든 컷에 그대로 붙이세요.</li>
+    <li><b>글자는 AI에게 맡기지 마세요.</b> 이미지 안에 한글을 넣으라고 하면 거의 깨집니다. <b>배경만 AI로 만들고 글자는 화면(HTML/CSS)에서 얹으세요.</b> 나중에 문구를 고칠 때도 훨씬 편합니다.</li>
+    <li><b>사람 얼굴은 조심스럽게.</b> 실제 인물처럼 보이는 이미지를 후기·직원 사진처럼 쓰면, 손님이 알아챘을 때 신뢰가 통째로 무너집니다. 분위기 컷이나 뒷모습·손·사물 위주로 쓰세요.</li>
+    <li><b>가로/세로를 미리 정하세요.</b> 웹 배너는 가로로 길고(예: 16:9, 21:9), SNS는 정사각이나 세로(1:1, 9:16)입니다. 나중에 자르면 중요한 부분이 잘립니다.</li>
+    <li><b>영상은 3~6초짜리 여러 개가 낫습니다.</b> 긴 영상 하나보다 짧은 걸 이어 붙이는 편이 실패해도 다시 뽑기 쉽습니다.</li>
+  </ul>
+
+  <h3>사이트에 넣을 때 — 무거우면 안 넣느니만 못합니다</h3>
+  <p>AI가 준 이미지는 대개 아주 큽니다(수 MB). 그대로 올리면 사이트가 눈에 띄게 느려집니다.</p>
+  <ul>
+    <li><b>형식은 WebP나 AVIF로.</b> 같은 화질에 용량이 훨씬 작습니다. Next.js를 쓴다면 <code>next/image</code>가 알아서 변환·크기 조절을 해 줍니다. <code>&lt;img&gt;</code> 대신 그걸 쓰세요.</li>
+    <li><b>표시할 크기보다 조금만 크게.</b> 화면에 400px로 나오는 이미지를 4000px로 올릴 이유가 없습니다.</li>
+    <li><b>영상은 자동재생 + 음소거 + 반복</b>이 기본입니다. 소리가 갑자기 나오면 손님은 탭을 닫습니다.</li>
+  </ul>
+
+  <div class="note">
+    <b>권리와 요금.</b> AI로 만든 이미지·영상을 <b>상업적으로</b> 써도 되는지, 어디까지 되는지는 도구마다 다르고 요금제마다 다릅니다. 자주 바뀌기도 합니다. <b>쓰기 전에 그 도구의 약관과 요금 안내를 직접 확인하세요.</b> 특히 유료 상품에 넣거나 광고에 쓸 계획이면 반드시요.
+  </div>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">힉스필드에서 같은 톤 지시문으로 여러 컷을 뽑아 나란히 놓은 결과. "한 벌로 뽑는다"가 눈으로 보이게.</span>
+  </div>
+</section>
+
+
+<!-- ══════════════ 8장 ══════════════ -->
+<section class="chapter" id="ch8">
+  <span class="num">8</span>
+  <h2>AI 기능 붙이기 (Claude API)</h2>
+  <p class="when">언제 필요한가 — 손님이 내 사이트 안에서 AI를 쓰게 하고 싶을 때</p>
+
+  <p>지금까지는 <b>내가</b> AI로 사이트를 만들었습니다. 이 장은 <b>손님이</b> 내 사이트 안에서 AI를 쓰게 하는 이야기입니다. 요약해 주는 기능, 문구를 만들어 주는 기능 같은 것들이요.</p>
+
+  <h3>1) 키 받아서 숨기기</h3>
+  <ol>
+    <li><a href="https://console.anthropic.com">console.anthropic.com</a>에 가입하고, 결제 수단을 등록한 뒤 <b>API Key</b>를 만듭니다. (쓴 만큼 내는 방식입니다.)</li>
+    <li>키를 <code>.env.local</code>과 Vercel 환경변수에 넣습니다.</li>
+  </ol>
+
+<pre><code>ANTHROPIC_API_KEY=sk-ant-...</code></pre>
+
+  <div class="tip">
+    <span class="lb">이것만은 꼭</span>
+    <p><b>이 키에 <code>NEXT_PUBLIC_</code>을 붙이면 안 됩니다.</b> 그 순간 브라우저에서 누구나 볼 수 있게 되고, <b>남이 당신 카드로 AI를 씁니다.</b> 실제로 자주 벌어지는 사고입니다.</p>
+    <p>AI 호출은 <b>반드시 서버에서만</b> 하세요. Next.js라면 서버 컴포넌트, 서버 액션, 또는 <code>app/api/...</code> 안입니다. 화면 쪽 코드(<code>"use client"</code>가 붙은 파일)에서는 절대 부르지 마세요.</p>
+  </div>
+
+  <h3>2) 부르기</h3>
+<pre><code>npm install @anthropic-ai/sdk</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "Claude를 쉽게 부를 수 있는 도구를 설치해라."</p>
+
+<pre><code><span class="c">// 서버 쪽 파일에서만</span>
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+const message = await client.messages.create({
+  model: "claude-haiku-4-5",
+  max_tokens: 4000,
+  system: "너는 ~를 하는 도우미다. 결과는 JSON으로만 답한다.",
+  messages: [{ role: "user", content: 사용자입력 }],
+});</code></pre>
+  <p class="means"><b>세 개만 알면 됩니다.</b> <code>model</code> = 어떤 모델을 쓸지. <code>max_tokens</code> = 답을 최대 얼마나 길게 쓸지. <code>system</code> = "너는 이런 역할이다"라는 사전 지시. <code>messages</code>에 실제 질문이 들어갑니다.</p>
+
+  <h3>3) 모델은 일마다 다르게 — 이게 원가를 정합니다</h3>
+  <p>모델은 여러 개고, 똑똑할수록 비쌉니다. <b>모든 걸 제일 비싼 모델로 하면 원가가 무너집니다.</b></p>
+  <p>우리는 이렇게 나눴습니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>하는 일</th><th>쓰는 모델</th><th>왜</th></tr></thead>
+    <tbody>
+      <tr><td>화면 목록 뼈대 만들기</td><td>빠르고 싼 모델 (Haiku)</td><td>양이 많고 형식이 정해져 있다. 속도와 값이 중요.</td></tr>
+      <tr><td>내용을 깊게 보강하기</td><td>비싼 모델 (Opus)</td><td>판단이 필요하다. 결과 품질이 곧 상품 가치.</td></tr>
+      <tr><td>검수(잘못된 곳 찾기)</td><td>비싼 모델 (Opus)</td><td>놓치면 안 되는 일이라 값보다 정확도.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <b>요금.</b> 모델별 단가(입력·출력 토큰당 가격)는 바뀝니다. <b>Anthropic 공식 요금 페이지에서 직접 확인하세요.</b> 다만 방향은 확실합니다 — 같은 일을 시켜도 모델에 따라 원가가 몇 배 차이 납니다.
+  </div>
+
+  <div class="ours">
+    <span class="lb">우리가 겪은 것</span>
+    <h4>AI 기능을 붙일 때 아무도 미리 안 알려 주는 세 가지</h4>
+
+    <p><b>① 오래 걸립니다. 그리고 서버가 먼저 포기합니다.</b><br>
+    Vercel 같은 곳의 서버 함수는 기본 제한 시간이 짧습니다. AI가 긴 답을 쓰는 데 1~2분이 걸리면, 답이 오기도 전에 서버가 <b>끊어 버립니다.</b> 손님 화면엔 그냥 오류가 뜨죠. 우리는 무거운 화면마다 제한 시간을 직접 올려 뒀습니다.</p>
+<pre><code><span class="c">// 이 페이지/경로는 최대 300초까지 기다린다</span>
+export const maxDuration = 300;</code></pre>
+    <p>다만 <b>얼마까지 올릴 수 있는지는 요금제마다 다릅니다.</b> Vercel 문서에서 확인하세요. 그리고 화면에는 반드시 "만드는 중이에요" 표시를 두세요. 1분 넘게 아무 반응이 없으면 손님은 고장 났다고 생각하고 새로고침합니다.</p>
+
+    <p><b>② 답이 중간에 잘립니다. 그런데 오류가 안 납니다.</b><br>
+    <code>max_tokens</code>에 걸리면 AI는 문장 한가운데서 그냥 멈춥니다. JSON을 달라고 했다면 <b>닫는 괄호가 없는 반쪽짜리 JSON</b>이 옵니다. 이걸 그대로 쓰면 엉뚱한 데서 터지고, 원인을 찾는 데 하루가 갑니다.</p>
+    <p>반드시 <b>왜 멈췄는지</b>를 확인하고, 잘렸으면 그 묶음은 버리세요.</p>
+<pre><code><span class="c">// 분량 상한에 걸려 JSON이 잘린 경우 — 이 결과는 신뢰할 수 없다</span>
+if (message.stop_reason === "max_tokens") {
+  throw new Error("TRUNCATED");
+}</code></pre>
+    <p>덧붙여, 한 번에 너무 많은 걸 시키지 마세요. 우리는 "① 뼈대만 만들기 → ② 화면별 내용 채우기"로 <b>두 단계로 쪼갰고</b>, ②는 다시 여러 묶음으로 나눠 부릅니다. 그러면 한 묶음이 실패해도 <b>전체를 버리지 않아도 됩니다.</b></p>
+
+    <p><b>③ 얼마 썼는지 모르면 값을 못 매깁니다.</b><br>
+    AI를 쓰는 기능으로 돈을 받으려면 <b>한 번 실행에 얼마가 드는지</b>를 알아야 합니다. 그런데 이건 청구서가 와야 아는 게 아니라, <b>호출할 때마다 응답에 들어 있습니다.</b> 우리는 매 호출의 토큰 사용량을 모아서 로그에 한 줄로 찍습니다.</p>
+<pre><code>const u = message.usage;
+usage.input      += u.input_tokens ?? 0;
+usage.output     += u.output_tokens ?? 0;
+usage.cacheRead  += u.cache_read_input_tokens ?? 0;
+usage.cacheWrite += u.cache_creation_input_tokens ?? 0;</code></pre>
+    <p>이 숫자를 며칠만 모아 보면 "이 기능은 1회에 대략 얼마"가 나옵니다. <b>그 값을 알고 나서 가격을 정하세요.</b> 우리는 이걸 안 하다가 큰 프로젝트에서 적자를 냈고, 이후로 "실행 규모에 비례하는" 방식으로 값을 다시 짰습니다.</p>
+  </div>
+
+  <div class="tip">
+    <span class="lb">이 오류가 뜨면</span>
+    <p><b><code>401 authentication_error</code></b><br>
+    키가 없거나 틀렸습니다. Vercel에 넣었다면 <b>재배포</b>했는지 확인하세요.</p>
+    <p><b><code>429 rate_limit_error</code></b><br>
+    너무 빨리 많이 불렀습니다. 잠깐 쉬었다 다시 시도하는 처리를 넣으세요.</p>
+    <p><b>JSON을 달라고 했는데 "네, 알겠습니다"가 앞에 붙어 온다</b><br>
+    흔한 일입니다. 응답 문자열에서 첫 <code>{</code>와 마지막 <code>}</code> 사이만 잘라 쓰면 안전합니다.</p>
+  </div>
+</section>
+
+
+<!-- ══════════════ 9장 ══════════════ -->
+<section class="chapter" id="ch9">
+  <span class="num">9</span>
+  <h2>안 망가지게 지키기</h2>
+  <p class="when">언제 필요한가 — 한 군데 고칠 때마다 다른 데가 깨질 때</p>
+
+  <p>사이트가 커지면 반드시 이 순간이 옵니다. 버튼 색 하나 바꿨는데 결제가 안 되고, 그걸 <b>손님이 먼저 알려 줍니다.</b> 개발자가 아니어도 막을 방법이 있습니다.</p>
+
+  <h3>1) 올릴 때마다 자동으로 검사받기 (GitHub Actions)</h3>
+  <p>깃허브에는 "코드가 올라오면 자동으로 뭔가 시키는" 기능이 있습니다. 제일 값진 건 <b>"일단 지어지기는 하는지"</b>를 확인하는 겁니다.</p>
+  <p>프로젝트에 <code>.github/workflows/ci.yml</code> 파일을 만들고 아래를 넣으세요. 우리 것과 거의 같습니다.</p>
+
+<pre><code>name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "<code>main</code>에 코드가 올라오거나 변경 제안이 생기면, 깨끗한 리눅스 컴퓨터를 하나 빌려서 → 코드를 받고 → Node 20을 깔고 → 부품을 설치하고 → 사이트를 지어 봐라." 짓다가 실패하면 깃허브에 <b>빨간 X</b>가 뜹니다.</p>
+  <p>이것만으로도 "빌드도 안 되는 코드를 실서버에 올리는" 사고의 대부분이 막힙니다.</p>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">GitHub Actions 탭에서 CI가 초록 체크로 통과한 화면과, 실패해서 빨간 X가 뜬 화면 두 장.</span>
+  </div>
+
+  <h3>2) 지켜야 할 규칙을 기계에게 맡기기</h3>
+  <p>우리는 검사를 하나 더 넣었습니다.</p>
+<pre><code>      - name: Enforce domain/adapters boundary
+        run: npm run depcruise</code></pre>
+  <p class="means"><b>이게 무슨 일이냐면.</b> 우리 코드는 "핵심 규칙" 부분과 "바깥 세상과 연결하는" 부분이 나뉘어 있습니다. 핵심 규칙 쪽에서 결제 회사나 데이터베이스를 직접 부르면 안 되죠. 그런데 사람은 잊습니다. 그래서 <b>규칙을 어긴 코드가 올라오면 자동으로 빨간 X가 뜨게</b> 만들었습니다.</p>
+  <p>여러분의 프로젝트에 이걸 그대로 넣을 필요는 없습니다. <b>핵심은 "지키기로 한 규칙을 사람의 기억이 아니라 기계에 맡긴다"</b>는 겁니다.</p>
+
+  <h3>3) 진짜 주소에 올리기 전에 미리 보기</h3>
+  <p>Vercel은 <b>변경 제안(Pull Request)마다 임시 주소를 하나씩</b> 만들어 줍니다. 실제 사이트는 그대로 두고, 그 임시 주소에서 먼저 눌러 볼 수 있습니다.</p>
+  <p>습관을 이렇게 바꾸면 사고가 확 줍니다.</p>
+  <ol>
+    <li><code>main</code>에 바로 올리지 않고 <b>가지(branch)를 하나 파서</b> 작업합니다.</li>
+    <li>변경 제안을 올리면 CI 검사가 돌고, Vercel이 미리보기 주소를 답니다.</li>
+    <li>그 주소에서 직접 눌러 보고, 괜찮으면 합칩니다.</li>
+  </ol>
+
+<pre><code>git switch -c fix-login
+<span class="c"># ... 고치고 ...</span>
+git add .
+git commit -m "로그인 버튼 문구 수정"
+git push -u origin fix-login</code></pre>
+  <p class="means"><b>이건 이런 뜻이에요.</b> "<code>fix-login</code>이라는 새 가지를 만들어 거기서 작업하고, 그 가지를 창고에 올려라." 올리면 깃허브가 "변경 제안을 만들까요?"라고 물어봅니다.</p>
+
+  <h3>4) 잘못 올렸을 때 — 되돌리기</h3>
+  <p>Vercel의 <b>Deployments</b> 탭에는 지금까지 올린 것들이 전부 남아 있습니다. 멀쩡했던 것을 골라 <b>⋯ → Promote to Production</b>(또는 Instant Rollback)을 누르면 <b>몇 초 만에</b> 그 상태로 돌아갑니다. 코드를 고치는 게 아니라 <b>예전에 지어 둔 것으로 스위치를 옮기는</b> 것이라 아주 빠릅니다.</p>
+  <p><b>문제가 생기면 원인부터 찾지 말고 일단 되돌리세요.</b> 손님이 오류를 보고 있는 시간을 줄이는 게 먼저입니다. 원인은 그다음에 찾으면 됩니다.</p>
+
+  <h3>5) 위험한 것은 스위치 뒤에 두기</h3>
+  <p><a href="#ch6">6장</a>에서 만든 스위치는 결제만을 위한 게 아닙니다. <b>아직 자신 없는 기능은 만들어 두되 꺼 두세요.</b> 우리는 화면을 직접 편집하는 기능을 다 만들어 놓고 껐습니다.</p>
+<pre><code><span class="c">/**
+ * 화면 목록에서 화면을 직접 고칠 수 있게 하는가.
+ *
+ * 잘 쓰려면 기획 감각이 필요해 대부분의 사용자에게는 부담이었다(2026-08-03 보류).
+ * 기능은 그대로 두고 버튼만 감춘다 — 다시 열 때 이 값만 true로 바꾸면 된다.
+ */</span>
+export const SCREEN_EDIT_OPEN = false;</code></pre>
+  <p class="means"><b>지우지 않고 끄는 이유.</b> 지우면 다시 만들어야 하고, 나중에 "왜 없앴더라"를 아무도 기억 못 합니다. 꺼 두고 <b>이유를 적어 두면</b> 언제든 한 줄로 되살릴 수 있습니다.</p>
+
+  <div class="tip">
+    <span class="lb">오류가 났는데 뭐가 문제인지 모를 때</span>
+    <p>Vercel 프로젝트의 <b>Logs</b>(또는 각 배포의 Runtime Logs)를 보세요. 손님 화면엔 "오류가 발생했습니다"만 나와도, 여기엔 <b>진짜 이유가 한 줄로</b> 찍혀 있습니다. 그 줄을 그대로 복사해서 AI에게 물어보면 대개 바로 답이 나옵니다.</p>
+  </div>
+</section>
+
+
+<!-- ══════════════ 10장 ══════════════ -->
+<section class="chapter" id="ch10">
+  <span class="num">10</span>
+  <h2>오픈 전 마지막 점검</h2>
+  <p class="when">언제 필요한가 — 문 열기 직전</p>
+
+  <p>여기까지 오셨으면 사이트는 이미 돌고 있습니다. 이제 <b>손님이 되어 한 번 걸어 보는</b> 일만 남았습니다. 만든 사람은 자기가 만든 길로만 걷습니다. 손님은 아무 데나 누릅니다.</p>
+
+  <h3>주소와 자물쇠</h3>
+  <ul class="check">
+    <li>내 도메인으로 들어가면 사이트가 뜬다.</li>
+    <li><code>www</code>가 있는 주소와 없는 주소 <b>둘 다</b> 들어가진다(한쪽으로 넘어가도 됨).</li>
+    <li>주소창에 자물쇠가 보인다. "안전하지 않음"이 없다.</li>
+    <li><code>http://</code>로 들어가도 <code>https://</code>로 넘어간다.</li>
+  </ul>
+
+  <h3>로그인</h3>
+  <ul class="check">
+    <li>화면에 보이는 소셜 로그인 버튼이 <b>전부</b> 실제로 동작한다(<a href="#ch4">4장</a>).</li>
+    <li><b>로그아웃</b>이 된다. 조용히 실패하지 않는다(<a href="#ch3">3장</a>의 함정).</li>
+    <li>로그아웃 상태로 회원 전용 주소를 직접 쳐서 들어가면 <b>막힌다.</b></li>
+    <li>다른 사람의 데이터 주소를 직접 쳐 넣어도 <b>안 보인다.</b> (남의 프로젝트 번호로 바꿔 보세요.)</li>
+  </ul>
+
+  <h3>결제 (받는다면)</h3>
+  <ul class="check">
+    <li><b>실제 카드로 최소 금액 한 번</b> 결제해 본다. 테스트 키로 백 번 해 본 것과 다릅니다.</li>
+    <li>결제 후 물건(크레딧·파일·권한)이 <b>실제로</b> 들어온다.</li>
+    <li>결제창을 그냥 닫았을 때 빨간 오류가 안 뜬다.</li>
+    <li>취소·환불을 어떻게 처리할지 <b>내가</b> 알고 있다.</li>
+    <li>푸터에 상호·대표자·사업자등록번호·통신판매업 신고번호·주소·연락처가 있다.</li>
+    <li>이용약관과 개인정보처리방침 링크가 있고, <b>내용이 실제와 맞다</b>(체험 기간·환불 조건 등).</li>
+  </ul>
+
+  <h3>화면</h3>
+  <ul class="check">
+    <li><b>휴대폰으로</b> 전부 열어 본다. 가로로 밀리는 화면이 없다.</li>
+    <li>목록에 아무것도 없을 때(<b>빈 화면</b>)가 깨져 보이지 않는다.</li>
+    <li>없는 주소를 쳤을 때 <b>404 화면</b>이 제대로 나온다.</li>
+    <li>오래 걸리는 동작에 "처리 중" 표시가 있다(<a href="#ch8">8장</a>).</li>
+    <li>회색 네모, <code>lorem ipsum</code>, "여기에 텍스트" 같은 임시 내용이 남아 있지 않다.</li>
+    <li>카카오톡·슬랙에 주소를 붙였을 때 <b>미리보기 카드</b>가 제대로 나온다.</li>
+  </ul>
+
+  <h3>안 보이는 것</h3>
+  <ul class="check">
+    <li>깃허브 창고에 <code>.env</code>나 키 파일이 올라가 있지 않다(<a href="#ch1">1장</a>).</li>
+    <li>브라우저 개발자 도구에서 시크릿 키가 안 보인다(<code>NEXT_PUBLIC_</code> 점검).</li>
+    <li>문의받을 창구(메일·카톡 등)가 있고, <b>내가 그걸 실제로 본다.</b></li>
+    <li>데이터베이스 백업/브랜치를 어떻게 하는지 안다(<a href="#ch5">5장</a>).</li>
+    <li>문제가 생겼을 때 되돌리는 법을 안다(<a href="#ch9">9장</a>).</li>
+  </ul>
+
+  <div class="shot">
+    <span class="cam">📷</span>
+    <span class="lb">캡처 필요</span>
+    <span class="what">휴대폰으로 실제 사이트를 열어 본 화면 두 장 — 잘 나온 것과, 가로로 밀려서 깨진 것을 나란히.</span>
+  </div>
+
+  <hr>
+
+  <p>여기까지가 <b>내놓는 법</b>입니다. 주소가 있고, 자물쇠가 있고, 로그인이 되고, 데이터가 남고, 돈을 받을 수 있고, 망가져도 되돌릴 수 있습니다.</p>
+
+  <p>그런데 목록을 훑어보면 아시겠지만, <b>남은 건 결국 하나씩 눌러 확인하는 일</b>입니다. 그리고 이게 만든 사람에게는 제일 안 되는 일입니다. 내가 만든 길은 눈 감고도 걸으니까, <b>내가 안 만든 길</b>이 안 보입니다. 빈 화면, 잘못 누른 순서, 로그아웃한 채로 들어간 주소 — 사고는 거기서 납니다.</p>
+
+  <p>그래서 우리는 <b>사이트 주소만 넣으면 대신 걸어 보고 알려 주는 검수</b>를 만들고 있습니다. 접속·속도·모바일·검색·이미지·링크처럼 기계가 판정할 수 있는 것들을 홈 한 장이 아니라 <b>안쪽 화면까지 따라 들어가며</b> 확인하고, 사람이 봐야 할 것은 "무엇을 어떤 순서로 눌러 보라"는 <b>검수 시나리오</b>로 뽑아 줍니다. 이 장의 체크리스트를 손으로 훑으신 뒤에, 한 번 더 확인받고 싶으시면 그때 써 보세요.</p>
+</section>
+
+
+<!-- ══════════════ 부록 ══════════════ -->
+<section class="chapter" id="chA">
+  <span class="num">부록</span>
+  <h2>그런데 화면은 어떻게 만드나요?</h2>
+  <p class="when">이 부록은 <b>내놓는 법</b>입니다. 화면 자체를 설계하는 건 AI팩이 합니다.</p>
+
+  <p>이 문서를 여기까지 읽으셨다면, 아마 이미 만들어 둔 화면이 있으실 겁니다. 그런데 이런 경우도 있습니다 — <b>AI에게 "쇼핑몰 만들어 줘"라고 했더니 화면 다섯 개가 나오고 끝났다.</b> 실제로 필요한 건 마흔 개인데요.</p>
+
+  <p>AI는 시키는 걸 잘합니다. 다만 <b>무엇을 시켜야 하는지</b>는 알려 주지 않습니다. 로그인 화면은 만들어도, 로그인 실패했을 때 화면, 비밀번호 찾기, 이미 가입된 계정, 탈퇴 유예 중인 계정은 말하지 않으면 안 나옵니다. 그 목록을 만드는 게 기획이고, 그게 <b>AI팩</b>입니다.</p>
+
+  <h3>AI팩에 들어 있는 것</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>산출물</th><th>무엇인가</th></tr></thead>
+    <tbody>
+      <tr><td>메뉴구조</td><td>사이트 전체가 어떤 메뉴로 나뉘는지.</td></tr>
+      <tr><td>IA 화면목록</td><td>만들어야 할 화면을 하나도 빠짐없이 적은 목록. 예외·오류·빈 화면까지 포함.</td></tr>
+      <tr><td>기능정의서</td><td>각 화면에서 무엇이 되어야 하는지.</td></tr>
+      <tr><td>WBS 개발 일정</td><td>무엇을 어떤 순서로 며칠에 걸쳐 만들지.</td></tr>
+      <tr><td>FLOW 흐름도</td><td>화면과 화면이 어떤 버튼으로 이어지는지.</td></tr>
+      <tr><td>AI 빌드 스펙팩</td><td>Claude Code·Cursor에 그대로 넣어 화면을 만들게 하는 지시 묶음.</td></tr>
+      <tr><td>디자인 프리셋</td><td>가이드 3종 · 레이아웃 2종. 색·글꼴·간격을 미리 정해 둔 것.</td></tr>
+      <tr><td>검수 시나리오 <small>(등급에 따라)</small></td><td>무엇을 어떤 순서로 눌러 확인할지. <a href="#ch10">10장</a>에서 말한 그것입니다.</td></tr>
+      <tr><td>완성 화면 (HTML) <small>(등급에 따라)</small></td><td>바로 열어 볼 수 있는 실제 화면 파일.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>규모(화면 수)와 등급에 따라 들어가는 것이 달라집니다. 검수 시나리오와 완성 화면은 상위 등급에 들어갑니다.</p>
+
+  <h3>솔직하게</h3>
+  <p>AI팩이 없어도 사이트는 만들 수 있습니다. 시간을 더 쓰고, 빠뜨린 화면을 나중에 발견해서 다시 만들면 됩니다. AI팩은 <b>그 되돌아가는 시간을 줄이는 것</b>이지, 없으면 못 만드는 물건이 아닙니다.</p>
+  <p>다만 이 부록에서 다룬 배포·로그인·결제는 <b>화면 목록이 흔들리면 전부 다시 해야 하는</b> 일들입니다. 도메인을 붙이고 결제를 붙인 뒤에 "아, 이 화면이 빠졌네"를 발견하면 앞의 작업이 통째로 흔들립니다. 순서를 앞에 두는 게 값이 덜 듭니다.</p>
+
+  <p><b>caffeinecolor.com</b>에서 무료 샘플을 먼저 열어 보세요. 산출물이 실제로 어떻게 생겼는지 보고 정하시면 됩니다.</p>
+</section>
+
+<footer class="end">
+  <p><b>만든 사이트를 세상에 내놓는 법</b><br>
+  카페인컬러 · caffeinecolor.com</p>
+  <p><small>이 부록은 우리가 이 사이트를 만들며 실제로 겪은 것을 정리한 것입니다.<br>
+  가격·무료 한도·요금제는 바뀌므로 반드시 각 서비스에서 직접 확인하세요.</small></p>
+  <p class="backtop"><a href="#toc">↑ 목차로</a></p>
+</footer>
+
+</div>
+</body>
+</html>

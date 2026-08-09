@@ -304,6 +304,21 @@ export function ZipAllButton({
         zip.file(`검수시나리오_${base}.xlsx`, XLSX.write(wb, { type: "array", bookType: "xlsx" }));
       }
 
+      /* 「사이트 내놓는 법」 안내서를 함께 넣는다 — 2026-08-10.
+         화면까지 만들어 드려도 「내 컴퓨터에서만 보인다」에서 멈추시는 분이 많다.
+         원본은 판매용_템플릿/_마케팅 한 벌이고, npm run pack 이 public/guide 로 복사한다.
+
+         ⚠ 이것 때문에 zip 전체가 실패하면 안 된다 — 안내서는 «덤»이지 본체가 아니다.
+           못 가져오면 조용히 빼고 나머지를 내려준다. */
+      try {
+        const 안내 = await fetch("/guide/deploy-guide.html");
+        if (안내.ok) {
+          zip.file("사이트_내놓는_법.html", await 안내.arrayBuffer());
+        }
+      } catch {
+        // 무시 — 안내서 없이 산출물만 내려준다.
+      }
+
       const blob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
