@@ -9,7 +9,7 @@ import {
   PRESET_REVISION_LIMIT,
 } from "@/application/preset";
 import { ProjectNotFoundError } from "@/application/with-project-auth";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { PresetForm } from "./preset-form";
 
 export default async function PresetPage({
@@ -29,7 +29,7 @@ export default async function PresetPage({
         projectId={projectId}
         projectName={proj.concept || "프로젝트"}
         initial={config}
-        creditsOpen={CREDITS_OPEN}
+        creditsOpen={(await creditsOpenForMe())}
         genCost={PRESET_GEN_COST}
         downloadCost={PRESET_DOWNLOAD_COST}
         revisionCost={PRESET_REVISION_COST}

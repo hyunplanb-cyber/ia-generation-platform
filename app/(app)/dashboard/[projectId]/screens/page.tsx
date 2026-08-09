@@ -8,7 +8,7 @@ import { detectOutOfRangeScreens } from "@/domain/schedule/detect-out-of-range-s
 import { detectScheduleReversals } from "@/domain/schedule/detect-schedule-reversals";
 import { DeliverableHeader, HeaderStat } from "../deliverable-header";
 import { ZipAllButton } from "../../zip-all-button";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { isDownloadUnlocked } from "@/application/download";
 import { downloadCost } from "@/lib/credits";
 import { ScreensView } from "./screens-view";
@@ -50,7 +50,7 @@ export default async function ScreensPage({
               large
               credits={cost}
               unlocked={unlocked}
-              creditsOpen={CREDITS_OPEN}
+              creditsOpen={(await creditsOpenForMe())}
             />
           ) : undefined
         }

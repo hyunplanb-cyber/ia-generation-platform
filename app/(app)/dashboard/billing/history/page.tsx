@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Coins, Info } from "lucide-react";
 import { listCredits, getCreditBalance } from "@/application/credit";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import type { CreditEntry, CreditKind } from "@/domain/credit/credit";
 
 function formatDate(d: Date): string {
@@ -60,7 +60,7 @@ export default async function CreditHistoryPage() {
             현재 잔액 <span className="font-bold text-primary">{balance.toLocaleString()}</span> 크레딧
           </p>
         </div>
-        {CREDITS_OPEN && (
+        {(await creditsOpenForMe()) && (
           <Link
             href="/dashboard/billing"
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"

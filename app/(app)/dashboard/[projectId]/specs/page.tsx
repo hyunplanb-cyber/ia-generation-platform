@@ -3,7 +3,7 @@ import { getProjectScreensDetail } from "@/application/get-project-screens-detai
 import { listMenus } from "@/application/list-menus";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { ZipAllButton } from "../../zip-all-button";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { isDownloadUnlocked } from "@/application/download";
 import { downloadCost } from "@/lib/credits";
 import { buildRequirements, type ReqType } from "@/lib/export/requirements";
@@ -58,7 +58,7 @@ export default async function SpecsPage({
               large
               credits={cost}
               unlocked={unlocked}
-              creditsOpen={CREDITS_OPEN}
+              creditsOpen={(await creditsOpenForMe())}
             />
           ) : undefined
         }

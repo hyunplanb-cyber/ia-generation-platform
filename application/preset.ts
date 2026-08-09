@@ -3,7 +3,7 @@ import { db } from "@/db/client";
 import { project } from "@/db/schema";
 import { withProjectAuth } from "@/application/with-project-auth";
 import { spendCredits } from "@/application/credit";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { CREDIT_COST, PRESET_REVISION_LIMIT } from "@/lib/credits";
 import { parsePresetConfig, type PresetConfig } from "@/lib/design-presets";
 
@@ -121,7 +121,8 @@ export async function downloadPreset(projectId: string): Promise<PresetActionRes
     }
 
     const cost = firstTime ? PRESET_DOWNLOAD_COST : PRESET_REVISION_COST;
-    if (CREDITS_OPEN) {
+    const 유료 = await creditsOpenForMe();
+    if (유료) {
       const memo = firstTime ? "디자인 프리셋 다운로드" : "디자인 프리셋 수정본 다운로드";
       const spend = await spendCredits(cost, memo, { projectId });
       if (!spend.ok) return { ok: false, reason: "insufficient", balance: spend.balance };
@@ -136,6 +137,6 @@ export async function downloadPreset(projectId: string): Promise<PresetActionRes
       })
       .where(eq(project.id, projectId));
 
-    return { ok: true, charged: CREDITS_OPEN, cost };
+    return { ok: true, charged: 유료, cost };
   });
 }

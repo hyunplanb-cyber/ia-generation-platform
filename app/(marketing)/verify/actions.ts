@@ -3,7 +3,7 @@
 import { verifySite, verifyDocument, verifyText } from "@/application/verify-site";
 import { requireSession } from "@/application/require-session";
 import { getCreditBalance, spendCredits } from "@/application/credit";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { VERIFY_CHUNK, verifyGenCost, insufficientCreditMessage } from "@/lib/credits";
 import { drizzleVerifyRunRepository } from "@/adapters/repository/drizzle/verify-run-repository";
 import type { VerificationReport } from "@/domain/verify/report";
@@ -63,7 +63,7 @@ export async function runVerifyAction(
       : VERIFY_CHUNK.maxDocChunks;
   // 한도는 크레딧 하나로만 정한다(기능별 무료 횟수를 두지 않는다).
   if ((await getCreditBalance()) < verifyGenCost(maxChunks)) {
-    return { report: null, error: insufficientCreditMessage(CREDITS_OPEN), limitReached: true, runId: null };
+    return { report: null, error: insufficientCreditMessage(await creditsOpenForMe()), limitReached: true, runId: null };
   }
 
   let report: VerificationReport;

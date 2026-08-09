@@ -19,7 +19,7 @@ import { getProjectQuota } from "@/application/can-create-project";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { ZipAllButton } from "./zip-all-button";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { isDownloadUnlocked, isVerifyDownloadUnlocked } from "@/application/download";
 import { downloadCost, CREDIT_COST } from "@/lib/credits";
 import { ProjectDeliverablePreview } from "./project-deliverable-preview";
@@ -77,6 +77,8 @@ export default async function DashboardPage({
   ]);
   const activeTab = tab === "verify" ? "verify" : "planning";
   const quota = await getProjectQuota(projects.length);
+  // 크레딧 경제가 이 사람에게 열려 있나. map 콜백 안에서는 await 를 못 써서 한 번만 구한다.
+  const 크레딧열림 = await creditsOpenForMe();
   const hitLimit = limit === "reached" || !quota.allowed;
 
   let body: React.ReactNode;
@@ -85,7 +87,7 @@ export default async function DashboardPage({
     const verifyUnlocks = Object.fromEntries(
       await Promise.all(runs.map(async (r) => [r.id, await isVerifyDownloadUnlocked(r.id)] as const)),
     );
-    body = <VerifyTab runs={runs} verifyUnlocks={verifyUnlocks} creditsOpen={CREDITS_OPEN} />;
+    body = <VerifyTab runs={runs} verifyUnlocks={verifyUnlocks} creditsOpen={크레딧열림} />;
   } else {
     const screenCounts = await countScreensByProject(projects.map((p) => p.id));
     // 생성 완료(화면이 생긴)된 것만 목록에 노출한다. 작성 중(초안)은 감춘다.
@@ -101,6 +103,7 @@ export default async function DashboardPage({
     );
     body = (
       <PlanningTab
+        크레딧열림={크레딧열림}
         completed={completed}
         results={results}
         unlocks={unlocks}
@@ -120,7 +123,7 @@ export default async function DashboardPage({
       </div>
 
       {/* 무료 베타 안내 — 무료 크레딧으로 생성·미리보기, 그 외(다운로드·충전)는 준비중 */}
-      {!CREDITS_OPEN && (
+      {!크레딧열림 && (
         <div className="flex items-start gap-2 rounded-xl border border-primary/30 bg-primary-soft/20 px-4 py-3 text-sm">
           <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" />
           <p className="leading-relaxed text-foreground">
@@ -138,6 +141,7 @@ export default async function DashboardPage({
 
 // ── AI팩 탭 ──────────────────────────────
 function PlanningTab({
+  크레딧열림,
   completed,
   results,
   unlocks,
@@ -146,6 +150,8 @@ function PlanningTab({
   hitLimit,
   quotaLimit,
 }: {
+  /** 크레딧 경제가 이 사람에게 열려 있나 — 부모(서버 컴포넌트)가 정해서 넘긴다 */
+  크레딧열림: boolean;
   completed: Awaited<ReturnType<typeof listMyProjects>>;
   results: Record<string, ProjectResult>;
   unlocks: Record<string, boolean>;
@@ -258,7 +264,7 @@ function PlanningTab({
                         large
                         credits={cost}
                         unlocked={unlocks[p.id]}
-                        creditsOpen={CREDITS_OPEN}
+                        creditsOpen={크레딧열림}
                         {...zipAddonProps}
                       />
                     </span>
@@ -272,7 +278,7 @@ function PlanningTab({
                     large
                     credits={cost}
                     unlocked={unlocks[p.id]}
-                    creditsOpen={CREDITS_OPEN}
+                    creditsOpen={크레딧열림}
                     {...zipAddonProps}
                   />
                 </div>

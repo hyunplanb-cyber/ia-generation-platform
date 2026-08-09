@@ -7,7 +7,7 @@ import { listMenus } from "@/application/list-menus";
 import { withProjectAuth } from "@/application/with-project-auth";
 import { requireSession } from "@/application/require-session";
 import { getCreditBalance, spendCredits } from "@/application/credit";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { VERIFY_CHUNK, verifyGenCost, insufficientCreditMessage } from "@/lib/credits";
 import { buildSpecPackMarkdown } from "@/lib/export/spec-pack";
 import { drizzleVerifyRunRepository } from "@/adapters/repository/drizzle/verify-run-repository";
@@ -62,7 +62,7 @@ export async function generateScenariosAction(
     : 1;
   // 한도는 크레딧 하나로만 정한다(기능별 무료 횟수를 두지 않는다).
   if ((await getCreditBalance()) < verifyGenCost(plannedChunks)) {
-    return { report: null, error: insufficientCreditMessage(CREDITS_OPEN), limitReached: true, runId: null };
+    return { report: null, error: insufficientCreditMessage(await creditsOpenForMe()), limitReached: true, runId: null };
   }
 
   let report: VerificationReport;

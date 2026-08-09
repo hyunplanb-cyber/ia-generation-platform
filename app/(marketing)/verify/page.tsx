@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { getCreditBalance } from "@/application/credit";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { VerifyForm } from "./verify-form";
 
 // 검수는 여러 페이지를 돌며 자동 검사(수십~백여 건) + LLM 시나리오까지 하므로
@@ -28,7 +28,7 @@ export default async function VerifyPage() {
   // 스텝(입력→검수 결과)·안내 패널·폼이 상태를 공유해야 하므로, 셸 전체를 VerifyForm(클라이언트)이 그린다.
   return (
     <main className="point-green mx-auto w-full max-w-[1440px] px-6 py-5">
-      <VerifyForm balance={balance} creditsOpen={CREDITS_OPEN} />
+      <VerifyForm balance={balance} creditsOpen={(await creditsOpenForMe())} />
     </main>
   );
 }

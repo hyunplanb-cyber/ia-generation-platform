@@ -3,7 +3,7 @@ import { listMenus } from "@/application/list-menus";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { ZipAllButton } from "../../zip-all-button";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { isDownloadUnlocked } from "@/application/download";
 import { downloadCost } from "@/lib/credits";
 import { FoldList } from "../fold";
@@ -66,7 +66,7 @@ export default async function WbsPage({
               large
               credits={cost}
               unlocked={unlocked}
-              creditsOpen={CREDITS_OPEN}
+              creditsOpen={(await creditsOpenForMe())}
             />
           ) : undefined
         }

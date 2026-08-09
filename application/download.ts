@@ -5,7 +5,7 @@ import { requireSession } from "@/application/require-session";
 import { getProjectScreensDetail } from "@/application/get-project-screens-detail";
 import { spendCredits, getCreditBalance } from "@/application/credit";
 import { downloadPreset, getPresetState, PRESET_DOWNLOAD_COST } from "@/application/preset";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { downloadCost, CREDIT_COST } from "@/lib/credits";
 
 // 이 프로젝트의 다운로드가 이미 열려 있는가(크레딧을 낸 적 있는가).
@@ -108,7 +108,8 @@ export async function unlockBundle(
   sel: BundleSelection,
 ): Promise<UnlockResult> {
   await requireSession();
-  if (!CREDITS_OPEN) return { ok: true }; // 결제 꺼짐 — 전부 무료
+  // 심사 기간에는 allowlist 계정만 크레딧 경제가 열린다(application/billing-gate.ts).
+  if (!(await creditsOpenForMe())) return { ok: true }; // 결제 꺼짐 — 전부 무료
 
   let total = 0;
   if (sel.base && !(await isDownloadUnlocked(projectId))) total += await downloadCostFor(projectId);

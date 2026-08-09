@@ -5,7 +5,7 @@ import { DeliverableHeader, DeliverableEmpty } from "../deliverable-header";
 import { DiagramView } from "../diagram-view";
 import { MenuTreeChart } from "../menu-tree-chart";
 import { ZipAllButton } from "../../zip-all-button";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { isDownloadUnlocked } from "@/application/download";
 import { downloadCost } from "@/lib/credits";
 
@@ -40,7 +40,7 @@ export default async function TreePage({
               large
               credits={cost}
               unlocked={unlocked}
-              creditsOpen={CREDITS_OPEN}
+              creditsOpen={(await creditsOpenForMe())}
             />
           ) : undefined
         }

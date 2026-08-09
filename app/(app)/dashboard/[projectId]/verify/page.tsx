@@ -5,7 +5,7 @@ import { listProjectVerifyRuns } from "@/application/list-project-verify-runs";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { isVerifyDownloadUnlocked } from "@/application/download";
-import { CREDITS_OPEN } from "@/lib/flags";
+import { creditsOpenForMe } from "@/application/billing-gate";
 import { CREDIT_COST, VERIFY_CHUNK, verifyGenCost } from "@/lib/credits";
 import { VerifyPanel } from "./verify-panel";
 
@@ -45,6 +45,8 @@ export default async function ProjectVerifyPage({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
+  // 크레딧 경제가 이 사람에게 열려 있나. map 콜백 안에서는 await 를 못 써서 한 번만 구한다.
+  const 크레딧열림 = await creditsOpenForMe();
   const [menus, runs, screenCounts] = await Promise.all([
     listMenus(projectId),
     listProjectVerifyRuns(projectId),
@@ -89,7 +91,7 @@ export default async function ProjectVerifyPage({
         screenCount={screenCount}
         detailChunks={detailChunks}
         downloadCost={CREDIT_COST.downloadVerify}
-        creditsOpen={CREDITS_OPEN}
+        creditsOpen={크레딧열림}
       >
       {/* 보조 안내(먼저) — 왜 필요한지 */}
       <div className="rounded-xl border border-border bg-muted/20 p-4">
@@ -163,7 +165,7 @@ export default async function ProjectVerifyPage({
                         verifyRunId={run.id}
                         credits={CREDIT_COST.downloadVerify}
                         unlocked={verifyUnlocks[run.id]}
-                        creditsOpen={CREDITS_OPEN}
+                        creditsOpen={크레딧열림}
                       />
                     </div>
                   )}
