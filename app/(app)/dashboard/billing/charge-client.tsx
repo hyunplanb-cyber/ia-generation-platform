@@ -58,7 +58,12 @@ export function ChargeClient({
     setBusy(pack.id);
     try {
       const order = await createChargeOrderAction(pack.id);
-      if (!order) throw new Error("주문을 만들지 못했어요.");
+      /* 주문이 안 만들어지는 까닭은 셋이다 — 결제가 이 계정에 안 열렸거나,
+         심사 기간 충전 횟수를 다 썼거나, 지금 결제되지 않는 금액이거나.
+         셋 다 손님에게는 같은 뜻이다: **이 결제는 아직 열려 있지 않다.**
+         「주문을 만들지 못했어요」는 고장으로 읽혀서 손님이 다시 누르게 만든다.
+         잠긴 칸에 적힌 「결제 심사중」과 같은 말로 맞춘다. */
+      if (!order) throw new Error("결제 준비 중이에요.");
       await startPayment(order);
     } catch (e) {
       handleError(e);

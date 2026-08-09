@@ -34,6 +34,15 @@ export async function createChargeOrder(packId: string): Promise<StartedOrder | 
       .where(and(eq(creditOrder.userId, session.user.id), eq(creditOrder.status, "paid")));
     if (수 >= REVIEW_MAX_CHARGES) return null;
   }
+
+  /* 금액도 막는다 — 심사 기간에는 REVIEW_CHARGE_WON 한 칸만 실제로 결제된다.
+     화면은 나머지를 「결제 심사중」으로 잠그지만, 이 함수는 팩 id 만 알면 부를 수 있다.
+     9만 9천원을 두 번이면 2,178크레딧 — 22만원어치다.
+
+     ⚠ 이 줄이 원래 없었다(2026-08-09에 발견). chargeableNow 를 import 까지 해 놓고
+       부르지 않았다. 타입 검사는 «안 쓴 import» 를 오류로 보지 않아 그냥 통과했다.
+       화면에서 막았으니 됐다고 여긴 것이 화근이다 — 막는 곳은 언제나 서버여야 한다. */
+  if (!chargeableNow(pack.priceKrw)) return null;
   /* 지급 크레딧은 표(pack.credits)가 아니라 «계산식»에서 뽑는다.
      심사 기간에는 보너스가 10%로 내려가는데, 표의 값은 30% 기준이라
      표를 그대로 쓰면 심사 계정에 30%가 나간다(2026-08-09). 계산식이 유일한 출처다. */
