@@ -5,7 +5,9 @@
  * 조건을 얼마나 풀면 몇 명이 되는지, 요청서를 쓰면 어떻게 되는지를 그 자리에서 말해 준다.
  */
 import * as U from './ui.mjs';
-import { CATS, HOT_WORDS, PROS, REVIEWS, PRO } from './data.mjs';
+import { CATS, HOT_WORDS, PROS, REVIEWS } from './data.mjs';
+/* 대표 고수 — PRO 는 «함수»라 그대로 쓰면 undefined 가 찍힌다. 목록의 첫 사람을 쓴다. */
+const 대표 = PROS[0];
 
 const P = {};
 export default P;
@@ -253,7 +255,7 @@ ${U.card("", `<div class="row-b wrap-row mb4">
       ${U.btn('이 지역 다시 검색', { cls: 'btn-pri btn-sm', attr: ' data-toast="보고 계신 범위에서 다시 찾았어요 — 12명"' })}
     </div>
   </div>
-  ${U.phFix('지도 영역 (서울 강남구 중심 · 고수 18명 핀)', '16/9')}`)}
+  ${U.ph(['지도 영역 (서울 강남구 중심 · 고수 18명 핀)', 1200, 675])}`)}
 
 ${U.card("", `<b>핀을 누르면 이렇게 보입니다</b>
   <div class="list mt3">${U.proRow(PROS[0], { extra: '<span class="t-sub">여기서 2.4km</span>' })}</div>`,
@@ -350,7 +352,7 @@ ${U.banner('warn', '🔎', `<b>「서울 강남구 · 30만원 이하 · ★4.5 
   <p class="t-sub mt1">가장 많이 늘어나는 것은 <b>지역을 서울 전체로</b> 넓히는 것입니다 — 34명이 됩니다.</p>`)}
 
 ${U.card("", `${U.table(
-    [{ label: '이렇게 풀면', w: '46%' }, '몇 명', '알아 두실 것'],
+    [{ t: '이렇게 풀면', w: '46%' }, '몇 명', '알아 두실 것'],
     제안.map(([나, 수, 주]) => [나, `<b class="acc">${수}</b>`, `<span class="t-sub">${주 || '—'}</span>`]),
   )}
   <div class="btns mt4">
@@ -406,7 +408,7 @@ P['SE0302'] = () => {
   const 항목 = [['친절', 4.9], ['시간 약속', 4.8], ['마무리', 4.9], ['가격', 4.6]];
 
   const body = `
-${U.pageHd(`${PRO.nm} 고수`, '후기 128개')}
+${U.pageHd(`${대표.nm} 고수`, '후기 128개')}
 
 ${U.tabs([{ label: '소개', go: 'SE-03' }, { label: '후기' }, { label: '가격표', go: 'SE0303' }, { label: '포트폴리오', go: 'SE-04' }], 1)}
 
@@ -445,11 +447,11 @@ P['SE0303'] = () => {
   ];
 
   const body = `
-${U.pageHd(`${PRO.nm} 고수`, '가격표')}
+${U.pageHd(`${대표.nm} 고수`, '가격표')}
 
 ${U.tabs([{ label: '소개', go: 'SE-03' }, { label: '후기', go: 'SE0302' }, { label: '가격표' }, { label: '포트폴리오', go: 'SE-04' }], 2)}
 
-${U.card("", U.table([{ label: '서비스', w: '46%' }, '시작가', '무엇에 따라 달라지나'], 표), { cls: 'mt4' })}
+${U.card("", U.table([{ t: '서비스', w: '46%' }, '시작가', '무엇에 따라 달라지나'], 표), { cls: 'mt4' })}
 
 ${U.card("", `<b>이럴 때 더 붙습니다</b>
   ${U.table(['조건', '추가'], 추가)}`, { cls: 'mt6' })}
@@ -465,7 +467,7 @@ ${U.banner('info', '💡', `<b>여기 적힌 것은 «시작가»입니다.</b>
 /* ================= SE0304 고수 상세 > 휴무·응답 불가 ================= */
 P['SE0304'] = () => {
   const body = `
-${U.pageHd(`${PRO.nm} 고수`, '지금은 요청을 받지 않습니다')}
+${U.pageHd(`${대표.nm} 고수`, '지금은 요청을 받지 않습니다')}
 
 ${U.banner('warn', '🌙', `<b>휴식 중입니다 — <b>8월 18일</b>부터 다시 활동합니다.</b>
   <p class="t-sub mt1">지금 요청을 보내셔도 답이 늦습니다. 다시 활동할 때 알려드릴까요?</p>`,
@@ -496,7 +498,7 @@ P['SE0305'] = () => {
   ];
 
   const body = `
-${U.pageHd('신고하기', `${PRO.nm} 고수`)}
+${U.pageHd('신고하기', `${대표.nm} 고수`)}
 
 ${U.card("", `<p class="t-th mb3">무엇이 문제였나요?</p>
   ${유형.map(([나, 설명]) => `<label class="chk mb3">
@@ -529,10 +531,10 @@ ${U.card("", U.kv([
 /* ================= SE0402 포트폴리오 > 사진 크게 보기 ================= */
 P['SE0402'] = () => {
   const body = `
-${U.pageHd('작업 사진', `${PRO.nm} 고수 · 3 / 12`)}
+${U.pageHd('작업 사진', `${대표.nm} 고수 · 3 / 12`)}
 
 ${U.card("", `<div class="lightbox">
-    <div class="lb-stage">${U.phFix('작업 사진 (원룸 이사 · 완료 후)', '4/3')}</div>
+    <div class="lb-stage">${U.ph(['작업 사진 (원룸 이사 · 완료 후)', 1200, 900])}</div>
     <div class="row-b mt4">
       ${U.btn('‹ 이전', { cls: 'btn-ghost', attr: ' data-toast="이전 사진"' })}
       <span class="t-sub num">3 / 12</span>
@@ -563,7 +565,7 @@ ${U.card("", `<b>사진에 대해</b>
 /* ================= SE0403 포트폴리오 > 포트폴리오 없음 ================= */
 P['SE0403'] = () => {
   const body = `
-${U.pageHd('올린 작업 사진이 없습니다', `${PRO.nm} 고수`)}
+${U.pageHd('올린 작업 사진이 없습니다', `${대표.nm} 고수`)}
 
 ${U.card("", U.empty('📷', '아직 작업 사진이 없어요',
     '최근에 활동을 시작한 고수입니다. 사진은 없지만 후기와 자격은 확인하실 수 있습니다.',

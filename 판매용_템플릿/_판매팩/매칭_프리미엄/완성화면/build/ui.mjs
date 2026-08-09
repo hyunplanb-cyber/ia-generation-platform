@@ -22,11 +22,25 @@ export const setPages = (ids) => { PAGES = new Set(ids); };
 export function toPageId(id) {
   const s = String(id);
   if (!PAGES || PAGES.has(s)) return s;
-  const m = /^([A-Z]{2})(\d{2})\d{2}$/.exec(s);
-  const want = m ? `${m[1]}-${m[2]}` : s;
+
+  /* 3뎁스 팩에서는 «반대 방향»이 필요하다 — 2026-08-09.
+     2뎁스 빌더가 'SE-03' 으로 링크를 거는데 이 팩의 파일은 'SE0301.html' 이다.
+     그대로 두면 88장이 전부 끊긴다(check-pack.mts 가 잡아 줬다).
+     'SE-03' → 'SE0301' : 그 화면의 «기본 상태»로 보낸다. */
+  const 짧은 = /^([A-Z]{2})-(\d{2})$/.exec(s);
+  if (짧은) {
+    const 긴 = `${짧은[1]}${짧은[2]}01`;
+    if (PAGES.has(긴)) return 긴;
+  }
+
+  /* 반대 방향도 남겨 둔다 — 2뎁스 팩에서 3뎁스 이름으로 링크를 걸었을 때. */
+  const 긴것 = /^([A-Z]{2})(\d{2})\d{2}$/.exec(s);
+  const want = 긴것 ? `${긴것[1]}-${긴것[2]}` : s;
   if (PAGES.has(want)) return want;
-  const code = want.slice(0, 2);
-  return [...PAGES].find((p) => p.startsWith(`${code}-`)) || want;
+
+  // 그래도 못 찾으면 같은 메뉴의 첫 화면으로. 끊긴 링크보다 낫다.
+  const code = s.slice(0, 2);
+  return [...PAGES].find((p) => p.startsWith(code)) || s;
 }
 export const link = (id) => `${toPageId(id)}.html`;
 
