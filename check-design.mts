@@ -37,7 +37,7 @@ import { execFileSync } from "node:child_process";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import {
-  LAYOUTS, STRUCTURES, THUMBS, STRUCTURE_COLS, GRID_GAP, cardWidth,
+  LAYOUTS, STRUCTURES, THUMBS, STRUCTURE_COLS, GRID_GAP, cardWidth, gridBaseCss,
 } from "./lib/design-presets";
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
@@ -82,18 +82,29 @@ const 짧게 = (p: string) => p.replace(SITE, "").replace(/^[\\/]/, "");
   /* css 만 본다. html 의 인라인 style 까지 훑었더니 [^;]+ 가 문서 한 줄을
      통째로 물어 와서 메시지를 못 읽을 지경이 됐다(2026-08-08).
      값도 24자에서 끊는다 — 값이 길면 그건 값이 아니라 잘못 문 것이다. */
+  /* 「격자」에 적은 숫자만 잡는다.
+   *
+   * 2026-08-09 에 좁혔다. 그전에는 gap 이 들어간 줄을 전부 잡아서, 완성화면 네 팩에
+   * 21~32군데씩 찍혔다. 열어 보니 **하나도 격자가 아니었다** —
+   *   .btn{ display:inline-flex; gap:6px }   버튼 안 아이콘과 글자 사이
+   *   .delta{ gap:3px }                      숫자 옆 화살표
+   * 가이드가 말하는 건 「카드를 늘어놓는 격자」다. 버튼 안 6px 은 격자가 아니다.
+   *
+   * 헛경보를 내는 검사기는 없는 것만 못하다 — 몇 번 겪으면 사람이 다 무시하게 된다.
+   * 그래서 규칙 덩어리를 통째로 보고 **격자인 것만** 잰다. */
   for (const f of css들) {
-    const 줄들 = readFileSync(f, "utf8").split("\n");
-    줄들.forEach((줄, i) => {
-      /* 변수를 「정의하는」 줄은 넘어간다 — --card-gap:16px 은 정의라 맞다.
-         쓰는 자리에서 숫자를 적은 것만 잡는다. */
-      if (/^\s*--/.test(줄)) return;
-      const m = 줄.match(/(?<!-)\b(gap|column-gap|row-gap)\s*:\s*(?!var\()([^;{}"]{1,24})/);
-      if (m && /\d/.test(m[2])) {
-        걸린곳.push(`${짧게(f)}:${i + 1}`);
-        값모음.add(m[2].trim());
+    const 글 = readFileSync(f, "utf8");
+    for (const m of 글.matchAll(/([^{}]*)\{([^}]*)\}/g)) {
+      const 속 = m[2];
+      const 격자다 = /display\s*:\s*(inline-)?grid|grid-template-columns|grid-auto-columns/.test(속);
+      if (!격자다) continue;
+      const g = 속.match(/(?<!-)\b(gap|column-gap|row-gap)\s*:\s*(?!var\()([^;{}"]{1,24})/);
+      if (g && /\d/.test(g[2])) {
+        const 줄번호 = 글.slice(0, m.index).split("\n").length;
+        걸린곳.push(`${짧게(f)}:${줄번호}  ${m[1].trim().slice(0, 30)}`);
+        값모음.add(g[2].trim());
       }
-    });
+    }
   }
   if (걸린곳.length) {
     못됨(
@@ -104,12 +115,18 @@ const 짧게 = (p: string) => p.replace(SITE, "").replace(/^[\\/]/, "");
 }
 
 /* ── 2. 정해준 값과 다른가 ──────────────────────────────── */
+/* 값을 손으로 다시 적지 않는다 — 여기 24/52/8 이 적혀 있었고, 그중 52 는
+   가이드가 실제로 내보내는 값(48)과 달랐다. 검사기가 틀린 기준으로 재고 있었다는 뜻이다.
+   가이드가 내보내는 CSS 에서 그대로 뽑아 쓴다(2026-08-09). */
+const 가이드CSS = gridBaseCss();
+const 가이드값 = (이름: string) =>
+  가이드CSS.match(new RegExp(`${이름}\\s*:\\s*([^;]+);`))?.[1].trim() ?? "";
 const 정해진값: Record<string, string> = {
   "--card-gap": `${GRID_GAP.x}px`,
   "--card-gap-y": `${GRID_GAP.y}px`,
-  "--card-pad": "24px",
-  "--row-h": "52px",
-  "--btn-gap": "8px",
+  "--card-pad": 가이드값("--card-pad"),
+  "--row-h": 가이드값("--row-h"),
+  "--btn-gap": 가이드값("--btn-gap"),
 };
 for (const f of css들) {
   const 글 = readFileSync(f, "utf8");
@@ -135,21 +152,47 @@ for (const f of css들) {
 /* ── 4. 카드 구조 ──────────────────────────────────────────
    ⚠ 이 검사는 「우리 카드 규격(.card > .thumb + .body)으로 만든 화면」에만 뜻이 있다.
    처음엔 이걸 안 가려서, 자기 이름을 쓰는 옛 사이트에 「130장 실패」를 찍었다.
-   우리 규칙으로 남의 규칙을 재면 검사기가 틀린 것이다(2026-08-08). */
+   우리 규칙으로 남의 규칙을 재면 검사기가 틀린 것이다(2026-08-08).
+
+   ⚠⚠ 2026-08-09 — 그 가림막이 모자랐다. 「.card 를 쓰나」만 봤는데,
+   **완성화면도 .card 를 쓴다. 다른 뜻으로.**
+     우리   .card = 사진+글자 카드.        안에 .thumb + .body
+     완성화면 .card = 상자(패널).           안에 .card-hd / .card-bd / .card-ft
+                     사진 자리는 .ph-thumb · .ph-sq · .ph-circle 이다
+   같은 낱말이 두 뜻이라 네 팩에 37~124장씩 헛경보가 찍혔다.
+   그런데 가이드는 「사진 없는 상자는 이 규칙 밖」이라고 이미 적어 두었다 —
+   즉 완성화면은 규칙을 어긴 게 아니라 **애초에 이 규칙의 대상이 아니었다.**
+
+   이 사고는 이번이 세 번째다. `.card.wide`(카드 종류 ↔ 칸 수), `720px`(기준선 ↔ 읽기 폭),
+   그리고 `.card`(카드 ↔ 상자). **이름이 겹치면 반드시 어디선가 터진다.** */
 {
-  let 카드있는쪽 = 0, 구조없는쪽 = 0;
-  for (const f of html들) {
-    const 글 = readFileSync(f, "utf8");
-    if (!/class="[^"]*(^|\s)card(\s|")/.test(글) && !/class="[^"]*\bcard\b/.test(글)) continue;
-    카드있는쪽++;
-    /* 사진 없는 카드(.card.text)는 .thumb 가 없는 게 맞다 */
-    if (/class="[^"]*\bcard\b[^"]*\btext\b/.test(글)) continue;
-    if (!/class="[^"]*\bthumb\b/.test(글)) 구조없는쪽++;
-  }
-  if (카드있는쪽 === 0) {
-    걸림("카드 규격", "우리 카드 이름(.card)을 안 쓰는 화면입니다 — 카드 구조 검사는 건너뜁니다");
-  } else if (구조없는쪽 > 0) {
-    못됨(`화면 ${구조없는쪽}장`, ".card 는 쓰는데 안에 .thumb 가 없습니다 — 카드 CSS 가 안 붙습니다");
+  /* 어느 어휘로 쓰인 화면인지 먼저 가른다. 상자 어휘(.card-hd/.card-bd)나
+     자기네 사진 이름(.ph-*)이 보이면 우리 카드 규격이 아니다. */
+  const 상자어휘 = html들.some((f) => /class="[^"]*\bcard-(hd|bd|ft)\b/.test(readFileSync(f, "utf8")));
+  const 우리썸네일 = css들.some((f) => /\.thumb[^{}]*\{/.test(readFileSync(f, "utf8")));
+
+  if (상자어휘 || !우리썸네일) {
+    걸림(
+      "카드 규격",
+      상자어휘
+        ? ".card 를 「상자(패널)」 뜻으로 쓰는 화면입니다 — 우리 .card(사진+글자)와 다른 어휘라 건너뜁니다"
+        : "우리 카드 이름(.card > .thumb)을 안 쓰는 화면입니다 — 카드 구조 검사는 건너뜁니다",
+    );
+  } else {
+    let 카드있는쪽 = 0, 구조없는쪽 = 0;
+    for (const f of html들) {
+      const 글 = readFileSync(f, "utf8");
+      if (!/class="[^"]*\bcard\b/.test(글)) continue;
+      카드있는쪽++;
+      /* 사진 없는 카드(.card.text)는 .thumb 가 없는 게 맞다 */
+      if (/class="[^"]*\bcard\b[^"]*\btext\b/.test(글)) continue;
+      if (!/class="[^"]*\bthumb\b/.test(글)) 구조없는쪽++;
+    }
+    if (카드있는쪽 === 0) {
+      걸림("카드 규격", "우리 카드 이름(.card)을 안 쓰는 화면입니다 — 카드 구조 검사는 건너뜁니다");
+    } else if (구조없는쪽 > 0) {
+      못됨(`화면 ${구조없는쪽}장`, ".card 는 쓰는데 안에 .thumb 가 없습니다 — 카드 CSS 가 안 붙습니다");
+    }
   }
 }
 

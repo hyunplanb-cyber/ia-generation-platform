@@ -7,7 +7,7 @@ import { PACKAGES } from "./lib/packages";
 // 두 곳에 따로 적으면 "산 프리셋과 만든 프리셋이 다르다"는 말이 나온다.
 import {
   LAYOUTS, THUMBS, thumbByKey, DENSITIES, SPACING_SLOTS, LINE_SLOTS,
-  DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, CONTENT_WIDTH, COMMON_RULES, type DesignKey,
+  DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, CONTENT_WIDTH, READING_WIDTH, COMMON_RULES, ACCENT_RULE, type DesignKey,
   STRUCTURES, STRUCTURE_COLS, GRID_GAP, gridBaseCss, cardWidth,
 } from "./lib/design-presets";
 
@@ -167,6 +167,8 @@ const PRESETS: Preset[] = [
       "primary (주요 액션)": "#2B4A8B",
       "primary-hover": "#1F3A73",
       "accent (강조·배지)": "#FF7A30",
+      "accent-text (강조 글자용)": "#A84B28",
+      "accent-text-dark (어두운 바탕 글자용)": "#FF7A30",
       "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#16233F",
@@ -216,6 +218,7 @@ const PRESETS: Preset[] = [
       "primary-hover": "#000000",
       "accent (강조·배지)": "#D97757",
       "accent-text (강조 글자용)": "#A84B28",
+      "accent-text-dark (어두운 바탕 글자용)": "#D97757",
       "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#111111",
@@ -266,6 +269,8 @@ const PRESETS: Preset[] = [
       "primary (주요 액션)": "#5B4FE5",
       "primary-hover": "#4A3DD1",
       "accent (강조·배지)": "#FFD54A",
+      "accent-text (강조 글자용)": "#8A5A00",
+      "accent-text-dark (어두운 바탕 글자용)": "#FFD54A",
       "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#1F2024",
@@ -291,7 +296,7 @@ const PRESETS: Preset[] = [
       ["버튼(보조)", "soft-lavender 배경, primary 글자. 테두리 없음"],
       ["카드", "surface 배경, radius 16px, 부드러운 그림자. 테두리는 아주 연하게"],
       ["입력", "높이 44px, background #F7F7F9, 테두리 없음, focus 시 primary 2px"],
-      ["배지", "파스텔 배경 + 같은 계열 진한 글자. 알약 형태(radius 999px)"],
+      ["배지", "파스텔 배경 + accent-text 글자(노란 강조를 글자로 쓰면 안 읽힌다). 알약 형태(radius 999px)"],
       ["표", "헤더 배경 #F7F7F9, 행 구분선 아주 연하게, 행 높이 48px"],
       ["사이드바", "활성 항목은 soft-lavender 배경 + radius 12px로 감싸기"],
       ["강조 문구", "노란 형광펜 효과: linear-gradient(transparent 54%, #FFE9A8 54%)"],
@@ -315,6 +320,8 @@ const PRESETS: Preset[] = [
       "primary (주요 액션)": "#15803D",
       "primary-hover": "#116632",
       "accent (강조·배지)": "#65A30D",
+      "accent-text (강조 글자용)": "#166534",
+      "accent-text-dark (어두운 바탕 글자용)": "#65A30D",
       "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#1C2B22",
@@ -363,6 +370,8 @@ const PRESETS: Preset[] = [
       "primary (주요 액션)": "#F0654F",
       "primary-hover": "#D9503B",
       "accent (강조·배지)": "#F59E0B",
+      "accent-text (강조 글자용)": "#8A5A00",
+      "accent-text-dark (어두운 바탕 글자용)": "#F59E0B",
       "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#33221E",
@@ -388,7 +397,7 @@ const PRESETS: Preset[] = [
       ["버튼(보조)", "primary 10% 배경, primary 글자. 테두리 없음"],
       ["카드", "surface 배경, radius 16px, 부드러운 그림자. 테두리는 연하게"],
       ["입력", "높이 44px, background #FFF9F7, 테두리 연하게, focus 시 primary 2px"],
-      ["배지", "primary·accent 10% 배경 + 같은 계열 진한 글자. 알약 형태"],
+      ["배지", "primary·accent 10% 배경 + accent-text 글자. 알약 형태"],
       ["표", "헤더 배경 background 색, 행 구분선 연하게, 행 높이 48px"],
       ["사이드바", "활성 항목은 primary 10% 배경 + radius 12px로 감싸기"],
       ["강조 문구", "accent 형광펜 효과: linear-gradient(transparent 54%, #FDE4B0 54%)"],
@@ -432,6 +441,8 @@ function md(p: Preset): string {
   L.push("| --- | --- |");
   for (const [k, v] of Object.entries(p.c)) L.push(`| ${k} | \`${v}\` |`);
   L.push("");
+  // 강조색을 배경용·글자용으로 가르는 규칙은 유저 팩과 한 벌을 쓴다(lib/design-presets.ts).
+  L.push(...ACCENT_RULE);
   L.push("## 2. 타이포그래피");
   L.push("");
   L.push(`- 기본 폰트: **${p.font.family}** (대체: ${p.font.alt})`);
@@ -456,7 +467,8 @@ function md(p: Preset): string {
   L.push("시작 지점이 120px씩 어긋난 사이트가 실제로 있었습니다.");
   L.push("");
   L.push("- 더 넓게 쓰고 싶은 화면이 있어도 폭을 새로 만들지 마세요. 같은 폭 안에서 열 수를 늘리세요.");
-  L.push("- 읽기용으로 좁힌 한 단(예: 상세 본문 720px)은 이 폭 **안에서** 가운데 정렬합니다. 바깥 폭을 바꾸는 게 아닙니다.");
+  // 읽기 폭의 본문은 COMMON_RULES 가 들고 있다(유저 팩과 한 벌). 여기서는 가리키기만 한다.
+  L.push(`- 읽기용으로 좁힌 한 단(상세 본문 ${READING_WIDTH}px)은 이 폭 **안에서** 가운데 정렬합니다 — 아래 「읽기 폭」 참고.`);
   L.push("- 좁은 화면에서는 좌우 여백만 한 단계 줄이고, 폭은 화면을 따라갑니다.");
   L.push("");
   L.push("### 간격 눈금 — 밀도에서 나옵니다");
@@ -567,6 +579,7 @@ function md(p: Preset): string {
   L.push(`아래 디자인 규칙을 모든 화면에 일관되게 적용해줘.`);
   L.push("");
   L.push(`- 주요 색: ${Object.values(p.c)[0]}, 강조: ${p.c["accent (강조·배지)"] ?? Object.values(p.c)[2]}`);
+  L.push(`- 강조를 **글자**로 쓸 때는 ${p.c["accent-text (강조 글자용)"]} — 위 강조색은 배경·배지 바탕에만`);
   L.push(`- 배경: ${p.c["background (페이지)"]}, 카드: ${p.c["surface (카드)"]}, 본문 글자: ${p.c["text (본문)"]}`);
   L.push(`- 폰트: ${p.font.family}. 페이지 제목 ${p.scale[0][1]}/${p.scale[0][2]}, 본문 ${p.scale[3][1]}/${p.scale[3][2]}`);
   L.push(`- 모서리: 카드 ${p.radius.card}, 버튼 ${p.radius.button}, 배지 ${p.radius.badge}`);
@@ -795,6 +808,8 @@ for (const p of chosen) {
 /* 비교 미리보기 HTML — 구매자가 세 가지를 눈으로 비교 */
 const card = (p: Preset) => {
   const pri = Object.values(p.c)[0], acc = p.c["accent (강조·배지)"] ?? Object.values(p.c)[2];
+  // 배지 글자에 acc 원색을 쓰고 있었다 — 밝은 강조는 옅은 바탕 위에서 안 읽힌다.
+  const accT = p.c["accent-text (강조 글자용)"] ?? acc;
   const bg = p.c["background (페이지)"], sf = p.c["surface (카드)"];
   const tx = p.c["text (본문)"], mu = p.c["text-muted (보조)"], bd = p.c["border (구분선)"];
   return `
@@ -806,7 +821,7 @@ const card = (p: Preset) => {
         <p class="dt" style="font-size:${p.scale[2][1]};font-weight:${p.scale[2][2]}">제목입니다</p>
         <p class="dm" style="color:${mu};font-size:${p.scale[4][1]}">서브 카피입니다</p>
         <div class="drow">
-          <span class="dbadge" style="background:${acc}22;color:${acc};border-radius:${p.radius.badge};
+          <span class="dbadge" style="background:${acc}22;color:${accT};border-radius:${p.radius.badge};
                 border:1px solid ${acc}55">배지 1</span>
           <span class="dbadge" style="background:transparent;color:${mu};border:1px solid ${bd};
                 border-radius:${p.radius.badge}">배지 2</span>

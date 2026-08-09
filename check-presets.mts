@@ -1,4 +1,5 @@
 /* 레이아웃 문서(글)와 뼈대(코드)가 같은 말을 하는지 본다.
+ * 그리고 테마의 글자색이 정말 읽히는지 대비를 잰다.
  *
  * 왜 만드나
  *   2026-08-08 에 sidebar·multi 뼈대로 실물을 만들어 보다가 찾았다.
@@ -9,13 +10,37 @@
  *   글과 코드가 싸우면 만드는 쪽은 아무거나 고른다. 그래서 셋을 코드에 맞췄다.
  *   사람이 글을 고칠 때 또 어긋날 수 있으므로 검사를 남긴다.
  *
+ * 색 검사를 나중에 붙인 까닭 (2026-08-08 오후)
+ *   같은 날 색에서 더 큰 게 나왔다. 「진한 글자색」 자리에 연한 민트가 들어가
+ *   대비가 **1.01** 이었는데 아무도 몰랐다. 색은 눈으로 보면 「그럴듯」해서
+ *   틀린 줄을 모른다 — 5번 항목(겹침 카드)과 같은 종류의 사고다.
+ *   숫자로 재는 자를 여기 둔다. 사람이 색을 고칠 때마다 다시 잰다.
+ *
  * 쓰는 법: npx tsx check-presets.mts
  *   어긋난 게 있으면 1 로 끝난다. 팩을 굽기 전에 돌린다.
  */
-import { LAYOUTS, STRUCTURE_COLS, THUMBS, cardWidth } from "./lib/design-presets";
+import {
+  LAYOUTS, STRUCTURE_COLS, THUMBS, cardWidth,
+  DESIGN_OPTIONS, colorsFor, CONTENT_BG, DARK_BG, contrast, TEXT_CONTRAST_MIN,
+  accentTextOn, READING_WIDTH, BREAKPOINTS,
+} from "./lib/design-presets";
+import { LMS } from "./template-data-lms";
+import { BEAUTY } from "./template-data-beauty";
+import { TRAVEL } from "./template-data-travel";
+import { ADMIN } from "./template-data-admin";
+import { MATCHING } from "./template-data-matching";
+import { GROUPBUY } from "./template-data-groupbuy";
 
 /* 「N열」만 본다. 「N단」은 히어로·상세의 좌우 나눔을 뜻해서 카드 칸 수와 무관하다. */
 const 열찾기 = /([0-9])\s*열/g;
+
+/* 「최대 폭 760px」 · 「본문 폭 760px」 — 글을 한 단으로 좁힐 때의 폭.
+ *
+ * 2026-08-09 에 넣었다. 이 값이 글에만 세 벌(760·720·680)로 적혀 있었고
+ * 그중 둘은 코드에 근거가 없었다. 지금은 LAYOUTS 가 READING_WIDTH 를 끼워 넣으므로
+ * 어긋날 수가 없지만, **나중에 사람이 숫자를 손으로 다시 적을 수 있다.**
+ * 453px 사고도 처음엔 맞는 값이었다가 뼈대가 바뀌면서 어긋난 것이다. */
+const 읽기폭찾기 = /(?:최대\s*폭|본문\s*폭)\s*([0-9]{3,4})\s*px/g;
 
 let 어긋남 = 0;
 
@@ -37,6 +62,19 @@ for (const L of LAYOUTS) {
         문제.push(`${자리}에 「${m[0]}」 — 코드는 ${c1}/${c2}/${c3}열`);
       }
     }
+
+    읽기폭찾기.lastIndex = 0;
+    while ((m = 읽기폭찾기.exec(문장)) !== null) {
+      const 적힌폭 = Number(m[1]);
+      if (적힌폭 !== READING_WIDTH) {
+        문제.push(
+          `${자리}에 「${m[0]}」 — 읽기 폭은 ${READING_WIDTH}px 하나입니다(READING_WIDTH)`
+            + (적힌폭 === BREAKPOINTS.narrow
+              ? `. ${BREAKPOINTS.narrow} 은 휴대폰 기준선 값이라 읽기 폭으로 쓰면 두 뜻이 겹칩니다`
+              : ""),
+        );
+      }
+    }
   }
 
   const 표 = `${L.key.padEnd(10)}${L.label.padEnd(10)}뼈대=${L.structure.padEnd(10)}카드=${L.thumb.padEnd(8)}`
@@ -52,9 +90,131 @@ for (const L of LAYOUTS) {
   }
 }
 
+/* ── 색 대비 ────────────────────────────────────────────────
+   바탕 CONTENT_BG 위에서 글자로 쓰는 값이 정말 읽히는지 잰다.
+   accent 는 배경 전용이므로 재지 않는다 — 여기서 재면 다섯 테마가 전부 걸리는데,
+   그건 「틀린 게 아니라 배경용이라서」다. 그러라고 accentText 를 따로 둔 것이다. */
+console.log("");
+console.log(`색 대비 — 밝은 바탕 ${CONTENT_BG} · 어두운 바탕 ${DARK_BG} (${TEXT_CONTRAST_MIN} 이상이어야 본문)`);
+
+const 재기 = (색: string, 바탕 = CONTENT_BG) => contrast(색, 바탕).toFixed(2).padStart(5);
+
+for (const o of DESIGN_OPTIONS) {
+  const 색표 = colorsFor(o.key);
+  const 문제: string[] = [];
+
+  // 밝은 바탕에서 글자로 쓰는 두 값
+  for (const [자리, 색] of [["본문(ink)", o.ink], ["글자용 강조(accentText)", o.accentText]] as const) {
+    if (contrast(색) < TEXT_CONTRAST_MIN) {
+      문제.push(`${자리} ${색} — 밝은 바탕에서 ${contrast(색).toFixed(2)}, ${TEXT_CONTRAST_MIN} 미만이라 본문에 못 씁니다`);
+    }
+  }
+
+  /* 어두운 바탕에서도 강조를 글자로 쓸 수 있어야 한다.
+     레트로가 여기서 걸렸다 — 틸이 어두운 바탕 위 3.12 였다(2026-08-09). */
+  if (contrast(o.accentTextDark, DARK_BG) < TEXT_CONTRAST_MIN) {
+    문제.push(
+      `글자용 강조(accentTextDark) ${o.accentTextDark} — 어두운 바탕에서 `
+        + `${contrast(o.accentTextDark, DARK_BG).toFixed(2)}, ${TEXT_CONTRAST_MIN} 미만입니다`,
+    );
+  }
+
+  /* 배경을 주면 재서 골라 주는 함수가 정말 읽히는 값을 내는지 — 두 바탕 다 확인한다.
+     값이 맞아도 고르는 쪽이 틀리면 소용이 없다. */
+  for (const 바탕 of [CONTENT_BG, DARK_BG]) {
+    const 고른값 = accentTextOn(o, 바탕);
+    if (contrast(고른값, 바탕) < TEXT_CONTRAST_MIN) {
+      문제.push(`accentTextOn 이 ${바탕} 에서 ${고른값} 을 골랐는데 대비 ${contrast(고른값, 바탕).toFixed(2)} 입니다`);
+    }
+  }
+
+  /* DESIGN_OPTIONS 와 PRESETS.colors 는 같은 값을 두 벌로 들고 있다.
+     한쪽만 고치면 카드에 보이는 색과 팩 문서에 적히는 색이 갈린다. */
+  const 짝 = [
+    ["ink", o.ink, 색표["text(본문)"]],
+    ["accent", o.accent, 색표["accent(강조·배지)"] ?? 색표["accent(강조)"]],
+    ["accentText", o.accentText, 색표["accent-text(강조 글자용)"]],
+    ["accentTextDark", o.accentTextDark, 색표["accent-text-dark(어두운 바탕 글자용)"]],
+  ] as const;
+  for (const [이름, 여기, 저기] of 짝) {
+    if (저기 === undefined) 문제.push(`${이름} 이 PRESETS.colors 에 없습니다`);
+    else if (여기.toUpperCase() !== 저기.toUpperCase()) {
+      문제.push(`${이름} 이 두 곳에서 다릅니다 — DESIGN_OPTIONS ${여기} / PRESETS.colors ${저기}`);
+    }
+  }
+
+  const 표 = `${o.key.padEnd(8)}${o.title.padEnd(12)}`
+    + `본문 ${재기(o.ink)} · 글자용 강조 ${재기(o.accentText)}`
+    + ` · 어두운 바탕 ${재기(o.accentTextDark, DARK_BG)}`
+    + ` · (강조 ${재기(o.accent)} 배경 전용)`;
+
+  if (문제.length) {
+    어긋남 += 문제.length;
+    console.log(`✗ ${표}`);
+    문제.forEach((x) => console.log(`    ${x}`));
+  } else {
+    console.log(`· ${표}`);
+  }
+}
+
+/* ── 업종 스펙팩 1장의 「디자인 컨셉」 색 ────────────────────
+ *
+ * 2026-08-09 에 넣었다. 테마 색은 다 재고 있었는데 **여기가 사정권 밖이었다.**
+ * 업종마다 손으로 적은 색이 있고, 그중 셋이 「포인트」라면서 글자로 못 쓰는 값이었다
+ *   LMS 오렌지 2.26 · 관리자 블루 4.22 · 공동구매 코랄레드 2.65
+ *
+ * 왜 위험한가 — 스펙팩은 「프리셋이 없다면 1장의 디자인 컨셉을 토큰화하라」고 말한다.
+ * 즉 프리셋 없이 쓰는 손님에게는 **이 한 줄이 유일한 색 지시**다.
+ * 공동구매는 할인율·남은 시간이 주인공인데 그걸 2.65 짜리 색으로 쓰라고 한 셈이었다.
+ *
+ * 「배경」이라고 적힌 색은 재지 않는다 — 배경은 연한 게 맞다.
+ * 「글자에는 #…」로 적힌 색은 반드시 잰다.
+ */
+const 업종컨셉: [string, string][] = [
+  ["LMS", LMS.project.designConcept],
+  ["뷰티샵", BEAUTY.project.designConcept],
+  ["여행", TRAVEL.project.designConcept],
+  ["관리자", ADMIN.project.designConcept],
+  ["매칭", MATCHING.project.designConcept],
+  ["공동구매", GROUPBUY.project.designConcept],
+];
+
+console.log("");
+console.log("업종 스펙팩 1장의 디자인 컨셉 색");
+for (const [업종, 컨셉] of 업종컨셉) {
+  const 문제: string[] = [];
+  const 잰것: string[] = [];
+  for (const m of 컨셉.matchAll(/#[0-9A-Fa-f]{6}/g)) {
+    const 색 = m[0];
+    /* 창을 좁게 잡는다. 넓게 잡았더니 「베이지(#F5EFE9) 배경에 딥 플럼(#7A3B5D) 포인트」에서
+       앞 색의 「배경」이 뒤 색까지 덮어, 플럼을 안 재고 넘어갔다. 지금은 6.99 라 안 걸리지만
+       다음에 연한 포인트 색이 오면 조용히 통과한다 — 헛경보보다 나쁜 쪽이다. */
+    const 앞 = 컨셉.slice(Math.max(0, m.index - 7), m.index);
+    const 뒤 = 컨셉.slice(m.index + 7, m.index + 19);
+    /* 「글자에는 #…」이면 무조건 잰다. 그 밖에 바로 앞뒤에 「배경」이 붙어 있으면 배경색이다. */
+    const 글자용 = /글자에는\s*$/.test(앞);
+    if (!글자용 && /배경/.test(앞 + 뒤)) { 잰것.push(`${색} 배경`); continue; }
+    const r = contrast(색);
+    잰것.push(`${색} ${r.toFixed(2)}`);
+    if (r < TEXT_CONTRAST_MIN) {
+      문제.push(`${색} 이 ${r.toFixed(2)} 입니다 — 「포인트」로 적으면 글자에 쓰입니다. `
+        + `배경 전용이면 「배경·배지 전용, 글자에는 #…」처럼 갈라 적으세요`);
+    }
+  }
+  const 표 = `${업종.padEnd(6)}${잰것.join(" · ") || "(색 없음)"}`;
+  if (문제.length) {
+    어긋남 += 문제.length;
+    console.log(`✗ ${표}`);
+    문제.forEach((x) => console.log(`    ${x}`));
+  } else {
+    console.log(`· ${표}`);
+  }
+}
+
 console.log("");
 if (어긋남) {
-  console.log(`어긋난 곳 ${어긋남}군데. lib/design-presets.ts 의 글을 코드에 맞추세요.`);
+  // 어디를 고쳐야 하는지 함께 말한다 — 색·레이아웃은 lib, 업종 컨셉은 업종 데이터다.
+  console.log(`어긋난 곳 ${어긋남}군데. lib/design-presets.ts (또는 업종이면 template-data-*.ts) 를 고치세요.`);
   process.exit(1);
 }
-console.log(`레이아웃 ${LAYOUTS.length}개, 글과 코드가 같은 말을 합니다.`);
+console.log(`레이아웃 ${LAYOUTS.length}개 · 테마 ${DESIGN_OPTIONS.length}개, 글과 코드가 같은 말을 합니다.`);

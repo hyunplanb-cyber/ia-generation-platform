@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { SocialLoginButtons } from "@/components/social-login-buttons";
+import { ReviewLogin } from "./review-login";
 import type { EnabledSocialProviders } from "@/lib/social-providers";
 
 export function LoginForm({
   enabledSocialProviders,
+  // 카드사 심사 기간에만 이메일·비밀번호 칸을 함께 보여준다(lib/auth.ts 주석).
+  reviewLogin = false,
   // 로그인 후 돌아갈 경로(무료 샘플 등 특정 페이지에서 들어온 경우).
   next = "/dashboard",
 }: {
   enabledSocialProviders: EnabledSocialProviders;
+  reviewLogin?: boolean;
   next?: string;
 }) {
   // 로그인·가입 모두 소셜 계정으로만 받는다 — 비밀번호를 아예 보관하지 않기 위해서.
@@ -38,6 +42,7 @@ export function LoginForm({
               <p className="text-center text-xs text-muted-foreground">
                 가입할 때 쓰신 구글 계정으로 로그인해 주세요.
               </p>
+              {reviewLogin && <ReviewLogin next={next} />}
             </>
           ) : (
             // 소셜 인증 키가 빠지면 들어올 문이 하나도 없게 되므로,

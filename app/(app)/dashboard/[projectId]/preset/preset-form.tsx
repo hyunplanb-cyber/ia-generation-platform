@@ -8,6 +8,7 @@ import {
   FONT_FEELS,
   RADIUS_FEELS,
   DENSITIES,
+  swatchesOf,
   primarySwatchesFor,
   fontById,
   buildDetailedPresetMarkdown,
@@ -236,9 +237,13 @@ function PreviewCard({ config, badge }: { config: PresetConfig; badge?: string }
   const r = RADIUS_FEELS.find((x) => x.key === config.radius)!;
   const f = fontById(config.font);
   const d = DENSITIES.find((x) => x.key === config.density)!;
-  const th = DESIGN_OPTIONS.find((o) => o.key === config.style)?.swatches ?? [config.primary];
-  const ac = th[1] ?? config.primary; // 2번째 색 → 배지
-  const hl = th[2] ?? config.primary; // 3번째 색 → 테두리
+  // 배지 바탕은 강조색, 배지 글자는 글자용 강조색. 테두리는 본문 글자색.
+  // 전에는 swatches 배열의 2·3번째를 순서로 집었는데, 그 3번째 자리에 연한 민트가
+  // 들어 있던 테마가 있어서 미리보기 테두리가 사라져 보였다(2026-08-08).
+  const th = DESIGN_OPTIONS.find((o) => o.key === config.style);
+  const ac = th?.accent ?? config.primary;
+  const acText = th?.accentText ?? config.primary;
+  const hl = th?.ink ?? config.primary;
   return (
     <div className="flex flex-col gap-1.5">
       {badge && (
@@ -264,7 +269,7 @@ function PreviewCard({ config, badge }: { config: PresetConfig; badge?: string }
           <span
             style={{
               background: ac + "22",
-              color: ac,
+              color: acText,
               borderRadius: r.badge,
               fontSize: 11,
               padding: "2px 8px",
@@ -502,7 +507,7 @@ export function PresetForm({
                   </span>
                 )}
                 <div className="flex gap-1">
-                  {opt.swatches.map((s, i) => (
+                  {swatchesOf(opt).map((s, i) => (
                     <span key={i} className="size-4 rounded-full ring-1 ring-black/5" style={{ backgroundColor: s }} />
                   ))}
                 </div>

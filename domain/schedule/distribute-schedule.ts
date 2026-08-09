@@ -76,18 +76,25 @@ export function sequentialWorkdaySlots(
   daysPerItem = 2,
 ): ScheduleSlot[] {
   const next = workdayStepper(overallStart, daysPerItem);
-  return Array.from({ length: count }, next);
+  // Array.from 의 콜백은 (값, 순번)을 넘긴다 — 그대로 주면 순번이 일수로 들어간다.
+  return Array.from({ length: count }, () => next());
 }
 
 /**
  * 같은 규칙을 화면 개수를 미리 모를 때 쓰는 형태.
  * 부를 때마다 다음 칸을 하나씩 내준다(상세 IA처럼 잎사귀를 훑으며 만드는 경우).
  */
-export function workdayStepper(overallStart: string, daysPerItem = 2): () => ScheduleSlot {
+export function workdayStepper(
+  overallStart: string,
+  daysPerItem = 2,
+): (days?: number) => ScheduleSlot {
   let cursor = nextWorkday(overallStart);
-  return () => {
+  /* 부를 때 일수를 주면 그걸 쓰고, 안 주면 기본값을 쓴다.
+     화면마다 담은 일이 다른데 전부 같은 일수를 주면 WBS 가 「전 화면 2일」이 된다 —
+     기획을 아는 사람은 그 표를 보는 순간 자동생성인 걸 안다(2026-08-09). */
+  return (days = daysPerItem) => {
     let end = cursor;
-    for (let d = 1; d < daysPerItem; d++) end = nextWorkday(addDays(end, 1));
+    for (let d = 1; d < Math.max(1, days); d++) end = nextWorkday(addDays(end, 1));
     const slot = { scheduleStart: cursor, scheduleEnd: end };
     cursor = nextWorkday(addDays(end, 1));
     return slot;

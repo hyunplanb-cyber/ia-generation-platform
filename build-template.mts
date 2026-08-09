@@ -4,7 +4,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import * as XLSX from "xlsx";
 import { buildMenuTreeRows, buildScreenListRows, buildWbsRows } from "./lib/export/excel-rows";
-import { buildRequirementRows } from "./lib/export/requirements";
+import { buildRequirementRows, screenWorkdays } from "./lib/export/requirements";
 import {
   buildFlowHtml,
   buildFlowHtmlTabs,
@@ -33,7 +33,7 @@ const SCREEN_LIST_NOTE = [
 import type { Menu, MenuAudience } from "./domain/menu/menu";
 import type { Screen } from "./domain/screen/screen";
 import type { ButtonAction } from "./domain/screen/button-action";
-import { sequentialWorkdaySlots } from "./domain/schedule/distribute-schedule";
+import { workdayStepper } from "./domain/schedule/distribute-schedule";
 import { LMS } from "./template-data-lms";
 import { BEAUTY } from "./template-data-beauty";
 import { CREATOR } from "./template-data-creator";
@@ -69,11 +69,10 @@ const screens: Screen[] = [];
 const buttonActions: ButtonAction[] = [];
 const refToScreenId = new Map<string, string>();
 
-// 1) 메뉴·화면을 도메인 형태로 전개 (일정은 화면당 2일씩 순차 배분, 주말 제외)
-let screenCount = 0;
-for (const m of SRC_DATA.menus) screenCount += m.screens.length;
-const slots = sequentialWorkdaySlots(SRC_DATA.project.overallStart, screenCount, 2);
-let slotIndex = 0;
+/* 1) 메뉴·화면을 도메인 형태로 전개
+      일정은 **화면이 담은 일의 양**만큼 잡는다(주말 제외).
+      전에는 전부 2일 고정이었다 — screenWorkdays() 주석에 왜 바꿨는지 적어 뒀다. */
+const 일정칸 = workdayStepper(SRC_DATA.project.overallStart);
 SRC_DATA.menus.forEach((m, mi) => {
   const menuId = `menu-${m.code}`;
   menus.push({
@@ -97,7 +96,7 @@ SRC_DATA.menus.forEach((m, mi) => {
     const screenId = `scr-${pageId}`;
     refToScreenId.set(s.ref, screenId);
 
-    const slot = slots[slotIndex++];
+    const slot = 일정칸(screenWorkdays(s.func, s.btns?.length ?? 0, s.acts?.length ?? 0));
 
     screens.push({
       id: screenId,

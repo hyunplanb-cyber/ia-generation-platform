@@ -5,6 +5,7 @@ import type { EnrichScreenInput } from "@/domain/ports/ia-enricher";
 import type { EnrichedFields } from "@/domain/ports/screen-repository";
 import { MAX_FUNC_DEF_LENGTH } from "@/domain/screen/func-def-limit";
 import { withProjectAuth } from "@/application/with-project-auth";
+import { REVIEW_MODE } from "@/lib/flags";
 
 export type EnrichDownloadResult =
   | { ok: true; total: number; enriched: number; skipped: number; failedChunks: number }
@@ -24,6 +25,17 @@ export type EnrichDownloadResult =
  */
 export async function enrichForDownload(projectId: string): Promise<EnrichDownloadResult> {
   return withProjectAuth(projectId, async (project) => {
+    /* 카드사 심사 기간에는 보강을 건너뛴다(lib/flags.ts REVIEW_MODE).
+       테스트 키라 결제는 공짜인데 보강은 진짜 돈이 나간다 — 1건에 3,000~10,000원이다.
+       심사는 「결제창이 뜨는가」를 보는 절차라 결과물 품질이 기준이 아니고,
+       사용처는 우리가 캡처해 PPT 로 제출한다. 다운로드 자체는 그대로 되고
+       기본본(하이쿠로 이미 만든 것)이 나간다 — 추가 지출만 0이 된다. */
+    if (REVIEW_MODE) {
+      const all = await drizzleScreenRepository.listByProject(projectId);
+      const live = all.filter((s) => s.status === "active");
+      return { ok: true, total: live.length, enriched: 0, skipped: live.length, failedChunks: 0 };
+    }
+
     const [menus, screens] = await Promise.all([
       drizzleMenuRepository.listByProject(projectId),
       drizzleScreenRepository.listByProject(projectId),

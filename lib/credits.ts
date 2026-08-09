@@ -1,5 +1,6 @@
 // 크레딧 경제 — 값의 단일 출처(가격 정책서 기준). UI·서버 공용.
 // 1크레딧 = 100원. 충전형(구독 아님).
+import { REVIEW_MODE } from "@/lib/flags";
 
 export const WON_PER_CREDIT = 100;
 
@@ -41,11 +42,30 @@ export interface CreditPack {
   popular?: boolean;
 }
 
+/* 충전 옵션 — 반드시 «고르는» 형태여야 하고 하나도 10만원을 넘으면 안 된다.
+ *
+ * 토스 「홈페이지 결제경로 제작 가이드(충전업종용)」 유의사항 3번이 그렇게 요구한다.
+ *   임의 금액입력 후 충전하는 결제 방식은 이용이 불가능해요.
+ *   반드시 10만원 이하의 금액을 선택하도록 구현해 주세요.
+ * 이 규칙을 어기면 카드사 심사에서 반려된다. 그래서 직접 입력 충전을 들어내고(charge.ts)
+ * 큰 금액이 필요한 자리를 여기 선택지로 옮겼다(2026-08-09).
+ *
+ * credits 값은 creditsForWon() 과 반드시 같아야 한다 — 두 벌로 적으면 갈라진다.
+ * 5만·9만이 보너스 30%인 것은 bonusPctForWon 이 2만원 이상을 30%로 보기 때문이다.
+ */
 export const CREDIT_PACKS: CreditPack[] = [
   { id: "starter", name: "스타터", priceKrw: 5000, credits: 55, bonusPct: 10 },
   { id: "basic", name: "베이직", priceKrw: 10000, credits: 120, bonusPct: 20, popular: true },
   { id: "value", name: "밸류", priceKrw: 20000, credits: 260, bonusPct: 30 },
+  { id: "plus", name: "플러스", priceKrw: 50000, credits: 650, bonusPct: 30 },
+  /* 팩 한 벌을 크레딧으로 살 만한 자리 — 규정이 「10만원 이하」라 99,000까지 된다.
+     처음엔 90,000으로 잡았는데 그건 보수적으로 둔 값이었고, 99,000이면
+     117크레딧이 더 붙어 가장 비싼 등급(프리미엄 982)도 여유 있게 덮는다. */
+  { id: "max", name: "맥스", priceKrw: 99000, credits: 1287, bonusPct: 30 },
 ];
+
+/** 1회 충전 상한 — 토스 충전업종 가이드가 못 박은 값. 옵션을 늘릴 때 넘기면 안 된다. */
+export const MAX_CHARGE_WON = 100000;
 
 export function packById(id: string): CreditPack | undefined {
   return CREDIT_PACKS.find((p) => p.id === id);
@@ -63,9 +83,14 @@ export const CREDIT_COST = {
   verifyDoc: 10, // (미사용) 옛 문서 검수 고정값
   verifySite: 23, // (미사용) 옛 사이트 검수 고정값
   verifyDesignVs: 30, // (미구현) 설계 대비 검수 — 만들면 그때 값을 정한다
-  downloadScreens30: 390, // 다운로드 · AI팩 30~50 — 39,000원
-  downloadScreens150: 690, // 다운로드 · AI팩 100~150 — 69,000원
-  downloadAdmin: 590, // 다운로드 · 관리자
+  /* 2026-08-09 — 가격정책표 v4 로 내렸다(390→290 · 690→490 · 590→490).
+     원가는 그대로인데 값만 내려간 것이라 원가율이 이렇게 된다.
+       AI팩 30-50   총 302크레딧 = 30,200원 · 원가 3,400원 → 원가율 11.3%
+       AI팩 100-150 총 518크레딧 = 51,800원 · 원가 10,900원 → 원가율 21.0%
+     둘 다 건강한 선이다. 관리자는 v4 에 따로 줄이 없어 100-150 과 같이 본다. */
+  downloadScreens30: 290, // 다운로드 · AI팩 30~50 — 29,000원
+  downloadScreens150: 490, // 다운로드 · AI팩 100~150 — 49,000원
+  downloadAdmin: 490, // 다운로드 · 관리자 (100~150과 같은 규모)
   downloadVerify: 99, // 다운로드 · 검수 시나리오
   optionPreset: 99, // 옵션 · 디자인 프리셋
   // 프리셋을 고쳐서 다시 받을 때. 프리셋은 프로젝트에 묶이지 않는 파일이라
@@ -107,8 +132,17 @@ export function wonToCredits(won: number): number {
   return Math.round(won / WON_PER_CREDIT);
 }
 
-// 충전 금액별 보너스율(팩과 동일 기준). 직접 입력 충전에도 그대로 적용한다.
+/** 심사 기간의 보너스율.
+ *
+ * 30%는 아직 확정된 값이 아니다. 손님에게 어떻게 돌려줄지(충전을 깎을지,
+ * 다운로드를 깎을지)는 프로모션 설계로 따로 정하기로 했다(2026-08-09).
+ * 정해지지 않은 값을 심사 계정에 그대로 적용하면 지급이 필요 이상으로 커지므로
+ * 심사 기간에는 10%로 낮춰 둔다. */
+export const REVIEW_BONUS_PCT = 10;
+
+// 충전 금액별 보너스율. 심사 기간에는 금액과 무관하게 REVIEW_BONUS_PCT 로 고정한다.
 export function bonusPctForWon(won: number): number {
+  if (REVIEW_MODE) return won >= 1000 ? REVIEW_BONUS_PCT : 0;
   if (won >= 20000) return 30;
   if (won >= 10000) return 20;
   if (won >= 5000) return 10;
@@ -121,10 +155,9 @@ export function creditsForWon(won: number): number {
   return base + Math.floor((base * bonusPctForWon(won)) / 100);
 }
 
-// 직접 입력 충전 한도(1,000원 단위).
-export const CUSTOM_MIN_WON = 1000;
-export const CUSTOM_MAX_WON = 1000000;
-export const CUSTOM_STEP_WON = 1000;
+/* 직접 입력 충전 한도는 없앴다(2026-08-09).
+   최대가 1,000,000원이라 토스가 정한 1회 10만원의 «열 배»였고,
+   방식 자체(임의 금액 입력)가 충전업종 심사에서 불가다. 위 CREDIT_PACKS 로 대체. */
 
 // 프로젝트 산출물 전체 다운로드 원가 — 상세(3뎁스)면 더 비싸다.
 export function downloadCost(hasDetail: boolean): number {

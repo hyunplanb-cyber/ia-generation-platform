@@ -1,17 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { creditOrder } from "@/db/schema";
 import { requireSession } from "@/application/require-session";
 import { chargeCredits } from "@/application/credit";
 import { confirmTossPayment } from "@/adapters/payment/toss";
-import {
-  packById,
-  creditsForWon,
-  CUSTOM_MIN_WON,
-  CUSTOM_MAX_WON,
-  CUSTOM_STEP_WON,
-} from "@/lib/credits";
+import { packById, creditsForWon, bonusPctForWon } from "@/lib/credits";
+import { billingOpenFor, REVIEW_MODE, REVIEW_MAX_CHARGES } from "@/lib/flags";
 
 export interface StartedOrder {
   orderId: string;
@@ -25,46 +20,51 @@ export async function createChargeOrder(packId: string): Promise<StartedOrder | 
   const pack = packById(packId);
   if (!pack) return null;
   const session = await requireSession();
+  /* 화면에서 막는 것만으로는 부족하다 — 서버 액션은 주소만 알면 부를 수 있다.
+     심사 기간에는 allowlist 계정만 주문을 만들 수 있어야 한다(lib/flags.ts). */
+  if (!billingOpenFor(session.user.email)) return null;
+
+  /* 심사 기간에는 계정당 충전 횟수를 못 박는다.
+     테스트 키라 충전은 공짜인데 크레딧은 진짜로 쌓인다 — 횟수를 안 막으면
+     한 계정이 몇 번을 누를지 우리가 알 수 없고, 그만큼 생성비가 새어나간다. */
+  if (REVIEW_MODE) {
+    const [{ 수 }] = await db
+      .select({ 수: count() })
+      .from(creditOrder)
+      .where(and(eq(creditOrder.userId, session.user.id), eq(creditOrder.status, "paid")));
+    if (수 >= REVIEW_MAX_CHARGES) return null;
+  }
+  /* 지급 크레딧은 표(pack.credits)가 아니라 «계산식»에서 뽑는다.
+     심사 기간에는 보너스가 10%로 내려가는데, 표의 값은 30% 기준이라
+     표를 그대로 쓰면 심사 계정에 30%가 나간다(2026-08-09). 계산식이 유일한 출처다. */
+  const credits = creditsForWon(pack.priceKrw);
   const orderId = `credit_${randomUUID().replace(/-/g, "")}`;
   await db.insert(creditOrder).values({
     orderId,
     userId: session.user.id,
     packId: pack.id,
     amountKrw: pack.priceKrw,
-    credits: pack.credits,
+    credits,
     status: "pending",
   });
   return {
     orderId,
     amountKrw: pack.priceKrw,
-    credits: pack.credits,
-    orderName: `${pack.name} 크레딧 ${pack.credits}개`,
+    credits,
+    orderName: `${pack.name} 크레딧 ${credits}개`,
   };
 }
 
-// 직접 입력 충전(1,000원 단위) 주문 생성. 금액·크레딧은 서버가 확정한다.
-export async function createCustomChargeOrder(amountKrw: number): Promise<StartedOrder | null> {
-  if (
-    !Number.isFinite(amountKrw) ||
-    amountKrw < CUSTOM_MIN_WON ||
-    amountKrw > CUSTOM_MAX_WON ||
-    amountKrw % CUSTOM_STEP_WON !== 0
-  ) {
-    return null;
-  }
-  const session = await requireSession();
-  const credits = creditsForWon(amountKrw);
-  const orderId = `credit_${randomUUID().replace(/-/g, "")}`;
-  await db.insert(creditOrder).values({
-    orderId,
-    userId: session.user.id,
-    packId: "custom",
-    amountKrw,
-    credits,
-    status: "pending",
-  });
-  return { orderId, amountKrw, credits, orderName: `크레딧 ${credits}개 충전` };
-}
+/* 직접 입력 충전은 없앴다 — 2026-08-09.
+ *
+ * 토스 「홈페이지 결제경로 제작 가이드(충전업종용)」 유의사항 3번:
+ *   **임의 금액입력 후 충전하는 결제 방식은 이용이 불가능해요.**
+ *   반드시 10만원 이하의 금액을 «선택»하도록 구현해 주세요.
+ *
+ * 카드사 심사를 통과할 수 없는 방식이라 기능째 들어냈다. 상한도 문제였다 —
+ * CUSTOM_MAX_WON 이 1,000,000원이라 허용치의 열 배였다.
+ * 대신 CREDIT_PACKS 에 선택형 옵션을 10만원 이하로 늘렸다(lib/credits.ts).
+ */
 
 export type ConfirmResult =
   | { ok: true; credits: number; alreadyDone: boolean }

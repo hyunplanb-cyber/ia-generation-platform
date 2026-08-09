@@ -3,7 +3,7 @@
 import type { Menu } from "@/domain/menu/menu";
 import type { Screen } from "@/domain/screen/screen";
 import type { ButtonAction } from "@/domain/screen/button-action";
-import { IMAGE_PLACEHOLDER, CONTENT_WIDTH, COMMON_RULES } from "@/lib/design-presets";
+import { IMAGE_PLACEHOLDER, CONTENT_WIDTH, READING_WIDTH, COMMON_RULES } from "@/lib/design-presets";
 
 export interface SpecPackProject {
   concept: string;
@@ -156,6 +156,12 @@ export function buildSpecPackModel(
         paddingX: CONTENT_WIDTH.padX,
         note: "헤더·본문·푸터·하단 고정 바가 모두 이 폭을 쓴다. 화면마다 따로 정하지 않는다.",
       },
+      /* 글을 한 단으로 좁힐 때의 폭. 이 값이 없어서 상세 본문 폭이 화면마다 갈렸다 —
+         가이드 글에만 680·720·760 세 벌로 적혀 있었고 둘은 근거가 없었다(2026-08-09). */
+      readingWidth: {
+        max: `${READING_WIDTH}px`,
+        note: "글이 주인공인 자리(상세 본문·안내·약관)만. 콘텐츠 영역 안에서 좁히고 가운데 정렬한다.",
+      },
       header: "로고 + 검색 + 상단 내비게이션(GNB)",
       footer: "저작권 · 기본 링크",
       // 사진이 없는 단계에서 이미지 자리를 어떻게 그릴지. 이걸 안 적어두면
@@ -276,6 +282,12 @@ export function buildSpecPackMarkdown(
   lines.push(
     `- **콘텐츠 영역**: 최대 ${m.common.contentWidth.max}, 좌우 여백 ${m.common.contentWidth.paddingX} — ` +
       `${m.common.contentWidth.note} 화면마다 폭을 새로 정하면 위아래가 어긋납니다.`,
+  );
+  /* 읽기 폭이 여기 없어서, 상세 본문을 콘텐츠 폭 그대로 꽉 채운 화면이 나왔다.
+     한 줄 90자가 넘으면 다음 줄 첫 글자를 눈이 못 찾는다(2026-08-09). */
+  lines.push(
+    `- **읽기 폭**: 글이 주인공인 자리(상세 본문·안내·약관)는 최대 ${m.common.readingWidth.max}로 좁혀 ` +
+      `콘텐츠 영역 **안에서** 가운데 정렬 — 카드 격자에는 쓰지 않습니다. 아래 「읽기 폭」 참고.`,
   );
   lines.push(`- **헤더**: ${m.common.header}`);
   lines.push(`- **푸터**: ${m.common.footer}`);

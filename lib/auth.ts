@@ -1,4 +1,5 @@
 import { betterAuth } from 'better-auth';
+import { REVIEW_MODE } from "@/lib/flags";
 import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import { db } from '@/db/client';
 
@@ -41,10 +42,31 @@ function productionOrigins(): string[] {
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: 'pg' }),
-  // 이메일·비밀번호는 가입도 로그인도 받지 않는다 — 비밀번호를 아예 보관하지 않기 위해서.
-  // 화면에서 폼을 지우는 것만으로는 API 직접 호출을 막지 못하므로 서버에서도 잠근다.
+  /* 이메일·비밀번호는 가입도 로그인도 받지 않는다 — 비밀번호를 아예 보관하지 않기 위해서.
+     화면에서 폼을 지우는 것만으로는 API 직접 호출을 막지 못하므로 서버에서도 잠근다.
+   *
+   * ⚠ 예외 하나 — 카드사 심사 기간(REVIEW_MODE)에만 연다.
+   *
+   *   우리는 소셜 로그인만 받는데, 심사관은 **다른 회사·다른 지역**에서 접속한다.
+   *   구글 계정을 새로 파서 넘기면 낯선 기기 로그인으로 2단계 인증이 걸려
+   *   심사관이 못 들어오고, 그러면 「결제창이 확인되지 않는다」로 반려된다(FAQ 10번).
+   *   남의 구글 계정 자격증명을 넘기는 것 자체도 위험하다.
+   *
+   *   그래서 «우리 서비스 전용» 아이디·비밀번호를 하나 만들어 넘긴다.
+   *   BILLING_ALLOWLIST 에 적힌 이메일에만 열리므로 일반 가입 경로는 그대로 소셜뿐이다.
+   *   심사가 끝나 REVIEW_MODE 를 끄면 이 문은 저절로 닫힌다 — 끄는 걸 잊을 일이 없다.
+   *   그때 그 계정을 지우면 비밀번호를 보관하지 않는 원칙으로 완전히 돌아온다. */
   emailAndPassword: {
-    enabled: false,
+    enabled: REVIEW_MODE,
+    /* 가입은 열지 않는다 — 로그인만 열린다.
+       열어 두면 심사 2주 동안 누구나 이메일·비밀번호로 계정을 만들 수 있고,
+       그건 우리가 막으려던 「공짜 크레딧」 문을 옆으로 다시 여는 셈이다.
+     *
+     * ALLOW_REVIEW_SIGNUP 은 **배포 서버에 절대 넣지 않는다.**
+     * 심사 계정을 만드는 스크립트(make-review-account.mts)가 자기 프로세스에서만
+     * 잠깐 켠다. `disableSignUp` 은 서버 안에서 부르는 auth.api.signUpEmail() 까지
+     * 막기 때문에, 이 문이 없으면 계정을 만들 방법이 없다(2026-08-09 확인). */
+    disableSignUp: process.env.ALLOW_REVIEW_SIGNUP !== "true",
   },
   socialProviders,
   // 로컬 개발 시 다른 프로젝트와 3000번 포트가 겹쳐 매번 다른 포트로 뜰 수 있어

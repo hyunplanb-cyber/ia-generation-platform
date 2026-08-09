@@ -15,6 +15,12 @@
  * 배경은 중립으로 고정하고, 색은 주색·강조가 내게 한다. */
 export const CONTENT_BG = "#F0EFEB";
 
+/** 다크모드의 페이지 배경.
+ *
+ * 이 값도 두 함수에 `"#0E1116"` 으로 손으로 적혀 있었다(2026-08-09 에 묶었다).
+ * 색을 재려면 배경이 어디 있는지 알아야 하는데, 문자열로 흩어져 있으면 잴 수가 없다. */
+export const DARK_BG = "#0E1116";
+
 /** 콘텐츠 영역 — PC에서 내용이 놓이는 폭.
  *
  * 헤더·본문·푸터가 **모두 같은 폭**을 써야 위아래가 한 줄로 선다.
@@ -22,6 +28,32 @@ export const CONTENT_BG = "#F0EFEB";
  * 120px씩 어긋난 사이트가 있었다(2026-08-06). 폭을 한 곳에서 정하고
  * 헤더 안쪽·본문·푸터 안쪽·고정 바가 모두 그 값을 참조하게 한다. */
 export const CONTENT_WIDTH = { max: "1440px", padX: "24px" } as const;
+
+/**
+ * 읽기 폭 — 글을 한 단으로 좁힐 때의 최대 폭.
+ *
+ * 2026-08-09 에 묶었다. 그전까지 이 값이 **글에만 세 벌**로 적혀 있었다.
+ *   좌우 분할형 상세 760 · 에디토리얼형 상세 720 · 여백 중심형 상세 680
+ * 그중 760 만 코드에 근거가 있었고(아래 `본문폭()` 과 single 뼈대의 CSS),
+ * 720·680 은 아무 데도 없는 숫자였다. 카드 폭 453px 사고와 같은 종류다 —
+ * 근거 없는 숫자가 가이드에 적혀 나가고, 받는 쪽은 그걸 믿는다.
+ *
+ * 게다가 720 은 이미 `BREAKPOINTS.narrow` 의 값이다. 같은 숫자가 「휴대폰 기준선」과
+ * 「읽기 폭」 두 뜻으로 쓰이고 있었다 — 벤토의 `.card.wide` 가 카드 종류 이름과
+ * 겹쳐 터질 뻔한 것과 같은 모양이라, 이름을 붙여 갈라 둔다.
+ *
+ * 왜 760 인가 — 완성화면을 재서 고르려 했는데 **거기엔 답이 없었다.**
+ * 좁은 한 단 컨테이너(`.wrap-narrow`)는 여덟 팩 중 일곱이 880px 인데,
+ * 그건 예약 완료·폼처럼 **글이 아니라 상자를 담는** 자리였다. 긴 글을 읽는 화면
+ * 자체가 완성화면에 거의 없다(긴 문단이 다섯 이상인 화면이 네 개뿐).
+ * 그래서 재서 정할 수 있는 값이 아니었고, **이미 코드가 쓰고 있던 760** 을 남겼다.
+ * 새 숫자를 만들지 않는 쪽이 맞다.
+ *
+ * 880 은 「좁은 페이지 폭」이라는 다른 자리다. 읽기 폭과 섞지 않는다.
+ * 여백 중심형은 페이지 자체가 이 폭으로 갇히므로(single 뼈대), 그 상세가
+ * 이보다 넓어지면 자기 페이지를 넘는 모순이 된다 — 한 값이어야 하는 이유다.
+ */
+export const READING_WIDTH = 760;
 
 /**
  * 화면이 줄어드는 지점 — 딱 두 곳.
@@ -82,7 +114,7 @@ function 안쪽폭(vw: number): number {
  */
 function 본문폭(vw: number, structure?: StructureKey): number {
   const 폭 = 안쪽폭(vw);
-  if (structure === "single") return Math.min(폭, 760);
+  if (structure === "single") return Math.min(폭, READING_WIDTH);
   if (structure === "sidebar") {
     if (vw <= BREAKPOINTS.narrow) return 폭;          // 사이드바가 위로 접힌다
     const side = vw <= BREAKPOINTS.mid ? 220 : 260;   // 뼈대 CSS 의 --side-w
@@ -110,58 +142,170 @@ export type DesignKey = "navy" | "mono" | "pastel" | "retro" | "forest" | "coral
  */
 export const BRIEF_DESIGN_KEYS: DesignKey[] = ["navy", "mono", "pastel"];
 
-// concept 텍스트가 프로젝트에 저장되고, 그걸로 프리셋을 되찾는다.
-// swatches: 카드에 보여줄 대표 색(주색·강조·본문·배경 순).
+/* concept 텍스트가 프로젝트에 저장되고, 그걸로 프리셋을 되찾는다.
+ *
+ * 색을 배열이 아니라 «이름»으로 준다 — 2026-08-08 에 바꿨다.
+ * 전에는 `swatches: [주색, 강조, 진한글자, 옛배경]` 네 칸짜리 배열이었다.
+ * 자리의 뜻이 이름에 없으니 바이올렛 세 번째 칸에 연한 민트(#DFF5EC)가 들어가 있어도
+ * 아무도 몰랐다. 그 팩으로 만들면 본문 대비가 **1.01** — 글자가 안 보인다.
+ * 모노도 같은 칸에 회색(#767676, 3.95)이 들어 있어 본문에 모자랐다.
+ * 네 번째(옛배경)는 2026-08-05 에 이미 버린 값인데 배열에만 남아 있었다. 지웠다.
+ *
+ * accent 와 accentText 를 가른 까닭
+ *   강조색 여섯 중 글자로 쓸 수 있는 건 레트로(5.27) 하나뿐이었다.
+ *   나머지 다섯은 배경 위 1.2~2.7 이라 배경·배지 전용이다. 그런데 주는 값이
+ *   하나뿐이니 받는 쪽은 그걸 글자에도 썼다(실제로 견본·미리보기 세 곳이 그랬다).
+ *   카드뉴스2.css 가 이미 `--orange`(배경) / `--orange-text`(글자)로 갈라 두고 있었다.
+ *   같은 방식이다 — 「강조를 글자에 쓰지 마세요」라고 글로 부탁하는 대신
+ *   **쓸 수 있는 값을 따로 준다.** 글로 된 부탁은 안 지켜지고 값은 지켜진다.
+ *
+ * accentText 는 전부 이미 이 저장소 안에 있던 색이다(지어낸 값이 없다).
+ *   #A84B28  lib/design-presets.ts 모노의 accent-text · build-design-presets.mts 와 같은 값
+ *   #8A5A00  app/globals.css --warning
+ *   #0E6F60  카드뉴스2.css --teal-text · app/globals.css --pastel-mint-foreground
+ *   #166534  PRIMARY_SWATCHES_BY_STYLE.forest[1]
+ * 값을 바꿀 때는 check-presets.mts 가 CONTENT_BG 위 4.5:1 을 다시 잰다.
+ */
 export const DESIGN_OPTIONS: {
   key: DesignKey;
   title: string;
   desc: string;
   concept: string;
-  swatches: string[];
+  /** 주요 액션 — 버튼·활성 표시 */
+  primary: string;
+  /** 강조 — **배경·배지·띠 전용.** 글자로 쓰면 안 읽힌다. */
+  accent: string;
+  /** 글자용 강조 — 같은 계열의 진한 값. CONTENT_BG 위 4.5:1 이상. */
+  accentText: string;
+  /** 어두운 바탕에서의 글자용 강조 — DARK_BG 위 4.5:1 이상.
+   *  다섯 테마는 강조 원색이 어두운 바탕에서 그대로 잘 읽혀 accent 와 같다.
+   *  레트로만 틸이 어두운 바탕에서 3.12 라 밝은 쪽 값을 따로 든다. */
+  accentTextDark: string;
+  /** 본문 글자색. PRESETS[key].colors 의 text(본문)과 같은 값이어야 한다. */
+  ink: string;
 }[] = [
   {
     key: "navy",
     title: "모던 네이비",
     desc: "신뢰감 있고 정돈된, 실무형",
     concept: "모던하고 신뢰감 있는 네이비 톤. 정보가 잘 정돈된 실무형 디자인, 카드와 표 중심.",
-    swatches: ["#2B4A8B", "#FF7A30", "#16233F", "#F5F7FA"],
+    primary: "#2B4A8B",
+    accent: "#FF7A30",
+    accentText: "#A84B28",
+    accentTextDark: "#FF7A30", // 강조 원색 그대로 — 어두운 바탕 위 7.28
+    ink: "#16233F",
   },
   {
     key: "mono",
     title: "미니멀 모노",
     desc: "색을 뺀 여백·활자 중심",
     concept: "색을 절제한 미니멀 모노톤. 넉넉한 여백과 활자 위계로 정리하고, 색은 강조 한 곳에만 쓴다.",
-    swatches: ["#111111", "#D97757", "#767676", "#E5E5E5"],
+    primary: "#111111",
+    accent: "#D97757",
+    accentText: "#A84B28",
+    accentTextDark: "#D97757", // 강조 원색 그대로 — 6.06
+    ink: "#111111",
   },
   {
     key: "pastel",
     title: "일렉트릭 바이올렛",
     desc: "부드럽고 친근한 분위기",
     concept: "부드럽고 친근한 파스텔 톤. 둥근 모서리와 넉넉한 여백으로 편안한 느낌.",
-    swatches: ["#5B4FE5", "#FFD54A", "#DFF5EC", "#FAFAFA"],
+    primary: "#5B4FE5",
+    accent: "#FFD54A",
+    accentText: "#8A5A00",
+    accentTextDark: "#FFD54A", // 강조 원색 그대로 — 13.39
+    ink: "#1F2024",
   },
   {
     key: "retro",
     title: "레트로 페이퍼",
     desc: "종이 질감 · 오렌지 & 틸",
     concept: "종이 질감의 따뜻한 레트로 톤. 크림색 배경에 오렌지·틸 포인트, 편집숍 같은 감성.",
-    swatches: ["#DE6F26", "#0E6F60", "#2A2320", "#F7F1E6"],
+    primary: "#DE6F26",
+    accent: "#0E6F60",
+    // 여섯 중 유일하게 강조색 그대로 글자에 쓸 수 있다(5.27).
+    accentText: "#0E6F60",
+    // 여섯 중 유일하게 강조 원색이 어두운 바탕에서 모자란다(3.12).
+    // 카드뉴스2.css 의 `--teal` — 이 틸의 「배경용」 짝이다. 어두운 바탕 위 6.08.
+    // 밝은 바탕에서는 반대로 이 값이 2.70 이라 못 쓴다. 그래서 두 자리가 갈린다.
+    accentTextDark: "#1AA48F",
+    ink: "#2A2320",
   },
   {
     key: "forest",
     title: "내추럴 그린",
     desc: "차분한 자연 · 친환경",
     concept: "차분한 그린 톤의 내추럴 디자인. 자연·건강·친환경 느낌, 넉넉한 여백.",
-    swatches: ["#15803D", "#65A30D", "#1C2B22", "#F3F7F2"],
+    primary: "#15803D",
+    accent: "#65A30D",
+    // 올리브(#65A30D)를 글자까지 낮춘 값은 저장소에 없었다. 있는 것 중 가장 가까운
+    // #4D7C0F 는 4.34 로 모자란다. 그래서 이 테마가 이미 들고 있는 진한 초록을 쓴다.
+    accentText: "#166534",
+    accentTextDark: "#65A30D", // 강조 원색 그대로 — 6.12
+    ink: "#1C2B22",
   },
   {
     key: "coral",
     title: "코럴 선셋",
     desc: "밝고 따뜻한 생기",
     concept: "밝고 따뜻한 코럴 톤. 둥근 모서리와 생기 있는 색으로 친근한 느낌.",
-    swatches: ["#F0654F", "#F59E0B", "#33221E", "#FFF6F3"],
+    primary: "#F0654F",
+    accent: "#F59E0B",
+    accentText: "#8A5A00",
+    accentTextDark: "#F59E0B", // 강조 원색 그대로 — 8.81
+    ink: "#33221E",
   },
 ];
+
+/** 테마 하나를 찾는다. 없으면 navy. */
+export const designOptionFor = (k: DesignKey) =>
+  DESIGN_OPTIONS.find((d) => d.key === k) ?? DESIGN_OPTIONS[0];
+
+/** 카드에 동그랗게 늘어놓을 대표 색 — 화면 장식용이다.
+ *  뜻이 필요한 자리에서는 이걸 쓰지 말고 primary·accent·accentText·ink 를 직접 읽는다. */
+export const swatchesOf = (o: (typeof DESIGN_OPTIONS)[number]): string[] => [
+  o.primary,
+  o.accent,
+  o.accentText,
+  o.ink,
+];
+
+/* ─── 색 대비 재기 ────────────────────────────────────────────
+   눈으로 「진해 보인다」로 정하면 안 된다. 바이올렛의 민트가 그렇게 들어왔다.
+   WCAG 상대휘도로 잰다. 4.5 이상이면 본문, 3.0 이상이면 큰 글자까지다. */
+function 상대휘도(hex: string): number {
+  return toRgb(hex)
+    .map((v) => {
+      const s = v / 255;
+      return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+    })
+    .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
+}
+
+/** 두 색의 대비(1~21). 배경을 안 주면 콘텐츠 배경 위에서 잰다. */
+export function contrast(hex: string, bg: string = CONTENT_BG): number {
+  const [밝, 어] = [상대휘도(hex), 상대휘도(bg)].sort((a, b) => b - a);
+  return (밝 + 0.05) / (어 + 0.05);
+}
+
+/** 본문 글자로 쓸 수 있는 대비 — WCAG AA 기준 */
+export const TEXT_CONTRAST_MIN = 4.5;
+
+/** 이 바탕 위에서 강조를 글자로 쓸 때의 값.
+ *
+ * accentText 는 밝은 바탕(CONTENT_BG)에서 읽히라고 진하게 잡은 값이라,
+ * 어두운 바탕에 그대로 얹으면 거꾸로 안 보인다(예: 파스텔의 #8A5A00 은 3.19).
+ * 그래서 어두운 바탕용을 따로 든다(accentTextDark).
+ *
+ * 어느 쪽을 줄지 「다크모드면 이것」식으로 분기하지 않고 **재서 고른다.**
+ * 배경은 다크 스위치 말고도 달라진다 — 짙은 히어로, 하단 고정 바, 사진 위 어둠막.
+ * 그 자리마다 사람이 고르게 두면 또 틀린다. 배경을 주면 값이 나오게 한다. */
+export function accentTextOn(o: (typeof DESIGN_OPTIONS)[number], bg: string): string {
+  return contrast(o.accentText, bg) >= contrast(o.accentTextDark, bg)
+    ? o.accentText
+    : o.accentTextDark;
+}
 
 interface Preset {
   key: DesignKey;
@@ -183,6 +327,8 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#2B4A8B",
       "accent(강조·배지)": "#FF7A30",
+      "accent-text(강조 글자용)": "#A84B28",
+      "accent-text-dark(어두운 바탕 글자용)": "#FF7A30",
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#16233F",
@@ -212,6 +358,7 @@ const PRESETS: Record<DesignKey, Preset> = {
       "primary(주요 액션)": "#111111",
       "accent(강조)": "#D97757",
       "accent-text(강조 글자용)": "#A84B28",
+      "accent-text-dark(어두운 바탕 글자용)": "#D97757",
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#111111",
@@ -240,6 +387,8 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#5B4FE5",
       "accent(강조)": "#FFD54A",
+      "accent-text(강조 글자용)": "#8A5A00",
+      "accent-text-dark(어두운 바탕 글자용)": "#FFD54A",
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#1F2024",
@@ -269,6 +418,9 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#DE6F26",
       "accent(강조·배지)": "#0E6F60",
+      // 여섯 중 유일하게 강조색을 그대로 글자에 쓸 수 있다(배경 위 5.27).
+      "accent-text(강조 글자용)": "#0E6F60",
+      "accent-text-dark(어두운 바탕 글자용)": "#1AA48F",
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFDF8",
       "text(본문)": "#2A2320",
@@ -297,6 +449,8 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#15803D",
       "accent(강조·배지)": "#65A30D",
+      "accent-text(강조 글자용)": "#166534",
+      "accent-text-dark(어두운 바탕 글자용)": "#65A30D",
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#1C2B22",
@@ -325,6 +479,8 @@ const PRESETS: Record<DesignKey, Preset> = {
     colors: {
       "primary(주요 액션)": "#F0654F",
       "accent(강조·배지)": "#F59E0B",
+      "accent-text(강조 글자용)": "#8A5A00",
+      "accent-text-dark(어두운 바탕 글자용)": "#F59E0B",
       "background(페이지)": "#F0EFEB",
       "surface(카드)": "#FFFFFF",
       "text(본문)": "#33221E",
@@ -346,6 +502,10 @@ const PRESETS: Record<DesignKey, Preset> = {
     ],
   },
 };
+
+/** 테마의 색 표 — 팩 문서의 「색상」 절이 그대로 이것이다.
+ *  DESIGN_OPTIONS 와 두 벌로 적힌 값이라 check-presets.mts 가 둘이 같은지 잰다. */
+export const colorsFor = (k: DesignKey): Record<string, string> => PRESETS[k].colors;
 
 // 저장된 디자인 컨셉 텍스트(또는 키) → 프리셋. 못 찾으면 navy 기본.
 export function presetForConcept(concept: string | null | undefined): Preset {
@@ -382,7 +542,7 @@ export const STRUCTURES: {
     label: "한 단",
     desc: "화면 가운데 한 줄기로만 쌓는다. 위에서 아래로 읽힌다.",
     css: `/* 한 단 — 읽는 폭을 좁혀야 글이 눈에 들어온다 */
-.wrap > section { max-width: 760px; margin-inline: auto; }
+.wrap > section { max-width: ${READING_WIDTH}px; margin-inline: auto; }
 .cards { grid-template-columns: 1fr; }`,
   },
   {
@@ -477,6 +637,18 @@ export const STRUCTURES: {
  *   .detail-img                   카드 비율 4:3 을 본문 폭에 쓰면 사진 세로가 1044px 이 되어
  *                                 노트북 화면을 통째로 덮었다.
  */
+/** 격자 CSS 가 쓰는 기본 밀도 — 「넉넉하게」다.
+ *
+ * 2026-08-09 에 이었다. 그전에는 이 셋이 격자 CSS 에 손으로 적혀 있었는데,
+ * `--row-h` 만 **52px** 이라 아래 밀도 눈금(48/40)과 싸우고 있었다.
+ * 같은 「표 한 줄 높이」를 가이드가 두 값으로 말한 셈이다.
+ *
+ * 어느 쪽이 맞나 — 완성화면을 재니 `--row-h` 를 정의한 곳이 **48px 과 40px**,
+ * 정확히 밀도 눈금의 두 값이었다. 52 는 아무도 안 쓴다.
+ * `--card-pad`(24)·`--btn-gap`(8)은 이미 「넉넉하게」와 같은 값인데, 그 둘은
+ * 완성화면을 재서 고쳤고 `--row-h` 만 안 고쳤기 때문이다. 이제 셋 다 눈금에서 나온다. */
+const 기본밀도 = () => DENSITIES.find((d) => d.key === "cozy")!;
+
 export const gridBaseCss = (): string => `:root{
   --wrap: ${CONTENT_WIDTH.max};      /* 콘텐츠 폭 — 헤더·본문·푸터·고정바가 모두 이 값을 쓴다 */
   --pad-x: ${CONTENT_WIDTH.padX};    /* 좌우 여백 */
@@ -486,9 +658,9 @@ export const gridBaseCss = (): string => `:root{
   --side-gap:   32px;                /* 사이드바와 본문 사이 */
   --row-gap:    14px;                /* 가로 행 카드 안: 썸네일과 글자 사이 */
 
-  --card-pad:   24px;                /* 카드 안쪽 여백 */
-  --row-h:      52px;                /* 표 한 줄 높이 — 안 정하면 줄마다 들쭉날쭉해진다 */
-  --btn-gap:    8px;                 /* 나란히 놓은 버튼 사이 */
+  --card-pad:   ${기본밀도().cardPad};                /* 카드 안쪽 여백 */
+  --row-h:      ${기본밀도().rowH};                /* 표 한 줄 높이 — 안 정하면 줄마다 들쭉날쭉해진다 */
+  --btn-gap:    ${기본밀도().btnGap};                 /* 나란히 놓은 버튼 사이 */
 }
 @media (max-width: ${BREAKPOINTS.narrow}px){
   :root{ --pad-x: ${BREAKPOINTS.padXNarrow}; --card-gap: ${GRID_GAP.xNarrow}px; }
@@ -741,7 +913,7 @@ export const LAYOUTS: {
     hero: "좌우 2단. 왼쪽에 큰 제목과 설명, 오른쪽에 폼 또는 대표 이미지.",
     list: "3열(1440px에서 카드 453px). 카드 안은 사진 없이 글자 위계로만 나눈다. 1024px에서 2열, 720px 아래로는 1열.",
     nav: "상단 가로 GNB. 로고 왼쪽, 액션 버튼 오른쪽 끝.",
-    detail: "본문 한 단(최대 폭 760px) + 하단 고정 액션 바.",
+    detail: `본문 한 단(최대 폭 ${READING_WIDTH}px) + 하단 고정 액션 바.`,
     structure: "multi",
     thumb: "wide",
     fits: "설득이 먼저인 서비스(랜딩·구독·B2B 소개)",
@@ -765,7 +937,7 @@ export const LAYOUTS: {
     hero: "큰 사진을 두지 않는다. 왼쪽에 세로 목차(카테고리·연재), 오른쪽에 가로로 긴 배너 한 장.",
     list: "3열 갤러리. 사진 아래 제목과 함께 두세 줄짜리 설명을 붙인다.",
     nav: "상단 가로 GNB + 그 아래 얇은 구분선. 카테고리는 목록 화면 왼쪽에 세로로.",
-    detail: "본문 한 단(최대 폭 720px) 가운데 정렬. 사진은 본문 폭을 넘겨 좌우로 튀어나오게.",
+    detail: `본문 한 단(최대 폭 ${READING_WIDTH}px) 가운데 정렬. 사진은 본문 폭을 넘겨 좌우로 튀어나오게.`,
     structure: "sidebar",
     thumb: "tall",
     fits: "고르는 데 설명이 필요한 것(큐레이션·전시·매거진·브랜드 소개)",
@@ -787,9 +959,9 @@ export const LAYOUTS: {
     label: "여백 중심형",
     tagline: "덜 넣는다. 큰 사진 한 장과 넉넉한 빈 자리로 말한다.",
     hero: "가운데 정렬. 짧은 문구 한 줄 위에 여백을 크게 두고, 아래에 큰 사진 딱 한 장.",
-    list: "1열(본문 폭 760px). 카드 테두리와 그림자를 쓰지 않고 여백으로만 나눈다. 한 화면에 4~6개까지만.",
+    list: `1열(본문 폭 ${READING_WIDTH}px). 카드 테두리와 그림자를 쓰지 않고 여백으로만 나눈다. 한 화면에 4~6개까지만.`,
     nav: "상단 가로 GNB. 메뉴 글자를 작게 하고 자간을 넓힌다. 로고는 가운데.",
-    detail: "본문 한 단 가운데 정렬(최대 폭 680px). 구분선 대신 빈 줄로 나눈다.",
+    detail: `본문 한 단 가운데 정렬(최대 폭 ${READING_WIDTH}px). 구분선 대신 빈 줄로 나눈다.`,
     structure: "single",
     thumb: "overlay",
     fits: "차분한 인상이 중요한 것(공방·클리닉·프리미엄 브랜드·전시)",
@@ -909,6 +1081,7 @@ export function buildPresetMarkdown(p: Preset): string {
   L.push("| --- | --- |");
   for (const [k, v] of Object.entries(p.colors)) L.push(`| ${k} | \`${v}\` |`);
   L.push("");
+  L.push(...ACCENT_RULE);
   L.push("## 2. 타이포그래피");
   L.push("");
   L.push(`- 폰트: ${p.font}`);
@@ -1090,6 +1263,35 @@ export const SPACING_SLOTS: { key: keyof (typeof DENSITIES)[number]; label: stri
   { key: "rowH", label: "표 한 줄 높이", when: "표의 행" },
 ];
 
+/** 강조색을 어디에 쓰는가 — 배경이냐 글자냐.
+ *
+ * 팩을 받는 쪽에는 원래 강조색이 하나만 나갔다. 그래서 그 값이 배지 글자·태그·
+ * 링크에도 쓰였는데, 여섯 테마 중 다섯은 배경 위 대비가 1.2~2.7 이라 안 읽혔다.
+ * 파는 팩과 유저 팩이 각자 문장을 쓰면 반드시 갈라지므로(2026-08-06 에 겪었다)
+ * 여기 한 벌만 두고 양쪽이 같이 읽는다. */
+export const ACCENT_RULE: string[] = [
+  "> **강조색은 두 개입니다 — 배경용과 글자용.**",
+  "> `accent` 는 **배경·배지 바탕·띠·구분선**에만 씁니다. 글자에는 `accent-text` 를 쓰세요.",
+  ">",
+  "> 강조색은 눈에 띄라고 밝게 잡은 색이라, 밝은 배경 위에 글자로 얹으면 대비가 2:1 남짓까지",
+  "> 떨어져 **보이긴 하는데 읽히지는 않습니다.** 그래서 같은 계열의 진한 값을 따로 드립니다.",
+  ">",
+  "> - 배지: `accent` 를 10~15% 농도로 깔고 글자는 `accent-text`",
+  "> - 태그·링크·강조 문구: `accent-text`",
+  "> - 버튼 배경·형광펜·좌측 색 띠: `accent`",
+  "> - **어두운 바탕 위**(짙은 히어로·하단 바·사진 어둠막)에서는 `accent-text` 가 거꾸로 안 보입니다.",
+  ">   진하게 잡은 값이라 그렇습니다. 거기에는 `accent-text-dark` 를 쓰세요.",
+  "",
+  "> 정리하면 **강조는 세 자리**입니다. 배경이 무엇이냐로 고르면 됩니다.",
+  ">",
+  "> | 자리 | 언제 |",
+  "> | --- | --- |",
+  "> | `accent` | 배경·배지 바탕·띠·형광펜 — **글자 아님** |",
+  "> | `accent-text` | 밝은 바탕 위 글자 |",
+  "> | `accent-text-dark` | 어두운 바탕 위 글자 |",
+  "",
+];
+
 /** 색·밀도와 상관없이 어느 사이트에나 걸리는 규칙.
  *
  * 파는 팩(build-design-presets.mts)과 유저가 받는 팩(buildDetailedPresetMarkdown)이
@@ -1097,6 +1299,19 @@ export const SPACING_SLOTS: { key: keyof (typeof DENSITIES)[number]; label: stri
  * 유저 문서는 오히려 "카드 = surface 배경, border 1px"라고 반대로 말하고 있었다.
  * 두 벌로 적으면 반드시 갈라진다 — 여기 한 벌만 두고 양쪽이 같이 읽는다(2026-08-06). */
 export const COMMON_RULES: string[] = [
+  "### 읽기 폭 — 글을 한 단으로 좁힐 때",
+  "",
+  `글이 주인공인 자리(상세 본문·안내·약관)는 **최대 ${READING_WIDTH}px** 로 좁히고 가운데 정렬합니다.`,
+  "콘텐츠 영역(위의 최대 폭) **안에서** 좁히는 것입니다 — 바깥 폭을 바꾸는 게 아닙니다.",
+  "",
+  "**왜 좁히나** — 한 줄이 길면 다음 줄 첫 글자를 눈이 못 찾습니다. 1440px 폭에 본문을 꽉 채우면",
+  "한 줄에 90자가 넘어가고, 읽는 사람은 두세 줄마다 같은 줄을 다시 읽게 됩니다.",
+  "",
+  `- **이 값 하나만 씁니다.** 화면마다 680·720·760 처럼 다르게 잡지 마세요 — 저희도 그렇게 적혀 있었고,`,
+  "  같은 팩 안의 상세 화면끼리 본문 폭이 달라 서로 다른 사이트처럼 보였습니다.",
+  `- **카드 격자에는 쓰지 않습니다.** 여기는 «글»을 좁히는 값입니다. 카드를 몇 열로 놓을지는 레이아웃이 정합니다.`,
+  "- 사진·표·코드처럼 넓어야 읽히는 것은 이 폭을 넘겨도 됩니다. 좁히는 건 글줄입니다.",
+  "",
   "### 격자 — 카드를 늘어놓는 자리",
   "",
   "카드·타일을 격자로 늘어놓을 때 **좌우와 위아래를 다른 값으로** 벌립니다.",
@@ -1557,7 +1772,9 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   const rad = RADIUS_FEELS.find((r) => r.key === cfg.radius)!;
   const den = DENSITIES.find((d) => d.key === cfg.density)!;
   const pal = palette(cfg.primary);
-  const bg = cfg.dark ? "#0E1116" : "#F0EFEB";
+  const bg = cfg.dark ? DARK_BG : CONTENT_BG;
+  const theme = designOptionFor(cfg.style);
+  const accentText = accentTextOn(theme, bg);
   const surface = cfg.dark ? "#171B22" : "#FFFFFF";
   const text = cfg.dark ? "#E8EAED" : "#16181D";
   const muted = cfg.dark ? "#9AA0A8" : "#6B7280";
@@ -1579,6 +1796,8 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   L.push("| 토큰 | 값 |");
   L.push("| --- | --- |");
   for (const [k, v] of Object.entries(pal)) L.push(`| ${k} | \`${v}\` |`);
+  L.push(`| accent(강조·배지) | \`${theme.accent}\` |`);
+  L.push(`| accent-text(강조 글자용) | \`${accentText}\` |`);
   L.push(`| background | \`${bg}\` |`);
   L.push(`| surface(카드) | \`${surface}\` |`);
   L.push(`| text | \`${text}\` |`);
@@ -1586,6 +1805,7 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   L.push(`| border | \`${border}\` |`);
   L.push("| success / warning / danger | `#16A34A` / `#D97706` / `#DC2626` |");
   L.push("");
+  L.push(...ACCENT_RULE);
   L.push("## 2. 타이포그래피");
   L.push("");
   L.push(`- 폰트: **${font.name}** (${font.label}) — \`${font.family}\``);
@@ -1623,7 +1843,10 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   L.push(`| 카드 (사진 없는 상자) | surface 배경, border 1px, radius ${rad.card}, 내부 여백 ${den.cardPad} |`);
   L.push(`| 카드 (사진 + 글자) | **배경·테두리 없음.** 모서리는 사진이 가진다 (아래 「분리형과 혼합형」) |`);
   L.push("| 입력 | 높이 = 글자 + 위아래 10px, border 1px, focus 시 primary 2px 링 |");
-  L.push(`| 배지 | 상태색 10% 배경 + 같은 색 글자, radius ${rad.badge} |`);
+  // 「같은 색 글자」라고만 적어 두면 강조 배지에서 밝은 원색이 글자로 나간다.
+  L.push(
+    `| 배지 | 배경은 10% 농도, 글자는 같은 계열의 진한 값. 강조 배지는 \`${theme.accent}\` 10% 배경 + \`${accentText}\` 글자. radius ${rad.badge} |`,
+  );
   L.push(`| 표 | 헤더 muted 배경, 행 구분 border 1px, 행 높이 ${den.rowH} |`);
   L.push("");
   // 색·밀도와 상관없는 규칙은 파는 팩과 한 벌을 쓴다. 따로 적으면 갈라진다(2026-08-06).
@@ -1650,6 +1873,10 @@ export interface PresetSummary {
   baseName: string;
   primary: string;
   palette: [string, string][]; // [라벨, hex]
+  /** 강조 — 배경·배지 바탕 전용 */
+  accent: string;
+  /** 글자용 강조 — 이 요약의 bg 위에서 읽히는 값 */
+  accentText: string;
   bg: string;
   surface: string;
   text: string;
@@ -1672,11 +1899,15 @@ export function buildPresetSummary(cfg: PresetConfig): PresetSummary {
   const rad = RADIUS_FEELS.find((r) => r.key === cfg.radius)!;
   const den = DENSITIES.find((d) => d.key === cfg.density)!;
   const pal = palette(cfg.primary);
+  const bg = cfg.dark ? DARK_BG : CONTENT_BG;
+  const theme = designOptionFor(cfg.style);
   return {
     baseName: base.name,
     primary: cfg.primary,
     palette: Object.entries(pal),
-    bg: cfg.dark ? "#0E1116" : "#F0EFEB",
+    accent: theme.accent,
+    accentText: accentTextOn(theme, bg),
+    bg,
     surface: cfg.dark ? "#171B22" : "#FFFFFF",
     text: cfg.dark ? "#E8EAED" : "#16181D",
     muted: cfg.dark ? "#9AA0A8" : "#6B7280",

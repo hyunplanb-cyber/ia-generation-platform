@@ -5,7 +5,9 @@ import { packOrder } from "@/db/schema";
 import { requireSession } from "@/application/require-session";
 import { getSession } from "@/lib/session";
 import { confirmTossPayment } from "@/adapters/payment/toss";
-import { PACKAGES, PLAN_NAMES, planOf, type PlanId } from "@/lib/packages";
+import { PACKAGES, PLAN_NAMES, planOf, packCredits, type PlanId } from "@/lib/packages";
+import { spendCredits } from "@/application/credit";
+import { billingOpenFor, planBuyableNow } from "@/lib/flags";
 
 export interface StartedPackOrder {
   orderId: string;
@@ -29,6 +31,11 @@ export async function createPackOrder(
   if (!plan) return null;
 
   const session = await requireSession();
+  /* 팩도 같은 문을 쓴다. 테스트 키가 붙어 있으면 **팩도 공짜로 사진다** —
+     충전만 막고 여기를 열어두면 뒷문이 열린 셈이다(2026-08-09). */
+  if (!billingOpenFor(session.user.email)) return null;
+  // 심사 기간에는 한 등급만 연다(플러스 — 10만원 아래라 결제창이 확실히 뜬다).
+  if (!planBuyableNow(plan.id)) return null;
   const orderId = `pack_${randomUUID().replace(/-/g, "")}`;
   await db.insert(packOrder).values({
     orderId,
@@ -43,6 +50,66 @@ export async function createPackOrder(
     amountKrw: plan.priceKrw,
     orderName: `${pkg.title} ${plan.name}`,
   };
+}
+
+export type BuyWithCreditsResult =
+  | { ok: true; packageId: string; planId: PlanId; spent: number; balance: number }
+  | { ok: false; reason: "closed" | "insufficient" | "unknown"; need?: number; balance?: number };
+
+/**
+ * 팩을 «크레딧으로» 산다 — 2026-08-09 에 넣었다.
+ *
+ * 왜 카드 직결제를 두고 이 길을 만드나
+ *   충전해 둔 크레딧이 남았는데 팩은 따로 현금을 내야 했다. 지갑이 둘이라
+ *   남은 크레딧이 놀았다. 지갑을 하나로 합치면 그 손해가 사라진다.
+ *
+ *   그리고 카드사 심사에서 「포인트 사용처」를 보여줘야 하는데(충전업종 요건),
+ *   지금까지 사용처가 「만들기」 하나뿐이었다. 팩이 사용처로 붙으면 둘이 된다.
+ *
+ *   토스가 1회 충전을 10만원으로 묶어 둔 것도 이 길로 풀린다 — 카드 직결제는
+ *   한 건에 한 금액이라 10만원 넘는 등급을 쪼갤 수 없지만, 크레딧은 나눠 채울 수 있다.
+ *
+ * 값은 서버가 정한다(packCredits). 클라이언트가 보내는 숫자는 믿지 않는다.
+ * 이미 산 등급이면 다시 받게만 하고 크레딧을 또 깎지 않는다.
+ */
+export async function buyPackWithCredits(
+  packageId: string,
+  planId: string,
+): Promise<BuyWithCreditsResult> {
+  const pkg = PACKAGES.find((p) => p.id === packageId);
+  if (!pkg) return { ok: false, reason: "unknown" };
+  const plan = planOf(pkg, planId);
+  if (!plan) return { ok: false, reason: "unknown" };
+
+  const session = await requireSession();
+  if (!billingOpenFor(session.user.email)) return { ok: false, reason: "closed" };
+  if (!planBuyableNow(plan.id)) return { ok: false, reason: "closed" };
+
+  // 이미 가진 등급이면 값을 두 번 받지 않는다.
+  if (await ownsPack(packageId, plan.id)) {
+    return { ok: true, packageId, planId: plan.id as PlanId, spent: 0, balance: -1 };
+  }
+
+  const need = packCredits(plan.priceKrw);
+  const spend = await spendCredits(need, `${pkg.title} ${plan.name} 구매`, {
+    packageId,
+    planId: plan.id,
+  });
+  if (!spend.ok) return { ok: false, reason: "insufficient", need, balance: spend.balance };
+
+  /* 크레딧으로 산 것도 같은 주문 표에 남긴다 — 「내가 산 팩」 목록과 다운로드 권한이
+     이 표를 보고 있어서, 따로 두면 산 게 안 보인다. 결제수단만 다르다. */
+  await db.insert(packOrder).values({
+    orderId: `packc_${randomUUID().replace(/-/g, "")}`,
+    userId: session.user.id,
+    packageId: pkg.id,
+    planId: plan.id,
+    amountKrw: plan.priceKrw,
+    status: "paid",
+    paidAt: new Date(),
+  });
+
+  return { ok: true, packageId, planId: plan.id as PlanId, spent: need, balance: spend.balance };
 }
 
 export type ConfirmPackResult =

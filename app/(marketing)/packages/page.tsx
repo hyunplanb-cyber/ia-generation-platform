@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
-import { packageProducts, planContents, formatKrw } from "@/lib/packages";
+import { packageProducts, planContents, formatPackPrice } from "@/lib/packages";
 import { PACKAGE_PRICES_PUBLIC, PACKAGE_SALE_OPEN } from "@/lib/flags";
 
 export const metadata: Metadata = {
@@ -88,7 +88,7 @@ export default function PackagesPage() {
 
                 <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-4">
                   {PACKAGE_PRICES_PUBLIC ? (
-                    <p className="text-lg font-bold text-foreground">{formatKrw(plan.priceKrw)}</p>
+                    <p className="text-lg font-bold text-foreground">{formatPackPrice(plan.priceKrw)}</p>
                   ) : (
                     // 살 수 없는 동안엔 값을 걸지 않는다 — 값만 남고 돌아가는 손님을 만들지 않으려고.
                     <p className="text-sm font-semibold text-warning">판매 준비 중</p>

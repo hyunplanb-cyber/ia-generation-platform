@@ -3,11 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { recordPlanInterest, type InterestSource } from "@/application/plan-interest";
 import { normalizePlan } from "@/lib/plans";
-import {
-  createChargeOrder,
-  createCustomChargeOrder,
-  type StartedOrder,
-} from "@/application/charge";
+import { createChargeOrder, type StartedOrder } from "@/application/charge";
 
 // 요금제 화면의 "이 플랜이 필요해요" 버튼(구버전). 어떤 등급을 원했는지만 기록한다.
 export async function recordPlanInterestAction(formData: FormData) {
@@ -25,9 +21,5 @@ export async function createChargeOrderAction(packId: string): Promise<StartedOr
   return createChargeOrder(packId);
 }
 
-// 직접 입력 금액(1,000원 단위) 충전.
-export async function createCustomChargeOrderAction(
-  amountKrw: number,
-): Promise<StartedOrder | null> {
-  return createCustomChargeOrder(amountKrw);
-}
+/* 직접 입력 충전 액션은 없앴다 — 토스 충전업종 가이드가 「임의 금액입력 충전 불가」라
+   못 박았다(2026-08-09). 자세한 까닭은 application/charge.ts 주석. */

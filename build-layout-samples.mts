@@ -36,11 +36,14 @@ if (!P) throw new Error(`색 「${색키}」가 없습니다. 있는 것: ${DESI
 const S = STRUCTURES.find((x) => x.key === L.structure)!;
 const T = THUMBS.find((x) => x.key === L.thumb)!;
 
-/* swatches 는 [주색, 강조, 진한글자, 옛배경] 이다.
-   네 번째(옛배경)는 2026-08-05 에 버렸다 — 테마마다 주색을 옅게 깐 값이라
-   화면마다 배경이 달라 보였다. 지금 배경은 CONTENT_BG 하나로 고정돼 있다.
-   여기서 새 값을 지어내면 견본과 실제 팩이 어긋난다. 반드시 lib 값을 쓴다. */
-const [primary, accent, ink] = P.swatches;
+/* 색은 이름으로 받는다. 전에는 `const [primary, accent, ink] = P.swatches` 로
+   자리 순서에 기대고 있었는데, 그 배열의 세 번째에 연한 민트가 들어 있어도
+   여기서는 알 방법이 없었다(2026-08-08). 이름이 있으면 그런 일이 안 생긴다.
+   여기서 새 값을 지어내면 견본과 실제 팩이 어긋난다. 반드시 lib 값을 쓴다.
+
+   accent 와 accentText 를 갈라 쓴다 — accent 는 배경·배지 바탕, 글자는 accentText.
+   밝은 바탕에 accent 를 글자로 얹으면 안 읽힌다(다섯 테마가 2.7 아래다). */
+const { primary, accent, accentText, ink } = P;
 const BG = CONTENT_BG;
 const SURFACE = "#FFFFFF";
 const LINE = "#E5E7EB";
@@ -53,6 +56,7 @@ ${gridBaseCss()}
 :root {
   --primary: ${primary};
   --accent: ${accent};
+  --accent-text: ${accentText};
   --ink: ${ink};
   --bg: ${BG};
   --surface: ${SURFACE};
@@ -95,7 +99,8 @@ th, td { text-align: left; padding: 0 14px; height: var(--row-h);
 th { background: #F3F4F6; border-top: 0; font-size: 13px; color: var(--muted); }
 .badge { display: inline-block; padding: 3px 9px; border-radius: 999px;
   font-size: 12px; font-weight: 700; background: #EEF2FF; color: var(--primary); }
-.badge.warn { background: #FFF1E8; color: ${accent}; }
+/* 옅은 바탕에 얹는 글자라 강조 원색을 쓰면 안 읽힌다 — 글자용 강조를 쓴다 */
+.badge.warn { background: #FFF1E8; color: ${accentText}; }
 .btn { display: inline-block; padding: 10px 18px; border-radius: 9px; border: 0;
   background: var(--primary); color: #fff; font-weight: 700; font-size: 14px;
   cursor: pointer; text-decoration: none; }
@@ -380,6 +385,7 @@ writeFileSync(join(나갈곳, "00_자동넘김.html"), `<!doctype html>
   .tag{position:fixed;left:0;right:0;bottom:0;padding:10px 18px;
     background:${ink};color:#fff;font:700 15px/1.4 "Paperlogy","Pretendard",sans-serif;
     display:flex;justify-content:space-between}
+  /* 어두운 띠 위라 여기서는 강조 원색이 오히려 잘 읽힌다 */
   .tag .n{color:${accent}}
 </style></head><body>
 <iframe id="f" src="01_홈.html"></iframe>

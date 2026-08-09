@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FormSection } from "../form-shell";
 import { saveBriefAndGenerateAction, type GenerateState } from "./actions";
-import { DESIGN_OPTIONS, BRIEF_DESIGN_KEYS, type DesignKey } from "@/lib/design-presets";
+import { DESIGN_OPTIONS, BRIEF_DESIGN_KEYS, swatchesOf, type DesignKey } from "@/lib/design-presets";
 import { CREDIT_COST } from "@/lib/credits";
 import type { Project } from "@/domain/project/project";
 
@@ -92,14 +92,18 @@ export function BriefForm({
   // 만들기 화면에는 셋만 놓고 '선택 안 함'을 더한다 — 여섯을 다 늘어놓으면
   // 첫 화면이 복잡해 보이고, 고르는 것 자체가 문턱이 된다(2026-08-04).
   // 세밀한 색·글꼴은 디자인 프리셋에서 여섯 종을 다 보고 고른다.
+  // dots 는 카드에 동그랗게 보여줄 대표 색이다. 테마가 색을 이름으로 들고 있으므로
+  // (primary·accent·accentText·ink) 화면용 배열은 swatchesOf 로 만든다.
   const briefOptions = [
-    ...BRIEF_DESIGN_KEYS.map((k) => DESIGN_OPTIONS.find((d) => d.key === k)!),
+    ...BRIEF_DESIGN_KEYS.map((k) => {
+      const d = DESIGN_OPTIONS.find((o) => o.key === k)!;
+      return { key: d.key as DesignKey | "none", title: d.title, desc: d.desc, dots: swatchesOf(d) };
+    }),
     {
       key: "none" as const,
       title: "선택 안 함",
       desc: "AI가 알아서 하나로 통일해요",
-      concept: "",
-      swatches: [] as string[],
+      dots: [] as string[],
     },
   ];
   // 저장된 값이 셋 중 하나면 그걸 고르고, 비어 있으면 '선택 안 함'.
@@ -164,10 +168,12 @@ export function BriefForm({
                     <span className="font-semibold text-foreground">{opt.title}</span>
                     <span className="text-xs leading-relaxed text-muted-foreground">{opt.desc}</span>
                     <span className="mt-1.5 flex gap-1">
-                      {opt.swatches.length > 0 ? (
-                        opt.swatches.map((c) => (
+                      {opt.dots.length > 0 ? (
+                        // 색을 key 로 쓰면 안 된다 — 모노는 주색과 본문색이 둘 다 #111111 이라
+                        // 같은 key 가 두 번 나온다. 자리로 센다.
+                        opt.dots.map((c, i) => (
                           <span
-                            key={c}
+                            key={i}
                             className="size-4 rounded-full border border-black/10"
                             style={{ backgroundColor: c }}
                           />

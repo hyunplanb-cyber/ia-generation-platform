@@ -7,6 +7,7 @@ import type { Menu, MenuAudience } from "./domain/menu/menu";
 import type { Screen } from "./domain/screen/screen";
 import type { ButtonAction } from "./domain/screen/button-action";
 import { workdayStepper } from "./domain/schedule/distribute-schedule";
+import { screenWorkdays } from "./lib/export/requirements";
 import type { TplMenu } from "./template-data-lms";
 
 // 화면 하나에 매달리는 잎사귀(탭·상태·세부). 이름·역할·기능만 짧게 정의하면
@@ -127,7 +128,9 @@ export function expandDeep(input: DeepInput): DeepResult {
       leaves.forEach((leaf, li0) => {
         const li = li0 + 1;
         const pageId = `${m.code}${pad2(si)}${pad2(li)}`;
-        const slot = nextSlot();
+        /* 3뎁스의 잎(탭·상태)도 담은 일의 양만큼 잡는다.
+           여기만 2일 고정으로 두면 132화면짜리 표가 다시 전부 「2」가 된다. */
+        const slot = nextSlot(screenWorkdays(leaf.func, 0, leaf.acts?.length ?? 0));
         const fullName = li === 1 ? s.name : `${s.name} > ${leaf.name}`;
 
         const scr: Screen = {

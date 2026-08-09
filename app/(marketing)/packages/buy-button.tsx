@@ -1,43 +1,37 @@
 "use client";
 
-// AI팩 구매 버튼.
+// AI팩 구매 버튼 — 크레딧으로 산다(2026-08-09).
 //
 // 크몽은 별개 판로다 — 수수료 때문에 값이 다를 수 있고, 승인도 우리 손 밖이다.
 // 그래서 우리 사이트는 "구매하기 → 결제 → 바로 다운로드"가 되어야 한다(2026-08-03).
+//
+// 카드 직결제를 걷어낸 까닭: 지갑이 둘이면 남은 크레딧이 논다.
+// 크레딧이 모자라면 값을 알려 주고 충전으로 보낸다 — 그 자리에서 막지 않는다.
 //
 // 판매를 아직 열지 않았어도(PACKAGE_SALE_OPEN=false) 이미 산 사람의 다운로드는 막지 않는다.
 // 막는 건 결제 시작뿐이다.
 
 import { useState } from "react";
-import { Download, Loader2, ShoppingBag } from "lucide-react";
-import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import { Download, Loader2, Coins } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import type { StartedPackOrder } from "@/application/pack-order";
-import { createPackOrderAction } from "./actions";
+import { buyPackWithCreditsAction } from "./actions";
 
 export function BuyButton({
   packageId,
   planId,
-  planName,
+  credits,
   owned,
   saleOpen,
   signedIn,
-  clientKey,
-  customerKey,
-  customerEmail,
-  customerName,
   emphasis,
 }: {
   packageId: string;
   planId: string;
-  planName: string;
+  /** 이 등급을 사는 데 드는 크레딧 — 값은 서버가 정한다(packCredits) */
+  credits: number;
   owned: boolean;
   saleOpen: boolean;
   signedIn: boolean;
-  clientKey: string;
-  customerKey: string;
-  customerEmail: string | null;
-  customerName: string | null;
   /** 강조 색을 쓸 등급인가(프리미엄) */
   emphasis?: boolean;
 }) {
@@ -72,32 +66,21 @@ export function BuyButton({
       return;
     }
     setBusy(true);
-    try {
-      const order: StartedPackOrder | null = await createPackOrderAction(packageId, planId);
-      if (!order) {
-        setBusy(false);
-        setError("주문을 만들지 못했어요.");
-        return;
-      }
-      // 성공하면 successUrl로 넘어가므로 이 아래는 실행되지 않는다.
-      const toss = await loadTossPayments(clientKey);
-      const payment = toss.payment({ customerKey: customerKey || ANONYMOUS });
-      await payment.requestPayment({
-        method: "CARD",
-        amount: { currency: "KRW", value: order.amountKrw },
-        orderId: order.orderId,
-        orderName: order.orderName,
-        successUrl: `${window.location.origin}/packages/success`,
-        failUrl: `${window.location.origin}/packages/fail`,
-        customerEmail: customerEmail ?? undefined,
-        customerName: customerName ?? undefined,
-      });
-    } catch (e) {
-      setBusy(false);
-      const msg = e instanceof Error ? e.message : "결제를 시작하지 못했어요.";
-      // 결제창을 그냥 닫은 건 오류가 아니다.
-      if (!/취소|cancel|close|USER_CANCEL/i.test(msg)) setError(msg);
+    const r = await buyPackWithCreditsAction(packageId, planId);
+    if (r.ok) {
+      // 산 즉시 파일로 보낸다 — 「결제하면 바로 다운로드」가 우리 강점이다.
+      window.location.href = href;
+      return;
     }
+    setBusy(false);
+    if (r.reason === "insufficient") {
+      /* 여기서 막지 않는다. 얼마가 모자란지 말해 주고 충전으로 보낸다 —
+         "크레딧이 부족합니다"만 띄우면 손님은 갈 곳을 스스로 찾아야 한다. */
+      const 모자람 = (r.need ?? 0) - (r.balance ?? 0);
+      setError(`크레딧이 ${모자람.toLocaleString()}개 모자라요. 충전하고 다시 눌러 주세요.`);
+      return;
+    }
+    setError(r.reason === "closed" ? "아직 판매를 열지 않았어요." : "구매하지 못했어요.");
   }
 
   return (
@@ -110,11 +93,11 @@ export function BuyButton({
           emphasis ? "" : "bg-foreground hover:bg-foreground/90"
         }`}
       >
-        {busy ? <Loader2 className="size-4 animate-spin" /> : <ShoppingBag className="size-4" />}
-        {planName} 구매하기
+        {busy ? <Loader2 className="size-4 animate-spin" /> : <Coins className="size-4" />}
+        {credits.toLocaleString()}크레딧으로 받기
       </button>
       <p className="text-center text-xs text-muted-foreground">
-        결제하면 바로 다운로드돼요.
+        누르면 크레딧이 빠지고 바로 다운로드돼요.
       </p>
       {error && <p className="text-center text-xs font-medium text-danger">{error}</p>}
     </div>

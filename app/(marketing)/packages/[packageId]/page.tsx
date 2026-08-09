@@ -16,13 +16,14 @@ import {
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { getSession } from "@/lib/session";
-import { PACKAGE_SALE_OPEN } from "@/lib/flags";
+import { PACKAGE_SALE_OPEN, planBuyableNow } from "@/lib/flags";
 import { ownedPlans } from "@/application/pack-order";
 import { BuyButton } from "../buy-button";
 import {
   PACKAGES,
   getPackage,
-  formatKrw,
+  formatPackPrice,
+  packCredits,
   planContents,
   BUILD_SCOPE,
   PRESET_WHY,
@@ -35,14 +36,6 @@ import {
   salePresetConfig,
 } from "@/lib/design-presets";
 import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
-
-// 흰 바탕에 글자로 써도 읽히는 색인지. 파스텔의 노란 강조처럼 밝은 색은 배경으로만 쓴다.
-// 기준을 낮추면 네이비의 주황 같은 멀쩡한 색까지 걸러져 테마 색이 사라진다.
-function isTooLightForText(hex: string): boolean {
-  const h = hex.replace("#", "");
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
-  return 0.299 * r + 0.587 * g + 0.114 * b > 180;
-}
 
 // 판매 상세이자 검색 유입 페이지.
 // 앞쪽은 판매(플랜 비교·추천 대상·포함 산출물), 뒤쪽은 실제 산출물 공개로 신뢰를 준다.
@@ -240,17 +233,19 @@ export default async function PackageDetailPage({
   const presets = pkg.presetStyles.map((style, i) => {
     const opt = DESIGN_OPTIONS.find((o) => o.key === style)!;
     const sum = buildPresetSummary(salePresetConfig(style));
-    const accent = opt.swatches[1] ?? sum.primary;
     return {
       no: String(i + 1).padStart(2, "0"),
       name: opt.title,
       fit: pkg.presetFits[i],
       primary: sum.primary,
-      accent,
-      // 밝은 강조색은 배경 틴트로만 쓰고 글자는 본문색으로 적는다.
-      // (테마마다 swatches[2]의 뜻이 달라서 — 네이비는 본문색, 파스텔은 민트 — 거기서 가져오면 안 된다.)
-      accentText: isTooLightForText(accent) ? sum.text : accent,
-      // swatches[3]은 테마마다 주색을 옅게 깐 옛 배경(네이비 #F5F7FA, 코럴 #FFF6F3)이다.
+      // 강조는 배지 바탕에만, 글자는 글자용 강조로.
+      // 전에는 여기서 밝기를 눈대중으로 재서(0.299R+0.587G+0.114B > 180) 밝으면 본문색으로
+      // 떨어뜨렸다. 테마가 주는 값이 하나뿐이라 받는 쪽이 스스로 고르려 한 것인데,
+      // 그러면 강조 색이 통째로 사라져 배지가 본문색으로 나왔다.
+      // 이제 테마가 글자용 값을 따로 준다 — 여기서 고를 일이 없다(2026-08-08).
+      accent: sum.accent,
+      accentText: sum.accentText,
+      // 옛 swatches[3]은 테마마다 주색을 옅게 깐 배경(네이비 #F5F7FA, 코럴 #FFF6F3)이었다.
       // 2026-08-05에 "테마를 바꿀 때마다 화면 색조가 흔들린다"는 이유로 버리고
       // 배경을 종이색 하나로 고정했는데, 이 미리보기만 옛 값을 그대로 쓰고 있었다.
       // 손님이 판매 페이지에서 본 배경과 실제로 받는 팩의 배경이 달랐다.
@@ -341,10 +336,6 @@ export default async function PackageDetailPage({
                 selected={plan.id === selected.id}
                 owned={owned.has(plan.id)}
                 signedIn={Boolean(session)}
-                tossClientKey={process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? ""}
-                customerKey={session?.user.id ?? ""}
-                customerEmail={session?.user.email ?? null}
-                customerName={session?.user.name ?? null}
               />
             ))}
           </div>
@@ -1063,20 +1054,12 @@ function PlanCard({
   selected,
   owned,
   signedIn,
-  tossClientKey,
-  customerKey,
-  customerEmail,
-  customerName,
 }: {
   plan: PackagePlan;
   pkgId: string;
   selected: boolean;
   owned: boolean;
   signedIn: boolean;
-  tossClientKey: string;
-  customerKey: string;
-  customerEmail: string | null;
-  customerName: string | null;
 }) {
   return (
     <div
@@ -1106,7 +1089,7 @@ function PlanCard({
       </div>
 
       {PACKAGE_PRICES_PUBLIC ? (
-        <p className="text-3xl font-bold text-primary">{formatKrw(plan.priceKrw)}</p>
+        <p className="text-3xl font-bold text-primary">{formatPackPrice(plan.priceKrw)}</p>
       ) : (
         <p className="text-xl font-bold text-warning">판매 준비 중</p>
       )}
@@ -1157,18 +1140,16 @@ function PlanCard({
       )}
 
       <div className="mt-auto flex flex-col gap-2 pt-2">
-        {/* 우리 사이트에서 바로 산다. 결제가 끝나면 그 자리에서 파일을 받는다. */}
+        {/* 우리 사이트에서 바로 산다. 결제가 끝나면 그 자리에서 파일을 받는다.
+            심사 기간(REVIEW_MODE)에는 플러스만 열리고 나머지는 「판매 준비 중」으로 보인다 —
+            10만원을 넘는 디럭스·프리미엄은 충전업종 심사에서 결제 자체가 막힐 수 있다. */}
         <BuyButton
           packageId={pkgId}
           planId={plan.id}
-          planName={plan.name}
+          credits={packCredits(plan.priceKrw)}
           owned={owned}
-          saleOpen={PACKAGE_SALE_OPEN}
+          saleOpen={PACKAGE_SALE_OPEN && planBuyableNow(plan.id)}
           signedIn={signedIn}
-          clientKey={tossClientKey}
-          customerKey={customerKey}
-          customerEmail={customerEmail}
-          customerName={customerName}
           emphasis={plan.id === "premium"}
         />
 

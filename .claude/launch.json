@@ -2,6 +2,18 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "카드뉴스",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "4199",
+        "판매용_템플릿/_마케팅"
+      ],
+      "port": 4199
+    },
+    {
       "name": "dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": [

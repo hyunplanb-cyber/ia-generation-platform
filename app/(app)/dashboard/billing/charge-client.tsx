@@ -1,18 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Coins, Loader2, Minus, Plus } from "lucide-react";
+import { Coins, Loader2 } from "lucide-react";
 import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
-import {
-  type CreditPack,
-  creditsForWon,
-  bonusPctForWon,
-  CUSTOM_MIN_WON,
-  CUSTOM_MAX_WON,
-  CUSTOM_STEP_WON,
-} from "@/lib/credits";
+import { type CreditPack } from "@/lib/credits";
 import type { StartedOrder } from "@/application/charge";
-import { createChargeOrderAction, createCustomChargeOrderAction } from "./actions";
+import { createChargeOrderAction } from "./actions";
 
 export function ChargeClient({
   packs,
@@ -31,10 +24,6 @@ export function ChargeClient({
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [customWon, setCustomWon] = useState(30000);
-
-  const customCredits = creditsForWon(customWon);
-  const customBonus = bonusPctForWon(customWon);
 
   // 주문번호로 토스 결제창을 연다. 성공하면 successUrl로 리다이렉트(이후 코드 실행 안 됨).
   async function startPayment(order: StartedOrder) {
@@ -75,28 +64,6 @@ export function ChargeClient({
     }
   }
 
-  async function chargeCustom() {
-    setError(null);
-    if (!clientKey) {
-      setError("결제 설정이 아직 준비되지 않았어요. 잠시 후 다시 시도해 주세요.");
-      return;
-    }
-    // 1,000원 단위로 맞춘다.
-    const amount = Math.round(customWon / CUSTOM_STEP_WON) * CUSTOM_STEP_WON;
-    if (amount < CUSTOM_MIN_WON) {
-      setError(`최소 ${CUSTOM_MIN_WON.toLocaleString()}원부터 충전할 수 있어요.`);
-      return;
-    }
-    setCustomWon(amount);
-    setBusy("custom");
-    try {
-      const order = await createCustomChargeOrderAction(amount);
-      if (!order) throw new Error("금액을 확인해 주세요.");
-      await startPayment(order);
-    } catch (e) {
-      handleError(e);
-    }
-  }
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-12">
@@ -164,69 +131,9 @@ export function ChargeClient({
         })}
       </div>
 
-      {/* 직접 입력 충전 — 다운로드처럼 큰 금액이 필요할 때 한 번에 */}
-      <div className="rounded-2xl border border-border bg-background p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-bold text-foreground">원하는 만큼 충전</p>
-            <p className="text-xs text-muted-foreground">1,000원 단위로 직접 입력하세요.</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setCustomWon((w) => Math.max(CUSTOM_MIN_WON, w - 10000))}
-              className="flex size-9 items-center justify-center rounded-lg border border-border text-foreground hover:bg-muted"
-              aria-label="1만원 줄이기"
-            >
-              <Minus className="size-4" />
-            </button>
-            <div className="flex items-baseline gap-1 rounded-lg border border-border px-3 py-2">
-              <input
-                type="number"
-                step={CUSTOM_STEP_WON}
-                min={CUSTOM_MIN_WON}
-                max={CUSTOM_MAX_WON}
-                value={customWon}
-                onChange={(e) =>
-                  setCustomWon(Math.min(CUSTOM_MAX_WON, Math.max(0, Math.floor(Number(e.target.value)))))
-                }
-                className="w-28 bg-transparent text-right text-lg font-extrabold text-foreground outline-none"
-              />
-              <span className="text-sm font-bold text-muted-foreground">원</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setCustomWon((w) => Math.min(CUSTOM_MAX_WON, w + 10000))}
-              className="flex size-9 items-center justify-center rounded-lg border border-border text-foreground hover:bg-muted"
-              aria-label="1만원 늘리기"
-            >
-              <Plus className="size-4" />
-            </button>
-          </div>
-        </div>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-dashed border-border pt-3">
-          <p>
-            <span className="text-xl font-extrabold text-primary">
-              {customCredits.toLocaleString()}
-            </span>
-            <span className="ml-1 text-sm font-semibold text-muted-foreground">크레딧</span>
-            {customBonus > 0 && (
-              <span className="ml-2 rounded-md bg-success-soft px-2 py-0.5 text-xs font-bold text-success">
-                보너스 +{customBonus}%
-              </span>
-            )}
-          </p>
-          <button
-            type="button"
-            onClick={chargeCustom}
-            disabled={!!busy}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
-          >
-            {busy === "custom" ? <Loader2 className="size-4 animate-spin" /> : null}
-            {busy === "custom" ? "결제창 여는 중" : "충전하기"}
-          </button>
-        </div>
-      </div>
+      {/* 직접 입력 충전 UI 는 없앴다 — 토스 충전업종 가이드가
+          「임의 금액입력 후 충전하는 결제 방식은 이용이 불가능」이라 못 박았다(2026-08-09).
+          큰 금액은 위 선택지(5만·9만)로 옮겼다. 전부 10만원 이하여야 한다. */}
 
       {error && <p className="text-center text-sm text-danger">{error}</p>}
 

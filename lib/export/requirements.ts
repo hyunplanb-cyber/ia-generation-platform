@@ -83,6 +83,33 @@ export function splitFuncDef(funcDef: string): string[] {
   return items;
 }
 
+/**
+ * 이 화면 하나에 며칠을 잡을 것인가 — WBS 의 「기간(일)」.
+ *
+ * 2026-08-09 에 넣었다. 그전에는 **모든 화면이 일괄 2일**이었다.
+ * 132화면짜리 표를 열면 「기간(일)」 칸이 전부 `2` 다. 기획을 아는 구매자는
+ * 그 표를 보는 순간 자동으로 채운 값인 걸 안다 — 나머지가 아무리 좋아도
+ * 문서 전체의 신뢰가 거기서 깎인다.
+ *
+ * 무엇을 근거로 다르게 잡나 — **이미 그 화면이 들고 있는 것**을 센다.
+ *   요건 수(기능정의를 쪼갠 개수) + 다른 화면으로 가는 버튼 + 화면 안에서 끝나는 동작
+ * 새로 재거나 지어낸 값이 아니라, 기능정의서·스펙팩이 이미 쓰고 있는 그 숫자다.
+ * 실측하니 화면당 무게가 5~21 로 갈린다(LMS·뷰티·여행 세 업종).
+ *
+ * 5로 나누는 것은 「하루에 요건 다섯 남짓」이라는 뜻이고, 이 규칙을 문서에도 적어
+ * 사는 사람이 자기 팀 속도로 바꿔 쓸 수 있게 한다. 우리가 모르는 값을 아는 척하지 않는다.
+ * 1~4일로 막는다 — 0일짜리 작업은 없고, 한 화면이 닷새를 넘으면 그건 쪼개야 할 화면이다.
+ */
+export const WORKDAY_PER_WEIGHT = 5;
+export function screenWorkdays(
+  func: string | null | undefined,
+  btnCount = 0,
+  actCount = 0,
+): number {
+  const 무게 = splitFuncDef(func ?? "").length + btnCount + actCount;
+  return Math.min(4, Math.max(1, Math.ceil(무게 / WORKDAY_PER_WEIGHT)));
+}
+
 export function buildRequirements(menus: Menu[], screens: Screen[]): Requirement[] {
   const rows: Requirement[] = [];
   let 업무n = 0;

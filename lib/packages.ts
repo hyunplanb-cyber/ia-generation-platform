@@ -30,12 +30,29 @@ export interface TplData {
 /**
  * 등급은 사다리가 아니라 2×2다. 축이 둘이다 — 설계 깊이 × 완성 화면 유무.
  *
- *              문서만        + 검수 시나리오 + 완성 화면(HTML)
- *   2뎁스   standard 51,300        deluxe  108,000
- *   3뎁스   plus     82,900        premium 163,800
+ *              문서만              + 검수 시나리오 + 완성 화면(HTML)
+ *   2뎁스   standard 330크레딧        deluxe  704크레딧
+ *   3뎁스   plus     503크레딧        premium 982크레딧
  *
- * 값은 "직접 만들면 드는 크레딧"과 같게 맞췄다(가격표 2026-08-01).
- * 재고는 남의 컨셉이라 직접 만들기보다 비싸면 살 이유가 없다.
+ * 값의 뿌리는 "직접 만들면 드는 크레딧"이다. 재고는 남의 컨셉이라
+ * 직접 만들기보다 비싸면 살 이유가 없다 — 그래서 그 선을 넘지 않는다.
+ *
+ * 2026-08-09 — 가격정책표 v4. **팩은 크레딧으로 산다.**
+ * 1크레딧 = 100원이라 값을 100으로 나누면 크레딧이 된다(packCredits).
+ * 충전과 지갑이 하나라 남은 크레딧이 놀지 않는다.
+ *
+ * 값은 두 번 움직였다.
+ *   ① 다운로드 크레딧을 290/490 으로 내려 낱개 합이 413/629/880/1,228 이 됐다.
+ *   ② 거기서 **20% 더 내려** 330/503/704/982 로 확정했다.
+ *
+ * ②의 까닭 — 낱개 합 그대로면 「직접 만들기」와 값이 **완전히 같아진다.**
+ * 그런데 직접 만들기는 무료 크레딧으로 만들어 보고 마음에 들 때 결제하는데,
+ * 팩은 사야 볼 수 있다. 같은 값이면 손님은 리스크가 없는 쪽을 고른다.
+ * 팩은 이미 만들어 둔 파일이라 **한계원가가 0**이라 깎을 여유가 있다.
+ *
+ * 딸려 온 효과 — 가장 비싼 프리미엄이 982크레딧이 되어 **1회 충전(99,000원 = 1,287)에
+ * 들어온다.** 전에는 1,228이라 두 번 충전해야 했다. 토스가 1회 충전을 10만원으로
+ * 묶어 둔 것과 맞물리는 자리라, 값을 정할 때 이 선을 넘기지 않아야 한다.
  *
  * 이름은 일부러 사다리처럼 뒀다 — 2×2를 대놓고 보여주면 구매자가 표를 만들어
  * 계산하기 시작한다. 대신 홈에서 넷을 한 줄에 나란히 놓지 않는다.
@@ -255,7 +272,7 @@ function makePlans(
     {
       id: "standard",
       name: PLAN_NAMES.standard,
-      priceKrw: 51300,
+      priceKrw: 33000, // 330크레딧 — 낱개 합 413 에서 20% 내린 값(v4 확정 판매가)
       summary: `화면 ${s.screens}개 · 기본 설계`,
       depthLabel: "메뉴 → 화면까지",
       stats: s,
@@ -269,7 +286,7 @@ function makePlans(
     {
       id: "plus",
       name: PLAN_NAMES.plus,
-      priceKrw: 82900,
+      priceKrw: 50300, // 503크레딧 — 낱개 합 629 에서 20% 내린 값
       summary: `화면 ${p.screens}개 · 상세 설계`,
       depthLabel: "메뉴 → 화면 → 화면 속 탭·예외까지",
       stats: p,
@@ -287,7 +304,7 @@ function makePlans(
     plans.push({
       id: "deluxe",
       name: PLAN_NAMES.deluxe,
-      priceKrw: 108000,
+      priceKrw: 70400, // 704크레딧 — 낱개 합 880 에서 20% 내린 값
       summary: `설계 ${s.screens}개 + 만들어 둔 화면 ${site.base}개`,
       depthLabel: "메뉴 → 화면까지 + 완성 화면",
       stats: s,
@@ -307,7 +324,7 @@ function makePlans(
     plans.push({
       id: "premium",
       name: PLAN_NAMES.premium,
-      priceKrw: 163800,
+      priceKrw: 98200, // 982크레딧 — 낱개 합 1,228 에서 20% 내린 값. 1회 충전(1,287)에 들어온다
       summary: `설계 ${p.screens}개 + 만들어 둔 화면 ${site.deep}개`,
       depthLabel: "메뉴 → 화면 → 화면 속 탭·예외까지 + 완성 화면",
       stats: p,
@@ -579,7 +596,7 @@ export function aiPackCards(): AiPackCard[] {
     depthLabel: plan.depthLabel,
     contents: planContents(plan),
     // 살 수 있는 길이 열리기 전까지는 값 대신 상태를 적는다(lib/flags.ts).
-    price: PACKAGE_PRICES_PUBLIC ? formatKrw(plan.priceKrw) : "판매 준비 중",
+    price: PACKAGE_PRICES_PUBLIC ? formatPackPrice(plan.priceKrw) : "판매 준비 중",
     badge: plan.badge,
   }));
 }
@@ -616,6 +633,20 @@ export function deepSample(deep: DeepInput, refs: string[]) {
     .map((ref) => ({ screen: byRef.get(ref), leaves: deep.subs[ref] ?? [] }))
     .filter((x) => x.screen && x.leaves.length > 0)
     .map((x) => ({ screen: x.screen!, leaves: x.leaves }));
+}
+
+/** 이 등급을 사는 데 드는 크레딧. 1크레딧 = 100원이라 값에서 바로 나온다.
+ *  값과 크레딧을 두 벌로 적지 않으려고 계산으로 둔다 — 두 벌은 반드시 갈라진다. */
+export function packCredits(priceKrw: number): number {
+  return Math.round(priceKrw / 100);
+}
+
+/** 화면에 적을 값 — 팩은 크레딧으로 사므로 크레딧이 주(主)다.
+ *
+ * 원 환산을 괄호로 함께 적는다. 「629크레딧」만 있으면 처음 온 사람은 그게
+ * 얼마인지 가늠할 수 없고, 「62,900원」만 있으면 실제로 무엇을 내는지와 어긋난다. */
+export function formatPackPrice(priceKrw: number): string {
+  return `${packCredits(priceKrw).toLocaleString()}크레딧`;
 }
 
 export function formatKrw(won: number): string {
