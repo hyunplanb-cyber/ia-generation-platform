@@ -28,9 +28,9 @@ ${U.card('', `
 
 ${U.card('', `<div class="card"><div class="card-bd flush">
   ${뽑힌.map((s) => `<a class="lrow" href="${U.link('ST-03')}">
-    ${U.ph(s.name, 'ph-ava-sm', s.id)}
-    <span class="grow"><b>${s.name}</b>
-      <span class="t-sub" style="display:block">${s.email} · 최근 접속 ${s.last}</span></span>
+    ${U.ph(s.nm, "ph-ava-sm", s.nm)}
+    <span class="grow"><b>${s.nm}</b>
+      <span class="t-sub" style="display:block">${s.mail} · 최근 접속 ${s.last}</span></span>
     <span style="width:140px">${U.barRow(s.pct)}</span>
     <span class="muted">›</span></a>`).join('')}
 </div></div>`, { cls: 'mt6' })}

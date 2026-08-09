@@ -673,7 +673,8 @@ ${U.card('', `${조건.map(([이름, 필요, 지금, ok, 안내, 가기]) => `
   </div>`).join('')}
 
   <div class="btns mt6">
-    <button class="btn btn-primary btn-lg" type="button" disabled>수료증 발급 (조건을 채우면 열립니다)</button>
+    <button class="btn btn-primary btn-lg" type="button" disabled>수료증 발급</button>
+    <p class="t-sub mt2">위 두 가지를 채우시면 <b>따로 신청하지 않으셔도</b> 자동으로 발급됩니다.</p>
   </div>`)}
 
 ${U.card('남은 분량', `${U.kv([

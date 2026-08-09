@@ -37,6 +37,10 @@ const spec = JSON.parse(fs.readFileSync(SPEC, 'utf8'));
 
 fs.mkdirSync(OUT, { recursive: true });
 
+/* 만들기 «전에» 어떤 화면이 있는지 알려 준다 — 링크를 옮길 때 쓴다.
+   이게 없으면 2뎁스 빌더의 'CL-03' 링크가 그대로 나가 132장이 끊긴다. */
+U.setPages(spec.screens.map((s) => s.pageId));
+
 const missing = [];
 let written = 0;
 

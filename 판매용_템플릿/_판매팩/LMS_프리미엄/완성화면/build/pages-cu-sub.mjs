@@ -145,7 +145,8 @@ ${U.card('', `${칸.map(([이름, 필수, 값, 안내]) => `
       ? `<div class="drop-zone${값 ? '' : ' err'} mt2" style="min-height:120px">
           <span class="t-sub">${값 || '파일을 끌어다 놓거나 눌러서 고르세요'}</span></div>`
       : `<input class="input mt2${필수 && !값 ? ' err' : ''}" value="${값}"
-          placeholder="${안내 || ''}" aria-label="${이름}"${필수 && !값 ? ' aria-invalid="true"' : ''}>`}
+          placeholder="${안내 || ''}" aria-label="${이름}"${필수 && !값 ? ' aria-invalid="true"' : ''}
+          ${필수 ? `data-gate="basic" data-label="${이름}"` : ''}>`}
     ${필수 && !값 ? `<p class="err-msg mt2">⚠ ${안내}</p>` : ''}
   </div>`).join('')}
 
@@ -260,11 +261,11 @@ ${U.card('비어 있는 차시', `<div class="card"><div class="card-bd flush">
 </div></div>`, { cls: 'mt6' })}
 
 ${U.card('', `<div class="btns">
-  <button class="btn btn-primary btn-lg is-off" type="button" data-gated="submit"
-    data-toast="검수를 요청했어요. 보통 2영업일 걸립니다">검수 요청</button>
-  ${U.btn('영상 업로드로', { cls: 'btn-ghost btn-lg', href: 'CU-04' })}
+  <button class="btn btn-primary btn-lg" type="button" disabled>검수 요청</button>
+  ${U.btn('영상 업로드로', { cls: 'btn-primary btn-lg', href: 'CU-04' })}
 </div>
-<p class="t-sub mt2">비어 있는 차시가 0개가 되면 요청 버튼이 열립니다.</p>`, { cls: 'mt6' })}
+<p class="t-sub mt2">비어 있는 차시가 0개가 되면 요청 버튼이 열립니다 —
+  <b>이 화면에서는 열 수 없고</b> 영상을 붙이셔야 합니다.</p>`, { cls: 'mt6' })}
 
 ${U.card('영상 없이 두는 방법도 있습니다', U.kv([
     ['차시 지우기', '그 차시가 필요 없다면 지우면 됩니다'],

@@ -6,7 +6,33 @@ export const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => (
 export const nf = (n) => Number(n).toLocaleString('ko-KR');
 export const won = (n) => nf(n) + '원';
 export const offRate = (was, price) => Math.round((1 - price / was) * 100);
-export const link = (id) => `${id}.html`;
+/* 링크가 «있는 화면»을 가리키게 옮겨 준다.
+ *
+ * 왜 필요한가 — 2026-08-09
+ *   2뎁스 빌더는 'CL-03' 으로 링크를 건다. 그런데 3뎁스 팩의 파일은 'CL0301.html' 이다.
+ *   그대로 두면 **132장 전부 링크가 죽는다** — 화면 사이를 오갈 수가 없다.
+ *   눈으로는 안 보인다. 눌러야 보이고, 132장을 다 눌러 볼 수는 없다.
+ *   (check-pack.mts 가 이걸 잡아 줬다.)
+ *
+ * 옮기는 규칙
+ *   'CL-03'  → 'CL0301'   그 화면의 «기본 상태»로 보낸다
+ *   'CL0302' → 그대로       이미 3뎁스 이름이면 손대지 않는다
+ *   없는 것  → 같은 메뉴의 첫 화면으로. 끊긴 링크보다 낫다.
+ */
+let PAGES = null;
+export const setPages = (ids) => { PAGES = new Set(ids); };
+export function toPageId(id) {
+  const s = String(id);
+  if (!PAGES || PAGES.has(s)) return s;
+  const m = /^([A-Z]{2})-(\d{2})$/.exec(s);
+  if (m) {
+    const want = `${m[1]}${m[2]}01`;
+    if (PAGES.has(want)) return want;
+  }
+  const code = s.slice(0, 2);
+  return [...PAGES].find((p) => p.startsWith(code)) || s;
+}
+export const link = (id) => `${toPageId(id)}.html`;
 
 /* ---------- 이미지 자리 ----------
    테마 색으로 칠하지 않는다. 옅은 파스텔 한 톤 + 1px 테두리 + 무엇·권장 크기.

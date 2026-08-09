@@ -15,6 +15,7 @@ import { PAGES as PR } from './pages-pr.mjs';
 import { PAGES as LD } from './pages-ld.mjs';
 import { PAGES as JBAU } from './pages-jb-au.mjs';
 import { PAGES as HOSESUB } from './pages-ho-se-sub.mjs';
+import { PAGES as RQQTSUB } from './pages-rq-qt-sub.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -30,7 +31,7 @@ const OUT = path.resolve(ROOT, 'pages');
 const short2spec = (k) => (/^[A-Z]{2}-\d{2}$/.test(k) ? `${k.slice(0, 2)}${k.slice(3)}01` : k);
 
 const BUILDERS = {};
-for (const src of [HO, SE, RQ, QT, CHPY, MYRV, PR, LD, JBAU, HOSESUB]) {
+for (const src of [HO, SE, RQ, QT, CHPY, MYRV, PR, LD, JBAU, HOSESUB, RQQTSUB]) {
   for (const [k, v] of Object.entries(src)) BUILDERS[short2spec(k)] = v;
 }
 
