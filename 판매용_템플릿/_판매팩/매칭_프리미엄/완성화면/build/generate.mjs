@@ -16,6 +16,9 @@ import { PAGES as LD } from './pages-ld.mjs';
 import { PAGES as JBAU } from './pages-jb-au.mjs';
 import { PAGES as HOSESUB } from './pages-ho-se-sub.mjs';
 import { PAGES as RQQTSUB } from './pages-rq-qt-sub.mjs';
+import { PAGES as CPMRSUB } from './pages-ch-py-my-rv-sub.mjs';
+import { PAGES as PRLDSUB } from './pages-pr-ld-sub.mjs';
+import { PAGES as JBAUSUB } from './pages-jb-au-sub.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -31,7 +34,7 @@ const OUT = path.resolve(ROOT, 'pages');
 const short2spec = (k) => (/^[A-Z]{2}-\d{2}$/.test(k) ? `${k.slice(0, 2)}${k.slice(3)}01` : k);
 
 const BUILDERS = {};
-for (const src of [HO, SE, RQ, QT, CHPY, MYRV, PR, LD, JBAU, HOSESUB, RQQTSUB]) {
+for (const src of [HO, SE, RQ, QT, CHPY, MYRV, PR, LD, JBAU, HOSESUB, RQQTSUB, CPMRSUB, PRLDSUB, JBAUSUB]) {
   for (const [k, v] of Object.entries(src)) BUILDERS[short2spec(k)] = v;
 }
 

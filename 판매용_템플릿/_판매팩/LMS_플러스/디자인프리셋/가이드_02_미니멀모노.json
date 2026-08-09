@@ -15,8 +15,8 @@
     "text (본문)": "#111111",
     "text-muted (보조)": "#666666",
     "border (구분선)": "#E5E5E5",
-    "success": "#1A7F37",
-    "warning": "#9A6700",
+    "success": "#197B35",
+    "warning": "#916100",
     "danger": "#CF222E",
     "on-primary (주색 배경 위 글자)": "#FFFFFF",
     "on-accent (강조색 배경 위 글자)": "#111111"

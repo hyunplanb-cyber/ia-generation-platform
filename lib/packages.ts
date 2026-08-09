@@ -585,12 +585,15 @@ export const PACKAGES: PackageDef[] = [
     industry: "매칭·중개",
     tagline:
       "요청서 한 장을 보내면 고수들이 각자 값을 불러 견적을 보내고, 비교해서 고르는 매칭 플랫폼 AI팩",
-    // 2뎁스 43화면은 모던 네이비로 만들었다. 3뎁스는 아직 화면이 없어 프리미엄이 안 생긴다.
+    /* 2뎁스 43화면은 모던 네이비 + 좌우 분할형,
+       3뎁스 159화면은 미니멀 모노 + 목록 중심형으로 만들었다(2026-08-10).
+       두 등급의 프리셋을 «일부러» 다르게 뒀다 — 같은 스펙팩이라도 프리셋을 갈아
+       끼우면 화면이 이렇게 달라진다는 것을 나란히 보여 주는 것이 이 팩의 값이다. */
     plans: makePlans(
       MATCHING,
       MATCHING_DEEP,
-      { standard: null, plus: null, deluxe: null },
-      { base: 43 },
+      { standard: null, plus: null, deluxe: null, premium: null },
+      { base: 43, deep: 159 },
     ),
     data: MATCHING,
     deep: MATCHING_DEEP,
@@ -643,12 +646,11 @@ export const PACKAGES: PackageDef[] = [
  * "왜 이건 두 개뿐이지"가 먼저 걸리기 때문이다.
  *
  * 2026-08-09 — 공동구매와 LMS 를 더했다.
- *   공동구매 디럭스 37화면·프리미엄 125화면
- *   LMS      디럭스 44화면·프리미엄 132화면 (프리미엄은 이날 만들었다)
- * 매칭만 아직 빠진다 — 3뎁스 완성화면 159장이 없다. 만들면 여기에 더하면 된다.
- * (상세 주소 /packages/matching 은 그대로 살아 있다 — 링크만 안 건다.)
+ * 2026-08-10 — 매칭을 더했다. **다섯 업종 스무 칸이 모두 찼다.**
+ *   여행 43/144 · 뷰티샵 49/136 · 공동구매 37/125 · LMS 44/132 · 매칭 43/159
+ *   (디럭스 2뎁스 화면 수 / 프리미엄 3뎁스 화면 수)
  */
-const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms"]);
+const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching"]);
 
 /**
  * 이 등급 zip에 실제로 들어가는 것.

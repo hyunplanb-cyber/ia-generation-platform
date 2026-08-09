@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>일감 상세 &gt; 완료 처리 · 동네고수</title>
+<meta name="description" content="작업 완료 사진 첨부 · 최종 금액 확인 · 손님 확인 후 정산된다는 안내 · 되돌릴 수 없음 · 최종 확인">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="JB0203">
+<header class="gnb pro"><div class="gnb-in">
+    <a class="logo" href="PR0101.html"><span class="mark">고</span>동네고수<span class="badge b-pri" style="margin-left:2px">고수</span></a>
+    <nav class="gnb-nav"><a href="PR0101.html">고수센터</a><a href="LD0101.html">요청 받기</a><a href="JB0101.html" class="on">진행 관리</a></nav>
+    <div class="gnb-util"><span class="badge b-pri">크레딧 42</span>
+       <button class="bell" type="button" aria-label="알림">🔔<span class="dot">3</span></button>
+       <a class="btn btn-ghost btn-sm" href="HO0201.html">손님 화면으로</a><a class="gnb-ava" href="AU0101.html" title="내 정보"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"></div></a></div>
+  </div></header>
+<div class="backbar"><div class="in">
+        <a class="back" href="JB0201.html">‹ 일감 상세</a>
+        <span class="crumb">진행 관리 <i>›</i> 일감 상세 &gt; 완료 처리</span>
+      </div></div>
+
+
+<main class="main  "><div class="wrap">
+<div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">완료 처리</h1><p class="t-sub">되돌릴 수 없습니다</p></div></div>
+
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">마무리 사진</h3></div>
+  <div class="card-bd "><p class="t-sub mb3">끝난 상태를 찍어 두시면 나중에 분쟁이 생겨도 근거가 됩니다.
+  <b>필수는 아니지만</b> 올려 두시길 권합니다.</p>
+  <div class="g4">
+    <div class="thumb-del"><div class="ph t2  " style="aspect-ratio:1200/900"><span class="lb">이미지 영역 (작업 사진 · <span class="sz">권장 1200×900</span>)</span></div>
+      <button class="del" type="button" data-toast="사진을 뺐어요" aria-label="삭제">✕</button></div><div class="thumb-del"><div class="ph t3  " style="aspect-ratio:1200/900"><span class="lb">이미지 영역 (작업 사진 · <span class="sz">권장 1200×900</span>)</span></div>
+      <button class="del" type="button" data-toast="사진을 뺐어요" aria-label="삭제">✕</button></div>
+    <label class="drop" style="min-height:0;aspect-ratio:4/3;cursor:pointer">
+      <span style="font-size:24px">＋</span>
+      <input type="file" hidden multiple data-toast="사진을 붙였어요"></label>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">최종 금액</h3></div>
+  <div class="card-bd "><div class="sum-row "><span class="muted">처음 견적</span><span>280,000원</span></div><div class="sum-row "><span class="muted">추가 (사다리차)</span><span>+120,000원</span></div>
+  <div class="sum-row total"><span>최종 금액</span><span class="price">400,000원</span></div>
+  <p class="t-sub mt3">추가 금액은 손님이 <b>8월 21일 08:42</b>에 동의하셨습니다.</p></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">완료를 누르면</h3></div>
+  <div class="card-bd "><div class="timeline"><div class="tl-item on">
+  <span class="dot">●</span>
+  <b>완료 처리</b><div class="when">손님에게 「일이 끝났습니다」가 갑니다</div></div><div class="tl-item todo">
+  <span class="dot"></span>
+  <b>손님 확인</b><div class="when">보통 <b>하루 안</b>에 확인합니다</div></div><div class="tl-item todo">
+  <span class="dot"></span>
+  <b>결제</b><div class="when">확인하면 그때 결제됩니다</div></div><div class="tl-item todo">
+  <span class="dot"></span>
+  <b>정산</b><div class="when">결제 후 <b>7영업일</b> 안에 계좌로</div></div></div><p class="t-sub mt4">손님이 <b>7일</b> 동안 확인을 안 하면 <b>자동으로 확인</b>됩니다 —
+    돈을 못 받고 끝나는 일은 없습니다.</p></div>
+  </div>
+
+<div class="card mt6">
+  
+  <div class="card-bd "><label class="chk"><input type="checkbox" data-gate="fin" data-label="완료 확인">
+    <b>일이 끝났고, 되돌릴 수 없음을 확인했습니다</b></label>
+  <div class="err-msg mt3" data-gatemsg="fin" hidden></div>
+  <div class="btns mt6">
+    <button class="btn btn-pri btn-lg is-off" type="button" data-gated="fin"
+      data-toast="완료 처리했어요. 손님 확인을 기다립니다">완료 처리</button>
+    <a class="btn btn-ghost btn-lg" href="JB0201.html">아직 안 끝났어요</a>
+  </div></div>
+  </div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">고</span>동네고수</div>
+      <p class="t-sub">(주)동네고수  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 서비스 제공과 그 결과에 대한 책임은 각 고수에게 있습니다.</p>
+    </div>
+    <div><h4>맡기기</h4><ul>
+      <li><a href="RQ0101.html">요청서 작성</a></li><li><a href="SE0101.html">고수 찾기</a></li>
+      <li><a href="QT0101.html">받은 견적</a></li><li><a href="MY0101.html">내 요청</a></li>
+      <li><a href="RV0201.html">내 후기</a></li></ul></div>
+    <div><h4>고수</h4><ul>
+      <li><a href="PR0201.html">고수 등록</a></li><li><a href="PR0101.html">고수센터</a></li>
+      <li><a href="LD0101.html">요청 받기</a></li><li><a href="LD0401.html">크레딧</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 동네고수. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전 거래 정책</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">JB0203</div><div class="nm">일감 상세 &gt; 완료 처리</div>
+    <div class="fd">작업 완료 사진 첨부 · 최종 금액 확인 · 손님 확인 후 정산된다는 안내 · 되돌릴 수 없음 · 최종 확인</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">JB0203 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
