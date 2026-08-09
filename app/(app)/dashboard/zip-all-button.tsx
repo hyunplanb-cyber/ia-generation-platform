@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, Download, Loader2, X } from "lucide-react";
 import type { VerificationReport } from "@/domain/verify/report";
 import { unlockBundleAction } from "./[projectId]/download-actions";
+import { RefundNotice } from "@/components/refund-notice";
 
 function safeFileName(concept: string): string {
   return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
@@ -109,7 +110,22 @@ export function ZipAllButton({
       setModalOpen(true);
       return;
     }
-    void runDownload(false, false);
+    물어보고받기(false, false);
+  }
+
+  /* 「받으면 무를 수 없다」를 «파일이 나가기 전»에 한 번 알린다 — 2026-08-10.
+   *
+   * 값이 빠지는 경우에만 묻는다. 이미 열어 두신 것을 다시 받는 것은
+   * 새로 사는 게 아니라 «가진 것을 다시 가져가는» 것이라 물을 일이 아니다 —
+   * 매번 물으면 곧 아무도 안 읽는다.
+   *
+   * 창을 띄우기만 하고 뒤에서 받기가 시작되면 알린 뜻이 없다.
+   * 그래서 받을 조건을 들고 있다가 «동의를 누른 뒤에» 부른다. */
+  const [무를수없음, set무를수없음] = useState<{ p: boolean; v: boolean } | null>(null);
+  function 물어보고받기(withPreset: boolean, withVerify: boolean) {
+    const 값이빠지나 = total > 0;
+    if (값이빠지나) { set무를수없음({ p: withPreset, v: withVerify }); return; }
+    void runDownload(withPreset, withVerify);
   }
 
   // 실제 다운로드 — 결제(묶음) 후 zip을 만들어 내려준다.
@@ -307,6 +323,17 @@ export function ZipAllButton({
 
   return (
     <Fragment>
+      <RefundNotice
+        open={무를수없음 !== null}
+        onAgree={() => {
+          const 조건 = 무를수없음!;
+          set무를수없음(null);
+          void runDownload(조건.p, 조건.v);
+        }}
+        onClose={() => set무를수없음(null)}
+        agreeLabel={`동의하고 ${total}크레딧으로 받기`}
+        what={`${total}크레딧이 빠지고 파일이 만들어집니다.`}
+      />
       <button
         type="button"
         onClick={onClick}
@@ -403,7 +430,7 @@ export function ZipAllButton({
 
             <button
               type="button"
-              onClick={() => void runDownload(offerPreset && addPreset, offerVerify && addVerify)}
+              onClick={() => { setModalOpen(false); 물어보고받기(offerPreset && addPreset, offerVerify && addVerify); }}
               disabled={busy}
               className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
             >

@@ -97,10 +97,37 @@ export interface PackagePlan {
   badge?: string;
 }
 
+/* ─── 무엇을 만드는 사이트인가 (갈래) ────────────────────────────
+ *
+ * 왜 나누나 — 2026-08-10
+ *   팩이 스무 칸이 되면서 한 줄로 늘어놓으면 못 찾는다.
+ *   손님은 「내 업종」이 아니라 **「내가 만들려는 것의 «종류»」**로 찾는다 —
+ *   미용실을 하시는 분이 「뷰티」를 찾는 게 아니라 「예약받는 사이트」를 찾는다.
+ *   그래서 업종(industry)이 아니라 «만들려는 것»으로 가른다.
+ *
+ * 아임웹·카페24의 갈래를 참고하되 우리 것에 맞췄다.
+ * 우리는 **카페24로 안 되는 맞춤형**만 판다 — 그래서 「일반 쇼핑몰」 갈래가 없다.
+ *
+ * ⚠ 비어 있는 갈래는 «화면에 안 나온다»(listedCategories).
+ *   팩이 들어오면 저절로 나타난다. 빈 칸을 눌러 아무것도 없으면 손님이 떠난다.
+ */
+export const CATEGORIES = [
+  { id: "booking", label: "예약·일정", desc: "날짜와 사람을 맞춰 잡는 서비스" },
+  { id: "commerce", label: "커머스·거래", desc: "물건이나 서비스를 사고파는 곳" },
+  { id: "matching", label: "중개·매칭", desc: "찾는 사람과 해 주는 사람을 잇는 곳" },
+  { id: "learning", label: "교육·학습", desc: "가르치고 배우는 곳" },
+  { id: "community", label: "커뮤니티·콘텐츠", desc: "모여서 읽고 쓰는 곳" },
+  { id: "biztool", label: "관리·업무도구", desc: "안에서 쓰는 관리자 화면" },
+] as const;
+
+export type CategoryId = (typeof CATEGORIES)[number]["id"];
+
 export interface PackageDef {
   id: string;
   /** 목록·상세의 제목 */
   title: string;
+  /** 무엇을 만드는 사이트인가 — 목록에서 이걸로 거른다 */
+  category: CategoryId;
   /** 업종 라벨 */
   industry: string;
   /** 한 줄 소개 */
@@ -350,6 +377,7 @@ export const PACKAGES: PackageDef[] = [
   {
     id: "lms",
     title: "온라인 강의 플랫폼 (LMS)",
+    category: "learning",
     industry: "교육",
     tagline:
       "수강생 학습부터 강사의 수업 편성·학생 관리·정산까지 갖춘 강의 플랫폼 AI팩",
@@ -409,6 +437,7 @@ export const PACKAGES: PackageDef[] = [
   {
     id: "beauty",
     title: "뷰티샵 예약 플랫폼",
+    category: "booking",
     industry: "뷰티·예약",
     tagline:
       "미용실·네일·왁싱·피부관리 매장을 찾아 예약하고, 매장은 예약·디자이너 일정·정산을 관리하는 예약 플랫폼 AI팩",
@@ -466,6 +495,7 @@ export const PACKAGES: PackageDef[] = [
   {
     id: "travel",
     title: "해외 투어·티켓 예약 플랫폼",
+    category: "booking",
     industry: "여행·예약",
     tagline:
       "해외 투어·입장권·패스를 날짜와 인원을 골라 예약하고, 현지에서 쓸 바우처를 받는 여행 예약 플랫폼 AI팩",
@@ -525,6 +555,7 @@ export const PACKAGES: PackageDef[] = [
   {
     id: "groupbuy",
     title: "공동구매(공구) 플랫폼",
+    category: "commerce",
     industry: "커머스·공구",
     tagline:
       "목표 인원이 차야 할인가로 성사되고 미달이면 전액 환불되는, 조건부 결제 공동구매 플랫폼 AI팩",
@@ -582,6 +613,7 @@ export const PACKAGES: PackageDef[] = [
   {
     id: "matching",
     title: "동네 서비스 매칭 플랫폼",
+    category: "matching",
     industry: "매칭·중개",
     tagline:
       "요청서 한 장을 보내면 고수들이 각자 값을 불러 견적을 보내고, 비교해서 고르는 매칭 플랫폼 AI팩",
@@ -697,6 +729,35 @@ export function packageProducts(): PackageProduct[] {
     })),
   );
 }
+
+/**
+ * 진열된 팩이 «실제로 있는» 갈래만 — 개수를 함께 준다.
+ *
+ * 비어 있는 갈래를 보여 주지 않는 까닭 — 눌러서 아무것도 없으면
+ * 손님은 「이 사이트에 물건이 없구나」로 읽는다. 여섯 칸을 미리 벌여 놓고
+ * 넷이 비어 있으면 스무 칸이 있어도 빈약해 보인다.
+ */
+export function listedCategories(): { id: CategoryId; label: string; desc: string; count: number }[] {
+  const 셈 = new Map<CategoryId, number>();
+  for (const pkg of PACKAGES) {
+    if (!LISTED_IDS.has(pkg.id)) continue;
+    셈.set(pkg.category, (셈.get(pkg.category) ?? 0) + pkg.plans.length);
+  }
+  return CATEGORIES.filter((c) => 셈.has(c.id)).map((c) => ({ ...c, count: 셈.get(c.id)! }));
+}
+
+/**
+ * 목록에서 찾을 때 쓰는 글자 뭉치.
+ *
+ * 제목만 뒤지면 「미용실」로 못 찾는다 — 팩 이름이 「뷰티샵 예약 플랫폼」이기 때문이다.
+ * 손님이 실제로 칠 말은 업종·소개·SEO 키워드에 흩어져 있으므로 다 합쳐 둔다.
+ * (검색은 화면에서 하므로 미리 만들어 내려보낸다 — 팩 원본을 통째로 보내면
+ *  화면 수백 개짜리 데이터가 브라우저로 넘어간다.)
+ */
+export const searchText = (pkg: PackageDef): string =>
+  [pkg.title, pkg.industry, pkg.tagline, ...pkg.seo.keywords, ...pkg.audience]
+    .join(" ")
+    .toLowerCase();
 
 /**
  * 메인 랜딩이 쓰는 가벼운 카드 데이터.

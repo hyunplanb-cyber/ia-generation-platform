@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
-import { packageProducts, planContents, formatPackPrice } from "@/lib/packages";
+import {
+  packageProducts, planContents, formatPackPrice, listedCategories, searchText,
+} from "@/lib/packages";
 import { PACKAGE_PRICES_PUBLIC, PACKAGE_SALE_OPEN } from "@/lib/flags";
+import { Browse, type BrowseCard } from "./browse";
 
 export const metadata: Metadata = {
   title: "AI팩 구매 — 업종별 화면설계서·기능정의서 완성본",
@@ -12,7 +15,25 @@ export const metadata: Metadata = {
 };
 
 export default function PackagesPage() {
-  const products = packageProducts();
+  /* 카드에 필요한 만큼만 추려 내려보낸다.
+     PackageDef 를 통째로 넘기면 화면 수백 개짜리 템플릿 데이터가 브라우저로 간다. */
+  const cards: BrowseCard[] = packageProducts().map(({ pkg, plan, href }) => ({
+    key: `${pkg.id}-${plan.id}`,
+    pkgId: pkg.id,
+    title: pkg.title,
+    category: pkg.category,
+    planId: plan.id,
+    planName: plan.name,
+    depthLabel: plan.depthLabel,
+    contents: planContents(plan),
+    note: plan.highlights[plan.highlights.length - 1],
+    price: PACKAGE_PRICES_PUBLIC ? formatPackPrice(plan.priceKrw) : null,
+    saleOpen: PACKAGE_SALE_OPEN,
+    hasSite: !!plan.siteScreens,
+    href,
+    find: searchText(pkg),
+  }));
+  const categories = listedCategories();
 
   return (
     <div className="bg-background">
@@ -38,76 +59,9 @@ export default function PackagesPage() {
       </section>
 
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 pb-14 pt-7">
-        {/* 업종 × 등급. 프리미엄은 만들어 둔 화면이 있는 업종에만 생긴다. */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map(({ pkg, plan, href }) => {
-            const isPremium = plan.id === "premium";
-            return (
-              <Link
-                key={`${pkg.id}-${plan.id}`}
-                href={href}
-                className={`group flex flex-col rounded-2xl border bg-surface p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md ${
-                  isPremium
-                    ? "border-primary/40 hover:border-primary"
-                    : "border-border hover:border-primary/40"
-                }`}
-              >
-                {/* 등급만 단다. 업종은 바로 아래 제목에 이미 들어 있어서
-                    같은 말을 두 번 하는 셈이었다. */}
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                      plan.siteScreens
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-primary-soft text-primary-on-soft"
-                    }`}
-                  >
-                    {plan.name}
-                  </span>
-                </div>
-
-                <h2 className="mt-3 text-lg font-bold leading-snug text-foreground">
-                  {pkg.title}
-                </h2>
-                <p className="mt-1 text-sm font-semibold text-primary">{plan.depthLabel}</p>
-
-                {/* 무엇이 들어 있는지를 먼저 보여준다 — 등급이 넷이라 "가볍게 시작하는 분께"
-                    같은 문구보다 구성이 갈리는 지점이 눈에 들어와야 고를 수 있다.
-                    한 줄에 하나씩 쌓으면 카드가 너무 길어져(홈과 같은 이유) 폭 안에서
-                    흘러가며 접히게 두고, 항목 사이는 가운뎃점으로 나눈다. */}
-                <ul className="mt-4 flex flex-wrap gap-y-0.5 border-t border-border/60 pt-4 text-[13px] leading-relaxed text-muted-foreground">
-                  {planContents(plan).map((c) => (
-                    <li key={c} className="after:mx-[7px] after:text-border after:content-['·'] last:after:hidden">
-                      {c}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                  {plan.highlights[plan.highlights.length - 1]}
-                </p>
-
-                <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-4">
-                  {PACKAGE_PRICES_PUBLIC ? (
-                    <p className="text-lg font-bold text-foreground">{formatPackPrice(plan.priceKrw)}</p>
-                  ) : (
-                    // 살 수 없는 동안엔 값을 걸지 않는다 — 값만 남고 돌아가는 손님을 만들지 않으려고.
-                    <p className="text-sm font-semibold text-warning">판매 준비 중</p>
-                  )}
-                  <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                    자세히 보기
-                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                  </span>
-                </div>
-
-                {/* 판매를 열기 전에는 값이 보여도 살 수 없다는 걸 카드에서 미리 알린다.
-                    크몽 링크가 아니라 우리 판매 여부가 기준이다 — 크몽은 별개 판로다. */}
-                {PACKAGE_PRICES_PUBLIC && !PACKAGE_SALE_OPEN && (
-                  <p className="mt-2 text-xs font-medium text-warning">판매 준비 중</p>
-                )}
-              </Link>
-            );
-          })}
-        </div>
+        {/* 갈래로 고르고, 말로 찾는다. 카드 그리기까지 Browse 가 맡는다.
+            비어 있는 갈래는 서버에서 걸러 보낸다(listedCategories). */}
+        <Browse cards={cards} categories={categories} />
 
         {/* 직접 만들기 유도 */}
         <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-muted/20 px-6 py-10 text-center">

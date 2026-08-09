@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Download, Loader2, Coins } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { RefundNotice } from "@/components/refund-notice";
 import { buyPackWithCreditsAction } from "./actions";
 
 export function BuyButton({
@@ -39,10 +40,13 @@ export function BuyButton({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /* 「무를 수 없다」를 알리는 창. 여기서 동의해야 결제가 «시작»된다 —
+     창만 띄우고 뒤에서 이미 사고 있으면 알린 뜻이 없다(components/refund-notice.tsx). */
+  const [묻는중, set묻는중] = useState(false);
 
   const href = `/api/packages/${packageId}/${planId}/download`;
 
-  // 이미 산 사람은 언제나 다시 받을 수 있다.
+  // 이미 산 사람은 언제나 다시 받을 수 있다. 값을 치른 뒤라 다시 안 묻는다.
   if (owned) {
     return (
       <a href={href} className={`${buttonVariants({ size: "lg" })} w-full`}>
@@ -61,12 +65,20 @@ export function BuyButton({
     );
   }
 
-  async function buy() {
+  /* 버튼을 누르면 «묻는 창»부터 연다. 로그인 안 하신 분은 그 전에 가입으로 보낸다 —
+     동의부터 받아 놓고 가입시키면 돌아왔을 때 동의가 사라져 두 번 묻게 된다. */
+  function 누름() {
     setError(null);
     if (!signedIn) {
       window.location.href = `/signup?next=/packages/${packageId}%3Fplan=${planId}`;
       return;
     }
+    set묻는중(true);
+  }
+
+  async function buy() {
+    set묻는중(false);
+    setError(null);
     setBusy(true);
     const r = await buyPackWithCreditsAction(packageId, planId);
     if (r.ok) {
@@ -98,9 +110,16 @@ export function BuyButton({
 
   return (
     <div className="flex flex-col gap-1.5">
+      <RefundNotice
+        open={묻는중}
+        onAgree={buy}
+        onClose={() => set묻는중(false)}
+        agreeLabel={`동의하고 ${credits.toLocaleString()}크레딧으로 받기`}
+        what={`${credits.toLocaleString()}크레딧이 빠지고 바로 파일이 내려옵니다.`}
+      />
       <button
         type="button"
-        onClick={buy}
+        onClick={누름}
         disabled={busy}
         className={`${buttonVariants({ size: "lg" })} w-full ${
           emphasis ? "" : "bg-foreground hover:bg-foreground/90"
