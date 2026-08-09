@@ -32,6 +32,16 @@
 process.env.ALLOW_REVIEW_SIGNUP = "true";
 process.env.REVIEW_MODE = "true"; // emailAndPassword 자체를 켜는 스위치
 
+/* .env.local 을 손으로 읽는다.
+   Next.js 는 자동으로 읽지만 tsx 로 직접 도는 스크립트는 안 읽는다 —
+   그대로 두면 DATABASE_URL 이 없어 「No database connection string」으로 죽는다. */
+const dotenv = await import("dotenv");
+dotenv.config({ path: ".env.local", quiet: true });
+if (!process.env.DATABASE_URL) {
+  console.error("DATABASE_URL 이 없습니다. .env.local 에 있는지 확인해 주세요.");
+  process.exit(1);
+}
+
 const { auth } = await import("./lib/auth");
 const { REVIEW_MODE } = await import("./lib/flags");
 
