@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수료 기준 설정 · 배움터</title>
+<meta name="description" content="진도율 기준 설정(슬라이더) · 과제 제출 최소 개수 · 출석률 기준 · 최종 평가 점수 기준 · 기준 변경 시 영향받는 인원 실시간 표시 · 수료증 양식 선택">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="GR0401">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <div class="gl">강사센터</div><a href="TC-01.html">강사센터 홈</a><div class="gl">수업 편성</div><a href="CU-01.html">내 강의 목록</a><a href="CU-02.html">강의 개설</a><a href="CU-03.html">커리큘럼 편성</a><a href="CU-04.html">영상 업로드</a><div class="gl">학생 관리</div><a href="ST-01.html">수강생 목록</a><a href="ST-04.html">진도 미달자</a><a href="ST-05.html">알림 발송</a><div class="gl">출결·평가</div><a href="GR-01.html">출석 현황</a><a href="GR-02.html">과제 채점</a><a href="GR-04.html">수료 기준</a><div class="gl">정산</div><a href="MY-03.html">정산 내역</a>
+    <div class="side-ft">
+      <a href="HO-01.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="MY-01.html"><span class="ava">김</span>김수현님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="GR0101.html">‹ 출석 현황</a>
+    <span class="path">출결·평가 › <b>수료 기준 설정</b></span>
+  </nav>
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">수료 기준 설정</h1><p class="t-sub">값을 움직이면 오른쪽 인원이 그 자리에서 다시 계산됩니다</p></div></div>
+
+<div class="split-r" data-calc-criteria>
+  <div>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">기준</h3></div>
+  <div class="card-bd ">
+      <div class="toggle-row" style="border:0;padding-bottom:0">
+        <label class="check"><input type="checkbox" id="use-progress" checked data-calc><span><b>진도율</b></span></label>
+        <span class="t-sub">최소 <b class="pri" id="pg-out">80%</b></span></div>
+      <input class="slider" type="range" id="cr-progress" min="0" max="100" step="5" value="80" data-out="#pg-out" data-unit="%" data-calc>
+      <div class="hr"></div>
+
+      <div class="toggle-row" style="border:0;padding-bottom:0">
+        <label class="check"><input type="checkbox" id="use-hw" checked data-calc><span><b>과제 제출</b></span></label>
+        <span class="t-sub">최소 개수</span></div>
+      <div class="input-row mt2" style="max-width:200px"><input class="input" type="number" id="cr-hw" value="3" min="0" max="5" data-calc><span class="btn btn-ghost">개</span></div>
+      <div class="hr"></div>
+
+      <div class="toggle-row" style="border:0;padding-bottom:0">
+        <label class="check"><input type="checkbox" id="use-attend" checked data-calc><span><b>출석률</b></span></label>
+        <span class="t-sub">최소 <b class="pri" id="at-out">75%</b></span></div>
+      <input class="slider" type="range" id="cr-attend" min="0" max="100" step="5" value="75" data-out="#at-out" data-unit="%" data-calc>
+      <div class="hr"></div>
+
+      <div class="toggle-row" style="border:0;padding-bottom:0">
+        <label class="check"><input type="checkbox" id="use-score" data-calc><span><b>최종 평가 점수</b></span></label>
+        <span class="t-sub">100점 만점 기준</span></div>
+      <div class="input-row mt2" style="max-width:200px"><input class="input" type="number" id="cr-score" value="60" min="0" max="100" data-calc><span class="btn btn-ghost">점</span></div>
+      <p class="help">체크를 풀면 그 항목은 계산에서 빠집니다</p>
+    </div>
+  </div>
+
+    <div class="mt4"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">수료증 양식</h3></div>
+  <div class="card-bd ">
+      <div class="g3 gap-s">
+        <div class="radio on" data-group="cert" data-label="기본형 (가로)" style="height:auto;padding:var(--gap-group);flex-direction:column;align-items:stretch">
+          <div class="ph ph-a4 ph-t4" role="img" aria-label="수료증 양식 이미지 자리, 권장 2970×2100"><span>이미지 영역 (수료증 양식 · 권장 2970×2100)</span></div>
+          <div class="row-c mt2"><span class="dot"></span><b style="font-size:14px">기본형 (가로)</b></div></div><div class="radio" data-group="cert" data-label="간결형 (가로)" style="height:auto;padding:var(--gap-group);flex-direction:column;align-items:stretch">
+          <div class="ph ph-a4 ph-t5" role="img" aria-label="수료증 양식 이미지 자리, 권장 2970×2100"><span>이미지 영역 (수료증 양식 · 권장 2970×2100)</span></div>
+          <div class="row-c mt2"><span class="dot"></span><b style="font-size:14px">간결형 (가로)</b></div></div><div class="radio" data-group="cert" data-label="학원형 (도장 자리 포함)" style="height:auto;padding:var(--gap-group);flex-direction:column;align-items:stretch">
+          <div class="ph ph-a4 ph-t1" role="img" aria-label="수료증 양식 이미지 자리, 권장 2970×2100"><span>이미지 영역 (수료증 양식 · 권장 2970×2100)</span></div>
+          <div class="row-c mt2"><span class="dot"></span><b style="font-size:14px">학원형 (도장 자리 포함)</b></div></div>
+      </div></div>
+  <div class="card-ft"><div class="btns"><span class="t-sub grow">고른 양식 — <b data-pick-out="cert">기본형 (가로)</b></span>
+      <button class="btn btn-primary" type="button" data-toast="기준 저장은 서버가 연결되면 동작합니다">기준 저장하기</button></div></div></div></div>
+  </div>
+
+  <aside class="sticky">
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">지금 기준이면</h3></div>
+  <div class="card-bd ">
+      <div class="center">
+        <div class="t-page pri"><span data-out-pass>96</span><small style="font-size:20px">명</small></div>
+        <div class="t-sub">수료 가능</div>
+      </div>
+      <div class="mt4"><div class="bar ok"><i data-out-passbar style="width:75%"></i></div></div>
+      <div class="row-b mt2"><span class="t-sub">전체 128명 중 <b data-out-passpct>75%</b></span>
+        <span class="t-sub">미달 <b class="danger" data-out-fail>32</b>명</span></div>
+      <div class="hr"></div>
+      <p class="t-sub">기준을 올리면 수료 인원이 줄고, 내리면 늘어납니다. 항목 체크를 풀면 그 조건이 계산에서 빠져요.</p>
+    </div>
+  <div class="card-ft"><div class="btns-v"><a class="btn btn-primary btn-block" href="GR-05.html">수료 처리하러 가기</a>
+      <a class="btn btn-ghost btn-block" href="GR-01.html">출석 현황 보기</a></div></div></div>
+  </aside>
+</div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">GR0401</div><div class="nm">수료 기준 설정</div>
+    <div class="fd">진도율 기준 설정(슬라이더) · 과제 제출 최소 개수 · 출석률 기준 · 최종 평가 점수 기준 · 기준 변경 시 영향받는 인원 실시간 표시 · 수료증 양식 선택</div>
+    <div class="lk"><a href="GR0501.html">수료 처리 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">GR0401 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

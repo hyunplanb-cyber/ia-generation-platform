@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수료 처리 - 확인 · 배움터</title>
+<meta name="description" content="수료 대상자 명단 최종 확인 · 인원수와 기준 재확인 · 되돌릴 수 없다는 경고 표시 · 수료증 일괄 발급 옵션 · 알림 발송 여부 선택 · 최종 확인 체크박스">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="GR0501">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <div class="gl">강사센터</div><a href="TC-01.html">강사센터 홈</a><div class="gl">수업 편성</div><a href="CU-01.html">내 강의 목록</a><a href="CU-02.html">강의 개설</a><a href="CU-03.html">커리큘럼 편성</a><a href="CU-04.html">영상 업로드</a><div class="gl">학생 관리</div><a href="ST-01.html">수강생 목록</a><a href="ST-04.html">진도 미달자</a><a href="ST-05.html">알림 발송</a><div class="gl">출결·평가</div><a href="GR-01.html">출석 현황</a><a href="GR-02.html">과제 채점</a><a href="GR-04.html">수료 기준</a><div class="gl">정산</div><a href="MY-03.html">정산 내역</a>
+    <div class="side-ft">
+      <a href="HO-01.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="MY-01.html"><span class="ava">김</span>김수현님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="GR0101.html">‹ 출석 현황</a>
+    <span class="path">출결·평가 › <b>수료 처리 - 확인</b></span>
+  </nav>
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">수료 처리</h1><p class="t-sub">되돌릴 수 없는 작업이라 한 번 더 확인합니다</p></div></div>
+
+<div class="wrap-narrow" style="padding:0">
+<div class="card ">
+  
+  <div class="card-bd ">
+  <div class="center">
+    <div class="t-page"><b class="pri" data-selcount="cert" data-base="90">96</b>명을 수료 처리합니다</div>
+    <p class="t-sub mt2">아래 명단에서 체크를 바꾸면 인원이 함께 바뀝니다</p>
+  </div>
+
+  <div class="box mt6">
+    <b>적용된 기준</b>
+    <dl class="kv"><dt>진도율</dt><dd>80% 이상</dd><dt>과제 제출</dt><dd>3개 이상</dd><dt>출석률</dt><dd>75% 이상</dd><dt>최종 평가</dt><dd>사용 안 함</dd><dt>수료증 양식</dt><dd>기본형 (가로)</dd></dl>
+    <div class="btns mt3"><a class="btn btn-ghost btn-sm" href="GR-04.html">기준 고치러 가기</a></div>
+  </div>
+
+  <div class="mt6"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">수료 대상자 명단</h3><span class="t-sub">고른 사람 <b class="pri" data-selcount="cert" data-base="90">96</b>명</span></div>
+  <div class="card-bd tight">
+    <div style="max-height:300px;overflow-y:auto">
+      <div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert" checked aria-label="김서준 고르기">
+        <span class="grow"><b>김서준</b> <span class="t-sub">seojun@example.com · 진도 92% · 과제 3/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="김서준 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert" checked aria-label="이하윤 고르기">
+        <span class="grow"><b>이하윤</b> <span class="t-sub">hayun@example.com · 진도 78% · 과제 3/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="이하윤 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert" checked aria-label="박도윤 고르기">
+        <span class="grow"><b>박도윤</b> <span class="t-sub">doyun@example.com · 진도 64% · 과제 2/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="박도윤 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert"  aria-label="최시우 고르기">
+        <span class="grow"><b>최시우</b> <span class="t-sub">siwoo@example.com · 진도 41% · 과제 2/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="최시우 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert"  aria-label="정지호 고르기">
+        <span class="grow"><b>정지호</b> <span class="t-sub">jiho@example.com · 진도 12% · 과제 0/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="정지호 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert" checked aria-label="강예린 고르기">
+        <span class="grow"><b>강예린</b> <span class="t-sub">yerin@example.com · 진도 88% · 과제 3/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="강예린 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert"  aria-label="윤채원 고르기">
+        <span class="grow"><b>윤채원</b> <span class="t-sub">chaewon@example.com · 진도 55% · 과제 1/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="윤채원 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert"  aria-label="임건우 고르기">
+        <span class="grow"><b>임건우</b> <span class="t-sub">gunwoo@example.com · 진도 0% · 과제 0/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="임건우 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert" checked aria-label="한소율 고르기">
+        <span class="grow"><b>한소율</b> <span class="t-sub">soyul@example.com · 진도 96% · 과제 3/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="한소율 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert"  aria-label="오지안 고르기">
+        <span class="grow"><b>오지안</b> <span class="t-sub">jian@example.com · 진도 33% · 과제 1/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="오지안 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert" checked aria-label="서주원 고르기">
+        <span class="grow"><b>서주원</b> <span class="t-sub">juwon@example.com · 진도 71% · 과제 2/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="서주원 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div><div class="row-c" style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <input class="selbox" type="checkbox" data-selgroup="cert"  aria-label="문태민 고르기">
+        <span class="grow"><b>문태민</b> <span class="t-sub">taemin@example.com · 진도 24% · 과제 0/3</span></span>
+        <select class="input" style="height:32px;width:150px;font-size:13px" aria-label="문태민 제외 사유" data-exclude>
+          <option value="">대상에 포함</option><option value="x">제외 — 진도 부족</option>
+          <option value="x">제외 — 과제 미제출</option><option value="x">제외 — 본인 요청</option></select>
+      </div>
+    </div>
+    <p class="t-sub mt3">제외 사유를 고르면 그 줄이 대상에서 빠지고 위 인원이 줄어듭니다.
+    (명단은 전체 128명 가운데 12명만 보여 주는 견본입니다)</p></div>
+  </div></div>
+
+  <div class="box-danger mt6">
+    <b>⚠️ 수료 처리 후에는 되돌릴 수 없어요</b>
+    <p class="t-sub mt2">수료증 번호가 발급되고 수강생에게 알림이 나갑니다. 잘못 처리하면 개별로 취소해야 합니다.</p>
+  </div>
+
+  <div class="mt6">
+    <div class="checks">
+      <label class="check"><input type="checkbox" checked><span>수료증 자동 발급하기</span></label>
+      <label class="check"><input type="checkbox" checked><span>수료 안내 메일 보내기</span></label>
+      <label class="check"><input type="checkbox" data-gate="cert" data-label="최종 확인">
+        <span><b>위 내용을 확인했고, 되돌릴 수 없다는 것을 알고 있습니다</b><span class="req">*</span></span></label>
+    </div>
+    <div class="err-msg mt3" data-gatemsg="cert" hidden></div>
+  </div>
+
+  <div class="btns mt7" style="justify-content:center">
+    <a class="btn btn-ghost btn-lg" href="GR-01.html">출석 현황으로</a>
+    <button class="btn btn-primary btn-lg is-off" type="button" data-gated="cert" data-toast="수료 처리는 서버가 연결되면 실제로 진행됩니다" data-toast-kind="ok">수료 처리하기</button>
+  </div>
+</div>
+  </div>
+</div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">GR0501</div><div class="nm">수료 처리 - 확인</div>
+    <div class="fd">수료 대상자 명단 최종 확인 · 인원수와 기준 재확인 · 되돌릴 수 없다는 경고 표시 · 수료증 일괄 발급 옵션 · 알림 발송 여부 선택 · 최종 확인 체크박스</div>
+    <div class="lk"><a href="GR0101.html">출석 현황 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">GR0501 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

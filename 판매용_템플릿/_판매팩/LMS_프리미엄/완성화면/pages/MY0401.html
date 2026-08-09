@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>정산 내역 - 내역 없음 · 배움터</title>
+<meta name="description" content="선택 기간에 정산 내역이 없다는 안내 · 다른 기간 선택 유도 · 첫 정산 안내 문구 · 정산 주기 안내 · 강의 개설 유도 버튼">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="MY0401">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <div class="gl">강사센터</div><a href="TC-01.html">강사센터 홈</a><div class="gl">수업 편성</div><a href="CU-01.html">내 강의 목록</a><a href="CU-02.html">강의 개설</a><a href="CU-03.html">커리큘럼 편성</a><a href="CU-04.html">영상 업로드</a><div class="gl">학생 관리</div><a href="ST-01.html">수강생 목록</a><a href="ST-04.html">진도 미달자</a><a href="ST-05.html">알림 발송</a><div class="gl">출결·평가</div><a href="GR-01.html">출석 현황</a><a href="GR-02.html">과제 채점</a><a href="GR-04.html">수료 기준</a><div class="gl">정산</div><a href="MY-03.html">정산 내역</a>
+    <div class="side-ft">
+      <a href="HO-01.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="MY-01.html"><span class="ava">김</span>김수현님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="MY0101.html">‹ 내 정보</a>
+    <span class="path">마이페이지 › <b>정산 내역 - 내역 없음</b></span>
+  </nav>
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">정산 내역</h1><p class="t-sub">고른 기간에 내역이 없어요</p></div></div>
+<div class="tabs-pill"  ><button class="tab" type="button" data-go="MY-01.html">내 정보</button><button class="tab" type="button" data-go="MY-02.html">수강 이력</button><button class="tab on" type="button" data-go="MY-03.html">정산 내역</button><button class="tab" type="button" data-go="MY-01.html">알림 설정</button></div>
+
+<div class="card mb4"><div class="card-bd">
+  <div class="row-b wrap-row">
+    <select class="input" style="width:200px" aria-label="정산 월" data-swapsel="settle">
+      <option value="none">2026년 8월</option><option value="has">2026년 7월</option><option value="none">2026년 5월</option></select>
+    <span class="t-sub">기간을 바꾸면 내역이 있는 달에는 표가 나타납니다</span>
+  </div>
+</div></div>
+
+<div data-swap-set="settle">
+  <div data-swap-key="none">
+    <div class="empty">
+  <div class="ico">🧾</div><h3 class="t-sec mt3">2026년 8월에는 정산 내역이 없어요</h3>
+  <p class="msg">이 달에 판매된 강의가 없습니다. 다른 기간을 골라 보시거나, 새 강의를 열어 보세요.</p><div class="btns"><a class="btn btn-primary btn-lg" href="CU-02.html">강의 개설하기</a>
+     <button class="btn btn-ghost btn-lg" type="button" data-swap="settle:has">내역이 있는 달 보기</button></div></div>
+  </div>
+  <div data-swap-key="has" hidden>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">2026년 7월 정산</h3><button class="btn btn-ghost btn-sm" type="button" data-swap="settle:none">8월로 돌아가기</button></div>
+  <div class="card-bd "><div class="table-wrap "><table class="table ">
+    <thead><tr><th>강의</th><th>판매</th><th>실 정산액</th><th>상태</th></tr></thead><tbody><tr><td>엑셀 함수 특강 (단기)</td><td>18건</td><td>705,600원</td><td><span class="badge b-ok">정산 완료</span></td></tr></tbody></table></div></div>
+  </div>
+  </div>
+</div>
+
+<div class="g2 mt6">
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">정산은 이렇게 이뤄져요</h3></div>
+  <div class="card-bd tight"><ul class="list-plain">
+    <li>· <b>매월 15일</b>에 전월 매출을 정산합니다</li>
+    <li>· 플랫폼 수수료는 판매가의 <b>20%</b>입니다</li>
+    <li>· 환불된 건은 그 달 정산에서 빠집니다</li>
+    <li>· 정산액이 1만원 미만이면 다음 달로 넘어갑니다</li>
+  </ul></div>
+  </div>
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">첫 정산을 받으려면</h3></div>
+  <div class="card-bd tight"><ul class="list-plain">
+    <li>1. 강의를 열고 검수를 통과합니다</li>
+    <li>2. 수강생이 결제하면 매출이 쌓입니다</li>
+    <li>3. 다음 달 15일에 계좌로 들어옵니다</li>
+  </ul>
+  <div class="btns mt7"><a class="btn btn-primary" href="CU-02.html">강의 개설하기</a>
+    <a class="btn btn-ghost" href="CU-01.html">내 강의 목록</a></div></div>
+  </div>
+</div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">MY0401</div><div class="nm">정산 내역 - 내역 없음</div>
+    <div class="fd">선택 기간에 정산 내역이 없다는 안내 · 다른 기간 선택 유도 · 첫 정산 안내 문구 · 정산 주기 안내 · 강의 개설 유도 버튼</div>
+    <div class="lk"><a href="CU0201.html">강의 개설 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">MY0401 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

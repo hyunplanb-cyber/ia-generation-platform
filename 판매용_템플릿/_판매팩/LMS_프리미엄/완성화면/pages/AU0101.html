@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>로그인 · 배움터</title>
+<meta name="description" content="이메일·비밀번호 입력 · 소셜 로그인 3종(카카오·네이버·구글) · 로그인 상태 유지 체크 · 비밀번호 찾기 링크 · 회원가입 링크 · 입력 오류 안내 문구 자리 · 로그인 후 원래 보던 화면으로 돌아가기">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="AU0101">
+<main class="solo">
+  <div class="solo-box ">
+    <a class="logo" href="HO-01.html"><span class="em">배</span>배움터</a>
+    
+    
+<div class="card ">
+  
+  <div class="card-bd ">
+  <h1 class="t-sec center">다시 오셨네요</h1>
+  <p class="t-sub center mt2">이메일로 로그인하거나 소셜 계정으로 바로 들어오세요</p>
+
+  <div class="field mt6"><label class="lb" for="lg-mail">이메일</label>
+    <input class="input" id="lg-mail" type="email" data-gate="login" data-label="이메일" placeholder="you@example.com"></div>
+  <div class="field"><label class="lb" for="lg-pw">비밀번호</label>
+    <div class="input-row"><input class="input" id="lg-pw" type="password" data-gate="login" data-label="비밀번호">
+      <button class="btn btn-ghost" type="button" data-eye="#lg-pw" aria-label="비밀번호 보기">👁</button></div></div>
+
+  <div class="row-b wrap-row">
+    <label class="check"><input type="checkbox"><span>로그인 상태 유지</span></label>
+    <a class="btn-link" href="AU-05.html">비밀번호를 잊으셨나요?</a>
+  </div>
+
+  <div class="err-msg mt4" data-gatemsg="login" hidden></div>
+
+  <div class="mt7"><a class="btn btn-primary btn-lg btn-block is-off" href="HO-02.html" data-gated="login">로그인</a></div>
+
+  <div class="row-c mt6" style="gap:12px"><span class="hr grow" style="margin:0"></span>
+    <span class="t-sub">또는</span><span class="hr grow" style="margin:0"></span></div>
+
+  <div class="btns-v mt4">
+    <button class="btn btn-block" type="button" style="background:#FEE500" data-toast="카카오 로그인은 서버가 연결되면 동작합니다">카카오로 시작하기</button>
+    <button class="btn btn-block" type="button" style="background:#03C75A;color:#fff" data-toast="네이버 로그인은 서버가 연결되면 동작합니다">네이버로 시작하기</button>
+    <button class="btn btn-ghost btn-block" type="button" data-toast="구글 로그인은 서버가 연결되면 동작합니다">구글로 시작하기</button>
+  </div>
+
+  <p class="center mt6 t-sub">아직 회원이 아니신가요? <a class="btn-link" href="AU-02.html">회원가입</a></p>
+</div>
+  </div>
+    <p class="t-sub center mt6"><a href="../index.html" style="font-weight:700;color:var(--pri-ink)">화면 목록</a> · 화면 견본이라 실제로 가입·로그인되지 않습니다</p>
+  </div>
+</main>
+
+<div class="dev"><div class="spec">
+    <div class="id">AU0101</div><div class="nm">로그인</div>
+    <div class="fd">이메일·비밀번호 입력 · 소셜 로그인 3종(카카오·네이버·구글) · 로그인 상태 유지 체크 · 비밀번호 찾기 링크 · 회원가입 링크 · 입력 오류 안내 문구 자리 · 로그인 후 원래 보던 화면으로 돌아가기</div>
+    <div class="lk"><a href="AU0201.html">회원가입 ›</a><a href="AU0501.html">비밀번호 찾기 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">AU0101 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>과제 제출 · 배움터</title>
+<meta name="description" content="과제 안내문과 배점 표시 · 파일 첨부(드래그앤드롭, 용량 제한 안내) · 텍스트 답안 입력 에디터 · 임시 저장 기능 · 마감일까지 남은 시간 표시">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="CL0501">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="HO-01.html"><span class="em">배</span>배움터</a>
+    <div class="gl">둘러보기</div><a href="HO-01.html">홈</a><a href="CO-01.html">강의 탐색</a><div class="gl">학습</div><a href="CL-01.html">내 강의실</a><a href="CL-03.html">강의 재생</a><a href="CL-07.html">질문 게시판</a><a href="CL-08.html">수료증</a><div class="gl">내 정보</div><a href="MY-01.html">마이페이지</a><a href="MY-02.html">수강 이력</a><a href="TC-01.html">강사센터</a><div class="gl">계정</div><a href="AU-01.html">로그인</a><a href="AU-02.html">회원가입</a>
+    <div class="side-ft">
+      <a href="TC-01.html">↪ 강사센터 화면으로</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    <form class="tb-search" role="search"><span class="ico" aria-hidden="true">🔍</span>
+      <input type="search" placeholder="배우고 싶은 것을 검색해 보세요" value="" aria-label="검색"></form>
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="MY-01.html"><span class="ava">김</span>김수현님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="CL0101.html">‹ 내 강의실 - 수강 중</a>
+    <span class="path">내 강의실 › <b>과제 제출</b></span>
+  </nav>
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">과제 제출</h1><p class="t-sub">엑셀로 시작하는 실무 데이터 분석 · 3장 과제</p></div></div>
+
+<div class="split-r">
+  <div>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">3장 과제 — 부서별 실적 대시보드</h3></div>
+  <div class="card-bd ">
+      <div class="row-c wrap-row mb4"><span class="badge b-danger">D-3</span><span class="badge b-line">배점 30점</span><span class="badge b-ok">제출 후 수정 가능</span>
+        <span class="t-sub">마감 2026년 8월 10일 23:59</span></div>
+      <div class="box">
+        <b>과제 안내</b>
+        <p class="mt2">3장에서 만든 피벗 테이블을 이용해 <b>부서별 월 실적 대시보드</b>를 한 장으로 만들어 제출하세요.</p>
+        <ul class="list-plain mt3">
+          <li>1. 부서·월을 축으로 하는 피벗 테이블 1개</li>
+          <li>2. 슬라이서 2개 이상 (부서 · 기간)</li>
+          <li>3. 조건부 서식으로 목표 미달 셀 강조</li>
+          <li>4. 한 화면에 들어오도록 배치</li>
+        </ul>
+        <p class="t-sub mt3">평가 기준 — 정확성 10점 · 가독성 10점 · 자동화 정도 10점</p>
+      </div></div>
+  </div>
+
+    <div class="mt4"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">답안</h3></div>
+  <div class="card-bd ">
+      <div class="field"><label class="lb" for="hw-text">텍스트 답안<span class="req">*</span></label>
+        <textarea class="input" id="hw-text" style="min-height:200px" data-gate="hw" data-label="텍스트 답안" data-charcount="hw"
+          placeholder="어떤 순서로 만들었는지, 막혔던 부분은 무엇이었는지 적어 주세요"></textarea>
+        <div class="help"><b data-charout="hw">0</b>자 · 200자 이상 권장</div></div>
+
+      <div class="field"><span class="lb">파일 첨부</span>
+        <div class="drop" data-drop="hw"><div class="ico">📎</div>
+          <p class="mt2"><b>파일을 끌어다 놓거나 눌러서 고르세요</b></p>
+          <p class="t-sub">XLSX · PDF · ZIP · 최대 5개 · 합계 20MB까지</p></div>
+        <div data-filebox="hw" data-max="5" data-names="부서별_대시보드.xlsx,캡처화면.png,설명메모.pdf,원본데이터.zip,보완본.xlsx"></div>
+        <div class="help">올린 파일 <b data-fileout="hw">0/5개 · 0.0MB</b></div></div>
+
+      <div class="err-msg" data-gatemsg="hw" hidden></div>
+      <div class="acc" data-acc-single>
+  <div class="acc-item">
+    <button class="acc-q" type="button">제출될 내용 미리보기<span class="mk">＋</span></button>
+    <div class="acc-a"><div><div class="in"><div class="box"><b>3장 과제 — 부서별 실적 대시보드</b>
+        <p class="t-sub mt2">제출자 김수현 · 제출 예정 2026-08-07</p>
+        <p class="mt3" data-preview="hw" data-empty="아직 답안을 쓰지 않았어요">아직 답안을 쓰지 않았어요</p></div></div></div></div></div></div>
+    </div>
+  <div class="card-ft"><div class="row-b wrap-row"><span class="t-sub">제출 후 마감 전까지 다시 낼 수 있어요</span>
+      <div class="btns"><button class="btn btn-ghost" type="button" data-toast="임시 저장은 서버가 연결되면 동작합니다">임시 저장</button>
+      <a class="btn btn-primary is-off" href="CL-03.html" data-gated="hw">제출하기</a></div></div></div></div></div>
+  </div>
+
+  <aside class="sticky">
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">남은 시간</h3></div>
+  <div class="card-bd "><div class="center"><div class="t-page pri">3일 8시간</div>
+      <p class="t-sub">2026년 8월 10일 23:59 마감</p></div>
+      <div class="hr"></div>
+      <dl class="kv"><dt>배점</dt><dd>30점</dd><dt>제출 인원</dt><dd>84/128명</dd><dt>지각 제출</dt><dd>허용 (감점 10%)</dd><dt>재제출</dt><dd>마감 전까지 가능</dd></dl></div>
+  </div>
+    <div class="mt4"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">이 강의의 과제</h3></div>
+  <div class="card-bd tight"><ul class="list-plain">
+      <li><span class="badge b-ok">완료</span><span class="grow">1장 과제</span><span class="t-sub">28/30</span></li>
+      <li><span class="badge b-mut">마감</span><span class="grow">2장 과제</span>
+        <a class="btn btn-ghost btn-sm" href="CL-06.html">마감된 과제</a></li>
+      <li><span class="badge b-pri">진행</span><span class="grow">3장 과제</span><span class="t-sub">—</span></li>
+    </ul></div>
+  </div></div>
+  </aside>
+</div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">CL0501</div><div class="nm">과제 제출</div>
+    <div class="fd">과제 안내문과 배점 표시 · 파일 첨부(드래그앤드롭, 용량 제한 안내) · 텍스트 답안 입력 에디터 · 임시 저장 기능 · 마감일까지 남은 시간 표시</div>
+    <div class="lk"><a href="CL0301.html">제출하기 ›</a><a href="CL0601.html">마감된 과제 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">CL0501 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
