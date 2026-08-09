@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>결제 실패 · 빌려쓰기</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<header class="gnb"><div class="gnb-in">
+  <a class="logo" href="HO-01.html"><span class="mark">빌</span>빌려쓰기</a>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="HO-02.html">캠핑장비</a><a href="HO-02.html">카메라장비</a><a href="PD-06.html">패키지</a><a href="HO-05.html">기획전</a><a href="CS-03.html">이용안내</a></nav>
+  <div class="gnb-right">
+    <a class="cart" href="CT-01.html" aria-label="장바구니"><span aria-hidden="true">🧺</span><span class="n">2</span></a>
+    <a class="btn btn-ghost btn-sm" href="MY-01.html">내 대여</a>
+  </div>
+</div></header>
+
+<main class="main"><div class="wrap"><a class="back" href="BK-01.html">‹ 대여 신청서</a><div class="wrap-read">
+  <div class="page-hd">
+  <div><h1 class="t-page">결제하지 못했어요</h1><p class="t-sub">카드 한도가 모자랍니다.</p></div>
+  </div>
+
+  <div class="banner banner-dan "><span class="ico">✕</span><div class="grow">신한카드 승인이 거절됐습니다 — <b>한도 초과</b></div></div>
+
+  <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">렌탈은 한도가 더 필요합니다</h3></div>
+  <div class="card-bd ">
+    <p>보증금이 <b>실제로 빠져나가지는 않지만 한도는 잡습니다.</b> 그래서 대여료보다 큰 여유가 필요해요.</p>
+    <div class="mt6"><div class="table-wrap table-scroll"><table class="table "><thead><tr><th>무엇</th><th style="width:120px" class="r nowrap">얼마</th></tr></thead><tbody><tr><td>대여료 (실제 결제)</td><td class="r nowrap"><span class="num">240,000원</span></td></tr><tr><td>보증금 (한도만 잡힘)</td><td class="r nowrap"><span class="num">200,000원</span></td></tr></tbody><tfoot><tr><td><b>필요한 카드 여유</b></td><td class="r nowrap"><b class="num">440,000원</b></td></tr></tfoot></table></div></div>
+    <p class="t-sub mt4">이것이 렌탈 결제가 실패하는 가장 흔한 까닭입니다.</p></div>
+  </div>
+
+  <div class="banner banner-warn mt6"><span class="ico">⏳</span><div class="grow">고르신 장비는 <b class="num" data-count="1140">19:00</b> 동안 잡아 두었어요. 그 안에 다시 시도해 주세요.</div></div>
+
+  <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">이렇게 해 보세요</h3></div>
+  <div class="card-bd "><div class="stack" style="gap:var(--sp-block)">
+    <div class="row-b"><div><div class="strong">① 보증금을 실제 결제로 바꾸기</div>
+      <div class="t-sub mt1">한도를 안 잡고 결제합니다. 반납 후 돌려드려요.</div></div>
+      <a class="btn btn-pri" href="BK-02.html">바꾸기</a></div>
+    <div class="row-b"><div><div class="strong">② 다른 카드로 결제하기</div>
+      <div class="t-sub mt1">한도에 44만원 여유가 있는 카드로요.</div></div>
+      <a class="btn btn-ghost" href="BK-02.html">다른 카드</a></div>
+    <div class="row-b"><div><div class="strong">③ 수량을 줄이기</div>
+      <div class="t-sub mt1">1개만 빌리면 대여료 120,000 + 보증금 100,000 = 22만원이면 됩니다.</div></div>
+      <a class="btn btn-ghost" href="BK-01.html">1개로</a></div>
+  </div></div>
+  </div>
+
+  <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">다른 까닭일 수도 있어요</h3></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th>왜 안 됐나</th><th>어떻게 하면 되나</th></tr></thead><tbody><tr><td>한도 초과</td><td>위 세 가지 중 하나를 해 보세요</td></tr><tr><td>해외 결제 차단</td><td>카드사 앱에서 국내 온라인 결제를 켜 주세요</td></tr><tr><td>카드사 승인 거절</td><td>카드사에 직접 물어보셔야 합니다</td></tr><tr><td>잔액 부족 (체크카드)</td><td>입금하시거나 다른 카드로 바꿔 주세요</td></tr></tbody></table></div></div>
+  </div>
+
+  <div class="btns mt8"><a class="btn btn-pri" href="BK-02.html">다시 결제하기</a><button class="btn btn-ghost" type="button" data-toast="02-000-0000 로 전화 주세요">전화로 문의</button><a class="btn btn-ghost" href="CS-02.html">1:1 문의</a></div>
+</div></div></main>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">BK-04 · 결제 실패</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>예약·결제</dd>
+        <dt>기능정의</dt><dd>실패 안내와 무엇 때문인지 · 흔한 까닭 목록(한도 초과·보증금 한도 부족·카드사 거절) · 보증금 때문에 한도가 모자란 경우 따로 안내 · 장비는 아직 잡혀 있다는 것과 언제까지인지 · 다시 시도하기 · 다른 결제 수단으로 · 보증금 방식 바꾸기 · 고객센터 안내</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="BK-02.html">다시 결제 → 보증금·결제</a><a href="BK-01.html">신청서로 → 대여 신청서</a><a href="CS-02.html">문의하기 → 1:1 문의</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>
