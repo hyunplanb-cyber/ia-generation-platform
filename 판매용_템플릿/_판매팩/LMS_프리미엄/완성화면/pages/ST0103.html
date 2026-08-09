@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수강생 목록 &gt; 엑셀 다운로드 · 배움터</title>
+<meta name="description" content="내려받을 항목 선택 · 현재 필터 조건 적용 여부 선택 · 개인정보 마스킹 옵션 · 파일 생성 대기 후 다운로드">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="ST0103">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="TC-01.html">강사센터</a><a href="CU-01.html">수업 편성</a><a href="ST-01.html">학생 관리</a><a href="GR-01.html">출결·평가</a><a href="MY-03.html">정산</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="HO-01.html">고객 화면</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="ST0101.html">‹ 수강생 목록</a>
+    <span class="path">학생 관리 › <b>수강생 목록 &gt; 엑셀 다운로드</b></span>
+  </nav>
+<div class="page-hd"><div>
+  <h1 class="t-page">엑셀로 내려받기</h1><p class="t-sub">무엇을 담을지 고르세요</p></div></div>
+
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">담을 항목</h3></div>
+  <div class="card-bd ">
+  <label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" checked data-toast="이름 을 뺐어요">
+    이름 <span class="badge b-warn">개인정보</span></label>
+  <label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" checked data-toast="이메일 을 뺐어요">
+    이메일 <span class="badge b-warn">개인정보</span></label>
+  <label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" data-toast="휴대폰 을 담았어요">
+    휴대폰 <span class="badge b-warn">개인정보</span></label>
+  <label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" checked data-toast="진도율 을 뺐어요">
+    진도율</label>
+  <label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" checked data-toast="최근 접속일 을 뺐어요">
+    최근 접속일</label>
+  <label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" checked data-toast="과제 제출 수 을 뺐어요">
+    과제 제출 수</label>
+  <label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" data-toast="최종 점수 을 담았어요">
+    최종 점수</label>
+  <label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" data-toast="결제일·결제액 을 담았어요">
+    결제일·결제액 <span class="badge b-warn">개인정보</span></label></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">개인정보 가리기</h3></div>
+  <div class="card-bd ">
+  <label class="row-c mb3" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" checked data-toast="가리기를 켰어요"> <b>가리고 내려받기</b> <span class="t-sub">(권장)</span></label>
+  <div class="table-wrap "><table class="table ">
+    <thead><tr><th>항목</th><th>가리면</th><th>안 가리면</th></tr></thead><tbody><tr><td>이메일</td><td>kim****@gmail.com</td><td>kimsuhyun@gmail.com</td></tr><tr><td>휴대폰</td><td>010-****-9808</td><td>010-6526-9808</td></tr><tr><td>이름</td><td>김*현</td><td>김수현</td></tr></tbody></table></div>
+  <div class="box mt4"><b>왜 켜 두기를 권하나</b>
+    <p class="t-sub mt1">엑셀 파일은 한 번 나가면 어디로 가는지 알 수 없습니다.
+    진도를 보시려는 것이라면 이름과 진도율만으로 충분합니다.
+    <b>가리지 않고 받으신 기록은 3년간 남습니다</b> — 개인정보 처리 책임이 강사에게도 있기 때문입니다.</p></div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">범위</h3></div>
+  <div class="card-bd "><label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+    <input type="radio" name="scope" checked> 지금 걸린 조건대로 <b>62명</b></label>
+  <label class="row-c" style="gap:var(--s2);cursor:pointer">
+    <input type="radio" name="scope"> 이 강의 전체 <b>128명</b></label>
+  <div class="btns mt7">
+    <button class="btn btn-primary btn-lg" type="button" data-toast="파일을 만들고 있어요. 다 되면 알려드릴게요">파일 만들기</button>
+  </div>
+  <p class="t-sub mt2">100명이 넘으면 만드는 데 잠깐 걸립니다. 다 되면 알림으로 알려 드리고 <b>24시간</b> 동안 받으실 수 있습니다.</p></div>
+  </div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">ST0103</div><div class="nm">수강생 목록 &gt; 엑셀 다운로드</div>
+    <div class="fd">내려받을 항목 선택 · 현재 필터 조건 적용 여부 선택 · 개인정보 마스킹 옵션 · 파일 생성 대기 후 다운로드</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">ST0103 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

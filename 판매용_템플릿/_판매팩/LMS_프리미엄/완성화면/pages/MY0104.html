@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내 정보 &gt; 회원 탈퇴 확인 · 배움터</title>
+<meta name="description" content="수강 중 강의·잔여 쿠폰·정산 예정 잔액 경고 · 삭제되는 데이터 범위 안내 · 탈퇴 사유 선택 · 확인 문구 입력 후 진행">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="MY0104">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="HO-01.html"><span class="em">배</span>배움터</a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="HO-01.html">둘러보기</a><a href="CL-01.html">학습</a><a href="MY-01.html">내 정보</a><a href="AU-01.html">계정</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="TC-01.html">강사센터</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="MY0101.html">‹ 내 정보</a>
+    <span class="path">마이페이지 › <b>내 정보 &gt; 회원 탈퇴 확인</b></span>
+  </nav>
+<div class="page-hd"><div>
+  <h1 class="t-page">정말 탈퇴하시겠어요?</h1><p class="t-sub">되돌릴 수 없습니다</p></div></div>
+
+<div class="banner banner-danger"><span class="ico">⚠</span><div class="grow"><b>지금 탈퇴하시면 잃는 것이 있습니다.</b>
+  <p class="t-sub mt1">아래를 먼저 확인해 주세요. 탈퇴 뒤에는 저희도 되살릴 수 없습니다.</p></div></div>
+
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">지금 가지고 계신 것</h3></div>
+  <div class="card-bd "><div class="table-wrap "><table class="table ">
+    <thead><tr><th></th><th></th><th>탈퇴하면</th></tr></thead><tbody><tr><td>수강 중인 강의</td><td><b>3개</b> (남은 기간 125일)</td><td><b class="danger">못 봅니다 · 환불 안 됩니다</b></td></tr><tr><td>쿠폰</td><td><b>2장</b> (23,000원어치)</td><td><b class="danger">사라집니다</b></td></tr><tr><td>수료증</td><td><b>1장</b></td><td><b class="danger">확인 페이지가 닫힙니다</b></td></tr><tr><td>내가 쓴 노트</td><td><b>42개</b></td><td><b class="danger">지워집니다</b></td></tr><tr><td>후기·질문</td><td><b>7건</b></td><td>익명으로 남습니다</td></tr></tbody></table></div>
+  <div class="box box-danger mt4"><b>수강 중인 강의가 있습니다</b>
+    <p class="t-sub mt1">환불받으실 수 있는 강의가 <b>1개</b> 있습니다(진도 8%).
+    탈퇴 전에 환불을 먼저 신청하시면 <b>63,200원</b>을 돌려받으실 수 있습니다.</p>
+    <div class="btns mt3"><a class="btn btn-primary btn-sm" href="MY0202.html">환불 먼저 신청</a></div></div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">탈퇴하시는 이유</h3></div>
+  <div class="card-bd ">
+  <label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+      <input type="radio" name="why"> 쓸 일이 없어서</label><label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+      <input type="radio" name="why"> 강의가 마음에 안 들어서</label><label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+      <input type="radio" name="why"> 값이 비싸서</label><label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+      <input type="radio" name="why"> 다른 곳을 쓰게 되어서</label><label class="row-c mb2" style="gap:var(--s2);cursor:pointer">
+      <input type="radio" name="why"> 개인정보가 걱정돼서</label>
+  <textarea class="input mt3" rows="2" placeholder="더 하실 말씀이 있으면 적어 주세요 (선택)" aria-label="탈퇴 사유"></textarea></div>
+  </div>
+
+<div class="card mt6">
+  
+  <div class="card-bd "><p class="t-th mb2">확인을 위해 <b>탈퇴합니다</b> 를 그대로 적어 주세요</p>
+  <input class="input" placeholder="탈퇴합니다" data-gate="quit" data-label="확인 문구" aria-label="확인 문구">
+  <div class="err-msg mt3" data-gatemsg="quit" hidden></div>
+  <div class="btns mt6">
+    <button class="btn btn-danger btn-lg is-off" type="button" data-gated="quit"
+      data-toast="탈퇴 처리는 서버가 연결되면 실제로 진행됩니다">탈퇴하기</button>
+    <a class="btn btn-ghost btn-lg" href="MY-01.html">그만두기</a>
+  </div>
+  <p class="t-sub mt3">개인정보는 <b>즉시</b> 지웁니다. 다만 전자상거래법에 따라
+    <b>결제·환불 기록은 5년</b> 동안 따로 보관합니다 — 법이 정한 것이라 지울 수 없습니다.</p></div>
+  </div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">MY0104</div><div class="nm">내 정보 &gt; 회원 탈퇴 확인</div>
+    <div class="fd">수강 중 강의·잔여 쿠폰·정산 예정 잔액 경고 · 삭제되는 데이터 범위 안내 · 탈퇴 사유 선택 · 확인 문구 입력 후 진행</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">MY0104 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

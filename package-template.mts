@@ -63,8 +63,17 @@ interface Product {
 const INDUSTRIES = [
   { key: "lms", label: "LMS", title: "온라인 강의 플랫폼(LMS)",
     base: `${W}/LMS_온라인강의플랫폼`, deep: `${W}/LMS_온라인강의플랫폼_상세IA`,
-    // 프리미엄(3뎁스 132화면)은 아직 화면을 안 만들었다 — 만들면 siteDeep 을 채운다.
-    siteBase: `${T}/LMS_온라인강의_완성화면_디럭스` },
+    /* 2026-08-09 에 프리미엄 132화면을 만들었다.
+       디럭스와 «일부러» 다른 프리셋을 쓴다 — 디럭스는 코럴 선셋 + 대시보드형,
+       프리미엄은 모던 네이비 + 에디토리얼형이다. 같은 스펙팩이라도 프리셋을
+       갈아 끼우면 화면이 이렇게 달라진다는 것을 두 등급 나란히 보여 주는 것이
+       이 팩의 값이다(여행·뷰티샵·공동구매가 모두 그렇게 되어 있다).
+
+       ⚠ siteBase·siteDeep 을 «일부러» 비워 둔다.
+         완성화면을 팩 밖에 두던 시절에는 여기에 원본 경로를 적었다.
+         지금은 팩 안이 원본이다 — 그래서 팩 안을 가리키면 원본과 대상이 같아지고,
+         copyFileSync 가 자기 자신을 덮어쓴다. 비워 두면 「팩에 있던 것을 그대로
+         둡니다」로 흘러가고 화면 수도 팩에서 세어 준다. 다른 네 업종도 마찬가지다. */ },
   { key: "beauty", label: "뷰티샵", title: "뷰티샵 예약 플랫폼",
     base: `${W}/뷰티샵_예약플랫폼`, deep: `${W}/뷰티샵_예약플랫폼_상세IA`,
     // 여행과 같이 두 등급의 프리셋을 다르게 뒀다 — 디럭스는 소프트 파스텔,
@@ -403,9 +412,13 @@ async function pack(p: Product) {
   );
 
   // 무엇이 들어 있고 무엇이 비었는지 한눈에 보라고, 부족한 칸 목록을 만들 재료를 남긴다.
+  /* 「설정이 되어 있나」가 아니라 «팩에 정말 들어 있나»를 센다.
+     전에는 p.sitePath 로 판단했는데, 완성화면 원본이 팩 안으로 들어오면서
+     그 값을 비웠더니 화면이 132장 들어 있는 칸을 「빠짐」으로 보고했다(2026-08-09).
+     물어야 할 것은 「경로를 적었나」가 아니라 「손님이 받을 zip 에 화면이 있나」다. */
   const missing: string[] = [];
   if (p.withVerify && !stats.verifyScenarios) missing.push("검수 시나리오(08)");
-  if (p.withVerify && !p.sitePath) missing.push("완성 화면(HTML)");
+  if (p.withVerify && siteCount === 0) missing.push("완성 화면(HTML)");
   return { key: p.zipName, planLabel: p.planLabel, title: p.title, missing, kb };
 }
 

@@ -14,6 +14,10 @@ import MYAU from './pages-my-au.mjs';
 import HOTCSUB from './pages-ho-tc-sub.mjs';
 import COSUB from './pages-co-sub.mjs';
 import CLSUB from './pages-cl-sub.mjs';
+import CUSUB from './pages-cu-sub.mjs';
+import STSUB from './pages-st-sub.mjs';
+import GRSUB from './pages-gr-sub.mjs';
+import MYSUB from './pages-my-sub.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -26,7 +30,7 @@ const OUT = path.resolve(ROOT, 'pages');
 const short2spec = (k) => (/^[A-Z]{2}-\d{2}$/.test(k) ? `${k.slice(0, 2)}${k.slice(3)}01` : k);
 
 const BUILDERS = {};
-for (const src of [HOTC, CO, CL, CU, STGR, MYAU, HOTCSUB, COSUB, CLSUB]) {
+for (const src of [HOTC, CO, CL, CU, STGR, MYAU, HOTCSUB, COSUB, CLSUB, CUSUB, STSUB, GRSUB, MYSUB]) {
   for (const [k, v] of Object.entries(src)) BUILDERS[short2spec(k)] = v;
 }
 const spec = JSON.parse(fs.readFileSync(SPEC, 'utf8'));

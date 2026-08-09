@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>과제 채점 - 상세 &gt; 루브릭 점수 입력 · 배움터</title>
+<meta name="description" content="항목별 배점과 점수 입력 · 총점 자동 합산 · 배점 초과 경고 · 감점 사유 메모 · 임시 저장">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="GR0302">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="TC-01.html">강사센터</a><a href="CU-01.html">수업 편성</a><a href="ST-01.html">학생 관리</a><a href="GR-01.html">출결·평가</a><a href="MY-03.html">정산</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="HO-01.html">고객 화면</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="GR0301.html">‹ 과제 채점 - 상세</a>
+    <span class="path">출결·평가 › <b>과제 채점 - 상세 &gt; 루브릭 점수 입력</b></span>
+  </nav>
+<div class="page-hd"><div>
+  <h1 class="t-page">채점</h1><p class="t-sub">김수현 · 3. 피벗 기본</p></div></div>
+
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">채점 기준표</h3></div>
+  <div class="card-bd ">
+  <div class="mb4">
+    <div class="row-b wrap-row" style="gap:var(--s4)">
+      <b class="grow" style="min-width:200px">피벗 구성이 정확한가</b>
+      <div class="row-c" style="gap:var(--s2)">
+        <input class="input num" style="width:74px;text-align:right" value="36" aria-label="피벗 구성이 정확한가 점수">
+        <span class="t-sub nowrap">/ 40점</span>
+      </div>
+    </div>
+    <p class="t-sub mt2">슬라이서를 연결하지 않아 −4</p>
+    <input class="input mt2" placeholder="감점 사유 (수강생에게 보입니다)" value="슬라이서를 연결하지 않아 −4" aria-label="피벗 구성이 정확한가 사유">
+  </div>
+  <div class="mb4">
+    <div class="row-b wrap-row" style="gap:var(--s4)">
+      <b class="grow" style="min-width:200px">계산 필드를 바르게 썼는가</b>
+      <div class="row-c" style="gap:var(--s2)">
+        <input class="input num" style="width:74px;text-align:right" value="30" aria-label="계산 필드를 바르게 썼는가 점수">
+        <span class="t-sub nowrap">/ 30점</span>
+      </div>
+    </div>
+    
+    <input class="input mt2" placeholder="감점 사유 (수강생에게 보입니다)" value="" aria-label="계산 필드를 바르게 썼는가 사유">
+  </div>
+  <div class="mb4">
+    <div class="row-b wrap-row" style="gap:var(--s4)">
+      <b class="grow" style="min-width:200px">보고서가 읽히는가</b>
+      <div class="row-c" style="gap:var(--s2)">
+        <input class="input num" style="width:74px;text-align:right" value="16" aria-label="보고서가 읽히는가 점수">
+        <span class="t-sub nowrap">/ 20점</span>
+      </div>
+    </div>
+    <p class="t-sub mt2">축 이름이 없어 −4</p>
+    <input class="input mt2" placeholder="감점 사유 (수강생에게 보입니다)" value="축 이름이 없어 −4" aria-label="보고서가 읽히는가 사유">
+  </div>
+  <div class="mb4">
+    <div class="row-b wrap-row" style="gap:var(--s4)">
+      <b class="grow" style="min-width:200px">제출 형식을 지켰는가</b>
+      <div class="row-c" style="gap:var(--s2)">
+        <input class="input num" style="width:74px;text-align:right" value="10" aria-label="제출 형식을 지켰는가 점수">
+        <span class="t-sub nowrap">/ 10점</span>
+      </div>
+    </div>
+    
+    <input class="input mt2" placeholder="감점 사유 (수강생에게 보입니다)" value="" aria-label="제출 형식을 지켰는가 사유">
+  </div>
+
+  <div class="box box-pri mt6">
+    <div class="row-b wrap-row" style="gap:var(--s4)">
+      <b>총점</b>
+      <div class="row-c" style="gap:var(--s3)">
+        <b class="t-sec">92</b><span class="t-sub">/ 100점</span>
+      </div>
+    </div>
+  </div>
+  <p class="t-sub mt3">항목 점수를 고치면 총점이 저절로 바뀝니다.
+    배점을 넘겨 넣으면 <b>그 칸이 빨개지고 저장이 막힙니다.</b></p></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">전체 피드백</h3></div>
+  <div class="card-bd "><textarea class="input" rows="4" placeholder="수강생에게 전할 말"
+    aria-label="전체 피드백">피벗 구성은 정확합니다. 다만 슬라이서를 연결하면 더 좋았겠습니다.</textarea>
+  <div class="row-b mt3">
+    <span class="t-sub">✓ 3초마다 임시 저장됩니다 · 마지막 21:04:12</span>
+    <div class="btns">
+      <button class="btn btn-ghost" type="button" data-toast="임시 저장했어요. 나중에 이어 하실 수 있습니다">임시 저장</button>
+      <button class="btn btn-primary" type="button" data-toast="채점을 마쳤어요. 수강생에게 알림이 갑니다">채점 마치기</button>
+    </div>
+  </div></div>
+  </div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">GR0302</div><div class="nm">과제 채점 - 상세 &gt; 루브릭 점수 입력</div>
+    <div class="fd">항목별 배점과 점수 입력 · 총점 자동 합산 · 배점 초과 경고 · 감점 사유 메모 · 임시 저장</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">GR0302 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

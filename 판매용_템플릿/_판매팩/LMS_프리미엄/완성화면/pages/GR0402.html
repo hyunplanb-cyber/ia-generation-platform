@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수료 기준 설정 &gt; 영향 인원 시뮬레이션 · 배움터</title>
+<meta name="description" content="기준 조정 시 수료 가능·미달 인원 실시간 갱신 · 항목별 미달 사유 분포 · 이전 기준과 비교 · 상세 명단 보기">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="GR0402">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="TC-01.html">강사센터</a><a href="CU-01.html">수업 편성</a><a href="ST-01.html">학생 관리</a><a href="GR-01.html">출결·평가</a><a href="MY-03.html">정산</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="HO-01.html">고객 화면</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="GR0401.html">‹ 수료 기준 설정</a>
+    <span class="path">출결·평가 › <b>수료 기준 설정 &gt; 영향 인원 시뮬레이션</b></span>
+  </nav>
+<div class="page-hd"><div>
+  <h1 class="t-page">수료 기준</h1><p class="t-sub">옮기면 인원이 바로 바뀝니다</p></div></div>
+
+<div class="card ">
+  
+  <div class="card-bd "><dl class="kv"><dt>진도율</dt><dd><div class="row-c" style="gap:var(--s3)">
+      <input type="range" class="slider" min="50" max="100" step="5" value="80" data-toast="진도 기준을 바꿨어요">
+      <b class="nowrap num">80% 이상</b></div></dd><dt>과제</dt><dd><select class="input" style="width:auto" data-toast="과제 기준을 바꿨어요">
+      <option>전체 제출</option><option>80% 이상 제출</option><option>보지 않음</option></select></dd><dt>최종 시험</dt><dd><div class="row-c" style="gap:var(--s3)">
+      <input type="range" class="slider" min="0" max="100" step="5" value="60" data-toast="시험 기준을 바꿨어요">
+      <b class="nowrap num">60점 이상</b></div></dd></dl>
+  <div class="g3 mt6">
+    <button class="stat s-ok" type="button">
+  <span class="ico" aria-hidden="true">🎓</span>
+  <span class="l">수료 가능</span>
+  <span class="v">41<small>명</small></span>
+  <span class="foot"><span class="delta flat">— 0</span></span>
+</button>
+    <button class="stat " type="button">
+  <span class="ico" aria-hidden="true">⏳</span>
+  <span class="l">조건 미달</span>
+  <span class="v">76<small>명</small></span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button>
+    <button class="stat s-acc" type="button">
+  <span class="ico" aria-hidden="true">✅</span>
+  <span class="l">이미 수료</span>
+  <span class="v">11<small>명</small></span>
+  <span class="foot"><span class="t-sub">기준을 바꿔도 유지</span></span>
+</button>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">무엇 때문에 못 채우나</h3></div>
+  <div class="card-bd "><div class="table-wrap "><table class="table ">
+    <thead><tr><th>미달 항목</th><th>인원</th><th></th></tr></thead><tbody><tr><td>진도만 모자람</td><td><b>38명</b></td><td><div class="bar "><i style="width:50%"></i></div></td></tr><tr><td>과제만 모자람</td><td><b>19명</b></td><td><div class="bar "><i style="width:25%"></i></div></td></tr><tr><td>시험만 모자람</td><td><b>7명</b></td><td><div class="bar "><i style="width:9%"></i></div></td></tr><tr><td>둘 이상 모자람</td><td><b>12명</b></td><td><div class="bar "><i style="width:16%"></i></div></td></tr></tbody></table></div>
+  <p class="t-sub mt4">진도 하나만 걸린 사람이 38명으로 가장 많습니다.
+    기준을 <b>75%</b>로 낮추면 그중 14명이 수료 대상이 됩니다.</p>
+  <div class="btns mt4"><button class="btn btn-ghost" type="button" data-toast="진도만 모자란 38명을 보여드릴게요">명단 보기</button></div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">이전 기준과 견주면</h3></div>
+  <div class="card-bd "><div class="table-wrap "><table class="table ">
+    <thead><tr><th></th><th>이전 (7월)</th><th>지금</th></tr></thead><tbody><tr><td>진도율</td><td>70%</td><td><b>80%</b></td></tr><tr><td>과제</td><td>80% 제출</td><td><b>전체 제출</b></td></tr><tr><td>시험</td><td>60점</td><td>60점</td></tr><tr><td>수료 가능 인원</td><td>68명</td><td><b class="danger">41명</b></td></tr></tbody></table></div>
+  <p class="t-sub mt4">기준을 올리셔서 수료 대상이 <b>27명 줄었습니다.</b></p></div>
+  </div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">GR0402</div><div class="nm">수료 기준 설정 &gt; 영향 인원 시뮬레이션</div>
+    <div class="fd">기준 조정 시 수료 가능·미달 인원 실시간 갱신 · 항목별 미달 사유 분포 · 이전 기준과 비교 · 상세 명단 보기</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">GR0402 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

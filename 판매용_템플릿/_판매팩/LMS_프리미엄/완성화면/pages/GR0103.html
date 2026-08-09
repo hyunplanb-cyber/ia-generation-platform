@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>출석 현황 &gt; 출석 수정 모달 · 배움터</title>
+<meta name="description" content="셀 클릭 시 출석·지각·결석 변경 · 변경 사유 입력 · 수정 이력 기록 · 수강생 통지 여부 선택 · 저장">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="GR0103">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="TC-01.html">강사센터</a><a href="CU-01.html">수업 편성</a><a href="ST-01.html">학생 관리</a><a href="GR-01.html">출결·평가</a><a href="MY-03.html">정산</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="HO-01.html">고객 화면</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="GR0101.html">‹ 출석 현황</a>
+    <span class="path">출결·평가 › <b>출석 현황 &gt; 출석 수정 모달</b></span>
+  </nav>
+<div class="page-hd"><div>
+  <h1 class="t-page">출석 고치기</h1><p class="t-sub">김수현 · 6주차</p></div></div>
+
+<div class="card ">
+  
+  <div class="card-bd "><dl class="kv"><dt>수강생</dt><dd><b>김수현</b> (kim****@gmail.com)</dd><dt>주차</dt><dd>6주차 · 2026-07-20</dd><dt>지금 기록</dt><dd><span class="badge b-danger">결석</span></dd></dl>
+  <div class="mt6">
+    <p class="t-th mb2">무엇으로 바꾸시겠어요?</p>
+    <div class="chips">
+      <button class="chip" type="button" data-toast="출석으로 바꿉니다">출석</button>
+      <button class="chip on" type="button" data-toast="지각으로 바꿉니다">지각</button>
+      <button class="chip" type="button" data-toast="결석으로 둡니다">결석</button>
+    </div>
+  </div>
+  <div class="mt6">
+    <p class="t-th mb2">고치는 이유 <span class="danger">*</span></p>
+    <textarea class="input" rows="2" placeholder="예) 병원 진단서 확인함" aria-label="수정 사유"></textarea>
+    <p class="t-sub mt2">사유는 <b>반드시 남깁니다.</b> 나중에 성적 이의가 들어왔을 때 근거가 됩니다.</p>
+  </div>
+  <label class="row-c mt6" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" checked data-toast="수강생에게 알립니다"> <b>수강생에게 알리기</b>
+    <span class="t-sub">「6주차 출결이 결석 → 지각으로 바뀌었습니다」</span></label>
+  <div class="btns mt7">
+    <button class="btn btn-primary btn-lg" type="button" data-toast="출결을 고쳤어요. 수강생에게 알림이 갔습니다">저장</button>
+    <a class="btn btn-ghost btn-lg" href="GR-01.html">취소</a>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">수정 이력</h3></div>
+  <div class="card-bd "><div class="table-wrap "><table class="table ">
+    <thead><tr><th>시각</th><th>누가</th><th>무엇을</th><th>사유</th></tr></thead><tbody><tr><td>2026-08-09 21:02</td><td>박지훈(강사)</td><td>결석 → 지각</td><td>병원 진단서 확인</td></tr><tr><td>2026-07-20 23:59</td><td>(자동)</td><td>— → 결석</td><td>출석 체크 시간 내 미접속</td></tr></tbody></table></div>
+  <p class="t-sub mt4">출결은 <b>덮어쓰지 않고 쌓습니다.</b> 누가 언제 왜 바꿨는지가 남아야
+    이의 신청이 들어왔을 때 답할 수 있습니다.</p></div>
+  </div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">GR0103</div><div class="nm">출석 현황 &gt; 출석 수정 모달</div>
+    <div class="fd">셀 클릭 시 출석·지각·결석 변경 · 변경 사유 입력 · 수정 이력 기록 · 수강생 통지 여부 선택 · 저장</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">GR0103 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

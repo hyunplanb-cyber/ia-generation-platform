@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수료 기준 설정 &gt; 게시 후 기준 변경 경고 · 배움터</title>
+<meta name="description" content="수강 중 강의의 기준 변경 영향 안내 · 이미 수료 처리된 인원 유지 여부 · 수강생 고지 필요 안내 · 취소·적용">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="GR0403">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="TC-01.html">강사센터</a><a href="CU-01.html">수업 편성</a><a href="ST-01.html">학생 관리</a><a href="GR-01.html">출결·평가</a><a href="MY-03.html">정산</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="HO-01.html">고객 화면</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="GR0401.html">‹ 수료 기준 설정</a>
+    <span class="path">출결·평가 › <b>수료 기준 설정 &gt; 게시 후 기준 변경 경고</b></span>
+  </nav>
+<div class="page-hd"><div>
+  <h1 class="t-page">수강 중에 기준을 바꾸십니다</h1><p class="t-sub">이미 듣고 있는 128명에게 영향이 갑니다</p></div></div>
+
+<div class="banner banner-danger"><span class="ico">⚠</span><div class="grow"><b>이 강의는 게시 중이고 128명이 듣고 있습니다.</b>
+  <p class="t-sub mt1">기준을 올리면 <b>어제까지 수료 대상이던 사람이 오늘 아니게 됩니다.</b>
+  결제할 때 본 조건과 달라지므로 분쟁이 생길 수 있습니다.</p></div></div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">무엇이 어떻게 바뀌나</h3></div>
+  <div class="card-bd "><div class="table-wrap "><table class="table ">
+    <thead><tr><th></th><th>지금 기준</th><th>바꾸려는 기준</th><th>영향</th></tr></thead><tbody><tr><td>진도율</td><td>70%</td><td><b>80%</b></td><td><b class="danger">−22명</b></td></tr><tr><td>과제</td><td>80% 제출</td><td><b>전체 제출</b></td><td><b class="danger">−5명</b></td></tr><tr><td>시험</td><td>60점</td><td>60점</td><td>없음</td></tr><tr><td><b>수료 가능</b></td><td><b>68명</b></td><td><b class="danger">41명</b></td><td><b class="danger">−27명</b></td></tr></tbody></table></div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">이미 수료 처리된 11명은</h3></div>
+  <div class="card-bd ">
+  <label class="row-c mb3" style="gap:var(--s2);cursor:pointer">
+    <input type="radio" name="keep" checked> <b>그대로 둡니다</b> <span class="t-sub">(권장)</span></label>
+  <label class="row-c" style="gap:var(--s2);cursor:pointer">
+    <input type="radio" name="keep"> 새 기준으로 다시 판정합니다</label>
+  <div class="box box-danger mt4"><b>다시 판정하면 수료증을 회수하게 됩니다</b>
+    <p class="t-sub mt1">이미 받은 수료증을 무효로 만드는 것이라 <b>권하지 않습니다.</b>
+    이력서에 붙인 분이 있을 수 있습니다. 새 기준은 <b>앞으로 수료할 사람</b>에게만 적용하세요.</p></div></div>
+  </div>
+
+<div class="card mt6">
+  
+  <div class="card-bd "><label class="row-c" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" data-gate="crit" data-label="영향 확인">
+    <b>27명이 수료 대상에서 빠지는 것을 확인했습니다</b></label>
+  <label class="row-c mt3" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" data-gate="crit" data-label="고지 동의">
+    <b>수강생 128명에게 변경을 알리겠습니다</b> <span class="t-sub">(필수)</span></label>
+  <div class="err-msg mt3" data-gatemsg="crit" hidden></div>
+  <div class="btns mt6">
+    <button class="btn btn-danger btn-lg is-off" type="button" data-gated="crit"
+      data-toast="기준을 바꾸고 128명에게 알렸어요">기준 바꾸기</button>
+    <a class="btn btn-ghost btn-lg" href="GR-04.html">취소</a>
+  </div></div>
+  </div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">GR0403</div><div class="nm">수료 기준 설정 &gt; 게시 후 기준 변경 경고</div>
+    <div class="fd">수강 중 강의의 기준 변경 영향 안내 · 이미 수료 처리된 인원 유지 여부 · 수강생 고지 필요 안내 · 취소·적용</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">GR0403 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

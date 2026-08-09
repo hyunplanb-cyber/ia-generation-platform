@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>진도 미달자 관리 &gt; 기준 설정 · 배움터</title>
+<meta name="description" content="진도율 기준과 미접속 일수 슬라이더 · 대상 인원 실시간 갱신 · 기준 저장 · 기본값 복원">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="ST0402">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="TC-01.html">강사센터</a><a href="CU-01.html">수업 편성</a><a href="ST-01.html">학생 관리</a><a href="GR-01.html">출결·평가</a><a href="MY-03.html">정산</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="HO-01.html">고객 화면</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="ST0401.html">‹ 진도 미달자 관리</a>
+    <span class="path">학생 관리 › <b>진도 미달자 관리 &gt; 기준 설정</b></span>
+  </nav>
+<div class="page-hd"><div>
+  <h1 class="t-page">미달자 기준</h1><p class="t-sub">슬라이더를 움직이면 대상 인원이 바로 바뀝니다</p></div></div>
+
+<div class="card ">
+  
+  <div class="card-bd "><dl class="kv"><dt>진도율이</dt><dd><div class="row-c" style="gap:var(--s3)">
+      <input type="range" class="slider" min="0" max="100" step="5" value="30" data-toast="진도 기준을 바꿨어요">
+      <b class="nowrap num">30% 미만</b></div></dd><dt>그리고 접속이</dt><dd><div class="row-c" style="gap:var(--s3)">
+      <input type="range" class="slider" min="3" max="60" step="1" value="14" data-toast="미접속 기준을 바꿨어요">
+      <b class="nowrap num">14일 이상 없음</b></div></dd><dt>수료한 사람</dt><dd><label class="row-c" style="gap:var(--s2);cursor:pointer">
+      <input type="checkbox" checked> 대상에서 빼기</label></dd><dt>최근 독려받은 사람</dt><dd><label class="row-c" style="gap:var(--s2);cursor:pointer">
+      <input type="checkbox" checked> 7일 안에 받았으면 빼기</label></dd></dl>
+  <div class="box box-pri mt6">
+    <div class="row-b wrap-row" style="gap:var(--s4)">
+      <div><b>이 기준이면 <span class="t-sec pri">23명</span></b>
+        <p class="t-sub mt1">전체 128명 중 18%입니다</p></div>
+      <div class="btns">
+        <button class="btn btn-primary" type="button" data-toast="기준을 저장했어요. 앞으로 이 기준으로 봅니다">기준 저장</button>
+        <button class="btn btn-ghost" type="button" data-toast="진도 30% · 미접속 14일로 되돌렸어요">기본값으로</button>
+      </div>
+    </div>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">기준을 바꾸면 이렇게 됩니다</h3></div>
+  <div class="card-bd "><div class="table-wrap "><table class="table ">
+    <thead><tr><th>기준</th><th>대상 인원</th><th></th></tr></thead><tbody><tr><td>진도 10% · 미접속 30일</td><td><b>7명</b></td><td>정말 손 놓은 사람만</td></tr><tr><td><b>진도 30% · 미접속 14일 (지금)</b></td><td><b class="pri">23명</b></td><td>균형이 맞습니다</td></tr><tr><td>진도 50% · 미접속 7일</td><td><b>61명</b></td><td>너무 많습니다 — 독려가 스팸이 됩니다</td></tr></tbody></table></div>
+  <p class="t-sub mt4">한 번에 30명이 넘으면 독려 메시지가 광고처럼 읽힙니다.
+    <b>20명 안팎</b>으로 잡고 자주 보내시는 편이 낫습니다.</p></div>
+  </div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">ST0402</div><div class="nm">진도 미달자 관리 &gt; 기준 설정</div>
+    <div class="fd">진도율 기준과 미접속 일수 슬라이더 · 대상 인원 실시간 갱신 · 기준 저장 · 기본값 복원</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">ST0402 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

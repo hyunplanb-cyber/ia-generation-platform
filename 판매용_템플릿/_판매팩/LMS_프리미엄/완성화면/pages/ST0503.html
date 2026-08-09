@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>알림 발송 &gt; 일부 발송 실패 · 배움터</title>
+<meta name="description" content="수신 거부·주소 오류 등 실패 건 목록 · 사유별 분류 · 실패 건만 재발송 · 성공 건수 요약">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="ST0503">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="TC-01.html">강사센터</a><a href="CU-01.html">수업 편성</a><a href="ST-01.html">학생 관리</a><a href="GR-01.html">출결·평가</a><a href="MY-03.html">정산</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="HO-01.html">고객 화면</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="ST0501.html">‹ 알림 발송</a>
+    <span class="path">학생 관리 › <b>알림 발송 &gt; 일부 발송 실패</b></span>
+  </nav>
+<div class="page-hd"><div>
+  <h1 class="t-page">일부만 갔습니다</h1><p class="t-sub">14명 성공 · 9명 실패</p></div></div>
+
+<div class="card ">
+  
+  <div class="card-bd "><div class="g3">
+  <button class="stat " type="button">
+  <span class="ico" aria-hidden="true">📨</span>
+  <span class="l">보낸 사람</span>
+  <span class="v">23<small>명</small></span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button>
+  <button class="stat s-ok" type="button">
+  <span class="ico" aria-hidden="true">✅</span>
+  <span class="l">도착</span>
+  <span class="v">14<small>명</small></span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button>
+  <button class="stat s-danger" type="button">
+  <span class="ico" aria-hidden="true">⚠</span>
+  <span class="l">실패</span>
+  <span class="v">9<small>명</small></span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button>
+</div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">왜 실패했나</h3></div>
+  <div class="card-bd ">
+  <div class="box  mb3">
+    <div class="row-b wrap-row" style="gap:var(--s4)">
+      <div class="grow" style="min-width:240px">
+        <div class="row-c" style="gap:var(--s2)"><b>수신 거부</b><span class="badge b-mut">3명</span></div>
+        <p class="t-sub mt1">이 분들은 마케팅 수신을 껐습니다</p>
+        <p class="t-sub mt1">→ 다시 보낼 수 없습니다 — 법으로 막혀 있습니다</p>
+      </div>
+      <span class="muted">다시 보낼 수 없음</span>
+    </div>
+  </div>
+  <div class="box  mb3">
+    <div class="row-b wrap-row" style="gap:var(--s4)">
+      <div class="grow" style="min-width:240px">
+        <div class="row-c" style="gap:var(--s2)"><b>주소 오류</b><span class="badge b-mut">2명</span></div>
+        <p class="t-sub mt1">없는 이메일 주소입니다</p>
+        <p class="t-sub mt1">→ 수강생에게 주소 확인을 요청하세요</p>
+      </div>
+      <span class="muted">다시 보낼 수 없음</span>
+    </div>
+  </div>
+  <div class="box box-pri mb3">
+    <div class="row-b wrap-row" style="gap:var(--s4)">
+      <div class="grow" style="min-width:240px">
+        <div class="row-c" style="gap:var(--s2)"><b>일시적 오류</b><span class="badge b-pri">4명</span></div>
+        <p class="t-sub mt1">받는 쪽 서버가 잠깐 안 받았습니다</p>
+        <p class="t-sub mt1">→ 다시 보내면 대부분 갑니다</p>
+      </div>
+      <button class="btn btn-primary" type="button" data-toast="4명에게 다시 보냈어요">이 4명만 다시</button>
+    </div>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">다시 보낼 때 지키는 것</h3></div>
+  <div class="card-bd "><dl class="kv"><dt>수신 거부</dt><dd><b>절대 다시 보내지 않습니다.</b> 정보통신망법 위반이고 계정이 정지될 수 있습니다</dd><dt>주소 오류</dt><dd>3번 연속 실패하면 그 주소는 발송 목록에서 자동으로 빠집니다</dd><dt>일시적 오류</dt><dd>10분 뒤 한 번 자동으로 다시 시도합니다 — 위 버튼은 그 뒤에도 실패한 건입니다</dd><dt>같은 사람에게</dt><dd>하루 <b>2통</b>까지만 나갑니다</dd></dl></div>
+  </div>
+
+<div class="card mt6">
+  
+  <div class="card-bd "><div class="btns">
+  <button class="btn btn-ghost" type="button" data-toast="실패 9건을 엑셀로 내려받았어요">실패 목록 엑셀로</button>
+  <a class="btn btn-ghost" href="ST-05.html">발송 내역</a>
+</div></div>
+  </div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">ST0503</div><div class="nm">알림 발송 &gt; 일부 발송 실패</div>
+    <div class="fd">수신 거부·주소 오류 등 실패 건 목록 · 사유별 분류 · 실패 건만 재발송 · 성공 건수 요약</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">ST0503 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
