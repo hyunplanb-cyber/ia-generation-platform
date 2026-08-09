@@ -12,6 +12,7 @@
 // 막는 건 결제 시작뿐이다.
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Download, Loader2, Coins } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { buyPackWithCreditsAction } from "./actions";
@@ -35,6 +36,7 @@ export function BuyButton({
   /** 강조 색을 쓸 등급인가(프리미엄) */
   emphasis?: boolean;
 }) {
+  const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,8 +70,19 @@ export function BuyButton({
     setBusy(true);
     const r = await buyPackWithCreditsAction(packageId, planId);
     if (r.ok) {
-      // 산 즉시 파일로 보낸다 — 「결제하면 바로 다운로드」가 우리 강점이다.
+      /* 산 즉시 파일로 보낸다 — 「결제하면 바로 다운로드」가 우리 강점이다.
+       *
+       * ⚠ 여기서 return 하고 끝내면 «로딩이 영영 안 멈춘다».
+       *   다운로드 주소로 보내는 것은 «화면을 넘기는 것»이 아니다 — 파일만 내려오고
+       *   페이지는 그 자리에 남는다. 그래서 setBusy(false) 를 안 하면 돌아가는 표시가
+       *   계속 돈다. 실제로 「파일은 받아졌는데 무한 로딩」으로 나왔다(2026-08-09).
+       *
+       *   refresh() 는 산 것을 화면에 반영한다 — 버튼이 「다운로드」로 바뀐다.
+       *   안 하면 방금 산 사람에게 여전히 「크레딧으로 받기」가 보여서
+       *   두 번 사는 줄 알고 놀란다(값은 두 번 안 빠지지만 그건 손님이 모른다). */
       window.location.href = href;
+      setBusy(false);
+      router.refresh();
       return;
     }
     setBusy(false);
