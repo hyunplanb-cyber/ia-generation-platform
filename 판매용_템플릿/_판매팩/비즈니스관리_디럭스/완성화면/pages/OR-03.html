@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>환불 처리 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a" href="BK-01.html">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a on" href="OR-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a" href="CU-01.html">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a" href="PD-01.html">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a" href="MK-01.html">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a" href="ST-01.html">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a" href="TM-01.html">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a" href="SE-01.html">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><a class="back" href="OR-01.html">‹ 주문 목록</a><div class="page-hd">
+  <div><h1 class="t-page">환불 처리</h1><p class="t-sub">주문 20260810-0031 · 김서연 · 100,000원</p></div>
+  </div>
+
+<div class="split-r">
+  <div>
+    <div class="banner banner-warn "><span class="ico">⚠</span><div class="grow">환불은 <b>되돌릴 수 없습니다.</b> 금액과 품목을 다시 확인해 주세요.</div></div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">환불 유형</h3></div>
+  <div class="card-bd ">
+      <div class="stack">
+        <label class="check none">
+  <input type="checkbox">
+  <span>전체 환불 — 100,000원 전부</span></label>
+        <label class="check none">
+  <input type="checkbox" checked>
+  <span>부분 환불 — 품목과 금액을 골라서</span></label>
+      </div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">환불할 품목</h3></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:34px" class="c"><input type="checkbox" aria-label="전체 선택"></th><th>상품</th><th style="width:96px" class="r nowrap">결제액</th><th style="width:128px">환불액</th></tr></thead><tbody><tr><td class="c"><input type="checkbox" aria-label="뿌리 염색 선택"></td><td>뿌리 염색</td><td class="r nowrap"><span class="num">72,000원</span></td><td><input class="in" type="text" value="0" aria-label="뿌리 염색 환불액"></td></tr><tr><td class="c"><input type="checkbox" checked aria-label="홈케어 샴푸 선택"></td><td>홈케어 샴푸 300ml</td><td class="r nowrap"><span class="num">28,000원</span></td><td><input class="in" type="text" value="28,000" aria-label="샴푸 환불액"></td></tr></tbody></table></div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">사유</h3></div>
+  <div class="card-bd ">
+      <label class="field">
+  <span class="lb">환불 사유<span class="req">*</span></span>
+  <select class="sel"><option>고객 변심</option><option selected>상품 불량</option><option>서비스 불만</option><option>중복 결제</option><option>매장 사정</option></select></label>
+      <label class="field">
+  <span class="lb">상세 사유<span class="req">*</span></span>
+  <textarea class="ta" placeholder="무슨 일이 있었는지 적어 두세요. 나중에 통계와 활동 로그에 남습니다."></textarea></label></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">함께 처리할 것</h3></div>
+  <div class="card-bd ">
+      <label class="check">
+  <input type="checkbox" checked>
+  <span>재고를 되돌립니다<span class="sub">홈케어 샴푸 300ml 재고가 22 → 23 이 됩니다.</span></span></label>
+      <label class="check">
+  <input type="checkbox" checked>
+  <span>고객에게 환불 안내를 보냅니다<span class="sub">알림톡으로 환불 금액과 예상 입금일을 안내합니다.</span></span></label></div>
+  </div>
+  </div>
+
+  <div class="sticky stack">
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">환불 요약</h3></div>
+  <div class="card-bd ">
+      <div class="sum-row "><span class="muted">결제 금액</span><span><span class="num">100,000원</span></span></div><div class="sum-row "><span class="muted">환불 품목</span><span>1건</span></div><div class="sum-row "><span class="muted">이미 환불된 금액</span><span><span class="num">0원</span></span></div>
+  <div class="sum-row total"><span>최종 환불액</span><span class="price"><span class="num">28,000원</span></span></div>
+      <div class="banner banner-info mt4"><span class="ico">💳</span><div class="grow"><b>원결제수단(카드 신한 1234)</b> 으로 자동 환불됩니다. 카드사 사정에 따라 3~5영업일 걸립니다.</div></div></div>
+  <div class="card-ft"><label class="check">
+  <input type="checkbox" data-unlock="doRefund">
+  <span>금액과 품목을 확인했습니다</span></label>
+             <div class="mt4"><button class="btn btn-dan btn-w is-off" id="doRefund" type="button" disabled data-modal="m-refund">환불 실행</button></div>
+             <div class="mt3"><a class="btn btn-ghost btn-w" href="OR-02.html">주문 상세로 돌아가기</a></div></div></div>
+  </div>
+</div>
+
+<template id="m-refund"><div class="modal">
+  <div class="m-hd"><h3 class="t-card">28,000원을 환불합니다</h3><button class="x" type="button" data-dismiss aria-label="닫기">✕</button></div>
+  <div class="m-bd"><p>김서연 님의 <b>홈케어 샴푸 300ml</b> 결제액이 원결제수단으로 돌아갑니다.</p>
+   <p class="t-sub mt4">되돌릴 수 없습니다. 환불 내역은 활동 로그에 남습니다.</p></div><div class="m-ft"><button class="btn btn-ghost" type="button" data-dismiss>닫기</button><button class="btn btn-dan" type="button" data-dismiss data-toast="28,000원을 환불했어요" data-toast-kind="ok">환불 확정</button></div></div></template></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">OR-03 · 환불 처리</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>주문·매출</dd>
+        <dt>기능정의</dt><dd>환불 대상 주문 요약 · 환불 유형 선택(전체·부분) · 부분 환불 시 품목·금액 지정 · 환불 사유 선택과 상세 · 환불 수단 안내(원결제수단 자동) · 재고 복원 여부 체크 · 고객 알림 발송 여부 · 최종 환불액 표시 · 환불 실행 버튼(확인 모달)</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="OR-02.html">주문 상세 → 주문 상세</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

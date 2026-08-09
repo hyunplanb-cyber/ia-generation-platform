@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>재고 부족·품절 알림 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a" href="BK-01.html">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a" href="OR-01.html">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a" href="CU-01.html">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a on" href="PD-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a" href="MK-01.html">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a" href="ST-01.html">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a" href="TM-01.html">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a" href="SE-01.html">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><a class="back" href="PD-01.html">‹ 상품 목록</a><div class="page-hd">
+  <div><h1 class="t-page">재고 부족·품절</h1><p class="t-sub">3개 상품이 곧 떨어집니다</p></div>
+  <div class="btns"><button class="btn btn-ghost" type="button" data-toast="담당자에게 알림을 보냈어요" data-toast-kind="ok">담당자에게 알림</button><a class="btn btn-pri" href="PD-03.html">한 번에 입고</a></div></div>
+
+<div class="banner banner-dan "><span class="ico">⚠</span><div class="grow"><b>트리트먼트 (LPP)</b> 는 이미 품절입니다. 판매를 잠시 멈추지 않으면 손님이 예약할 수 있습니다.</div></div>
+
+<div class="card ">
+  
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th>상품</th><th style="width:68px" class="r">현재고</th><th style="width:76px" class="r">안전재고</th><th style="width:80px" class="r">하루 판매</th><th style="width:92px">소진 예상</th><th style="width:80px" class="r">발주 추천</th><th style="width:80px" class="c">판매 중지</th><th style="width:76px"></th></tr></thead><tbody><tr><td><b>두피 스케일링</b><div class="sub">클리닉</div></td><td class="r"><span class="num strong">3</span></td><td class="r"><span class="num">5</span></td><td class="r"><span class="num">1.2개</span></td><td><span class="num">2일 뒤</span></td><td class="r"><span class="num strong">36개</span></td><td class="c"><button class="toggle" type="button" aria-pressed="false" data-toast="두피 스케일링 판매를 멈췄어요"></button></td><td><button class="btn btn-pri btn-sm" type="button" data-toast="두피 스케일링 입고 화면을 엽니다">바로 입고</button></td></tr><tr><td><b>트리트먼트 (LPP)</b><div class="sub">클리닉</div></td><td class="r"><span class="num strong">0</span></td><td class="r"><span class="num">5</span></td><td class="r"><span class="num">0.9개</span></td><td><span class="badge b-dan">이미 품절</span></td><td class="r"><span class="num strong">27개</span></td><td class="c"><button class="toggle on" type="button" aria-pressed="true" data-toast="트리트먼트 (LPP) 판매를 멈췄어요"></button></td><td><button class="btn btn-pri btn-sm" type="button" data-toast="트리트먼트 (LPP) 입고 화면을 엽니다">바로 입고</button></td></tr><tr><td><b>헤어 에센스 100ml</b><div class="sub">제품</div></td><td class="r"><span class="num strong">2</span></td><td class="r"><span class="num">5</span></td><td class="r"><span class="num">0.6개</span></td><td><span class="num">3일 뒤</span></td><td class="r"><span class="num strong">20개</span></td><td class="c"><button class="toggle" type="button" aria-pressed="false" data-toast="헤어 에센스 100ml 판매를 멈췄어요"></button></td><td><button class="btn btn-pri btn-sm" type="button" data-toast="헤어 에센스 100ml 입고 화면을 엽니다">바로 입고</button></td></tr></tbody></table></div></div>
+  </div>
+
+<p class="t-sub mt4">발주 추천 수량은 <b>최근 30일 판매 속도 × 30일</b> 로 잡은 값입니다. 최소 20개부터 권합니다.</p>
+
+<div class="g2 mt8">
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">알림 기준 바꾸기</h3></div>
+  <div class="card-bd "><p class="t-sub mb4">지금은 <b>재고 5개 이하</b>일 때 알립니다. 상품마다 따로 정할 수도 있어요.</p>
+    <label class="field">
+  <span class="lb">공통 기준</span>
+  <input class="in " type="text" value="5"></label>
+    <div class="btns"><button class="btn btn-pri" type="button" data-toast="알림 기준을 바꿨어요" data-toast-kind="ok">저장</button><a class="btn btn-ghost" href="SE-03.html">알림 설정으로</a></div></div>
+  </div>
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">다음에 할 일</h3></div>
+  <div class="card-bd "><div class="btns-v">
+    <a class="btn btn-ghost btn-w" href="PD-03.html">재고 관리로 돌아가기</a>
+    <a class="btn btn-ghost btn-w" href="PD-02.html">새 상품 등록</a>
+  </div></div>
+  </div>
+</div></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">PD-04 · 재고 부족·품절 알림</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>상품·재고</dd>
+        <dt>기능정의</dt><dd>재고 부족·품절 상품 목록(현재고·안전재고·최근 판매 속도) · 소진 예상일 표시 · 발주 추천 수량 · 바로 입고 처리 · 담당자에게 알림 발송 · 판매 일시중지 토글 · 알림 기준 조정 링크</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="PD-03.html">재고 관리 → 재고 관리</a><a href="PD-02.html">상품 등록 → 상품 등록·수정</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

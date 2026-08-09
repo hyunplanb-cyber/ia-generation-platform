@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>발송 이력 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a" href="BK-01.html">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a" href="OR-01.html">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a" href="CU-01.html">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a" href="PD-01.html">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a on" href="MK-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a" href="ST-01.html">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a" href="TM-01.html">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a" href="SE-01.html">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><a class="back" href="MK-01.html">‹ 알림 발송 작성</a><div class="page-hd">
+  <div><h1 class="t-page">발송 이력</h1><p class="t-sub">최근 30일 · 4건</p></div>
+  <div class="btns"><a class="btn btn-pri" href="MK-01.html">새 발송</a></div></div>
+
+<div class="g4 mb6"><div class="stat ">
+  <div class="l">발송</div><div class="n">4건</div></div><div class="stat ">
+  <div class="l">보낸 수</div><div class="n">540건</div></div><div class="stat ok">
+  <div class="l">성공</div><div class="n">216건</div></div><div class="stat warn">
+  <div class="l">실패</div><div class="n">6건</div></div></div>
+
+<div class="filters">
+  <select class="sel"><option selected>최근 30일</option><option>오늘</option><option>최근 7일</option><option>이번 달</option></select>
+  <select class="sel"><option selected>채널 전체</option><option>알림톡</option><option>문자</option><option>이메일</option></select>
+  <select class="sel"><option selected>상태 전체</option><option>발송완료</option><option>발송실패</option><option>예약대기</option></select>
+  <button class="btn btn-ghost" type="button" data-toast="실패한 건만 걸렀어요">실패만 모아보기</button>
+</div>
+
+<div class="banner banner-warn "><span class="ico">⏰</span><div class="grow"><b>8/12 09:00</b> 에 나갈 예약 발송이 1건 있습니다 — 휴무 안내 (318명).</div><button class="btn btn-ghost btn-sm" type="button" data-toast="예약 발송을 취소했어요">예약 취소</button></div>
+
+<div class="mt6"><div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:128px">발송일시</th><th style="width:68px">채널</th><th>제목</th><th style="width:64px" class="r">대상</th><th style="width:64px" class="r">성공</th><th style="width:64px" class="r">실패</th><th style="width:80px" class="r nowrap">비용</th><th style="width:80px">상태</th><th style="width:76px"></th></tr></thead><tbody><tr><td><span class="num sub">2026-08-10 09:00</span></td><td>알림톡</td><td><b>오늘 예약 리마인드</b></td><td class="r"><span class="num">6</span></td><td class="r"><span class="num">6</span></td><td class="r"><span class="muted">0</span></td><td class="r nowrap"><span class="num">78원</span></td><td><span class="badge b-ok">발송완료</span></td><td><a class="btn btn-ghost btn-sm" href="MK-01.html">다시 보내기</a></td></tr><tr><td><span class="num sub">2026-08-09 10:00</span></td><td>문자</td><td><b>8월 회원 전용 쿠폰</b></td><td class="r"><span class="num">214</span></td><td class="r"><span class="num">209</span></td><td class="r"><span class="num strong">5</span></td><td class="r nowrap"><span class="num">4,066원</span></td><td><span class="badge b-ok">발송완료</span></td><td><a class="btn btn-ghost btn-sm" href="MK-03.html">실패 보기</a></td></tr><tr class="warn"><td><span class="num sub">2026-08-08 18:30</span></td><td>알림톡</td><td><b>노쇼 안내</b></td><td class="r"><span class="num">2</span></td><td class="r"><span class="num">1</span></td><td class="r"><span class="num strong">1</span></td><td class="r nowrap"><span class="num">26원</span></td><td><span class="badge b-dan">발송실패</span></td><td><a class="btn btn-ghost btn-sm" href="MK-03.html">실패 보기</a></td></tr><tr><td><span class="num sub">2026-08-12 09:00</span></td><td>이메일</td><td><b>휴무 안내 (예약 발송)</b></td><td class="r"><span class="num">318</span></td><td class="r"><span class="num">0</span></td><td class="r"><span class="muted">0</span></td><td class="r nowrap"><span class="num">0원</span></td><td><span class="badge b-warn">예약대기</span></td><td><button class="btn btn-dan btn-sm" type="button" data-toast="예약 발송을 취소했어요">취소</button></td></tr></tbody></table></div></div>
+
+<p class="t-sub mt6">발송 건을 누르면 <b>수신자별로 성공·실패</b>를 볼 수 있습니다.</p></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">MK-02 · 발송 이력</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>메시지·알림</dd>
+        <dt>기능정의</dt><dd>기간·채널·상태 필터 · 발송 목록(발송일시·채널·제목·대상 수·성공/실패 수·비용·상태) · 예약 발송 대기 항목 표시와 취소 · 발송 건 클릭 시 상세(수신자별 성공·실패) · 실패만 모아보기 · 재발송 · 통계 요약</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="MK-03.html">발송 실패 상세 → 발송 실패 상세</a><a href="MK-01.html">새 발송 → 알림 발송 작성</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내 계정 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a" href="BK-01.html">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a" href="OR-01.html">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a" href="CU-01.html">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a" href="PD-01.html">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a" href="MK-01.html">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a" href="ST-01.html">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a" href="TM-01.html">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a on" href="SE-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><a class="back" href="SE-01.html">‹ 사업장 정보</a><div class="page-hd">
+  <div><h1 class="t-page">내 계정</h1><p class="t-sub">박지우 · 원장 · 관리자 권한</p></div>
+  </div>
+
+<div style="max-width:760px">
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">프로필</h3></div>
+  <div class="card-bd ">
+    <div class="row" style="gap:var(--sp-card-pad);align-items:flex-start">
+      <div style="width:96px"><div class="ph t1 ph-round " style="aspect-ratio:400/400"><span class="lb">이미지 영역 (프로필 사진 · <span class="sz">권장 400×400</span>)</span></div></div>
+      <div class="grow">
+        <div class="f2">
+          <label class="field">
+  <span class="lb">이름<span class="req">*</span></span>
+  <input class="in " type="text" value="박지우"></label>
+          <label class="field">
+  <span class="lb">연락처</span>
+  <input class="in " type="tel" value="010-1234-5678"></label>
+        </div>
+        <label class="field">
+  <span class="lb">이메일</span>
+  <input class="in " type="email" value="jiwoo@salon.example" disabled><span class="hint">로그인에 쓰는 주소라 바꾸려면 원장 권한이 필요합니다.</span></label>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">보안</h3></div>
+  <div class="card-bd ">
+    <label class="field">
+  <span class="lb">비밀번호 변경</span>
+  <div class="stack">
+      <input class="in " type="password" placeholder="지금 비밀번호">
+      <input class="in " type="password" placeholder="새 비밀번호 (8자 이상, 숫자·영문 섞어서)">
+      <input class="in " type="password" placeholder="새 비밀번호 다시">
+    </div></label>
+    <div class="btns mb6"><button class="btn btn-pri" type="button" data-toast="비밀번호를 바꿨어요. 다른 기기는 다시 로그인해야 합니다" data-toast-kind="ok">비밀번호 바꾸기</button></div>
+    <div class="row-b">
+      <div>
+        <div class="strong">2단계 인증</div>
+        <div class="t-sub">로그인할 때 문자로 온 숫자를 한 번 더 넣습니다. 계정 도용을 크게 줄여 줍니다.</div>
+      </div>
+      <button class="toggle" type="button" aria-pressed="false" data-toast="2단계 인증을 켰어요"></button>
+    </div></div>
+  </div>
+
+  <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">접속 중인 기기</h3><button class="btn btn-ghost btn-sm" type="button" data-toast="이 기기만 남기고 모두 로그아웃했어요" data-toast-kind="ok">다른 기기 모두 로그아웃</button></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th>기기</th><th>위치</th><th style="width:124px">마지막 접속</th><th style="width:84px"></th></tr></thead><tbody><tr><td><b>Chrome · Windows</b> <span class="badge b-ok">지금 이 기기</span></td><td>서울</td><td><span class="num sub">2026-08-10 09:12</span></td><td></td></tr><tr><td>Safari · iPhone</td><td>서울</td><td><span class="num sub">2026-08-09 21:40</span></td><td><button class="btn btn-dan btn-sm" type="button" data-toast="그 기기에서 로그아웃했어요">로그아웃</button></td></tr></tbody></table></div></div>
+  </div>
+
+  <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">개인 설정</h3></div>
+  <div class="card-bd ">
+    <div class="f2">
+      <label class="field">
+  <span class="lb">언어</span>
+  <select class="sel"><option selected>한국어</option><option>English</option></select></label>
+      <label class="field">
+  <span class="lb">시간대</span>
+  <select class="sel"><option selected>(GMT+9) 서울</option><option>(GMT+0) 런던</option></select></label>
+    </div>
+    <label class="check">
+  <input type="checkbox" checked>
+  <span>내 알림을 이메일로도 받기</span></label></div>
+  </div>
+
+  <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">계정 정리</h3></div>
+  <div class="card-bd ">
+    <p class="t-sub">탈퇴하면 <b>내 계정만</b> 사라집니다. 사업장 데이터(고객·예약·주문)는 남습니다.
+    사업장 자체를 닫으려면 원장 계정으로 <a href="SE-01.html"><b>사업장 정보</b></a>에서 처리해 주세요.</p>
+    <div class="btns mt4"><button class="btn btn-ghost" type="button" data-modal="m-quit">탈퇴 안내 보기</button></div></div>
+  </div>
+
+  <div class="btns mt8" style="justify-content:flex-end">
+    <button class="btn btn-pri" type="button" data-toast="내 계정 정보를 저장했어요" data-toast-kind="ok">저장</button>
+    <a class="btn btn-ghost" href="AC-01.html">로그아웃</a>
+  </div>
+</div>
+
+<template id="m-quit"><div class="modal">
+  <div class="m-hd"><h3 class="t-card">탈퇴하면 이렇게 됩니다</h3><button class="x" type="button" data-dismiss aria-label="닫기">✕</button></div>
+  <div class="m-bd"><ul class="stack">
+    <li>· 내 계정으로는 더 이상 로그인할 수 없습니다.</li>
+    <li>· 내가 남긴 <b>활동 로그와 메모는 남습니다</b> — 누가 무엇을 했는지 기록이라 지울 수 없습니다.</li>
+    <li>· 담당으로 지정된 고객은 <b>담당 없음</b>이 됩니다.</li>
+    <li>· 되돌릴 수 없습니다.</li>
+  </ul></div><div class="m-ft"><button class="btn btn-ghost" type="button" data-dismiss>닫기</button><button class="btn btn-dan" type="button" data-dismiss data-toast="탈퇴 신청을 접수했어요. 원장 승인 후 처리됩니다">탈퇴 신청</button></div></div></template></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">SE-04 · 내 계정</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>설정</dd>
+        <dt>기능정의</dt><dd>프로필(이름·연락처·프로필 사진) · 이메일 · 비밀번호 변경 · 2단계 인증 설정 · 알림 개인 설정 · 접속 기기 관리와 로그아웃 · 언어·시간대 · 회원 탈퇴 안내 · 로그아웃 버튼</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="AC-01.html">로그아웃 → 로그인</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>발송 실패 상세 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a" href="BK-01.html">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a" href="OR-01.html">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a" href="CU-01.html">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a" href="PD-01.html">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a on" href="MK-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a" href="ST-01.html">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a" href="TM-01.html">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a" href="SE-01.html">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><a class="back" href="MK-01.html">‹ 알림 발송 작성</a><div class="page-hd">
+  <div><h1 class="t-page">발송 실패 상세</h1><p class="t-sub">M-3310 · 2026-08-08 18:30 · 알림톡 · 노쇼 안내</p></div>
+  <div class="btns"><a class="btn btn-ghost" href="MK-02.html">발송 이력</a><a class="btn btn-pri" href="MK-01.html">유효 번호만 다시 보내기</a></div></div>
+
+<div class="g4 mb6"><div class="stat ">
+  <div class="l">보낸 수</div><div class="n">2건</div></div><div class="stat ok">
+  <div class="l">성공</div><div class="n">1건</div></div><div class="stat dan">
+  <div class="l">실패</div><div class="n">1건</div></div><div class="stat ">
+  <div class="l">든 비용</div><div class="n">26원</div></div></div>
+
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">실패한 까닭</h3></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th>사유</th><th style="width:64px" class="r">건수</th><th>어떻게 하면 되나</th></tr></thead><tbody><tr><td>없는 번호</td><td class="r"><span class="num">1</span></td><td>고객 정보에서 연락처를 고쳐 주세요. 아래 목록에서 바로 갈 수 있어요.</td></tr><tr><td>수신거부</td><td class="r"><span class="num">0</span></td><td>광고성 메시지는 보낼 수 없습니다. 예약 안내는 갑니다.</td></tr><tr><td>잔액 부족</td><td class="r"><span class="num">0</span></td><td>충전하면 자동으로 재발송됩니다.</td></tr><tr><td>수신 차단</td><td class="r"><span class="num">0</span></td><td>고객이 매장 번호를 차단했습니다. 다른 채널로 보내세요.</td></tr></tbody></table></div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">수신자별 결과</h3></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th>고객</th><th>연락처</th><th style="width:80px">결과</th><th>사유</th><th style="width:104px"></th></tr></thead><tbody><tr><td>오재현</td><td><span class="num">010-2210-6647</span></td><td><span class="badge b-dan">발송실패</span></td><td>없는 번호 (수신처 없음)</td><td><a class="btn btn-ghost btn-sm" href="CU-02.html">연락처 고치기</a></td></tr><tr><td>윤채린</td><td><span class="num">010-8834-1902</span></td><td><span class="badge b-ok">발송완료</span></td><td><span class="muted">-</span></td><td></td></tr></tbody></table></div></div>
+  </div>
+
+<div class="g2 mt8">
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">다시 보내기</h3></div>
+  <div class="card-bd "><p class="t-sub mb4">실패한 번호를 빼고 <b>유효한 번호만</b> 골라 다시 보냅니다.</p>
+    <a class="btn btn-pri btn-w" href="MK-01.html">유효 번호만 재발송</a></div>
+  </div>
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">잔액·설정</h3></div>
+  <div class="card-bd "><div class="sum-row "><span class="muted">남은 잔액</span><span><span class="num">48,200원</span></span></div><div class="sum-row "><span class="muted">자동 충전</span><span>꺼짐</span></div>
+  
+    <div class="btns-v mt4"><a class="btn btn-ghost btn-w" href="SE-02.html">충전하러 가기</a><a class="btn btn-ghost btn-w" href="SE-03.html">알림 설정</a></div></div>
+  </div>
+</div></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">MK-03 · 발송 실패 상세</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>메시지·알림</dd>
+        <dt>기능정의</dt><dd>실패 발송 요약 · 실패 사유별 분류(번호 오류·수신거부·잔액 부족·차단) · 수신자별 실패 목록 · 사유별 대처 안내 · 유효 번호만 골라 재발송 · 잘못된 번호 고객 정보 수정 링크 · 충전/설정 바로가기</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="MK-01.html">다시 보내기 → 알림 발송 작성</a><a href="MK-02.html">발송 이력 → 발송 이력</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

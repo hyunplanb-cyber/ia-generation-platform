@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>로그인 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<style>
+.solo-wrap{min-height:100vh;display:grid;place-items:center;padding:var(--sp-block) var(--sp-wrap)}
+.solo-card{width:100%;max-width:392px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:32px}
+.solo-hd{display:flex;align-items:center;gap:8px;margin-bottom:var(--sp-block);font-size:var(--fs-card)}
+.solo-hd .mark{width:24px;height:24px;border-radius:var(--r-badge);background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font-size:12px;font-weight:700}
+</style>
+<div class="solo-wrap"><div class="solo-card">
+  <div class="solo-hd"><span class="mark">S</span><b>살롱드무드 관리 시스템</b></div>
+  <h1 class="t-sec mb2">살롱드무드 강남점 관리 시스템</h1><p class="t-sub mb6">사장님과 직원이 쓰는 화면입니다. 손님용 예약 페이지와 다릅니다.</p><form>
+      <label class="field">
+  <span class="lb">이메일<span class="req">*</span></span>
+  <input class="in " type="email" placeholder="name@salon.example" value="jiwoo@salon.example"></label>
+      <label class="field">
+  <span class="lb">비밀번호<span class="req">*</span></span>
+  <div class="in-row"><input class="in " type="password" value="············">
+         <button class="btn btn-ghost" type="button" data-toast="비밀번호를 화면에 보여 줍니다" aria-label="비밀번호 표시">👁</button></div></label>
+      <div class="row-b mt4">
+        <label class="check none">
+  <input type="checkbox" checked>
+  <span>로그인 상태 유지</span></label>
+        <a class="t-sub" href="AC-02.html"><b>비밀번호를 잊으셨나요?</b></a>
+      </div>
+      <a class="btn btn-pri btn-w" href="DB-01.html">로그인</a>
+    </form>
+    <div class="banner banner-warn mt6"><span class="ico">⚠</span><div class="grow">비밀번호를 <b>5번</b> 틀리면 계정이 잠깁니다. 잠기면 원장님께 잠금 해제를 요청해 주세요.</div></div>
+    <p class="t-sub mt4">접속 환경 — Chrome 128 · Windows · 203.0.113.24<br>
+    공용 PC에서는 「로그인 상태 유지」를 꺼 주세요.</p></div></div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">AC-01 · 로그인</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>계정·접근</dd>
+        <dt>기능정의</dt><dd>브랜드 로고와 시스템명 · 이메일 입력 · 비밀번호 입력 · 로그인 상태 유지 체크 · 로그인 버튼 · 비밀번호 찾기 링크 · 로그인 실패 안내(비밀번호 5회 오류 시 잠금) · 접속 환경 안내</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="DB-01.html">로그인 → 대시보드 홈</a><a href="AC-02.html">비밀번호 찾기 → 비밀번호 재설정</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

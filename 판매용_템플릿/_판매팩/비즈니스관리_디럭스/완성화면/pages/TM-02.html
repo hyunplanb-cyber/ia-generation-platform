@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>직원 초대·권한 설정 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a" href="BK-01.html">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a" href="OR-01.html">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a" href="CU-01.html">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a" href="PD-01.html">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a" href="MK-01.html">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a" href="ST-01.html">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a on" href="TM-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a" href="SE-01.html">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><a class="back" href="TM-01.html">‹ 직원 목록</a><div class="page-hd">
+  <div><h1 class="t-page">직원 초대</h1><p class="t-sub">이메일을 보내면 그 사람이 스스로 비밀번호를 정합니다.</p></div>
+  </div>
+
+<div class="split-r">
+  <div>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">누구를</h3></div>
+  <div class="card-bd ">
+      <label class="field">
+  <span class="lb">이메일<span class="req">*</span></span>
+  <input class="in " type="email" placeholder="name@salon.example"><span class="hint">이 주소로 초대 메일이 갑니다.</span></label>
+      <div class="f2">
+        <label class="field">
+  <span class="lb">이름<span class="req">*</span></span>
+  <input class="in " type="text" placeholder="홍길동"></label>
+        <label class="field">
+  <span class="lb">역할</span>
+  <select class="sel"><option selected>디자이너</option><option>원장</option><option>인턴</option><option>리셉션</option></select></label>
+      </div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">권한 등급</h3></div>
+  <div class="card-bd ">
+      <div class="stack">
+        <label class="check none">
+  <input type="checkbox">
+  <span>관리자 — 모든 메뉴. 정산·환불·권한 변경까지</span></label>
+        <label class="check none">
+  <input type="checkbox" checked>
+  <span>매니저 — 고객·예약·주문·상품. 정산과 권한 변경은 못 함</span></label>
+        <label class="check none">
+  <input type="checkbox">
+  <span>일반 — 자기 담당 고객과 예약만</span></label>
+      </div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">메뉴별로 더 세밀하게</h3><button class="btn btn-ghost btn-sm" type="button" data-toast="매니저 기본값으로 되돌렸어요">등급 기본값으로</button></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th>메뉴</th><th style="width:60px" class="c">보기</th><th style="width:60px" class="c">편집</th><th style="width:60px" class="c">삭제</th></tr></thead><tbody><tr><td>대시보드</td><td class="c"><input type="checkbox" checked aria-label="대시보드 보기"></td><td class="c"><input type="checkbox" checked aria-label="대시보드 편집"></td><td class="c"><input type="checkbox" checked aria-label="대시보드 삭제"></td></tr><tr><td>고객 관리</td><td class="c"><input type="checkbox" checked aria-label="고객 관리 보기"></td><td class="c"><input type="checkbox" checked aria-label="고객 관리 편집"></td><td class="c"><input type="checkbox" checked aria-label="고객 관리 삭제"></td></tr><tr><td>예약·일정</td><td class="c"><input type="checkbox" checked aria-label="예약·일정 보기"></td><td class="c"><input type="checkbox" checked aria-label="예약·일정 편집"></td><td class="c"><input type="checkbox"  aria-label="예약·일정 삭제"></td></tr><tr><td>주문·매출</td><td class="c"><input type="checkbox" checked aria-label="주문·매출 보기"></td><td class="c"><input type="checkbox" checked aria-label="주문·매출 편집"></td><td class="c"><input type="checkbox"  aria-label="주문·매출 삭제"></td></tr><tr><td>상품·재고</td><td class="c"><input type="checkbox" checked aria-label="상품·재고 보기"></td><td class="c"><input type="checkbox" checked aria-label="상품·재고 편집"></td><td class="c"><input type="checkbox"  aria-label="상품·재고 삭제"></td></tr><tr><td>메시지·알림</td><td class="c"><input type="checkbox" checked aria-label="메시지·알림 보기"></td><td class="c"><input type="checkbox"  aria-label="메시지·알림 편집"></td><td class="c"><input type="checkbox"  aria-label="메시지·알림 삭제"></td></tr><tr><td>통계·리포트</td><td class="c"><input type="checkbox" checked aria-label="통계·리포트 보기"></td><td class="c"><input type="checkbox"  aria-label="통계·리포트 편집"></td><td class="c"><input type="checkbox"  aria-label="통계·리포트 삭제"></td></tr><tr><td>직원·권한</td><td class="c"><input type="checkbox"  aria-label="직원·권한 보기"></td><td class="c"><input type="checkbox"  aria-label="직원·권한 편집"></td><td class="c"><input type="checkbox"  aria-label="직원·권한 삭제"></td></tr><tr><td>설정</td><td class="c"><input type="checkbox"  aria-label="설정 보기"></td><td class="c"><input type="checkbox"  aria-label="설정 편집"></td><td class="c"><input type="checkbox"  aria-label="설정 삭제"></td></tr></tbody></table></div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">담당 범위와 근무</h3></div>
+  <div class="card-bd ">
+      <label class="field">
+  <span class="lb">담당 고객</span>
+  <select class="sel"><option selected>담당 지정 안 함</option><option>내가 예약받은 고객만</option><option>특정 등급만</option></select></label>
+      <label class="field">
+  <span class="lb">근무 요일</span>
+  <div class="chips"><button class="chip on" type="button">월</button><button class="chip on" type="button">화</button><button class="chip on" type="button">수</button><button class="chip on" type="button">목</button><button class="chip on" type="button">금</button><button class="chip" type="button">토</button><button class="chip" type="button">일</button></div></label>
+      <div class="f2">
+        <label class="field">
+  <span class="lb">출근</span>
+  <input class="in " type="time" value="10:00"></label>
+        <label class="field">
+  <span class="lb">퇴근</span>
+  <input class="in " type="time" value="19:00"></label>
+      </div></div>
+  </div>
+  </div>
+
+  <div class="sticky stack">
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">이 사람에게 보일 화면</h3></div>
+  <div class="card-bd "><div class="stack">
+      <div class="row-b"><span class="">대시보드</span><span class="badge b-ok">편집</span></div><div class="row-b"><span class="">고객 관리</span><span class="badge b-ok">편집</span></div><div class="row-b"><span class="">예약·일정</span><span class="badge b-ok">편집</span></div><div class="row-b"><span class="">주문·매출</span><span class="badge b-ok">편집</span></div><div class="row-b"><span class="">상품·재고</span><span class="badge b-ok">편집</span></div><div class="row-b"><span class="">메시지·알림</span><span class="badge b-mut">보기만</span></div><div class="row-b"><span class="">통계·리포트</span><span class="badge b-mut">보기만</span></div><div class="row-b"><span class="muted">직원·권한</span><span class="badge b-mut">안 보임</span></div><div class="row-b"><span class="muted">설정</span><span class="badge b-mut">안 보임</span></div>
+    </div></div>
+  <div class="card-ft"><div class="btns-v">
+        <button class="btn btn-pri btn-w" type="button" data-toast="초대 메일을 보냈어요. 7일 안에 가입해야 합니다" data-toast-kind="ok">초대 메일 보내기</button>
+        <a class="btn btn-ghost btn-w" href="TM-01.html">목록으로</a>
+      </div></div></div>
+    <div class="banner banner-info "><span class="ico">ℹ</span><div class="grow">권한을 바꾸면 <b>활동 로그에 남습니다.</b> 누가 언제 무엇을 열어 줬는지 나중에 볼 수 있어요.</div></div>
+  </div>
+</div></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">TM-02 · 직원 초대·권한 설정</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>직원·권한</dd>
+        <dt>기능정의</dt><dd>이메일로 초대 · 이름·역할 입력 · 권한 등급 선택 · 메뉴별 접근 권한 세부 설정(보기·편집·삭제 체크) · 담당 범위 지정 · 근무 시간·요일 설정 · 초대 메일 발송 · 권한 미리보기 · 저장</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="TM-01.html">직원 목록 → 직원 목록</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

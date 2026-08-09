@@ -96,6 +96,15 @@
       "port": 4191
     },
     {
+      "name": "비즈니스관리-디럭스",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_판매팩/비즈니스관리_디럭스/완성화면",
+      "port": 4182
+    },
+    {
       "name": "LMS-새것",
       "runtimeExecutable": "node",
       "runtimeArgs": [
