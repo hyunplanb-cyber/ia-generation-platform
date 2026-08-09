@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>날짜별 가용 재고 달력 &gt; 수량별 가능일 재계산 · 빌려쓰기</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<header class="gnb"><div class="gnb-in">
+  <a class="logo" href="HO0101.html"><span class="mark">빌</span>빌려쓰기</a>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="HO0201.html">캠핑장비</a><a href="HO0201.html">카메라장비</a><a href="PD0601.html">패키지</a><a href="HO0501.html">기획전</a><a href="CS0301.html">이용안내</a></nav>
+  <div class="gnb-right">
+    <a class="cart" href="CT0101.html" aria-label="장바구니"><span aria-hidden="true">🧺</span><span class="n">2</span></a>
+    <a class="btn btn-ghost btn-sm" href="MY0101.html">내 대여</a>
+  </div>
+</div></header>
+
+<main class="main"><div class="wrap"><a class="back" href="PD0301.html">‹ 날짜별 가용 재고 달력</a><nav class="crumb" aria-label="위치">
+  <a href="HO0101.html">홈</a><span class="sep">›</span>
+  <a href="PD0301.html">재고 달력</a><span class="sep">›</span>
+  <span>안쪽 화면</span></nav>
+<div class="page-hd">
+  <div><h1 class="t-page">수량을 바꾸면 달력이 다시 칠해집니다</h1><p class="t-sub">같은 달인데 수량에 따라 열리는 날이 달라집니다.</p></div>
+  </div>
+<div class="g2">
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">1개 — 24일 가능</h3></div>
+  <div class="card-bd "><div class="cal-hd">
+    <button class="cal-mv" type="button" data-mv="-1" aria-label="이전 달" disabled>‹</button>
+    <span class="cal-m">2026년 8월</span>
+    <button class="cal-mv" type="button" data-mv="1" aria-label="다음 달">›</button>
+  </div>
+  <div class="cal-grid">
+    <div class="hd">일</div><div class="hd">월</div><div class="hd">화</div><div class="hd">수</div><div class="hd">목</div><div class="hd">금</div><div class="hd">토</div>
+    <div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><button class="cal-d past" type="button" disabled aria-label="8월 1일 불가"><span class="dd">1</span></button><button class="cal-d past" type="button" disabled aria-label="8월 2일 불가"><span class="dd">2</span></button><button class="cal-d past" type="button" disabled aria-label="8월 3일 불가"><span class="dd">3</span></button><button class="cal-d past" type="button" disabled aria-label="8월 4일 불가"><span class="dd">4</span></button><button class="cal-d past" type="button" disabled aria-label="8월 5일 불가"><span class="dd">5</span></button><button class="cal-d past" type="button" disabled aria-label="8월 6일 불가"><span class="dd">6</span></button><button class="cal-d past" type="button" disabled aria-label="8월 7일 불가"><span class="dd">7</span></button><button class="cal-d past" type="button" disabled aria-label="8월 8일 불가"><span class="dd">8</span></button><button class="cal-d past" type="button" disabled aria-label="8월 9일 불가"><span class="dd">9</span></button><button class="cal-d plenty" type="button" aria-label="8월 10일 5대 가능"><span class="dd">10</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 11일 5대 가능"><span class="dd">11</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 12일 5대 가능"><span class="dd">12</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 13일 4대 가능"><span class="dd">13</span><span class="n">4대</span></button><button class="cal-d plenty" type="button" aria-label="8월 14일 3대 가능"><span class="dd">14</span><span class="n">3대</span><span class="fee">주말 +20%</span></button><button class="cal-d few" type="button" aria-label="8월 15일 2대 가능"><span class="dd">15</span><span class="n">2대</span><span class="fee">주말 +20%</span></button><button class="cal-d few" type="button" aria-label="8월 16일 2대 가능"><span class="dd">16</span><span class="n">2대</span></button><button class="cal-d few" type="button" aria-label="8월 17일 2대 가능"><span class="dd">17</span><span class="n">2대</span></button><button class="cal-d plenty" type="button" aria-label="8월 18일 4대 가능"><span class="dd">18</span><span class="n">4대</span></button><button class="cal-d fix" type="button" disabled data-why="반납 다음 날은 손질하는 날이라 못 빌려요" aria-label="8월 19일 불가"><span class="dd">19</span><span class="n">점검일</span></button><button class="cal-d plenty" type="button" aria-label="8월 20일 3대 가능"><span class="dd">20</span><span class="n">3대</span></button><button class="cal-d plenty" type="button" aria-label="8월 21일 3대 가능"><span class="dd">21</span><span class="n">3대</span><span class="fee">주말 +20%</span></button><button class="cal-d few" type="button" aria-label="8월 22일 1대 가능"><span class="dd">22</span><span class="n">1대</span><span class="fee">주말 +20%</span></button><button class="cal-d none" type="button" disabled aria-label="8월 23일 불가"><span class="dd">23</span><span class="n">0대</span></button><button class="cal-d few" type="button" aria-label="8월 24일 2대 가능"><span class="dd">24</span><span class="n">2대</span></button><button class="cal-d fix" type="button" disabled data-why="반납 다음 날은 손질하는 날이라 못 빌려요" aria-label="8월 25일 불가"><span class="dd">25</span><span class="n">점검일</span></button><button class="cal-d plenty" type="button" aria-label="8월 26일 5대 가능"><span class="dd">26</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 27일 5대 가능"><span class="dd">27</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 28일 5대 가능"><span class="dd">28</span><span class="n">5대</span><span class="fee">주말 +20%</span></button><button class="cal-d plenty" type="button" aria-label="8월 29일 3대 가능"><span class="dd">29</span><span class="n">3대</span><span class="fee">주말 +20%</span></button><button class="cal-d few" type="button" aria-label="8월 30일 2대 가능"><span class="dd">30</span><span class="n">2대</span></button><button class="cal-d plenty" type="button" aria-label="8월 31일 5대 가능"><span class="dd">31</span><span class="n">5대</span></button>
+  </div>
+  <div class="cal-legend">
+    <span><i style="background:rgba(21,128,61,.10)"></i>넉넉해요 (3대 이상)</span>
+    <span><i style="background:rgba(161,98,7,.12)"></i>얼마 안 남았어요 (1~2대)</span>
+    <span><i style="background:#F4F6F4"></i>다 나갔어요</span>
+    <span><i style="background:repeating-linear-gradient(45deg,#F4F6F4,#F4F6F4 3px,#EDF0ED 3px,#EDF0ED 6px)"></i>점검일</span>
+  </div></div>
+  </div>
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">3개 — 16일 가능</h3></div>
+  <div class="card-bd "><div class="cal-hd">
+    <button class="cal-mv" type="button" data-mv="-1" aria-label="이전 달" disabled>‹</button>
+    <span class="cal-m">2026년 8월</span>
+    <button class="cal-mv" type="button" data-mv="1" aria-label="다음 달">›</button>
+  </div>
+  <div class="cal-grid">
+    <div class="hd">일</div><div class="hd">월</div><div class="hd">화</div><div class="hd">수</div><div class="hd">목</div><div class="hd">금</div><div class="hd">토</div>
+    <div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><div class="cal-d past" aria-hidden="true"></div><button class="cal-d past" type="button" disabled aria-label="8월 1일 불가"><span class="dd">1</span></button><button class="cal-d past" type="button" disabled aria-label="8월 2일 불가"><span class="dd">2</span></button><button class="cal-d past" type="button" disabled aria-label="8월 3일 불가"><span class="dd">3</span></button><button class="cal-d past" type="button" disabled aria-label="8월 4일 불가"><span class="dd">4</span></button><button class="cal-d past" type="button" disabled aria-label="8월 5일 불가"><span class="dd">5</span></button><button class="cal-d past" type="button" disabled aria-label="8월 6일 불가"><span class="dd">6</span></button><button class="cal-d past" type="button" disabled aria-label="8월 7일 불가"><span class="dd">7</span></button><button class="cal-d past" type="button" disabled aria-label="8월 8일 불가"><span class="dd">8</span></button><button class="cal-d past" type="button" disabled aria-label="8월 9일 불가"><span class="dd">9</span></button><button class="cal-d plenty" type="button" aria-label="8월 10일 5대 가능"><span class="dd">10</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 11일 5대 가능"><span class="dd">11</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 12일 5대 가능"><span class="dd">12</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 13일 4대 가능"><span class="dd">13</span><span class="n">4대</span></button><button class="cal-d plenty" type="button" aria-label="8월 14일 3대 가능"><span class="dd">14</span><span class="n">3대</span><span class="fee">주말 +20%</span></button><button class="cal-d none" type="button" disabled aria-label="8월 15일 불가"><span class="dd">15</span><span class="n">2대</span></button><button class="cal-d none" type="button" disabled aria-label="8월 16일 불가"><span class="dd">16</span><span class="n">2대</span></button><button class="cal-d none" type="button" disabled aria-label="8월 17일 불가"><span class="dd">17</span><span class="n">2대</span></button><button class="cal-d plenty" type="button" aria-label="8월 18일 4대 가능"><span class="dd">18</span><span class="n">4대</span></button><button class="cal-d fix" type="button" disabled data-why="반납 다음 날은 손질하는 날이라 못 빌려요" aria-label="8월 19일 불가"><span class="dd">19</span><span class="n">점검일</span></button><button class="cal-d plenty" type="button" aria-label="8월 20일 3대 가능"><span class="dd">20</span><span class="n">3대</span></button><button class="cal-d plenty" type="button" aria-label="8월 21일 3대 가능"><span class="dd">21</span><span class="n">3대</span><span class="fee">주말 +20%</span></button><button class="cal-d none" type="button" disabled aria-label="8월 22일 불가"><span class="dd">22</span><span class="n">1대</span></button><button class="cal-d none" type="button" disabled aria-label="8월 23일 불가"><span class="dd">23</span><span class="n">0대</span></button><button class="cal-d none" type="button" disabled aria-label="8월 24일 불가"><span class="dd">24</span><span class="n">2대</span></button><button class="cal-d fix" type="button" disabled data-why="반납 다음 날은 손질하는 날이라 못 빌려요" aria-label="8월 25일 불가"><span class="dd">25</span><span class="n">점검일</span></button><button class="cal-d plenty" type="button" aria-label="8월 26일 5대 가능"><span class="dd">26</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 27일 5대 가능"><span class="dd">27</span><span class="n">5대</span></button><button class="cal-d plenty" type="button" aria-label="8월 28일 5대 가능"><span class="dd">28</span><span class="n">5대</span><span class="fee">주말 +20%</span></button><button class="cal-d plenty" type="button" aria-label="8월 29일 3대 가능"><span class="dd">29</span><span class="n">3대</span><span class="fee">주말 +20%</span></button><button class="cal-d none" type="button" disabled aria-label="8월 30일 불가"><span class="dd">30</span><span class="n">2대</span></button><button class="cal-d plenty" type="button" aria-label="8월 31일 5대 가능"><span class="dd">31</span><span class="n">5대</span></button>
+  </div>
+  <div class="cal-legend">
+    <span><i style="background:rgba(21,128,61,.10)"></i>넉넉해요 (3대 이상)</span>
+    <span><i style="background:rgba(161,98,7,.12)"></i>얼마 안 남았어요 (1~2대)</span>
+    <span><i style="background:#F4F6F4"></i>다 나갔어요</span>
+    <span><i style="background:repeating-linear-gradient(45deg,#F4F6F4,#F4F6F4 3px,#EDF0ED 3px,#EDF0ED 6px)"></i>점검일</span>
+  </div></div>
+  </div>
+</div>
+<div class="banner banner-info mt6"><span class="ico">🔢</span><div class="grow"><b>수량이 곧 조건입니다.</b> 3대를 빌리시려면 그날 3대가 «동시에» 비어 있어야 해요.</div></div>
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">최대 몇 개까지 되나</h3></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th>기간</th><th style="width:104px" class="r">최대 수량</th><th>메모</th></tr></thead><tbody><tr><td>8/13 ~ 8/15</td><td class="r"><span class="num">3개</span></td><td>14일에 3대가 한계</td></tr><tr><td>8/15 ~ 8/17</td><td class="r"><b class="num">2개</b></td><td>16일에 2대가 한계</td></tr><tr><td>8/26 ~ 8/28</td><td class="r"><span class="num">5개</span></td><td>전부 비어 있음</td></tr></tbody></table></div></div>
+  </div>
+<div class="card mt8">
+  <div class="card-hd"><h3 class="t-card">이 화면이 다루는 것</h3></div>
+  <div class="card-bd "><dl class="kv "><dt>수량을 올리면</dt><dd>그 수량이 안 되는 날이 회색으로 바뀐다</dd><dt>최대 수량</dt><dd>고른 기간에서 가장 적게 남은 날이 한계가 된다</dd><dt>왜 그런가</dt><dd>기간 내내 «동시에» 비어 있어야 하기 때문</dd><dt>안내</dt><dd>한계를 넘기면 「이 기간엔 최대 2개까지」라고 알린다</dd></dl></div>
+  </div>
+<div class="btns mt6"><a class="btn btn-ghost" href="PD0301.html">‹ 재고 달력로 돌아가기</a></div></div></main>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">PD0305 · 날짜별 가용 재고 달력 &gt; 수량별 가능일 재계산</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>장비</dd>
+        <dt>기능정의</dt><dd>수량 변경 시 달력 전체 재도색 · 그 수량으로 불가한 날 비활성 · 최대 가능 수량 안내</dd>
+        
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

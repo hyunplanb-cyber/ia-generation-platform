@@ -18,11 +18,13 @@ import { BEAUTY } from "@/template-data-beauty";
 import { TRAVEL } from "@/template-data-travel";
 import { GROUPBUY } from "@/template-data-groupbuy";
 import { MATCHING } from "@/template-data-matching";
+import { RENTAL } from "@/template-data-rental";
 import { LMS_DEEP } from "@/template-data-lms-deep";
 import { BEAUTY_DEEP } from "@/template-data-beauty-deep";
 import { TRAVEL_DEEP } from "@/template-data-travel-deep";
 import { GROUPBUY_DEEP } from "@/template-data-groupbuy-deep";
 import { MATCHING_DEEP } from "@/template-data-matching-deep";
+import { RENTAL_DEEP } from "@/template-data-rental-deep";
 import type { DeepInput } from "@/template-deep";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
 
@@ -669,6 +671,66 @@ export const PACKAGES: PackageDef[] = [
       ],
     },
   },
+  {
+    id: "rental",
+    title: "장비 렌탈·대여 예약 플랫폼",
+    category: "commerce",
+    industry: "렌탈·대여",
+    tagline:
+      "캠핑·카메라 장비를 날짜를 잡아 빌려주고 돌려받는 렌탈 예약 플랫폼 AI팩. 날짜별 재고 달력부터 반납·연체·보증금 정산까지",
+    /* 2뎁스 37화면은 내추럴 그린 + 검색 중심형,
+       3뎁스 161화면은 레트로 페이퍼 + 목록 중심형으로 만들었다(2026-08-10).
+       두 등급의 프리셋을 «일부러» 다르게 뒀다 — 같은 스펙팩이라도 프리셋을 갈아
+       끼우면 화면이 이렇게 달라진다는 것을 나란히 보여 주는 것이 이 팩의 값이다. */
+    plans: makePlans(
+      RENTAL,
+      RENTAL_DEEP,
+      { standard: null, plus: null, deluxe: null, premium: null },
+      { base: 37, deep: 161 },
+    ),
+    data: RENTAL,
+    deep: RENTAL_DEEP,
+    promptSamples: ["pd3", "rt5", "st2"],
+    presetStyles: ["forest", "mono", "retro"],
+    presetFits: [
+      "캠핑·아웃도어 장비 렌탈, 친환경·자연을 앞세우는 브랜드",
+      "카메라·음향처럼 사양이 중요한 전문 장비 렌탈, 표와 숫자가 주인공인 화면",
+      "빈티지·감성 소품 대여, 파티·촬영 소품처럼 분위기를 파는 대여",
+    ],
+    layoutKeys: ["search", "list"],
+    fileLabel: "장비렌탈",
+    integrations: [
+      { area: "로그인·회원가입", detail: "이메일 가입, 소셜 로그인, 고가 장비 신분 확인" },
+      { area: "결제·보증금", detail: "대여료 결제와 «보증금 카드 한도 보류»(승인 후 해제)" },
+      { area: "날짜별 재고", detail: "장비마다 날짜별 가용 수량 계산 — 쇼핑몰 재고와 다른 구조" },
+      { area: "택배 왕복", detail: "발송 예약과 회수 신청, 송장 조회" },
+      { area: "알림", detail: "수령 안내·반납 하루 전·3시간 전·연체·환급 완료" },
+      { area: "정산·환급", detail: "연체료·파손 배상 계산과 보증금 차감, 초과분 카드 청구" },
+    ],
+    audience: [
+      "캠핑·카메라 장비 렌탈 사이트를 만들려는 분",
+      "물건을 «기간»으로 빌려주는 서비스를 준비하는 창업자",
+      "쇼핑몰 솔루션으로는 안 되는 대여 구조를 설계해야 하는 분",
+    ],
+    painPoints: [
+      "쇼핑몰 재고는 「몇 개 남았나」인데 렌탈 재고는 「이 날짜에 비었나」라, 상품 모델부터 다르다",
+      "보증금은 대여료와 다른 돈인데 한 화면에 섞이면 손님이 반드시 오해한다",
+      "같은 「이용 중」 화면이 반납 하루 전·당일·연체 중에 각각 달라야 한다",
+      "반납은 접수·점검·정산·환급 네 단계라 화면이 그만큼 갈린다",
+    ],
+    seo: {
+      title: "장비 렌탈 예약 플랫폼 화면설계서 · 대여 서비스 AI팩",
+      description:
+        "캠핑·카메라 장비 렌탈 예약 플랫폼 AI팩(기획 산출물 한 벌)입니다. 날짜별 재고 달력·보증금·반납·연체·파손 정산까지 화면 목록과 기능정의를 미리 확인하세요.",
+      keywords: [
+        "렌탈 사이트 기획서",
+        "대여 예약 플랫폼 화면설계서",
+        "장비 렌탈 기능정의서",
+        "보증금 결제 기획",
+        "날짜별 재고 관리 설계",
+      ],
+    },
+  },
 ];
 
 /**
@@ -682,7 +744,7 @@ export const PACKAGES: PackageDef[] = [
  *   여행 43/144 · 뷰티샵 49/136 · 공동구매 37/125 · LMS 44/132 · 매칭 43/159
  *   (디럭스 2뎁스 화면 수 / 프리미엄 3뎁스 화면 수)
  */
-const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching"]);
+const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental"]);
 
 /**
  * 이 등급 zip에 실제로 들어가는 것.

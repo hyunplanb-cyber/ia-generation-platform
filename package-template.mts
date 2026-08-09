@@ -95,6 +95,14 @@ const INDUSTRIES = [
     // 두 등급의 프리셋이 다르다 — 디럭스는 코럴 선셋, 프리미엄은 미니멀 모노.
     siteBase: `${T}/공동구매_공구_완성화면_디럭스`,
     siteDeep: `${T}/공동구매_공구_완성화면_프리미엄` },
+  { key: "rental", label: "장비렌탈", title: "장비 렌탈·대여 예약 플랫폼",
+    base: `${W}/장비렌탈_대여예약`, deep: `${W}/장비렌탈_대여예약_상세IA`,
+    /* 두 등급의 프리셋이 다르다 — 디럭스는 내추럴 그린 + 검색 중심형,
+       프리미엄은 레트로 페이퍼 + 목록 중심형.
+
+       ⚠ siteBase·siteDeep 을 «일부러» 비운다. 완성화면이 이미 팩 안에 있어서
+         가리키면 원본과 대상이 같아져 copyFileSync 가 자기 자신을 덮어쓴다.
+         비워 두면 「팩에 있던 것을 그대로 둡니다」로 흘러가고 화면 수도 팩에서 센다. */ },
 ] as const satisfies readonly {
   key: string; label: string; title: string;
   base: string; deep: string; siteBase?: string; siteDeep?: string;
