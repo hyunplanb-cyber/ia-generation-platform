@@ -22,7 +22,7 @@
 import {
   LAYOUTS, STRUCTURE_COLS, THUMBS, cardWidth,
   DESIGN_OPTIONS, colorsFor, CONTENT_BG, DARK_BG, contrast, TEXT_CONTRAST_MIN,
-  accentTextOn, READING_WIDTH, BREAKPOINTS,
+  accentTextOn, textOn, READING_WIDTH, BREAKPOINTS,
 } from "./lib/design-presets";
 import { LMS } from "./template-data-lms";
 import { BEAUTY } from "./template-data-beauty";
@@ -125,6 +125,29 @@ for (const o of DESIGN_OPTIONS) {
     const 고른값 = accentTextOn(o, 바탕);
     if (contrast(고른값, 바탕) < TEXT_CONTRAST_MIN) {
       문제.push(`accentTextOn 이 ${바탕} 에서 ${고른값} 을 골랐는데 대비 ${contrast(고른값, 바탕).toFixed(2)} 입니다`);
+    }
+  }
+
+  /* 색을 «바탕으로» 깔았을 때 그 위 글자가 읽히나 — 반대 방향.
+   *
+   * 이 검사가 없어서 여섯 테마의 「버튼(주요)」가 전부 「흰 글자」로 적혀 있었고,
+   * 레트로(3.28)·코럴(3.14)의 버튼 글자가 안 읽혔다(2026-08-09).
+   * 위쪽 검사는 「이 색을 글자로 쓸 때」만 봤다 — 방향이 하나뿐이었다.
+   *
+   * 흰 글자를 강요하지 않는다. textOn 이 재서 고르므로, 여기서는
+   * **고른 값이 정말 읽히는지**만 본다. 어느 색이 와도 4.5 를 넘어야 한다. */
+  for (const [자리, 바탕] of [["주색(primary)", o.primary], ["강조색(accent)", o.accent]] as const) {
+    const 글자 = textOn(바탕);
+    const 값 = contrast(글자, 바탕);
+    if (값 < TEXT_CONTRAST_MIN) {
+      문제.push(
+        `${자리} ${바탕} 위에는 흰색도 먹색도 못 씁니다 — 고른 ${글자} 가 ${값.toFixed(2)} 입니다. `
+          + `버튼 글자가 안 읽히니 색 자체를 진하게 잡으세요`,
+      );
+    }
+    const 표값 = 색표[자리.startsWith("주색") ? "on-primary(주색 배경 위 글자)" : "on-accent(강조색 배경 위 글자)"];
+    if (표값 && 표값.toUpperCase() !== 글자.toUpperCase()) {
+      문제.push(`색 표의 ${자리} 위 글자가 ${표값} 인데 재서 고른 값은 ${글자} 입니다`);
     }
   }
 

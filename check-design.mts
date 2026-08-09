@@ -13,6 +13,7 @@
  *   3. 사진 자리에 비율이 없나          .thumb 에 aspect-ratio 없음 → 늘어나 타원이 된다
  *   4. 카드 구조가 맞나                .card 안에 .thumb/.body 가 없음
  *   5. 한국어 줄바꿈 규칙이 있나        word-break:keep-all 없으면 어절이 잘린다
+ *   9. 글자가 바탕 위에서 읽히나        대비 4.5(큰 글자 3.0). 바탕은 조상까지 거슬러 찾는다
  *
  * 띄워놓고 재는 것 (느리지만 진짜 값)
  *   6. 칸이 몇 개이고 카드가 몇 px 인가
@@ -38,6 +39,7 @@ import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import {
   LAYOUTS, STRUCTURES, THUMBS, STRUCTURE_COLS, GRID_GAP, cardWidth, gridBaseCss,
+  contrast, TEXT_CONTRAST_MIN,
 } from "./lib/design-presets";
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
@@ -203,6 +205,149 @@ for (const f of css들) {
   const 어딘가에 = [...css들, ...html들]
     .some((f) => /word-break\s*:\s*keep-all/.test(readFileSync(f, "utf8")));
   if (!어딘가에) 못됨("css 전체", "word-break: keep-all 이 없습니다 — 한국어 어절이 한가운데서 잘립니다");
+}
+
+/* ── 9. 글자가 바탕 위에서 읽히나 (색 대비) ─────────────────
+ *
+ * 왜 늦게 붙었나 — 2026-08-09
+ *   가이드의 색을 여러 번 고치는 동안(모노 #767676→#666666, 바이올렛, 코럴,
+ *   그리고 「글자용 강조색」 신설) **검사기는 색을 아예 안 보고 있었다.**
+ *   간격·카드구조·비율만 쟀다. 정작 가장 자주 바뀐 것이 사정권 밖이었다.
+ *   그래서 완성화면 여덟 세트가 가이드대로인지 사람이 손으로 재야 했다.
+ *   500장을 눈으로 볼 수는 없다 — 기계가 봐야 한다.
+ *
+ * 헛경보를 안 내는 것이 이 검사의 전부다.
+ *   손으로 재 봤더니 「대비 미달」로 보이는 것 대부분이 정상이었다.
+ *     .toast .act   #9FC0FF 1.83   ← 토스트는 «어두운» 팝업이다
+ *     .btn[disabled] #A3A3A3 2.52  ← 비활성은 WCAG 가 최소치에서 빼 준다
+ *     .map .pin.on   #FFFFFF 1.15  ← 강조색 «배경» 위 흰 글자
+ *   그래서 셋을 지킨다.
+ *     ① 바탕을 «조상 규칙까지 거슬러» 찾는다 (.toast 가 정한 배경을 .act 가 쓴다)
+ *     ② 비활성·플레이스홀더는 뺀다 (앞은 규정 면제, 뒤는 관행)
+ *     ③ 큰 글자는 3.0 으로 잰다 (24px 이상, 또는 18.66px 이상 굵은 글씨)
+ */
+{
+  const 큰글자기준 = 3.0;
+  const 본문기준 = TEXT_CONTRAST_MIN;
+  const 걸린것: { 어디: string; 글자: string; 바탕: string; 값: number; 기준: number; 확실: boolean }[] = [];
+  const 넘긴것: string[] = [];
+
+  for (const f of css들) {
+    const 글 = readFileSync(f, "utf8");
+
+    // 변수부터 푼다. var(--accent) 로 적힌 색도 재야 한다.
+    const 변수: Record<string, string> = {};
+    for (const m of 글.matchAll(/--([a-z0-9-]+)\s*:\s*(#[0-9A-Fa-f]{3,6})\b/gi)) {
+      변수[m[1]] ??= m[2];
+    }
+    const 풀기 = (v: string | undefined): string | null => {
+      if (!v) return null;
+      const s = v.trim();
+      const h = s.match(/^#[0-9A-Fa-f]{3,6}$/);
+      if (h) return s;
+      const vr = s.match(/^var\(\s*--([a-z0-9-]+)/i);
+      if (vr && 변수[vr[1]]) return 변수[vr[1]];
+      return null; // currentColor·rgba·gradient 는 안 잰다
+    };
+
+    const 규칙 = [...글.matchAll(/([^{}]*)\{([^{}]*)\}/g)];
+
+    /* 조상의 배경·글자크기를 찾기 위한 표 — 「이 class 는 이 배경/이 크기」.
+       .toast{background:#111} 을 적어 두면 .toast .act 가 그것을 물려받는다.
+       크기도 같이 물려받아야 한다 — 안 그러면 .logo{font-size:22px} 아래의
+       .logo .em 을 본문(4.5)으로 재서 헛경보가 난다. */
+    const 배경표: Record<string, string> = {};
+    const 크기표: Record<string, { px: number; 굵기: number }> = {};
+    for (const m of 규칙) {
+      const 배경 = 풀기(m[2].match(/(?:^|[;{\s])background(?:-color)?\s*:\s*([^;{}]+)/)?.[1]);
+      const px = Number(m[2].match(/font-size\s*:\s*([0-9.]+)px/)?.[1] ?? 0);
+      const 굵기 = Number(m[2].match(/font-weight\s*:\s*(\d+)/)?.[1] ?? 0);
+      for (const sel of m[1].split(",")) {
+        const 마지막 = sel.trim().split(/\s+|>/).pop() ?? "";
+        const cls = 마지막.match(/^\.([a-z0-9_-]+)$/i);
+        if (!cls) continue;
+        if (배경) 배경표[cls[1]] ??= 배경;
+        if (px || 굵기) 크기표[cls[1]] ??= { px, 굵기 };
+      }
+    }
+    const 페이지바탕 = 변수["bg"] ?? "#FFFFFF";
+
+    for (const m of 규칙) {
+      const 선택자 = m[1].trim().split("\n").pop()!.trim();
+      const 속 = m[2];
+      if (/^\s*:?root/.test(선택자) || !선택자) continue; // 변수 정의 덩어리
+
+      const 글자색 = 풀기(속.match(/(?:^|[;{\s])color\s*:\s*([^;{}]+)/)?.[1]);
+      if (!글자색) continue;
+
+      // ② 비활성·플레이스홀더는 뺀다.
+      if (/\[disabled\]|:disabled|\.is-off\b|\.disabled\b|\.off\b/.test(선택자)) {
+        넘긴것.push(`${선택자} (비활성)`);
+        continue;
+      }
+      if (/::placeholder/.test(선택자)) {
+        넘긴것.push(`${선택자} (플레이스홀더)`);
+        continue;
+      }
+
+      // ① 바탕 — 제 블록 → 조상 class → 페이지 순으로 찾는다.
+      let 바탕 = 풀기(속.match(/(?:^|[;{\s])background(?:-color)?\s*:\s*([^;{}]+)/)?.[1]);
+      if (!바탕) {
+        const 조상들 = 선택자.split(/\s+|>/).slice(0, -1).reverse();
+        for (const a of 조상들) {
+          const cls = a.match(/\.([a-z0-9_-]+)/i);
+          if (cls && 배경표[cls[1]]) { 바탕 = 배경표[cls[1]]; break; }
+        }
+      }
+      바탕 ??= 페이지바탕;
+
+      // ③ 큰 글자는 기준이 낮다. 크기는 제 블록 → 조상 순으로 찾는다.
+      let px = Number(속.match(/font-size\s*:\s*([0-9.]+)px/)?.[1] ?? 0);
+      let 굵기 = Number(속.match(/font-weight\s*:\s*(\d+)/)?.[1] ?? 0);
+      if (!px || !굵기) {
+        for (const a of 선택자.split(/\s+|>/).reverse()) {
+          const cls = a.match(/\.([a-z0-9_-]+)/i);
+          const 물림 = cls && 크기표[cls[1]];
+          if (물림) { px ||= 물림.px; 굵기 ||= 물림.굵기; }
+        }
+      }
+      굵기 ||= 400;
+      const 큼 = px >= 24 || (px >= 18.66 && 굵기 >= 700);
+
+      /* 기준을 «두 층»으로 나눈다 — 이게 헛경보를 가른다.
+       *
+       *   3.0 미만  무엇이든 틀렸다. 본문이든 큰 글자든 아이콘이든 이 밑은 안 보인다.
+       *   3.0~4.5   «본문이면» 틀렸다. 아이콘·큰 글자면 맞다.
+       *
+       * CSS 만 봐서는 그 규칙이 글자에 붙는지 아이콘에 붙는지 확실히 모른다.
+       * 모르는 것을 FAIL 로 올리면 사람이 검사기를 통째로 무시하게 된다 —
+       * 격자 간격에서 이미 겪었다(위 1번 주석). 그래서 확실한 것만 FAIL 로 올린다. */
+      const 값 = contrast(글자색, 바탕);
+      const 아래층 = 값 < 큰글자기준;
+      const 위층 = !큼 && 값 < 본문기준;
+      if (아래층 || 위층) {
+        const 줄번호 = 글.slice(0, m.index).split("\n").length;
+        걸린것.push({
+          어디: `${짧게(f)}:${줄번호}  ${선택자.slice(0, 34)}`,
+          글자: 글자색, 바탕, 값,
+          기준: 아래층 ? 큰글자기준 : 본문기준,
+          확실: 아래층,
+        });
+      }
+    }
+  }
+
+  const 확실한것 = 걸린것.filter((c) => c.확실).sort((a, b) => a.값 - b.값);
+  const 의심되는것 = 걸린것.filter((c) => !c.확실).sort((a, b) => a.값 - b.값);
+  for (const c of 확실한것.slice(0, 8)) {
+    못됨(c.어디, `글자 ${c.글자} 가 바탕 ${c.바탕} 위에서 ${c.값.toFixed(2)} 입니다 — 아이콘이라도 ${c.기준} 은 넘어야 합니다`);
+  }
+  if (확실한것.length > 8) 못됨("색 대비", `그 밖에 ${확실한것.length - 8}군데가 3.0 밑입니다`);
+  for (const c of 의심되는것.slice(0, 5)) {
+    걸림(c.어디, `글자 ${c.글자} 가 바탕 ${c.바탕} 위에서 ${c.값.toFixed(2)} — 본문이면 ${c.기준} 이 필요합니다 (아이콘·큰 글자면 괜찮습니다)`);
+  }
+  if (의심되는것.length > 5) 걸림("색 대비", `그 밖에 ${의심되는것.length - 5}군데가 3.0~4.5 사이입니다`);
+  if (넘긴것.length) 걸림("색 대비", `${넘긴것.length}군데는 규정상 빼고 셌습니다 (비활성·플레이스홀더)`);
 }
 
 /* ── 6~8. 띄워놓고 재기 ──────────────────────────────────── */

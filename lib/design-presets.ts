@@ -307,6 +307,28 @@ export function accentTextOn(o: (typeof DESIGN_OPTIONS)[number], bg: string): st
     : o.accentTextDark;
 }
 
+/** 색을 «바탕으로» 깔았을 때 그 위에 얹을 글자색.
+ *
+ * 왜 필요한가 — 2026-08-09
+ *   가이드에는 「이 색을 글자로 쓸 때」(accentText)는 있는데
+ *   **「이 색 «위에» 글자를 얹을 때」가 없었다.** 그래서 AI 가 만든 화면이
+ *   전부 흰 글자를 얹었고, 재 보니 두 테마의 버튼 글자가 안 읽혔다.
+ *     레트로 #DE6F26 위 흰 글자 3.28 · 코럴 #F0654F 위 흰 글자 3.14
+ *   강조색은 더 나쁘다 — **여섯 중 다섯이 흰 글자로는 미달**이다
+ *     네이비 2.60 · 모노 3.12 · 바이올렛 1.41 · 포레스트 3.09 · 코럴 2.15
+ *
+ *   버튼 글자가 흐린 것은 10만원짜리 산출물에서 «맨 먼저» 보이는 흠이다.
+ *   그런데 이건 각 화면의 실수가 아니라 **가이드에 칸이 없어서** 생긴 일이다 —
+ *   시키지 않은 것을 안 했다고 나무랄 수 없다.
+ *
+ * 흰색과 먹색 중 **재서** 고른다. 「밝은 색이면 검정」식의 눈대중은
+ * 포레스트(#15803D 흰 5.02 / 검정 3.76)처럼 애매한 자리에서 틀린다. */
+export const ON_LIGHT = "#111111";
+export const ON_DARK = "#FFFFFF";
+export function textOn(bg: string): string {
+  return contrast(ON_DARK, bg) >= contrast(ON_LIGHT, bg) ? ON_DARK : ON_LIGHT;
+}
+
 interface Preset {
   key: DesignKey;
   name: string;
@@ -344,7 +366,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     ],
     radius: "카드 12px · 버튼 8px · 입력 8px · 배지 6px",
     components: [
-      ["버튼(주요)", "primary 배경, 흰 글자, 높이 40px, 굵기 600"],
+      ["버튼(주요)", "primary 배경, on-primary 글자, 높이 40px, 굵기 600"],
       ["카드", "surface 배경, border 1px, 그림자 1단계, 헤더에 구분선"],
       ["표", "헤더는 background 색 채움, 행 구분 border 1px, 행 높이 44px"],
     ],
@@ -374,7 +396,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     ],
     radius: "카드 6px · 버튼 6px · 입력 6px · 배지 4px",
     components: [
-      ["버튼(주요)", "검정 배경, 흰 글자, 높이 36px, 굵기 500"],
+      ["버튼(주요)", "검정 배경, on-primary 글자, 높이 36px, 굵기 500"],
       ["카드", "border 1px만. 그림자·배경색 없음, 여백으로 구분"],
       ["표", "헤더 하단 border 2px, 행 구분 1px, 행 높이 40px"],
     ],
@@ -405,7 +427,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     ],
     radius: "카드 16px · 버튼 12px · 입력 12px · 배지 999px(알약)",
     components: [
-      ["버튼(주요)", "primary 배경, 흰 글자, 높이 44px, 굵기 700"],
+      ["버튼(주요)", "primary 배경, on-primary 글자, 높이 44px, 굵기 700"],
       ["카드", "surface 배경, radius 16px, 부드러운 그림자, 테두리는 연하게"],
       ["표", "헤더 배경 #F7F7F9, 행 구분 연하게, 행 높이 48px"],
     ],
@@ -436,7 +458,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     ],
     radius: "카드 10px · 버튼 8px · 입력 8px · 배지 6px",
     components: [
-      ["버튼(주요)", "오렌지 배경, 흰 글자, 높이 42px, 굵기 700"],
+      ["버튼(주요)", "오렌지 배경, on-primary 글자, 높이 42px, 굵기 700"],
       ["카드", "크림 surface, 연한 갈색 border 1px, 그림자 없이 종이 느낌"],
       ["표", "헤더 배경 진한 크림, 행 구분 1px, 행 높이 46px"],
     ],
@@ -466,7 +488,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     ],
     radius: "카드 12px · 버튼 10px · 입력 10px · 배지 8px",
     components: [
-      ["버튼(주요)", "그린 배경, 흰 글자, 높이 40px, 굵기 600"],
+      ["버튼(주요)", "그린 배경, on-primary 글자, 높이 40px, 굵기 600"],
       ["카드", "surface 배경, border 1px, 은은한 그림자"],
       ["표", "헤더 배경 연한 그린, 행 구분 1px, 행 높이 44px"],
     ],
@@ -496,12 +518,28 @@ const PRESETS: Record<DesignKey, Preset> = {
     ],
     radius: "카드 18px · 버튼 14px · 입력 14px · 배지 999px(알약)",
     components: [
-      ["버튼(주요)", "코럴 배경, 흰 글자, 높이 44px, 굵기 700"],
+      ["버튼(주요)", "코럴 배경, on-primary 글자, 높이 44px, 굵기 700"],
       ["카드", "surface 배경, radius 18px, 부드러운 그림자"],
       ["표", "헤더 배경 연한 코럴, 행 구분 연하게, 행 높이 48px"],
     ],
   },
 };
+
+/* 「색 위에 얹는 글자」 두 칸은 «계산해서» 채운다.
+ *
+ * 손으로 적지 않는 까닭 — 2026-08-09
+ *   여섯 테마의 「버튼(주요)」가 전부 **「흰 글자」**라고 적혀 있었다.
+ *   그중 레트로(3.28)와 코럴(3.14)은 미달이다. 그런데 이건 화면을 만든 쪽 잘못이 아니다 —
+ *   **가이드가 흰 글자를 시켰고, AI 는 시킨 대로 했다.**
+ *
+ *   여기에 값을 또 손으로 적으면 색을 조금 바꿀 때마다 같은 일이 되풀이된다.
+ *   primary·accent 에서 «재서» 뽑으면 색을 바꿔도 글자색이 저절로 따라온다.
+ */
+for (const o of DESIGN_OPTIONS) {
+  const c = PRESETS[o.key].colors;
+  c["on-primary(주색 배경 위 글자)"] = textOn(o.primary);
+  c["on-accent(강조색 배경 위 글자)"] = textOn(o.accent);
+}
 
 /** 테마의 색 표 — 팩 문서의 「색상」 절이 그대로 이것이다.
  *  DESIGN_OPTIONS 와 두 벌로 적힌 값이라 check-presets.mts 가 둘이 같은지 잰다. */
@@ -1290,6 +1328,19 @@ export const ACCENT_RULE: string[] = [
   "> | `accent-text` | 밝은 바탕 위 글자 |",
   "> | `accent-text-dark` | 어두운 바탕 위 글자 |",
   "",
+  "> **그리고 반대 방향이 하나 더 있습니다 — 색을 «바탕으로» 깔았을 때.**",
+  ">",
+  "> 채운 버튼(`background: primary`)이나 배지 바탕(`background: accent`) 위에 얹는 글자는",
+  "> **흰색이 기본이 아닙니다.** 아래 표의 `on-primary` · `on-accent` 를 그대로 쓰세요.",
+  ">",
+  "> 흰 글자가 안 되는 자리가 실제로 많습니다 — 이 여섯 테마에서 재 본 값입니다.",
+  ">",
+  "> - 주색 위 흰 글자: 레트로 3.28 · 코럴 3.14 → **둘 다 미달**(4.5 필요)",
+  "> - 강조색 위 흰 글자: 여섯 중 **다섯이 미달**(네이비 2.60 · 바이올렛 1.41 · 코럴 2.15 …)",
+  ">",
+  "> 「밝은 색이면 검정」 같은 눈대중으로 고르지 마세요. 포레스트(#15803D)는",
+  "> 흰 글자 5.02, 검은 글자 3.76 이라 **흰색이 맞습니다** — 보기와 다릅니다.",
+  "",
 ];
 
 /** 색·밀도와 상관없이 어느 사이트에나 걸리는 규칙.
@@ -1836,7 +1887,7 @@ export function buildDetailedPresetMarkdown(cfg: PresetConfig, projectName?: str
   L.push("| --- | --- |");
   // 높이를 px 로 박으면 글자를 키우거나 밀도를 바꿔도 안 따라온다 — 글자+패딩으로 정한다.
   L.push(
-    `| 버튼(주요) | primary-500 배경, 흰 글자, 높이 = 글자 + 위아래 8px, radius ${rad.button}. hover primary-600, active primary-700 |`,
+    `| 버튼(주요) | primary-500 배경, on-primary 글자, 높이 = 글자 + 위아래 8px, radius ${rad.button}. hover primary-600, active primary-700 |`,
   );
   L.push(`| 버튼(보조) | 투명 배경 + border 1px(${border}), text 색 글자 |`);
   // 사진이 든 분리형 카드는 상자를 두르지 않는다 — 아래 공통 규칙과 어긋나면 안 된다.
