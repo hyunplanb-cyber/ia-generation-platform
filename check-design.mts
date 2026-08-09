@@ -250,6 +250,16 @@ for (const f of css들) {
       return null; // currentColor·rgba·gradient 는 안 잰다
     };
 
+    /* 바탕이 «그림»이면 잴 수 없다 — 재려고 하면 안 된다.
+     *
+     * 처음엔 이걸 안 봐서 히어로 배너가 전부 걸렸다(2026-08-09).
+     *   .hero{ background:linear-gradient(...); color:#fff }  → 1.15 라고 찍혔다
+     * 그라데이션·사진은 색이 하나가 아니라 값을 못 낸다. 그런데 풀기() 가 null 을
+     * 주니 「배경 없음」으로 보고 페이지 바탕(#F0EFEB)에 흰 글자를 얹은 걸로 읽었다.
+     * **모르는 것과 없는 것은 다르다.** 그림 배경이면 아예 건너뛴다. */
+    const 그림배경 = (속: string) =>
+      /background(-image)?\s*:[^;{}]*(gradient|url\()/i.test(속);
+
     const 규칙 = [...글.matchAll(/([^{}]*)\{([^{}]*)\}/g)];
 
     /* 조상의 배경·글자크기를 찾기 위한 표 — 「이 class 는 이 배경/이 크기」.
@@ -258,16 +268,33 @@ for (const f of css들) {
        .logo .em 을 본문(4.5)으로 재서 헛경보가 난다. */
     const 배경표: Record<string, string> = {};
     const 크기표: Record<string, { px: number; 굵기: number }> = {};
+    const 그림배경표 = new Set<string>();
+    const 헷갈리는이름 = new Set<string>();
     for (const m of 규칙) {
       const 배경 = 풀기(m[2].match(/(?:^|[;{\s])background(?:-color)?\s*:\s*([^;{}]+)/)?.[1]);
       const px = Number(m[2].match(/font-size\s*:\s*([0-9.]+)px/)?.[1] ?? 0);
       const 굵기 = Number(m[2].match(/font-weight\s*:\s*(\d+)/)?.[1] ?? 0);
+      const 그림 = 그림배경(m[2]);
       for (const sel of m[1].split(",")) {
         const 마지막 = sel.trim().split(/\s+|>/).pop() ?? "";
-        const cls = 마지막.match(/^\.([a-z0-9_-]+)$/i);
-        if (!cls) continue;
-        if (배경) 배경표[cls[1]] ??= 배경;
-        if (px || 굵기) 크기표[cls[1]] ??= { px, 굵기 };
+        /* `.gnb.dark` 처럼 붙어 있는 것은 **뒤 class 를 열쇠로** 삼는다.
+           `.gnb{background:#fff}` 과 `.gnb.dark{background:#111}` 이 같이 있는데
+           앞만 보면 어두운 GNB 위 흰 글자를 「흰 바탕 위 흰 글자」로 읽는다. */
+        const 클래스들 = [...마지막.matchAll(/\.([a-z0-9_-]+)/gi)].map((x) => x[1]);
+        if (!클래스들.length || !/^\./.test(마지막)) continue;
+        const 열쇠 = 클래스들.length > 1 ? 클래스들.join(".") : 클래스들[0];
+        if (그림) 그림배경표.add(열쇠);
+        /* 같은 이름이 자리마다 다른 배경을 가질 수 있다.
+           `.tabs-pill .tab.on{background:surface}` 는 흰 바탕이고
+           `.seg .tab.on{background:primary}` 는 코럴 바탕이다.
+           먼저 만난 쪽으로 정해 버리면 **아닌 것을 아니라고 단정**하게 된다 —
+           실제로 「코럴 글자가 코럴 바탕 위에 1.71」이라는 헛경보가 났다(2026-08-09).
+           둘이 다르면 「모른다」로 두고 그 이름은 아예 재지 않는다. */
+        if (배경) {
+          if (배경표[열쇠] && 배경표[열쇠] !== 배경) 헷갈리는이름.add(열쇠);
+          else 배경표[열쇠] ??= 배경;
+        }
+        if (px || 굵기) 크기표[열쇠] ??= { px, 굵기 };
       }
     }
     const 페이지바탕 = 변수["bg"] ?? "#FFFFFF";
@@ -280,25 +307,57 @@ for (const f of css들) {
       const 글자색 = 풀기(속.match(/(?:^|[;{\s])color\s*:\s*([^;{}]+)/)?.[1]);
       if (!글자색) continue;
 
-      // ② 비활성·플레이스홀더는 뺀다.
-      if (/\[disabled\]|:disabled|\.is-off\b|\.disabled\b|\.off\b/.test(선택자)) {
-        넘긴것.push(`${선택자} (비활성)`);
+      /* ② 못 재는 것·재면 안 되는 것을 먼저 걸러낸다.
+         비활성은 WCAG 가 면제하고, 「마감·품절」도 회색으로 죽인 같은 성격이다. */
+      if (/\[disabled\]|:disabled|\.is-off\b|\.disabled\b|\.off\b|\.full\b|\.sold\b|\.done\b/.test(선택자)) {
+        넘긴것.push(`${선택자} (비활성·마감)`);
         continue;
       }
       if (/::placeholder/.test(선택자)) {
         넘긴것.push(`${선택자} (플레이스홀더)`);
         continue;
       }
+      if (그림배경(속)) {
+        넘긴것.push(`${선택자} (그림 배경)`);
+        continue;
+      }
+      /* 남의 브랜드 색은 우리가 못 바꾼다.
+         네이버는 초록 #03C75A 에 흰 글자(2.25)가 «공식 조합»이라, 고치면
+         네이버 버튼으로 안 보인다. WCAG 도 로고타입은 면제한다.
+         카카오(#FEE500 + 진한 갈색)는 자기 가이드가 이미 읽히는 조합이라 안 걸린다. */
+      if (/\bnaver\b|\bkakao\b|\bapple\b|\bgoogle\b|\bfacebook\b|\bline\b/i.test(선택자)) {
+        넘긴것.push(`${선택자} (남의 브랜드 색)`);
+        continue;
+      }
+      /* 구분선은 글자가 아니다.
+         `.stepbar .sep{color:var(--muted)}` 처럼 color 로 선 색을 정하는 자리가 있다.
+         단계 사이를 잇는 장식이라 대비 규정 대상이 아니다(WCAG 1.4.11 「순수 장식」). */
+      if (/\.(sep|divider|dot-line|rule)\b/.test(선택자)) {
+        넘긴것.push(`${선택자} (구분선·장식)`);
+        continue;
+      }
 
       // ① 바탕 — 제 블록 → 조상 class → 페이지 순으로 찾는다.
       let 바탕 = 풀기(속.match(/(?:^|[;{\s])background(?:-color)?\s*:\s*([^;{}]+)/)?.[1]);
+      let 그림물림 = false;
       if (!바탕) {
-        const 조상들 = 선택자.split(/\s+|>/).slice(0, -1).reverse();
-        for (const a of 조상들) {
-          const cls = a.match(/\.([a-z0-9_-]+)/i);
-          if (cls && 배경표[cls[1]]) { 바탕 = 배경표[cls[1]]; break; }
+        for (const a of 선택자.split(/\s+|>/).slice(0, -1).reverse()) {
+          const 클래스들 = [...a.matchAll(/\.([a-z0-9_-]+)/gi)].map((x) => x[1]);
+          if (!클래스들.length) continue;
+          /* 붙어 있는 것(.gnb.dark)을 먼저, 없으면 **부품 이름**(첫 class)만 본다.
+             수식어(.on .active .sel)를 낱개로 찾으면 엉뚱한 부품과 이어진다 —
+             `.acc-item.on` 의 `.on` 이 다른 부품의 파란 배경을 물어 와서
+             「파란 글자가 파란 바탕 위에 1.00」이라고 찍혔다(2026-08-09). */
+          const 후보 = [클래스들.join("."), 클래스들[0]];
+          const 맞은것 = 후보.find((k) => 배경표[k] || 그림배경표.has(k) || 헷갈리는이름.has(k));
+          if (!맞은것) continue;
+          if (헷갈리는이름.has(맞은것)) { 그림물림 = true; break; } // 모르는 것은 안 잰다
+          if (그림배경표.has(맞은것) && !배경표[맞은것]) { 그림물림 = true; break; }
+          바탕 = 배경표[맞은것];
+          break;
         }
       }
+      if (그림물림) { 넘긴것.push(`${선택자} (바탕을 확정 못 함)`); continue; }
       바탕 ??= 페이지바탕;
 
       // ③ 큰 글자는 기준이 낮다. 크기는 제 블록 → 조상 순으로 찾는다.

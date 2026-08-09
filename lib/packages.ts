@@ -16,9 +16,13 @@ import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
 import { LMS, type TplMenu } from "@/template-data-lms";
 import { BEAUTY } from "@/template-data-beauty";
 import { TRAVEL } from "@/template-data-travel";
+import { GROUPBUY } from "@/template-data-groupbuy";
+import { MATCHING } from "@/template-data-matching";
 import { LMS_DEEP } from "@/template-data-lms-deep";
 import { BEAUTY_DEEP } from "@/template-data-beauty-deep";
 import { TRAVEL_DEEP } from "@/template-data-travel-deep";
+import { GROUPBUY_DEEP } from "@/template-data-groupbuy-deep";
+import { MATCHING_DEEP } from "@/template-data-matching-deep";
 import type { DeepInput } from "@/template-deep";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
 
@@ -349,7 +353,10 @@ export const PACKAGES: PackageDef[] = [
     industry: "교육",
     tagline:
       "수강생 학습부터 강사의 수업 편성·학생 관리·정산까지 갖춘 강의 플랫폼 AI팩",
-    plans: makePlans(LMS, LMS_DEEP, { standard: null, plus: null }),
+    /* 2뎁스 44화면은 코럴 선셋으로 만들어 뒀다 → 디럭스가 생긴다.
+       3뎁스(프리미엄)는 아직 화면이 없어 안 생긴다 — 만들면 deep 을 채운다.
+       한동안 site 를 아예 안 넘겨서 디럭스가 빠져 있었다(2026-08-09에 발견). */
+    plans: makePlans(LMS, LMS_DEEP, { standard: null, plus: null, deluxe: null }, { base: 44 }),
     data: LMS,
     deep: LMS_DEEP,
     promptSamples: ["cl3", "cu3", "co6"],
@@ -508,17 +515,131 @@ export const PACKAGES: PackageDef[] = [
       ],
     },
   },
+  {
+    id: "groupbuy",
+    title: "공동구매(공구) 플랫폼",
+    industry: "커머스·공구",
+    tagline:
+      "목표 인원이 차야 할인가로 성사되고 미달이면 전액 환불되는, 조건부 결제 공동구매 플랫폼 AI팩",
+    // 화면을 실제로 만들어 뒀다 → 네 등급이 다 생긴다.
+    // 2뎁스 37화면은 코럴 선셋, 3뎁스 125화면은 미니멀 모노로 만들었다(완성화면 CSS에서 잰 값).
+    plans: makePlans(
+      GROUPBUY,
+      GROUPBUY_DEEP,
+      { standard: null, plus: null, deluxe: null, premium: null },
+      { base: 37, deep: 125 },
+    ),
+    data: GROUPBUY,
+    deep: GROUPBUY_DEEP,
+    promptSamples: ["ho1", "de2", "jo3"],
+    // build-design-presets.mts 의 TARGETS.groupbuy 와 «같은 순서»라야 한다(그 파일이 대조한다).
+    presetStyles: ["navy", "mono", "coral"],
+    presetFits: [
+      "신뢰가 중요한 대형 공동구매·소셜커머스, 안정감 있는 브랜드",
+      "감각적인 셀렉트 공구·인플루언서 공구, 편집숍형 큐레이션",
+      "생활밀착 저가 공구·맘카페형, 20~30대 모바일 타깃",
+    ],
+    layoutKeys: ["bold", "bento"],
+    fileLabel: "공동구매",
+    integrations: [
+      { area: "로그인·회원가입", detail: "이메일 가입, 카카오·네이버 소셜 로그인" },
+      { area: "조건부 결제", detail: "성사 전 결제 보류, 미달 시 전액 자동 환불" },
+      { area: "재고·수량", detail: "동시 참여로 목표 수량을 넘지 않게 막는 서버 처리" },
+      { area: "배송", detail: "송장 등록과 배송 조회 연동" },
+      { area: "알림", detail: "달성 임박·성사·취소 안내 알림톡 발송" },
+      { area: "진행자 정산", detail: "성사분 정산액 계산과 계좌 지급" },
+    ],
+    audience: [
+      "공동구매 플랫폼을 만들려는 분",
+      "인플루언서 공구를 시스템으로 옮기려는 분",
+      "목표 미달 시 자동 환불까지 설계해야 하는 분",
+    ],
+    painPoints: [
+      "목표 미달 취소는 결제가 끝난 뒤에 터지는 예외라 화면이 따로 필요하다",
+      "달성률과 남은 시간은 화면이 아니라 규칙이라, 말로만 시키면 매번 다르게 만든다",
+      "같은 수량을 여러 사람이 동시에 누르는 상황을 설계에서 빼먹기 쉽다",
+    ],
+    seo: {
+      title: "공동구매(공구) 플랫폼 화면설계서 · AI팩",
+      description:
+        "공동구매 플랫폼 AI팩(기획 산출물 한 벌)입니다. 목표 달성·조건부 결제·미달 환불까지 화면 목록과 기능정의를 미리 확인하세요.",
+      keywords: [
+        "공동구매 사이트 기획서",
+        "공구 플랫폼 화면설계서",
+        "소셜커머스 기획서 예시",
+        "공동구매 기능정의서",
+        "조건부 결제 시스템 기획",
+      ],
+    },
+  },
+  {
+    id: "matching",
+    title: "동네 서비스 매칭 플랫폼",
+    industry: "매칭·중개",
+    tagline:
+      "요청서 한 장을 보내면 고수들이 각자 값을 불러 견적을 보내고, 비교해서 고르는 매칭 플랫폼 AI팩",
+    // 2뎁스 43화면은 모던 네이비로 만들었다. 3뎁스는 아직 화면이 없어 프리미엄이 안 생긴다.
+    plans: makePlans(
+      MATCHING,
+      MATCHING_DEEP,
+      { standard: null, plus: null, deluxe: null },
+      { base: 43 },
+    ),
+    data: MATCHING,
+    deep: MATCHING_DEEP,
+    promptSamples: ["ho1", "re2", "qu3"],
+    presetStyles: ["navy", "mono", "forest"],
+    presetFits: [
+      "신뢰가 먼저인 매칭·중개 서비스, 이사·인테리어처럼 금액이 큰 분야",
+      "과외·레슨·컨설팅처럼 사람 자체가 상품인 분야",
+      "청소·수리·돌봄처럼 생활에 가까운 분야, 안심이 중요한 서비스",
+    ],
+    layoutKeys: ["split", "list"],
+    fileLabel: "매칭",
+    integrations: [
+      { area: "로그인·회원가입", detail: "이메일 가입, 소셜 로그인, 고수 본인인증" },
+      { area: "견적 크레딧", detail: "고수가 견적을 보낼 때 차감하는 크레딧 충전·결제" },
+      { area: "채팅", detail: "손님과 고수의 실시간 대화, 사진·파일 주고받기" },
+      { area: "지도·위치", detail: "활동 지역 설정과 내 주변 고수 찾기" },
+      { area: "알림", detail: "새 요청·견적 도착·선택 결과 발송" },
+      { area: "고수 정산", detail: "완료 건 정산액 계산과 계좌 지급" },
+    ],
+    audience: [
+      "숨고 같은 서비스 매칭 플랫폼을 만들려는 분",
+      "지역 기반 전문가 중개 서비스를 준비하는 창업자",
+      "요청서·견적·선택까지 3자 흐름을 설계해야 하는 분",
+    ],
+    painPoints: [
+      "한 계정이 손님과 고수 두 권한을 오가는 구조라, 화면을 두 벌로 세워야 한다",
+      "요청서는 한 번에 한 질문씩 물어야 해서 단계마다 화면이 갈린다",
+      "견적은 보낸 뒤 취소·수정·만료가 전부 다른 화면이다",
+    ],
+    seo: {
+      title: "서비스 매칭 플랫폼 화면설계서 · 숨고형 AI팩",
+      description:
+        "동네 서비스 매칭 플랫폼 AI팩(기획 산출물 한 벌)입니다. 요청서·견적 비교·채팅·정산까지 화면 목록과 기능정의를 미리 확인하세요.",
+      keywords: [
+        "매칭 플랫폼 기획서",
+        "숨고 같은 사이트 기획",
+        "견적 비교 서비스 화면설계서",
+        "중개 플랫폼 기능정의서",
+        "요청서 시스템 기획",
+      ],
+    },
+  },
 ];
 
 /**
  * 목록·랜딩에 진열할 업종.
  *
  * 네 등급이 다 갖춰진 업종만 올린다. 스탠다드·플러스뿐이면 2×2가 반만 보여
- * "왜 이건 두 개뿐이지"가 먼저 걸리기 때문이다. LMS·공동구매는 디럭스·프리미엄의
- * 완성 화면(HTML)이 아직 없어 빠져 있다 — 만들면 여기에 더한다.
- * (상세 주소 /packages/lms 는 그대로 살아 있다 — 링크만 걸지 않는다.)
+ * "왜 이건 두 개뿐이지"가 먼저 걸리기 때문이다.
+ *
+ * 2026-08-09 — 공동구매를 더했다. 디럭스 37화면·프리미엄 125화면이 다 있다.
+ * LMS(프리미엄 없음)와 매칭(프리미엄 없음)은 아직 빠진다. 그 둘의 3뎁스 화면을
+ * 만들면 여기에 더하면 된다. (상세 주소 /packages/lms 는 그대로 살아 있다 — 링크만 안 건다.)
  */
-const LISTED_IDS = new Set(["travel", "beauty"]);
+const LISTED_IDS = new Set(["travel", "beauty", "groupbuy"]);
 
 /**
  * 이 등급 zip에 실제로 들어가는 것.
