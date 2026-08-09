@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>매장 목록 &gt; 필터 적용 상태 · 뷰티나우</title>
+<meta name="description" content="적용 필터 칩 나열과 개별 해제 · 결과 매장 수 표시 · 전체 초기화 · 정렬 조건 유지 · 조건 요약 문장">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="SE0102">
+<header class="gnb">
+  
+  <div class="gnb-in">
+    <a class="logo" href="HO0101.html"><span class="mark">B</span>뷰티나우</a>
+    <nav class="gnb-nav"><a href="HO0101.html">홈</a><a href="SE0101.html" class="on">매장 탐색</a><a href="RE0101.html">예약하기</a><a href="MY0101.html">내 예약</a><a href="RV0201.html">리뷰</a><a href="AC0101.html">내 정보</a></nav>
+    <div class="gnb-util"><a class="btn btn-ghost btn-sm" href="AU0101.html">로그인</a>
+         <a class="btn btn-primary btn-sm" href="AU0201.html">회원가입</a></div>
+  </div>
+  <div class="catbar"><div class="catbar-in">
+    <a href="SE0101.html"><span>✂️</span>헤어컷</a><a href="SE0101.html"><span>🌀</span>펌</a><a href="SE0101.html"><span>🎨</span>염색</a><a href="SE0101.html"><span>💅</span>네일</a><a href="SE0101.html"><span>🪒</span>왁싱</a><a href="SE0101.html"><span>🧖</span>피부관리</a><a href="SE0101.html"><span>👁️</span>속눈썹</a><a href="SE0101.html"><span>🧴</span>두피케어</a>
+    <span class="sep"></span>
+    <a href="PT0201.html">매장 입점</a>
+    <a href="SE0301.html">지도로 찾기</a>
+  </div></div></header>
+<div class="backbar"><div class="in">
+        <a class="back" href="SE0101.html">‹ 매장 목록</a>
+        <span class="crumb">매장 탐색 <i>›</i> 매장 목록 &gt; 필터 적용 상태</span>
+      </div></div>
+<div class="state-bar"><div class="in"><span class="tag">상태</span><b>필터 적용 상태</b>
+    <span class="muted">적용 필터 칩 나열과 개별 해제 · 결과 매장 수 표시 · 전체 초기화 · 정렬 조건 유지 · 조건 요약 문장</span></div></div>
+
+<main class="main "><div class="wrap"><div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">매장 목록</h1></div></div><form class="searchbar mb6" role="search">
+    <div class="cell"><div class="lb">지역</div><input type="text" value="강남구"></div>
+    <div class="cell"><div class="lb">시술</div><input type="text" value="네일" placeholder="시술을 고르세요"></div>
+    <button class="btn btn-primary" type="submit" style="min-width:110px">검색</button></form><div class="split"><div class="card sticky">
+  
+  <div class="card-bd "><div class="filter-panel">
+    <div class="fg"><h4>지역</h4>
+      <select class="select"><option>강남구</option><option>서초구</option><option>송파구</option><option>마포구</option><option>용산구</option><option>성동구</option><option>광진구</option><option>영등포구</option></select></div>
+    <div class="fg"><h4>시술 카테고리</h4>
+      <label class="check"><input type="checkbox">✂️ 헤어컷 <span class="muted">1,240곳</span></label><label class="check"><input type="checkbox">🌀 펌 <span class="muted">980곳</span></label><label class="check"><input type="checkbox">🎨 염색 <span class="muted">1,102곳</span></label><label class="check"><input type="checkbox" checked>💅 네일 <span class="muted">1,860곳</span></label><label class="check"><input type="checkbox">🪒 왁싱 <span class="muted">620곳</span></label><label class="check"><input type="checkbox">🧖 피부관리 <span class="muted">740곳</span></label><label class="check"><input type="checkbox">👁️ 속눈썹 <span class="muted">910곳</span></label><label class="check"><input type="checkbox">🧴 두피케어 <span class="muted">380곳</span></label></div>
+    <div class="fg"><h4>가격대</h4>
+      <input class="range" type="range" min="0" max="200000" step="10000" value="50000">
+      <div class="row-b t-sub"><span>0원</span><span><b>50,000원</b> 이하</span></div></div>
+    <div class="fg"><h4>최소 평점</h4><div class="chips"><button class="chip on" type="button" >4.5 이상 <span class="x">✕</span></button><button class="chip" type="button" >4.0 이상</button><button class="chip" type="button" >3.5 이상</button></div></div>
+    <div class="fg"><div class="row-b"><h4 style="margin:0">오늘 예약 가능</h4><button class="toggle" type="button" aria-label="오늘 예약 가능만"></button></div>
+      <p class="t-sub mt2">지금 잔여 자리가 있는 매장만 봅니다</p></div>
+    <div class="fg"><h4>편의</h4><div class="chips"><button class="chip on" type="button" >주차 가능 <span class="x">✕</span></button><button class="chip" type="button" >1인샵</button><button class="chip" type="button" >여성 전용</button><button class="chip" type="button" >야간 영업</button></div></div>
+  </div></div>
+  </div><div>
+        <div class="box mb4"><div class="row-b wrap-row">
+          <div><b>강남구</b>에서 <b>네일</b>을 <b>5만원 이하</b>로, 평점 4.5 이상 · 주차 가능한 매장 <b class="pri">4곳</b></div>
+          <a class="btn btn-ghost btn-sm" href="SE0101.html">전체 초기화</a></div>
+          <div class="chips mt3"><button class="chip on" type="button" >강남구 <span class="x">✕</span></button><button class="chip on" type="button" >네일 <span class="x">✕</span></button><button class="chip on" type="button" >5만원 이하 <span class="x">✕</span></button><button class="chip on" type="button" >평점 4.5 이상 <span class="x">✕</span></button><button class="chip on" type="button" >주차 가능 <span class="x">✕</span></button></div></div>
+        <div class="row-b wrap-row mb4">
+  <div class="row-c"></div>
+  <div class="row-c">
+    <select class="select" style="width:auto"><option>평점순</option><option>거리순</option><option>인기순</option><option>최저가순</option></select>
+    <a class="btn btn-ghost" href="SE0301.html">🗺️ 지도로 보기</a>
+  </div></div>
+        <div class="mag"><div class="mcard " data-href="SE0401.html" tabindex="0">
+  <div class="top">
+    <button class="heart" type="button" aria-label="관심 매장">♡</button>
+    
+    <div class="ph t1 ph-flat " style="aspect-ratio:1200/900"><span class="lb">이미지 영역 (매장 대표 · <span class="sz">권장 1200×900</span>)</span></div>
+    <div class="over">
+      <div class="tags"><span class="badge ">1인샵</span><span class="badge ">주차가능</span></div>
+      <div class="nm">살롱 드 코랄</div>
+    </div>
+  </div>
+  <div class="bd">
+    <div class="row-b"><span class="t-sub">강남구 신사동</span><span><span class="stars" aria-hidden="true">★★★★★</span> <b>4.9</b> <span class="muted">(1,284)</span></span></div>
+    <p class="desc">가로수길 안쪽, 예약제로만 운영하는 1인 살롱. 커트와 클리닉을 함께 봅니다.</p>
+    
+    <div class="foot">
+      <div><div class="t-sub">대표 시술 최저가</div><div class="price">25,000원~</div></div>
+      <span class="badge b-pri">가장 빠른 예약 오늘 14:30</span>
+    </div>
+  </div></div><div class="mcard " data-href="SE0401.html" tabindex="0">
+  <div class="top">
+    <button class="heart" type="button" aria-label="관심 매장">♡</button>
+    
+    <div class="ph t2 ph-flat " style="aspect-ratio:1200/900"><span class="lb">이미지 영역 (매장 대표 · <span class="sz">권장 1200×900</span>)</span></div>
+    <div class="over">
+      <div class="tags"><span class="badge ">젤네일</span><span class="badge ">당일예약</span></div>
+      <div class="nm">네일 아뜰리에 봄</div>
+    </div>
+  </div>
+  <div class="bd">
+    <div class="row-b"><span class="t-sub">강남구 역삼동</span><span><span class="stars" aria-hidden="true">★★★★★</span> <b>4.8</b> <span class="muted">(962)</span></span></div>
+    <p class="desc">손 사진이 예쁘게 나오는 아트 위주 네일샵. 디자인 3,000종 보유.</p>
+    
+    <div class="foot">
+      <div><div class="t-sub">대표 시술 최저가</div><div class="price">38,000원~</div></div>
+      <span class="badge b-pri">가장 빠른 예약 오늘 16:00</span>
+    </div>
+  </div></div><div class="mcard " data-href="SE0401.html" tabindex="0">
+  <div class="top">
+    <button class="heart" type="button" aria-label="관심 매장">♡</button>
+    
+    <div class="ph t1 ph-flat " style="aspect-ratio:1200/900"><span class="lb">이미지 영역 (매장 대표 · <span class="sz">권장 1200×900</span>)</span></div>
+    <div class="over">
+      <div class="tags"><span class="badge ">페디큐어</span><span class="badge ">주차2시간</span></div>
+      <div class="nm">젤앤글로우</div>
+    </div>
+  </div>
+  <div class="bd">
+    <div class="row-b"><span class="t-sub">서초구 반포동</span><span><span class="stars" aria-hidden="true">★★★★★</span> <b>4.9</b> <span class="muted">(1,327)</span></span></div>
+    <p class="desc">손·발 동시 관리를 한 자리에서. 페디 전용석 6석.</p>
+    
+    <div class="foot">
+      <div><div class="t-sub">대표 시술 최저가</div><div class="price">42,000원~</div></div>
+      <span class="badge b-pri">가장 빠른 예약 내일 10:00</span>
+    </div>
+  </div></div><div class="mcard " data-href="SE0401.html" tabindex="0">
+  <div class="top">
+    <button class="heart" type="button" aria-label="관심 매장">♡</button>
+    
+    <div class="ph t2 ph-flat " style="aspect-ratio:1200/900"><span class="lb">이미지 영역 (매장 대표 · <span class="sz">권장 1200×900</span>)</span></div>
+    <div class="over">
+      <div class="tags"><span class="badge ">프리미엄</span><span class="badge ">발렛</span></div>
+      <div class="nm">뷰티살롱 하나</div>
+    </div>
+  </div>
+  <div class="bd">
+    <div class="row-b"><span class="t-sub">강남구 청담동</span><span><span class="stars" aria-hidden="true">★★★★★</span> <b>4.8</b> <span class="muted">(894)</span></span></div>
+    <p class="desc">청담 본점. 관리 전 피부 측정을 무료로 진행합니다.</p>
+    
+    <div class="foot">
+      <div><div class="t-sub">대표 시술 최저가</div><div class="price">88,000원~</div></div>
+      <span class="badge b-pri">가장 빠른 예약 오늘 18:00</span>
+    </div>
+  </div></div></div></div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">B</span>뷰티나우</div>
+      <p class="t-sub">(주)뷰티나우 · 대표 김하늘 · 서울 강남구 테헤란로 123, 8층<br>사업자등록번호 123-45-67890 · 통신판매업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 예약·시술에 대한 책임은 각 매장에 있습니다.</p>
+    </div>
+    <div><h4>서비스</h4><ul>
+      <li><a href="SE0101.html">매장 탐색</a></li><li><a href="SE0301.html">지도로 찾기</a></li>
+      <li><a href="MY0101.html">내 예약</a></li><li><a href="RV0301.html">내 리뷰</a></li>
+      <li><a href="AC0201.html">쿠폰·적립금</a></li></ul></div>
+    <div><h4>매장 사장님</h4><ul>
+      <li><a href="PT0201.html">매장 입점 신청</a></li><li><a href="PT0101.html">매장 홈</a></li>
+      <li><a href="MG0101.html">시술 메뉴 관리</a></li><li><a href="SA0101.html">정산 내역</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1600-0000</div>
+      <p class="t-sub">평일 10:00~19:00 · 점심 13:00~14:00 (주말·공휴일 휴무)</p>
+      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 뷰티나우. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 취소·환불 규정</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">SE0102</div><div class="nm">매장 목록 &gt; 필터 적용 상태</div>
+    <div class="fd">적용 필터 칩 나열과 개별 해제 · 결과 매장 수 표시 · 전체 초기화 · 정렬 조건 유지 · 조건 요약 문장</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">SE0102 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

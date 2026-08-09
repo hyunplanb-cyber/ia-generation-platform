@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>회원가입 · 배움터</title>
+<meta name="description" content="이메일·비밀번호·비밀번호 확인 입력 · 비밀번호 조건 실시간 표시 · 이름 입력 · 휴대폰 번호 입력 · 관심 분야 선택 · 약관 동의(전체·필수 2종·선택 1종) · 소셜로 간편 가입 · 이미 가입된 이메일 안내">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="AU-02">
+<main class="solo">
+  <div class="solo-box solo-wide">
+    <a class="logo" href="HO-01.html"><span class="em">배</span>배움터</a>
+    <nav class="crumb" aria-label="현재 위치"><a class="back" href="AU-01.html">‹ 로그인</a></nav>
+    
+<div class="steps"><span class="s on"><span class="n">1</span>정보 입력</span><span class="sep">›</span><span class="s "><span class="n">2</span>휴대폰 인증</span><span class="sep">›</span><span class="s "><span class="n">3</span>가입 완료</span></div>
+
+<div class="card ">
+  
+  <div class="card-bd ">
+  <div class="btns-v">
+    <button class="btn btn-block" type="button" style="background:#FEE500" data-toast="카카오 간편 가입은 서버가 연결되면 동작합니다">카카오로 간편 가입</button>
+    <button class="btn btn-block" type="button" style="background:#03C75A;color:#fff" data-toast="네이버 간편 가입은 서버가 연결되면 동작합니다">네이버로 간편 가입</button>
+    <button class="btn btn-ghost btn-block" type="button" data-toast="구글 간편 가입은 서버가 연결되면 동작합니다">구글로 간편 가입</button>
+  </div>
+
+  <div class="row-c mt6" style="gap:12px"><span class="hr grow" style="margin:0"></span>
+    <span class="t-sub">이메일로 가입</span><span class="hr grow" style="margin:0"></span></div>
+
+  <div class="field mt4"><label class="lb" for="su-mail">이메일<span class="req">*</span></label>
+    <input class="input" id="su-mail" type="email" data-gate="signup" data-label="이메일" placeholder="you@example.com">
+    <div class="err-msg" hidden id="mail-dup">⚠ 이미 가입된 이메일이에요. <a class="btn-link" href="AU-01.html">로그인하러 가기</a></div></div>
+
+  <div class="field"><label class="lb" for="su-pw">비밀번호<span class="req">*</span></label>
+    <div class="input-row"><input class="input" id="su-pw" type="password" data-pw data-gate="signup" data-label="비밀번호">
+      <button class="btn btn-ghost" type="button" data-eye="#su-pw" aria-label="비밀번호 보기">👁</button></div>
+    <div class="row-c mt2"><span class="bar grow"><i data-pw-bar style="width:0"></i></span>
+      <span class="t-sub" style="width:40px;text-align:right" data-pw-label>—</span></div>
+    <div class="row-c mt2" style="gap:14px"><span class="t-sub" data-pw-len>○ 8자 이상</span><span class="t-sub" data-pw-mix>○ 영문+숫자</span></div></div>
+
+  <div class="field"><label class="lb" for="su-pw2">비밀번호 확인<span class="req">*</span></label>
+    <input class="input" id="su-pw2" type="password" data-pw2 data-gate="signup" data-label="비밀번호 확인">
+    <div class="hint-ok" data-pw2-msg hidden></div></div>
+
+  <div class="g2 gap-s">
+    <div class="field"><label class="lb" for="su-nm">이름<span class="req">*</span></label>
+      <input class="input" id="su-nm" data-gate="signup" data-label="이름"></div>
+    <div class="field"><label class="lb" for="su-ph">휴대폰 번호<span class="req">*</span></label>
+      <input class="input" id="su-ph" inputmode="numeric" placeholder="010-0000-0000" data-gate="signup" data-label="휴대폰 번호"></div>
+  </div>
+
+  <div class="field"><span class="lb">관심 분야 <span class="t-sub">(여러 개 고를 수 있어요)</span></span>
+    <div class="chips"><button class="chip chip-sm" type="button" data-pickchip="interest" data-v="개발">💻 개발</button><button class="chip chip-sm" type="button" data-pickchip="interest" data-v="데이터">📊 데이터</button><button class="chip chip-sm" type="button" data-pickchip="interest" data-v="디자인">🎨 디자인</button><button class="chip chip-sm" type="button" data-pickchip="interest" data-v="마케팅">📣 마케팅</button><button class="chip chip-sm" type="button" data-pickchip="interest" data-v="기획">🗂 기획</button><button class="chip chip-sm" type="button" data-pickchip="interest" data-v="외국어">🌍 외국어</button><button class="chip chip-sm" type="button" data-pickchip="interest" data-v="재테크">💰 재테크</button><button class="chip chip-sm" type="button" data-pickchip="interest" data-v="취미">🎸 취미</button></div>
+    <div class="help">고른 분야 — <b data-pickout="interest">아직 고르지 않았어요</b></div></div>
+
+  <div class="box mt6">
+    <label class="check" style="font-weight:700"><input type="checkbox" data-agreeall="signup"><span>전체 동의</span></label>
+    <div class="hr" style="margin:12px 0"></div>
+    <div class="checks">
+      <label class="check"><input type="checkbox" data-agree="signup" data-gate="signup" data-label="이용약관 동의">
+        <span class="grow">이용약관 <span class="pri">(필수)</span></span>
+        <button class="btn-link" type="button" data-toast="약관 전문은 서버가 연결되면 열립니다">보기</button></label>
+      <label class="check"><input type="checkbox" data-agree="signup" data-gate="signup" data-label="개인정보 처리방침 동의">
+        <span class="grow">개인정보 처리방침 <span class="pri">(필수)</span></span>
+        <button class="btn-link" type="button" data-toast="전문은 서버가 연결되면 열립니다">보기</button></label>
+      <label class="check"><input type="checkbox" data-agree="signup" data-agree-optional>
+        <span class="grow">마케팅 정보 수신 <span class="muted">(선택)</span></span>
+        <button class="btn-link" type="button" data-toast="전문은 서버가 연결되면 열립니다">보기</button></label>
+    </div>
+  </div>
+
+  <div class="err-msg mt4" data-gatemsg="signup" hidden></div>
+  <div class="mt7"><a class="btn btn-primary btn-lg btn-block is-off" href="AU-03.html" data-gated="signup">다음 — 휴대폰 인증</a></div>
+  <p class="center mt4 t-sub">이미 회원이신가요? <a class="btn-link" href="AU-01.html">로그인</a></p>
+</div>
+  </div>
+    <p class="t-sub center mt6"><a href="../index.html" style="font-weight:700;color:var(--pri-ink)">화면 목록</a> · 화면 견본이라 실제로 가입·로그인되지 않습니다</p>
+  </div>
+</main>
+
+<div class="dev"><div class="spec">
+    <div class="id">AU-02</div><div class="nm">회원가입</div>
+    <div class="fd">이메일·비밀번호·비밀번호 확인 입력 · 비밀번호 조건 실시간 표시 · 이름 입력 · 휴대폰 번호 입력 · 관심 분야 선택 · 약관 동의(전체·필수 2종·선택 1종) · 소셜로 간편 가입 · 이미 가입된 이메일 안내</div>
+    <div class="lk"><a href="AU-03.html">다음 ›</a><a href="AU-01.html">로그인 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">AU-02 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>진도 미달자 관리 · 배움터</title>
+<meta name="description" content="기준 진도율 미만 수강생 자동 추출 · 미달 기간 표시(N일째 미접속) · 일괄 선택 체크박스 · 독려 메시지 일괄 발송 · 기준 진도율 설정 변경">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="ST-04">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <div class="gl">강사센터</div><a href="TC-01.html">강사센터 홈</a><div class="gl">수업 편성</div><a href="CU-01.html">내 강의 목록</a><a href="CU-02.html">강의 개설</a><a href="CU-03.html">커리큘럼 편성</a><a href="CU-04.html">영상 업로드</a><div class="gl">학생 관리</div><a href="ST-01.html">수강생 목록</a><a href="ST-04.html" class="on" aria-current="page">진도 미달자</a><a href="ST-05.html">알림 발송</a><div class="gl">출결·평가</div><a href="GR-01.html">출석 현황</a><a href="GR-02.html">과제 채점</a><a href="GR-04.html">수료 기준</a><div class="gl">정산</div><a href="MY-03.html">정산 내역</a>
+    <div class="side-ft">
+      <a href="HO-01.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="MY-01.html"><span class="ava">김</span>김수현님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="ST-01.html">‹ 수강생 목록</a>
+    <span class="path">학생 관리 › <b>진도 미달자 관리</b></span>
+  </nav>
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">진도 미달자 관리</h1><p class="t-sub">기준을 움직이면 대상 인원과 목록이 그 자리에서 다시 계산됩니다</p></div></div>
+
+<div class="split-r" data-calc-lag>
+  <div>
+    <div class="card mb4"><div class="card-bd">
+      <div class="row-b wrap-row" style="gap:var(--s6)">
+        <div class="grow" style="min-width:240px">
+          <label class="lb" for="lag-progress">진도율 <b class="pri" id="lag-out">40%</b> 미만</label>
+          <input class="slider" type="range" id="lag-progress" min="0" max="100" step="5" value="40" data-out="#lag-out" data-unit="%" data-calc>
+        </div>
+        <div style="width:200px">
+          <label class="lb" for="lag-days">며칠 이상 미접속</label>
+          <div class="input-row"><input class="input" type="number" id="lag-days" value="7" min="0" max="90" data-calc><span class="btn btn-ghost">일</span></div>
+        </div>
+      </div>
+      <div class="row-b wrap-row mt4">
+        <span class="t-sub">이 기준에 걸린 사람 <b class="pri" data-out-lag>0</b>명 · 고른 사람 <b class="pri" data-selcount="lag">0</b>명</span>
+        <a class="btn btn-primary is-off" href="ST-05.html" data-selneed="lag">선택한 <b data-selcount="lag">0</b>명에게 독려 메시지 보내기</a>
+      </div>
+    </div></div>
+
+    <div class="table-wrap table-scroll"><table class="table">
+      <thead><tr>
+        <th style="width:44px"><input type="checkbox" data-selall="lag" aria-label="전체 고르기"></th>
+        <th>이름</th><th style="width:190px">진도율</th><th style="width:120px">마지막 접속</th>
+        <th style="width:110px">미접속</th><th style="width:110px">상태</th></tr></thead>
+      <tbody id="lag-rows"><tr data-progress="92" data-days="1">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="김서준 고르기"></td>
+    <td><b>김서준</b><div class="t-sub">seojun@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:92%"></i></div><span class="pct">92%</span></div></div></td>
+    <td>2026-08-05</td>
+    <td class="right"><b class="">1일</b></td>
+    <td><span class="badge b-pri">수료 가능</span></td>
+  </tr><tr data-progress="78" data-days="2">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="이하윤 고르기"></td>
+    <td><b>이하윤</b><div class="t-sub">hayun@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:78%"></i></div><span class="pct">78%</span></div></div></td>
+    <td>2026-08-04</td>
+    <td class="right"><b class="">2일</b></td>
+    <td><span class="badge b-pri">진행 중</span></td>
+  </tr><tr data-progress="64" data-days="5">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="박도윤 고르기"></td>
+    <td><b>박도윤</b><div class="t-sub">doyun@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:64%"></i></div><span class="pct">64%</span></div></div></td>
+    <td>2026-08-01</td>
+    <td class="right"><b class="">5일</b></td>
+    <td><span class="badge b-pri">진행 중</span></td>
+  </tr><tr data-progress="41" data-days="13">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="최시우 고르기"></td>
+    <td><b>최시우</b><div class="t-sub">siwoo@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:41%"></i></div><span class="pct">41%</span></div></div></td>
+    <td>2026-07-24</td>
+    <td class="right"><b class="">13일</b></td>
+    <td><span class="badge b-pri">진행 중</span></td>
+  </tr><tr data-progress="12" data-days="29">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="정지호 고르기"></td>
+    <td><b>정지호</b><div class="t-sub">jiho@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:12%"></i></div><span class="pct">12%</span></div></div></td>
+    <td>2026-07-08</td>
+    <td class="right"><b class="danger">29일</b></td>
+    <td><span class="badge b-warn">진도 미달</span></td>
+  </tr><tr data-progress="88" data-days="0">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="강예린 고르기"></td>
+    <td><b>강예린</b><div class="t-sub">yerin@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:88%"></i></div><span class="pct">88%</span></div></div></td>
+    <td>2026-08-06</td>
+    <td class="right"><b class="">0일</b></td>
+    <td><span class="badge b-pri">수료 가능</span></td>
+  </tr><tr data-progress="55" data-days="7">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="윤채원 고르기"></td>
+    <td><b>윤채원</b><div class="t-sub">chaewon@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:55%"></i></div><span class="pct">55%</span></div></div></td>
+    <td>2026-07-30</td>
+    <td class="right"><b class="">7일</b></td>
+    <td><span class="badge b-pri">진행 중</span></td>
+  </tr><tr data-progress="0" data-days="73">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="임건우 고르기"></td>
+    <td><b>임건우</b><div class="t-sub">gunwoo@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:0%"></i></div><span class="pct">0%</span></div></div></td>
+    <td>2026-05-25</td>
+    <td class="right"><b class="danger">73일</b></td>
+    <td><span class="badge b-mut">미시작</span></td>
+  </tr><tr data-progress="96" data-days="0">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="한소율 고르기"></td>
+    <td><b>한소율</b><div class="t-sub">soyul@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:96%"></i></div><span class="pct">96%</span></div></div></td>
+    <td>2026-08-06</td>
+    <td class="right"><b class="">0일</b></td>
+    <td><span class="badge b-pri">수료 가능</span></td>
+  </tr><tr data-progress="33" data-days="18">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="오지안 고르기"></td>
+    <td><b>오지안</b><div class="t-sub">jian@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:33%"></i></div><span class="pct">33%</span></div></div></td>
+    <td>2026-07-19</td>
+    <td class="right"><b class="danger">18일</b></td>
+    <td><span class="badge b-warn">진도 미달</span></td>
+  </tr><tr data-progress="71" data-days="3">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="서주원 고르기"></td>
+    <td><b>서주원</b><div class="t-sub">juwon@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:71%"></i></div><span class="pct">71%</span></div></div></td>
+    <td>2026-08-03</td>
+    <td class="right"><b class="">3일</b></td>
+    <td><span class="badge b-pri">진행 중</span></td>
+  </tr><tr data-progress="24" data-days="26">
+    <td><input class="selbox" type="checkbox" data-selgroup="lag" aria-label="문태민 고르기"></td>
+    <td><b>문태민</b><div class="t-sub">taemin@example.com</div></td>
+    <td><div style="min-width:130px"><div class="bar-row"><div class="bar "><i style="width:24%"></i></div><span class="pct">24%</span></div></div></td>
+    <td>2026-07-11</td>
+    <td class="right"><b class="danger">26일</b></td>
+    <td><span class="badge b-warn">진도 미달</span></td>
+  </tr></tbody></table></div>
+  </div>
+
+  <aside class="sticky">
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">기준을 어떻게 잡을까요</h3></div>
+  <div class="card-bd tight"><ul class="list-plain">
+      <li>· <b>진도율 40% · 7일</b>이 기본값입니다</li>
+      <li>· 기준을 낮추면 대상이 늘고, 높이면 줄어요</li>
+      <li>· 미접속 일수만 크게 잡으면 <b>이미 다 들은 분</b>도 걸립니다</li>
+      <li>· 보통 한 달에 한 번 보내는 것이 적당합니다</li>
+    </ul></div>
+  </div>
+    <div class="mt4"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">최근 보낸 독려</h3></div>
+  <div class="card-bd tight"><ul class="list-plain">
+      <li><span class="grow">7월 진도 독려<div class="t-sub">2026-07-08 · 41명</div></span><span class="badge b-ok">열람 62%</span></li>
+      <li><span class="grow">6월 진도 독려<div class="t-sub">2026-06-10 · 38명</div></span><span class="badge b-ok">열람 55%</span></li>
+    </ul></div>
+  </div></div>
+  </aside>
+</div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">ST-04</div><div class="nm">진도 미달자 관리</div>
+    <div class="fd">기준 진도율 미만 수강생 자동 추출 · 미달 기간 표시(N일째 미접속) · 일괄 선택 체크박스 · 독려 메시지 일괄 발송 · 기준 진도율 설정 변경</div>
+    <div class="lk"><a href="ST-05.html">메시지 발송 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">ST-04 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+{
+  "preset": {
+    "no": "03",
+    "name": "소프트 파스텔",
+    "fits": "액티비티·레저 예약, 20~30대 자유여행객 타깃"
+  },
+  "colors": {
+    "primary (주요 액션)": "#5B4FE5",
+    "primary-hover": "#4A3DD1",
+    "accent (강조·배지)": "#FFD54A",
+    "background (페이지)": "#FAFAFA",
+    "surface (카드)": "#FFFFFF",
+    "text (본문)": "#1F2024",
+    "text-muted (보조)": "#6B6F76",
+    "border (구분선)": "#E7E7EA",
+    "pastel-mint": "#DFF5EC",
+    "pastel-lavender": "#EDE9FE",
+    "pastel-yellow": "#FFF6D9"
+  },
+  "typography": {
+    "fontFamily": "Pretendard",
+    "fallback": "Paperlogy",
+    "scale": {
+      "페이지 제목": {
+        "size": "36px",
+        "weight": "800"
+      },
+      "섹션 제목": {
+        "size": "24px",
+        "weight": "700"
+      },
+      "카드 제목": {
+        "size": "18px",
+        "weight": "700"
+      },
+      "본문": {
+        "size": "15px",
+        "weight": "500"
+      },
+      "보조 설명": {
+        "size": "14px",
+        "weight": "500"
+      },
+      "표 헤더": {
+        "size": "13px",
+        "weight": "700"
+      }
+    }
+  },
+  "radius": {
+    "card": "16px",
+    "button": "12px",
+    "input": "12px",
+    "badge": "999px"
+  },
+  "spacing": "4px 배수. 카드 내부 24px, 섹션 간격 40px. 요소 사이를 넉넉히",
+  "shadow": "0 2px 8px rgba(31,32,36,.06) — 카드와 떠 있는 요소에만",
+  "components": {
+    "버튼(주요)": "primary 배경, 흰 글자, 높이 44px, radius 12px, 굵기 700",
+    "버튼(보조)": "pastel-lavender 배경, primary 글자. 테두리 없음",
+    "카드": "surface 배경, radius 16px, 부드러운 그림자. 테두리는 아주 연하게",
+    "입력": "높이 44px, background #F7F7F9, 테두리 없음, focus 시 primary 2px",
+    "배지": "파스텔 배경 + 같은 계열 진한 글자. 알약 형태(radius 999px)",
+    "표": "헤더 배경 #F7F7F9, 행 구분선 아주 연하게, 행 높이 48px",
+    "사이드바": "활성 항목은 pastel-lavender 배경 + radius 12px로 감싸기",
+    "강조 문구": "노란 형광펜 효과: linear-gradient(transparent 54%, #FFE9A8 54%)"
+  },
+  "screenGuides": {
+    "대시보드": "지표 카드를 파스텔 3색으로 번갈아. 숫자 40px/800 primary",
+    "목록": "표보다 카드 그리드 우선. 카드마다 썸네일 영역 확보",
+    "폼": "1열, 입력 높이 44px로 크게. 도움말은 입력 아래 14px muted",
+    "빈 화면": "일러스트 또는 큰 이모지 + 친근한 문구 + 큰 primary 버튼",
+    "오류": "danger를 강하게 쓰지 않는다. 부드러운 안내 + 다음 행동 제시"
+  }
+}

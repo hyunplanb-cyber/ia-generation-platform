@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>과제 채점 목록 · 배움터</title>
+<meta name="description" content="채점 대기·완료 탭 구분 · 제출일 기준 정렬 · 지각 제출 배지 표시 · 과제별 제출률 표시 · 일괄 채점 진입 · 미채점 건수 강조">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="GR-02">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="TC-01.html"><span class="em">배</span>배움터 <span class="t-sub" style="font-weight:500">강사</span></a>
+    <div class="gl">강사센터</div><a href="TC-01.html">강사센터 홈</a><div class="gl">수업 편성</div><a href="CU-01.html">내 강의 목록</a><a href="CU-02.html">강의 개설</a><a href="CU-03.html">커리큘럼 편성</a><a href="CU-04.html">영상 업로드</a><div class="gl">학생 관리</div><a href="ST-01.html">수강생 목록</a><a href="ST-04.html">진도 미달자</a><a href="ST-05.html">알림 발송</a><div class="gl">출결·평가</div><a href="GR-01.html">출석 현황</a><a href="GR-02.html" class="on" aria-current="page">과제 채점</a><a href="GR-04.html">수료 기준</a><div class="gl">정산</div><a href="MY-03.html">정산 내역</a>
+    <div class="side-ft">
+      <a href="HO-01.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="MY-01.html"><span class="ava">김</span>김수현님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="GR-01.html">‹ 출석 현황</a>
+    <span class="path">출결·평가 › <b>과제 채점 목록</b></span>
+  </nav>
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">과제 채점</h1><p class="t-sub">제출률 84/128명 (66%)</p></div></div>
+
+<div class="g4 mb6">
+  <button class="stat " type="button">
+  <span class="ico" aria-hidden="true">📝</span>
+  <span class="l">채점 대기</span>
+  <span class="v">24<small>건</small></span>
+  <span class="foot"><span class="delta dn">▾ 6</span><svg class="spark" viewBox="0 0 92 28" width="92" height="28" aria-hidden="true">
+    <polygon class="ar" points="0,28 0.0,3.0 15.3,6.3 30.7,11.2 46.0,16.1 61.3,19.4 76.7,22.7 92.0,26.0 92,28"/><polyline class="ln" points="0.0,3.0 15.3,6.3 30.7,11.2 46.0,16.1 61.3,19.4 76.7,22.7 92.0,26.0"/></svg></span>
+</button>
+  <button class="stat s-ok" type="button">
+  <span class="ico" aria-hidden="true">✅</span>
+  <span class="l">채점 완료</span>
+  <span class="v">108<small>건</small></span>
+  <span class="foot"><span class="delta up">▴ 12</span><svg class="spark" viewBox="0 0 92 28" width="92" height="28" aria-hidden="true">
+    <polygon class="ar" points="0,28 0.0,26.0 15.3,21.8 30.7,17.6 46.0,13.5 61.3,10.3 76.7,6.7 92.0,3.0 92,28"/><polyline class="ln" points="0.0,26.0 15.3,21.8 30.7,17.6 46.0,13.5 61.3,10.3 76.7,6.7 92.0,3.0"/></svg></span>
+</button>
+  <button class="stat s-acc s-ink" type="button">
+  <span class="ico" aria-hidden="true">📊</span>
+  <span class="l">평균 점수</span>
+  <span class="v">26.4<small>/30</small></span>
+  <span class="foot"><span class="delta flat">— 0</span><svg class="spark" viewBox="0 0 92 28" width="92" height="28" aria-hidden="true">
+    <polygon class="ar" points="0,28 0.0,26.0 15.3,14.5 30.7,14.5 46.0,3.0 61.3,14.5 76.7,14.5 92.0,14.5 92,28"/><polyline class="ln" points="0.0,26.0 15.3,14.5 30.7,14.5 46.0,3.0 61.3,14.5 76.7,14.5 92.0,14.5"/></svg></span>
+</button>
+  <button class="stat s-mut s-ink" type="button">
+  <span class="ico" aria-hidden="true">⏰</span>
+  <span class="l">지각 제출</span>
+  <span class="v">9<small>건</small></span>
+  <span class="foot"><span class="delta up">▴ 2</span><svg class="spark" viewBox="0 0 92 28" width="92" height="28" aria-hidden="true">
+    <polygon class="ar" points="0,28 0.0,26.0 15.3,21.4 30.7,21.4 46.0,16.8 61.3,12.2 76.7,7.6 92.0,3.0 92,28"/><polyline class="ln" points="0.0,26.0 15.3,21.4 30.7,21.4 46.0,16.8 61.3,12.2 76.7,7.6 92.0,3.0"/></svg></span>
+</button>
+</div>
+
+<div class="tabs"  data-fset><button class="tab on" type="button" data-fgroup="gr" data-f="st" data-v="wait">채점 대기<span class="cnt">5</span></button><button class="tab" type="button" data-fgroup="gr" data-f="st" data-v="done">채점 완료<span class="cnt">3</span></button><button class="tab" type="button" data-fgroup="gr" data-f="st" data-v="*">전체<span class="cnt">8</span></button></div>
+
+<div class="card mb4"><div class="card-bd">
+  <div class="row-b wrap-row">
+    <select class="input" style="width:300px" aria-label="과제 고르기" data-toast="고른 과제의 제출물로 바뀝니다">
+      <option>3장 과제 — 부서별 실적 대시보드</option><option>2장 과제 — 월별 매출표 만들기</option><option>1장 과제 — 표를 표답게</option></select>
+    <div class="grow" style="min-width:180px"><input class="input" type="search" placeholder="이름으로 찾기" data-search="gr" aria-label="검색"></div>
+    <select class="input" style="width:160px" data-toast="고른 순서로 다시 늘어세웁니다" aria-label="정렬">
+      <option>제출일순</option><option>이름순</option></select>
+  </div>
+  <div class="row-b wrap-row mt3">
+    <span class="t-sub">지금 <b class="pri" data-fcount="gr">8</b>건 · 고른 것 <b class="pri" data-selcount="gr">0</b>건</span>
+    <button class="btn btn-primary is-off" type="button" data-selneed="gr" data-toast="일괄 채점은 서버가 연결되면 동작합니다">선택한 <b data-selcount="gr">0</b>건 일괄 채점</button>
+  </div>
+</div></div>
+
+<div class="table-wrap table-scroll"><table class="table ">
+    <thead><tr><th style="width:44px"><input type="checkbox" data-selall="gr" aria-label="전체 고르기"></th><th class="sortable" data-sort="text" style="width:110px">수강생 <span class="ar">↕</span></th><th class="sortable" data-sort="text">과제 <span class="ar">↕</span></th><th class="sortable" data-sort="num" style="width:200px">제출일시 <span class="ar">↕</span></th><th style="width:80px">첨부</th><th class="sortable" data-sort="num" style="width:100px">점수 <span class="ar">↕</span></th><th style="width:110px"></th></tr></thead><tbody data-list="gr" data-finit='{"st":["wait"]}'><tr data-tags="st:wait" data-q="김서준 3장 과제 — 부서별 실적 대시보드"><td><input class="selbox" type="checkbox" data-selgroup="gr" aria-label="김서준 고르기"></td><td data-v="김서준"><b>김서준</b></td><td data-v="3장 과제 — 부서별 실적 대시보드">3장 과제 — 부서별 실적 대시보드</td><td data-v="202608052114">2026-08-05 21:14</td><td>📎 2개</td><td data-v="-1"><span class="badge b-danger">채점 전</span></td><td><a class="btn btn-primary btn-sm" href="GR-03.html">채점하기</a></td></tr><tr data-tags="st:wait" data-q="이하윤 3장 과제 — 부서별 실적 대시보드"><td><input class="selbox" type="checkbox" data-selgroup="gr" aria-label="이하윤 고르기"></td><td data-v="이하윤"><b>이하윤</b></td><td data-v="3장 과제 — 부서별 실적 대시보드">3장 과제 — 부서별 실적 대시보드</td><td data-v="202608052347">2026-08-05 23:47</td><td>📎 1개</td><td data-v="-1"><span class="badge b-danger">채점 전</span></td><td><a class="btn btn-primary btn-sm" href="GR-03.html">채점하기</a></td></tr><tr data-tags="st:wait" data-q="박도윤 3장 과제 — 부서별 실적 대시보드"><td><input class="selbox" type="checkbox" data-selgroup="gr" aria-label="박도윤 고르기"></td><td data-v="박도윤"><b>박도윤</b></td><td data-v="3장 과제 — 부서별 실적 대시보드">3장 과제 — 부서별 실적 대시보드</td><td data-v="202608060902">2026-08-06 09:02 <span class="badge b-warn">지각</span></td><td>📎 3개</td><td data-v="-1"><span class="badge b-danger">채점 전</span></td><td><a class="btn btn-primary btn-sm" href="GR-03.html">채점하기</a></td></tr><tr data-tags="st:wait" data-q="강예린 3장 과제 — 부서별 실적 대시보드"><td><input class="selbox" type="checkbox" data-selgroup="gr" aria-label="강예린 고르기"></td><td data-v="강예린"><b>강예린</b></td><td data-v="3장 과제 — 부서별 실적 대시보드">3장 과제 — 부서별 실적 대시보드</td><td data-v="202608041830">2026-08-04 18:30</td><td>📎 2개</td><td data-v="-1"><span class="badge b-danger">채점 전</span></td><td><a class="btn btn-primary btn-sm" href="GR-03.html">채점하기</a></td></tr><tr data-tags="st:wait" data-q="한소율 3장 과제 — 부서별 실적 대시보드"><td><input class="selbox" type="checkbox" data-selgroup="gr" aria-label="한소율 고르기"></td><td data-v="한소율"><b>한소율</b></td><td data-v="3장 과제 — 부서별 실적 대시보드">3장 과제 — 부서별 실적 대시보드</td><td data-v="202608042011">2026-08-04 20:11</td><td>📎 1개</td><td data-v="-1"><span class="badge b-danger">채점 전</span></td><td><a class="btn btn-primary btn-sm" href="GR-03.html">채점하기</a></td></tr><tr data-tags="st:done" data-q="서주원 2장 과제 — 월별 매출표 만들기"><td><input class="selbox" type="checkbox" data-selgroup="gr" aria-label="서주원 고르기"></td><td data-v="서주원"><b>서주원</b></td><td data-v="2장 과제 — 월별 매출표 만들기">2장 과제 — 월별 매출표 만들기</td><td data-v="202607282205">2026-07-28 22:05</td><td>📎 2개</td><td data-v="92"><b>92</b>/30</td><td><a class="btn btn-ghost btn-sm" href="GR-03.html">다시 보기</a></td></tr><tr data-tags="st:done" data-q="윤채원 2장 과제 — 월별 매출표 만들기"><td><input class="selbox" type="checkbox" data-selgroup="gr" aria-label="윤채원 고르기"></td><td data-v="윤채원"><b>윤채원</b></td><td data-v="2장 과제 — 월별 매출표 만들기">2장 과제 — 월별 매출표 만들기</td><td data-v="202607291041">2026-07-29 10:41 <span class="badge b-warn">지각</span></td><td>📎 1개</td><td data-v="78"><b>78</b>/30</td><td><a class="btn btn-ghost btn-sm" href="GR-03.html">다시 보기</a></td></tr><tr data-tags="st:done" data-q="최시우 2장 과제 — 월별 매출표 만들기"><td><input class="selbox" type="checkbox" data-selgroup="gr" aria-label="최시우 고르기"></td><td data-v="최시우"><b>최시우</b></td><td data-v="2장 과제 — 월별 매출표 만들기">2장 과제 — 월별 매출표 만들기</td><td data-v="202607271920">2026-07-27 19:20</td><td>📎 3개</td><td data-v="85"><b>85</b>/30</td><td><a class="btn btn-ghost btn-sm" href="GR-03.html">다시 보기</a></td></tr></tbody></table></div>
+<div data-list-empty="gr" hidden class="mt4"><div class="empty">
+  <div class="ico">🎉</div><h3 class="t-sec mt3">채점할 것이 없어요</h3>
+  <p class="msg">다른 탭을 눌러 보세요</p></div></div>
+
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">GR-02</div><div class="nm">과제 채점 목록</div>
+    <div class="fd">채점 대기·완료 탭 구분 · 제출일 기준 정렬 · 지각 제출 배지 표시 · 과제별 제출률 표시 · 일괄 채점 진입 · 미채점 건수 강조</div>
+    <div class="lk"><a href="GR-03.html">채점하기 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">GR-02 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

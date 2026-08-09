@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>시술 메뉴 관리 · 뷰티나우</title>
+<meta name="description" content="카테고리 추가와 순서 변경 · 카테고리별 시술 목록 · 시술 추가·수정(이름·소요시간·가격·설명) · 옵션 항목 설정(길이·난이도별 추가금) · 대표 사진 업로드 · 노출/숨김 토글 · 드래그로 순서 변경">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="MG-01">
+<header class="gnb">
+  
+  <div class="gnb-in">
+    <a class="logo" href="PT-01.html"><span class="mark">B</span>뷰티나우<span class="badge b-pri" style="margin-left:4px">매장</span></a>
+    <nav class="gnb-nav"><a href="PT-01.html">매장 홈</a><a href="ST-01.html">예약 관리</a><a href="MG-01.html" class="on">매장 운영</a><a href="SA-01.html">정산</a></nav>
+    <div class="gnb-util"><a class="btn btn-ghost btn-sm" href="MG-01.html">살롱 드 코랄</a>
+       <a class="icon-btn" href="ST-05.html" aria-label="접수 대기">🔔<span class="dot">3</span></a></div>
+  </div>
+  </header>
+
+
+
+<main class="main "><div class="wrap"><div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">시술 메뉴 관리</h1><p class="t-sub">고객이 예약할 때 보는 목록이에요. 순서는 끌어서 바꿀 수 있어요</p></div></div>
+      <div class="split"><aside class="side">
+    <div class="gl">카테고리 <span class="t-sub">(끌어서 순서 변경)</span></div>
+    <a href="#">⠿ 헤어 <span class="t-sub">4</span></a><a href="#" class="on">⠿ 컬러 <span class="t-sub">3</span></a><a href="#">⠿ 네일 <span class="t-sub">3</span></a><a href="#">⠿ 케어 <span class="t-sub">3</span></a>
+    <div style="padding:8px"><button class="btn btn-ghost btn-block btn-sm" type="button" data-toast="새 카테고리를 만들어요">+ 카테고리 추가</button></div></aside><div>
+        <div class="row-b wrap-row mb4"><b class="t-sec">컬러 <span class="t-sub">3종</span></b>
+          <div class="btns"><a class="btn btn-ghost" href="MG-05.html">사진 올리기</a><button class="btn btn-primary" type="button"data-toast="새 시술을 추가해요">+ 시술 추가</button></div></div>
+        <div class="table-wrap table-scroll"><table class="table table-fix">
+    <thead><tr><th style="width:auto"></th><th style="width:80px">사진</th><th style="width:auto">시술명</th><th style="width:90px">소요</th><th style="width:120px">가격</th><th style="width:70px">노출</th><th style="width:150px"></th></tr></thead>
+    <tbody><tr class="">
+    <td style="width:40px" class="muted">⠿</td>
+    <td><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (시술 대표 · 권장 1200×900)"><span class="lb">1200×900</span></div></td>
+    <td><b>뿌리 염색</b>
+      <div class="t-sub">자란 부분만 색을 맞춥니다.…</div></td>
+    <td>60분</td>
+    <td>45,000원</td>
+    <td><button class="toggle on" type="button" aria-label="노출"></button></td>
+    <td class="right"><div class="btns" style="justify-content:flex-end;flex-wrap:nowrap">
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="뿌리 염색 수정 패널을 엽니다">수정</button>
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="정말 지울까요? 이미 잡힌 예약은 유지돼요">삭제</button></div></td></tr><tr class="">
+    <td style="width:40px" class="muted">⠿</td>
+    <td><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (시술 대표 · 권장 1200×900)"><span class="lb">1200×900</span></div></td>
+    <td><b>전체 염색</b> <span class="badge b-line">옵션 있음</span>
+      <div class="t-sub">길이에 따라 추가금이 있어요.…</div></td>
+    <td>90분</td>
+    <td>70,000원</td>
+    <td><button class="toggle on" type="button" aria-label="노출"></button></td>
+    <td class="right"><div class="btns" style="justify-content:flex-end;flex-wrap:nowrap">
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="전체 염색 수정 패널을 엽니다">수정</button>
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="정말 지울까요? 이미 잡힌 예약은 유지돼요">삭제</button></div></td></tr><tr class="">
+    <td style="width:40px" class="muted">⠿</td>
+    <td><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (시술 대표 · 권장 1200×900)"><span class="lb">1200×900</span></div></td>
+    <td><b>발레아쥬</b> <span class="badge b-line">옵션 있음</span>
+      <div class="t-sub">탈색 후 톤을 얹는 시술. 모발 상태 확인이 필요해…</div></td>
+    <td>180분</td>
+    <td>165,000원</td>
+    <td><button class="toggle on" type="button" aria-label="노출"></button></td>
+    <td class="right"><div class="btns" style="justify-content:flex-end;flex-wrap:nowrap">
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="발레아쥬 수정 패널을 엽니다">수정</button>
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="정말 지울까요? 이미 잡힌 예약은 유지돼요">삭제</button></div></td></tr></tbody></table></div>
+        <div class="mt6"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">시술 수정 — 발레아쥬</h3></div>
+  <div class="card-bd ">
+    <div class="field"><div class="label">시술명 <span class="req">*</span></div><input class="input " type="text" value="발레아쥬"></div>
+    <div class="field-row">
+      <div class="field"><div class="label">소요시간(분) <span class="req">*</span></div>
+        <input class="input " type="number" value="180" placeholder="예: 180">
+        <p class="hint">이 시간만큼 자리를 잡아요</p></div>
+      <div class="field"><div class="label">기본 가격(원) <span class="req">*</span></div>
+        <input class="input " type="number" value="165000" placeholder="예: 165000">
+        </div></div>
+    <div class="field"><div class="label">설명</div><textarea class="textarea" style="min-height:88px">탈색 후 톤을 얹는 시술. 모발 상태 확인이 필요해요.</textarea></div>
+    <div class="field"><div class="label">옵션별 추가금</div>
+      <div class="table-wrap table-scroll"><table class="table table-fix"><thead><tr><th>옵션</th><th>항목</th><th>추가금</th><th>추가시간</th></tr></thead><tbody><tr class=""><td><b>길이</b></td><td>단발(어깨 위)</td><td><input class="input" style="height:36px" type="text" value="0"></td><td><input class="input" style="height:36px" type="text" value="0"></td></tr><tr class=""><td></td><td>중단발(어깨~가슴)</td><td><input class="input" style="height:36px" type="text" value="15000"></td><td><input class="input" style="height:36px" type="text" value="20"></td></tr><tr class=""><td></td><td>롱(가슴 아래)</td><td><input class="input" style="height:36px" type="text" value="30000"></td><td><input class="input" style="height:36px" type="text" value="40"></td></tr><tr class=""><td><b>디자인 난이도</b></td><td>기본</td><td><input class="input" style="height:36px" type="text" value="0"></td><td><input class="input" style="height:36px" type="text" value="0"></td></tr><tr class=""><td></td><td>포인트 2개</td><td><input class="input" style="height:36px" type="text" value="8000"></td><td><input class="input" style="height:36px" type="text" value="15"></td></tr><tr class=""><td></td><td>전체 아트</td><td><input class="input" style="height:36px" type="text" value="20000"></td><td><input class="input" style="height:36px" type="text" value="30"></td></tr></tbody></table></div></div>
+    <div class="field"><div class="label">대표 사진</div>
+      <div class="row wrap-row" style="gap:8px"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:120px;height:90px" title="이미지 영역 (시술 대표 · 권장 1200×900)"><span class="lb">1200×900</span></div><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:120px;height:90px" title="이미지 영역 (시술 대표 · 권장 1200×900)"><span class="lb">1200×900</span></div>
+        <div class="upload none" style="width:120px;padding:16px;display:flex;align-items:center;justify-content:center">＋</div></div>
+      <p class="hint">1200×900 이상 · JPG·PNG · 최대 5장</p></div></div>
+  <div class="card-ft"><div class="btns"><button class="btn btn-ghost" type="button"data-dismiss data-toast="고치던 내용을 버렸어요">취소</button>
+      <button class="btn btn-primary grow" type="button" data-toast="시술을 저장했어요" data-toast-kind="ok">저장</button></div></div></div></div>
+      </div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">B</span>뷰티나우</div>
+      <p class="t-sub">(주)뷰티나우 · 대표 김하늘 · 서울 강남구 테헤란로 123, 8층<br>사업자등록번호 123-45-67890 · 통신판매업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 예약·시술에 대한 책임은 각 매장에 있습니다.</p>
+    </div>
+    <div><h4>서비스</h4><ul>
+      <li><a href="SE-01.html">매장 탐색</a></li><li><a href="SE-03.html">지도로 찾기</a></li>
+      <li><a href="MY-01.html">내 예약</a></li><li><a href="RV-03.html">내 리뷰</a></li>
+      <li><a href="AC-02.html">쿠폰·적립금</a></li></ul></div>
+    <div><h4>매장 사장님</h4><ul>
+      <li><a href="PT-02.html">매장 입점 신청</a></li><li><a href="PT-01.html">매장 홈</a></li>
+      <li><a href="MG-01.html">시술 메뉴 관리</a></li><li><a href="SA-01.html">정산 내역</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1600-0000</div>
+      <p class="t-sub">평일 10:00~19:00 · 점심 13:00~14:00 (주말·공휴일 휴무)</p>
+      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 뷰티나우. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 취소·환불 규정</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">MG-01</div><div class="nm">시술 메뉴 관리</div>
+    <div class="fd">카테고리 추가와 순서 변경 · 카테고리별 시술 목록 · 시술 추가·수정(이름·소요시간·가격·설명) · 옵션 항목 설정(길이·난이도별 추가금) · 대표 사진 업로드 · 노출/숨김 토글 · 드래그로 순서 변경</div>
+    <div class="lk"><a href="MG-02.html">디자이너 관리 ›</a><a href="MG-05.html">사진 업로드 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">MG-01 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>계정 설정 · 트래블나우</title>
+<meta name="description" content="프로필 정보 수정(이름·여권 영문명·연락처) · 이메일 변경과 인증 메일 발송 · 비밀번호 변경(현재·새 비밀번호·조건 표시) · 소셜 계정 연결과 해제 · 알림 수신 설정(카톡·이메일·앱 푸시 개별 토글) · 마케팅 수신 동의와 변경 이력 · 표시 언어와 결제 통화 ">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="MY-13">
+<header class="gnb">
+  
+  <div class="gnb-in">
+    <a class="logo" href="HO-01.html"><span class="mark">TN</span>트래블나우</a>
+    <form class="gnb-search" role="search"><span class="ico">🔍</span><input class="input" type="search" placeholder="여행지, 상품명으로 검색" value=""></form>
+    <nav class="gnb-nav"><a href="HO-01.html">홈</a><a href="HO-02.html">여행지</a><a href="PR-01.html">투어·티켓</a><a href="PR-04.html">패스</a><a href="HO-05.html">기획전</a><a href="VC-01.html">바우처</a><a href="MY-03.html" class="on">마이페이지</a><a href="CS-01.html">고객센터</a></nav>
+    <div class="gnb-util">
+      <a class="btn btn-ghost btn-sm" href="MY-13.html">김여행님</a>
+      <a class="icon-btn" href="MY-12.html" aria-label="알림함" style="display:inline-flex;align-items:center;justify-content:center">🔔<span class="dot">3</span></a>
+      <a class="icon-btn" href="CT-01.html" aria-label="장바구니" style="display:inline-flex;align-items:center;justify-content:center">🛒</a>
+    </div>
+  </div></header>
+<div class="backbar"><div class="in">
+        <a class="back" href="MY-01.html">‹ 로그인</a>
+        <span class="crumb">마이페이지 <i>›</i> 계정 설정</span>
+      </div></div>
+
+
+<main class="main "><div class="wrap"><div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">계정 설정</h1><p class="t-sub">kim@example.com · 2024년 3월 가입</p></div></div>
+  <div class="split"><aside class="side"><div class="gl">계정 설정</div>
+    <a href="#s0" class="on">프로필</a><a href="#s1">이메일 변경</a><a href="#s2">비밀번호</a><a href="#s3">소셜 계정</a><a href="#s4">알림 수신</a><a href="#s5">마케팅 동의</a><a href="#s6">표시 설정</a><a href="#s7">저장된 여행자</a><a href="#s8">개인정보 내려받기</a>
+    <div class="gl">기타</div><a href="MY-13.html" style="color:var(--muted)">회원 탈퇴</a></aside><div>
+
+    <div class="card mb4">
+  <div class="card-hd"><h3 class="t-card">프로필</h3></div>
+  <div class="card-bd "><div class="field-row">
+      <div class="field"><label class="label">이름</label><input class="input" value="김여행"></div>
+      <div class="field"><label class="label">여권 영문명</label><input class="input" value="KIM YEOHAENG"></div></div>
+      <div class="field" style="max-width:320px"><label class="label">휴대폰 번호</label><input class="input" value="010-1234-5678"></div>
+      <div class="banner banner-pri mb4"><span class="ico">ℹ</span><div class="grow"><b>예약에 쓰인 영문명은 여기서 바꿔도 이미 한 예약에는 반영되지 않아요.</b> 기존 예약은 예약 상세에서 개별 수정해주세요.</div></div>
+      <div class="btns"><button class="btn btn-primary" type="button" data-toast="프로필을 저장했어요" data-toast-kind="ok">저장</button></div></div>
+  </div>
+
+    <div class="card mb4">
+  <div class="card-hd"><h3 class="t-card">이메일 변경</h3></div>
+  <div class="card-bd "><div class="field" style="max-width:420px"><label class="label">현재 이메일</label><input class="input" value="kim@example.com" disabled></div>
+      <div class="field" style="max-width:420px"><label class="label">새 이메일</label><input class="input" placeholder="새 이메일을 입력하세요"></div>
+      <div class="btns"><a class="btn btn-primary" href="MY-13.html">인증 메일 발송</a></div>
+      <p class="hint">인증을 완료하기 전까지는 기존 이메일로 발송됩니다.</p></div>
+  </div>
+
+    <div class="card mb4">
+  <div class="card-hd"><h3 class="t-card">비밀번호 변경</h3></div>
+  <div class="card-bd "><div class="form">
+      <div class="field"><label class="label">현재 비밀번호</label><input class="input" type="password" value="••••••••"></div>
+      <div class="field"><label class="label">새 비밀번호</label><input class="input" type="password" value="••••••••••">
+        <div class="row-c mt2" style="gap:12px;flex-wrap:wrap"><span class="t-sub success">✓ 8자 이상</span>
+          <span class="t-sub success">✓ 영문 포함</span><span class="t-sub success">✓ 숫자 포함</span></div></div>
+      <div class="field"><label class="label">새 비밀번호 확인</label><input class="input" type="password" value="••••••••••"><p class="ok">✓ 일치해요</p></div>
+      <button class="btn btn-primary" type="button" data-toast="비밀번호를 변경했어요" data-toast-kind="ok">비밀번호 변경</button></div></div>
+  </div>
+
+    <div class="card mb4">
+  <div class="card-hd"><h3 class="t-card">소셜 계정 연결</h3></div>
+  <div class="card-bd "><div class="row-b" style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <div><b>카카오</b> <span class="badge b-ok">연결됨</span>
+          <div class="t-sub mt1">kim****@kakao.com</div></div>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="연결을 해제했어요">해제</button></div><div class="row-b" style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <div><b>구글</b> <span class="badge b-mut">미연결</span>
+          <div class="t-sub mt1">연결하면 간편하게 로그인할 수 있어요</div></div>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="계정을 연결했어요" data-toast-kind="ok">연결</button></div><div class="row-b" style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <div><b>애플</b> <span class="badge b-ok">연결됨</span>
+          <div class="t-sub mt1">마지막 로그인 수단이라 해제할 수 없어요</div></div>
+        <button class="btn btn-ghost btn-sm" type="button" disabled>해제</button></div></div>
+  </div>
+
+    <div class="card mb4">
+  <div class="card-hd"><h3 class="t-card">알림 수신 설정</h3></div>
+  <div class="card-bd "><div class="table-wrap "><table class="table "><thead><tr><th style="width:34%">알림 종류</th><th>카카오톡</th><th>이메일</th><th>앱 푸시</th></tr></thead><tbody><tr class=""><td>예약 안내 <span class="t-sub">(확정·출발·바우처)</span></td><td><button class="toggle on" type="button"></button></td><td><button class="toggle on" type="button"></button></td><td><button class="toggle on" type="button"></button></td></tr><tr class=""><td>혜택 · 특가 <span class="t-sub">(찜 할인·쿠폰 만료)</span></td><td><button class="toggle on" type="button"></button></td><td><button class="toggle " type="button"></button></td><td><button class="toggle on" type="button"></button></td></tr><tr class=""><td>공지 · 현지 이슈</td><td><button class="toggle on" type="button"></button></td><td><button class="toggle on" type="button"></button></td><td><button class="toggle on" type="button"></button></td></tr></tbody></table></div>
+      <p class="hint">예약 확정과 출발 안내는 여행에 꼭 필요한 정보라 최소 1개 채널은 켜두시길 권해요.</p></div>
+  </div>
+
+    <div class="card mb4">
+  <div class="card-hd"><h3 class="t-card">마케팅 수신 동의</h3></div>
+  <div class="card-bd "><div class="row-b">
+      <div><b>마케팅 정보 수신에 동의</b><p class="t-sub mt1">최근 변경일 2026년 5월 12일 · 동의 상태</p></div>
+      <button class="toggle on" type="button"></button></div>
+      <div class="hr"></div>
+      <div class="table-wrap "><table class="table "><thead><tr><th style="width:34%">변경 시각</th><th>항목</th><th>변경 내용</th></tr></thead><tbody><tr class=""><td>2026.05.12 21:04</td><td>마케팅 수신</td><td>미동의 → 동의</td></tr><tr class=""><td>2024.03.02 10:11</td><td>마케팅 수신</td><td>동의 (가입 시)</td></tr></tbody></table></div></div>
+  </div>
+
+    <div class="card mb4">
+  <div class="card-hd"><h3 class="t-card">표시 설정</h3></div>
+  <div class="card-bd "><div class="g2 g1-m">
+      <div class="field"><label class="label">표시 언어</label>
+        <select class="select"><option>한국어</option><option>English</option></select></div>
+      <div class="field"><label class="label">결제 통화</label>
+        <select class="select"><option>KRW 원</option><option>USD 달러</option></select></div></div>
+      <p class="hint">결제 통화를 바꾸면 상품 가격이 해당 통화로 표시됩니다. 실제 청구는 카드사 환율이 적용돼요.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-toast="표시 설정을 저장했어요" data-toast-kind="ok">저장</button></div></div>
+  </div>
+
+    <div class="card mb4">
+  <div class="card-hd"><h3 class="t-card">저장된 여행자 정보</h3></div>
+  <div class="card-bd "><p class="t-sub mb3">자주 함께 가는 동행자를 저장해두면 예약할 때 바로 불러올 수 있어요.</p>
+      <div class="table-wrap "><table class="table "><thead><tr><th style="width:32%">영문명</th><th>생년월일</th><th>관계</th><th></th></tr></thead><tbody><tr class=""><td>LEE SORA</td><td>1992-07-02</td><td>배우자</td><td><button class="btn btn-ghost btn-sm" type="button" data-toast="삭제했어요">삭제</button></td></tr><tr class=""><td>KIM HANEUL</td><td>2016-04-18</td><td>자녀</td><td><button class="btn btn-ghost btn-sm" type="button" data-toast="삭제했어요">삭제</button></td></tr></tbody></table></div>
+      <div class="btns mt4"><button class="btn btn-ghost" type="button" data-toast="여행자 추가 창을 열었어요">＋ 여행자 추가</button></div></div>
+  </div>
+
+    <div class="card mb6">
+  <div class="card-hd"><h3 class="t-card">내 개인정보 내려받기</h3></div>
+  <div class="card-bd "><p>요청하시면 보관 중인 개인정보와 예약 기록을 정리해 <b>가입 이메일로 보내드려요.</b></p>
+      <p class="t-sub mt2">처리에 최대 3영업일이 걸리며, 파일은 암호가 걸린 ZIP으로 전송됩니다.</p>
+      <div class="btns mt4"><button class="btn btn-ghost" type="button" data-toast="내려받기를 요청했어요. 3영업일 안에 메일로 보내드립니다" data-toast-kind="ok">내려받기 요청</button></div></div>
+  </div>
+
+    <div class="center"><button class="btn btn-link" type="button" data-modal="m-leave" style="color:var(--muted);font-weight:400">회원 탈퇴</button></div>
+
+    <template id="m-leave"><div class="modal ">
+  <div class="hd">정말 탈퇴하시겠어요?</div><div class="bd">
+      <div class="box-danger mb3"><b>탈퇴하면 아래 정보가 모두 사라져요.</b>
+        <ul class="mt2"><li class="t-sub" style="padding:2px 0">· 보유 쿠폰 3장</li><li class="t-sub" style="padding:2px 0">· 포인트 3,500P</li><li class="t-sub" style="padding:2px 0">· 작성한 후기 11개</li><li class="t-sub" style="padding:2px 0">· 예약 기록과 바우처</li></ul></div>
+      <p class="t-sub">같은 이메일로 30일 안에는 재가입할 수 없어요.</p></div><div class="ft"><button class="btn btn-ghost" type="button" data-dismiss>계정 유지</button>
+       <a class="btn btn-danger" href="MY-13.html">탈퇴 진행</a></div></div></template>
+  </div></div>
+
+  </div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">TN</span>트래블나우</div>
+      <p class="t-sub">(주)트래블나우  ·  서울 강남구 테헤란로 000  ·  대표 홍길동<br>사업자등록번호 000-00-00000  ·  통신판매업 제2026-서울강남-0000호  ·  관광사업자 등록 제2026-000호</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 상품 정보 및 거래에 대한 책임은 각 판매자에게 있습니다.</p>
+    </div>
+    <div><h4>서비스</h4><ul>
+      <li><a href="PR-01.html">투어·티켓</a></li><li><a href="PR-04.html">패스</a></li>
+      <li><a href="HO-05.html">기획전</a></li><li><a href="HO-02.html">여행지</a></li>
+      <li><a href="VC-01.html">내 바우처</a></li></ul></div>
+    <div><h4>고객지원</h4><ul>
+      <li><a href="CS-01.html">자주 묻는 질문</a></li><li><a href="CS-02.html">1:1 문의</a></li>
+      <li><a href="CS-04.html">공지사항</a></li><li><a href="CS-05.html">취소·환불 규정</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00~18:00 · 주말 10:00~17:00 (현지 긴급은 24시간)</p>
+      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 트래블나우. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 여행자 보험 안내</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">MY-13</div><div class="nm">계정 설정</div>
+    <div class="fd">프로필 정보 수정(이름·여권 영문명·연락처) · 이메일 변경과 인증 메일 발송 · 비밀번호 변경(현재·새 비밀번호·조건 표시) · 소셜 계정 연결과 해제 · 알림 수신 설정(카톡·이메일·앱 푸시 개별 토글) · 마케팅 수신 동의와 변경 이력 · 표시 언어와 결제 통화 설정 · 자주 쓰는 여행자 정보 저장·관리 · 내 개인정보 내려받기 · 회원 탈퇴와 유의사항</div>
+    <div class="lk"><a href="MY-12.html">알림함 ›</a><a href="CS-02.html">문의하기 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">MY-13 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

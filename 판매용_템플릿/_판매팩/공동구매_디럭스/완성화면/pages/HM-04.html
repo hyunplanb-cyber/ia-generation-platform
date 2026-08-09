@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>발주·배송 관리 · 모아공구</title>
+<meta name="description" content="성사분 총 수량·옵션별 집계 · 공급처 발주서 생성·다운로드 · 배송 상태 관리(준비·발송·완료) · 참여자별 배송지 목록과 송장번호 일괄 등록(엑셀 업로드) · 배송 출발 알림 발송 · 반품·교환 접수 · 배송 지연 공지 · 진행률 표시">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="HM-04">
+<header class="gnb dark">
+  
+  <div class="gnb-in">
+    <a class="logo" href="HM-01.html"><span class="mark">MG</span>모아공구<span class="badge b-pri" style="margin-left:4px">진행자</span></a>
+    <nav class="gnb-nav"><a href="HM-01.html" class="on">진행자 대시보드</a><a href="HS-02.html">공구 개설</a><a href="HM-04.html" class="on">발주·배송</a><a href="SE-01.html">정산</a></nav>
+    <div class="gnb-util"><a class="btn btn-ghost btn-sm" href="HO-01.html">참여자 화면 보기</a><a class="gnb-ava" href="AC-01.html" title="내 정보"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"></div></a></div>
+  </div>
+  </header>
+
+
+
+<main class="main "><div class="wrap wrap-full"><div class="split"><aside class="side"><div class="gl">공구</div><a href="HM-01.html">진행자 대시보드</a><a href="HS-02.html">공구 개설</a><a href="HM-02.html">참여 현황</a><a href="HM-03.html">마감·성사 처리</a><div class="gl">배송</div><a href="HM-04.html" class="on">발주·배송 관리</a><a href="HM-05.html">참여자 공지</a><div class="gl">정산</div><a href="SE-01.html">정산 내역</a><a href="SE-02.html">계좌·세금 설정</a></aside><div><div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">발주·배송 관리</h1><p class="t-sub">독일산 스테인리스 냄비 3종 세트</p></div></div><div class="mt6"><div class="split-r"><div>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">성사 집계</h3></div>
+  <div class="card-bd "><div class="row-b wrap-row">
+      <div><b>독일산 스테인리스 냄비 3종 세트</b><div class="t-sub mt1">2026년 8월 4일 성사 · 최종 151명</div></div>
+      <span class="badge b-ok">성사</span>
+    </div>
+    <div class="hr"></div>
+    <div class="g4">
+      <div class="box center"><div class="t-sub">총 수량</div><b class="mt1" style="display:block;font-size:18px">164개</b></div><div class="box center"><div class="t-sub">기본 3종 세트</div><b class="mt1" style="display:block;font-size:18px">151개</b></div><div class="box center"><div class="t-sub">추가 구성</div><b class="mt1" style="display:block;font-size:18px">13개</b></div><div class="box center"><div class="t-sub">발주 금액</div><b class="mt1" style="display:block;font-size:18px">9,840,000원</b></div>
+    </div>
+    <div class="btns mt4">
+      <button class="btn btn-primary" type="button" data-toast="발주서를 내려받았어요" data-toast-kind="ok">발주서 내려받기 (엑셀)</button>
+      <button class="btn btn-ghost" type="button" data-toast="공급처에 발주서를 보냈어요" data-toast-kind="ok">공급처에 메일 보내기</button>
+    </div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">배송 진행</h3></div>
+  <div class="card-bd "><div class="row-b mb3"><b>151건 중 32건 발송 완료</b><span class="t-sub">21%</span></div>
+      <div class="progress"><div class="fill " style="width:21%"></div></div>
+      <div class="row wrap-row mt4" style="gap:10px">
+        <div class="box center grow"><div class="t-sub">준비</div><b class="mt1" style="display:block;font-size:20px">119건</b>
+          <div class="mt2"><span class="badge b-warn">준비</span></div></div><div class="box center grow"><div class="t-sub">발송</div><b class="mt1" style="display:block;font-size:20px">32건</b>
+          <div class="mt2"><span class="badge b-ok">발송</span></div></div><div class="box center grow"><div class="t-sub">완료</div><b class="mt1" style="display:block;font-size:20px">0건</b>
+          <div class="mt2"><span class="badge b-mut">완료</span></div></div>
+      </div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">송장번호 등록</h3></div>
+  <div class="card-bd "><div class="upload" style="padding:22px">
+      <div class="ico">📄</div><b>엑셀 파일을 끌어다 놓으세요</b>
+      <p class="t-sub">참여 번호와 송장번호 두 열만 있으면 됩니다 · XLSX·CSV</p>
+      <div class="btns mt3">
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="양식을 내려받았어요" data-toast-kind="ok">양식 내려받기</button>
+        <button class="btn btn-primary btn-sm" type="button" data-toast="송장번호 119건을 등록했어요" data-toast-kind="ok">파일 올리기</button>
+      </div>
+    </div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">배송지 목록</h3></div>
+  <div class="card-bd "><div class="row-b wrap-row mb4" style="gap:12px">
+      <div class="row wrap-row" style="gap:8px">
+        <input class="input" style="width:180px" placeholder="닉네임·송장번호 검색">
+        <div class="chips"><button class="chip on" type="button" >전체 <span class="x">✕</span></button><button class="chip" type="button" >발송 준비</button><button class="chip" type="button" >발송 완료</button></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="배송지 목록을 내려받았어요" data-toast-kind="ok">배송지 엑셀 내려받기</button>
+    </div>
+    <div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:36px"></th><th>참여자</th><th>옵션</th><th>수량</th><th style="width:26%">배송지</th><th>송장번호</th><th>상태</th></tr></thead><tbody><tr class=""><td><label class="check" style="padding:0"><input type="checkbox"><span></span></label></td><td><div class="row" style="gap:8px"><div class="ph ph-fix t2 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div><b>김하*</b></div></td><td>기본 3종 세트</td><td>1개</td><td>서울 성동구 아차산로 111…</td><td>640123456789</td><td><span class="badge b-ok">발송 완료</span></td></tr><tr class=""><td><label class="check" style="padding:0"><input type="checkbox"><span></span></label></td><td><div class="row" style="gap:8px"><div class="ph ph-fix t4 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div><b>이준*</b></div></td><td>기본 3종 세트</td><td>1개</td><td>경기 성남시 분당구 판교로…</td><td>640123456790</td><td><span class="badge b-ok">발송 완료</span></td></tr><tr class=""><td><label class="check" style="padding:0"><input type="checkbox" checked><span></span></label></td><td><div class="row" style="gap:8px"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div><b>박민*</b></div></td><td>기본 3종 세트</td><td>2개</td><td>부산 해운대구 센텀중앙로…</td><td><input class="input" placeholder="송장번호" style="width:150px"></td><td><span class="badge b-warn">발송 준비</span></td></tr><tr class=""><td><label class="check" style="padding:0"><input type="checkbox" checked><span></span></label></td><td><div class="row" style="gap:8px"><div class="ph ph-fix t5 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div><b>최윤*</b></div></td><td>기본 3종 세트</td><td>1개</td><td>제주 제주시 첨단로…</td><td><input class="input" placeholder="송장번호" style="width:150px"></td><td><span class="badge b-warn">발송 준비</span></td></tr><tr class=""><td><label class="check" style="padding:0"><input type="checkbox" checked><span></span></label></td><td><div class="row" style="gap:8px"><div class="ph ph-fix t2 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div><b>정태*</b></div></td><td>기본 3종 세트</td><td>1개</td><td>대전 유성구 대학로…</td><td><input class="input" placeholder="송장번호" style="width:150px"></td><td><span class="badge b-warn">발송 준비</span></td></tr></tbody></table></div>
+    <div class="row-b mt4">
+      <label class="check" style="padding:0"><input type="checkbox" checked><span>발송 준비 전체 선택 (119건)</span></label>
+      <div class="btns">
+        <button class="btn btn-primary btn-sm" type="button" data-toast="119건을 발송 완료로 바꿨어요" data-toast-kind="ok">발송 완료로 바꾸기</button>
+        <a class="btn btn-accent btn-sm" href="HM-05.html">배송 출발 알림 보내기</a>
+      </div>
+    </div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">반품·교환 접수</h3></div>
+  <div class="card-bd "><div class="row-b list-row" style="padding:12px 0">
+      <div class="grow"><div class="row" style="gap:8px"><div class="ph ph-fix t5 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div><b>최윤*</b><span class="t-sub">2026-08-05</span></div>
+        <p class="t-sub mt1">박스가 눌려 왔어요 (사진 첨부)</p></div>
+      <div class="btns nowrap"><span class="badge b-warn">접수</span>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="재발송을 접수했어요" data-toast-kind="ok">재발송</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="환불을 접수했어요" data-toast-kind="ok">환불</button></div>
+    </div><div class="row-b list-row" style="padding:12px 0">
+      <div class="grow"><div class="row" style="gap:8px"><div class="ph ph-fix t2 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div><b>정태*</b><span class="t-sub">2026-08-05</span></div>
+        <p class="t-sub mt1">구성이 하나 빠졌습니다</p></div>
+      <div class="btns nowrap"><span class="badge b-pri">처리 중</span>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="재발송을 접수했어요" data-toast-kind="ok">재발송</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="환불을 접수했어요" data-toast-kind="ok">환불</button></div>
+    </div></div>
+  </div></div><div class="sticky"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">배송 요약</h3></div>
+  <div class="card-bd "><dl class="kv"><dt>성사 인원</dt><dd>151명</dd><dt>총 수량</dt><dd>164개</dd><dt>발송 완료</dt><dd>32건</dd><dt>발송 준비</dt><dd>119건</dd><dt>반품 접수</dt><dd>2건</dd></dl>
+    <div class="mt3"><div class="progress"><div class="fill " style="width:21%"></div></div></div>
+    <div class="hr"></div>
+    <div class="btns">
+      <a class="btn btn-primary btn-block" href="HM-05.html">배송 출발 알림</a>
+    </div>
+    <a class="btn btn-ghost btn-block" href="HM-05.html">배송 지연 공지</a>
+    <a class="btn btn-ghost btn-block" href="SE-01.html">정산 내역 보기</a>
+    <div class="hr"></div>
+    <div class="box box-warn"><b>배송 지연은 등급에 영향이 있어요</b>
+      <p class="t-sub mt1">약속한 발송일을 넘기면 신뢰 등급이 내려갑니다. 늦어질 것 같으면 미리 공지해 주세요.</p></div></div>
+  </div></div></div></div></div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">MG</span>모아공구</div>
+      <p class="t-sub">(주)모아공구 · 대표 서지현 · 서울 성동구 아차산로 111 5층<br>사업자등록 512-81-00947 · 통신판매 2026-서울성동-0288</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 상품과 배송에 대한 책임은 각 공구를 연 진행자에게 있습니다.</p>
+    </div>
+    <div><h4>참여하기</h4><ul>
+      <li><a href="HO-02.html">공구 목록</a></li><li><a href="HO-03.html">마감 임박</a></li>
+      <li><a href="MY-01.html">내 공구함</a></li><li><a href="RV-03.html">관심 공구</a></li>
+      <li><a href="CS-04.html">환불·분쟁 정책</a></li></ul></div>
+    <div><h4>진행자</h4><ul>
+      <li><a href="HS-01.html">진행자 시작하기</a></li><li><a href="HS-02.html">공구 개설</a></li>
+      <li><a href="HM-01.html">진행자 대시보드</a></li><li><a href="SE-01.html">정산 내역</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1670-3120</div>
+      <p class="t-sub">평일 10:00–18:00 (점심 12:30–13:30) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 모아공구. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 환불·분쟁 정책</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">HM-04</div><div class="nm">발주·배송 관리</div>
+    <div class="fd">성사분 총 수량·옵션별 집계 · 공급처 발주서 생성·다운로드 · 배송 상태 관리(준비·발송·완료) · 참여자별 배송지 목록과 송장번호 일괄 등록(엑셀 업로드) · 배송 출발 알림 발송 · 반품·교환 접수 · 배송 지연 공지 · 진행률 표시</div>
+    <div class="lk"><a href="HM-02.html">참여 현황 ›</a><a href="SE-01.html">정산 내역 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">HM-04 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

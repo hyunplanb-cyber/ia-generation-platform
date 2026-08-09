@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내 정보 · 배움터</title>
+<meta name="description" content="프로필 이미지와 닉네임 수정 · 이메일·비밀번호 변경 · 알림 수신 설정(이메일/푸시/문자) · 강사 전환 신청 버튼 · 회원 탈퇴 링크">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="MY-01">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="HO-01.html"><span class="em">배</span>배움터</a>
+    <div class="gl">둘러보기</div><a href="HO-01.html">홈</a><a href="CO-01.html">강의 탐색</a><div class="gl">학습</div><a href="CL-01.html">내 강의실</a><a href="CL-03.html">강의 재생</a><a href="CL-07.html">질문 게시판</a><a href="CL-08.html">수료증</a><div class="gl">내 정보</div><a href="MY-01.html" class="on" aria-current="page">마이페이지</a><a href="MY-02.html">수강 이력</a><a href="TC-01.html">강사센터</a><div class="gl">계정</div><a href="AU-01.html">로그인</a><a href="AU-02.html">회원가입</a>
+    <div class="side-ft">
+      <a href="TC-01.html">↪ 강사센터 화면으로</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    <form class="tb-search" role="search"><span class="ico" aria-hidden="true">🔍</span>
+      <input type="search" placeholder="배우고 싶은 것을 검색해 보세요" value="" aria-label="검색"></form>
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="MY-01.html"><span class="ava">김</span>김수현님</a>
+  </header>
+  <main class="appmain">
+    
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">마이페이지</h1><p class="t-sub">김수현님 · 2026-03-14 가입</p></div></div>
+<div class="tabs-pill"  ><button class="tab on" type="button" data-go="MY-01.html">내 정보</button><button class="tab" type="button" data-go="MY-02.html">수강 이력</button><button class="tab" type="button" data-go="MY-03.html">정산 내역</button><button class="tab" type="button" data-go="MY-01.html">알림 설정</button></div>
+
+<div class="split-r">
+  <div>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">프로필</h3></div>
+  <div class="card-bd ">
+      <div class="row wrap-row" style="gap:var(--s6);align-items:center">
+        <div class="ph ph-ava ph-t5" role="img" aria-label="프로필 이미지 자리, 권장 400×400"><span>400×400</span></div>
+        <div class="grow" style="min-width:200px">
+          <div class="btns"><button class="btn btn-soft" type="button" data-toast="사진 업로드는 서버가 연결되면 동작합니다">사진 바꾸기</button>
+            <button class="btn btn-ghost" type="button" data-toast="사진 삭제는 서버가 연결되면 동작합니다">사진 지우기</button></div>
+          <p class="t-sub mt3">권장 400×400 (1:1) · JPG · PNG · 2MB 이하</p>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="toggle-row" data-editrow="nick">
+        <span class="grow"><span class="lb" style="margin:0">닉네임</span>
+          <span data-view><b>수현쌤</b></span>
+          <span data-form hidden><input class="input mt2" value="수현쌤" style="max-width:280px"></span></span>
+        <div class="btns"><button class="btn btn-ghost btn-sm" type="button" data-edit="nick">수정</button>
+          <button class="btn btn-primary btn-sm" type="button" data-save="nick">저장</button></div>
+      </div>
+
+      <div class="toggle-row" data-editrow="mail">
+        <span class="grow"><span class="lb" style="margin:0">이메일</span>
+          <span data-view><b>sh.kim@example.com</b></span>
+          <span data-form hidden><input class="input mt2" type="email" value="sh.kim@example.com" style="max-width:280px"></span></span>
+        <div class="btns"><button class="btn btn-ghost btn-sm" type="button" data-edit="mail">수정</button>
+          <button class="btn btn-primary btn-sm" type="button" data-save="mail">저장</button></div>
+      </div>
+
+      <div class="toggle-row" data-editrow="phone">
+        <span class="grow"><span class="lb" style="margin:0">휴대폰</span>
+          <span data-view><b>010-1234-5678</b></span>
+          <span data-form hidden><input class="input mt2" value="010-1234-5678" style="max-width:280px"></span></span>
+        <div class="btns"><button class="btn btn-ghost btn-sm" type="button" data-edit="phone">수정</button>
+          <button class="btn btn-primary btn-sm" type="button" data-save="phone">저장</button></div>
+      </div>
+
+      <div class="toggle-row">
+        <span class="grow"><span class="lb" style="margin:0">비밀번호</span><span class="t-sub">2026-06-02에 마지막으로 바꿨어요</span></span>
+        <a class="btn btn-ghost btn-sm" href="AU-05.html">비밀번호 바꾸기</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="mt4" id="noti"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">알림 받기</h3></div>
+  <div class="card-bd ">
+      <div class="toggle-row"><span class="grow"><b>이메일</b><div class="t-sub">과제 마감·수료 안내를 메일로</div></span>
+        <button class="toggle on" type="button" role="switch" aria-checked="true" aria-label="이메일 알림"><i></i></button></div><div class="toggle-row"><span class="grow"><b>앱 푸시</b><div class="t-sub">이어보기·새 강의 알림</div></span>
+        <button class="toggle on" type="button" role="switch" aria-checked="true" aria-label="앱 푸시 알림"><i></i></button></div><div class="toggle-row"><span class="grow"><b>문자</b><div class="t-sub">중요한 안내만</div></span>
+        <button class="toggle" type="button" role="switch" aria-checked="false" aria-label="문자 알림"><i></i></button></div>
+      <p class="help">켜고 끈 상태가 그대로 남습니다</p></div>
+  </div></div>
+
+    <div class="mt6 row-b wrap-row">
+      <a class="btn btn-primary" href="TC-02.html">강사로 전환 신청</a>
+      <button class="btn btn-link" type="button" data-toast="탈퇴 처리는 서버가 연결되면 진행됩니다">회원 탈퇴</button>
+    </div>
+  </div>
+
+  <aside class="sticky">
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">한눈에 보기</h3></div>
+  <div class="card-bd "><dl class="kv"><dt>수강 중</dt><dd>3개</dd><dt>수강 완료</dt><dd>2개</dd><dt>받은 수료증</dt><dd>2장</dd><dt>쓸 수 있는 쿠폰</dt><dd>2장</dd><dt>작성한 후기</dt><dd>4개</dd></dl></div>
+  <div class="card-ft"><div class="btns-v"><a class="btn btn-ghost btn-block" href="MY-02.html">수강 이력 보기</a>
+      <a class="btn btn-ghost btn-block" href="CL-01.html">내 강의실 가기</a></div></div></div>
+  </aside>
+</div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">MY-01</div><div class="nm">내 정보</div>
+    <div class="fd">프로필 이미지와 닉네임 수정 · 이메일·비밀번호 변경 · 알림 수신 설정(이메일/푸시/문자) · 강사 전환 신청 버튼 · 회원 탈퇴 링크</div>
+    <div class="lk"><a href="MY-02.html">수강 이력 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">MY-01 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

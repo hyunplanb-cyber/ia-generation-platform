@@ -39,7 +39,7 @@ ${U.sec('', `
     label: f.neo ? `${f.label} <span class="badge b-acc" style="margin-left:6px">NEW</span>` : f.label,
     pane: f.key,
   })), 0, { panes: 'ho-rec' })}
-  <div data-panes-set="ho-rec" class="mt4">${판}</div>
+  <div data-pane-set="ho-rec" class="mt4">${판}</div>
 `, { cls: 'mt6' })}
 
 ${U.card('이 화면이 다루는 것', U.kv([
@@ -280,7 +280,7 @@ ${U.sec('', `
     ${U.tabs(기간.map((p) => ({ label: p.label, pane: p.key })), 1, { panes: 'tc-trend' })}
     ${U.fchips('tc-course', 'course', [['*', '전체 강의'], ...강의들.map((t) => [t.id, byId(t.id).name.slice(0, 12)])])}
   </div>
-  <div data-panes-set="tc-trend">${판}</div>
+  <div data-pane-set="tc-trend">${판}</div>
 `)}
 
 ${U.banner('info', '⚠', `<b>데이터가 없는 구간은 0 이 아니라 «빈 곳»으로 둡니다.</b>

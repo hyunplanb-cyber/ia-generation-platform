@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>매장 지도 · 뷰티나우</title>
+<meta name="description" content="지도에 매장 위치 핀 표시 · 핀 클릭 시 하단 미리보기 카드 · 현재 위치 기준 재검색 버튼 · 지도 이동 시 이 지역 재검색 · 목록 보기 전환 · 예약 가능 매장 핀 색상 구분">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="SE0301">
+<header class="gnb">
+  
+  <div class="gnb-in">
+    <a class="logo" href="HO0101.html"><span class="mark">B</span>뷰티나우</a>
+    <nav class="gnb-nav"><a href="HO0101.html">홈</a><a href="SE0101.html" class="on">매장 탐색</a><a href="RE0101.html">예약하기</a><a href="MY0101.html">내 예약</a><a href="RV0201.html">리뷰</a><a href="AC0101.html">내 정보</a></nav>
+    <div class="gnb-util"><a class="btn btn-ghost btn-sm" href="AU0101.html">로그인</a>
+         <a class="btn btn-primary btn-sm" href="AU0201.html">회원가입</a></div>
+  </div>
+  <div class="catbar"><div class="catbar-in">
+    <a href="SE0101.html"><span>✂️</span>헤어컷</a><a href="SE0101.html"><span>🌀</span>펌</a><a href="SE0101.html"><span>🎨</span>염색</a><a href="SE0101.html"><span>💅</span>네일</a><a href="SE0101.html"><span>🪒</span>왁싱</a><a href="SE0101.html"><span>🧖</span>피부관리</a><a href="SE0101.html"><span>👁️</span>속눈썹</a><a href="SE0101.html"><span>🧴</span>두피케어</a>
+    <span class="sep"></span>
+    <a href="PT0201.html">매장 입점</a>
+    <a href="SE0301.html">지도로 찾기</a>
+  </div></div></header>
+<div class="backbar"><div class="in">
+        <a class="back" href="SE0101.html">‹ 매장 목록</a>
+        <span class="crumb">매장 탐색 <i>›</i> 매장 지도</span>
+      </div></div>
+
+
+<main class="main "><div class="wrap"><div class="row-b wrap-row mb4">
+    <form class="searchbar grow" role="search" style="margin:0;max-width:520px;grid-template-columns:1fr auto">
+      <div class="cell"><div class="lb">지역·매장</div><input type="text" value="강남구" placeholder="지역이나 매장명"></div>
+      <button class="btn btn-primary" type="submit" style="min-width:96px">검색</button></form>
+    <div class="btns"><button class="btn btn-ghost" type="button" data-toast="위치 연결은 개발이 필요한 기능이에요">📍 현재 위치에서 찾기</button><a class="btn btn-soft" href="SE0101.html">목록으로 보기</a></div>
+  </div><div class="map map-lg"><button class="pin free" style="left:22%;top:30%" data-name="살롱 드 코랄" type="button">1</button><button class="pin free" style="left:44%;top:22%" data-name="네일 아뜰리에 봄" type="button">2</button><button class="pin" style="left:62%;top:40%" data-name="헤어랩 서초" type="button">3</button><button class="pin free" style="left:35%;top:58%" data-name="스킨스튜디오 온" type="button">4</button><button class="pin" style="left:70%;top:66%" data-name="왁싱하우스 마포" type="button">5</button><button class="pin free" style="left:52%;top:74%" data-name="래쉬룸 용산" type="button">6</button><button class="pin free" style="left:80%;top:30%" data-name="컬러샵 성수" type="button">7</button><button class="pin" style="left:18%;top:68%" data-name="살롱 미아모레" type="button">8</button><span class="lb">지도 영역 (매장 위치 · 실제 지도 서비스 연결 필요)</span></div><div class="row-c t-sub mt3" style="gap:16px;flex-wrap:wrap">
+    <span class="row-c"><i style="width:12px;height:12px;border-radius:999px;background:var(--primary);display:inline-block"></i> 오늘 예약 가능</span>
+    <span class="row-c"><i style="width:12px;height:12px;border-radius:999px;background:var(--muted);display:inline-block"></i> 오늘 마감</span>
+    <span>지도를 움직이면 이 지역에서 다시 찾을 수 있어요</span></div>
+      <div class="row-c mt4" style="justify-content:center"><button class="btn btn-soft" type="button" data-toast="현재 보이는 지역에서 다시 찾았어요">🔄 이 지역에서 재검색</button></div>
+      <div class="mt4"><div class="card" data-map-preview><div class="card-bd">
+    <div class="row gap6 wrap-row">
+      <div class="ph ph-fix t2 ph-sq ph-tiny" style="width:140px;height:105px" title="이미지 영역 (매장 대표 · 권장 1200×900)"><span class="lb">1200×900</span></div>
+      <div class="grow" style="min-width:200px">
+        <div class="t-card" data-map-name>살롱 드 코랄</div>
+        <p class="t-sub">강남구 신사동 · 여기서 640m</p>
+        <div class="mt2"><span class="stars" aria-hidden="true">★★★★★</span> <b>4.9</b> <span class="muted">(1,284)</span></div>
+        
+      </div>
+      <div class="none right" style="min-width:150px">
+        <div class="t-sub">대표 시술 최저가</div><div class="price">25,000원~</div>
+        <div class="btns mt3"><a class="btn btn-primary" href="RE0101.html">예약하기</a><button class="btn btn-ghost" type="button" data-toast="지도 앱 연결은 개발이 필요한 기능이에요">길찾기</button></div>
+      </div></div></div></div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">B</span>뷰티나우</div>
+      <p class="t-sub">(주)뷰티나우 · 대표 김하늘 · 서울 강남구 테헤란로 123, 8층<br>사업자등록번호 123-45-67890 · 통신판매업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 예약·시술에 대한 책임은 각 매장에 있습니다.</p>
+    </div>
+    <div><h4>서비스</h4><ul>
+      <li><a href="SE0101.html">매장 탐색</a></li><li><a href="SE0301.html">지도로 찾기</a></li>
+      <li><a href="MY0101.html">내 예약</a></li><li><a href="RV0301.html">내 리뷰</a></li>
+      <li><a href="AC0201.html">쿠폰·적립금</a></li></ul></div>
+    <div><h4>매장 사장님</h4><ul>
+      <li><a href="PT0201.html">매장 입점 신청</a></li><li><a href="PT0101.html">매장 홈</a></li>
+      <li><a href="MG0101.html">시술 메뉴 관리</a></li><li><a href="SA0101.html">정산 내역</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1600-0000</div>
+      <p class="t-sub">평일 10:00~19:00 · 점심 13:00~14:00 (주말·공휴일 휴무)</p>
+      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 뷰티나우. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 취소·환불 규정</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">SE0301</div><div class="nm">매장 지도</div>
+    <div class="fd">지도에 매장 위치 핀 표시 · 핀 클릭 시 하단 미리보기 카드 · 현재 위치 기준 재검색 버튼 · 지도 이동 시 이 지역 재검색 · 목록 보기 전환 · 예약 가능 매장 핀 색상 구분</div>
+    <div class="lk"><a href="SE0401.html">매장 상세 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">SE0301 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

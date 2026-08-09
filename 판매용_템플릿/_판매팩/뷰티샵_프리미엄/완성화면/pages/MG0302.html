@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>근무 일정 관리 &gt; 기존 예약 충돌 · 뷰티나우</title>
+<meta name="description" content="변경으로 영향받는 예약 건수와 목록 · 건별 시간 이동·취소 선택 · 고객 통지 문구 미리보기 · 저장 전 되돌리기">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="MG0302">
+<header class="gnb">
+  
+  <div class="gnb-in">
+    <a class="logo" href="PT0101.html"><span class="mark">B</span>뷰티나우<span class="badge b-pri" style="margin-left:4px">매장</span></a>
+    <nav class="gnb-nav"><a href="PT0101.html">매장 홈</a><a href="ST0101.html">예약 관리</a><a href="MG0101.html" class="on">매장 운영</a><a href="SA0101.html">정산</a></nav>
+    <div class="gnb-util"><a class="btn btn-ghost btn-sm" href="MG0101.html">살롱 드 코랄</a>
+       <a class="icon-btn" href="ST0501.html" aria-label="접수 대기">🔔<span class="dot">3</span></a></div>
+  </div>
+  </header>
+<div class="backbar"><div class="in">
+        <a class="back" href="MG0301.html">‹ 근무 일정 관리</a>
+        <span class="crumb">매장 운영 <i>›</i> 근무 일정 관리 &gt; 기존 예약 충돌</span>
+      </div></div>
+<div class="state-bar"><div class="in"><span class="tag">상태</span><b>기존 예약 충돌</b>
+    <span class="muted">변경으로 영향받는 예약 건수와 목록 · 건별 시간 이동·취소 선택 · 고객 통지 문구 미리보기 · 저장 전 되돌리기</span></div></div>
+
+<main class="main "><div class="wrap"><div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">근무 일정 관리</h1></div></div><div class="tabs-pill"><button class="tab on" type="button">김수현 원장</button><button class="tab" type="button">박지은 실장</button><button class="tab" type="button">이도윤 디자이너</button><button class="tab" type="button">최민서 디자이너</button></div>
+        <div class="banner banner-danger mb6"><span class="ico">⚠️</span><div class="grow"><b>이 변경으로 예약 2건이 영향을 받아요.</b>
+          <div class="t-sub mt1">수요일 시작 시각을 11:00 → 13:00으로 바꾸시면, 9월 16일과 9월 23일 오전 예약이 근무 시간 밖이 돼요.</div></div></div>
+        <div class="card mb6">
+  <div class="card-hd"><h3 class="t-card">영향받는 예약</h3></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table table-fix"><thead><tr><th>일시</th><th>고객</th><th>시술</th><th>어떻게 할까요</th></tr></thead><tbody><tr class="is-diff"><td>9/16(수) 11:00</td><td>한소희</td><td>뿌리 염색 (60분)</td><td><div class="btns" style="flex-wrap:nowrap"><button class="btn btn-soft btn-sm" type="button" data-toast="13:00으로 옮겼어요">13:00으로</button><button class="btn btn-ghost btn-sm" type="button" data-toast="취소하고 환불할까요?">취소</button></div></td></tr><tr class="is-diff"><td>9/23(수) 12:00</td><td>오지훈</td><td>두피 스케일링 (50분)</td><td><div class="btns" style="flex-wrap:nowrap"><button class="btn btn-soft btn-sm" type="button" data-toast="13:00으로 옮겼어요">13:00으로</button><button class="btn btn-ghost btn-sm" type="button" data-toast="이 예약은 그대로 둘게요">취소</button></div></td></tr></tbody></table></div>
+        <div class="box mt4"><div class="t-sub mb2">고객에게 갈 문구 미리보기</div>
+          <p>[살롱 드 코랄] 한소희님, 매장 사정으로 9월 16일(수) 예약 시간을 11:00 → 13:00으로 옮겨도 될까요? 어려우시면 02-000-0000으로 알려주세요.</p></div>
+        <div class="btns mt4"><a class="btn btn-ghost" href="MG0301.html">되돌리기</a>
+          <button class="btn btn-primary grow" type="button" data-toast="일정을 저장하고 고객 2명에게 알렸어요" data-toast-kind="ok">이대로 저장하고 고객에게 알리기</button></div></div>
+  </div>
+        <div class="card ">
+  <div class="card-hd"><h3 class="t-card">주간 근무 시간</h3></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table table-fix">
+    <thead><tr><th style="width:80px">요일</th><th style="width:90px">근무</th><th>시작</th><th>종료</th><th>휴게</th><th style="width:120px"></th></tr></thead>
+    <tbody><tr class="is-off ">
+        <td><b>월</b><div class="t-sub">매장 휴무</div></td>
+        <td><button class="toggle" type="button" aria-label="월 근무"></button></td>
+        <td><span class="muted">—</span></td>
+        <td><span class="muted">—</span></td>
+        <td><span class="muted">—</span></td>
+        <td class="right"></td></tr><tr class=" ">
+        <td><b>화</b></td>
+        <td><button class="toggle on" type="button" aria-label="화 근무"></button></td>
+        <td><input class="input" style="height:36px" type="time" value="11:00"></td>
+        <td><input class="input" style="height:36px" type="time" value="21:00"></td>
+        <td><input class="input" style="height:36px" type="text" value="15:00~16:00"></td>
+        <td class="right"></td></tr><tr class=" is-diff">
+        <td><b>수</b></td>
+        <td><button class="toggle on" type="button" aria-label="수 근무"></button></td>
+        <td><input class="input" style="height:36px" type="time" value="13:00"></td>
+        <td><input class="input" style="height:36px" type="time" value="21:00"></td>
+        <td><input class="input" style="height:36px" type="text" value="15:00~16:00"></td>
+        <td class="right"><span class="badge b-acc">바꿈</span></td></tr><tr class=" ">
+        <td><b>목</b></td>
+        <td><button class="toggle on" type="button" aria-label="목 근무"></button></td>
+        <td><input class="input" style="height:36px" type="time" value="11:00"></td>
+        <td><input class="input" style="height:36px" type="time" value="21:00"></td>
+        <td><input class="input" style="height:36px" type="text" value="15:00~16:00"></td>
+        <td class="right"></td></tr><tr class=" ">
+        <td><b>금</b></td>
+        <td><button class="toggle on" type="button" aria-label="금 근무"></button></td>
+        <td><input class="input" style="height:36px" type="time" value="11:00"></td>
+        <td><input class="input" style="height:36px" type="time" value="21:00"></td>
+        <td><input class="input" style="height:36px" type="text" value="15:00~16:00"></td>
+        <td class="right"></td></tr><tr class=" ">
+        <td><b>토</b></td>
+        <td><button class="toggle on" type="button" aria-label="토 근무"></button></td>
+        <td><input class="input" style="height:36px" type="time" value="11:00"></td>
+        <td><input class="input" style="height:36px" type="time" value="19:00"></td>
+        <td><input class="input" style="height:36px" type="text" value="15:00~16:00"></td>
+        <td class="right"></td></tr><tr class=" ">
+        <td><b>일</b></td>
+        <td><button class="toggle on" type="button" aria-label="일 근무"></button></td>
+        <td><input class="input" style="height:36px" type="time" value="11:00"></td>
+        <td><input class="input" style="height:36px" type="time" value="19:00"></td>
+        <td><input class="input" style="height:36px" type="text" value="15:00~16:00"></td>
+        <td class="right"></td></tr></tbody></table></div></div>
+  </div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">B</span>뷰티나우</div>
+      <p class="t-sub">(주)뷰티나우 · 대표 김하늘 · 서울 강남구 테헤란로 123, 8층<br>사업자등록번호 123-45-67890 · 통신판매업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 예약·시술에 대한 책임은 각 매장에 있습니다.</p>
+    </div>
+    <div><h4>서비스</h4><ul>
+      <li><a href="SE0101.html">매장 탐색</a></li><li><a href="SE0301.html">지도로 찾기</a></li>
+      <li><a href="MY0101.html">내 예약</a></li><li><a href="RV0301.html">내 리뷰</a></li>
+      <li><a href="AC0201.html">쿠폰·적립금</a></li></ul></div>
+    <div><h4>매장 사장님</h4><ul>
+      <li><a href="PT0201.html">매장 입점 신청</a></li><li><a href="PT0101.html">매장 홈</a></li>
+      <li><a href="MG0101.html">시술 메뉴 관리</a></li><li><a href="SA0101.html">정산 내역</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1600-0000</div>
+      <p class="t-sub">평일 10:00~19:00 · 점심 13:00~14:00 (주말·공휴일 휴무)</p>
+      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 뷰티나우. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 취소·환불 규정</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">MG0302</div><div class="nm">근무 일정 관리 &gt; 기존 예약 충돌</div>
+    <div class="fd">변경으로 영향받는 예약 건수와 목록 · 건별 시간 이동·취소 선택 · 고객 통지 문구 미리보기 · 저장 전 되돌리기</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">MG0302 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

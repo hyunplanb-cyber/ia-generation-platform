@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>활동 설정 · 동네고수</title>
+<meta name="description" content="제공 서비스와 항목별 시작가 · 활동 지역(구 단위 다중 선택·출장 가능 거리) · 요청 받을 조건(예산 하한·최소 규모) · 응답 가능 시간과 휴무일 · 자동 응답 문구 · 휴식 모드(요청 받지 않기) · 저장 시 노출에 미치는 영향 안내">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="PR-04">
+<header class="gnb pro"><div class="gnb-in">
+    <a class="logo" href="PR-01.html"><span class="mark">고</span>동네고수<span class="badge b-pri" style="margin-left:2px">고수</span></a>
+    <nav class="gnb-nav"><a href="PR-01.html" class="on">고수센터</a><a href="LD-01.html">요청 받기</a><a href="JB-01.html">진행 관리</a></nav>
+    <div class="gnb-util"><span class="badge b-pri">크레딧 42</span>
+       <button class="bell" type="button" aria-label="알림">🔔<span class="dot">3</span></button>
+       <a class="btn btn-ghost btn-sm" href="HO-02.html">손님 화면으로</a><a class="gnb-ava" href="AU-01.html" title="내 정보"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"></div></a></div>
+  </div></header>
+
+
+
+<main class="main  "><div class="wrap"><div class="split"><aside class="side">
+    <div class="gl">일감</div><a href="PR-01.html">고수센터 홈</a><a href="LD-01.html">새 요청<span class="n">12</span></a><a href="JB-01.html">일감 목록</a><div class="gl">정산</div><a href="JB-03.html">정산 내역</a><a href="LD-04.html">크레딧 충전</a><div class="gl">내 활동</div><a href="PR-04.html" class="on">활동 설정</a><a href="PR-05.html">프로필·포트폴리오</a><a href="PR-03.html">등록 심사 현황</a>
+    <div class="cr">
+      <div class="t-sub">남은 크레딧</div>
+      <div class="row-b"><b class="big">42</b><a class="btn btn-pri btn-xs" href="LD-04.html">충전</a></div>
+    </div>
+  </aside><div>
+  <div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">활동 설정</h1><p class="t-sub">어떤 요청을 받을지, 언제 답할 수 있는지 정해 두세요</p></div><button class="btn btn-pri" type="button" data-toast="설정을 저장했어요" data-toast-kind="ok">저장</button></div>
+
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">제공 서비스와 시작가</h3></div>
+  <div class="card-bd ">
+    <div class="table-wrap table-scroll"><table class="table  table-fix"><thead><tr><th style="width:46%">서비스</th><th style="width:30%">시작가</th><th style="width:80px"></th></tr></thead><tbody><tr class=""><td>원룸·소형 이사</td><td><input class="input" value="180,000"></td><td><button class="btn btn-ghost btn-xs" type="button" data-toast="줄을 지웠어요">삭제</button></td></tr><tr class=""><td>가정 이사(반포장)</td><td><input class="input" value="420,000"></td><td><button class="btn btn-ghost btn-xs" type="button" data-toast="줄을 지웠어요">삭제</button></td></tr><tr class=""><td>가정 이사(포장)</td><td><input class="input" value="680,000"></td><td><button class="btn btn-ghost btn-xs" type="button" data-toast="줄을 지웠어요">삭제</button></td></tr><tr class=""><td>사무실 이사</td><td><input class="input" value="1,200,000"></td><td><button class="btn btn-ghost btn-xs" type="button" data-toast="줄을 지웠어요">삭제</button></td></tr></tbody></table></div>
+    <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="빈 줄을 하나 넣었어요">＋ 서비스 추가</button></div>
+    <p class="t-sub mt2" style="color:var(--pri-text)">💡 시작가를 적어 두면 목록에 “180,000원~”으로 보여요. 값을 적지 않으면 목록에서 뒤로 밀립니다.</p></div>
+  </div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">활동 지역</h3></div>
+  <div class="card-bd ">
+    <div class="g2">
+      <div class="map">
+        <div class="zone" style="left:22%;top:20%;width:56%;height:60%"></div>
+        <span class="pin on" style="left:44%;top:42%" data-name="강남구"></span>
+        <span class="pin" style="left:28%;top:58%" data-name="서초구"></span>
+        <span class="pin" style="left:62%;top:36%" data-name="송파구"></span>
+        지도 영역 (활동 반경 · 권장 800×600)
+      </div>
+      <div>
+        <label class="lb">받을 지역</label>
+        <div class="chips mb4"><button class="chip on" type="button" >강남구 <span class="x">✕</span></button><button class="chip on" type="button" >서초구 <span class="x">✕</span></button><button class="chip on" type="button" >송파구 <span class="x">✕</span></button><button class="chip" type="button" >강동구</button><button class="chip" type="button" >용산구</button><button class="chip" type="button" >성동구</button></div>
+        <label class="lb">출장 가능 거리</label>
+        <div class="slider"><div class="fill" style="left:0;right:52%"></div><span class="kn" style="left:calc(48% - 9px)"></span></div>
+        <div class="row-b t-sub"><span>0km</span><b style="color:var(--text)">24km</b><span>50km</span></div>
+        <p class="t-sub mt2" style="color:var(--pri-text)">💡 지역을 3곳에서 5곳으로 늘리면 들어오는 요청이 평균 1.7배 많아져요.</p>
+      </div>
+    </div></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">요청 받을 조건</h3></div>
+  <div class="card-bd ">
+    <div class="g3 mb4">
+      <div><label class="lb">예산 하한</label><input class="input" value="100,000">
+        <p class="help">이보다 낮은 예산의 요청은 안 받아요</p></div>
+      <div><label class="lb">최소 규모</label><select class="input"><option>제한 없음</option><option>원룸 이상</option><option>20평 이상</option></select></div>
+      <div><label class="lb">하루 최대 요청 수</label><select class="input"><option>제한 없음</option><option>10건</option><option>5건</option></select></div>
+    </div>
+    <label class="lb">받지 않을 유형</label>
+    <div class="chips"><button class="chip on" type="button" >당일 요청 <span class="x">✕</span></button><button class="chip" type="button" >보관 이사</button><button class="chip" type="button" >피아노 포함</button><button class="chip on" type="button" >5층 이상 승강기 없음 <span class="x">✕</span></button><button class="chip" type="button" >반려동물 동반</button></div>
+    <p class="t-sub mt2" style="color:var(--pri-text)">💡 조건을 좁힐수록 들어오는 요청이 줄어요. 지금 조건이면 하루 평균 12건이 들어옵니다.</p></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">응답 가능 시간</h3></div>
+  <div class="card-bd ">
+    <div class="table-wrap table-scroll"><table class="table  table-fix"><thead><tr><th style="width:20%">요일</th><th>시작</th><th>종료</th><th style="width:18%">쉬는 날</th></tr></thead><tbody><tr class=""><td><b>월</b></td><td><select class="input"><option>08:00</option><option>09:00</option></select></td><td><select class="input"><option>20:00</option><option>18:00</option></select></td><td><label class="check"><input type="checkbox"><span class="t-sub">쉼</span></label></td></tr><tr class=""><td><b>화</b></td><td><select class="input"><option>08:00</option><option>09:00</option></select></td><td><select class="input"><option>20:00</option><option>18:00</option></select></td><td><label class="check"><input type="checkbox"><span class="t-sub">쉼</span></label></td></tr><tr class=""><td><b>수</b></td><td><select class="input"><option>08:00</option><option>09:00</option></select></td><td><select class="input"><option>20:00</option><option>18:00</option></select></td><td><label class="check"><input type="checkbox" checked><span class="t-sub">쉼</span></label></td></tr><tr class=""><td><b>목</b></td><td><select class="input"><option>08:00</option><option>09:00</option></select></td><td><select class="input"><option>20:00</option><option>18:00</option></select></td><td><label class="check"><input type="checkbox"><span class="t-sub">쉼</span></label></td></tr><tr class=""><td><b>금</b></td><td><select class="input"><option>08:00</option><option>09:00</option></select></td><td><select class="input"><option>20:00</option><option>18:00</option></select></td><td><label class="check"><input type="checkbox"><span class="t-sub">쉼</span></label></td></tr><tr class=""><td><b>토</b></td><td><select class="input"><option>08:00</option><option>09:00</option></select></td><td><select class="input"><option>20:00</option><option>18:00</option></select></td><td><label class="check"><input type="checkbox"><span class="t-sub">쉼</span></label></td></tr><tr class=""><td><b>일</b></td><td><select class="input"><option>08:00</option><option>09:00</option></select></td><td><select class="input"><option>20:00</option><option>18:00</option></select></td><td><label class="check"><input type="checkbox"><span class="t-sub">쉼</span></label></td></tr></tbody></table></div>
+    <div class="mt4"><label class="lb">특정 날짜 휴무</label>
+      <div class="chips"><button class="chip on" type="button" >2026-09-14 (추석) <span class="x">✕</span></button><button class="chip on" type="button" >2026-09-15 (추석) <span class="x">✕</span></button>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="달력이 열려요">＋ 날짜 추가</button></div></div>
+    <p class="t-sub mt2" style="color:var(--pri-text)">💡 응답 가능 시간 밖에 들어온 요청도 목록에는 쌓여요. 다만 “지금 답할 수 있는 고수” 필터에서는 빠집니다.</p></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">자동 응답 문구</h3></div>
+  <div class="card-bd ">
+    <textarea class="input" placeholder="요청이 들어오면 손님에게 자동으로 보낼 첫 인사">안녕하세요, 한결이사입니다. 요청 잘 받았습니다. 사진을 보내주시면 더 정확한 값을 알려드릴 수 있어요. 보통 30분 안에 견적을 보내드립니다.</textarea>
+    <p class="t-sub mt2" style="color:var(--pri-text)">💡 자동 응답을 켜 두면 응답률이 올라가요. 다만 이것만으로는 견적을 보낸 것으로 치지 않습니다.</p></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card tape warn">
+  <div class="card-hd"><h3 class="t-card">휴식 모드</h3></div>
+  <div class="card-bd ">
+    <div class="toggle-row">
+      <div><b>새 요청 받지 않기</b>
+        <div class="t-sub mt1">켜면 새 요청이 들어오지 않고, 목록에서 ‘지금 쉬는 중’으로 보여요.
+        진행 중인 일감과 채팅은 그대로 쓸 수 있습니다.</div></div>
+      <button class="toggle" type="button" data-toast="휴식 모드를 켜면 새 요청이 들어오지 않아요"></button>
+    </div>
+    <div class="banner banner-warn "><span class="ico">⚠️</span><div class="grow">휴식 모드가 <b>7일 넘게</b> 이어지면 목록 순위가 내려갑니다. 짧게 쉬실 때만 쓰세요.</div></div></div>
+  </div></div>
+
+  <div class="btns mt-block">
+    <button class="btn btn-pri btn-lg" type="button" data-toast="설정을 저장했어요" data-toast-kind="ok">설정 저장</button>
+    <a class="btn btn-ghost" href="PR-01.html">고수센터로</a>
+  </div></div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">고</span>동네고수</div>
+      <p class="t-sub">(주)동네고수  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 서비스 제공과 그 결과에 대한 책임은 각 고수에게 있습니다.</p>
+    </div>
+    <div><h4>맡기기</h4><ul>
+      <li><a href="RQ-01.html">요청서 작성</a></li><li><a href="SE-01.html">고수 찾기</a></li>
+      <li><a href="QT-01.html">받은 견적</a></li><li><a href="MY-01.html">내 요청</a></li>
+      <li><a href="RV-02.html">내 후기</a></li></ul></div>
+    <div><h4>고수</h4><ul>
+      <li><a href="PR-02.html">고수 등록</a></li><li><a href="PR-01.html">고수센터</a></li>
+      <li><a href="LD-01.html">요청 받기</a></li><li><a href="LD-04.html">크레딧</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 동네고수. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전 거래 정책</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">PR-04</div><div class="nm">활동 설정</div>
+    <div class="fd">제공 서비스와 항목별 시작가 · 활동 지역(구 단위 다중 선택·출장 가능 거리) · 요청 받을 조건(예산 하한·최소 규모) · 응답 가능 시간과 휴무일 · 자동 응답 문구 · 휴식 모드(요청 받지 않기) · 저장 시 노출에 미치는 영향 안내</div>
+    <div class="lk"><a href="PR-01.html">고수센터 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">PR-04 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

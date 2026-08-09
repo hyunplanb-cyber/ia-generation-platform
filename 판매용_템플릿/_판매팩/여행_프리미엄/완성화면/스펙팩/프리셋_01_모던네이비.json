@@ -1,0 +1,74 @@
+{
+  "preset": {
+    "no": "01",
+    "name": "모던 네이비",
+    "fits": "신뢰가 중요한 해외 투어·티켓 예약, 대형 여행 플랫폼"
+  },
+  "colors": {
+    "primary (주요 액션)": "#2B4A8B",
+    "primary-hover": "#1F3A73",
+    "accent (강조·배지)": "#FF7A30",
+    "background (페이지)": "#F5F7FA",
+    "surface (카드)": "#FFFFFF",
+    "text (본문)": "#16233F",
+    "text-muted (보조)": "#5A6B8C",
+    "border (구분선)": "#DFE4EC",
+    "success": "#0F7A52",
+    "warning": "#B4761A",
+    "danger": "#C0392B"
+  },
+  "typography": {
+    "fontFamily": "Pretendard",
+    "fallback": "Noto Sans KR",
+    "scale": {
+      "페이지 제목": {
+        "size": "32px",
+        "weight": "700"
+      },
+      "섹션 제목": {
+        "size": "22px",
+        "weight": "700"
+      },
+      "카드 제목": {
+        "size": "18px",
+        "weight": "600"
+      },
+      "본문": {
+        "size": "15px",
+        "weight": "400"
+      },
+      "보조 설명": {
+        "size": "13px",
+        "weight": "400"
+      },
+      "표 헤더": {
+        "size": "13px",
+        "weight": "600"
+      }
+    }
+  },
+  "radius": {
+    "card": "12px",
+    "button": "8px",
+    "input": "8px",
+    "badge": "6px"
+  },
+  "spacing": "4px 배수 (4·8·12·16·24·32·48). 카드 내부 여백 20px, 섹션 간격 32px",
+  "shadow": "0 1px 3px rgba(22,35,63,.08) — 카드에만. 버튼·입력에는 쓰지 않는다",
+  "components": {
+    "버튼(주요)": "primary 배경, 흰 글자, 높이 40px, radius 8px, 굵기 600",
+    "버튼(보조)": "흰 배경, border 1px, text 색 글자. 같은 높이",
+    "카드": "surface 배경, border 1px, radius 12px, 그림자 1단계. 헤더에 구분선",
+    "입력": "높이 40px, border 1px, focus 시 primary 테두리 2px",
+    "배지": "상태별 배경 10% 농도 + 같은 색 진한 글자. radius 6px, 12px 글자",
+    "표": "헤더는 background 색 채움, 행 구분은 border 1px, 행 높이 44px",
+    "사이드바": "surface 배경, 활성 항목만 primary 10% 배경 + primary 글자"
+  },
+  "screenGuides": {
+    "대시보드": "지표 카드 4개를 한 줄에. 숫자 32px/700, 라벨 13px muted",
+    "목록": "표 형태 우선. 필터는 상단 가로 배치, 행 hover 시 background 색",
+    "폼": "라벨 위·입력 아래. 1열 배치, 최대 폭 560px",
+    "빈 화면": "아이콘 48px muted + 안내 문구 15px + 주요 버튼 하나",
+    "오류": "danger 색 아이콘과 문구. 재시도 버튼은 보조 스타일"
+  }
+}
