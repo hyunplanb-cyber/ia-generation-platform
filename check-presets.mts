@@ -259,6 +259,36 @@ for (const [업종, 컨셉] of 업종컨셉) {
   }
 }
 
+/* ── 고를 수 있다고 내놓은 색을 «정말 만들 수 있나» ────────────────
+ *
+ * 2026-08-10 에 렌탈 팩을 만들다 걸렸다. 가이드는 색을 6종 내놓는데
+ * 정작 팩을 굽는 build-design-presets.mts 는 «자기 목록»을 따로 들고 있었고
+ * 거기엔 5종뿐이었다. 레트로 페이퍼를 고르자 그제야 죽었다.
+ *
+ * 이 검사기는 그때까지 통과를 찍고 있었다 — 두 목록을 견줘 본 적이 없어서다.
+ * 같은 것을 두 벌로 적으면 반드시 갈라진다. 일곱 번째다.
+ * 고르라고 내놓고 못 만드는 것은 «없는 것보다 나쁘다» — 고른 사람이 그제야 안다. */
+{
+  const 굽는이 = readFileSync("build-design-presets.mts", "utf8");
+  /* 그 파일의 PRESETS 배열에 적힌 key 들만 뽑는다. */
+  const 블록 = 굽는이.slice(굽는이.indexOf("const PRESETS: Preset[] = ["));
+  const 만들수있는색 = new Set(
+    [...블록.slice(0, 블록.indexOf("\n];")).matchAll(/^\s*key: "(\w+)"/gm)].map((m) => m[1]),
+  );
+  const 못만드는색 = DESIGN_OPTIONS.filter((o) => !만들수있는색.has(o.key));
+  if (못만드는색.length) {
+    어긋남 += 못만드는색.length;
+    for (const o of 못만드는색) {
+      console.log(
+        `✗ 「${o.title}」(${o.key}) — 가이드는 고를 수 있다고 내놓는데 ` +
+          `build-design-presets.mts 의 PRESETS 에 정의가 없습니다. 고르면 굽다가 죽습니다.`,
+      );
+    }
+  } else {
+    console.log(`· 색 ${DESIGN_OPTIONS.length}종 모두 실제로 구울 수 있습니다`);
+  }
+}
+
 console.log("");
 if (어긋남) {
   // 어디를 고쳐야 하는지 함께 말한다 — 색·레이아웃은 lib, 업종 컨셉은 업종 데이터다.

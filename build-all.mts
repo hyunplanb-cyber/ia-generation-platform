@@ -33,7 +33,7 @@ import { createHash } from "node:crypto";
    tsx 는 어차피 node_modules 안에 있으므로 노드로 직접 부른다 — 가장 확실하다. */
 const TSX = "node_modules/tsx/dist/cli.mjs";
 
-const 업종들 = ["lms", "beauty", "travel", "admin", "matching", "groupbuy"] as const;
+const 업종들 = ["lms", "beauty", "travel", "admin", "matching", "groupbuy", "rental"] as const;
 const 고른업종 = process.argv[2];
 const 돌릴것 = 고른업종 ? [고른업종] : [...업종들];
 
