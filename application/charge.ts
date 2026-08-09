@@ -6,7 +6,7 @@ import { requireSession } from "@/application/require-session";
 import { chargeCredits } from "@/application/credit";
 import { confirmTossPayment } from "@/adapters/payment/toss";
 import { packById, creditsForWon, bonusPctForWon } from "@/lib/credits";
-import { billingOpenFor, REVIEW_MODE, REVIEW_MAX_CHARGES } from "@/lib/flags";
+import { billingOpenFor, chargeableNow, REVIEW_MODE, REVIEW_MAX_CHARGES } from "@/lib/flags";
 
 export interface StartedOrder {
   orderId: string;

@@ -15,7 +15,8 @@ export function ChargeClient({
   customerEmail,
   customerName,
 }: {
-  packs: CreditPack[];
+  /** chargeable — 이 금액이 지금 실제로 결제되는가(심사 기간엔 한 칸만 true) */
+  packs: (CreditPack & { chargeable: boolean })[];
   balance: number;
   clientKey: string;
   customerKey: string;
@@ -113,19 +114,28 @@ export function ChargeClient({
               >
                 {pack.bonusPct > 0 ? `보너스 +${pack.bonusPct}%` : "기본 제공"}
               </span>
-              <button
-                type="button"
-                onClick={() => charge(pack)}
-                disabled={!!busy}
-                className={`mt-5 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-60 ${
-                  pack.popular
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-foreground text-background"
-                }`}
-              >
-                {on ? <Loader2 className="size-4 animate-spin" /> : null}
-                {on ? "결제창 여는 중" : "충전하기"}
-              </button>
+              {/* 심사 기간에는 한 칸만 실제로 결제된다(lib/flags.ts REVIEW_CHARGE_WON).
+                  나머지는 감추지 않고 「결제 심사중」으로 둔다 — 감추면 라인업이
+                  한 칸으로 보여 「옵션 선택형」 요건이 약해진다. */}
+              {pack.chargeable ? (
+                <button
+                  type="button"
+                  onClick={() => charge(pack)}
+                  disabled={!!busy}
+                  className={`mt-5 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-60 ${
+                    pack.popular
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-foreground text-background"
+                  }`}
+                >
+                  {on ? <Loader2 className="size-4 animate-spin" /> : null}
+                  {on ? "결제창 여는 중" : "충전하기"}
+                </button>
+              ) : (
+                <p className="mt-5 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-2.5 text-center text-sm font-semibold text-muted-foreground">
+                  결제 심사중
+                </p>
+              )}
             </div>
           );
         })}

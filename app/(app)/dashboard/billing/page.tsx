@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { billingOpenFor } from "@/lib/flags";
+import { billingOpenFor, chargeableNow } from "@/lib/flags";
 import { requireSession } from "@/application/require-session";
 import { getCreditBalance } from "@/application/credit";
 import { CREDIT_PACKS, creditsForWon, bonusPctForWon } from "@/lib/credits";
@@ -25,6 +25,8 @@ export default async function BillingPage() {
         ...p,
         credits: creditsForWon(p.priceKrw),
         bonusPct: bonusPctForWon(p.priceKrw),
+        // 심사 기간에는 한 칸만 실제로 결제된다. 나머지는 「결제 심사중」으로 보인다.
+        chargeable: chargeableNow(p.priceKrw),
       }))}
       balance={balance}
       clientKey={process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? ""}
