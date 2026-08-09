@@ -12,6 +12,8 @@ import CU from './pages-cu.mjs';
 import STGR from './pages-st-gr.mjs';
 import MYAU from './pages-my-au.mjs';
 import HOTCSUB from './pages-ho-tc-sub.mjs';
+import COSUB from './pages-co-sub.mjs';
+import CLSUB from './pages-cl-sub.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -24,7 +26,7 @@ const OUT = path.resolve(ROOT, 'pages');
 const short2spec = (k) => (/^[A-Z]{2}-\d{2}$/.test(k) ? `${k.slice(0, 2)}${k.slice(3)}01` : k);
 
 const BUILDERS = {};
-for (const src of [HOTC, CO, CL, CU, STGR, MYAU, HOTCSUB]) {
+for (const src of [HOTC, CO, CL, CU, STGR, MYAU, HOTCSUB, COSUB, CLSUB]) {
   for (const [k, v] of Object.entries(src)) BUILDERS[short2spec(k)] = v;
 }
 const spec = JSON.parse(fs.readFileSync(SPEC, 'utf8'));

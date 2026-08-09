@@ -182,6 +182,32 @@ dl,dd{margin:0}
 .topbar .who .ava{width:32px;height:32px;border-radius:50%;background:var(--pri-10);color:var(--pri-ink);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex:none}
 .appmain{padding:var(--s8) var(--pad-x) 64px;max-width:calc(var(--wrap) - var(--side-w));width:100%}
 
+/* ---------- 기다리는 화면 · 모바일 시트 ----------
+   3뎁스에서 새로 생긴 상태들이다. 2뎁스에는 「불러오는 중」도 「좁은 화면 시트」도 없다. */
+
+/* 뼈대(스켈레톤) — 카드가 들어올 «자리»를 먼저 잡아 화면이 튀지 않게 한다 */
+.sk-card{display:flex;flex-direction:column;gap:var(--s2)}
+.sk-line{height:12px;border-radius:6px;background:var(--border);animation:sk 1.4s ease-in-out infinite}
+.ph.sk{background:var(--border);animation:sk 1.4s ease-in-out infinite}
+.ph.sk .cap{display:none}
+@keyframes sk{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* 도는 표시 */
+.spin{display:inline-block;width:22px;height:22px;border-radius:50%;
+  border:2px solid var(--border);border-top-color:var(--primary);animation:spin .8s linear infinite}
+.spin-lg{width:38px;height:38px;border-width:3px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 좁은 화면에서 아래에서 올라오는 필터 시트.
+   여기서는 «그 모양을 보여 주는 견본»이라 화면 안에 박아 둔다. */
+.sheet-demo{max-width:420px;margin:0 auto;border:1px solid var(--border);border-radius:var(--r-card);
+  background:var(--surface);overflow:hidden;box-shadow:var(--sh-card)}
+.sheet-hd{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+  padding:var(--s4) var(--card-pad);border-bottom:1px solid var(--border);font-size:16px}
+.sheet-ft{padding:var(--s4) var(--card-pad);border-top:1px solid var(--border);background:var(--bg)}
+.sheet-ft .btns{margin-top:var(--gap-group)}
+.sheet-demo .acc{padding:0 var(--card-pad)}
+
 /* ---------- 에디토리얼형 뼈대 (레이아웃_B) ----------
    대시보드형과 갈리는 자리만 여기 모았다. 위쪽 .side/.topbar 는
    단독 화면(계정)이 아직 쓰기 때문에 지우지 않는다. */

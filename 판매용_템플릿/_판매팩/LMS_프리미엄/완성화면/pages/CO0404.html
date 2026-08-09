@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수강 신청 - 결제 &gt; 결제 수단 확장 · 배움터</title>
+<meta name="description" content="카드사 선택과 할부 개월 · 간편결제 계정 연결 · 계좌이체 은행 선택 · 저장된 수단 불러오기 · 현금영수증 정보 입력">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="CO0404">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="HO-01.html"><span class="em">배</span>배움터</a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="HO-01.html">둘러보기</a><a href="CL-01.html">학습</a><a href="MY-01.html">내 정보</a><a href="AU-01.html">계정</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="TC-01.html">강사센터</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="CO0401.html">‹ 수강 신청 - 결제</a>
+    <span class="path">강의 탐색 › <b>수강 신청 - 결제 &gt; 결제 수단 확장</b></span>
+  </nav><div class="read">
+<div class="page-hd"><div>
+  <h1 class="t-page">결제 수단</h1><p class="t-sub">고른 수단에 따라 아래가 바뀝니다</p></div></div>
+
+<div class="card ">
+  
+  <div class="card-bd "><div class="tabs" data-panes="pay" ><button class="tab on" type="button" data-pane="card">신용·체크카드</button><button class="tab" type="button" data-pane="easy">간편결제</button><button class="tab" type="button" data-pane="bank">계좌이체</button></div>
+  <div data-pane-set="pay" class="mt4">
+    <div data-pane-body="card">
+      <div class="box mb4"><b>저장된 카드</b>
+        <label class="row-c mt3" style="gap:var(--s2);cursor:pointer">
+          <input type="radio" name="card" checked> 신한 1234 <span class="t-sub">(2028-05 만료)</span></label>
+        <label class="row-c mt2" style="gap:var(--s2);cursor:pointer">
+          <input type="radio" name="card"> 새 카드로 결제</label>
+      </div>
+      <dl class="kv"><dt>할부</dt><dd><select class="input" style="width:auto" data-toast="할부 개월을 바꿨어요">
+        <option>일시불</option><option>2개월</option><option>3개월 (무이자)</option><option>6개월</option></select></dd></dl>
+      <p class="t-sub mt2">5만원 이상부터 할부를 고르실 수 있습니다. 무이자 여부는 카드사 정책을 따릅니다.</p></div>
+    <div data-pane-body="easy" hidden><div class="g3">
+      <button class="btn btn-ghost btn-lg" type="button" data-toast="카카오페이 계정을 연결합니다 (견본이라 열리지 않습니다)">카카오페이</button><button class="btn btn-ghost btn-lg" type="button" data-toast="네이버페이 계정을 연결합니다 (견본이라 열리지 않습니다)">네이버페이</button><button class="btn btn-ghost btn-lg" type="button" data-toast="토스페이 계정을 연결합니다 (견본이라 열리지 않습니다)">토스페이</button>
+    </div>
+    <p class="t-sub mt4">한 번 연결하면 다음부터는 비밀번호만으로 결제됩니다.</p></div>
+    <div data-pane-body="bank" hidden><dl class="kv"><dt>은행</dt><dd><select class="input" style="width:auto"><option>국민은행</option><option>신한은행</option><option>우리은행</option></select></dd><dt>입금 기한</dt><dd>주문 후 <b>24시간</b> — 지나면 자동 취소됩니다</dd></dl>
+    <p class="t-sub mt3">계좌이체는 입금이 확인된 뒤에 수강이 열립니다. 보통 5분 안에 처리됩니다.</p></div>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">현금영수증</h3></div>
+  <div class="card-bd ">
+  <label class="row-c mb3" style="gap:var(--s2);cursor:pointer">
+    <input type="checkbox" checked data-toast="현금영수증을 신청합니다"> 현금영수증 신청</label>
+  <dl class="kv"><dt>용도</dt><dd><label class="row-c" style="gap:var(--s4)">
+      <span class="row-c" style="gap:6px"><input type="radio" name="rc" checked> 소득공제</span>
+      <span class="row-c" style="gap:6px"><input type="radio" name="rc"> 지출증빙</span></label></dd><dt>번호</dt><dd><input class="input" placeholder="휴대폰 번호 또는 사업자등록번호" aria-label="현금영수증 번호"></dd></dl></div>
+  </div></div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">CO0404</div><div class="nm">수강 신청 - 결제 &gt; 결제 수단 확장</div>
+    <div class="fd">카드사 선택과 할부 개월 · 간편결제 계정 연결 · 계좌이체 은행 선택 · 저장된 수단 불러오기 · 현금영수증 정보 입력</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">CO0404 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

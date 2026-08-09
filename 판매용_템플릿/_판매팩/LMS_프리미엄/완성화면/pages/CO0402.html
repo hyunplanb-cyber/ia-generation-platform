@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수강 신청 - 결제 &gt; 쿠폰 적용 실패 · 배움터</title>
+<meta name="description" content="유효하지 않은 코드·기간 만료·중복 사용 사유 구분 표시 · 입력값 유지 · 보유 쿠폰 목록 열기 · 다시 입력 유도">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="CO0402">
+<div class="app-ed">
+  <header class="ednav"><div class="ednav-in">
+    <a class="logo" href="HO-01.html"><span class="em">배</span>배움터</a>
+    <nav class="ednav-menu" aria-label="주요 메뉴"><a href="HO-01.html">둘러보기</a><a href="CL-01.html">학습</a><a href="MY-01.html">내 정보</a><a href="AU-01.html">계정</a></nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="TC-01.html">강사센터</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="MY-01.html" aria-label="김수현님">김</a>
+    </div>
+  </div></header>
+  <main class="edmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="CO0401.html">‹ 수강 신청 - 결제</a>
+    <span class="path">강의 탐색 › <b>수강 신청 - 결제 &gt; 쿠폰 적용 실패</b></span>
+  </nav><div class="read">
+<div class="page-hd"><div>
+  <h1 class="t-page">쿠폰이 적용되지 않았습니다</h1><p class="t-sub">입력하신 코드는 지우지 않았습니다</p></div></div>
+
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">쿠폰 코드</h3></div>
+  <div class="card-bd ">
+  <div class="row-c" style="gap:var(--s2)">
+    <input class="input grow err" value="SUMMER2025" aria-label="쿠폰 코드" aria-invalid="true">
+    <button class="btn btn-primary" type="button" data-toast="이 코드는 사용 기간이 지났어요">적용</button>
+  </div>
+  <p class="err-msg mt2">⚠ <b>사용 기간이 지난 코드입니다.</b> (2025-08-31 까지였습니다)</p>
+
+  <div class="box mt6"><b>왜 안 되는지 세 가지로 갈라 알려드립니다</b>
+    <div class="table-wrap "><table class="table ">
+    <thead><tr><th>사유</th><th>문구</th><th>다음에 할 일</th></tr></thead><tbody><tr><td>없는 코드</td><td>「그런 코드가 없습니다」</td><td>오타를 확인하거나 보유 쿠폰에서 고르기</td></tr><tr><td>기간 만료</td><td>「사용 기간이 지난 코드입니다」 + 만료일</td><td>다른 쿠폰 고르기</td></tr><tr><td>이미 사용</td><td>「이미 쓰신 코드입니다」 + 쓴 날짜</td><td>보유 쿠폰 열기</td></tr></tbody></table></div>
+    <p class="t-sub mt3">「쿠폰을 적용할 수 없습니다」 하나로 뭉뚱그리면 손님은 무엇을 고쳐야 할지 모릅니다.</p>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">가지고 계신 쿠폰</h3></div>
+  <div class="card-bd "><div class="card"><div class="card-bd flush">
+  <div class="lrow">
+    <span class="badge b-pri">사용 가능</span>
+    <span class="grow"><b>신규 가입 20% 할인</b>
+      <span class="t-sub" style="display:block">~2026-08-31</span></span>
+    <button class="btn btn-ghost btn-sm" type="button" data-toast="쿠폰을 적용했어요. 15,800원 할인됩니다">적용</button>
+  </div><div class="lrow is-off">
+    <span class="badge b-mut">사용 불가</span>
+    <span class="grow"><b>여름 특가 1만원</b>
+      <span class="t-sub" style="display:block">~2026-08-15 · 이 강의는 대상이 아닙니다</span></span>
+    <span class="muted">—</span>
+  </div><div class="lrow is-off">
+    <span class="badge b-mut">사용 불가</span>
+    <span class="grow"><b>재수강 30% 할인</b>
+      <span class="t-sub" style="display:block">~2026-09-30 · 이미 수강한 강의에만 씁니다</span></span>
+    <span class="muted">—</span>
+  </div>
+</div></div></div>
+  </div></div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 배움터 · (주)배움터 · 대표 김수현 · 서울 마포구 양화로 45</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">CO0402</div><div class="nm">수강 신청 - 결제 &gt; 쿠폰 적용 실패</div>
+    <div class="fd">유효하지 않은 코드·기간 만료·중복 사용 사유 구분 표시 · 입력값 유지 · 보유 쿠폰 목록 열기 · 다시 입력 유도</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">CO0402 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
