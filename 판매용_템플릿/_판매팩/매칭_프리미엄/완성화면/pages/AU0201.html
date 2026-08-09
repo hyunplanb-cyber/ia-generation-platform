@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>회원가입 · 동네고수</title>
+<meta name="description" content="이메일·비밀번호·비밀번호 확인 · 비밀번호 조건 실시간 표시 · 이름과 휴대폰 번호 · 활동 지역 선택 · 관심 서비스 선택 · 약관 동의(전체·필수 2종·선택 1종) · 소셜 간편 가입 · 이미 가입된 이메일 안내">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="AU0201">
+
+<div class="backbar"><div class="in">
+        <a class="back" href="AU0101.html">‹ 로그인</a>
+        <span class="crumb">계정 <i>›</i> 회원가입</span>
+      </div></div>
+
+
+<main class="main  "><div class="wrap"><div class="solo solo-lg"><div class="solo-box">
+  <div class="logo mb4"><span class="mark">고</span>동네고수</div>
+  <div class="stepbar"><span class="s on"><span class="n">1</span>정보 입력</span><span class="sep">›</span><span class="s "><span class="n">2</span>인증</span><span class="sep">›</span><span class="s "><span class="n">3</span>완료</span></div>
+  <h1 class="t-sec">회원가입</h1>
+  <div class="mt6">
+    <div class="btns col mb6">
+      <button class="sns-btn kakao" type="button" data-toast="카카오로 간편 가입해요">💬 카카오로 3초 만에 가입</button>
+      <button class="sns-btn naver" type="button" data-toast="네이버로 간편 가입해요">N 네이버로 가입</button>
+      <button class="sns-btn google" type="button" data-toast="구글로 간편 가입해요">G 구글로 가입</button>
+    </div>
+    <div class="divider">또는 이메일로 가입</div>
+
+    <form>
+      <div class="field"><label class="lb">이메일<span class="req">*</span></label>
+        <input class="input" type="email" value="hyun@example.com">
+        <p class="help">이미 가입된 이메일이면 알려드릴게요.</p></div>
+
+      <div class="field"><label class="lb">비밀번호<span class="req">*</span></label>
+        <input class="input" type="password" value="········">
+        <div class="row mt2" style="gap:var(--s4)">
+          <span class="t-sub" style="color:var(--success)">✓ 8자 이상</span>
+          <span class="t-sub" style="color:var(--success)">✓ 영문 포함</span>
+          <span class="t-sub">○ 숫자 포함</span>
+        </div></div>
+
+      <div class="field"><label class="lb">비밀번호 확인<span class="req">*</span></label>
+        <input class="input" type="password" value="········"></div>
+
+      <div class="g2">
+        <div class="field"><label class="lb">이름<span class="req">*</span></label><input class="input" value="김하늘"></div>
+        <div class="field"><label class="lb">휴대폰<span class="req">*</span></label><input class="input" value="010-1234-5678"></div>
+      </div>
+
+      <div class="field"><label class="lb">사는 지역</label>
+        <div class="row" style="gap:var(--s2)">
+          <select class="input"><option>서울특별시</option><option>경기도</option></select>
+          <select class="input"><option>강남구</option><option>서초구</option></select>
+        </div>
+        <p class="help">가까운 고수를 먼저 보여드리는 데 씁니다.</p></div>
+
+      <div class="field"><label class="lb">관심 있는 서비스 <span class="t-sub">(여러 개 고를 수 있어요)</span></label>
+        <div class="chips"><button class="chip on" type="button" >이사 <span class="x">✕</span></button><button class="chip on" type="button" >청소 <span class="x">✕</span></button><button class="chip" type="button" >인테리어</button><button class="chip" type="button" >수리·설치</button><button class="chip" type="button" >과외·레슨</button><button class="chip" type="button" >촬영</button><button class="chip" type="button" >디자인</button><button class="chip" type="button" >행사·이벤트</button></div></div>
+
+      <div class="field">
+        <label class="check box mb2" data-agree-all data-unlock="next"><input type="checkbox"><span><b>전체 동의</b></span></label>
+        <div data-agree-scope>
+          <div class="row-b" style="padding:3px 0">
+      <label class="check"><input type="checkbox" data-agree><span class="t-sub">이용약관 (필수)</span></label>
+      <button class="link quiet" type="button" data-toast="전문이 열려요" style="font-size:12px">전문 보기</button></div><div class="row-b" style="padding:3px 0">
+      <label class="check"><input type="checkbox" data-agree><span class="t-sub">개인정보 처리방침 (필수)</span></label>
+      <button class="link quiet" type="button" data-toast="전문이 열려요" style="font-size:12px">전문 보기</button></div><div class="row-b" style="padding:3px 0">
+      <label class="check"><input type="checkbox" data-agree><span class="t-sub">마케팅 정보 수신 (선택)</span></label>
+      <button class="link quiet" type="button" data-toast="전문이 열려요" style="font-size:12px">전문 보기</button></div>
+        </div>
+      </div>
+
+      <a class="btn btn-pri btn-lg btn-block" href="AU-03.html">다음 — 휴대폰 인증</a>
+    </form>
+
+    <p class="t-sub center mt-block">이미 계정이 있으신가요? <a class="link" href="AU-01.html">로그인</a></p></div></div></div></div></main>
+
+
+
+<div class="dev"><div class="spec">
+    <div class="id">AU0201</div><div class="nm">회원가입</div>
+    <div class="fd">이메일·비밀번호·비밀번호 확인 · 비밀번호 조건 실시간 표시 · 이름과 휴대폰 번호 · 활동 지역 선택 · 관심 서비스 선택 · 약관 동의(전체·필수 2종·선택 1종) · 소셜 간편 가입 · 이미 가입된 이메일 안내</div>
+    <div class="lk"><a href="AU0301.html">다음 ›</a><a href="AU0101.html">로그인 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">AU0201 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

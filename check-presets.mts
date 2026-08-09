@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 /* 레이아웃 문서(글)와 뼈대(코드)가 같은 말을 하는지 본다.
  * 그리고 테마의 글자색이 정말 읽히는지 대비를 잰다.
  *
@@ -125,6 +126,30 @@ for (const o of DESIGN_OPTIONS) {
     const 고른값 = accentTextOn(o, 바탕);
     if (contrast(고른값, 바탕) < TEXT_CONTRAST_MIN) {
       문제.push(`accentTextOn 이 ${바탕} 에서 ${고른값} 을 골랐는데 대비 ${contrast(고른값, 바탕).toFixed(2)} 입니다`);
+    }
+  }
+
+  /* 상태색(success·warning·danger)도 글자로 쓴다.
+   *
+   * 이 셋은 lib 이 아니라 build-design-presets.mts 에만 있어서
+   * 대비 검사를 «한 번도» 안 받았다(2026-08-09에 발견).
+   * 재 보니 warning #B4761A 가 3.29, #9A6700 이 4.23 이었다 —
+   * 「경고」라고 써 놓은 글자가 정작 안 읽혔다.
+   *
+   * lib 에서 읽을 수 없으니 그 파일의 글에서 직접 뽑아 잰다.
+   * 두 벌인 것을 검사기가 이어 준다 — 합치는 것이 낫지만, 합치기 전까지는
+   * 적어도 «갈라진 채로 틀리지는» 않게 한다. */
+  if (o === DESIGN_OPTIONS[0]) {
+    const src = readFileSync("build-design-presets.mts", "utf8");
+    const 본 = new Set<string>();
+    for (const m of src.matchAll(/"(success|warning|danger)"\s*:\s*"(#[0-9A-Fa-f]{6})"/g)) {
+      const [, 이름, hex] = m;
+      if (본.has(hex)) continue;
+      본.add(hex);
+      const v = contrast(hex, CONTENT_BG);
+      if (v < TEXT_CONTRAST_MIN) {
+        문제.push(`상태색 ${이름} ${hex} — 밝은 바탕에서 ${v.toFixed(2)}, 글자로 못 씁니다 (build-design-presets.mts)`);
+      }
     }
   }
 

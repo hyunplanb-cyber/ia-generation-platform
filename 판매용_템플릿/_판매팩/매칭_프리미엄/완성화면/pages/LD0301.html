@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>견적 보내기 · 동네고수</title>
+<meta name="description" content="견적 금액 입력과 금액 구성(기본료·추가 항목·출장비) · 포함/불포함 항목 체크 · 예상 소요 시간 · 가능한 일정 제안(여러 날짜) · 제안 메시지 작성과 템플릿 불러오기 · 차감될 크레딧과 잔액 표시 · 미리보기 · 보내기">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="LD0301">
+<header class="gnb pro"><div class="gnb-in">
+    <a class="logo" href="PR-01.html"><span class="mark">고</span>동네고수<span class="badge b-pri" style="margin-left:2px">고수</span></a>
+    <nav class="gnb-nav"><a href="PR-01.html">고수센터</a><a href="LD-01.html" class="on">요청 받기</a><a href="JB-01.html">진행 관리</a></nav>
+    <div class="gnb-util"><span class="badge b-pri">크레딧 42</span>
+       <button class="bell" type="button" aria-label="알림">🔔<span class="dot">3</span></button>
+       <a class="btn btn-ghost btn-sm" href="HO-02.html">손님 화면으로</a><a class="gnb-ava" href="AU-01.html" title="내 정보"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"></div></a></div>
+  </div></header>
+<div class="backbar"><div class="in">
+        <a class="back" href="LD0101.html">‹ 새 요청 목록</a>
+        <span class="crumb">요청 받기 <i>›</i> 견적 보내기</span>
+      </div></div>
+
+
+<main class="main  "><div class="wrap">
+  <div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">견적 보내기</h1><p class="t-sub">원룸·소형 이사 · 강남구 역삼동 → 송파구 잠실동 · 희망일 8월 20일 (목) 오전</p></div><div class="row-c wrap-row">
+  <span class="badge b-pri lg">🪙 남은 크레딧 42</span>
+  <a class="link" href="LD-04.html">충전하기</a></div></div>
+  <div class="split-r"><div>
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">견적 금액</h3></div>
+  <div class="card-bd ">
+    <div class="field"><label class="lb">기본료<span class="req">*</span></label>
+      <div class="inline"><input class="input" value="180,000"><span class="t-sub">원</span></div>
+      <p class="help">원룸 이사 기본 구성(기사 2명 · 1톤 차량 · 포장 자재) 기준으로 적어 주세요.</p></div>
+
+    <label class="lb">추가 항목</label>
+    <div class="col mb3" style="gap:var(--sp-btn)">
+      <div class="row" style="gap:var(--s2)">
+        <input class="input grow" value="사다리차 (3층)"><input class="input none" value="40,000" style="width:140px">
+        <button class="btn btn-ghost none" type="button" data-toast="줄을 지웠어요">✕</button></div><div class="row" style="gap:var(--s2)">
+        <input class="input grow" value="에어컨 탈부착"><input class="input none" value="20,000" style="width:140px">
+        <button class="btn btn-ghost none" type="button" data-toast="줄을 지웠어요">✕</button></div>
+    </div>
+    <button class="btn btn-ghost btn-sm" type="button" data-toast="빈 줄을 하나 넣었어요">＋ 항목 추가</button>
+
+    <div class="field mt-block" style="margin-bottom:0"><label class="lb">출장비</label>
+      <div class="inline"><input class="input" value="0" style="max-width:180px"><span class="t-sub">원 · 활동 지역 안이라 받지 않음</span></div></div></div>
+  </div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">포함 여부</h3></div>
+  <div class="card-bd "><div class="g2">
+    <div>
+      <h4 class="t-card mb3" style="color:var(--success)">포함되는 것</h4>
+      <label class="check"><input type="checkbox" checked><span>포장 자재</span></label><label class="check"><input type="checkbox" checked><span>사다리차</span></label><label class="check"><input type="checkbox" checked><span>기본 정리</span></label><label class="check"><input type="checkbox" checked><span>옷장 분해·조립</span></label><label class="check"><input type="checkbox"><span>짐 정리</span></label>
+    </div>
+    <div>
+      <h4 class="t-card mb3 muted">포함되지 않는 것</h4>
+      <label class="check"><input type="checkbox" checked><span>에어컨 설치비</span></label><label class="check"><input type="checkbox" checked><span>폐기물 처리</span></label><label class="check"><input type="checkbox"><span>입주 청소</span></label><label class="check"><input type="checkbox"><span>보관료</span></label>
+      <p class="t-sub mt3">포함 안 되는 것을 분명히 적으면 현장에서 다투는 일이 줄어요.</p>
+    </div>
+  </div></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">일정</h3></div>
+  <div class="card-bd ">
+    <div class="field"><label class="lb">예상 소요 시간</label>
+      <div class="inline"><input class="input" value="3" style="max-width:100px"><span class="t-sub">~</span>
+        <input class="input" value="4" style="max-width:100px"><span class="t-sub">시간</span></div></div>
+    <div class="field" style="margin-bottom:0"><label class="lb">가능한 날짜 <span class="t-sub">(여러 개 고를 수 있어요)</span></label>
+      <div class="chips"><button class="chip on" type="button" >8월 20일 (목) 오전 <span class="x">✕</span></button><button class="chip" type="button" >8월 20일 (목) 오후</button><button class="chip on" type="button" >8월 21일 (금) 오전 <span class="x">✕</span></button><button class="chip" type="button" >8월 22일 (토) 오전</button></div>
+      <p class="help">손님이 적은 희망일은 <b>8월 20일 (목) 오전</b>이에요.</p></div></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">제안 메시지</h3></div>
+  <div class="card-bd ">
+    <div class="row-b mb2"><span class="t-sub">손님이 가장 먼저 읽는 글이에요</span>
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="저장해 둔 문구 4개가 열려요">자주 쓰는 문구 불러오기</button></div>
+    <textarea class="input" style="min-height:180px">안녕하세요, 한결이사입니다. 요청서와 사진 잘 봤습니다.
+
+역삼동 3층에 승강기가 없어 사다리차를 쓰는 게 낫겠습니다. 계단으로 옮기면 시간이 두 배로 들고, 냉장고와 세탁기는 계단 운반 중 흠집이 나기 쉽습니다. 사다리차 비용을 견적에 넣었습니다.
+
+옷장 분해는 제가 공구를 챙겨 가겠습니다. 오전 8시에 시작하면 점심 전에 마칠 수 있습니다.</textarea>
+    <div class="row-b mt2"><span class="t-sub">최소 30자</span><span class="t-sub">208 / 1000</span></div>
+    <label class="check mt3"><input type="checkbox"><span class="t-sub">이 문구를 ‘자주 쓰는 문구’로 저장할게요</span></label></div>
+  </div></div></div><div class="sticky">
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">손님에게는 이렇게 보여요</h3></div>
+  <div class="card-bd ">
+    <div class="box soft" style="padding:var(--s4)">
+      <div class="row-c"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:44px;height:44px" title="이미지 영역 (고수 프로필 · 권장 400×400)"></div>
+        <div><b>한결이사</b><div class="t-sub"><span class="stars" aria-hidden="true">★★★★★</span> 4.9 (328)</div></div></div>
+      <div class="row-b mt3"><span class="t-sub">예상 3~4시간</span><b class="price">240,000원</b></div>
+      <p class="t-sub mt2" style="color:var(--text)">사다리차 포함, 오전 8시 시작해 점심 전에 끝냅니다</p>
+      <div class="verifies mt3"><span class="verify"><i>✓</i>사업자</span><span class="verify"><i>✓</i>자격증</span></div>
+    </div>
+    <p class="t-sub mt3">비교 화면에서는 금액·평점·응답률이 나란히 놓입니다.</p></div>
+  </div>
+
+  <div class="mt4"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">금액 정리</h3></div>
+  <div class="card-bd ">
+    <div class="sum-row "><span class="muted">기본료</span><span>180,000원</span></div><div class="sum-row "><span class="muted">사다리차 (3층)</span><span>40,000원</span></div><div class="sum-row "><span class="muted">에어컨 탈부착</span><span>20,000원</span></div><div class="sum-row "><span class="muted">출장비</span><span>없음</span></div>
+  <div class="sum-row total"><span>견적 금액</span><span class="price">240,000원</span></div>
+    <p class="t-sub mt3">성사되면 수수료 12%(28,800원)를 뺀 <b>211,200원</b>이 정산돼요.</p></div>
+  </div></div>
+
+  <div class="mt4"><div class="card acc">
+  
+  <div class="card-bd ">
+    <div class="banner banner-acc "><span class="ico">🪙</span><div class="grow"><b>3크레딧이 차감돼요</b>
+      <div class="t-sub mt1">잔액 <b>42 → 39</b> · 보낸 뒤에는 돌려받을 수 없어요.</div></div></div>
+    <div class="btns col mt-block">
+      <a class="btn btn-pri btn-lg btn-block" href="JB-01.html">견적 보내기</a>
+      <button class="btn btn-ghost btn-block" type="button" data-toast="임시 저장했어요. 크레딧은 빠지지 않았어요">임시 저장</button>
+      <a class="btn btn-quiet btn-block btn-sm" href="LD-04.html">크레딧 충전</a>
+    </div>
+    <p class="t-sub mt3 center">견적 자리 2 / 5 남음</p></div>
+  </div></div></div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">고</span>동네고수</div>
+      <p class="t-sub">(주)동네고수  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 서비스 제공과 그 결과에 대한 책임은 각 고수에게 있습니다.</p>
+    </div>
+    <div><h4>맡기기</h4><ul>
+      <li><a href="RQ-01.html">요청서 작성</a></li><li><a href="SE-01.html">고수 찾기</a></li>
+      <li><a href="QT-01.html">받은 견적</a></li><li><a href="MY-01.html">내 요청</a></li>
+      <li><a href="RV-02.html">내 후기</a></li></ul></div>
+    <div><h4>고수</h4><ul>
+      <li><a href="PR-02.html">고수 등록</a></li><li><a href="PR-01.html">고수센터</a></li>
+      <li><a href="LD-01.html">요청 받기</a></li><li><a href="LD-04.html">크레딧</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 동네고수. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전 거래 정책</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">LD0301</div><div class="nm">견적 보내기</div>
+    <div class="fd">견적 금액 입력과 금액 구성(기본료·추가 항목·출장비) · 포함/불포함 항목 체크 · 예상 소요 시간 · 가능한 일정 제안(여러 날짜) · 제안 메시지 작성과 템플릿 불러오기 · 차감될 크레딧과 잔액 표시 · 미리보기 · 보내기</div>
+    <div class="lk"><a href="JB0101.html">보낸 견적 ›</a><a href="LD0401.html">크레딧 충전 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">LD0301 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

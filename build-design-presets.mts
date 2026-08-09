@@ -175,7 +175,7 @@ const PRESETS: Preset[] = [
       "text-muted (보조)": "#5A6B8C",
       "border (구분선)": "#DFE4EC",
       "success": "#0F7A52",
-      "warning": "#B4761A",
+      "warning": "#926013",
       "danger": "#C0392B",
     },
     scale: [
@@ -224,8 +224,8 @@ const PRESETS: Preset[] = [
       "text (본문)": "#111111",
       "text-muted (보조)": "#666666",
       "border (구분선)": "#E5E5E5",
-      "success": "#1A7F37",
-      "warning": "#9A6700",
+      "success": "#197B35",
+      "warning": "#916100",
       "danger": "#CF222E",
     },
     scale: [
