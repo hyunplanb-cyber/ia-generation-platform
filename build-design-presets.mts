@@ -8,7 +8,7 @@ import { PACKAGES } from "./lib/packages";
 import {
   LAYOUTS, THUMBS, thumbByKey, DENSITIES, SPACING_SLOTS, LINE_SLOTS,
   DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, CONTENT_WIDTH, READING_WIDTH, COMMON_RULES, ACCENT_RULE, type DesignKey,
-  STRUCTURES, STRUCTURE_COLS, GRID_GAP, gridBaseCss, cardWidth,
+  STRUCTURES, STRUCTURE_COLS, GRID_GAP, gridBaseCss, cardWidth, textOn,
 } from "./lib/design-presets";
 
 /** 마크다운 표 안에 코드로 감싸 넣는다 — 중첩 백틱을 피하려고 함수로 뺐다. */
@@ -190,7 +190,7 @@ const PRESETS: Preset[] = [
     space: "4px 배수 (4·8·12·16·24·32·48). 카드 내부 여백 20px, 섹션 간격 32px",
     shadow: "0 1px 3px rgba(22,35,63,.08) — 카드에만. 버튼·입력에는 쓰지 않는다",
     comp: [
-      ["버튼(주요)", "primary 배경, 흰 글자, 높이 40px, radius 8px, 굵기 600"],
+      ["버튼(주요)", "primary 배경, on-primary 글자, 높이 40px, radius 8px, 굵기 600"],
       ["버튼(보조)", "흰 배경, border 1px, text 색 글자. 같은 높이"],
       ["카드", "surface 배경, border 1px, radius 12px, 그림자 1단계. 헤더에 구분선"],
       ["입력", "높이 40px, border 1px, focus 시 primary 테두리 2px"],
@@ -241,7 +241,7 @@ const PRESETS: Preset[] = [
     shadow: "사용하지 않는다. 깊이는 border와 배경 대비로만 표현",
     accentNote: "무채색이 바탕이고 색은 강조 한 곳에만 쓴다. 강조색을 진하게 채우는 자리는 버튼 하나까지다. 배지는 10~15% 농도로 깔고 글자를 진하게 쓴다 — 배지까지 채우면 버튼과 무게가 같아져 무엇이 중요한지 다시 안 보인다. 원색을 글자로 쓰면 흰 배경에서 3.1:1 이라 안 읽히니, 글자에는 accent-text 를 쓴다.",
     comp: [
-      ["버튼(주요)", "검정 배경, 흰 글자, 높이 36px, radius 6px, 굵기 500"],
+      ["버튼(주요)", "검정 배경, on-primary 글자, 높이 36px, radius 6px, 굵기 500"],
       ["버튼(강조)", "accent 배경 + 검정 글자. 주요 버튼과 나란히 놓지 않는다 — 한 화면에 하나"],
       ["버튼(보조)", "흰 배경 + border 1px. hover 시 background #F6F6F6"],
       ["카드", "border 1px만. 그림자·배경색 없음. 제목과 본문은 여백으로 구분"],
@@ -292,7 +292,7 @@ const PRESETS: Preset[] = [
     space: "4px 배수. 카드 내부 24px, 섹션 간격 40px. 요소 사이를 넉넉히",
     shadow: "0 2px 8px rgba(31,32,36,.06) — 카드와 떠 있는 요소에만",
     comp: [
-      ["버튼(주요)", "primary 배경, 흰 글자, 높이 44px, radius 12px, 굵기 700"],
+      ["버튼(주요)", "primary 배경, on-primary 글자, 높이 44px, radius 12px, 굵기 700"],
       ["버튼(보조)", "soft-lavender 배경, primary 글자. 테두리 없음"],
       ["카드", "surface 배경, radius 16px, 부드러운 그림자. 테두리는 아주 연하게"],
       ["입력", "높이 44px, background #F7F7F9, 테두리 없음, focus 시 primary 2px"],
@@ -343,7 +343,7 @@ const PRESETS: Preset[] = [
     space: "4px 배수. 카드 내부 24px, 섹션 간격 40px. 숨 쉴 여백을 남긴다",
     shadow: "0 1px 4px rgba(28,43,34,.07) — 카드에만. 그림자를 과하게 쓰지 않는다",
     comp: [
-      ["버튼(주요)", "primary 배경, 흰 글자, 높이 42px, radius 10px, 굵기 600"],
+      ["버튼(주요)", "primary 배경, on-primary 글자, 높이 42px, radius 10px, 굵기 600"],
       ["버튼(보조)", "surface 배경, border 1px, primary 글자"],
       ["카드", "surface 배경, border 1px, radius 14px, 아주 옅은 그림자"],
       ["입력", "높이 42px, border 1px, focus 시 primary 테두리 2px"],
@@ -393,7 +393,7 @@ const PRESETS: Preset[] = [
     space: "4px 배수. 카드 내부 24px, 섹션 간격 40px. 답답하지 않게 띄운다",
     shadow: "0 2px 8px rgba(51,34,30,.07) — 카드와 떠 있는 요소에만",
     comp: [
-      ["버튼(주요)", "primary 배경, 흰 글자, 높이 44px, radius 12px, 굵기 700"],
+      ["버튼(주요)", "primary 배경, on-primary 글자, 높이 44px, radius 12px, 굵기 700"],
       ["버튼(보조)", "primary 10% 배경, primary 글자. 테두리 없음"],
       ["카드", "surface 배경, radius 16px, 부드러운 그림자. 테두리는 연하게"],
       ["입력", "높이 44px, background #FFF9F7, 테두리 연하게, focus 시 primary 2px"],
@@ -411,6 +411,27 @@ const PRESETS: Preset[] = [
     ],
   },
 ];
+
+/* 「색 위에 얹는 글자」 두 칸을 계산해서 넣는다 — 2026-08-09.
+ *
+ * 이 파일은 lib/design-presets.ts 와 «따로» 색 표를 들고 있다(세 번째 벌이다).
+ * 그래서 lib 쪽에 on-primary 를 넣었는데도 팩 문서에는 여전히
+ * 「버튼(주요) | primary 배경, 흰 글자」가 실렸다.
+ *
+ * 값을 여기에 또 손으로 적지 않는다. 재는 함수는 lib 것 하나만 쓴다 —
+ * 색 표가 세 벌인 것만으로도 충분히 위험하다.
+ *
+ * 코럴 #F0654F 위 흰 글자는 3.14 다. 버튼 글자가 안 읽힌다. */
+for (const p of PRESETS) {
+  const 찾기 = (앞: string) => {
+    const k = Object.keys(p.c).find((x) => x.startsWith(앞));
+    return k ? p.c[k] : undefined;
+  };
+  const primary = 찾기("primary (");
+  const accent = 찾기("accent (강조");
+  if (primary) p.c["on-primary (주색 배경 위 글자)"] = textOn(primary);
+  if (accent) p.c["on-accent (강조색 배경 위 글자)"] = textOn(accent);
+}
 
 function md(p: Preset): string {
   const L: string[] = [];
