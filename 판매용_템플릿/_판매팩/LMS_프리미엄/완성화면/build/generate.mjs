@@ -11,6 +11,7 @@ import CL from './pages-cl.mjs';
 import CU from './pages-cu.mjs';
 import STGR from './pages-st-gr.mjs';
 import MYAU from './pages-my-au.mjs';
+import HOTCSUB from './pages-ho-tc-sub.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -23,7 +24,7 @@ const OUT = path.resolve(ROOT, 'pages');
 const short2spec = (k) => (/^[A-Z]{2}-\d{2}$/.test(k) ? `${k.slice(0, 2)}${k.slice(3)}01` : k);
 
 const BUILDERS = {};
-for (const src of [HOTC, CO, CL, CU, STGR, MYAU]) {
+for (const src of [HOTC, CO, CL, CU, STGR, MYAU, HOTCSUB]) {
   for (const [k, v] of Object.entries(src)) BUILDERS[short2spec(k)] = v;
 }
 const spec = JSON.parse(fs.readFileSync(SPEC, 'utf8'));
@@ -51,11 +52,12 @@ const total = spec.screens.length;
 const backCount = spec.screens.filter((s) => s.backTo).length;
 const actCount = spec.screens.reduce((a, s) => a + (s.acts || []).length, 0);
 
-const COLORS = [
-  ['primary', '#F0654F'], ['primary-hover', '#D9503B'], ['accent', '#F59E0B'], ['background', '#F0EFEB'],
-  ['surface', '#FFFFFF'], ['text', '#33221E'], ['text-muted', '#7A6560'], ['border', '#F2E2DD'],
-  ['success', '#0F7A52'], ['warning', '#B45309'], ['danger', '#C0392B'],
-];
+/* 색과 프리셋 이름은 «스펙팩 폴더의 JSON에서 읽는다».
+   여기에 손으로 적어 두었더니 프리셋을 코럴 선셋에서 모던 네이비로 바꿨는데도
+   화면 목록만 옛 색을 계속 보여 줬다(2026-08-09). 파는 문서와 화면이 갈리는 자리다. */
+const PRESET = JSON.parse(fs.readFileSync(path.resolve(ROOT, '스펙팩/가이드_01_모던네이비.json'), 'utf8'));
+const LAYOUT = JSON.parse(fs.readFileSync(path.resolve(ROOT, '스펙팩/레이아웃_B_에디토리얼형.json'), 'utf8'));
+const COLORS = Object.entries(PRESET.colors).map(([k, v]) => [k.replace(/ \(.*\)$/, ''), v]);
 
 const indexHtml = `<!doctype html>
 <html lang="ko">
@@ -68,7 +70,7 @@ const indexHtml = `<!doctype html>
 </head>
 <body>
 <section class="idx-hero"><div class="wrap">
-  <div class="row-c" style="gap:10px"><span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:12px;background:var(--primary);color:#fff;font-size:18px;font-weight:800">${SITE.mark}</span>
+  <div class="row-c" style="gap:10px"><span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:12px;background:var(--primary);color:var(--on-pri);font-size:18px;font-weight:800">${SITE.mark}</span>
     <b style="font-size:18px">${SITE.name}</b></div>
   <h1 class="t-page mt4">${U.esc(spec.project.title)} — 전체 화면</h1>
   <p class="t-sub mt3" style="max-width:820px;font-size:15px">${U.esc(spec.project.concept)}</p>
@@ -82,13 +84,15 @@ const indexHtml = `<!doctype html>
 
 <main class="main"><div class="wrap">
   <div class="card mb6"><div class="card-bd">
-    <h2 class="t-card mb4">디자인 프리셋 — 가이드 03 코럴 선셋 · 레이아웃 A 대시보드형</h2>
+    <h2 class="t-card mb4">디자인 프리셋 — 가이드 ${PRESET.preset.no} ${PRESET.preset.name} · 레이아웃 ${LAYOUT.layout.no} ${LAYOUT.layout.name}</h2>
     <div class="sw">${COLORS.map(([n, c]) => `<div><div class="c" style="background:${c}"></div>
       <div class="t-sub mt1">${n}<br>${c}</div></div>`).join('')}</div>
     <p class="t-sub mt6">Paperlogy · 카드 16px / 버튼·입력 12px / 배지 알약 · 카드 안쪽 24px · 카드 사이 가로 20px · 줄 사이 세로 28px ·
-      그림자는 카드에만 (0 2px 8px rgba(51,34,30,.07))</p>
-    <p class="t-sub mt2">레이아웃 A — 좌측 세로 사이드바 + 상단 바, 화면 위쪽에 지표 카드, 목록은 표 중심, 상세는 본문 + 우측 액션 패널.
-      손님이 쓰는 메뉴와 강사가 쓰는 메뉴는 <b>사이드바를 나눠</b> 두었고, 오갈 때는 사이드바 맨 아래 진입점 하나로만 이동합니다.</p>
+      그림자는 카드에만</p>
+    <p class="t-sub mt2">레이아웃 ${LAYOUT.layout.no} — ${U.esc(LAYOUT.layout.tagline)}
+      ${Object.entries(LAYOUT.slots).map(([k, v]) => `<br><b>${k}</b> · ${U.esc(v)}`).join('')}</p>
+    <p class="t-sub mt2">같은 스펙팩이라도 프리셋을 갈아 끼우면 화면이 이렇게 달라집니다 —
+      디럭스는 <b>코럴 선셋 + 대시보드형</b>, 이 프리미엄은 <b>${PRESET.preset.name} + ${LAYOUT.layout.name}</b>입니다.</p>
   </div></div>
 
   ${spec.menus.map((m) => `<section class="idx-menu">
@@ -101,7 +105,7 @@ const indexHtml = `<!doctype html>
 
   <div class="card"><div class="card-bd">
     <h3 class="t-card mb3">이 화면들에 대해</h3>
-    <p class="t-sub">스펙팩(07_AI빌드_스펙팩.json)의 화면 정의와 디자인 프리셋(가이드_03_코럴선셋 · 레이아웃_A_대시보드형)을 그대로 반영해 만든
+    <p class="t-sub">스펙팩(07_AI빌드_스펙팩.json)의 화면 정의와 디자인 프리셋(가이드_01_모던네이비 · 레이아웃_B_에디토리얼형)을 그대로 반영해 만든
     정적 화면 견본입니다. 서버와 데이터베이스는 붙어 있지 않아 로그인·결제·저장은 실제로 동작하지 않고, 짧은 안내 문구로 대신합니다.</p>
     <p class="t-sub mt3">각 화면의 <b>탭·필터·정렬·펼치기·체크·슬라이더</b>처럼 그 화면 안에서 끝나는 조작은 실제로 값이 바뀝니다.
     화면 우하단의 <b>화면 정보</b> 버튼을 누르면 화면ID · 화면명 · 기능정의와 연결 화면을 확인할 수 있습니다.</p>

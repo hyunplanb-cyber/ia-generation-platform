@@ -309,17 +309,50 @@ function head(ctx) {
 }
 
 /** 사이드바가 있는 화면 (고객 · 운영자 공통 뼈대, 항목만 다르다) */
+/* 상단 가로 GNB — 레이아웃_B 에디토리얼형의 nav 슬롯.
+   메뉴 이름은 사이드바가 쓰던 묶음(NAV_USER·NAV_ADMIN)의 «첫 항목»을 그대로 쓴다.
+   같은 목록을 두 벌로 적으면 한쪽만 고쳐져 갈라진다. */
+function ednav(activeId, admin) {
+  const groups = admin ? NAV_ADMIN : NAV_USER;
+  const 켠묶음 = groups.find(([, items]) => items.some(([id]) => id === activeId));
+  const menu = groups.map(([g, items]) => {
+    const [id] = items[0];
+    const 켬 = 켠묶음 && 켠묶음[0] === g;
+    return `<a href="${link(id)}"${켬 ? ' class="on" aria-current="page"' : ''}>${g}</a>`;
+  }).join('');
+  return `<header class="ednav"><div class="ednav-in">
+    <a class="logo" href="${link(admin ? 'TC-01' : 'HO-01')}"><span class="em">${SITE.mark}</span>${SITE.name}${admin ? ' <span class="t-sub" style="font-weight:500">강사</span>' : ''}</a>
+    <nav class="ednav-menu" aria-label="주요 메뉴">${menu}</nav>
+    <div class="ednav-util">
+      <a class="btn btn-ghost btn-sm" href="${link(admin ? 'HO-01' : 'TC-01')}">${admin ? '고객 화면' : '강사센터'}</a>
+      <button class="icon-btn" type="button" data-toast="새 알림이 3개 있어요" aria-label="알림">🔔</button>
+      <a class="ava" href="${link('MY-01')}" aria-label="${SITE.me.name}님">${SITE.me.init}</a>
+    </div>
+  </div></header>`;
+}
+
+/** 목록 화면 왼쪽에 세우는 세로 카테고리 — 에디토리얼형의 list 슬롯. */
+export function edrail(items, activeId) {
+  return `<aside class="edrail"><div class="gl">둘러보기</div>
+    ${items.map(([id, label, n]) => `<a href="${link(id)}"${id === activeId ? ' class="on" aria-current="page"' : ''}>${label}${n != null ? `<span class="n">${n}</span>` : ''}</a>`).join('')}
+  </aside>`;
+}
+
 export function shell(ctx, body, o = {}) {
+  /* o.rail 이 있으면 왼쪽에 세로 카테고리를 세운다(목록 화면).
+     o.read 면 본문을 한 단(760px)으로 좁힌다(상세 화면).
+     둘 다 없으면 그냥 넓게 쓴다. */
+  const inner = o.rail
+    ? `<div class="edcols">${o.rail}<div>${crumb(ctx)}${body}</div></div>`
+    : `${crumb(ctx)}${o.read ? `<div class="read">${body}</div>` : body}`;
   return `<!doctype html>
 <html lang="ko">
 <head>${head(ctx)}</head>
 <body data-page="${ctx.id}">
-<div class="app">
-  ${sidebar(ctx.id, !!o.admin)}
-  ${topbar(o)}
-  <main class="appmain">
-    ${crumb(ctx)}
-    ${body}
+<div class="app-ed">
+  ${ednav(ctx.id, !!o.admin)}
+  <main class="edmain">
+    ${inner}
     ${footer()}
   </main>
 </div>
