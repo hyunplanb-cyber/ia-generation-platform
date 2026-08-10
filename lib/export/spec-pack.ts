@@ -116,6 +116,58 @@ function deviceLabel(mode: string): string {
   return mode === "pc" ? "PC 웹" : mode === "mobile" ? "모바일 웹(앱)" : "반응형";
 }
 
+/* ─────────────────────────────────────────────────────────────
+   앱으로 낼 때만 더 필요한 것 (deviceMode === "mobile")
+
+   2026-08-10 까지 「모바일 웹(앱)」을 골라도 스펙팩은 «디바이스: 모바일 웹(앱)»
+   한 줄만 달랐다. 화면 구성은 PC 웹과 똑같이 나갔다.
+
+   그런데 앱은 브라우저가 아니다. 주소창이 없으니 뒤로가기를 화면 안에 둬야 하고,
+   폰 기능을 쓰려면 권한을 물어야 하고, 거절당했을 때 보여줄 화면이 있어야 한다.
+   그 화면들이 설계도에 없으면 AI 는 만들지 않는다 — 시키지 않은 것은 안 나온다.
+
+   자세한 까닭은 팩에 함께 들어가는 `10_앱으로_내놓는_법.html` 에 있다.
+   ───────────────────────────────────────────────────────────── */
+const APP_EXTRA = {
+  why: "앱은 브라우저가 아닙니다. 주소창도 뒤로가기 버튼도 없고, 폰 기능을 쓰려면 사용자에게 물어야 합니다. 아래는 «앱으로 낼 때만» 더 필요한 것입니다.",
+  screens: [
+    {
+      name: "권한 안내",
+      role: "permission-intro",
+      funcDef:
+        "권한을 묻기 «직전»에 왜 필요한지 한 화면으로 설명 · 무엇을 할 수 있게 되는지 한 줄 · [허용하고 계속] [나중에] 두 버튼 · 앱을 켜자마자 띄우지 않는다(그 기능을 처음 쓰는 자리에서 띄운다)",
+    },
+    {
+      name: "권한 거부됨",
+      role: "permission-denied",
+      funcDef:
+        "거절한 뒤에도 앱이 굴러간다는 것을 보여 주는 화면 · 그 기능만 못 쓴다는 안내 · 대신 할 수 있는 길 제시 · [설정에서 켜기] 버튼(폰 설정으로 보냄) · 심사관이 «일부러 거절해» 보므로 하얀 화면이 되면 반려된다",
+    },
+    {
+      name: "알림 설정",
+      role: "notification-settings",
+      funcDef:
+        "알림 종류별 켜기·끄기 스위치 · 지금 꺼져 있으면 그 사실과 켜는 길 안내 · 조용한 시간대 설정 · 알림을 쓰는 앱이면 반드시 있어야 한다",
+    },
+    {
+      name: "연결 끊김",
+      role: "offline",
+      funcDef:
+        "인터넷이 없을 때 나오는 화면 · 하얀 화면 대신 무엇이 안 되는지 설명 · 마지막으로 받아 둔 내용은 볼 수 있게 · [다시 시도] 버튼",
+    },
+  ],
+  rules: [
+    "**뒤로가기를 화면 안에 둡니다.** 앱에는 브라우저 주소창이 없어 「이전 화면으로」가 없습니다. 첫 화면이 아닌 모든 화면 좌측 상단에 `‹ 상위 화면` 을 둡니다.",
+    "**하단 탭 바**를 씁니다. 상단 GNB 는 폰에서 손가락이 안 닿습니다. 주요 메뉴 3~5개를 화면 아래에 고정하세요.",
+    "**권한은 쓰는 순간에 묻습니다.** 앱을 켜자마자 알림·카메라·위치를 연달아 물으면 대부분 거절합니다.",
+    "**누르는 자리는 최소 44×44px.** 손가락은 마우스보다 굵습니다.",
+    "**아래쪽 여백을 넉넉히** 둡니다. 폰 아래 끝은 홈 바에 가려집니다.",
+    "**가로 스크롤이 생기면 안 됩니다.** 표가 넓으면 표만 따로 좌우로 밀리게 하고, 화면 자체는 밀리지 않게 하세요.",
+  ],
+  storeNote:
+    "스토어에 올릴 계획이라면 팩에 함께 들어 있는 `10_앱으로_내놓는_법.html` 을 먼저 읽으세요. 사이트를 그대로 감싼 앱은 애플 심사에서 반려됩니다.",
+};
+
 // 정규화된 모델(마크다운·JSON 공용 소스).
 export function buildSpecPackModel(
   project: SpecPackProject,
@@ -174,6 +226,9 @@ export function buildSpecPackModel(
         examples: IMAGE_PLACEHOLDER.examples,
         rule: IMAGE_PLACEHOLDER.rule,
       },
+      /* 앱으로 낼 때만. PC 웹·반응형이면 null 이고 스펙에 아예 안 나온다 —
+         안 쓸 것을 적어 두면 AI 가 쓸데없는 화면을 만든다. */
+      appExtra: project.deviceMode === "mobile" ? APP_EXTRA : null,
     },
     menus: menus.map((m) => ({
       code: m.menuCode,
@@ -485,6 +540,22 @@ export function buildSpecPackMarkdown(
     `- 자리 안에 \`${m.common.imagePlaceholder.labelFormat}\` 형식으로 적으세요. 예: ${m.common.imagePlaceholder.examples.map((e) => `\`${e}\``).join(" · ")}`,
   );
   for (const r of m.common.imagePlaceholder.rule) lines.push(`- ${r}`);
+
+  /* 앱으로 낼 때만 붙는 절. PC 웹·반응형이면 통째로 안 나온다. */
+  if (m.common.appExtra) {
+    const a = m.common.appExtra;
+    lines.push("");
+    lines.push("### 2-1. 앱으로 낼 때 더 필요한 것");
+    lines.push(`> ${a.why}`);
+    lines.push("");
+    lines.push("**아래 화면을 추가로 만드세요.** 4장의 화면 목록에는 없지만, 앱에는 있어야 합니다.");
+    for (const s of a.screens) lines.push(`- **${s.name}** — ${s.funcDef}`);
+    lines.push("");
+    lines.push("**그리고 이 규칙을 모든 화면에 적용하세요.**");
+    for (const r of a.rules) lines.push(`- ${r}`);
+    lines.push("");
+    lines.push(`> ${a.storeNote}`);
+  }
 
   /* 파일을 어디에 두고 어떻게 부를지가 한 줄도 없었다.
      그래서 화면 44장이 pages/ 안에서 assets/... 를 불렀는데 자산은 한 층 위에 있었고,
