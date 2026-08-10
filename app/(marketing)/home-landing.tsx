@@ -250,6 +250,36 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
+          {/* 만든 뒤에 막히는 자리 — 2026-08-10.
+              화면까지 만들어 드려도 「내 컴퓨터에서만 보인다」에서 멈추시는 분이 많다.
+              팔려고 넣는 것이 아니라 «도움이 되면 좋겠다»는 뜻으로 둔다. */}
+          <div className="ship">
+            <div className="ship-in">
+              <span className="ship-ico" aria-hidden="true">🚀</span>
+              <div>
+                <h3>만들고 나서 막히는 자리도 적어 뒀어요</h3>
+                <p>
+                  화면은 다 만들었는데 <b>내 컴퓨터에서만 보이는</b> 데서 멈추시는 분이 많아요.
+                  링크를 보내도 상대는 못 열고요. 저희도 거기서 한참 헤맸습니다.
+                </p>
+                <p>
+                  그래서 <b>「만든 사이트를 세상에 내놓는 법」</b>을 안내서로 정리해
+                  결과물에 함께 넣어 뒀습니다. 이 사이트를 만들며 <b>실제로 겪은 것</b>만 적었어요.
+                </p>
+                <ul className="ship-list">
+                  <li>세상에 올리기 · 도메인 붙이기 · 자물쇠(HTTPS)</li>
+                  <li>회원가입·로그인 · 데이터 저장</li>
+                  <li>결제 받기 — 심사 두 달 동안 무엇을 하면 되는지</li>
+                  <li>사진·영상 만들기 · AI 기능 붙이기</li>
+                  <li>잘못 올렸을 때 되돌리는 법</li>
+                </ul>
+                <p className="ship-note">
+                  어려워하실 부분이라 남겨 둔 것입니다. 도움이 되셨으면 좋겠습니다.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div className="hero-ctas" style={{ marginTop: 36 }}>
             <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
               무료로 만들어보기 <span aria-hidden="true">→</span>
@@ -1194,6 +1224,72 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           font-weight: 700;
           font-size: 17px;
           color: var(--orange-deep);
+        }
+
+        /* SHIP — 만들고 나서 막히는 자리 안내.
+           파는 말이 아니라 «도와드리려고 적어 뒀다»는 결이라 색을 절제한다. */
+        .ship {
+          margin-top: 40px;
+        }
+        .ship-in {
+          display: flex;
+          gap: 18px;
+          align-items: flex-start;
+          text-align: left;
+          max-width: 780px;
+          margin: 0 auto;
+          padding: 26px 28px;
+          border: 1px solid var(--paper-line);
+          border-left: 4px solid var(--teal);
+          border-radius: 14px;
+          background: var(--card);
+        }
+        .ship-ico {
+          font-size: 26px;
+          line-height: 1.2;
+          flex: none;
+        }
+        .ship-in h3 {
+          margin: 0 0 10px;
+          font-size: 20px;
+          font-weight: 800;
+        }
+        .ship-in p {
+          margin: 8px 0;
+          font-size: 16px;
+          line-height: 1.75;
+        }
+        .ship-list {
+          margin: 14px 0 0;
+          padding: 0;
+          list-style: none;
+          display: grid;
+          gap: 6px;
+        }
+        .ship-list li {
+          font-size: 15px;
+          color: var(--ink-soft);
+          padding-left: 16px;
+          position: relative;
+        }
+        .ship-list li::before {
+          content: "·";
+          position: absolute;
+          left: 4px;
+          color: var(--teal);
+          font-weight: 700;
+        }
+        .ship-note {
+          margin-top: 14px !important;
+          font-size: 15px !important;
+          color: var(--ink-soft);
+        }
+        @media (max-width: 640px) {
+          .ship-in {
+            flex-direction: column;
+            gap: 12px;
+            padding: 22px 20px;
+          }
         }
 
         /* MOAT */

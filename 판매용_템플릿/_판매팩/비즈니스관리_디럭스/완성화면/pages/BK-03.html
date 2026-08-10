@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>예약 등록·변경 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a on" href="BK-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a" href="OR-01.html">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a" href="CU-01.html">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a" href="PD-01.html">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a" href="MK-01.html">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a" href="ST-01.html">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a" href="TM-01.html">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a" href="SE-01.html">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><a class="back" href="BK-01.html">‹ 예약 캘린더</a><div class="page-hd">
+  <div><h1 class="t-page">예약 등록</h1><p class="t-sub">고객과 서비스를 고르면 소요시간과 금액이 자동으로 채워집니다.</p></div>
+  </div>
+
+<div class="split-r">
+  <div>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">고객</h3></div>
+  <div class="card-bd ">
+      <label class="field">
+  <span class="lb">고객 검색<span class="req">*</span></span>
+  <div class="in-row"><input class="in " type="text" placeholder="이름 또는 연락처"><button class="btn btn-ghost" type="button" data-toast="고객을 찾았어요">찾기</button></div></label>
+      <div class="row-b">
+        <span class="t-sub">처음 오신 분인가요?</span>
+        <a class="btn btn-ghost btn-sm" href="CU-03.html">신규 고객 즉시 등록</a>
+      </div>
+      <div class="banner banner-ok mt6"><span class="ico">✓</span><div class="grow"><b>한소영</b> (010-7745-2098 · VIP) 선택됨 — 노쇼 이력 1회</div></div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">서비스와 담당</h3></div>
+  <div class="card-bd ">
+      <div class="f2">
+        <label class="field">
+  <span class="lb">서비스<span class="req">*</span></span>
+  <select class="sel"><option>디자인 커트 (38,000원)</option><option>뿌리 염색 (72,000원)</option><option selected>볼륨 매직 (중단발) (148,000원)</option><option>두피 스케일링 (55,000원)</option><option>트리트먼트 (LPP) (62,000원)</option><option>남성 컷 + 스타일링 (32,000원)</option></select></label>
+        <label class="field">
+  <span class="lb">담당 직원<span class="req">*</span></span>
+  <select class="sel"><option selected>박지우 (원장)</option><option>최민서 (디자이너)</option><option>김도윤 (디자이너)</option></select></label>
+      </div>
+      <div class="banner banner-info "><span class="ico">⏱</span><div class="grow">소요시간 <b>150분</b> · 금액 <b>148,000원</b> — 고른 서비스에서 자동으로 채웠습니다.</div></div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">날짜와 시간</h3></div>
+  <div class="card-bd ">
+      <div class="f2">
+        <label class="field">
+  <span class="lb">날짜<span class="req">*</span></span>
+  <input class="in " type="date" value="2026-08-10"></label>
+        <label class="field">
+  <span class="lb">시작 시간<span class="req">*</span></span>
+  <select class="sel"><option>10:00</option><option>11:30 (예약 있음)</option><option selected>13:00</option><option>15:30</option><option>17:00</option></select><span class="hint">고른 직원이 비어 있는 시간만 열립니다.</span></label>
+      </div>
+      <label class="check">
+  <input type="checkbox">
+  <span>매주 같은 시간으로 반복<span class="sub">4회까지 한 번에 잡습니다. 겹치는 날은 건너뜁니다.</span></span></label>
+      <div class="banner banner-warn mt4"><span class="ico">⚠</span><div class="grow"><b>13:00~15:30</b> 은 박지우 님의 다른 예약과 겹칩니다.</div><a class="btn btn-ghost btn-sm" href="BK-04.html">겹침 확인</a></div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">요청사항</h3></div>
+  <div class="card-bd "><textarea class="ta" placeholder="고객이 남긴 요청이나 주의할 점"></textarea></div>
+  </div>
+  </div>
+
+  <div class="sticky stack">
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">예약 요약</h3></div>
+  <div class="card-bd ">
+      <div class="sum-row "><span class="muted">고객</span><span>한소영 (VIP)</span></div><div class="sum-row "><span class="muted">서비스</span><span>볼륨 매직 (중단발)</span></div><div class="sum-row "><span class="muted">담당</span><span>박지우</span></div><div class="sum-row "><span class="muted">일시</span><span>8/10 (월) 13:00</span></div><div class="sum-row "><span class="muted">소요</span><span>150분</span></div>
+  <div class="sum-row total"><span>결제 예정액</span><span class="price">148,000원</span></div></div>
+  <div class="card-ft"><label class="check none">
+  <input type="checkbox" checked>
+  <span>저장하면 확정 알림을 보냅니다</span></label>
+             <div class="mt4"><button class="btn btn-pri btn-w" type="button" data-toast="예약을 저장했어요. 확정 알림을 보냈습니다" data-toast-kind="ok">예약 저장</button></div>
+             <div class="mt3"><a class="btn btn-ghost btn-w" href="BK-01.html">취소</a></div></div></div>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">겹침 확인</h3></div>
+  <div class="card-bd "><p class="t-sub">고른 직원·시간에 다른 예약이 있으면 저장 전에 알려 드립니다.</p>
+      <div class="mt3"><a class="btn btn-ghost btn-sm btn-w" href="BK-04.html">충돌 화면 보기</a></div></div>
+  </div>
+  </div>
+</div></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">BK-03 · 예약 등록·변경</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>예약·일정</dd>
+        <dt>기능정의</dt><dd>고객 검색·선택(신규 고객 즉시 등록) · 서비스 선택(소요시간·금액 자동 반영) · 담당 직원 선택 · 날짜·시간 선택(가능 시간만 활성) · 반복 예약 옵션 · 요청사항 메모 · 예약 확정 알림 발송 여부 · 중복/충돌 실시간 확인 · 저장 버튼</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="BK-01.html">예약 캘린더 → 예약 캘린더</a><a href="BK-04.html">시간 충돌 → 예약 불가 - 시간 충돌</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

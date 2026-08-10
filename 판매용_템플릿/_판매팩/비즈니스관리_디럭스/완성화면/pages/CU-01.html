@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>고객 목록 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a" href="BK-01.html">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a" href="OR-01.html">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a on" href="CU-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a" href="PD-01.html">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a" href="MK-01.html">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a" href="ST-01.html">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a" href="TM-01.html">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a" href="SE-01.html">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><div class="page-hd">
+  <div><h1 class="t-page">고객 목록</h1><p class="t-sub">전체 8명 · VIP 2명 · 이번 달 신규 2명</p></div>
+  <div class="btns"><button class="btn btn-ghost" type="button" data-toast="고객 목록을 엑셀로 내려받았어요" data-toast-kind="ok">엑셀 내보내기</button><a class="btn btn-pri" href="CU-03.html">신규 고객 등록</a></div></div>
+
+<div class="split-l"><div class="sticky"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">필터</h3></div>
+  <div class="card-bd ">
+  <label class="field">
+  <span class="lb">등급</span>
+  <div class="stack"><label class="check none">
+  <input type="checkbox" checked>
+  <span>VIP</span></label><label class="check none">
+  <input type="checkbox" checked>
+  <span>단골</span></label><label class="check none">
+  <input type="checkbox">
+  <span>신규</span></label><label class="check none">
+  <input type="checkbox">
+  <span>휴면</span></label></div></label>
+  <label class="field">
+  <span class="lb">최근 방문</span>
+  <select class="sel"><option selected>전체 기간</option><option>최근 7일</option><option>최근 30일</option><option>90일 이상 미방문</option></select></label>
+  <label class="field">
+  <span class="lb">담당 직원</span>
+  <select class="sel"><option selected>전체</option><option>박지우</option><option>최민서</option><option>김도윤</option><option>임하은</option></select></label>
+  <label class="field">
+  <span class="lb">태그</span>
+  <input class="in " type="text" placeholder="펌, 민감두피 …"></label>
+  <div class="btns-v mt6">
+    <button class="btn btn-pri btn-w" type="button" data-toast="필터를 적용했어요">필터 적용</button>
+    <a class="btn btn-ghost btn-w" href="CU-01.html">초기화</a>
+  </div></div>
+  </div></div><div>
+  <div class="filters">
+    <input class="in search" type="search" placeholder="이름 또는 연락처로 검색">
+    <select class="sel"><option selected>최근 방문순</option><option>누적 구매액순</option><option>이름순</option></select>
+    <button class="btn btn-ghost" type="button" data-toast="검색했어요">검색</button>
+    <a class="btn btn-ghost btn-sm" href="CU-04.html">결과 없을 때</a>
+  </div>
+
+  <div class="banner banner-info "><span class="ico">☑</span><div class="grow">고객을 골라 <b>한 번에 알림을 보낼</b> 수 있어요. 아래 체크박스로 고르세요.</div><a class="btn btn-pri btn-sm" href="MK-01.html">선택 고객에게 알림 발송</a></div>
+
+  <div class="mt6"><div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:34px" class="c"><input type="checkbox" aria-label="전체 선택"></th><th>이름</th><th>연락처</th><th style="width:62px">등급</th><th style="width:54px" class="r">방문</th><th style="width:104px" class="r nowrap">누적 구매액</th><th style="width:92px">최근 방문</th><th>태그</th><th style="width:62px">담당</th></tr></thead><tbody><tr data-href="CU-02.html" tabindex="0" role="link"><td class="c"><input type="checkbox" aria-label="김서연 선택"></td><td><b>김서연</b></td><td><span class="num">010-2847-1130</span></td><td><span class="badge b-acc">VIP</span></td><td class="r"><span class="num">24</span></td><td class="r nowrap"><span class="num">3,480,000원</span></td><td><span class="num">2026-08-08</span></td><td><span class="badge ">펌</span> <span class="badge ">민감두피</span></td><td>박지우</td></tr><tr data-href="CU-02.html" tabindex="0" role="link"><td class="c"><input type="checkbox" aria-label="이준호 선택"></td><td><b>이준호</b></td><td><span class="num">010-4471-8820</span></td><td><span class="badge b-ok">단골</span></td><td class="r"><span class="num">12</span></td><td class="r nowrap"><span class="num">1,240,000원</span></td><td><span class="num">2026-08-07</span></td><td><span class="badge ">커트</span></td><td>최민서</td></tr><tr data-href="CU-02.html" tabindex="0" role="link"><td class="c"><input type="checkbox" aria-label="박하늘 선택"></td><td><b>박하늘</b></td><td><span class="num">010-9021-3374</span></td><td><span class="badge b-ok">단골</span></td><td class="r"><span class="num">9</span></td><td class="r nowrap"><span class="num">980,000원</span></td><td><span class="num">2026-08-05</span></td><td><span class="badge ">염색</span> <span class="badge ">클리닉</span></td><td>박지우</td></tr><tr data-href="CU-02.html" tabindex="0" role="link"><td class="c"><input type="checkbox" aria-label="정우진 선택"></td><td><b>정우진</b></td><td><span class="num">010-3388-5512</span></td><td><span class="badge b-pri">신규</span></td><td class="r"><span class="num">2</span></td><td class="r nowrap"><span class="num">96,000원</span></td><td><span class="num">2026-08-04</span></td><td><span class="muted">-</span></td><td>최민서</td></tr><tr data-href="CU-02.html" tabindex="0" role="link"><td class="c"><input type="checkbox" aria-label="한소영 선택"></td><td><b>한소영</b></td><td><span class="num">010-7745-2098</span></td><td><span class="badge b-acc">VIP</span></td><td class="r"><span class="num">31</span></td><td class="r nowrap"><span class="num">4,720,000원</span></td><td><span class="num">2026-08-03</span></td><td><span class="badge ">펌</span> <span class="badge ">두피관리</span></td><td>박지우</td></tr><tr data-href="CU-02.html" tabindex="0" role="link"><td class="c"><input type="checkbox" aria-label="오재현 선택"></td><td><b>오재현</b></td><td><span class="num">010-2210-6647</span></td><td><span class="badge b-ok">단골</span></td><td class="r"><span class="num">7</span></td><td class="r nowrap"><span class="num">640,000원</span></td><td><span class="num">2026-07-29</span></td><td><span class="badge ">커트</span></td><td>김도윤</td></tr><tr data-href="CU-02.html" tabindex="0" role="link"><td class="c"><input type="checkbox" aria-label="윤채린 선택"></td><td><b>윤채린</b></td><td><span class="num">010-8834-1902</span></td><td><span class="badge b-pri">신규</span></td><td class="r"><span class="num">1</span></td><td class="r nowrap"><span class="num">48,000원</span></td><td><span class="num">2026-07-26</span></td><td><span class="badge ">첫방문</span></td><td>최민서</td></tr><tr data-href="CU-02.html" tabindex="0" role="link"><td class="c"><input type="checkbox" aria-label="강민혁 선택"></td><td><b>강민혁</b></td><td><span class="num">010-5567-7413</span></td><td><span class="badge b-mut">휴면</span></td><td class="r"><span class="num">5</span></td><td class="r nowrap"><span class="num">410,000원</span></td><td><span class="num">2026-02-14</span></td><td><span class="badge ">커트</span></td><td>김도윤</td></tr></tbody></table></div></div>
+
+  <div class="row-b mt6">
+    <span class="t-sub">1–8 / 8명</span>
+    <div class="btns"><button class="btn btn-ghost btn-sm is-off" type="button" disabled>‹ 이전</button><button class="btn btn-pri btn-sm" type="button">1</button><button class="btn btn-ghost btn-sm is-off" type="button" disabled>다음 ›</button></div>
+  </div></div></div></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">CU-01 · 고객 목록</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>고객 관리</dd>
+        <dt>기능정의</dt><dd>검색창(이름·연락처) · 필터(등급·최근 방문·태그·담당 직원) · 정렬(최근 방문·누적 구매액·이름) · 고객 표(이름·연락처·등급 배지·방문 횟수·누적 구매액·최근 방문일·태그) · 체크박스 다중 선택 · 선택 고객에게 일괄 알림 발송 · 신규 고객 등록 버튼 · 엑셀 내보내기 · 페이지네이션</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="CU-02.html">고객 상세 → 고객 상세</a><a href="CU-03.html">고객 등록 → 고객 등록·수정</a><a href="CU-04.html">검색 결과 없음 → 고객 목록 - 검색 결과 없음</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

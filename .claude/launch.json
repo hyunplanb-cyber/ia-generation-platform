@@ -2,6 +2,24 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "렌탈-프리미엄",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_판매팩/장비렌탈_프리미엄/완성화면",
+      "port": 4184
+    },
+    {
+      "name": "렌탈-디럭스",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_판매팩/장비렌탈_디럭스/완성화면",
+      "port": 4183
+    },
+    {
       "name": "카드뉴스",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
@@ -94,6 +112,15 @@
       ],
       "cwd": "판매용_템플릿/_판매팩/뷰티샵_디럭스/완성화면_올드",
       "port": 4191
+    },
+    {
+      "name": "비즈니스관리-디럭스",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_판매팩/비즈니스관리_디럭스/완성화면",
+      "port": 4182
     },
     {
       "name": "LMS-새것",

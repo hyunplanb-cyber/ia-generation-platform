@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>리포트 내보내기 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a" href="BK-01.html">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a" href="OR-01.html">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a" href="CU-01.html">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a" href="PD-01.html">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a" href="MK-01.html">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a on" href="ST-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a" href="TM-01.html">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a" href="SE-01.html">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><a class="back" href="ST-01.html">‹ 매출 통계</a><div class="page-hd">
+  <div><h1 class="t-page">리포트 내보내기</h1><p class="t-sub">보고 자료로 쓸 파일을 만듭니다.</p></div>
+  <div class="btns"><a class="btn btn-ghost" href="ST-01.html">매출 통계</a></div></div>
+
+<div class="split-r">
+  <div>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">무엇을</h3></div>
+  <div class="card-bd ">
+      <label class="field">
+  <span class="lb">리포트 유형<span class="req">*</span></span>
+  <div class="chips"><button class="chip on" type="button">매출</button><button class="chip" type="button">고객</button><button class="chip" type="button">상품</button><button class="chip" type="button">예약</button></div></label>
+      <label class="field">
+  <span class="lb">기간<span class="req">*</span></span>
+  <div class="f2"><input class="in " type="date" value="2026-08-01"><input class="in " type="date" value="2026-08-10"></div></label></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">포함할 항목</h3></div>
+  <div class="card-bd "><div class="g2">
+      <label class="check none">
+  <input type="checkbox" checked>
+  <span>일별 매출</span></label><label class="check none">
+  <input type="checkbox" checked>
+  <span>결제수단별 비중</span></label><label class="check none">
+  <input type="checkbox" checked>
+  <span>채널별 매출</span></label><label class="check none">
+  <input type="checkbox" checked>
+  <span>요일·시간대 히트맵</span></label><label class="check none">
+  <input type="checkbox" checked>
+  <span>상품별 실적</span></label><label class="check none">
+  <input type="checkbox">
+  <span>환불 내역</span></label><label class="check none">
+  <input type="checkbox">
+  <span>목표 대비 달성률</span></label><label class="check none">
+  <input type="checkbox">
+  <span>전기 대비 증감</span></label>
+    </div></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">어떻게</h3></div>
+  <div class="card-bd ">
+      <label class="field">
+  <span class="lb">형식</span>
+  <div class="chips"><button class="chip on" type="button">엑셀 (.xlsx)</button><button class="chip" type="button">PDF</button><button class="chip" type="button">CSV</button></div></label>
+      <label class="field">
+  <span class="lb">파일명</span>
+  <input class="in " type="text" value="살롱드무드_매출리포트_202608"></label>
+      <label class="field">
+  <span class="lb">요약 코멘트</span>
+  <textarea class="ta" placeholder="이 리포트를 보는 사람에게 남길 말. 파일 첫 장에 들어갑니다."></textarea></label></div>
+  </div>
+
+    <div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">정기 리포트</h3></div>
+  <div class="card-bd ">
+      <label class="check">
+  <input type="checkbox" checked>
+  <span>정기적으로 만들어 이메일로 보내기<span class="sub">매번 들어와서 만들지 않아도 됩니다.</span></span></label>
+      <div class="f2 mt4">
+        <label class="field">
+  <span class="lb">주기</span>
+  <select class="sel"><option selected>매주 월요일</option><option>매월 1일</option><option>매월 말일</option></select></label>
+        <label class="field">
+  <span class="lb">받는 사람</span>
+  <input class="in " type="text" value="jiwoo@salon.example"></label>
+      </div></div>
+  </div>
+  </div>
+
+  <div class="sticky stack">
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">생성 미리보기</h3></div>
+  <div class="card-bd ">
+      <div class="sum-row "><span class="muted">유형</span><span>매출 리포트</span></div><div class="sum-row "><span class="muted">기간</span><span>2026-08-01 ~ 08-10</span></div><div class="sum-row "><span class="muted">항목</span><span>5개</span></div><div class="sum-row "><span class="muted">형식</span><span>엑셀 (.xlsx)</span></div>
+  <div class="sum-row total"><span>예상 용량</span><span class="price">약 42KB</span></div>
+      <div class="box mt4" style="background:var(--bg)">
+        <div class="t-sub">1장 요약 · 2장 일별 매출 · 3장 결제수단 · 4장 채널 · 5장 히트맵</div>
+      </div></div>
+  <div class="card-ft"><div class="btns-v">
+          <button class="btn btn-pri btn-w" type="button" data-toast="리포트를 만들어 내려받았어요" data-toast-kind="ok">다운로드</button>
+          <button class="btn btn-ghost btn-w" type="button" data-toast="jiwoo@salon.example 로 보냈어요" data-toast-kind="ok">이메일로 보내기</button>
+        </div></div></div>
+  </div>
+</div>
+
+<div class="card mt8">
+  <div class="card-hd"><h3 class="t-card">최근 만든 리포트</h3></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:112px">만든 날</th><th>이름</th><th style="width:68px">유형</th><th style="width:80px">형식</th><th style="width:80px"></th></tr></thead><tbody><tr><td><span class="num sub">2026-08-03</span></td><td>살롱드무드_매출리포트_202607</td><td>매출</td><td>엑셀</td><td><button class="btn btn-ghost btn-sm" type="button" data-toast="다시 내려받았어요">다시 받기</button></td></tr><tr><td><span class="num sub">2026-07-01</span></td><td>살롱드무드_고객리포트_202606</td><td>고객</td><td>PDF</td><td><button class="btn btn-ghost btn-sm" type="button" data-toast="다시 내려받았어요">다시 받기</button></td></tr></tbody></table></div></div>
+  </div></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">ST-03 · 리포트 내보내기</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>통계·리포트</dd>
+        <dt>기능정의</dt><dd>리포트 유형 선택(매출·고객·상품·예약) · 기간 지정 · 포함 항목 체크 · 형식 선택(엑셀·PDF·CSV) · 파일명·요약 코멘트 · 정기 리포트 예약(매주·매월 이메일 발송) · 생성 미리보기 · 다운로드/발송 버튼 · 최근 생성 이력</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="ST-01.html">매출 통계 → 매출 통계</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

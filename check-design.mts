@@ -39,7 +39,7 @@ import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import {
   LAYOUTS, STRUCTURES, THUMBS, STRUCTURE_COLS, GRID_GAP, cardWidth, gridBaseCss,
-  contrast, TEXT_CONTRAST_MIN,
+  contrast, TEXT_CONTRAST_MIN, DENSITIES,
 } from "./lib/design-presets";
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
@@ -100,8 +100,10 @@ const 짧게 = (p: string) => p.replace(SITE, "").replace(/^[\\/]/, "");
       const 속 = m[2];
       const 격자다 = /display\s*:\s*(inline-)?grid|grid-template-columns|grid-auto-columns/.test(속);
       if (!격자다) continue;
-      const g = 속.match(/(?<!-)\b(gap|column-gap|row-gap)\s*:\s*(?!var\()([^;{}"]{1,24})/);
-      if (g && /\d/.test(g[2])) {
+      const g = 속.match(/(?<!-)\b(gap|column-gap|row-gap)\s*:\s*([^;{}"]{1,32})/);
+      /* var() 가 «어디에» 있든 눈금에서 나온 값이다. 전에는 맨 앞만 봐서
+         calc(var(--hair) * 2) 같은 «눈금에서 계산한 값»을 눈대중으로 봤다(2026-08-10). */
+      if (g && /\d/.test(g[2]) && !g[2].includes("var(")) {
         const 줄번호 = 글.slice(0, m.index).split("\n").length;
         걸린곳.push(`${짧게(f)}:${줄번호}  ${m[1].trim().slice(0, 30)}`);
         값모음.add(g[2].trim());
@@ -130,13 +132,39 @@ const 정해진값: Record<string, string> = {
   "--row-h": 가이드값("--row-h"),
   "--btn-gap": 가이드값("--btn-gap"),
 };
+
+/* ⚠ 가이드는 밀도를 «두 벌» 준다 — 넉넉하게(cozy)와 컴팩트(compact).
+   그런데 가이드CSS 는 기본값인 넉넉하게만 내보낸다. 그래서 백오피스처럼
+   «한 화면에 많이 담아야 하는» 팩이 컴팩트를 고르면, 가이드대로 골랐는데도
+   매번 걸렸다(2026-08-10, 비즈니스관리 디럭스에서 처음 나왔다).
+
+   무는 것은 «둘 다 아닐 때»뿐이다. 둘 중 하나면 어느 쪽을 골랐는지만 알린다 —
+   틀린 기준으로 재는 검사기는 헛경보를 내고, 헛경보는 사람이 다 무시하게 만든다. */
+const 밀도값 = (키: "cardPad" | "rowH" | "btnGap") =>
+  new Map(DENSITIES.map((d) => [d[키], d.label] as const));
+const 밀도표: Record<string, Map<string, string>> = {
+  "--card-pad": 밀도값("cardPad"),
+  "--row-h": 밀도값("rowH"),
+  "--btn-gap": 밀도값("btnGap"),
+};
+
 for (const f of css들) {
   const 글 = readFileSync(f, "utf8");
+  const 고른밀도 = new Set<string>();
   for (const [이름, 값] of Object.entries(정해진값)) {
     const m = 글.match(new RegExp(`${이름}\\s*:\\s*([^;]+);`));
     if (!m) continue;
     const 쓴값 = m[1].trim();
-    if (쓴값 !== 값) 걸림(짧게(f), `${이름} 이 ${쓴값} 입니다 — 가이드는 ${값}`);
+    if (쓴값 === 값) continue;
+    const 밀도 = 밀도표[이름]?.get(쓴값);
+    if (밀도) { 고른밀도.add(밀도); continue; }
+    걸림(짧게(f), `${이름} 이 ${쓴값} 입니다 — 가이드는 ${값}`);
+  }
+  /* 한 파일 안에서 밀도가 섞이면 그건 «고른 것»이 아니라 «흘린 것»이다. */
+  if (고른밀도.size === 1) {
+    console.log(`  · [${짧게(f)}] 밀도 「${[...고른밀도][0]}」 눈금을 씁니다 — 가이드가 주는 두 벌 중 하나입니다`);
+  } else if (고른밀도.size > 1) {
+    못됨(짧게(f), `밀도가 섞였습니다 (${[...고른밀도].join(" · ")}) — 한 화면은 한 벌만 씁니다`);
   }
 }
 

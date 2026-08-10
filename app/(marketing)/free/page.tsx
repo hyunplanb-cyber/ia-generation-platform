@@ -12,6 +12,7 @@ import {
   Presentation,
   Check,
   ArrowRight,
+  Rocket,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { buttonVariants } from "@/components/ui/button";
@@ -165,6 +166,45 @@ export default async function FreePage() {
               &ldquo;AI 빌드 스펙팩 확인해서 콘텐츠 판매 사이트 만들어줘&rdquo;
             </p>
             <p className="mt-2 text-sm text-muted-foreground">이게 전부예요.</p>
+          </div>
+        </section>
+
+        {/* 실제로 만들어 보시면 이런 것도 드려요 —
+            무료 샘플은 «문서 구경»에서 끝난다. 직접 만들어 파일을 받으시면
+            거기서 한 걸음 더 나가는 것이 있다는 걸 여기서 알린다(2026-08-10). */}
+        <section className="flex flex-col gap-4">
+          <SectionTitle>직접 만들어 파일을 받으시면 이런 것도 드려요</SectionTitle>
+          <div className="rounded-xl border border-border bg-surface p-5">
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 flex size-9 flex-none items-center justify-center rounded-full bg-success/12 text-success">
+                <Rocket className="size-4" />
+              </span>
+              <div>
+                <h3 className="font-bold text-foreground">
+                  「만든 사이트를 세상에 내놓는 법」 안내서
+                </h3>
+                <p className="mt-2 leading-relaxed text-muted-foreground">
+                  화면은 다 만들었는데 <b className="text-foreground">내 컴퓨터에서만 보이는</b> 데서
+                  멈추시는 분이 많아요. 링크를 보내도 상대는 못 열고요.
+                </p>
+                <p className="mt-2 leading-relaxed text-muted-foreground">
+                  저희가 이 사이트를 만들며 <b className="text-foreground">실제로 겪은 것</b>을 정리했습니다.
+                </p>
+                <ul className="mt-3 grid gap-1 text-sm text-muted-foreground sm:grid-cols-2">
+                  <li>· 세상에 올리기 (Vercel)</li>
+                  <li>· 내 도메인 붙이기 + 자물쇠</li>
+                  <li>· 비밀 열쇠 다루는 법</li>
+                  <li>· 회원가입·로그인 붙이기</li>
+                  <li>· 데이터 저장하기 (Neon)</li>
+                  <li>· 결제 받기 + 심사 두 달의 진실</li>
+                  <li>· 사진·영상 만들기</li>
+                  <li>· 안 망가지게 지키기·되돌리기</li>
+                </ul>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  프로젝트를 만들어 결과물을 받으시면 <b>모든 등급에 함께</b> 들어 있습니다.
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 

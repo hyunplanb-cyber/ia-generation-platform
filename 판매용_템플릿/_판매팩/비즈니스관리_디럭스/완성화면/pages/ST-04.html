@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>상품별 실적 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<div class="adm">
+  <aside class="side">
+    <div class="side-hd"><span class="mark">S</span><span class="nm">살롱드무드</span></div>
+    <nav class="side-nav" aria-label="주 메뉴">
+    <a class="side-a" href="DB-01.html">
+        <span class="ic" aria-hidden="true">▦</span>대시보드</a><div class="side-grp">매일 하는 일</div>
+    <a class="side-a" href="BK-01.html">
+        <span class="ic" aria-hidden="true">▤</span>예약·일정</a><a class="side-a" href="OR-01.html">
+        <span class="ic" aria-hidden="true">▣</span>주문·매출<span class="cnt">3</span></a><a class="side-a" href="CU-01.html">
+        <span class="ic" aria-hidden="true">◍</span>고객 관리</a><div class="side-grp">파는 것</div>
+    <a class="side-a" href="PD-01.html">
+        <span class="ic" aria-hidden="true">▧</span>상품·재고<span class="cnt">2</span></a><a class="side-a" href="MK-01.html">
+        <span class="ic" aria-hidden="true">✉</span>메시지·알림</a><div class="side-grp">보고 관리</div>
+    <a class="side-a on" href="ST-01.html" aria-current="page">
+        <span class="ic" aria-hidden="true">▨</span>통계·리포트</a><a class="side-a" href="TM-01.html">
+        <span class="ic" aria-hidden="true">◎</span>직원·권한</a><a class="side-a" href="SE-01.html">
+        <span class="ic" aria-hidden="true">⚙</span>설정</a></nav>
+  </aside>
+  <div class="main">
+    <header class="top"><div class="top-in">
+      <span class="biz">살롱드무드 강남점</span>
+      <span class="t-sub">오늘 · 2026.08.10</span>
+      <span class="grow"></span>
+      <button class="ico-btn" type="button" data-toast="새 알림 3건이 있어요" aria-label="알림"><span aria-hidden="true">🔔</span><span class="dot"></span></button>
+      <a class="me" href="SE-04.html"><span class="av">박</span>박지우 <span class="t-sub">원장</span></a>
+    </div></header>
+    <main class="wrap"><a class="back" href="ST-01.html">‹ 매출 통계</a><div class="page-hd">
+  <div><h1 class="t-page">상품별 실적</h1><p class="t-sub">2026.08.04 ~ 08.10 · 8개 상품</p></div>
+  <div class="btns"><a class="btn btn-ghost" href="ST-01.html">매출 통계</a><a class="btn btn-ghost" href="PD-01.html">상품 목록</a></div></div>
+
+<div class="filters">
+  <select class="sel"><option selected>매출순</option><option>판매량순</option><option>마진순</option></select>
+  <select class="sel"><option selected>카테고리 전체</option><option>커트</option><option>염색</option><option>펌</option><option>클리닉</option><option>제품</option></select>
+  <select class="sel"><option selected>전주 대비</option><option>전월 대비</option></select>
+</div>
+
+<div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:30px">#</th><th>상품</th><th style="width:76px">카테고리</th><th style="width:68px" class="r">판매량</th><th style="width:116px" class="r nowrap">매출</th><th style="width:108px" class="r nowrap">마진</th><th style="width:68px" class="r">마진율</th><th style="width:64px">추이</th><th style="width:76px" class="r">재고 회전</th></tr></thead><tbody><tr data-href="PD-02.html" tabindex="0" role="link"><td><span class="muted num">1</span></td><td><b>뿌리 염색</b></td><td>염색</td><td class="r"><span class="num">88</span></td><td class="r nowrap"><span class="num">6,336,000원</span></td><td class="r nowrap"><span class="num">4,488,000원</span></td><td class="r"><span class="num">71%</span></td><td><span class="spark"><i style="height:7px"></i><i style="height:11px"></i><i style="height:9px"></i><i style="height:12px"></i><i style="height:11px"></i><i style="height:14px"></i><i style="height:16px"></i></span></td><td class="r"><span class="num">6.3회</span></td></tr><tr data-href="PD-02.html" tabindex="0" role="link"><td><span class="muted num">2</span></td><td><b>볼륨 매직 (중단발)</b></td><td>펌</td><td class="r"><span class="num">41</span></td><td class="r nowrap"><span class="num">6,068,000원</span></td><td class="r nowrap"><span class="num">4,346,000원</span></td><td class="r"><span class="num">72%</span></td><td><span class="spark"><i style="height:8px"></i><i style="height:11px"></i><i style="height:10px"></i><i style="height:13px"></i><i style="height:11px"></i><i style="height:14px"></i><i style="height:16px"></i></span></td><td class="r"><span class="num">6.8회</span></td></tr><tr data-href="PD-02.html" tabindex="0" role="link"><td><span class="muted num">3</span></td><td><b>디자인 커트</b></td><td>커트</td><td class="r"><span class="num">142</span></td><td class="r nowrap"><span class="num">5,396,000원</span></td><td class="r nowrap"><span class="num">4,118,000원</span></td><td class="r"><span class="num">76%</span></td><td><span class="spark"><i style="height:9px"></i><i style="height:12px"></i><i style="height:10px"></i><i style="height:13px"></i><i style="height:12px"></i><i style="height:15px"></i><i style="height:16px"></i></span></td><td class="r"><span class="muted">-</span></td></tr><tr data-href="PD-02.html" tabindex="0" role="link"><td><span class="muted num">4</span></td><td><b>남성 컷 + 스타일링</b></td><td>커트</td><td class="r"><span class="num">96</span></td><td class="r nowrap"><span class="num">3,072,000원</span></td><td class="r nowrap"><span class="num">2,400,000원</span></td><td class="r"><span class="num">78%</span></td><td><span class="spark"><i style="height:9px"></i><i style="height:12px"></i><i style="height:11px"></i><i style="height:13px"></i><i style="height:12px"></i><i style="height:15px"></i><i style="height:16px"></i></span></td><td class="r"><span class="muted">-</span></td></tr><tr data-href="PD-02.html" tabindex="0" role="link"><td><span class="muted num">5</span></td><td><b>두피 스케일링</b></td><td>클리닉</td><td class="r"><span class="num">37</span></td><td class="r nowrap"><span class="num">2,035,000원</span></td><td class="r nowrap"><span class="num">1,517,000원</span></td><td class="r"><span class="num">75%</span></td><td><span class="spark"><i style="height:7px"></i><i style="height:11px"></i><i style="height:9px"></i><i style="height:12px"></i><i style="height:11px"></i><i style="height:14px"></i><i style="height:16px"></i></span></td><td class="r"><span class="num">12.3회</span></td></tr><tr data-href="PD-02.html" tabindex="0" role="link"><td><span class="muted num">6</span></td><td><b>트리트먼트 (LPP)</b></td><td>클리닉</td><td class="r"><span class="num">29</span></td><td class="r nowrap"><span class="num">1,798,000원</span></td><td class="r nowrap"><span class="num">1,276,000원</span></td><td class="r"><span class="num">71%</span></td><td><span class="spark"><i style="height:8px"></i><i style="height:11px"></i><i style="height:10px"></i><i style="height:13px"></i><i style="height:11px"></i><i style="height:14px"></i><i style="height:16px"></i></span></td><td class="r"><span class="num">29.0회</span></td></tr><tr data-href="PD-02.html" tabindex="0" role="link"><td><span class="muted num">7</span></td><td><b>홈케어 샴푸 300ml</b></td><td>제품</td><td class="r"><span class="num">54</span></td><td class="r nowrap"><span class="num">1,512,000원</span></td><td class="r nowrap"><span class="num">810,000원</span></td><td class="r"><span class="num">54%</span></td><td><span class="spark"><i style="height:9px"></i><i style="height:12px"></i><i style="height:10px"></i><i style="height:13px"></i><i style="height:12px"></i><i style="height:15px"></i><i style="height:16px"></i></span></td><td class="r"><span class="num">2.5회</span></td></tr><tr data-href="PD-02.html" tabindex="0" role="link"><td><span class="muted num">8</span></td><td><b>헤어 에센스 100ml</b></td><td>제품</td><td class="r"><span class="num">31</span></td><td class="r nowrap"><span class="num">1,054,000원</span></td><td class="r nowrap"><span class="num">589,000원</span></td><td class="r"><span class="num">56%</span></td><td><span class="spark"><i style="height:9px"></i><i style="height:12px"></i><i style="height:11px"></i><i style="height:13px"></i><i style="height:12px"></i><i style="height:15px"></i><i style="height:16px"></i></span></td><td class="r"><span class="num">15.5회</span></td></tr></tbody><tfoot><tr><td></td><td>합계</td><td></td><td class="r"><span class="num">518</span></td><td class="r">27,271,000원</td><td class="r">19,544,000원</td><td></td><td></td><td></td></tr></tfoot></table></div>
+
+<div class="g2 mt8">
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">잘 나가는 상품</h3></div>
+  <div class="card-bd "><div class="stack">
+    <div class="row-b"><span><b>1. 뿌리 염색</b></span><span class="num">6,336,000원</span></div><div class="row-b"><span><b>2. 볼륨 매직 (중단발)</b></span><span class="num">6,068,000원</span></div><div class="row-b"><span><b>3. 디자인 커트</b></span><span class="num">5,396,000원</span></div>
+  </div>
+  <p class="t-sub mt4">이 셋이 전체 매출의 <b>62%</b>입니다. 재고와 예약 시간을 여기에 먼저 쓰세요.</p></div>
+  </div>
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">안 나가는 상품</h3></div>
+  <div class="card-bd "><div class="stack">
+    <div class="row-b"><span>헤어 에센스 100ml</span><span class="num muted">31건</span></div><div class="row-b"><span>홈케어 샴푸 300ml</span><span class="num muted">54건</span></div><div class="row-b"><span>트리트먼트 (LPP)</span><span class="num muted">29건</span></div>
+  </div>
+  <p class="t-sub mt4">가격을 낮추거나, 잘 나가는 상품과 <b>묶어 파는</b> 것을 생각해 보세요.</p></div>
+  </div>
+</div>
+
+<div class="card mt8">
+  <div class="card-hd"><h3 class="t-card">함께 팔린 상품</h3></div>
+  <div class="card-bd "><div class="table-wrap table-scroll"><table class="table "><thead><tr><th>같이 산 조합</th><th style="width:64px" class="r">건수</th><th style="width:116px" class="r nowrap">묶음 매출</th><th>메모</th></tr></thead><tbody><tr><td>뿌리 염색 + 홈케어 샴푸 300ml</td><td class="r"><span class="num">31</span></td><td class="r nowrap"><span class="num">3,100,000원</span></td><td><b>묶음 상품으로 만들 만합니다</b></td></tr><tr><td>디자인 커트 + 트리트먼트 (LPP)</td><td class="r"><span class="num">18</span></td><td class="r nowrap"><span class="num">1,800,000원</span></td><td></td></tr><tr><td>볼륨 매직 + 두피 스케일링</td><td class="r"><span class="num">9</span></td><td class="r nowrap"><span class="num">1,827,000원</span></td><td></td></tr></tbody></table></div></div>
+  </div></main>
+  </div>
+</div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">ST-04 · 상품별 실적</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>통계·리포트</dd>
+        <dt>기능정의</dt><dd>상품·카테고리별 매출·판매량 순위 표 · 정렬(매출·수량·마진) · 판매 추이 스파크라인 · 재고 회전율 · 잘 나가는/안 나가는 상품 하이라이트 · 함께 팔린 상품(장바구니 분석) · 상품 상세로 이동 · 기간 비교</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="ST-01.html">매출 통계 → 매출 통계</a><a href="PD-01.html">상품 목록 → 상품 목록</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

@@ -8,6 +8,7 @@ import {
   ShieldQuestion,
   History,
   ChevronDown,
+  Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { countScreensByProject } from "@/application/count-screens-by-project";
@@ -282,6 +283,23 @@ function PlanningTab({
               </summary>
 
               <div className="border-t border-border/60 p-5">
+                {/* 받으실 때 함께 들어가는 것 — 2026-08-10.
+                    화면까지 만들어 드려도 「내 컴퓨터에서만 보인다」에서 멈추시는 분이 많다.
+                    파는 말이 아니라 «도움이 되면 좋겠다»는 뜻으로 둔다. */}
+                <div className="mb-5 flex items-start gap-3 rounded-xl border border-border bg-muted/30 p-4">
+                  <span className="mt-0.5 flex size-8 flex-none items-center justify-center rounded-full bg-success/12 text-success">
+                    <Rocket className="size-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-foreground">
+                      파일을 받으시면 「만든 사이트를 세상에 내놓는 법」이 함께 들어갑니다
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      배포·도메인·로그인·데이터 저장·결제까지, 저희가 이 사이트를 만들며 실제로 겪은
+                      것을 정리했어요. 만들고 나서 막히기 쉬운 자리라 함께 넣어 뒀습니다.
+                    </p>
+                  </div>
+                </div>
                 {result && <ProjectDeliverablePreview projectId={p.id} result={result} />}
               </div>
             </details>

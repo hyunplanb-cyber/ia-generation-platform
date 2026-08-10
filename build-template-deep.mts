@@ -31,6 +31,7 @@ const SCREEN_LIST_NOTE = [
 ];
 
 import { expandDeep, type DeepInput } from "./template-deep";
+import { RENTAL_DEEP } from "./template-data-rental-deep";
 import { MATCHING_DEEP } from "./template-data-matching-deep";
 import { GROUPBUY_DEEP } from "./template-data-groupbuy-deep";
 import { ADMIN_DEEP } from "./template-data-admin-deep";
@@ -44,6 +45,7 @@ const TEMPLATES: Record<string, { data: DeepInput; out: string; title: string }>
   lms: { data: LMS_DEEP, out: "_작업/LMS_온라인강의플랫폼_상세IA", title: "온라인 강의 플랫폼(LMS) — 상세 IA" },
   beauty: { data: BEAUTY_DEEP, out: "_작업/뷰티샵_예약플랫폼_상세IA", title: "뷰티샵 예약 플랫폼 — 상세 IA" },
   travel: { data: TRAVEL_DEEP, out: "_작업/해외투어_티켓예약_상세IA", title: "해외 투어·티켓 예약 플랫폼 — 상세 IA" },
+  rental: { data: RENTAL_DEEP, out: "_작업/장비렌탈_대여예약_상세IA", title: "장비 렌탈·대여 예약 플랫폼 — 상세 IA" },
   matching: { data: MATCHING_DEEP, out: "_작업/동네서비스_매칭플랫폼_상세IA", title: "동네 서비스 매칭 플랫폼 — 상세 IA" },
   groupbuy: { data: GROUPBUY_DEEP, out: "_작업/공동구매_공구플랫폼_상세IA", title: "공동구매(공구) 플랫폼 — 상세 IA" },
   admin: { data: ADMIN_DEEP, out: "_작업/비즈니스관리_관리자시스템_상세IA", title: "통합 비즈니스 관리자 시스템 — 상세 IA" },

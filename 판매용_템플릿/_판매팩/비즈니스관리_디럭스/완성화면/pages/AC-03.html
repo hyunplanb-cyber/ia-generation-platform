@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>접근 권한 없음 · 살롱드무드 관리 시스템</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<style>
+.solo-wrap{min-height:100vh;display:grid;place-items:center;padding:var(--sp-block) var(--sp-wrap)}
+.solo-card{width:100%;max-width:392px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:32px}
+.solo-hd{display:flex;align-items:center;gap:8px;margin-bottom:var(--sp-block);font-size:var(--fs-card)}
+.solo-hd .mark{width:24px;height:24px;border-radius:var(--r-badge);background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font-size:12px;font-weight:700}
+</style>
+<div class="solo-wrap"><div class="solo-card">
+  <div class="solo-hd"><span class="mark">S</span><b>살롱드무드 관리 시스템</b></div>
+  <h1 class="t-sec mb2">접근 권한이 없습니다</h1><p class="t-sub mb6">이 메뉴는 원장·매니저만 볼 수 있어요.</p><div class="box "><dl class="kv left"><dt>로그인 계정</dt><dd>김도윤 (doyun@salon.example)</dd><dt>권한 등급</dt><dd><span class="badge b-mut">일반</span></dd><dt>요청한 화면</dt><dd>정산 설정 (SE-02)</dd></dl></div>
+    <p class="t-sub mt4">권한이 필요하시면 원장님께 요청해 주세요. 요청 내역은 활동 로그에 남습니다.</p>
+    <div class="btns-v mt6">
+      <button class="btn btn-pri btn-w" type="button" data-toast="원장님께 권한 요청을 보냈어요" data-toast-kind="ok">관리자에게 권한 요청</button>
+      <a class="btn btn-ghost btn-w" href="DB-01.html">대시보드로 돌아가기</a>
+    </div>
+    <p class="t-sub mt4" style="text-align:center"><a href="AC-01.html"><b>로그아웃</b></a></p></div></div>
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">AC-03 · 접근 권한 없음</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>계정·접근</dd>
+        <dt>기능정의</dt><dd>권한 없음 안내 문구 · 현재 로그인 계정과 권한 등급 표시 · 관리자에게 권한 요청 버튼 · 접근 가능한 메뉴로 이동 · 로그아웃 링크</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="DB-01.html">대시보드로 → 대시보드 홈</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>
