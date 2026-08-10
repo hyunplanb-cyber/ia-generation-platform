@@ -33,12 +33,24 @@ import { createHash } from "node:crypto";
    tsx 는 어차피 node_modules 안에 있으므로 노드로 직접 부른다 — 가장 확실하다. */
 const TSX = "node_modules/tsx/dist/cli.mjs";
 
-const 업종들 = ["lms", "beauty", "travel", "admin", "matching", "groupbuy", "rental"] as const;
+/* 파는 업종만 굽는다.
+ *
+ * admin(비즈니스관리)은 보류함에 있다 — 주제가 모호해서 팔지 않기로 했다.
+ * 그런데 여기 이름이 남아 있어서 매번 다시 구워졌고, 팔지도 않는 팩이
+ * 판매팩 폴더에 25번째 칸으로 서 있었다. 파는 목록(lib/packages.ts)에는
+ * 없으니 조용히 있을 뿐, 언젠가 「팩이 25개네」로 읽힐 자리였다.
+ *
+ * 재료(template-data-admin.ts)와 만들어 뒀던 37화면은 지우지 않는다 —
+ * 관리자 화면 서비스를 열 때 참고한다. 깃 역사(1c8adbe)에 그대로 있다.
+ * 다시 구울 일이 생기면 `npx tsx build-all.mts admin` 으로 이름을 대면 된다. */
+const 업종들 = ["lms", "beauty", "travel", "matching", "groupbuy", "rental"] as const;
+const 보류업종들 = ["admin"];
 const 고른업종 = process.argv[2];
 const 돌릴것 = 고른업종 ? [고른업종] : [...업종들];
 
-if (고른업종 && !업종들.includes(고른업종 as (typeof 업종들)[number])) {
+if (고른업종 && !업종들.includes(고른업종 as (typeof 업종들)[number]) && !보류업종들.includes(고른업종)) {
   console.error(`업종 「${고른업종}」이 없습니다. 있는 것: ${업종들.join(", ")}`);
+  console.error(`보류함(이름을 대야만 굽는다): ${보류업종들.join(", ")}`);
   process.exit(1);
 }
 
@@ -93,7 +105,9 @@ console.log("\n3. 색·레이아웃 가이드");
 for (const k of 돌릴것) 돌리기(k, "build-design-presets.mts", [k]);
 
 // ── 4~5. 포장 ───────────────────────────────────────────────
-console.log("\n4. 20칸 포장");
+// 칸 수를 여기 적지 않는다 — 늘 때마다 여기만 옛 숫자로 남는다.
+// 실제로 몇 칸인지는 package-template 이 세어서 말한다.
+console.log("\n4. 판매팩 포장");
 돌리기("판매팩", "package-template.mts");
 
 console.log("\n5. 무료 샘플");
