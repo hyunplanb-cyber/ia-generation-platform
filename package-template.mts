@@ -402,10 +402,18 @@ async function pack(p: Product) {
   if (MAKE_ZIP) {
     const zip = new JSZip();
     const folder = zip.folder(p.zipName)!;
+    /* 옛 파일은 «지우지 않고» 안 담는다.
+     *
+     * 2026-08-10 에 뷰티샵 디럭스 zip 에 `완성화면/index_old.html` 이 그대로 들어가
+     * 손님에게 나갔다. 어느 것을 열어야 하는지 헷갈리는 파일이다.
+     * 그렇다고 지우지는 않는다 — 완성화면 안의 파일은 사람이 만든 것이 섞여 있고,
+     * 전에 두 번 잃었다. **팩에는 두고 zip 에만 안 담는 쪽**이 안전하다. */
+    const 안담을것 = /(^|\/)(index_old|.*_old)\.[^/]+$|\.bak$|(^|\/)~\$/;
     const put = (dir: string, rel: string) => {
       for (const name of readdirSync(dir)) {
         const abs = `${dir}/${name}`;
         if (statSync(abs).isDirectory()) put(abs, `${rel}${name}/`);
+        else if (안담을것.test(`${rel}${name}`)) console.log(`     · zip 에서 뺐습니다 — ${rel}${name}`);
         else folder.file(`${rel}${name}`, readFileSync(abs));
       }
     };

@@ -9,6 +9,7 @@ import {
   CalendarRange,
   Package,
   Sparkles,
+  Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -187,6 +188,30 @@ export function ConceptForm({
             <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
               AI 빌드 스펙팩은 파일 다운로드 시 확인됩니다.
             </p>
+
+            {/* 산출물 목록 아래에 함께 드리는 안내서. 만들고 나서 막히는 자리가
+                여기라, 목록을 보는 이 자리에서 미리 알려 둔다. */}
+            <div className="mt-4 border-t border-border pt-4">
+              <div className="flex items-center gap-2">
+                <Rocket className="size-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">
+                  「만든 사이트를 세상에 내놓는 법」도 함께
+                </h3>
+              </div>
+              <p className="mt-1 break-keep text-xs leading-relaxed text-muted-foreground">
+                화면은 다 만들었는데 <b className="font-semibold text-foreground">내 컴퓨터에서만 보이는</b> 데서
+                멈추시는 분이 많아요. 저희도 거기서 한참 헤맸고, 그때 알게 된 것을 안내서로 적어
+                파일에 같이 넣어 뒀습니다.
+              </p>
+              <ul className="mt-3 flex flex-col gap-1 text-xs text-muted-foreground">
+                {["세상에 올리기 · 도메인 · 자물쇠(HTTPS)", "회원가입·로그인 · 데이터 저장", "결제 받기 — 심사 두 달 동안 할 일", "사진·영상 · AI 기능 붙이기", "잘못 올렸을 때 되돌리기", "오픈 전 마지막 점검표"].map((t) => (
+                  <li key={t} className="relative break-keep pl-3">
+                    <span className="absolute left-0 top-[7px] size-1 rounded-full bg-primary" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </aside>
       </div>

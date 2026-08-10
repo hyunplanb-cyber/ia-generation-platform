@@ -757,3 +757,12 @@ ul,ol{margin:0;padding:0;list-style:none}
   .cards .item .thumb{width:100%}
   .sumbar{gap:var(--sp-item)}
 }
+
+/* ---------- 좁은 화면에서 옆 칸이 짜부라지지 않게 ----------
+   2026-08-10. 홈 「찾아오시는 길」 카드가 390px 에서 오른쪽으로 106px 삐져나갔다.
+   지도 자리가 width:280px 로 박혀 있어서, flex 가 옆의 .grow 를 9px 까지 줄여 버렸고
+   그 안의 주소 글자가 상자 밖으로 흘러나갔다. wrap-row 인데도 줄이 안 바뀐 까닭은
+   .grow 가 0 까지 줄어들 수 있어 «둘이 들어간다»고 본 탓이다.
+   줄바꿈이 일어날 만큼의 최소 폭을 주면 그때서야 아래로 내려간다. */
+.row.wrap-row > .grow{min-width:220px}
+.row.wrap-row > *{max-width:100%}
