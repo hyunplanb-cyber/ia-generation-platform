@@ -19,6 +19,8 @@
 
   --code-bg:#20261C; --code-fg:#F4F3EE; --code-dim:#A9B49C;
   --shadow:0 1px 0 rgba(32,38,28,.06), 0 8px 24px rgba(32,38,28,.06);
+  /* 청록 배지 위 글자. 어두운 모드에서 배경이 밝아지므로 여기도 뒤집는다(2026-08-10). */
+  --on-teal:#FBF6E9;
 }
 @media (prefers-color-scheme: dark){
   :root{
@@ -29,6 +31,7 @@
     --line:#3A3F31;
     --code-bg:#0D1008; --code-fg:#E8E5D8; --code-dim:#8E9683;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    --on-teal:#15180F;
   }
 }
 
@@ -213,7 +216,7 @@ code{
 .ours .lb{
   display:inline-block;
   background:var(--teal-deep);
-  color:#FBF6E9;
+  color:var(--on-teal);
   font-size:12px;font-weight:800;letter-spacing:.1em;
   padding:4px 11px;border-radius:999px;
   margin-bottom:12px;

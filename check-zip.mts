@@ -36,7 +36,7 @@ const 언제나 = [
   "01_메뉴구조.xlsx", "02_IA_화면목록.xlsx", "03_기능정의서.xlsx", "04_WBS.xlsx",
   "05_FLOW_흐름도.drawio", "05_FLOW_흐름도.html",
   "06_메뉴구조.pptx", "07_AI빌드_스펙팩.json", "07_AI빌드_스펙팩.md",
-  "09_사이트_내놓는_법.html", "README.txt",
+  "09_사이트_내놓는_법.html", "10_앱으로_내놓는_법.html", "README.txt",
 ];
 /** 완성화면이 들어가는 등급에만 있는 것. */
 const 완성화면있으면 = ["08_검수시나리오.xlsx"];

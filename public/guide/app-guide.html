@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>만든 사이트를 앱으로 내놓는 법 — 카페인컬러</title>
+<meta name="description" content="사이트는 만들었는데 앱으로 내려니 막힐 때. 심사·권한·아이콘·스토어 등록까지 순서대로 따라 하는 안내서.">
+<style>
+/* ─────────────────────────────────────────────
+   카페인컬러 — 레트로모던 · 종이 느낌
+   외부에서 아무것도 불러오지 않는다. 이 파일 하나로 끝난다.
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#EAE8DE; --paper-2:#F4F3EE; --card:#FBF6E9;
+  --ink:#20261C; --ink-soft:#4E4A3B;
+  --orange:#E4762C; --orange-deep:#C25D17;
+  --teal:#1AA48F; --teal-deep:#0E6F60;
+  --line:#D8D4C6;
+
+  --code-bg:#20261C; --code-fg:#F4F3EE; --code-dim:#A9B49C;
+  --shadow:0 1px 0 rgba(32,38,28,.06), 0 8px 24px rgba(32,38,28,.06);
+  /* 청록 배지 위 글자. 어두운 모드에서 배경이 밝아지므로 여기도 뒤집는다(2026-08-10). */
+  --on-teal:#FBF6E9;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#15180F; --paper-2:#1C2016; --card:#23271B;
+    --ink:#ECE9DE; --ink-soft:#B3AD99;
+    --orange:#F08A48; --orange-deep:#F5A874;
+    --teal:#3ECFB6; --teal-deep:#7FE0CE;
+    --line:#3A3F31;
+    --code-bg:#0D1008; --code-fg:#E8E5D8; --code-dim:#8E9683;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    --on-teal:#15180F;
+  }
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family: Paperlogy, Pretendard, "Noto Sans KR", "맑은 고딕", sans-serif;
+  font-size:17px;
+  line-height:1.85;
+  letter-spacing:-.01em;
+  word-break:keep-all;
+  overflow-wrap:anywhere;
+}
+img{max-width:100%;height:auto}
+
+.wrap{max-width:740px;margin:0 auto;padding:0 20px}
+
+/* ── 표지 ───────────────────────────────── */
+.cover{
+  padding:72px 20px 64px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--paper-2) 0%, transparent 62%);
+}
+.cover .kicker{
+  display:inline-block;
+  font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--teal-deep);
+  border:1px solid var(--teal);
+  border-radius:999px;
+  padding:5px 14px;
+  margin-bottom:26px;
+}
+.cover h1{
+  margin:0 0 18px;
+  font-size:clamp(30px,7.5vw,50px);
+  line-height:1.22;
+  letter-spacing:-.035em;
+  font-weight:800;
+}
+.cover h1 em{font-style:normal;color:var(--orange-deep)}
+.cover .sub{
+  margin:0 auto 30px;
+  max-width:26em;
+  font-size:clamp(15px,3.6vw,19px);
+  color:var(--ink-soft);
+  line-height:1.7;
+}
+.cover .rule{width:64px;height:3px;background:var(--orange);margin:0 auto 26px;border-radius:2px}
+.cover .brand{font-size:14px;letter-spacing:.06em;color:var(--ink-soft)}
+.cover .brand b{color:var(--ink)}
+
+/* ── 목차 ───────────────────────────────── */
+.toc{padding:52px 0 8px}
+.toc h2{
+  font-size:13px;letter-spacing:.2em;color:var(--ink-soft);
+  margin:0 0 20px;font-weight:700;text-transform:uppercase;
+}
+.toc ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.toc li{border-bottom:1px solid var(--line)}
+.toc a{
+  display:flex;gap:16px;align-items:baseline;
+  padding:15px 4px;text-decoration:none;color:inherit;
+}
+.toc a:hover{background:var(--paper-2)}
+.toc .n{
+  flex:0 0 2.1em;
+  font-size:15px;font-weight:800;color:var(--orange-deep);
+  font-variant-numeric:tabular-nums;
+}
+.toc .t{flex:1 1 auto;font-weight:700;font-size:16px}
+.toc .w{flex:0 0 auto;font-size:13px;color:var(--ink-soft);text-align:right;max-width:44%}
+@media (max-width:520px){
+  .toc a{flex-wrap:wrap}
+  .toc .w{flex:1 0 100%;text-align:left;max-width:none;padding-left:calc(2.1em + 16px)}
+}
+
+/* ── 장 ─────────────────────────────────── */
+.chapter{padding:56px 0 8px;border-top:1px solid var(--line);margin-top:44px}
+.chapter:first-of-type{border-top:0}
+.chapter > .num{
+  display:block;
+  font-size:clamp(40px,11vw,68px);
+  line-height:1;
+  font-weight:800;
+  color:var(--orange);
+  letter-spacing:-.04em;
+  margin-bottom:6px;
+}
+.chapter > h2{
+  margin:0 0 8px;
+  font-size:clamp(23px,5.4vw,31px);
+  line-height:1.32;
+  letter-spacing:-.03em;
+  font-weight:800;
+}
+.chapter > .when{
+  margin:0 0 34px;
+  font-size:15px;
+  color:var(--teal-deep);
+  font-weight:700;
+}
+h3{
+  margin:40px 0 12px;
+  font-size:20px;line-height:1.45;letter-spacing:-.02em;font-weight:800;
+  padding-bottom:8px;border-bottom:2px solid var(--line);
+}
+h4{margin:28px 0 8px;font-size:17px;font-weight:800}
+p{margin:0 0 16px}
+ul,ol{margin:0 0 18px;padding-left:1.35em}
+li{margin:0 0 8px}
+strong,b{font-weight:800}
+a{color:var(--teal-deep)}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+small{font-size:13px;color:var(--ink-soft)}
+
+/* ── 코드 ───────────────────────────────── */
+pre{
+  margin:0 0 8px;
+  background:var(--code-bg);
+  color:var(--code-fg);
+  padding:16px 18px;
+  border-radius:10px;
+  overflow-x:auto;
+  font-size:14px;
+  line-height:1.7;
+  max-width:100%;
+}
+pre code{
+  font-family:ui-monospace,"Consolas","D2Coding","Courier New",monospace;
+  white-space:pre;
+  background:none;border:0;padding:0;color:inherit;font-size:inherit;
+}
+pre .c{color:var(--code-dim)}
+code{
+  font-family:ui-monospace,"Consolas","D2Coding","Courier New",monospace;
+  font-size:.88em;
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-radius:5px;
+  padding:1px 5px;
+}
+.means{
+  margin:0 0 20px;
+  padding:9px 14px;
+  font-size:14.5px;
+  color:var(--ink-soft);
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-top:0;
+  border-radius:0 0 10px 10px;
+}
+.means b{color:var(--ink)}
+
+/* ── 상자들 ─────────────────────────────── */
+.tip{
+  margin:0 0 22px;
+  background:var(--card);
+  border-left:6px solid var(--orange);
+  border-radius:0 10px 10px 0;
+  padding:16px 18px;
+}
+.tip .lb{
+  display:block;font-size:12.5px;font-weight:800;letter-spacing:.06em;
+  color:var(--orange-deep);margin-bottom:6px;
+}
+.tip p:last-child,.tip ul:last-child,.tip ol:last-child{margin-bottom:0}
+
+.ours{
+  margin:30px 0 26px;
+  background:var(--card);
+  border:2px solid var(--teal);
+  border-radius:12px;
+  padding:20px 20px 18px;
+  box-shadow:var(--shadow);
+  position:relative;
+}
+.ours .lb{
+  display:inline-block;
+  background:var(--teal-deep);
+  color:var(--on-teal);
+  font-size:12px;font-weight:800;letter-spacing:.1em;
+  padding:4px 11px;border-radius:999px;
+  margin-bottom:12px;
+}
+.ours h4{margin:0 0 10px;font-size:18.5px;line-height:1.45}
+.ours p:last-child,.ours ul:last-child{margin-bottom:0}
+
+.note{
+  margin:0 0 22px;padding:14px 16px;
+  border:1px dashed var(--line);
+  border-radius:10px;
+  background:var(--paper-2);
+  font-size:15px;color:var(--ink-soft);
+}
+.note b{color:var(--ink)}
+
+/* ── 캡처 자리 ──────────────────────────── */
+.shot{
+  margin:22px 0;
+  padding:26px 20px;
+  border:2px dashed var(--orange);
+  border-radius:12px;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 12px, rgba(228,118,44,.06) 12px 24px);
+  text-align:center;
+}
+.shot .cam{font-size:24px;line-height:1;display:block;margin-bottom:8px}
+.shot .lb{
+  display:block;font-size:12.5px;font-weight:800;letter-spacing:.1em;
+  color:var(--orange-deep);margin-bottom:6px;
+}
+.shot .what{display:block;font-size:14.5px;color:var(--ink-soft);line-height:1.6}
+
+/* ── 표 ─────────────────────────────────── */
+.tablewrap{
+  overflow-x:auto;
+  margin:0 0 24px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--paper-2);
+}
+table{border-collapse:collapse;width:100%;min-width:460px;font-size:15px}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{background:var(--card);font-weight:800;font-size:14px;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+
+/* ── 체크리스트 ─────────────────────────── */
+.check{list-style:none;padding-left:0}
+.check li{
+  padding:10px 12px 10px 40px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:var(--paper-2);
+  margin-bottom:8px;
+  position:relative;
+}
+.check li::before{
+  content:"";
+  position:absolute;left:13px;top:15px;
+  width:15px;height:15px;
+  border:2px solid var(--teal-deep);
+  border-radius:4px;
+}
+
+/* ── 길잡이(0장) ────────────────────────── */
+.guide{list-style:none;padding-left:0;margin:0 0 24px}
+.guide li{
+  border-left:4px solid var(--teal);
+  background:var(--paper-2);
+  border-radius:0 9px 9px 0;
+  padding:12px 14px;
+  margin-bottom:9px;
+}
+.guide q{font-weight:800;quotes:"“" "”"}
+.guide .go{display:block;margin-top:4px;font-size:15px;color:var(--ink-soft)}
+.guide .go a{font-weight:800}
+
+/* ── 꼬리말 ─────────────────────────────── */
+.end{
+  margin:60px 0 0;
+  padding:34px 0 70px;
+  border-top:3px double var(--line);
+  text-align:center;
+  font-size:14px;color:var(--ink-soft);
+}
+.backtop{
+  display:inline-block;margin-top:14px;font-size:13px;
+}
+
+/* ── 인쇄 ───────────────────────────────── */
+@media print{
+  :root{
+    --paper:#fff; --paper-2:#fff; --card:#fff;
+    --ink:#000; --ink-soft:#333;
+    --orange:#000; --orange-deep:#000;
+    --teal:#000; --teal-deep:#000;
+    --line:#999;
+    --code-bg:#fff; --code-fg:#000; --code-dim:#555;
+    --shadow:none;
+  }
+  body{font-size:11pt;line-height:1.65;background:#fff;color:#000}
+  .wrap{max-width:none;padding:0}
+  .cover{padding:26% 0 0;border:0;background:none;break-after:page}
+  .toc{break-after:page}
+  .chapter{break-before:page;border-top:0;margin-top:0;padding-top:0}
+  .chapter > .num{font-size:34pt;color:#000}
+  h3,h4{break-after:avoid}
+  pre{border:1px solid #999;background:#fff;color:#000}
+  .ours{border:2px solid #000}
+  .ours .lb{background:#000;color:#fff}
+  .tip{border-left:5px solid #000;background:#fff;border-top:1px solid #ccc;border-right:1px solid #ccc;border-bottom:1px solid #ccc}
+  .shot{border:2px dashed #666;background:#fff}
+  .note,.guide li,.check li,.tablewrap{background:#fff}
+  a{color:#000;text-decoration:underline}
+  .backtop,.toc a:hover{display:none}
+  pre,.ours,.tip,.shot,table{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <span class="kicker">카페인컬러 부록</span>
+  <h1>만든 사이트를<br><em>앱으로 내놓는 법</em></h1>
+  <div class="rule"></div>
+  <p class="sub">화면은 폰에서도 잘 나오는데, 스토어에 올리려니 막힐 때<br>심사 · 권한 · 아이콘 · 등록까지 순서대로</p>
+  <p class="brand"><b>카페인컬러</b> · caffeinecolor.com</p>
+</header>
+
+<div class="wrap">
+
+<nav class="toc" id="toc">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#ch0"><span class="n">0</span><span class="t">골라 읽는 길잡이</span><span class="w">맨 먼저</span></a></li>
+    <li><a href="#ch1"><span class="n">1</span><span class="t">정말 앱이 필요한가요</span><span class="w">안 만들어도 되는 경우</span></a></li>
+    <li><a href="#ch2"><span class="n">2</span><span class="t">사이트를 그대로 감싸면 떨어집니다</span><span class="w">가장 자주 걸리는 곳</span></a></li>
+    <li><a href="#ch3"><span class="n">3</span><span class="t">권한 — 묻기 전에 왜 필요한지 말해야 합니다</span><span class="w">두 번째로 자주 걸리는 곳</span></a></li>
+    <li><a href="#ch4"><span class="n">4</span><span class="t">등록 전에 있어야 하는 것들</span><span class="w">없으면 시작이 안 됨</span></a></li>
+    <li><a href="#ch5"><span class="n">5</span><span class="t">아이폰 앱스토어에 올리기</span><span class="w">애플</span></a></li>
+    <li><a href="#ch6"><span class="n">6</span><span class="t">안드로이드 플레이스토어에 올리기</span><span class="w">구글</span></a></li>
+    <li><a href="#ch7"><span class="n">7</span><span class="t">떨어졌을 때</span><span class="w">거의 다 떨어져 봅니다</span></a></li>
+    <li><a href="#ch8"><span class="n">8</span><span class="t">오픈 전 마지막 점검</span><span class="w">내일 올려요</span></a></li>
+  </ol>
+</nav>
+
+<!-- ══════════════ 0장 ══════════════ -->
+<section class="chapter" id="ch0">
+  <span class="num">0</span>
+  <h2>골라 읽는 길잡이</h2>
+  <p class="when">언제 필요한가 — 어디부터 읽을지 모르겠을 때</p>
+
+  <p>이 부록은 <b>「만든 사이트를 세상에 내놓는 법」의 다음 이야기</b>입니다. 사이트는 이미 인터넷에 올라가 있다고 보고 시작합니다. 아직 그 단계라면 그 부록을 먼저 보세요.</p>
+
+  <ul class="pick">
+    <li><q>앱을 꼭 만들어야 하나요?</q><span class="go">→ <a href="#ch1">1장</a>. 안 만들어도 되는 경우가 생각보다 많습니다.</span></li>
+    <li><q>사이트를 앱으로 감싸기만 하면 되나요?</q><span class="go">→ <a href="#ch2">2장</a>을 <b>지금 당장</b> 읽으세요. 아이폰에서는 그대로 떨어집니다.</span></li>
+    <li><q>등록하려는데 뭐가 필요한가요?</q><span class="go">→ <a href="#ch4">4장</a>. 개인정보처리방침이 없으면 시작조차 안 됩니다.</span></li>
+    <li><q>아이콘·스크린샷 크기가 얼마죠?</q><span class="go">→ <a href="#ch5">5장</a>(애플) · <a href="#ch6">6장</a>(구글).</span></li>
+    <li><q>심사에서 떨어졌어요</q><span class="go">→ <a href="#ch7">7장</a>. 대부분 2장이나 3장 이야기입니다.</span></li>
+    <li><q>내일 올려요</q><span class="go">→ <a href="#ch8">8장</a>의 점검표만 훑으세요.</span></li>
+  </ul>
+
+  <div class="note">
+    <b>먼저 말씀드릴 것.</b> 앱은 사이트보다 <b>기다리는 일</b>이 많습니다. 개발자 계정 만드는 데 며칠, 심사에 며칠, 떨어지면 고쳐서 또 며칠. <b>오픈 날짜가 정해져 있다면 최소 3~4주 앞서 시작하세요.</b> 사이트는 오늘 올리면 오늘 열리지만 앱은 그렇지 않습니다.
+  </div>
+
+  <h3>이 문서에서 쓰는 말</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>말</th><th>쉬운 뜻</th></tr></thead>
+    <tbody>
+      <tr><td>네이티브 앱</td><td>아이폰·안드로이드 전용으로 만든 진짜 앱. 카메라·알림 같은 폰 기능을 직접 씁니다.</td></tr>
+      <tr><td>웹뷰 (WebView)</td><td>앱 껍데기 안에 <b>웹사이트를 그대로 띄우는</b> 것. 만들기는 제일 쉽지만 <a href="#ch2">2장</a>의 문제가 생깁니다.</td></tr>
+      <tr><td>PWA</td><td>브라우저에서 「홈 화면에 추가」를 하면 앱처럼 쓰이는 것. <b>스토어를 안 거칩니다.</b> <a href="#ch1">1장</a> 참고.</td></tr>
+      <tr><td>심사 (Review)</td><td>사람이 앱을 직접 눌러 보고 통과·반려를 정하는 일. 애플이 특히 깐깐합니다.</td></tr>
+      <tr><td>권한 (Permission)</td><td>카메라·위치·알림처럼 폰의 기능을 쓰겠다고 사용자에게 묻는 것.</td></tr>
+      <tr><td>번들 ID / 패키지명</td><td>앱의 주민등록번호 같은 것(예: <code>com.caffeinecolor.app</code>). <b>한 번 정하면 못 바꿉니다.</b></td></tr>
+      <tr><td>스토어 등재정보</td><td>스토어에 보이는 이름·설명·아이콘·스크린샷. 앱 자체와 별개로 따로 만듭니다.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ══════════════ 1장 ══════════════ -->
+<section class="chapter" id="ch1">
+  <span class="num">1</span>
+  <h2>정말 앱이 필요한가요</h2>
+  <p class="when">언제 필요한가 — 앱을 만들지 말지 정할 때</p>
+
+  <p>먼저 이 이야기부터 합니다. <b>앱을 안 만들어도 되는 경우가 꽤 많기 때문</b>입니다. 만들기 시작하면 계정·심사·업데이트가 계속 따라붙습니다.</p>
+
+  <h3>앱이 필요 없는 경우</h3>
+  <ul>
+    <li>손님이 <b>한 번 쓰고 마는</b> 서비스 — 예약 한 번, 견적 한 번. 앱을 깔라고 하면 그 자리에서 이탈합니다.</li>
+    <li>알림을 안 보내도 되는 서비스</li>
+    <li>카메라·위치 같은 폰 기능을 안 쓰는 서비스</li>
+  </ul>
+  <p>이 경우엔 <b>사이트를 「홈 화면에 추가」할 수 있게 만드는 것</b>으로 충분합니다. 아이콘도 생기고 전체 화면으로 열립니다. 스토어 심사도, 개발자 계정도 필요 없습니다.</p>
+
+  <h3>앱이 필요한 경우</h3>
+  <ul>
+    <li><b>알림을 보내야 한다</b> — 예약 알림, 배송 알림. 이게 앱을 만드는 가장 흔한 이유입니다.</li>
+    <li><b>자주 다시 온다</b> — 매일·매주 쓰는 서비스. 홈 화면에 아이콘이 있는 값어치가 큽니다.</li>
+    <li>카메라·사진·위치·생체인증을 쓴다</li>
+    <li>인터넷이 없어도 뭔가 보여야 한다</li>
+  </ul>
+
+  <div class="note">
+    <b>중간 길도 있습니다.</b> 먼저 사이트로 열고, 손님이 붙은 뒤에 앱을 냅니다. 앱을 먼저 내려다 몇 달을 심사에 쓰는 것보다, 사이트로 손님을 만나 보고 「앱이 있으면 좋겠다」는 말이 나올 때 만드는 편이 낫습니다.
+  </div>
+</section>
+
+<!-- ══════════════ 2장 ══════════════ -->
+<section class="chapter" id="ch2">
+  <span class="num">2</span>
+  <h2>사이트를 그대로 감싸면 떨어집니다</h2>
+  <p class="when">언제 필요한가 — 앱을 만들기로 정한 «직후». 이 장을 안 읽고 시작하면 두 달을 버립니다</p>
+
+  <p>가장 먼저 떠오르는 생각은 이겁니다. <b>「사이트가 폰에서 잘 나오니까, 앱 껍데기 안에 그 사이트를 띄우면 되겠다.」</b> 실제로 그렇게 만드는 도구도 많고, 만드는 데 하루면 됩니다.</p>
+  <p><b>그리고 아이폰에서 떨어집니다.</b></p>
+
+  <h3>애플이 뭐라고 하나</h3>
+  <p>애플 심사 지침 <b>4.2 「최소한의 기능(Minimum Functionality)」</b>에 이렇게 적혀 있습니다.</p>
+  <div class="ours"><span class="lb">애플 심사 지침 4.2</span><p>앱은 <b>웹사이트를 다시 포장한 것 이상</b>의 기능·콘텐츠·UI를 갖춰야 합니다. 특별히 유용하거나 고유하거나 「앱다운」 것이 아니라면 앱스토어에 있을 자리가 아닙니다.</p></div>
+  <p>사람이 직접 눌러 보고 판단합니다. <b>「이거 그냥 웹사이트인데?」</b> 싶으면 반려됩니다. 안드로이드는 대체로 통과하기 때문에, <b>구글에서 되니까 애플도 되겠지</b> 하고 넘어가다 걸리는 일이 많습니다.</p>
+
+  <h3>그럼 무엇을 더해야 하나</h3>
+  <p>「웹뷰를 쓰지 마라」가 아닙니다. <b>웹뷰를 쓰더라도 폰에서만 되는 것을 하나 이상 넣으라</b>는 뜻입니다. 아래 중 하나만 제대로 있어도 이야기가 달라집니다.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>더할 것</th><th>어떤 서비스에 맞나</th></tr></thead>
+    <tbody>
+      <tr><td><b>푸시 알림</b></td><td>거의 모든 서비스. 가장 자연스럽고 손님도 좋아합니다.</td></tr>
+      <tr><td><b>오프라인에서 보기</b></td><td>인터넷이 끊겨도 지난 예약·주문 내역은 보이게.</td></tr>
+      <tr><td><b>카메라 · 사진</b></td><td>현장 사진, 반납 사진, 프로필 사진.</td></tr>
+      <tr><td><b>생체인증</b></td><td>지문·얼굴로 로그인. 매번 비밀번호를 안 쳐도 되게.</td></tr>
+      <tr><td><b>폰의 공유 기능</b></td><td>다른 앱에서 「공유」로 우리 앱에 보내기.</td></tr>
+      <tr><td><b>저장해 두기</b></td><td>즐겨찾기·나중에 보기를 폰 안에 담아 두기.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="tip"><span class="lb">여기서 자주 걸립니다</span>
+    <b>심사관에게 보이게 하세요.</b> 기능을 넣어 놓고 앱 깊숙한 곳에 두면 심사관이 못 찾습니다. <b>앱을 켜자마자 보이는 자리</b>에 두거나, 심사 메모에 「알림 기능은 마이페이지 &gt; 알림 설정에 있습니다」처럼 <b>어디를 보면 되는지 적어</b> 주세요. 심사 메모는 등록 화면에서 적을 수 있고, 실제로 통과 여부를 가릅니다.
+  </div>
+
+  <h3>그래도 안 되면</h3>
+  <p>웹뷰를 버리고 <b>플러터(Flutter)나 리액트 네이티브</b>로 다시 만드는 길이 있습니다. 화면을 진짜 네이티브 부품으로 그리기 때문에 이 문제가 아예 사라집니다. 다만 <b>사이트와 앱을 두 벌 관리</b>하게 되니, 정말 앱이 중심인 서비스일 때만 고르세요.</p>
+</section>
+
+<!-- ══════════════ 3장 ══════════════ -->
+<section class="chapter" id="ch3">
+  <span class="num">3</span>
+  <h2>권한 — 묻기 전에 왜 필요한지 말해야 합니다</h2>
+  <p class="when">언제 필요한가 — 알림·카메라·위치를 쓸 때</p>
+
+  <p>폰 기능을 쓰려면 사용자에게 물어야 합니다. 그런데 <b>「물어보는 것」보다 「왜 필요한지 적는 것」에서 더 자주 걸립니다.</b></p>
+
+  <h3>아이폰 — 문구를 안 적으면 앱이 그냥 꺼집니다</h3>
+  <p>아이폰은 권한마다 <b>「이 앱이 왜 이게 필요한지」 문구</b>를 앱 안에 미리 적어 두게 합니다. 이 문구가 없으면 심사에서 떨어지는 정도가 아니라 <b>그 기능을 쓰는 순간 앱이 강제로 종료</b>됩니다.</p>
+  <p>문구는 <b>구체적으로</b> 씁니다. 「카메라를 사용합니다」는 반려 사유가 됩니다.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>이렇게 쓰면 떨어집니다</th><th>이렇게 쓰세요</th></tr></thead>
+    <tbody>
+      <tr><td>카메라를 사용합니다</td><td>반납하실 때 장비 상태를 사진으로 남기기 위해 카메라를 사용합니다.</td></tr>
+      <tr><td>위치 정보가 필요합니다</td><td>가까운 매장을 찾아 드리기 위해 현재 위치를 사용합니다.</td></tr>
+      <tr><td>사진 접근이 필요합니다</td><td>후기에 사진을 올리실 때 앨범에서 고르기 위해 사용합니다.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>「추적 권한」은 따로입니다. 광고를 위해 다른 앱·사이트에서의 활동을 이어 보려면 <b>별도의 창</b>으로 한 번 더 물어야 합니다. 광고를 안 붙일 거라면 아예 안 쓰는 편이 낫습니다 — 대부분 거절하고, 물어보는 것 자체가 인상을 나쁘게 합니다.</p>
+
+  <h3>안드로이드 — 알림도 이제 물어야 합니다</h3>
+  <p>예전에는 알림을 그냥 보낼 수 있었지만, <b>안드로이드 13부터는 알림도 권한</b>입니다. 사용자가 거절하면 알림이 하나도 안 갑니다. 알림 때문에 앱을 만드셨다면 여기가 급소입니다.</p>
+
+  <div class="tip"><span class="lb">여기서 자주 걸립니다</span>
+    <b>앱 켜자마자 다 물어보지 마세요.</b> 시작하자마자 알림·카메라·위치를 연달아 물으면 대부분 거절합니다. <b>그 기능을 실제로 쓰는 순간</b>에 묻고, 묻기 직전에 화면으로 이유를 한 줄 보여 주세요. 「예약이 확정되면 알려 드릴까요?」 한 줄이 수락률을 크게 바꿉니다.
+  </div>
+
+  <h3>거절했을 때 어떻게 되는지도 만들어야 합니다</h3>
+  <p>심사관은 <b>일부러 거절해 봅니다.</b> 거절했더니 화면이 하얗게 되거나 앱이 멈추면 반려됩니다. 거절해도 앱은 굴러가야 하고, 나중에 켜는 길(설정으로 보내기)을 안내해야 합니다.</p>
+  <p class="means"><b>설계도에 적을 것.</b> 권한을 쓰는 서비스라면 화면 목록에 이 셋을 넣으세요 — <b>권한 안내 화면</b>(왜 필요한지 설명), <b>권한 거부됨 화면</b>(거절했을 때 뭘 할 수 있는지), <b>알림 설정 화면</b>(나중에 켜는 곳).</p>
+</section>
+
+<!-- ══════════════ 4장 ══════════════ -->
+<section class="chapter" id="ch4">
+  <span class="num">4</span>
+  <h2>등록 전에 있어야 하는 것들</h2>
+  <p class="when">언제 필요한가 — 스토어에 올리기 전. 없으면 시작조차 안 됩니다</p>
+
+  <h3>① 개발자 계정</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th></th><th>애플</th><th>구글</th></tr></thead>
+    <tbody>
+      <tr><td>이름</td><td>Apple Developer Program</td><td>Google Play Console</td></tr>
+      <tr><td>돈</td><td><b>해마다</b> 냅니다</td><td><b>한 번만</b> 냅니다</td></tr>
+      <tr><td>걸리는 시간</td><td>며칠 (사업자면 서류 확인이 더 붙습니다)</td><td>보통 하루 안</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="means"><b>제일 먼저 하세요.</b> 다른 걸 다 만들어 놓고 계정에서 며칠 기다리는 일이 흔합니다. 값은 바뀌므로 각 사이트에서 확인하세요.</p>
+
+  <h3>② 개인정보처리방침 — 없으면 등록 자체가 막힙니다</h3>
+  <p><b>웹에 올라가 있는 주소(URL)</b>가 필요합니다. 문서 파일이 아니라 <b>누구나 열 수 있는 페이지</b>여야 합니다. 2026년 기준으로도 <b>반려 사유 상위</b>에 있습니다.</p>
+  <p>사이트를 이미 만드셨으니 <code>/privacy</code> 같은 주소로 한 장 만들어 두면 됩니다. 적을 것은 <b>무엇을 모으는지 · 왜 모으는지 · 얼마나 갖고 있는지 · 어떻게 지우는지 · 문의처</b>입니다.</p>
+
+  <h3>③ 앱 아이콘</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th></th><th>크기</th><th>주의</th></tr></thead>
+    <tbody>
+      <tr><td>애플</td><td><b>1024 × 1024</b></td><td>투명한 부분이 있으면 안 됩니다. 모서리는 애플이 알아서 둥글게 깎습니다.</td></tr>
+      <tr><td>구글</td><td><b>512 × 512</b></td><td>투명 배경을 쓸 수 있습니다.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="means"><b>글자를 넣지 마세요.</b> 폰 홈 화면에서는 아주 작게 보입니다. 도형 하나나 글자 한 자면 충분합니다. 색은 <b>디자인프리셋의 주색</b>을 그대로 쓰면 사이트와 앱이 한 벌로 보입니다.</p>
+
+  <h3>④ 스크린샷</h3>
+  <p>스토어에서 손님이 <b>깔지 말지 정하는 자리</b>입니다. 앱을 열어 보기 전에 이것만 봅니다.</p>
+  <ul>
+    <li>실제 앱 화면이어야 합니다. 예쁜 그림만 넣으면 반려됩니다.</li>
+    <li>애플·구글 모두 <b>여러 장</b> 올릴 수 있습니다. 3~5장이면 충분합니다.</li>
+    <li><b>첫 장이 거의 전부</b>입니다. 목록에서 첫 장만 보입니다.</li>
+    <li>화면 위에 한 줄 설명을 얹으면 훨씬 잘 읽힙니다 — 「날짜만 고르면 남은 장비가 보여요」처럼.</li>
+  </ul>
+  <p class="means"><b>완성화면이 있으면 여기서 씁니다.</b> 팩에 들어 있는 완성화면을 폰 폭으로 열어 찍으면 그대로 스크린샷 재료가 됩니다. 진짜 화면이라 반려될 일도 없습니다.</p>
+
+  <h3>⑤ 심사용 계정</h3>
+  <p>로그인해야 쓸 수 있는 앱이라면 <b>심사관이 쓸 아이디와 비밀번호</b>를 등록 화면에 적어야 합니다. 안 적으면 심사관이 들어가지 못해 그대로 반려됩니다. 휴대폰 인증이 필요한 구조라면 <b>인증 없이 들어가는 시연용 계정</b>을 따로 만들어 두세요.</p>
+</section>
+
+<!-- ══════════════ 5장 ══════════════ -->
+<section class="chapter" id="ch5">
+  <span class="num">5</span>
+  <h2>아이폰 앱스토어에 올리기</h2>
+  <p class="when">언제 필요한가 — 애플에 등록할 때</p>
+
+  <ol class="steps">
+    <li><b>개발자 계정을 만듭니다.</b> 며칠 걸립니다.</li>
+    <li><b>번들 ID를 정합니다.</b> <code>com.회사이름.앱이름</code> 꼴입니다. <b>한 번 정하면 못 바꿉니다.</b></li>
+    <li><b>앱을 만들어 올립니다.</b> 맥이 필요합니다. 맥이 없다면 클라우드 빌드 서비스를 씁니다.</li>
+    <li><b>등재정보를 채웁니다.</b> 이름 · 부제 · 설명 · 검색어 · 아이콘 · 스크린샷 · 개인정보처리방침 주소 · 심사용 계정.</li>
+    <li><b>심사에 냅니다.</b> 며칠 걸리고, 떨어지면 고쳐서 다시 냅니다.</li>
+  </ol>
+
+  <div class="note">
+    <b>이름은 두 개입니다.</b> 폰 홈 화면 아이콘 밑에 보이는 짧은 이름과, 스토어에서 검색되는 긴 이름이 다릅니다. 홈 화면 이름은 <b>10자 안쪽</b>이라야 안 잘립니다.
+  </div>
+
+  <h3>애플에서 자주 걸리는 것</h3>
+  <ul>
+    <li><b>웹사이트를 그대로 감쌌다</b> → <a href="#ch2">2장</a></li>
+    <li><b>권한 문구가 두루뭉술하다</b> → <a href="#ch3">3장</a></li>
+    <li><b>심사용 계정이 없거나 안 된다</b> → <a href="#ch4">4장</a></li>
+    <li><b>앱 안에서 결제하는데 애플 결제를 안 썼다</b> — 디지털 상품(구독·이용권)은 애플 결제를 써야 합니다. 실물 상품·오프라인 서비스 예약은 바깥 결제를 써도 됩니다. <b>여기서 크게 갈립니다.</b> 파는 것이 디지털이라면 미리 확인하세요.</li>
+    <li><b>깨진 링크</b> — 「준비 중」인 메뉴가 있으면 반려됩니다. 심사 때는 모든 버튼이 어딘가로 가야 합니다.</li>
+  </ul>
+</section>
+
+<!-- ══════════════ 6장 ══════════════ -->
+<section class="chapter" id="ch6">
+  <span class="num">6</span>
+  <h2>안드로이드 플레이스토어에 올리기</h2>
+  <p class="when">언제 필요한가 — 구글에 등록할 때</p>
+
+  <ol class="steps">
+    <li><b>플레이 콘솔 계정을 만듭니다.</b> 등록비는 한 번만 냅니다.</li>
+    <li><b>패키지명을 정합니다.</b> 애플의 번들 ID와 같은 것. <b>역시 못 바꿉니다.</b></li>
+    <li><b>앱을 만들어 올립니다.</b> 맥은 필요 없습니다.</li>
+    <li><b>「데이터 안전」 양식을 채웁니다.</b> 아래 참고.</li>
+    <li><b>등재정보를 채우고 심사에 냅니다.</b></li>
+  </ol>
+
+  <h3>데이터 안전 양식 — 개인정보처리방침과 별개입니다</h3>
+  <p>플레이스토어에는 <b>「이 앱이 무슨 정보를 모으고 어디에 쓰는지」를 표로 적는 칸</b>이 따로 있습니다. 개인정보처리방침 페이지를 만들었어도 <b>이 표는 또 채워야</b> 합니다.</p>
+  <p><b>실제와 다르면 나중에 앱이 내려갑니다.</b> 모으지 않는데 모은다고 적는 것도, 모으는데 안 적는 것도 문제입니다. 화면 목록을 보며 「어느 화면에서 무엇을 받는지」 세어서 적으세요.</p>
+
+  <h3>대상 API 수준 — 오래된 앱은 자동으로 안 보이게 됩니다</h3>
+  <p>구글은 <b>「앱이 최신 안드로이드를 기준으로 만들어졌는지」</b>를 해마다 올립니다. 기준에 못 미치면 <b>새로 올리는 것이 막히고</b>, 더 지나면 <b>새 폰을 쓰는 사람에게 앱이 아예 안 보입니다.</b></p>
+  <p>2026년 8월 31일부터 새 앱과 업데이트는 <b>안드로이드 16(API 36)</b> 이상을 기준으로 해야 하고, 이미 올라가 있는 앱도 <b>안드로이드 15(API 35)</b> 이상이어야 합니다. 늦으면 연장을 신청할 수 있습니다.</p>
+  <div class="tip"><span class="lb">한 번 올리고 끝이 아닙니다</span>
+    <b>한 번 올리고 끝이 아닙니다.</b> 사이트는 안 건드려도 계속 열리지만, <b>앱은 해마다 손을 봐야 살아 있습니다.</b> 앱을 내기로 하셨다면 이 유지비를 처음부터 셈에 넣으세요.
+  </div>
+</section>
+
+<!-- ══════════════ 7장 ══════════════ -->
+<section class="chapter" id="ch7">
+  <span class="num">7</span>
+  <h2>떨어졌을 때</h2>
+  <p class="when">언제 필요한가 — 반려 메일을 받았을 때</p>
+
+  <p><b>거의 다 한 번은 떨어집니다.</b> 처음 내는 앱이 한 번에 붙는 일이 오히려 드뭅니다. 떨어졌다고 잘못 만든 게 아닙니다.</p>
+
+  <h3>순서</h3>
+  <ol class="steps">
+    <li><b>어느 조항인지 봅니다.</b> 반려 메일에 번호가 적혀 있습니다. <code>4.2</code>면 <a href="#ch2">2장</a>, 권한 이야기면 <a href="#ch3">3장</a>입니다.</li>
+    <li><b>스크린샷을 봅니다.</b> 심사관이 어느 화면에서 막혔는지 사진을 같이 보내 줍니다. 그 화면부터 고칩니다.</li>
+    <li><b>고치고, 「무엇을 고쳤는지」를 메모에 적어 다시 냅니다.</b> 이 메모가 다음 심사를 빠르게 만듭니다.</li>
+    <li><b>억울하면 물어봅니다.</b> 사람이 답합니다. 오해로 반려된 경우 설명하면 풀리기도 합니다.</li>
+  </ol>
+
+  <div class="note">
+    <b>같은 이유로 두 번 떨어지면 방향을 바꾸세요.</b> 4.2로 두 번 떨어졌다면 기능을 조금 더 넣는 것으로는 안 됩니다. <a href="#ch2">2장</a> 끝의 「그래도 안 되면」을 보세요.
+  </div>
+</section>
+
+<!-- ══════════════ 8장 ══════════════ -->
+<section class="chapter" id="ch8">
+  <span class="num">8</span>
+  <h2>오픈 전 마지막 점검</h2>
+  <p class="when">언제 필요한가 — 내일 올릴 때</p>
+
+  <h3>앱 자체</h3>
+  <ul class="check">
+    <li>폰에서 실제로 깔아서 열어 봤다 (시뮬레이터 말고 <b>진짜 폰</b>)</li>
+    <li>모든 버튼이 어딘가로 간다. 「준비 중」이 없다</li>
+    <li>권한을 <b>거절해도</b> 앱이 안 멈춘다</li>
+    <li>인터넷을 끄고 열어도 하얀 화면이 아니라 안내가 나온다</li>
+    <li>로그아웃했다가 다시 로그인이 된다</li>
+    <li>뒤로가기가 화면 안에 있다 (앱에는 브라우저 주소창이 없습니다)</li>
+    <li>글자가 큰 폰에서도 안 잘린다</li>
+  </ul>
+
+  <h3>등록 정보</h3>
+  <ul class="check">
+    <li>개인정보처리방침 주소가 <b>진짜 열린다</b> (다른 브라우저에서도)</li>
+    <li>아이콘이 폰 홈 화면에서 알아볼 만하다</li>
+    <li>스크린샷 첫 장이 무슨 앱인지 말해 준다</li>
+    <li>심사용 계정으로 <b>내가 직접</b> 들어가 봤다</li>
+    <li>심사 메모에 「어디를 보면 되는지」 적었다</li>
+    <li>(안드로이드) 데이터 안전 양식이 실제와 같다</li>
+    <li>홈 화면 이름이 안 잘린다</li>
+  </ul>
+
+  <h3>그리고 마음의 준비</h3>
+  <ul class="check">
+    <li>오픈 날짜까지 <b>3~4주</b> 남겨 뒀다</li>
+    <li>한 번 떨어질 수 있다고 생각하고 있다</li>
+    <li>해마다 손봐야 한다는 걸 알고 있다</li>
+  </ul>
+</section>
+
+</div>
+
+<footer class="end">
+  <p><b>만든 사이트를 앱으로 내놓는 법</b><br>
+  카페인컬러 · caffeinecolor.com</p>
+  <p><small>스토어 정책과 가격은 자주 바뀝니다. 이 부록은 2026년 8월 기준으로 적었고,
+  실제로 올리시기 전에 애플·구글의 공식 안내를 한 번 확인해 주세요.<br>
+  바뀐 것을 알려 주시면 다음 판에 반영하겠습니다.</small></p>
+</footer>
+
+
+</body>
+</html>

@@ -327,13 +327,16 @@ export function ZipAllButton({
 
          ⚠ 이것 때문에 zip 전체가 실패하면 안 된다 — 안내서는 «덤»이지 본체가 아니다.
            못 가져오면 조용히 빼고 나머지를 내려준다. */
-      try {
-        const 안내 = await fetch("/guide/deploy-guide.html");
-        if (안내.ok) {
-          zip.file("사이트_내놓는_법.html", await 안내.arrayBuffer());
+      for (const [주소, 이름] of [
+        ["/guide/deploy-guide.html", "사이트_내놓는_법.html"],
+        ["/guide/app-guide.html", "앱으로_내놓는_법.html"],
+      ]) {
+        try {
+          const 안내 = await fetch(주소);
+          if (안내.ok) zip.file(이름, await 안내.arrayBuffer());
+        } catch {
+          // 무시 — 안내서 없이 산출물만 내려준다.
         }
-      } catch {
-        // 무시 — 안내서 없이 산출물만 내려준다.
       }
 
       const blob = await zip.generateAsync({ type: "blob" });
