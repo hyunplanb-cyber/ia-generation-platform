@@ -20,6 +20,19 @@
       "port": 4183
     },
     {
+      "name": "인테리어-프리셋",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "4185",
+        "."
+      ],
+      "cwd": "_작업/인테리어시공_견적상담/디자인프리셋",
+      "port": 4185
+    },
+    {
       "name": "카드뉴스",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
