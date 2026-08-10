@@ -16,19 +16,9 @@ import {
 import { buildFlowGroups } from "./lib/export/flow-groups";
 import { createMenuPptx, type PptMenu } from "./lib/export/ppt-export";
 import { buildSpecPackMarkdown, buildSpecPackJson } from "./lib/export/spec-pack";
-import { buildTemplateVerifySheets, CHECK_NOTE_IA } from "./lib/export/template-verify";
 /* 화면목록은 모든 등급에 들어간다 — 검수시나리오가 없는 스탠다드·플러스에서는
-   이 안내가 "눌러 보라"고 말하는 유일한 자리다. */
-const SCREEN_LIST_NOTE = [
-  "화면을 만든 뒤 — 여기로 돌아와 확인해 주세요",
-  "",
-  ...CHECK_NOTE_IA,
-  "",
-  "어떻게 보나요",
-  "1. '화면목록' 시트의 화면을 위에서부터 하나씩 엽니다.",
-  "2. '기능정의' 칸에 적힌 것이 화면에 실제로 있는지 봅니다.",
-  "3. '화면이동' 칸의 버튼을 눌러 그 화면으로 가는지 확인합니다.",
-];
+   이 안내가 "눌러 보라"고 말하는 유일한 자리다. 문구는 한 벌만 둔다. */
+import { buildTemplateVerifySheets, SCREEN_LIST_NOTE } from "./lib/export/template-verify";
 
 import { expandDeep, type DeepInput } from "./template-deep";
 import { RENTAL_DEEP } from "./template-data-rental-deep";

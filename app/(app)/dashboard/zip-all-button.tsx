@@ -172,23 +172,36 @@ export function ZipAllButton({
       if (!res.ok) throw new Error("fetch failed");
       const data = await res.json();
 
-      const [{ default: JSZip }, XLSX, rowsLib, flowLib, groupLib, pptLib, specLib, reqLib] = await Promise.all([
-        import("jszip"),
-        import("xlsx"),
-        import("@/lib/export/excel-rows"),
-        import("@/lib/export/flow-export"),
-        import("@/lib/export/flow-groups"),
-        import("@/lib/export/ppt-export"),
-        import("@/lib/export/spec-pack"),
-        import("@/lib/export/requirements"),
-      ]);
+      const [{ default: JSZip }, XLSX, rowsLib, flowLib, groupLib, pptLib, specLib, reqLib, verifyLib] =
+        await Promise.all([
+          import("jszip"),
+          import("xlsx"),
+          import("@/lib/export/excel-rows"),
+          import("@/lib/export/flow-export"),
+          import("@/lib/export/flow-groups"),
+          import("@/lib/export/ppt-export"),
+          import("@/lib/export/spec-pack"),
+          import("@/lib/export/requirements"),
+          import("@/lib/export/template-verify"),
+        ]);
 
       const { menus, screens, buttonActions, concept } = data;
       const base = safeFileName(concept);
 
-      const sheetBuf = (rows: Record<string, string | number>[], name: string) => {
+      // note 를 주면 「먼저 읽어 주세요」 시트를 맨 앞에 붙인다.
+      // 판매팩(build-template.mts)과 같은 순서다 — 뒤에 두면 안 본다.
+      const sheetBuf = (
+        rows: Record<string, string | number>[],
+        name: string,
+        note?: string[],
+      ) => {
         const ws = XLSX.utils.json_to_sheet(rows);
         const wb = XLSX.utils.book_new();
+        if (note) {
+          const nws = XLSX.utils.aoa_to_sheet(note.map((l) => [l]));
+          nws["!cols"] = [{ wch: 96 }];
+          XLSX.utils.book_append_sheet(wb, nws, "먼저 읽어 주세요");
+        }
         XLSX.utils.book_append_sheet(wb, ws, name);
         return XLSX.write(wb, { type: "array", bookType: "xlsx" });
       };
@@ -230,7 +243,11 @@ export function ZipAllButton({
       zip.file(`메뉴구조_${base}.xlsx`, sheetBuf(rowsLib.buildMenuTreeRows(menus, screens), "메뉴구조"));
       zip.file(
         `IA_화면목록_${base}.xlsx`,
-        sheetBuf(rowsLib.buildScreenListRows(menus, screens, buttonActions), "화면목록"),
+        sheetBuf(
+          rowsLib.buildScreenListRows(menus, screens, buttonActions),
+          "화면목록",
+          verifyLib.SCREEN_LIST_NOTE,
+        ),
       );
       zip.file(
         `기능정의서_${base}.xlsx`,
