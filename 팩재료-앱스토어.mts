@@ -64,11 +64,35 @@ const WORK = join(tmpdir(), "cc-appstore").replace(/\\/g, "/");
 
 /** 이 팩이 실제로 쓴 가이드의 색을 읽는다. 지어내지 않는다. */
 function 색읽기(팩: string, index: string) {
-  const m = /가이드\s*(\d{2})\s+([가-힣 ]+?)\s*[×·]/.exec(index);
-  if (!m) throw new Error("index.html 에서 쓴 가이드를 못 찾았습니다");
+  /* 어느 가이드를 썼는지 «화면이 실제로 쓰는 색»으로 찾는다.
+   *
+   * ⚠ index.html 의 문장에 기대면 안 된다. 팩마다 말이 다르고
+   *   (렌탈 「가이드 01 내추럴 그린 × …」 / 여행 「가이드 프리셋 03 — 소프트 파스텔」),
+   *   더 나쁜 것은 index 가 **세 프리셋을 다 소개**해서 첫 번째를 집게 된다는 것이다.
+   *   2026-08-10 에 여행이 그렇게 틀린 색으로 나왔다.
+   *
+   * base.css 의 `--primary` 는 그 화면이 «실제로 그려진» 색이다. 그것과 맞는 가이드를 찾는다.
+   * 못 찾으면 조용히 넘어가지 않고 알린다 — 화면과 가이드가 갈라졌다는 뜻이기 때문이다. */
   const 방 = join(팩방, 팩, "디자인프리셋");
-  const 이름 = readdirSync(방).find((f) => f.startsWith(`가이드_${m[1]}`) && f.endsWith(".json"));
-  if (!이름) throw new Error(`가이드_${m[1]}*.json 을 못 찾았습니다`);
+  const 가이드들 = readdirSync(방).filter((f) => f.startsWith("가이드_") && f.endsWith(".json")).sort();
+  if (!가이드들.length) throw new Error(`${방} 에 가이드 JSON 이 없습니다`);
+
+  const css = readFileSync(join(팩방, 팩, "완성화면/assets/css/base.css"), "utf8");
+  const 쓰는색 = /--primary:\s*(#[0-9A-Fa-f]{6})/.exec(css)?.[1]?.toUpperCase();
+
+  const 이름 = 가이드들.find((f) => {
+    const g = JSON.parse(readFileSync(join(방, f), "utf8"));
+    const k = Object.keys(g.colors).find((x) => x.startsWith("primary ("));
+    return k && String(g.colors[k]).toUpperCase() === 쓰는색;
+  });
+  if (!이름) {
+    throw new Error(
+      `화면은 ${쓰는색} 로 그려졌는데, 팩에 실린 가이드 ${가이드들.length}개 중 그 색이 없습니다.\n` +
+      `  → 화면과 디자인프리셋이 갈라졌습니다. 팩: ${팩}\n` +
+      `  → 실린 가이드: ${가이드들.map((f) => f.replace(/^가이드_\d+_|\.json$/g, "")).join(" · ")}`,
+    );
+  }
+  const m = [null, "", /가이드_\d{2}_(.+)\.json$/.exec(이름)?.[1] ?? "가이드"] as unknown as RegExpExecArray;
   const g = JSON.parse(readFileSync(join(방, 이름), "utf8"));
   const 골라 = (앞: string) => {
     const k = Object.keys(g.colors).find((x) => x.startsWith(앞));
