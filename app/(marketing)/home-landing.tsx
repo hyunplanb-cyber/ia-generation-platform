@@ -253,31 +253,27 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           {/* 만든 뒤에 막히는 자리 — 2026-08-10.
               화면까지 만들어 드려도 「내 컴퓨터에서만 보인다」에서 멈추시는 분이 많다.
               팔려고 넣는 것이 아니라 «도움이 되면 좋겠다»는 뜻으로 둔다. */}
+          {/* 만든 뒤에 막히는 자리 — 결과물에 함께 들어가는 안내서.
+              이 섹션의 어휘를 그대로 쓴다: 폭을 꽉 채우고, 카드 배경 + 종이선 테두리,
+              모서리 6px, 위 여백 40px. 혼자 다른 모양이면 곁다리로 보인다(2026-08-10). */}
           <div className="ship">
-            <div className="ship-in">
-              <span className="ship-ico" aria-hidden="true">🚀</span>
-              <div>
-                <h3>만들고 나서 막히는 자리도 적어 뒀어요</h3>
-                <p>
-                  화면은 다 만들었는데 <b>내 컴퓨터에서만 보이는</b> 데서 멈추시는 분이 많아요.
-                  링크를 보내도 상대는 못 열고요. 저희도 거기서 한참 헤맸습니다.
-                </p>
-                <p>
-                  그래서 <b>「만든 사이트를 세상에 내놓는 법」</b>을 안내서로 정리해
-                  결과물에 함께 넣어 뒀습니다. 이 사이트를 만들며 <b>실제로 겪은 것</b>만 적었어요.
-                </p>
-                <ul className="ship-list">
-                  <li>세상에 올리기 · 도메인 붙이기 · 자물쇠(HTTPS)</li>
-                  <li>회원가입·로그인 · 데이터 저장</li>
-                  <li>결제 받기 — 심사 두 달 동안 무엇을 하면 되는지</li>
-                  <li>사진·영상 만들기 · AI 기능 붙이기</li>
-                  <li>잘못 올렸을 때 되돌리는 법</li>
-                </ul>
-                <p className="ship-note">
-                  어려워하실 부분이라 남겨 둔 것입니다. 도움이 되셨으면 좋겠습니다.
-                </p>
-              </div>
+            <div className="ship-hd">
+              <span className="ship-tag">함께 드려요</span>
+              <h3>만들고 나서 막히는 자리도 적어 뒀어요</h3>
+              <p>
+                화면은 다 만들었는데 <b>내 컴퓨터에서만 보이는</b> 데서 멈추시는 분이 많습니다.
+                저희도 거기서 한참 헤맸어요. 그때 알게 된 것을{" "}
+                <b>「만든 사이트를 세상에 내놓는 법」</b>으로 정리해 결과물에 함께 넣었습니다.
+              </p>
             </div>
+            <ul className="ship-list">
+              <li>세상에 올리기 · 도메인 · 자물쇠(HTTPS)</li>
+              <li>회원가입·로그인 · 데이터 저장</li>
+              <li>결제 받기 — 심사 두 달 동안 할 일</li>
+              <li>사진·영상 · AI 기능 붙이기</li>
+              <li>잘못 올렸을 때 되돌리기</li>
+              <li>오픈 전 마지막 점검표</li>
+            </ul>
           </div>
 
           <div className="hero-ctas" style={{ marginTop: 36 }}>
@@ -1227,68 +1223,77 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         }
 
         /* SHIP — 만들고 나서 막히는 자리 안내.
+           .thesis·.chip 과 같은 어휘를 쓴다: 폭을 꽉 채우고, 카드 배경 +
+           종이선 테두리 1px, 모서리 6px, 위 여백 40px.
            파는 말이 아니라 «도와드리려고 적어 뒀다»는 결이라 색을 절제한다. */
         .ship {
           margin-top: 40px;
-        }
-        .ship-in {
-          display: flex;
-          gap: 18px;
-          align-items: flex-start;
-          text-align: left;
-          max-width: 780px;
-          margin: 0 auto;
-          padding: 26px 28px;
-          border: 1px solid var(--paper-line);
-          border-left: 4px solid var(--teal);
-          border-radius: 14px;
           background: var(--card);
+          border: 1px solid var(--paper-line);
+          border-radius: 6px;
+          padding: 30px 32px;
+          display: grid;
+          grid-template-columns: 1fr 300px;
+          gap: 32px;
+          align-items: start;
         }
-        .ship-ico {
-          font-size: 26px;
-          line-height: 1.2;
-          flex: none;
+        .ship-tag {
+          display: inline-block;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          color: var(--teal-deep);
+          background: rgba(14, 111, 96, 0.09);
+          border-radius: 4px;
+          padding: 4px 9px;
         }
-        .ship-in h3 {
-          margin: 0 0 10px;
-          font-size: 20px;
+        .ship-hd h3 {
+          margin: 12px 0 0;
+          font-size: 22px;
+          line-height: 1.3;
           font-weight: 800;
+          /* 좁은 화면에서 「막히/는」처럼 어절 한가운데가 잘렸다.
+             한국어는 어절 단위로 끊어야 읽힌다(2026-08-10). */
+          word-break: keep-all;
         }
-        .ship-in p {
-          margin: 8px 0;
-          font-size: 16px;
-          line-height: 1.75;
+        .ship-hd p {
+          margin: 10px 0 0;
+          font-size: 15px;
+          line-height: 1.8;
+          color: var(--ink-soft);
+          max-width: 560px;
+          word-break: keep-all;
         }
         .ship-list {
-          margin: 14px 0 0;
+          margin: 0;
           padding: 0;
           list-style: none;
           display: grid;
-          gap: 6px;
+          gap: 8px;
         }
         .ship-list li {
-          font-size: 15px;
+          font-size: 14px;
+          line-height: 1.5;
           color: var(--ink-soft);
-          padding-left: 16px;
+          padding-left: 15px;
           position: relative;
+          word-break: keep-all;
         }
         .ship-list li::before {
-          content: "·";
+          content: "";
           position: absolute;
-          left: 4px;
-          color: var(--teal);
-          font-weight: 700;
+          left: 0;
+          top: 8px;
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: var(--teal);
         }
-        .ship-note {
-          margin-top: 14px !important;
-          font-size: 15px !important;
-          color: var(--ink-soft);
-        }
-        @media (max-width: 640px) {
-          .ship-in {
-            flex-direction: column;
-            gap: 12px;
-            padding: 22px 20px;
+        @media (max-width: 860px) {
+          .ship {
+            grid-template-columns: 1fr;
+            gap: 22px;
+            padding: 26px 22px;
           }
         }
 
