@@ -105,6 +105,23 @@ const indexHtml = `<!doctype html>
       디럭스는 <b>코럴 선셋 + 대시보드형</b>, 이 프리미엄은 <b>${PRESET.preset.name} + ${LAYOUT.layout.name}</b>입니다.</p>
   </div></div>
 
+
+  <div class="box mb8" style="border-left:4px solid var(--primary)">
+    <h3 class="t-card mb3">화면이 만들어졌습니다 — 목록에서 확인해 보세요</h3>
+    <p class="t-sub">한 사이트를 만들기 위해서는 복잡한 흐름과 기능들이 있어요.
+    스펙에서 작성되는 지시문은 3,000줄 ~ 5,000줄 이상입니다.
+    AI가 스펙을 읽고 화면으로 옮기는 사이에 어긋남이 발생할 수 있어요.</p>
+    <p class="t-sub mt3">그래서 <b>'내 서비스 내가 확인할 수 있도록'</b> 화면목록을 작성하고 검수 시나리오를 준비했습니다.</p>
+    <p class="t-sub mt3">📌 전문 에이전시에서는 웹사이트를 제작할 때 가장 먼저 하는 일이 <b>화면목록(IA) 작성</b>이고,
+    배포 전에는 빠짐없는 검수를 위해 <b>검수(테스트) 시나리오</b>를 작성합니다.
+    바이브코딩은 이 과정을 생략하고 있지요. 그래서 제작 후 검수가 어렵고,
+    체계적으로 진행할 수 없어 오히려 시간이 많이 걸려요.</p>
+    <p class="t-sub mt3">아래 목록에서 화면을 하나씩 열어 잘 구성됐는지 확인하고,
+    배포 전에는 검수 시나리오대로 테스트해 보세요.
+    어긋나는 부분, 오류가 발생하는 부분은 AI 도구에
+    <b>'화면 ID, ~~ 고쳐줘.'</b> 라고 하면 AI가 쉽게 찾아 수정할 수 있어요.</p>
+  </div>
+
   ${spec.menus.map((m) => `<section class="idx-menu">
     <h3><span class="code">${m.code}</span>${m.nameKo}
       <span class="muted" style="font-size:14px;font-weight:500">${m.nameEn} · ${m.screens.length}개</span></h3>
