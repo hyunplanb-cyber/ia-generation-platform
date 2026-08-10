@@ -5,7 +5,7 @@ import { SITE, GEAR, PACKS, 기간, 남은수, REVIEWS } from './data.mjs';
 export const PAGES = {};
 
 /** 히어로 — 레이아웃 A: "폭을 꽉 채운 배경 위에 큰 검색바 1개. 아래에 숫자 지표 3개" */
-const hero = (h1, lead) => `<section class="hero"><div class="in">
+const hero = (h1, lead) => `<section class="hero"><div class="hero-in">
   <h1>${h1}</h1>
   <p class="lead">${lead}</p>
   <div class="searchbar">
@@ -13,7 +13,7 @@ const hero = (h1, lead) => `<section class="hero"><div class="in">
     <div class="fld"><span class="lb">빌리는 날</span><span class="val">8월 15일 (토)</span></div>
     <div class="fld"><span class="lb">돌려주는 날</span><span class="val">8월 17일 (월)</span></div>
     <div class="fld"><span class="lb">몇 개</span><span class="val">2개</span></div>
-    ${U.btn('찾아보기', { cls: 'btn-pri', href: 'HO-03', w: true, attr: ' style="height:100%"' })}
+    ${U.btn('찾아보기', { cls: 'btn-pri go', href: 'HO-03' })}
   </div>
   <div class="hero-stats">
     <div><div class="n">1,240<span style="font-size:15px">개</span></div><div class="l">빌려줄 수 있는 장비</div></div>

@@ -130,7 +130,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   background:linear-gradient(160deg,var(--primary) 0%,#0E5A2B 100%);
   color:var(--on-primary);padding:52px 0 44px;
 }
-.hero .in{max-width:1200px;margin:0 auto;padding:0 var(--sp-wrap)}
+.hero .hero-in{max-width:1200px;margin:0 auto;padding:0 var(--sp-wrap)}
 .hero h1{font-size:var(--fs-page);font-weight:var(--fw-page);line-height:var(--lh-hero);letter-spacing:-.6px}
 .hero .lead{margin-top:var(--sp-title);font-size:var(--fs-body);opacity:.94;max-width:640px}
 /* 검색바 — 이 서비스는 «기간»을 먼저 묻는다. 그것이 첫 화면의 주인공이다. */

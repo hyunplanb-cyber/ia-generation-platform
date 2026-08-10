@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>장비렌탈 디럭스 · 내추럴 그린 — 자동 넘김</title>
+<style>
+  html,body{margin:0;height:100%;background:#F0EFEB;overflow:hidden}
+  iframe{width:100%;height:calc(100% - 44px);border:0;display:block}
+  .tag{height:44px;box-sizing:border-box;padding:11px 18px;background:#1C2B22;color:#fff;
+    font:700 15px/1.4 Paperlogy,Pretendard,'Malgun Gothic',sans-serif;
+    display:flex;justify-content:space-between}
+</style></head><body>
+<iframe id="f" src="pages/HO-01.html"></iframe>
+<div class="tag"><span id="t">홈</span><span>장비렌탈 디럭스 · 내추럴 그린</span></div>
+<script>
+/* 한 장에 4초. 화면 녹화만 눌러도 쓸 수 있는 길이다. */
+const 장 = [{"f":"HO-01.html","t":"홈"},{"f":"PD-03.html","t":"날짜별 가용 재고 달력"},{"f":"CT-01.html","t":"대여 장바구니"},{"f":"BK-01.html","t":"대여 신청서"},{"f":"RT-04.html","t":"반납 접수"},{"f":"ST-02.html","t":"정산 내역 - 연체·파손 청구"},{"f":"MY-01.html","t":"내 대여 내역"},{"f":"CS-01.html","t":"자주 묻는 질문"}];
+let i = 0;
+setInterval(() => {
+  i = (i + 1) % 장.length;
+  document.getElementById("f").src = "pages/" + 장[i].f;
+  document.getElementById("t").textContent = 장[i].t;
+}, 4000);
+</script></body></html>
