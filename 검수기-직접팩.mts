@@ -47,12 +47,22 @@ if (파일들.size === 0) { console.error("안이 비었습니다."); process.ex
 const 흠들 = await 검수하기(파일들);
 const 못한것 = 흠들.filter((i) => i.급 === "FAIL");
 const 걸린것 = 흠들.filter((i) => i.급 === "WARN");
+const 알린것 = 흠들.filter((i) => i.급 === "알림");
+const 민글 = (s: string) => s.replace(/\*\*(.+?)\*\*/g, "$1");
 
 console.log(`\n직접 만든 AI팩 검수 — ${basename(준것)}`);
 console.log(`  파일 ${파일들.size}개\n`);
-for (const i of 못한것) console.log(`  ✗ [${i.항목}] ${i.무엇}`);
-for (const i of 걸린것) console.log(`  △ [${i.항목}] ${i.무엇}`);
-if (!흠들.length) console.log("  흠 없음.");
+
+if (못한것.length) console.log(`  고쳐야 할 것 ${못한것.length}건 — 이대로는 손님에게 못 줍니다\n`);
+for (const i of 못한것) console.log(`  ✗ [${i.항목}] ${민글(i.무엇)}`);
+for (const i of 걸린것) console.log(`  △ [${i.항목}] ${민글(i.무엇)}`);
+if (!못한것.length && !걸린것.length) console.log("  ✓ 고칠 것이 없습니다. 이대로 쓰셔도 됩니다.");
+
+/* 「흠이 아닌 것」은 갈라서 뒤에 붙인다. 섞으면 무엇을 손대야 하는지 알 수 없다. */
+if (알린것.length) {
+  console.log("\n  ── 아래는 흠이 아닙니다. 그냥 알려 드리는 것입니다 ──");
+  for (const i of 알린것) console.log(`  ℹ [${i.항목}] ${민글(i.무엇)}`);
+}
 
 console.log(`\n못 넘긴 것 ${못한것.length}건 · 봐줄 만한 것 ${걸린것.length}건`);
 console.log("  ※ 여기서 보는 것은 「파일이 성한가」다. 화면이 예쁜가는 완성화면이 있는 팩에서만 잰다.");

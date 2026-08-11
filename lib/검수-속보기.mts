@@ -15,7 +15,10 @@
 import JSZip from "jszip";
 import * as XLSX from "xlsx";
 
-export type 급 = "FAIL" | "WARN";
+/** FAIL 못 넘김 · WARN 봐줄 만함 · 알림 «흠이 아니다». 그냥 알려만 준다.
+ *  ⚠ 「안 고르셨으면 정상입니다」 같은 것을 WARN 으로 내면 사장님이 무엇을 고쳐야 하는지
+ *    알 수 없다. 고칠 것이 아니면 경고로 내지 않는다(2026-08-11). */
+export type 급 = "FAIL" | "WARN" | "알림";
 export type 흠 = { 급: 급; 어디: string; 무엇: string };
 /** 흠을 어디에 담을지는 부르는 쪽이 정한다. */
 export type 담기 = (급: 급, 어디: string, 무엇: string) => void;
@@ -83,17 +86,31 @@ export function 프리셋짝보기(어디: string, 파일이름들: string[], �
   }
 }
 
-/** 화면목록 엑셀에 「만든 뒤 확인하세요」 안내가 들어갔나 (검수항목 B6).
- *  2026-08-10 에 사장님이 「화면목록에 다 넣은 거 맞아?」라고 물으셨다. 아니었다. */
+/** 화면목록 엑셀에 「만든 뒤 확인하세요」 안내 시트가 들어갔나 (검수항목 B6).
+ *
+ * 2026-08-10 에 사장님이 「화면목록에 다 넣은 거 맞아?」라고 물으셨다.
+ *
+ * ⚠ 2026-08-11 — **처음 만든 이 검사는 헛경보였다.**
+ *   「의도한 대로」라는 «문구»를 찾게 해 뒀는데, 그 말은 우리 제품 어디에도 없었다.
+ *   내가 그날 대화를 기억으로 옮겨 적으면서 지어낸 말이었다.
+ *   그래서 24팩 전부와 손님 팩까지 전부 걸렸고, 나는 그것을 「진짜 결함」이라고 보고했다.
+ *
+ *   문구를 찾지 않는다. **안내 시트가 있고 알맹이가 있는지**를 본다 —
+ *   그것이 원래 재려던 것이다. 문구는 언제든 다듬을 수 있어야 한다.
+ */
 export function 화면목록안내보기(어디: string, 이름: string, buf: Buffer, 담: 담기) {
   try {
     const wb = XLSX.read(buf, { type: "buffer" });
-    const 통글 = wb.SheetNames
-      .map((s) => (XLSX.utils.sheet_to_json(wb.Sheets[s], { header: 1 }) as unknown[][])
-        .flat().map((c) => String(c ?? "")).join(" "))
-      .join(" ");
-    if (!통글.includes("의도한 대로")) {
-      담("WARN", 어디, `${이름} — 「의도한 대로 나오지 않을 수 있어요」 안내가 안 보입니다`);
+    /* 「먼저 읽어 주세요」처럼 «알맹이 표가 아닌» 시트가 안내 시트다. */
+    const 안내시트 = wb.SheetNames.find((s) => /읽어|안내|먼저/.test(s));
+    if (!안내시트) {
+      담("FAIL", 어디, `${이름} — 「먼저 읽어 주세요」 안내 시트가 없습니다. 손님이 「만든 뒤 무엇을 확인하나」를 못 봅니다`);
+      return;
+    }
+    const 줄 = (XLSX.utils.sheet_to_json(wb.Sheets[안내시트], { header: 1 }) as unknown[][])
+      .flat().map((c) => String(c ?? "").trim()).filter(Boolean);
+    if (줄.length < 5) {
+      담("FAIL", 어디, `${이름} — 안내 시트가 ${줄.length}줄뿐입니다. 알맹이가 안 들어갔습니다`);
     }
   } catch { /* 엑셀보기가 이미 못 연다고 말했다. 두 번 말하지 않는다. */ }
 }

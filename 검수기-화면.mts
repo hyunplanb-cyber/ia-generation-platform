@@ -23,9 +23,17 @@ import { 검수하기, 항목읽기, type 항목 } from "./lib/검수-직접팩.
 
 const 포트 = 4321;
 
+/* 검수항목.md 는 마크다운이다. 표 칸에 `**굵게**` 와 `` `코드` `` 가 들어 있는데,
+   그대로 뿌리면 별표가 글자로 보인다. 2026-08-11 에 화면에 `**문서끼리…**` 로 나왔다.
+   ⚠ 여는 글자를 먼저 막고(<>&) 나서 마크다운을 푼다. 차례를 바꾸면 태그가 새어 든다. */
+const 글로 = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+    .replace(/`(.+?)`/g, "<code>$1</code>");
+
 const 칸 = (a: 항목) => `<tr>
-  <td class="no">${a.번호}</td><td>${a.무엇}</td>
-  <td class="who">${a.누가}</td><td class="ap">${a.적용}</td></tr>`;
+  <td class="no">${글로(a.번호)}</td><td>${글로(a.무엇)}</td>
+  <td class="who">${글로(a.누가)}</td><td class="ap">${글로(a.적용)}</td></tr>`;
 
 function 페이지() {
   const { 기본, 변경 } = 항목읽기(readFileSync("검수항목.md", "utf8"));
@@ -57,8 +65,13 @@ function 페이지() {
   .fail{background:#FDECEC;border-left:4px solid #C0392B}
   .warn{background:#FDF6E6;border-left:4px solid #C9922B}
   .ok{background:#E9F5F0;border-left:4px solid var(--te);font-weight:700}
+  /* 「흠이 아니다」는 눈에 덜 띄게. 경고와 같은 색이면 고칠 것으로 읽힌다. */
+  .info{background:#F1F0EA;border-left:4px solid #A8A493;color:#4A4737}
   .뱃{font-weight:800;flex:none;min-width:34px}
-  .셈{font-size:15px;margin:14px 0 0;font-weight:700}
+  .셈{font-size:15px;margin:14px 0 6px;font-weight:700}
+  .셈.나쁨{color:#C0392B}
+  .셈.옅게{color:#6B6B5E;font-weight:400;font-size:14px;margin-top:18px}
+  code{background:#EFEEE7;border-radius:5px;padding:1px 5px;font-size:13px}
 </style></head><body><div class="wrap">
 
 <h1>AI팩 검수기</h1>
@@ -110,12 +123,22 @@ go.onclick=async()=>{
     const j=await r.json();
     결과.style.display='block';
     if(j.오류){ 결과.innerHTML='<div class="줄 fail"><span class="뱃">✗</span><span>'+j.오류+'</span></div>'; return; }
-    const 줄=(g,i)=>'<div class="줄 '+(g==='FAIL'?'fail':'warn')+'"><span class="뱃">'
-      +(g==='FAIL'?'✗':'△')+'</span><span><b>['+i.항목+']</b> '+i.무엇+'</span></div>';
-    const 못=j.흠들.filter(x=>x.급==='FAIL'), 걸=j.흠들.filter(x=>x.급==='WARN');
-    결과.innerHTML='<p class="셈">파일 '+j.파일수+'개 · 못 넘긴 것 '+못.length+'건 · 봐줄 만한 것 '+걸.length+'건</p>'
-      + (j.흠들.length?'':'<div class="줄 ok"><span class="뱃">✓</span><span>흠 없습니다.</span></div>')
-      + 못.map(i=>줄('FAIL',i)).join('') + 걸.map(i=>줄('WARN',i)).join('');
+    const 굵게=(s)=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+    const 반 = { FAIL:['fail','✗'], WARN:['warn','△'], '알림':['info','ℹ'] };
+    const 줄=(i)=>{const [c,b]=반[i.급]||반.WARN;
+      return '<div class="줄 '+c+'"><span class="뱃">'+b+'</span><span><b>['+i.항목+']</b> '+굵게(i.무엇)+'</span></div>';};
+    const 못=j.흠들.filter(x=>x.급==='FAIL'), 걸=j.흠들.filter(x=>x.급==='WARN'), 알=j.흠들.filter(x=>x.급==='알림');
+    /* 「고쳐야 할 것」과 「그냥 알려 주는 것」을 눈에 띄게 가른다.
+       섞어 놓으면 무엇을 손대야 하는지 알 수 없다(2026-08-11 사장님 지적). */
+    const 맨위 = 못.length
+      ? '<p class="셈 나쁨">고쳐야 할 것 '+못.length+'건 — 이대로는 손님에게 못 줍니다</p>'
+      : (걸.length
+          ? '<p class="셈">못 넘긴 것 없음 · 봐줄 만한 것 '+걸.length+'건</p>'
+          : '<div class="줄 ok"><span class="뱃">✓</span><span>고칠 것이 없습니다. 이대로 쓰셔도 됩니다.</span></div>');
+    결과.innerHTML = '<p class="셈">파일 '+j.파일수+'개</p>' + 맨위
+      + 못.map(줄).join('') + 걸.map(줄).join('')
+      + (알.length ? '<p class="셈 옅게">아래는 «흠이 아닙니다». 그냥 알려 드리는 것입니다.</p>'+알.map(줄).join('') : '');
   }catch(e){ 결과.style.display='block';
     결과.innerHTML='<div class="줄 fail"><span class="뱃">✗</span><span>'+e.message+'</span></div>'; }
   finally{ go.disabled=false; go.textContent='검수하기'; }

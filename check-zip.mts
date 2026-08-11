@@ -28,7 +28,9 @@ import { 파일보기, 프리셋짝보기, 화면목록안내보기, type 급 } 
 const 방 = "packs";
 const 고른것 = process.argv[2];
 
-type 흠 = { 급: "FAIL" | "WARN"; 어디: string; 무엇: string };
+/* 급은 공용 모듈이 정한다(`lib/검수-속보기`). 여기서 좁게 다시 적으면 갈라진다 —
+   「알림」이 생겼을 때 실제로 타입이 안 맞았다(2026-08-11). */
+type 흠 = { 급: 급; 어디: string; 무엇: string };
 const 흠들: 흠[] = [];
 const 못됨 = (어디: string, 무엇: string) => 흠들.push({ 급: "FAIL", 어디, 무엇 });
 const 걸림 = (어디: string, 무엇: string) => 흠들.push({ 급: "WARN", 어디, 무엇 });
