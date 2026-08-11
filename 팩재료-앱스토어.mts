@@ -60,7 +60,8 @@ const 후보 = readdirSync(팩방, { withFileTypes: true })
 const 대상 = 후보.filter((p) => existsSync(join(팩방, p, "완성화면", "pages")));
 if (!대상.length) { console.error(`「${인자}」에 완성화면이 있는 팩이 없습니다.`); process.exit(1); }
 
-const WORK = join(tmpdir(), "cc-appstore").replace(/\\/g, "/");
+// 프로세스 번호를 붙인다 — 루틴 둘이 동시에 돌 때 서로의 작업을 지우지 않게(2026-08-11).
+const WORK = join(tmpdir(), `cc-appstore-${process.pid}`).replace(/\\/g, "/");
 
 /** 이 팩이 실제로 쓴 가이드의 색을 읽는다. 지어내지 않는다. */
 function 색읽기(팩: string, index: string) {

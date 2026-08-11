@@ -97,7 +97,11 @@ if (대상.length === 0) {
   process.exit(1);
 }
 
-const WORK = join(tmpdir(), "cc-pack-shot").replace(/\\/g, "/");   // 한글 없는 자리
+/* 한글 없는 자리. **프로세스 번호를 붙인다.**
+   전에는 `cc-pack-shot` 한 곳을 쓰고 팩마다 통째로 지웠다. 검수 루틴 둘이 화요일 새벽에
+   «동시에» 돌기로 하면서(2026-08-11) 서로의 작업을 지우게 된다 — 한쪽이 찍는 중에
+   다른 쪽이 rmSync 를 부른다. 조용히 반쯤 빈 캡처가 나온다. */
+const WORK = join(tmpdir(), `cc-pack-shot-${process.pid}`).replace(/\\/g, "/");
 
 /** 파일 이름에 쓸 수 없는 글자를 뺀다. */
 const 안전 = (s: string) => s.replace(/[\\/:*?"<>|]/g, "").replace(/\s+/g, "").slice(0, 20);

@@ -21,7 +21,9 @@
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import JSZip from "jszip";
-import * as XLSX from "xlsx";
+/* 파일 «속»을 열어 보는 검사는 직접팩 검수기와 나눠 쓴다 — 두 벌로 적으면 갈라진다.
+   여기를 고치면 두 검사기가 같이 바뀐다(2026-08-11). */
+import { 파일보기, 프리셋짝보기, 화면목록안내보기, type 급 } from "./lib/검수-속보기.mjs";
 
 const 방 = "packs";
 const 고른것 = process.argv[2];
@@ -30,6 +32,8 @@ type 흠 = { 급: "FAIL" | "WARN"; 어디: string; 무엇: string };
 const 흠들: 흠[] = [];
 const 못됨 = (어디: string, 무엇: string) => 흠들.push({ 급: "FAIL", 어디, 무엇 });
 const 걸림 = (어디: string, 무엇: string) => 흠들.push({ 급: "WARN", 어디, 무엇 });
+/** 공용 검사(`lib/검수-속보기`)에 넘길 담개. */
+const 담 = (g: 급, 어디: string, 무엇: string) => 흠들.push({ 급: g, 어디, 무엇 });
 
 /** 어느 등급에나 있어야 하는 것. 없으면 손님이 「빠졌다」고 느낀다. */
 const 언제나 = [
@@ -40,31 +44,6 @@ const 언제나 = [
 ];
 /** 완성화면이 들어가는 등급에만 있는 것. */
 const 완성화면있으면 = ["08_검수시나리오.xlsx"];
-
-/** 엑셀이 «열리고 안에 뭐가 있나». 파일 크기만 보면 깨진 것을 못 잡는다. */
-function 엑셀보기(어디: string, 이름: string, buf: Buffer) {
-  let wb: XLSX.WorkBook;
-  try { wb = XLSX.read(buf, { type: "buffer" }); }
-  catch (e) { 못됨(어디, `${이름} — 엑셀이 안 열립니다 (${(e as Error).message.slice(0, 60)})`); return; }
-  if (!wb.SheetNames.length) { 못됨(어디, `${이름} — 시트가 하나도 없습니다`); return; }
-  /* 「먼저 읽어 주세요」만 있고 알맹이 시트가 비어 있던 적이 있는지 본다. */
-  let 값있는시트 = 0;
-  for (const s of wb.SheetNames) {
-    const rows = XLSX.utils.sheet_to_json(wb.Sheets[s], { header: 1 }) as unknown[][];
-    if (rows.filter((r) => r.some((c) => String(c ?? "").trim())).length > 1) 값있는시트 += 1;
-  }
-  if (값있는시트 === 0) 못됨(어디, `${이름} — 시트 ${wb.SheetNames.length}개가 모두 비었습니다`);
-}
-
-/** pptx 도 속은 zip 이다. 열어서 발표 파일이 들어 있는지 본다. */
-async function 피피티보기(어디: string, 이름: string, buf: Buffer) {
-  try {
-    const z = await JSZip.loadAsync(buf);
-    if (!z.file("ppt/presentation.xml")) 못됨(어디, `${이름} — 파워포인트 속이 비었습니다`);
-  } catch { 못됨(어디, `${이름} — 파워포인트가 안 열립니다`); }
-}
-
-const 최소길이: Record<string, number> = { ".html": 800, ".md": 500, ".txt": 200, ".drawio": 300 };
 
 async function 팩보기(zip파일: string) {
   const 이름 = zip파일.replace(/\.zip$/, "");
@@ -92,34 +71,13 @@ async function 팩보기(zip파일: string) {
     const b = Buffer.from(await z.files[p].async("uint8array"));
     if (b.length === 0) { 못됨(이름, `${짧게} — 0바이트입니다`); continue; }
 
-    if (p.endsWith(".xlsx")) 엑셀보기(이름, 짧게, b);
-    else if (p.endsWith(".pptx")) await 피피티보기(이름, 짧게, b);
-    else if (p.endsWith(".json")) {
-      try { JSON.parse(b.toString("utf8")); }
-      catch (e) { 못됨(이름, `${짧게} — json 이 깨졌습니다 (${(e as Error).message.slice(0, 50)})`); }
-    } else {
-      const ext = p.slice(p.lastIndexOf("."));
-      const 최소 = 최소길이[ext];
-      if (최소 && b.length < 최소) 못됨(이름, `${짧게} — ${b.length}바이트뿐입니다 (${최소} 미만)`);
-      if (ext === ".html") {
-        const s = b.toString("utf8").slice(0, 400).toLowerCase();
-        if (!s.includes("<html") && !s.includes("<!doctype")) 못됨(이름, `${짧게} — html 이 아닌 것 같습니다`);
-      }
-    }
+    await 파일보기(이름, 짧게, b, 담);
+    if (짧게.includes("화면목록")) 화면목록안내보기(이름, 짧게, b, 담);
   }
 
   /* 디자인프리셋 — .md 와 .json 이 짝이라야 한다. 하나만 있으면 반쪽이다. */
   const 프리셋 = 길들.filter((p) => p.includes("/디자인프리셋/")).map((p) => p.split("/").pop()!);
-  const 짝 = new Map<string, Set<string>>();
-  for (const f of 프리셋) {
-    const i = f.lastIndexOf(".");
-    if (i < 0) continue;
-    const [뿌, 확] = [f.slice(0, i), f.slice(i)];
-    if (확 !== ".md" && 확 !== ".json") continue;
-    if (!짝.has(뿌)) 짝.set(뿌, new Set());
-    짝.get(뿌)!.add(확);
-  }
-  for (const [뿌, 확들] of 짝) if (확들.size !== 2) 걸림(이름, `디자인프리셋/${뿌} — ${[...확들].join("")} 만 있습니다`);
+  프리셋짝보기(이름, 프리셋, 담);
 
   /* ── 완성화면 — 오늘 사고가 난 자리다 ────────────────────── */
   if (완성화면있음) {
