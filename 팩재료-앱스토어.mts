@@ -13,18 +13,22 @@
  * ⚠ 스토어 스크린샷은 «진짜 앱 화면»이라야 한다. 예쁜 그림만 넣으면 반려된다.
  *   그래서 완성화면을 폰 폭으로 열어 찍고, 위에 한 줄 설명만 얹는다.
  *
- * ⚠ **팩에 넣는 것은 «완성품»이 아니라 «틀»이다.**
- *   여기서 찍는 그림은 우리 견본 사이트(「빌려쓰기」) 화면이라 손님 스토어에 못 쓴다.
- *   손님은 자기 이름·자기 화면으로 다시 만들어야 한다. 그래서 팩에는
- *   **손님이 자기 화면으로 뽑는 틀**을 넣고, 우리 그림은 «이렇게 생깁니다» 견본 한 장씩만 넣는다.
+ * ⚠ **팩에 넣는 것은 «예시»다.**
+ *   여기서 찍는 그림은 우리 견본 사이트 화면이라 손님 스토어에 못 쓴다.
+ *   손님은 자기 이름·자기 화면으로 다시 만들어야 한다.
  *   (2026-08-10 에 완성품을 넣으려다 알았다 — 남의 가게 이름이 박힌 그림은 쓸모가 없다.)
  *
+ * ⚠ 2026-08-11 에 「만들기 틀」 두 장을 뺐다.
+ *   사장님: 「안내서에 이미지 사이즈랑 예시만 넣어 줘도 될 것 같아.」 맞는 말이었고,
+ *   확인해 보니 **스크린샷 틀은 애초에 쓸 수가 없었다** — 판이 1290×2796px 인데
+ *   화면 캡처로 그걸 뜨려면 모니터 세로가 2796px 이라야 한다.
+ *   만들어 놓고 되는지 안 해 본 것이다.
+ *   크기·장수·주의사항은 `10_앱으로_내놓는_법.html` 의 「④ 스크린샷」에 표로 있다.
+ *
  * 나오는 것 (팩 안 `앱스토어재료/`)
- *   아이콘_만들기.html        열어서 글자·색을 고치고 화면 캡처하면 아이콘이 된다
- *   스크린샷_만들기.html      자기 화면을 골라 얹으면 스토어 스크린샷이 된다
- *   견본_아이콘.png           «이렇게 생깁니다» — 우리 견본
- *   견본_스크린샷.png         〃
- *   읽어보세요.txt            크기·개수·주의사항과 쓰는 법
+ *   견본_아이콘.png           «이렇게 생깁니다» — 이 팩 주색으로 만든 1024×1024
+ *   견본_스크린샷.png         〃 — 아이폰 6.9형 세로
+ *   읽어보세요.txt            무엇인지 · 왜 그대로 못 쓰는지 · 어디를 보면 되는지
  *
  * 쓰는 법
  *   npx tsx 팩재료-앱스토어.mts 장비렌탈_디럭스
@@ -64,7 +68,7 @@ if (!대상.length) { console.error(`「${인자}」에 완성화면이 있는 �
 const WORK = join(tmpdir(), `cc-appstore-${process.pid}`).replace(/\\/g, "/");
 
 /** 이 팩이 실제로 쓴 가이드의 색을 읽는다. 지어내지 않는다. */
-function 색읽기(팩: string, index: string) {
+function 색읽기(팩: string) {
   /* 어느 가이드를 썼는지 «화면이 실제로 쓰는 색»으로 찾는다.
    *
    * ⚠ index.html 의 문장에 기대면 안 된다. 팩마다 말이 다르고
@@ -148,153 +152,10 @@ function 샷판(색: ReturnType<typeof 색읽기>, 말: string, 화면: string) 
 </div>`;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   손님이 «자기 화면»으로 뽑는 틀 두 장.
-   브라우저로 열면 바로 보이고, 화면 안에서 고쳐 쓴다. 깔 것도 없다.
-   ───────────────────────────────────────────────────────────── */
-function 아이콘틀(색: ReturnType<typeof 색읽기>) {
-  return `<!doctype html><html lang="ko"><head><meta charset="utf-8">
-<title>앱 아이콘 만들기</title><style>
-  body{margin:0;padding:28px;background:#F4F3EE;color:#20261C;
-       font:16px/1.7 ${색.글꼴},Pretendard,"맑은 고딕",sans-serif}
-  h1{font-size:22px;margin:0 0 6px}
-  p{margin:0 0 18px;color:#4E4A3B;font-size:14px}
-  .줄{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
-  label{font-size:13px;font-weight:700}
-  input[type=text]{width:60px;padding:7px 10px;border:1px solid #D8D4C6;border-radius:8px;font:inherit;text-align:center}
-  input[type=color]{width:46px;height:34px;border:1px solid #D8D4C6;border-radius:8px;background:none}
-  button{padding:8px 14px;border:1px solid #D8D4C6;border-radius:8px;background:#fff;font:inherit;cursor:pointer}
-  button.on{background:#20261C;color:#fff;border-color:#20261C}
-  /* 이 네모만 캡처하시면 됩니다. 테두리는 캡처 자리를 알려 주는 표시입니다. */
-  .틀{display:inline-block;outline:2px dashed #C25D17;outline-offset:8px}
-  .아이콘{display:grid;place-items:center;overflow:hidden}
-  .아이콘 span{line-height:1;font-weight:800}
-  .안내{margin-top:34px;font-size:13px;color:#4E4A3B;max-width:560px}
-  .안내 b{color:#20261C}
-</style></head><body>
-<h1>앱 아이콘 만들기</h1>
-<p>글자와 색을 사장님 것으로 고친 뒤, <b>점선 안쪽만</b> 화면 캡처하세요.</p>
-<div class="줄">
-  <label>글자 <input type="text" id="g" value="${"앱"}" maxlength="2"></label>
-  <label>바탕 <input type="color" id="bg" value="${색.primary}"></label>
-  <label>글자색 <input type="color" id="fg" value="${색.onPrimary}"></label>
-  <button id="b1024" class="on">1024 로 보기 (애플)</button>
-  <button id="b512">512 로 보기 (구글)</button>
-  <span id="크기표" style="font-size:13px;color:#4E4A3B"></span>
-</div>
-<div class="틀"><div class="아이콘" id="ico"><span id="글자">앱</span></div></div>
-<div class="안내">
-  <p><b>지킬 것</b><br>
-  · 모서리를 미리 깎지 마세요 — 애플·구글이 알아서 깎습니다. 미리 깎으면 두 번 깎입니다.<br>
-  · 투명한 곳이 있으면 애플에서 반려됩니다. 바탕을 꽉 채우세요.<br>
-  · 글자는 한두 자. 폰 홈 화면에서는 아주 작게 보입니다.<br>
-  · 글자 대신 도형 하나를 써도 좋습니다. 같은 바탕색 위에 흰 도형 하나면 충분합니다.</p>
-</div>
-<script>
-  var 크기 = 1024;
-  function 그리기(){
-    var ico = document.getElementById('ico');
-    ico.style.width = ico.style.height = 크기 + 'px';
-    ico.style.background = document.getElementById('bg').value;
-    var s = document.getElementById('글자');
-    s.textContent = document.getElementById('g').value || '앱';
-    s.style.color = document.getElementById('fg').value;
-    s.style.fontSize = Math.round(크기 * 0.44) + 'px';
-    document.getElementById('크기표').textContent = 크기 + ' × ' + 크기;
-    document.getElementById('b1024').className = 크기 === 1024 ? 'on' : '';
-    document.getElementById('b512').className = 크기 === 512 ? 'on' : '';
-  }
-  document.getElementById('b1024').onclick = function(){ 크기 = 1024; 그리기(); };
-  document.getElementById('b512').onclick = function(){ 크기 = 512; 그리기(); };
-  ['g','bg','fg'].forEach(function(id){ document.getElementById(id).oninput = 그리기; });
-  그리기();
-</script></body></html>`;
-}
-
-function 샷틀(색: ReturnType<typeof 색읽기>) {
-  return `<!doctype html><html lang="ko"><head><meta charset="utf-8">
-<title>스토어 스크린샷 만들기</title><style>
-  body{margin:0;padding:28px;background:#F4F3EE;color:#20261C;
-       font:16px/1.7 ${색.글꼴},Pretendard,"맑은 고딕",sans-serif}
-  h1{font-size:22px;margin:0 0 6px}
-  p.설명{margin:0 0 18px;color:#4E4A3B;font-size:14px}
-  .줄{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-  label{font-size:13px;font-weight:700}
-  input[type=text]{padding:7px 10px;border:1px solid #D8D4C6;border-radius:8px;font:inherit}
-  #주소{width:340px} #말{width:420px}
-  input[type=color]{width:46px;height:34px;border:1px solid #D8D4C6;border-radius:8px;background:none}
-  /* 판이 1290px 이라 화면보다 넓다. 보기용으로 줄여 두고 캡처할 때만 100% 로 키운다. */
-  .싸개{overflow:auto;margin-top:12px}
-  .틀{display:inline-block;outline:2px dashed #C25D17;outline-offset:8px;transform-origin:0 0}
-  /* 여기부터가 캡처할 판이다. 크기를 손대지 마세요 — 스토어가 요구하는 크기입니다. */
-  .판{width:${샷.w}px;height:${샷.h}px;display:flex;flex-direction:column;align-items:center;overflow:hidden}
-  .말{font-weight:800;font-size:62px;line-height:1.35;text-align:center;
-      padding:96px 80px 0;word-break:keep-all;letter-spacing:-.02em}
-  .폰{margin-top:64px;width:${폰.w * 3}px;height:${샷.h - 430}px;overflow:hidden;
-      border-radius:56px;box-shadow:0 24px 80px rgba(0,0,0,.18);background:#fff}
-  .폰 iframe{width:${폰.w}px;height:${Math.round((샷.h - 430) / 3)}px;border:0;
-             transform:scale(3);transform-origin:0 0}
-  .안내{margin-top:34px;font-size:13px;color:#4E4A3B;max-width:640px}
-  .안내 b{color:#20261C}
-</style></head><body>
-<h1>스토어 스크린샷 만들기</h1>
-<p class="설명">사장님 화면 주소를 넣고 한 줄 설명을 쓴 뒤, <b>점선 안쪽만</b> 화면 캡처하세요. 3~5장 만드시면 됩니다.</p>
-<div class="줄">
-  <label>화면 주소 <input type="text" id="주소" value="" placeholder="http://localhost:3000"></label>
-  <label>바탕 <input type="color" id="bg" value="${색.background}"></label>
-  <label>글자색 <input type="color" id="fg" value="${색.text}"></label>
-</div>
-<div class="줄">
-  <label>한 줄 설명 <input type="text" id="말" value="날짜만 고르면 남은 것이 보여요"></label>
-</div>
-<div class="줄">
-  <button id="작게" class="on">줄여서 보기</button>
-  <button id="크게">캡처할 크기 (100%)</button>
-  <span style="font-size:13px;color:#4E4A3B">캡처는 <b>100%</b> 로 놓고 하세요. ${샷.w} × ${샷.h} 그대로 찍힙니다.</span>
-</div>
-<div class="싸개"><div class="틀" id="틀"><div class="판" id="판">
-  <div class="말" id="말보기">날짜만 고르면 남은 것이 보여요</div>
-  <div class="폰"><iframe id="frame" src="about:blank"></iframe></div>
-</div></div></div>
-<div class="안내">
-  <p><b>지킬 것</b><br>
-  · <b>첫 장이 거의 전부입니다.</b> 스토어 목록에서는 첫 장만 보입니다.<br>
-  · 한 줄 설명은 «무엇이 되는지»로 쓰세요. 화면 이름을 그대로 쓰면 아무 말도 안 됩니다.<br>
-  &nbsp;&nbsp;(「예약 목록」 ✗ → 「날짜만 고르면 남은 것이 보여요」 ○)<br>
-  · <b>진짜 앱 화면이라야 합니다.</b> 예쁜 그림만 넣으면 반려됩니다.<br>
-  · 화면 주소를 못 불러오면(다른 사이트를 막아 둔 경우) 폰으로 직접 찍은 화면을
-    이 자리에 얹어도 됩니다. 크기만 맞으면 됩니다.</p>
-</div>
-<script>
-  function 그리기(){
-    document.getElementById('판').style.background = document.getElementById('bg').value;
-    var m = document.getElementById('말보기');
-    m.textContent = document.getElementById('말').value;
-    m.style.color = document.getElementById('fg').value;
-    var u = document.getElementById('주소').value.trim();
-    if (u) document.getElementById('frame').src = u;
-  }
-  function 배율(z){
-    var t = document.getElementById('틀');
-    t.style.transform = 'scale(' + z + ')';
-    /* transform 은 «자리»를 안 줄인다. 줄인 만큼 싸개 높이를 따로 잡아 줘야
-       아래가 텅 비지 않는다. */
-    t.parentElement.style.height = Math.round(${샷.h} * z + 40) + 'px';
-    document.getElementById('작게').className = z < 1 ? 'on' : '';
-    document.getElementById('크게').className = z === 1 ? 'on' : '';
-  }
-  document.getElementById('작게').onclick = function(){ 배율(0.28); };
-  document.getElementById('크게').onclick = function(){ 배율(1); };
-  ['주소','말','bg','fg'].forEach(function(id){ document.getElementById(id).oninput = 그리기; });
-  그리기();
-  배율(0.28);
-</script></body></html>`;
-}
-
 for (const 팩 of 대상) {
   const 완성화면 = join(팩방, 팩, "완성화면");
   const index = readFileSync(join(완성화면, "index.html"), "utf8");
-  const 색 = 색읽기(팩, index);
+  const 색 = 색읽기(팩);
   const [업종, 등급] = [팩.split("_")[0], 팩.split("_").slice(1).join("_")];
 
   rmSync(WORK, { recursive: true, force: true });
@@ -370,43 +231,37 @@ for (const 팩 of 대상) {
     rmSync(아이콘512);
   }
 
-  /* ── 손님이 «자기 화면»으로 뽑는 틀 ─────────────────────── */
-  writeFileSync(join(낼방, "아이콘_만들기.html"), 아이콘틀(색), "utf8");
-  writeFileSync(join(낼방, "스크린샷_만들기.html"), 샷틀(색), "utf8");
+  /* ⚠ 예전에는 여기서 「아이콘_만들기.html」「스크린샷_만들기.html」도 같이 넣었다.
+     2026-08-11 에 뺐다 — 사장님이 「안내서에 크기랑 예시만 넣어도 될 것 같다」고 하셨고,
+     확인해 보니 **스크린샷 틀은 애초에 쓸 수가 없었다.**
+     판이 1290×2796px 인데 화면 캡처로 그걸 뜨려면 모니터 세로가 2796px 이라야 한다.
+     만들어 놓고 되는지 안 해 본 것이다.
+
+     크기·장수·주의사항은 이제 `10_앱으로_내놓는_법.html` 의 「④ 스크린샷」에 있다.
+     견본 그림 두 장은 그대로 둔다 — 그게 「예시」다. */
 
   writeFileSync(join(낼방, "읽어보세요.txt"),
-`스토어에 올릴 아이콘·스크린샷 만들기 — ${업종} ${등급}
+`스토어에 올릴 아이콘·스크린샷 — ${업종} ${등급}
 
-■ 먼저 알아 두실 것
-  여기 있는 「견본_」 그림은 «저희 견본 사이트» 화면입니다.
-  스토어에는 못 올리십니다 — 사장님 이름·사장님 화면으로 다시 만드셔야 합니다.
-  그래서 «만드는 틀»을 함께 넣었습니다.
+■ 여기 있는 것
+  견본_아이콘.png      1024×1024 · 이 팩의 주색(${색.primary})으로 만든 견본
+  견본_스크린샷.png    ${샷.w}×${샷.h} · 아이폰 6.9형 세로 견본
 
-■ 아이콘 만들기
-  1. 아이콘_만들기.html 을 브라우저로 엽니다
-  2. 글자와 색을 사장님 것으로 고칩니다 (화면 안에서 바로 고칠 수 있습니다)
-  3. [1024 로 보기] 를 누르고 그 네모만 화면 캡처합니다 → 애플용
-  4. [512 로 보기] 로 한 번 더 → 구글용
-  · 모서리는 «깎지 마세요». 애플·구글이 알아서 둥글게 깎습니다.
-  · 투명한 곳이 있으면 애플에서 반려됩니다. 배경을 꽉 채우세요.
-  · 글자를 여러 자 넣지 마세요. 폰 홈 화면에서는 아주 작게 보입니다.
-  · 기본 색은 이 팩의 디자인프리셋 주색(${색.primary})입니다.
+■ 그대로 못 씁니다
+  «저희 견본 사이트» 화면입니다. 스토어에는 사장님 이름·사장님 화면으로 올리셔야 합니다.
+  이 두 장은 «이런 모습이면 됩니다»를 보여 주는 예시입니다.
 
-■ 스크린샷 만들기
-  1. 스크린샷_만들기.html 을 브라우저로 엽니다
-  2. 위 칸에 «사장님 화면 주소»를 넣습니다 (예: http://localhost:3000)
-  3. 아래 칸에 한 줄 설명을 씁니다
-  4. 그 네모만 화면 캡처합니다 → ${샷.w}×${샷.h} (아이폰 6.9형 세로)
-  · 3~5장이면 충분합니다. 작은 기기용은 스토어가 알아서 줄여 줍니다.
-  · **첫 장이 거의 전부입니다.** 목록에서 첫 장만 보입니다.
-  · 한 줄 설명은 «무엇이 되는지»로 쓰세요. 화면 이름을 그대로 쓰면 아무 말도 안 됩니다.
-    (예: 「예약 목록」 ✗ → 「날짜만 고르면 남은 것이 보여요」 ○)
-  · 진짜 앱 화면이라야 합니다. 예쁜 그림만 넣으면 반려됩니다.
+■ 어떻게 만드나
+  크기 · 장수 · 반려되는 까닭 · 한 줄 설명 쓰는 법이
+  팩 안의 **10_앱으로_내놓는_법.html «④ 스크린샷»** 에 표로 있습니다. 그것만 보시면 됩니다.
 
-■ 그 밖에 있어야 하는 것
+  가장 쉬운 길 — 팩의 완성화면을 폰 폭으로 열어 그대로 찍는 것입니다.
+  진짜 화면이라 반려될 일이 없습니다.
+
+■ 잊기 쉬운 것
   · 개인정보처리방침 «주소» — 없으면 등록 자체가 막힙니다
   · 심사용 계정(아이디·비밀번호) — 로그인이 필요한 앱이면
-  자세한 것은 팩의 10_앱으로_내놓는_법.html 을 보세요.
+  · 구글은 «대표 그림» 1024×500 을 따로 받습니다. 스크린샷과 별개입니다.
 `, "utf8");
 
   console.log(`  ${팩.padEnd(20)} 아이콘 2장 · 스크린샷 ${고른것.length}장  (${색.색이름} ${색.primary})`);
