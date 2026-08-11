@@ -350,7 +350,13 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
    적어 둔 권장 크기(정사각)의 비율이 실제로 지켜진다. */
 .mosaic{display:grid;grid-template-columns:2fr 1fr 1fr;gap:var(--s3);align-items:stretch}
 .mosaic > *{border-radius:var(--r-card)}
-.mosaic > *:first-child{grid-row:span 2;aspect-ratio:auto;height:100%}
+/* 첫 칸은 두 줄을 통째로 쓰므로 «비율을 풀어» 세로로 늘어나야 한다.
+   그런데 자리표(ph)가 style="aspect-ratio:1200/1200" 을 인라인으로 박아 넣는다 —
+   인라인은 어떤 선택자보다 세서 여기 aspect-ratio:auto 가 먹지 않았다.
+   그러면 칸은 정사각을 지키려고 «세로 길이에서 가로를 계산»해 2fr 칸을 13px 넘어서고,
+   옆 사진과의 틈(15px)을 통째로 먹는다. 큰 사진만 옆에 딱 붙어 보였다(2026-08-11).
+   인라인을 이기는 방법은 !important 뿐이다. */
+.mosaic > *:first-child{grid-row:span 2;aspect-ratio:auto!important;height:100%}
 .hero-a{padding:var(--s8) 0 0}
 .hero-copy{margin-top:var(--s6)}
 .hero-copy h1{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:var(--lh-display)}

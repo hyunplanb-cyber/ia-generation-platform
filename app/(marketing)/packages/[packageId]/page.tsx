@@ -482,7 +482,7 @@ export default async function PackageDetailPage({
 
           {/* 화면목록·검수 시나리오가 왜 있는지 — 이게 이 상품의 값어치다.
               "AI가 만들어 줍니다"만 말하면 만든 뒤에 확인할 방법이 없다는 걸 모르고 산다. */}
-          <div className="rounded-2xl border-l-4 border-primary bg-muted/40 px-5 py-5 sm:px-6">
+          <div className="rounded-2xl bg-muted/40 px-5 py-5 sm:px-6">
             <h3 className="text-base font-bold text-foreground">
               만든 뒤에 확인할 방법까지 함께 드립니다
             </h3>
