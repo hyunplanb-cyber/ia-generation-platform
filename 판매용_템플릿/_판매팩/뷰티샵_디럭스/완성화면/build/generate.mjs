@@ -1,5 +1,12 @@
 /* 07_AI빌드_스펙팩.json 의 2뎁스 화면(디럭스)을 정적 HTML 로 생성한다.
-   실행: node build/generate.mjs  (사이트 루트에서) */
+   실행: node build/generate.mjs  (사이트 루트에서)
+
+   ⚠ 이걸 돌리면 pages/*.html 을 «통째로 다시 씁니다».
+     사진 자리(.ph)에 넣어 둔 예시 사진(<img data-예시>)도 같이 지워지고
+     회색 자리표로 돌아갑니다. 손님에게는 그래도 됩니다 — 어차피 자기 사진을 넣으실
+     자리니까요. 우리가 다시 넣을 때는 사이트 만드는 쪽에서:
+         npx tsx 이미지-끼우기.mts 뷰티샵_디럭스
+     2026-08-11 에 이걸 몰라서 넣어 둔 사진 192장을 한 번 잃었습니다. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +21,7 @@ import * as REST from './pages-ac-pt-sa-au.mjs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const SPEC = process.env.SPEC_PATH || path.resolve(ROOT, '스펙팩/07_AI빌드_스펙팩.json');
-const PRESET = path.resolve(ROOT, '스펙팩/가이드_03_소프트파스텔.json');
+const PRESET = path.resolve(ROOT, '스펙팩/가이드_03_일렉트릭바이올렛.json');
 const OUT = path.resolve(ROOT, 'pages');
 
 const BUILDERS = { ...HOSE, ...RE, ...MYRV, ...STMG, ...REST };
@@ -79,7 +86,7 @@ const indexHtml = `<!doctype html>
 
 <main class="main"><div class="wrap">
   <div class="card mb8"><div class="card-bd">
-    <h2 class="t-card mb3">디자인 프리셋 — 가이드 03 소프트 파스텔 × 레이아웃 B 목록 중심형</h2>
+    <h2 class="t-card mb3">디자인 프리셋 — 가이드 03 일렉트릭 바이올렛 × 레이아웃 B 목록 중심형</h2>
     <div class="row wrap-row" style="gap:8px">
       ${swatch.map(([n, c]) => `<div style="width:116px"><div style="height:48px;border-radius:12px;border:1px solid var(--border);background:${c}"></div>
         <div class="t-sub mt1" style="font-size:12px">${n}<br>${c}</div></div>`).join('')}
@@ -113,9 +120,9 @@ const indexHtml = `<!doctype html>
 
   <div class="box mt8">
     <h3 class="t-card mb2">이 사이트에 대해</h3>
-    <p class="t-sub">스펙팩(07_AI빌드_스펙팩.json)의 화면 정의에 디자인 프리셋 두 벌(가이드 03 소프트 파스텔 · 레이아웃 B 목록 중심형)을 함께 넣어 만든 정적 프로토타입입니다.
+    <p class="t-sub">스펙팩(07_AI빌드_스펙팩.json)의 화면 정의에 디자인 프리셋 두 벌(가이드 03 일렉트릭 바이올렛 · 레이아웃 B 목록 중심형)을 함께 넣어 만든 정적 프로토타입입니다.
     화면마다 스펙팩에 적힌 화면 프롬프트를 그대로 따라 만들었습니다. 탭·상태·예외까지 펼친 3뎁스는 프리미엄 등급에 들어 있습니다.
-    사진 자리는 실제 사진 대신 <b>무엇이 들어갈 자리인지와 권장 크기</b>를 적은 옅은 회색 블록으로 두었고, 적어 둔 비율을 그대로 지킵니다.
+    사진 자리에는 <b>「예시 이미지」 표시를 박은 견본 사진</b>을 깔아 두었습니다. 그대로 쓰시라고 넣은 것이 아니라 <b>여기에 어떤 사진이 들어가는지</b> 보시라고 넣은 것이니, 가진 사진으로 바꿔 넣으세요. 자리마다 적어 둔 비율은 그대로 지킵니다.
     각 화면 우하단의 <b>화면 정보</b> 버튼을 누르면 pageId · 화면명 · 기능정의와 연결 화면을 볼 수 있습니다.</p>
   </div>
 </div></main>

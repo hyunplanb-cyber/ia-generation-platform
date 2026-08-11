@@ -68,6 +68,12 @@ const 초 = 2.6;
  *   스크립트를 두 벌로 나누지 않는다 — 찍는 규칙이 두 군데가 되면 반드시 갈라진다.
  *   같은 길을 걷되 «쓰는 자리»만 건너뛴다. */
 const 캡처만 = process.argv.includes("--캡처만");
+
+/* --전부 : 「메뉴마다 첫 화면」이 아니라 **모든 화면**을 찍는다.
+ *   평소에는 8~12장이면 된다(영상·홍보용). 그런데 «다 훑어보고 무엇이 깨졌나»를
+ *   보려면 전부 필요하다. 2026-08-11 에 뷰티샵 디럭스에 예시 사진을 넣고 나서
+ *   49화면을 다 봐야 했다. --캡처만 과 같이 쓴다. */
+const 전부찍기 = process.argv.includes("--전부");
 const 준인자 = process.argv.slice(2).find((a) => !a.startsWith("--"));
 if (!준인자) {
   console.error("쓰는 법: npx tsx 팩재료-캡처영상.mts <팩폴더·업종·팩키> [--캡처만]");
@@ -194,6 +200,29 @@ function 간판화면(pages: string, index: string, 스펙: string) {
   return 고른것;
 }
 
+/** 모든 화면. 차례는 스펙팩의 메뉴·화면 차례를 그대로 따른다 —
+ *  손님이 서비스를 쓰는 차례이고, 파일 이름순으로 하면 뒤엉킨다. */
+function 모든화면(pages: string, 스펙: string) {
+  const 있는것 = new Set(readdirSync(pages).filter((f) => f.endsWith(".html")));
+  const spec = JSON.parse(readFileSync(스펙, "utf8")) as {
+    menus: { screens: { pageId: string; pageName: string }[] }[];
+  };
+  const 고른것: { 파일: string; id: string; 이름: string }[] = [];
+  for (const 메뉴 of spec.menus) {
+    for (const s of 메뉴.screens) {
+      if (!있는것.has(`${s.pageId}.html`)) continue;
+      고른것.push({ 파일: `${s.pageId}.html`, id: s.pageId, 이름: s.pageName });
+    }
+  }
+  /* 스펙에 없는데 폴더에는 있는 화면도 빠뜨리지 않는다 — 그런 것이 있으면 그것도 봐야 한다. */
+  const 담은것 = new Set(고른것.map((x) => x.파일));
+  for (const f of [...있는것].sort()) {
+    if (!담은것.has(f)) 고른것.push({ 파일: f, id: f.replace(/\.html$/, ""), 이름: "(스펙에 없는 화면)" });
+  }
+  if (!고른것.length) throw new Error("찍을 화면이 없습니다");
+  return 고른것;
+}
+
 /** ffmpeg 로 잇는다. 화면은 비율 그대로 넣고 남는 자리는 그 팩의 배경색으로 채운다. */
 function 영상만들기(장들: string[], 나갈길: string, w: number, h: number, bg: string) {
   const 목록: string[] = [];
@@ -250,7 +279,10 @@ for (const 팩 of 대상) {
   const bg = 배경색(팩, 색);
   const [업종, 등급] = [팩.split("_")[0], 팩.split("_").slice(1).join("_")];
   const 꼬리 = `${업종} ${등급} · ${색.split("_")[1]}`;
-  const 장들 = 간판화면(join(완성화면, "pages"), index, join(팩방, 팩, "07_AI빌드_스펙팩.json"));
+  /* --전부면 스펙팩 차례대로 «모든» 화면을, 아니면 메뉴마다 첫 화면만. */
+  const 장들 = 전부찍기
+    ? 모든화면(join(완성화면, "pages"), join(팩방, 팩, "07_AI빌드_스펙팩.json"))
+    : 간판화면(join(완성화면, "pages"), index, join(팩방, 팩, "07_AI빌드_스펙팩.json"));
 
   console.log(`\n${팩}  —  ${색.replace("_", " ")}  ·  간판 ${장들.length}장`);
 
