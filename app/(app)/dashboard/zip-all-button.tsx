@@ -7,8 +7,36 @@ import type { VerificationReport } from "@/domain/verify/report";
 import { unlockBundleAction } from "./[projectId]/download-actions";
 import { RefundNotice } from "@/components/refund-notice";
 
+/* 손님이 적은 «한 줄 컨셉»을 파일 이름으로 만든다.
+ *
+ * ⚠ 2026-08-11 — 여기서 사고가 났다.
+ *   손님이 컨셉을 **여러 줄로** 적으면 그 줄바꿈이 파일 이름 한가운데로 들어갔다.
+ *     "메뉴구조_콘텐츠 랜덤 구매 사이트를 만들고 싶어 \r\n사람들이 a.xlsx"
+ *   윈도우는 이름에 줄바꿈이 든 파일을 «만들지 못한다». 그래서 압축을 풀면
+ *   11개 중 9개가 조용히 사라지고, 손님 눈에는 **「파일이 하나도 안 들어 있다」**로 보인다.
+ *   지우거나 막지 않고 조용히 빠지기 때문에 아무도 모른다.
+ *
+ * 그래서 «막는 글자 목록»만으로는 부족하다. 눈에 안 보이는 글자를 먼저 걷어낸다.
+ *
+ * 차례가 중요하다 — 먼저 씻고 나서 자른다.
+ *   전에는 `trim().slice(30).replace(...)` 라, 자른 뒤에 씻어서
+ *   30자 안에 든 줄바꿈은 그대로 남았다.
+ */
 function safeFileName(concept: string): string {
-  return (concept || "프로젝트").trim().slice(0, 30).replace(/[\\/:*?"<>|]/g, "_");
+  const 씻은것 = (concept || "")
+    // 줄바꿈·탭은 «한 칸»으로. 지우면 앞뒤 낱말이 붙어 버린다.
+    .replace(/[\r\n\t]+/g, " ")
+    // 그 밖의 눈에 안 보이는 글자는 아예 뺀다.
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\u0000-\u001F\u007F]/g, "")
+    // 윈도우·맥이 파일 이름에 못 쓰는 글자
+    .replace(/[\\/:*?"<>|]/g, "_")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 30)
+    // 자르고 나서 끝에 남은 점·공백을 뗀다 — 윈도우가 끝의 점·공백을 싫어한다.
+    .replace(/[.\s]+$/, "");
+  return 씻은것 || "프로젝트";
 }
 
 // 함께 받기 항목 한 줄 — 체크 시 테두리·배경 강조 + 체크 아이콘.
