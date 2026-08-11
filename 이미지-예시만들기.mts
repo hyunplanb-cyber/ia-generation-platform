@@ -66,12 +66,15 @@ function 워터마크SVG(w: number, h: number): Buffer {
     </pattern>
   </defs>
   <rect width="${w}" height="${h}" fill="url(#p)"/>
-  <!-- 아래 띠 — 여기만 또렷하게. 잘라 내도 위의 무늬가 남는다. -->
-  <rect x="0" y="${h - Math.round(글씨 * 2.4)}" width="${w}" height="${Math.round(글씨 * 2.4)}"
-        fill="#000000" fill-opacity="0.55"/>
-  <text x="${Math.round(글씨 * 0.7)}" y="${h - Math.round(글씨 * 0.75)}"
-        font-family="Malgun Gothic, Pretendard, sans-serif" font-size="${Math.round(글씨 * 0.86)}"
-        font-weight="700" fill="#ffffff">예시 이미지입니다 · 실제 사진으로 바꿔 넣으세요</text>
+  <!-- 아래 띠 — 여기만 또렷하게. 잘라 내도 위의 무늬가 남는다.
+       ⚠ 글을 «가운데»에 놓고 짧게 쓴다. 화면에 들어가면 object-fit:cover 가 좌우를 자르는데,
+         왼쪽에 붙여 두었더니 「입니다 · 실제 사진으로 바꿔 넣으세요」로 잘려 나왔다(2026-08-11).
+         가운데면 어느 쪽이 잘려도 말이 남는다. -->
+  <rect x="0" y="${h - Math.round(글씨 * 2.2)}" width="${w}" height="${Math.round(글씨 * 2.2)}"
+        fill="#000000" fill-opacity="0.5"/>
+  <text x="${Math.round(w / 2)}" y="${h - Math.round(글씨 * 0.68)}" text-anchor="middle"
+        font-family="Malgun Gothic, Pretendard, sans-serif" font-size="${Math.round(글씨 * 0.82)}"
+        font-weight="700" fill="#ffffff">예시 이미지 · 바꿔 넣으세요</text>
 </svg>`);
 }
 
