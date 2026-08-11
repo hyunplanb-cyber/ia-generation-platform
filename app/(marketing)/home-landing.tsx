@@ -521,6 +521,13 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           background: var(--paper);
           color: var(--ink);
           line-height: 1.6;
+          /* 한글은 낱말 «가운데»에서 끊지 않는다.
+             기본값(normal)이면 브라우저가 글자 사이 아무 데서나 줄을 바꾼다 —
+             폰에서 제목이 「만들기 전 / 엔 설계도」로 끊겨 있었다(2026-08-11).
+             overflow-wrap 은 안전망이다. 띄어쓰기 없는 긴 것(주소 같은 것)이
+             왔을 때 keep-all 만 있으면 화면 밖으로 삐져나간다. */
+          word-break: keep-all;
+          overflow-wrap: break-word;
         }
         .cc * {
           box-sizing: border-box;
@@ -528,10 +535,15 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         .cc :global(a) {
           text-decoration: none;
         }
+        /* 머리말·꼬리말과 «같은 자리»에 선다.
+           (marketing)/layout.tsx 가 max-w-[1440px] + px-6(24px) 이라 글이 서는 자리가
+           1392px 다. 여기만 1180/28 로 두었더니 1440 화면에서 로고는 왼쪽 24px 인데
+           본문은 122px 에서 시작했다 — 98px 어긋나 보였다(2026-08-11 사장님 지적).
+           ⚠ 두 값은 늘 같이 움직인다. layout.tsx 를 고치면 여기도 고친다. */
         .wrap {
-          max-width: 1180px;
+          max-width: 1440px;
           margin: 0 auto;
-          padding: 0 28px;
+          padding: 0 24px;
         }
         .mono {
           letter-spacing: 0.03em;
@@ -1131,9 +1143,16 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           margin-top: 22px;
           flex-wrap: wrap;
         }
+        /* ⚠ 줄바꿈을 «반드시» 켜 둔다. 점은 업종 수만큼 늘어난다 —
+           팩이 늘면서 폰(375px)에서 한 줄이 414px 이 됐고, 페이지 전체에
+           가로 스크롤이 생겼다(2026-08-11). 점 하나 34px × 개수 라
+           업종이 더 늘면 또 넘친다. 줄바꿈이 그 걱정을 없앤다. */
         .tpl-dots {
           display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
           gap: 8px;
+          max-width: 100%;
         }
         .tpl-dots button {
           width: 26px;
