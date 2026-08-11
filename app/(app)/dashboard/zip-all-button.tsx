@@ -56,6 +56,7 @@ export function ZipAllButton({
   credits,
   unlocked,
   creditsOpen,
+  downloadOpen,
   presetConfig,
   designConcept,
   canAddPreset,
@@ -70,6 +71,8 @@ export function ZipAllButton({
   credits?: number;
   unlocked?: boolean;
   creditsOpen?: boolean;
+  /** 다운로드 버튼만 여는 스위치. 주인은 크레딧이 닫혀 있어도 받아 봐야 한다(2026-08-11). */
+  downloadOpen?: boolean;
   presetConfig?: string | null;
   designConcept?: string | null;
   canAddPreset?: boolean;
@@ -88,8 +91,11 @@ export function ZipAllButton({
   const [addPreset, setAddPreset] = useState(true);
   const [addVerify, setAddVerify] = useState(true);
 
-  // 베타(결제 전)에는 다운로드를 아직 열지 않고 "준비 중"으로 둔다.
-  const comingSoon = !creditsOpen;
+  /* 베타(결제 전)에는 다운로드를 아직 열지 않고 "준비 중"으로 둔다.
+     ⚠ 다만 «주인»에게는 연다 — 팔기 전에 손님이 받는 그 파일을 직접 열어 봐야 한다.
+     크레딧 셈(creditsOpen)과는 **일부러 갈라 둔다.** 주인에게 creditsOpen 을 켜면
+     다운로드가 크레딧을 먹어서(application/download.ts) 오히려 못 받게 된다. */
+  const comingSoon = !(downloadOpen ?? creditsOpen);
   const gated = !!creditsOpen && !unlocked && (credits ?? 0) > 0;
   const offerPreset = !!creditsOpen && !!canAddPreset && !!presetConfig;
   const offerVerify = !!creditsOpen && !!canAddVerify && !!verifyReport && !!verifyRunId;

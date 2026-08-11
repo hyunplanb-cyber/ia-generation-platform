@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/session";
-import { billingOpenFor } from "@/lib/flags";
+import { billingOpenFor, isOwner } from "@/lib/flags";
 
 /**
  * 지금 이 사람에게 크레딧 경제가 열려 있는가.
@@ -19,5 +19,25 @@ import { billingOpenFor } from "@/lib/flags";
  */
 export async function creditsOpenForMe(): Promise<boolean> {
   const session = await getSession();
+  return billingOpenFor(session?.user.email);
+}
+
+/**
+ * 지금 이 사람에게 «다운로드 버튼»을 열어도 되나. (2026-08-11 사장님 요청)
+ *
+ * 크레딧이 열렸는지와 **일부러 갈라 둔다.**
+ *   주인에게 `creditsOpenForMe` 를 켜 버리면 다운로드가 «크레딧을 먹는다»
+ *   (`application/download.ts` — 「결제 꺼짐 — 전부 무료」). 크레딧이 모자라면
+ *   오히려 못 받는다. 우리가 원한 것은 그 반대다.
+ *
+ *   그래서 **버튼만 열고 셈은 그대로 둔다** — 주인은 공짜로 받는다.
+ *   손님에게는 아무것도 바뀌지 않는다(베타 동안 계속 「준비 중」).
+ *
+ * 왜 주인이 받아야 하나 — **팔기 전에 「손님이 받는 그 파일」을 열어 봐야 한다.**
+ * 2026-08-10 에 뷰티샵 디럭스가 완성화면 없이 엿새를 팔렸다.
+ */
+export async function downloadOpenForMe(): Promise<boolean> {
+  const session = await getSession();
+  if (isOwner(session?.user.email)) return true;
   return billingOpenFor(session?.user.email);
 }

@@ -20,7 +20,7 @@ import { getProjectQuota } from "@/application/can-create-project";
 import { VerifyReportView } from "@/components/verify/verify-report-view";
 import { VerifyScenarioDownloadButton } from "@/components/verify/verify-scenario-download";
 import { ZipAllButton } from "./zip-all-button";
-import { creditsOpenForMe } from "@/application/billing-gate";
+import { creditsOpenForMe, downloadOpenForMe } from "@/application/billing-gate";
 import { isDownloadUnlocked, isVerifyDownloadUnlocked } from "@/application/download";
 import { downloadCost, CREDIT_COST } from "@/lib/credits";
 import { ProjectDeliverablePreview } from "./project-deliverable-preview";
@@ -77,6 +77,8 @@ export default async function DashboardPage({
   const quota = await getProjectQuota(projects.length);
   // 크레딧 경제가 이 사람에게 열려 있나. map 콜백 안에서는 await 를 못 써서 한 번만 구한다.
   const 크레딧열림 = await creditsOpenForMe();
+  /* 다운로드 버튼은 «주인»에게만 따로 연다 — 크레딧 셈은 그대로 둔다(2026-08-11). */
+  const 다운로드열림 = await downloadOpenForMe();
   const hitLimit = limit === "reached" || !quota.allowed;
 
   let body: React.ReactNode;
@@ -102,6 +104,7 @@ export default async function DashboardPage({
     body = (
       <PlanningTab
         크레딧열림={크레딧열림}
+        다운로드열림={다운로드열림}
         completed={completed}
         results={results}
         unlocks={unlocks}
@@ -140,6 +143,7 @@ export default async function DashboardPage({
 // ── AI팩 탭 ──────────────────────────────
 function PlanningTab({
   크레딧열림,
+  다운로드열림,
   completed,
   results,
   unlocks,
@@ -150,6 +154,8 @@ function PlanningTab({
 }: {
   /** 크레딧 경제가 이 사람에게 열려 있나 — 부모(서버 컴포넌트)가 정해서 넘긴다 */
   크레딧열림: boolean;
+  /** 다운로드 버튼만 여는 스위치 — 주인은 크레딧이 닫혀 있어도 받아 본다 */
+  다운로드열림: boolean;
   completed: Awaited<ReturnType<typeof listMyProjects>>;
   results: Record<string, ProjectResult>;
   unlocks: Record<string, boolean>;
@@ -263,6 +269,7 @@ function PlanningTab({
                         credits={cost}
                         unlocked={unlocks[p.id]}
                         creditsOpen={크레딧열림}
+                        downloadOpen={다운로드열림}
                         {...zipAddonProps}
                       />
                     </span>
@@ -277,6 +284,7 @@ function PlanningTab({
                     credits={cost}
                     unlocked={unlocks[p.id]}
                     creditsOpen={크레딧열림}
+                    downloadOpen={다운로드열림}
                     {...zipAddonProps}
                   />
                 </div>
