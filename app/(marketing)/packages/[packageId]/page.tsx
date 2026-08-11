@@ -36,6 +36,8 @@ import {
   salePresetConfig,
 } from "@/lib/design-presets";
 import { PACKAGE_PRICES_PUBLIC } from "@/lib/flags";
+// 팩마다 실제로 찍어 둔 화면 그림. 팩화면-웹용.mts 가 만든다 — 손으로 고치지 않는다.
+import packScreens from "@/lib/pack-screens.json";
 
 // 판매 상세이자 검색 유입 페이지.
 // 앞쪽은 판매(플랜 비교·추천 대상·포함 산출물), 뒤쪽은 실제 산출물 공개로 신뢰를 준다.
@@ -148,6 +150,14 @@ export default async function PackageDetailPage({
       .filter(Boolean);
   const sampleMenus = isPremium ? pkg.deep.menus : menus;
   const allDeep = sampleMenus.flatMap((m) => m.screens);
+
+  /* 찍어 둔 화면 그림. 화면ID·이름은 팩화면-웹용.mts 가 «스펙팩»에서 읽어 적어 둔 것이다.
+     여기서 화면 목록(menus)과 맞춰 보려다 실패했다 — 그쪽 ref 는 `ho1` 같은 내부 꼴이고
+     완성화면 파일은 `HO-01` 이라 서로 안 맞는다(2026-08-11). 둘을 잇는 함수는 없다. */
+  const shots =
+    (packScreens as Record<string, { file: string; id: string; name: string }[]>)[
+      `${pkg.id}-${selected.id}`
+    ] ?? [];
   const sampleScreens = [...new Set([...pkg.promptSamples, allDeep[0]?.ref ?? ""])]
     .map((ref) => allDeep.find((x) => x.ref === ref))
     .filter((x): x is NonNullable<typeof x> => Boolean(x))
@@ -393,6 +403,54 @@ export default async function PackageDetailPage({
                 </span>
               </a>
             )}
+          </section>
+        )}
+
+        {/* 만들어진 화면 그대로. 24칸을 진열해 두고도 구매가 0이던 까닭 하나는,
+            5만~16만 원을 내기 전까지 «무엇을 받는지 못 본다»는 것이었다(2026-08-11).
+            글로 설명하는 절은 아래에 이미 여럿 있다. 여기서는 그냥 보여 준다.
+            ⚠ 완성 화면이 없는 등급(스탠다드·플러스)에서는 이 절이 통째로 안 나온다. */}
+        {shots.length > 0 && (
+          <section className="flex flex-col gap-4">
+            <SectionTitle>{selected.name}는 이런 화면이 만들어집니다</SectionTitle>
+            <p className="leading-relaxed text-muted-foreground">
+              고쳐서 올린 그림이 아니라 <b className="text-foreground">AI팩을 넣고 그대로 뽑은 화면</b>
+              입니다. 전체 {selected.siteScreens}개 중 메뉴마다 첫 화면을 골랐어요.{" "}
+              <span className="whitespace-nowrap">눌러서 크게 보실 수 있습니다.</span>
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {shots.map((s) => (
+                <figure key={s.file} className="flex flex-col gap-2">
+                  {/* 눌러서 원본을 연다. 폰에서는 카드가 작아 화면 속 글자가 안 읽힌다 —
+                      「무엇을 받는지 보여 주는」 절인데 안 읽히면 절반만 하는 셈이다. */}
+                  <a
+                    href={s.file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block overflow-hidden rounded-xl border border-border bg-muted transition-colors hover:border-primary"
+                  >
+                    {/* 원본이 1440×1000 이라 비율을 못 박아 둔다 — 안 그러면 불러오는 동안 글이 밀린다. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={s.file}
+                      alt={`${pkg.title} ${selected.name} — ${s.name}`}
+                      width={1440}
+                      height={1000}
+                      loading="lazy"
+                      className="block h-auto w-full"
+                    />
+                  </a>
+                  <figcaption className="flex items-baseline gap-1.5 text-xs">
+                    <span className="font-bold text-muted-foreground">{s.id}</span>
+                    <span className="text-muted-foreground/80">{s.name}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Claude Code(Opus 5 이상)로 만든 결과물입니다. 쓰시는 AI 도구에 따라 다르게 나올 수
+              있어요. 색·글꼴은 같이 드리는 규칙 3종 중에 고르실 수 있습니다.
+            </p>
           </section>
         )}
 

@@ -54,11 +54,23 @@ const W = 1440, H = 1150, 가로H = 1000;
 /** 한 장에 몇 초 머무나. 폰에서 스치듯 보는 화면이라 짧으면 못 읽는다. */
 const 초 = 2.6;
 
-const 준인자 = process.argv[2];
+/* --캡처만 : 그림만 찍고, 완성화면과 영상은 «건드리지 않는다».
+ *
+ * 왜 필요한가
+ *   이 스크립트는 완성화면 안에 00_자동넘김.html 을 써 넣는다. 새로 만드는 업종이면
+ *   괜찮지만, **이미 팔고 있는 팩**에 대고 돌리면 팩 내용이 바뀌어 zip 을 다시 구워야 한다.
+ *   2026-08-11 에 홈페이지 상세에 넣을 그림이 필요해서 열 팩을 찍어야 했는데,
+ *   그것 때문에 팔던 열 팩을 건드릴 이유는 없었다.
+ *
+ *   스크립트를 두 벌로 나누지 않는다 — 찍는 규칙이 두 군데가 되면 반드시 갈라진다.
+ *   같은 길을 걷되 «쓰는 자리»만 건너뛴다. */
+const 캡처만 = process.argv.includes("--캡처만");
+const 준인자 = process.argv.slice(2).find((a) => !a.startsWith("--"));
 if (!준인자) {
-  console.error("쓰는 법: npx tsx 팩재료-캡처영상.mts <팩폴더·업종·팩키>");
+  console.error("쓰는 법: npx tsx 팩재료-캡처영상.mts <팩폴더·업종·팩키> [--캡처만]");
   console.error("  예)   npx tsx 팩재료-캡처영상.mts 장비렌탈_디럭스");
   console.error("  예)   npx tsx 팩재료-캡처영상.mts rental");
+  console.error("  예)   npx tsx 팩재료-캡처영상.mts LMS --캡처만   (완성화면·영상은 안 건드림)");
   process.exit(1);
 }
 /* 「rental」처럼 팩 키로 부를 수도 있게 한다 — 굽는 차례(build-all)가 쓰는 이름이 그것이다.
@@ -90,11 +102,32 @@ const WORK = join(tmpdir(), "cc-pack-shot").replace(/\\/g, "/");   // 한글 없
 /** 파일 이름에 쓸 수 없는 글자를 뺀다. */
 const 안전 = (s: string) => s.replace(/[\\/:*?"<>|]/g, "").replace(/\s+/g, "").slice(0, 20);
 
-/** 이 팩이 실제로 쓴 가이드 이름 — 화면이 스스로 적어 둔 것을 읽는다. */
-function 쓴가이드(index: string): { 색: string; 레이아웃: string } {
-  const m = /가이드\s*(\d{2})\s+([가-힣 ]+?)\s*[×·]\s*레이아웃\s*([A-Z])\s+([가-힣 ]+?)\s*</.exec(index);
-  if (!m) throw new Error("index.html 에서 「가이드 NN … × 레이아웃 X …」를 못 찾았습니다");
-  return { 색: `${m[1]}_${m[2].trim()}`, 레이아웃: `${m[3]}_${m[4].trim()}` };
+/** 이 팩이 실제로 쓴 색 가이드 — **화면이 실제로 칠한 색**으로 찾는다.
+ *
+ * 전에는 index.html 의 «글»에서 이름을 읽었다. 그런데 그 글은 팩마다 문장이 다르고,
+ * 틀리게 적혀 있기도 하다. 2026-08-11 에 여행 팩에서 둘 다 걸렸다 —
+ * 디럭스는 「가이드 프리셋 03 — 소프트 파스텔」이라 꼴이 달랐고(게다가 소프트 파스텔은
+ * 폐기한 색이다. 실제로는 일렉트릭바이올렛이었다), 프리미엄은 아예 안 적혀 있었다.
+ *
+ * **글은 틀릴 수 있어도 칠한 색은 못 속인다.** base.css 의 --primary 를 읽어
+ * 그 팩의 가이드 JSON 들과 맞춰 본다. 앱스토어 재료 스크립트(팩재료-앱스토어.mts)가
+ * 같은 이유로 이미 이 방법을 쓴다. */
+function 쓴가이드(팩: string): { 색: string } {
+  const css = readFileSync(join(팩방, 팩, "완성화면", "assets", "css", "base.css"), "utf8");
+  const m = /--primary:\s*(#[0-9a-fA-F]{3,8})/.exec(css);
+  if (!m) throw new Error(`${팩}/완성화면/assets/css/base.css 에서 --primary 를 못 찾았습니다`);
+  const 쓰는색 = m[1].toUpperCase();
+
+  const 방 = join(팩방, 팩, "디자인프리셋");
+  const 이름 = readdirSync(방).filter((f) => f.startsWith("가이드") && f.endsWith(".json")).find((f) => {
+    const g = JSON.parse(readFileSync(join(방, f), "utf8"));
+    const k = Object.keys(g.colors).find((x) => x.startsWith("primary ("));
+    return k && String(g.colors[k]).toUpperCase() === 쓰는색;
+  });
+  if (!이름) throw new Error(`${팩} 이 칠한 색(${쓰는색})에 맞는 가이드 JSON 이 없습니다`);
+
+  // 「가이드_03_일렉트릭바이올렛.json」 → 「03_일렉트릭바이올렛」
+  return { 색: 이름.replace(/^가이드_/, "").replace(/\.json$/, "") };
 }
 
 /** 여백 색 — 그 팩의 가이드 JSON 에 적힌 배경색을 그대로 쓴다. 지어내지 않는다. */
@@ -194,7 +227,7 @@ let 만든장 = 0, 만든영상 = 0;
 for (const 팩 of 대상) {
   const 완성화면 = join(팩방, 팩, "완성화면");
   const index = readFileSync(join(완성화면, "index.html"), "utf8");
-  const { 색 } = 쓴가이드(index);
+  const { 색 } = 쓴가이드(팩);
   const bg = 배경색(팩, 색);
   const [업종, 등급] = [팩.split("_")[0], 팩.split("_").slice(1).join("_")];
   const 꼬리 = `${업종} ${등급} · ${색.split("_")[1]}`;
@@ -202,7 +235,7 @@ for (const 팩 of 대상) {
 
   console.log(`\n${팩}  —  ${색.replace("_", " ")}  ·  간판 ${장들.length}장`);
 
-  자동넘김쓰기(완성화면, 장들, bg, "#1C2B22", 꼬리);
+  if (!캡처만) 자동넘김쓰기(완성화면, 장들, bg, "#1C2B22", 꼬리);
 
   if (existsSync(WORK)) rmSync(WORK, { recursive: true, force: true });
   mkdirSync(WORK, { recursive: true });
@@ -213,7 +246,14 @@ for (const 팩 of 대상) {
   /* 「화면 정보」 패널은 손님 화면이 아니라 우리 확인용이다. 홍보물에 들어가면 안 된다.
      원본을 고치지 않고 «옮겨 놓은 사본»의 CSS 에만 한 줄 덧붙인다. */
   const css = `${찍을곳}/assets/css/base.css`;
-  writeFileSync(css, `${readFileSync(css, "utf8")}\n/* 캡처용 — 원본에는 없다 */\n.dev{display:none!important}\n`, "utf8");
+  writeFileSync(css, `${readFileSync(css, "utf8")}
+/* 캡처용 — 원본에는 없다 */
+.dev{display:none!important}
+/* 「화면 목록」으로 되돌아가는 링크는 «둘러보기 장치»다. 손님 사이트의 일부가 아니다.
+   홍보 그림에 남아 있으면 「이건 견본이구나」로 읽히고, 머리줄·옆줄에 군더더기가 붙는다.
+   어느 팩이든 이 링크는 ../index.html 하나로 통일돼 있어서 한 줄로 잡힌다(2026-08-11). */
+a[href="../index.html"]{display:none!important}
+`, "utf8");
 
   const 낼방 = join(캡처방, `${업종}_${등급}_${안전(색.split("_")[1])}`);
   const 가로방 = join(낼방, "가로");
@@ -241,6 +281,8 @@ for (const 팩 of 대상) {
     process.stdout.write(`  찍는 중 ${i + 1}/${장들.length}  ${장.이름}          \r`);
   });
   console.log(`  캡처 ${장들.length}장 → ${낼방}          `);
+
+  if (캡처만) continue;   // 그림만 필요했다. 완성화면도 릴스 폴더도 그대로 둔다.
 
   /* 릴스 폴더는 「n. 업종」 꼴로 이미 쓰고 있다. 있으면 그 자리에, 없으면 다음 번호로 만든다. */
   const 있는것 = readdirSync(영상방, { withFileTypes: true })
