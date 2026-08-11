@@ -628,7 +628,11 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 /* 상세 상단 전체 폭 갤러리 (레이아웃 A) */
 .detail-gal{display:grid;grid-template-columns:2fr 1fr 1fr;gap:var(--s2);position:relative;align-items:stretch}
 .detail-gal > *{border-radius:0}
-.detail-gal > *:first-child{grid-row:span 2;aspect-ratio:auto;height:100%}
+/* aspect-ratio:auto 에 !important 가 붙는 까닭 — 자리표(.ph)는 만들 때
+   style="aspect-ratio:1200/1200" 을 «인라인으로» 달고 나온다. 인라인이 세서
+   여기서 auto 라고만 적으면 무시되고, 큰 칸이 제 자리를 넘어가 옆 틈(8px)을
+   먹어 버린다. .mosaic 도 같은 이유로 !important 를 달고 있다(351~359줄). */
+.detail-gal > *:first-child{grid-row:span 2;aspect-ratio:auto!important;height:100%}
 .detail-gal .more-btn{position:absolute;right:var(--s4);bottom:var(--s4);z-index:2}
 
 .upload{border:2px dashed var(--border);border-radius:var(--r-card);background:#FFF9F7;padding:var(--s8);text-align:center;color:var(--muted)}

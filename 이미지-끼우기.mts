@@ -62,6 +62,7 @@ if (뺄까) {
   const 글 = readFileSync(css, "utf8").replace(/\n\/\* ── 예시 사진[\s\S]*?\/\* ── 예시 사진 끝 ── \*\/\n/, "\n");
   writeFileSync(css, 글, "utf8");
   rmSync(넣을곳, { recursive: true, force: true });
+  rmSync(join(완성화면, "사진바꾸기.csv"), { force: true });
   console.log(`\n${팩} — 예시 사진을 뺐습니다.`);
   console.log(`  ${고친장}장에서 ${뺀수}개를 뺐고, assets/예시/ 도 지웠습니다.`);
   console.log("  ⚠ 자리표(div)는 «건드리지 않았습니다». 원래 회색 네모로 돌아갑니다.");
@@ -156,6 +157,20 @@ function 뽑기(역할: string): string | null {
 let 넣은수 = 0, 고친장 = 0;
 const 역할셈 = new Map<string, number>();
 
+/* 손님이 사진을 바꿀 때 볼 표. 「어느 화면 어느 자리에 어떤 파일이 들어갔나」를 적는다.
+   파일 이름을 그대로 두고 내용만 바꿔 덮어쓰면 화면이 따라 바뀐다 —
+   HTML 을 열어 고칠 필요가 없다. 그래서 «파일 이름»이 이 표의 핵심이다. */
+const 바꾸기표: string[][] = [];
+const 화면이름 = (() => {
+  const 길 = join(완성화면, "스펙팩", "07_AI빌드_스펙팩.json");
+  const 표 = new Map<string, string>();
+  if (existsSync(길)) {
+    const spec = JSON.parse(readFileSync(길, "utf8")) as { screens?: { pageId: string; pageName: string }[] };
+    for (const s of spec.screens ?? []) 표.set(s.pageId, s.pageName);
+  }
+  return 표;
+})();
+
 for (const f of readdirSync(pages).filter((x) => x.endsWith(".html"))) {
   const 길 = join(pages, f);
   const 전 = readFileSync(길, "utf8");
@@ -181,6 +196,7 @@ for (const f of readdirSync(pages).filter((x) => x.endsWith(".html"))) {
       if (!사진) return 통째;
       역할셈.set(역할, (역할셈.get(역할) ?? 0) + 1);
       넣은수 += 1;
+
       return `${여는}<img data-예시 src="../assets/예시/${사진}" alt="">${속}${닫는}`;
     },
   );
@@ -206,8 +222,38 @@ if (!있던글.includes("── 예시 사진")) {
 `, "utf8");
 }
 
+/* ── 손님용 「사진 바꾸기」 표 ────────────────────────────────
+ * ⚠ 넣는 김에 같이 적지 «않는다». 이미 사진이 들어 있는 화면은 위에서 건너뛰기
+ *   때문에, 그때 적으면 두 번째 실행부터 표가 텅 빈다(2026-08-11 에 그랬다).
+ *   끝난 뒤에 pages 를 «다시 훑어» 적는다 — 그러면 몇 번을 돌려도 표는 온전하다.
+ * ⚠ BOM 을 붙인다 — 없으면 엑셀이 한글을 깨뜨린다. */
+for (const f of readdirSync(pages).filter((x) => x.endsWith(".html"))) {
+  const 화면ID = f.replace(/\.html$/, "");
+  const 글월 = readFileSync(join(pages, f), "utf8");
+  for (const [, 여는, 속] of 글월.matchAll(/(<div class="ph[^"]*"[^>]*>)([\s\S]*?)<\/div>/g)) {
+    const 사진 = /<img data-예시 src="\.\.\/assets\/예시\/([^"]+)"/.exec(속)?.[1];
+    if (!사진) continue;
+    const 제목 = /title="([^"]*)"/.exec(여는)?.[1] ?? "";
+    const 라벨 = (/<span class="lb">([\s\S]*?)<\/span>/.exec(속)?.[1] ?? "").replace(/<[^>]+>/g, "");
+    const 글 = `${제목} ${라벨}`;
+    const 비율 = /aspect-ratio:\s*(\d+)\s*\/\s*(\d+)/.exec(여는);
+    const 크기 = 비율 ? `${비율[1]}×${비율[2]}` : (/(\d{3,4}×\d{3,4})/.exec(글)?.[1] ?? "");
+    const 종류 = 역할규칙.find(([re]) => re.test(글))?.[1] ?? 기본역할;
+    const 자리 = (/이미지 영역 \(([^·)]+)/.exec(글)?.[1] ?? (제목 || 종류)).trim().replace(/\s+/g, " ");
+    바꾸기표.push([화면ID, 화면이름.get(화면ID) ?? "", 자리, 종류, 크기, 사진]);
+  }
+}
+
+const 칸 = (s: string) => `"${String(s).replace(/"/g, '""')}"`;
+const 표길 = join(완성화면, "사진바꾸기.csv");
+writeFileSync(표길, `﻿${[
+  ["화면ID", "화면명", "어떤 자리", "종류", "권장 크기", "지금 들어간 사진"].map(칸).join(","),
+  ...바꾸기표.map((줄) => 줄.map(칸).join(",")),
+].join("\r\n")}\r\n`, "utf8");
+
 console.log(`\n${팩} — 예시 사진을 끼웠습니다.`);
 console.log(`  화면 ${고친장}장 · 자리 ${넣은수}곳`);
 for (const [r, n] of [...역할셈].sort((a, b) => b[1] - a[1])) console.log(`    ${r.padEnd(4)} ${n}곳`);
 console.log(`  사진 ${쓸것.length}장을 ${넣을곳} 로 옮겼습니다.`);
+console.log(`  손님용 표 ${표길} — ${바꾸기표.length}줄`);
 console.log("\n  마음에 안 들면:  npx tsx 이미지-끼우기.mts " + 팩 + " --빼기");
