@@ -56,6 +56,37 @@ export function billingOpenFor(email: string | null | undefined): boolean {
   return BILLING_ALLOWLIST.includes(email.toLowerCase());
 }
 
+/* ── 사이트 주인 ──────────────────────────────────────────────
+ *
+ * 왜 (2026-08-11, 사장님 요청)
+ *   **팔기 전에 「손님이 받는 그 파일」을 직접 열어 봐야 한다.**
+ *   2026-08-10 에 뷰티샵 디럭스가 `완성화면/index.html` 없이 엿새를 팔렸다.
+ *   주인이 자기 상품을 사야만 받아 볼 수 있으면 그런 것을 못 잡는다.
+ *
+ * 왜 소스에 적어 두나
+ *   이 메일은 이미 **모든 커밋의 작성자**로 저장소에 들어 있다. 여기 적는다고
+ *   새로 드러나는 것이 없다. 대신 환경변수로만 두면 배포 서버에 안 넣었을 때
+ *   «조용히 안 되고» 그걸 아무도 모른다 — 오늘 zip 이 그렇게 안 구워지고 있었다.
+ *   사람을 더 넣고 싶으면 `OWNER_EMAILS` 에 쉼표로 적으면 더해진다.
+ *
+ * 안전한가 — 일반 가입은 **소셜(구글·네이버·카카오)뿐**이다(`lib/auth.ts`).
+ *   남이 이 메일로 계정을 만들려면 그 구글 계정을 가지고 있어야 한다.
+ *   메일·비밀번호 가입은 심사 모드에서도 `disableSignUp` 으로 막혀 있다.
+ *
+ * ⚠ 이것은 **다운로드만** 연다. 크레딧이 생기거나 결제가 열리는 것이 아니다.
+ */
+const OWNER_EMAILS = [
+  "hyun.planb@gmail.com",
+  ...(process.env.OWNER_EMAILS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
+];
+
+/** 사이트 주인인가 — 판매팩을 사지 않고도 내려받을 수 있다.
+ *  ⚠ `trim()` 을 붙인다. 앞뒤 공백 하나에 조용히 안 걸리면 까닭을 찾기 어렵다. */
+export function isOwner(email: string | null | undefined): boolean {
+  if (!email) return false;
+  return OWNER_EMAILS.includes(email.trim().toLowerCase());
+}
+
 /**
  * 카드사 심사 모드 — 심사 기간에만 켠다(`REVIEW_MODE=true`).
  *

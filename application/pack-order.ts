@@ -6,6 +6,7 @@ import { requireSession } from "@/application/require-session";
 import { getSession } from "@/lib/session";
 import { confirmTossPayment } from "@/adapters/payment/toss";
 import { PACKAGES, PLAN_NAMES, planOf, packCredits, type PlanId } from "@/lib/packages";
+import { isOwner } from "@/lib/flags";
 import { spendCredits } from "@/application/credit";
 import { billingOpenFor, planBuyableNow } from "@/lib/flags";
 
@@ -177,6 +178,15 @@ const COVERS: Record<string, PlanId[]> = {
 export async function ownedPlans(packageId: string): Promise<Set<string>> {
   const session = await getSession();
   if (!session) return new Set();
+
+  /* 사이트 주인은 사지 않고도 내려받는다 — **팔기 전에 「손님이 받는 그 파일」을
+     직접 열어 봐야** 하기 때문이다. 2026-08-10 에 뷰티샵 디럭스가
+     `완성화면/index.html` 없이 엿새를 팔렸다. 주인이 자기 상품을 사야만 받을 수
+     있으면 그런 것을 못 잡는다(2026-08-11 사장님 요청).
+
+     ⚠ 여는 것은 **다운로드뿐**이다. 크레딧이 생기거나 결제가 열리는 것이 아니다.
+     누가 주인인지는 `lib/flags.ts` 의 OWNER_EMAILS 한 곳에만 적혀 있다. */
+  if (isOwner(session.user.email)) return new Set(Object.keys(COVERS));
 
   const rows = await db
     .select({ planId: packOrder.planId })
