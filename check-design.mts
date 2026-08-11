@@ -103,7 +103,10 @@ const 짧게 = (p: string) => p.replace(SITE, "").replace(/^[\\/]/, "");
       const g = 속.match(/(?<!-)\b(gap|column-gap|row-gap)\s*:\s*([^;{}"]{1,32})/);
       /* var() 가 «어디에» 있든 눈금에서 나온 값이다. 전에는 맨 앞만 봐서
          calc(var(--hair) * 2) 같은 «눈금에서 계산한 값»을 눈대중으로 봤다(2026-08-10). */
-      if (g && /\d/.test(g[2]) && !g[2].includes("var(")) {
+      /* gap:0 은 눈금에서 나올 값이 아니다 — 「띄우지 않는다」는 뜻이라 토큰이 없다.
+         0 을 var(--s0) 로 적으라고 하면 없는 토큰을 만들게 된다(2026-08-11). */
+      const 영이다 = /^0(px|rem|em)?(\s+0(px|rem|em)?)*$/.test(g?.[2].trim() ?? "");
+      if (g && /\d/.test(g[2]) && !g[2].includes("var(") && !영이다) {
         const 줄번호 = 글.slice(0, m.index).split("\n").length;
         걸린곳.push(`${짧게(f)}:${줄번호}  ${m[1].trim().slice(0, 30)}`);
         값모음.add(g[2].trim());

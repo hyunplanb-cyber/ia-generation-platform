@@ -504,7 +504,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 /* 캘린더 */
 .cal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);box-shadow:var(--sh-card);padding:var(--card-pad)}
 .cal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s4)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--s1);text-align:center}
 .cal-grid .dow{font-size:12px;color:var(--muted);font-weight:700;padding-bottom:8px}
 .cal-d{min-height:56px;padding:8px 2px;border-radius:var(--r-btn);border:1px solid transparent;background:none;font-size:15px;font-weight:700;color:var(--text);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:inherit}
 .cal-d .p{font-size:10px;color:var(--muted);font-weight:600}
@@ -530,8 +530,8 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 /* 별점 입력 */
 .rate-in{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) 0}
 .rate-in .lb{width:96px;font-size:15px;font-weight:700;flex:none}
-.rate-in .st{display:flex;gap:4px}
-.rate-in .st b{font-size:30px;line-height:1;color:#908784;cursor:pointer;font-weight:400}
+.rate-in .st{display:flex;gap:var(--s1)}
+.rate-in .st b{font-size:30px;line-height:1;color:var(--muted);cursor:pointer;font-weight:400}
 .rate-in .st b.on{color:var(--star)}
 .rate-in .v{font-size:14px;color:var(--muted)}
 
@@ -697,7 +697,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .idx-menu{margin-bottom:var(--s8)}
 .idx-menu h3{font-size:19px;font-weight:800;display:flex;align-items:center;gap:9px;margin-bottom:var(--s3)}
 .idx-menu h3 .code{background:var(--pri-10);color:var(--pri-text);font-size:12px;font-weight:800;border-radius:999px;padding:3px 10px}
-.idx-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.idx-list{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2)}
 .idx-list a{display:flex;gap:9px;align-items:baseline;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-btn);padding:11px 14px;font-size:14px}
 .idx-list a:hover{border-color:var(--primary);background:var(--pri-06)}
 .idx-list a .pid{font-size:11px;font-weight:800;color:var(--pri-text);flex:none;font-variant-numeric:tabular-nums}
@@ -825,3 +825,15 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .list{display:flex;flex-direction:column;gap:var(--stack-gap)}
 .list-row + .list-row{margin-top:var(--stack-gap)}
 .card + .card:not(.mt-sec):not([class*="mt-"]){margin-top:var(--stack-gap)}
+
+/* ── 예시 사진 ──────────────────────────────────────────────
+   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
+   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
+.ph > img[data-예시]{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
+   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
+.ph > img[data-예시] ~ .lb{display:none}
+/* ── 예시 사진 끝 ── */

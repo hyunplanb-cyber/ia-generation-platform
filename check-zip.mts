@@ -103,6 +103,46 @@ async function 팩보기(zip파일: string) {
     /* 옛 파일이 섞여 있으면 손님이 어느 것을 열지 헷갈린다. */
     const 옛것 = 길들.filter((p) => /index_old|_old\.|\.bak$/.test(p)).map((p) => p.slice(뿌리.length + 1));
     if (옛것.length) 걸림(이름, `옛 파일이 섞여 있습니다 — ${옛것.join(", ")}`);
+
+    /* ── 예시 사진 (2026-08-11) ────────────────────────────────
+       사진은 «파일»과 «태그» 둘이 맞아야 보인다. 8월 10일 커밋에는 태그 192개가
+       들어갔는데 webp 는 0장이었다 — 손님은 회색 네모만 봤을 것이다. 그때는
+       아무도 안 재고 있었다. 여기서 잰다. */
+    const 사진파일 = new Set(길들.filter((p) => p.includes("/완성화면/assets/예시/"))
+      .map((p) => p.split("/").pop()!));
+    const 링크 = new Set<string>();
+    let 태그수 = 0;
+    const 지도에낀것: string[] = [];
+    for (const p of 길들.filter((x) => x.includes("/완성화면/pages/") && x.endsWith(".html"))) {
+      const 글 = Buffer.from(await z.files[p].async("uint8array")).toString("utf8");
+      for (const m of 글.matchAll(/data-예시 src="\.\.\/assets\/예시\/([^"]+)"/g)) { 태그수 += 1; 링크.add(m[1]); }
+      /* 지도 자리에 사진이 들어가면 그냥 틀린 화면이다. 넣는 쪽이 건너뛰기로 했지만,
+         「건너뛰기로 했다」와 「건너뛰었다」는 다른 말이다. 여기서 잰다. */
+      for (const [, 여는] of 글.matchAll(/<div class="([^"]*\bph-map\b[^"]*)"[^>]*>\s*<img data-예시/g)) {
+        void 여는;
+        지도에낀것.push(p.split("/").pop()!);
+      }
+    }
+    if (지도에낀것.length) {
+      못됨(이름, `지도 자리에 사진이 들어갔습니다 — ${[...new Set(지도에낀것)].slice(0, 4).join(", ")} (지도는 사진 자리가 아닙니다)`);
+    }
+    if (태그수) {
+      const 깨진것 = [...링크].filter((f) => !사진파일.has(f));
+      if (깨진것.length) {
+        못됨(이름, `예시 사진 ${깨진것.length}장이 zip 에 없습니다 — 그 자리는 빈 네모로 열립니다 (${깨진것.slice(0, 3).join(", ")})`);
+      }
+      /* 손님이 사진을 바꿀 때 보는 표. 없으면 어느 파일이 어디 쓰였는지 알 길이 없다. */
+      const 표길 = `${뿌리}/완성화면/사진바꾸기.csv`;
+      if (!안("완성화면/사진바꾸기.csv")) {
+        못됨(이름, `사진 ${태그수}곳을 넣고 사진바꾸기.csv 를 안 넣었습니다 — 손님이 어느 파일을 바꿔야 할지 모릅니다`);
+      } else {
+        const 줄수 = Buffer.from(await z.files[표길].async("uint8array")).toString("utf8")
+          .trim().split(/\r?\n/).length - 1;
+        if (줄수 !== 태그수) 못됨(이름, `사진바꾸기.csv 가 ${줄수}줄인데 실제 사진은 ${태그수}곳입니다 — 표가 묵었습니다`);
+      }
+    } else if (사진파일.size) {
+      걸림(이름, `예시 사진 ${사진파일.size}장이 들어 있는데 화면에서 쓰지 않습니다 — 용량만 먹습니다`);
+    }
   }
 
   const 문서수 = 길들.filter((p) => !p.includes("/완성화면/") && !p.includes("/디자인프리셋/")).length;
