@@ -98,12 +98,27 @@ export function 화면목록안내보기(어디: string, 이름: string, buf: Bu
   } catch { /* 엑셀보기가 이미 못 연다고 말했다. 두 번 말하지 않는다. */ }
 }
 
-/** 엑셀에서 값이 든 줄 수를 센다 (머리줄 뺀 값). 서로 맞는지 견줄 때 쓴다. */
-export function 줄수세기(buf: Buffer, 시트?: string): number {
+/** 엑셀에서 값이 든 줄 수를 센다 (머리줄 뺀 값). 서로 맞는지 견줄 때 쓴다.
+ *
+ * ⚠ **첫 시트를 세면 안 된다.** `02_IA_화면목록.xlsx` 는 시트가 둘이다 —
+ *   「먼저 읽어 주세요」(안내 14줄)와 「화면목록」(진짜 44줄). 첫 시트를 세면 14가 나온다.
+ *   2026-08-11 에 이걸로 만든 검사가 «늘 FAIL» 나게 되어 있었다. 안 걸린 까닭은
+ *   이름 규칙이 달라 그 검사가 아예 안 돌았기 때문이다.
+ *
+ * @param 고를말 시트 이름에 이 말이 들어간 것을 고른다. 없으면 «줄이 가장 많은» 시트.
+ */
+export function 줄수세기(buf: Buffer, 고를말?: string): number {
   try {
     const wb = XLSX.read(buf, { type: "buffer" });
-    const s = 시트 && wb.Sheets[시트] ? 시트 : wb.SheetNames[0];
-    const rows = XLSX.utils.sheet_to_json(wb.Sheets[s], { header: 1 }) as unknown[][];
-    return Math.max(0, rows.filter((r) => r.some((c) => String(c ?? "").trim())).length - 1);
+    const 세기 = (s: string) => {
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[s], { header: 1 }) as unknown[][];
+      return Math.max(0, rows.filter((r) => r.some((c) => String(c ?? "").trim())).length - 1);
+    };
+    if (고를말) {
+      const 맞는것 = wb.SheetNames.find((s) => s.replace(/\s/g, "").includes(고를말.replace(/\s/g, "")));
+      if (맞는것) return 세기(맞는것);
+    }
+    /* 못 찾으면 «가장 큰» 시트를 쓴다 — 안내 시트는 언제나 알맹이보다 짧다. */
+    return Math.max(0, ...wb.SheetNames.map(세기));
   } catch { return -1; }
 }
