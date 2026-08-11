@@ -19,6 +19,7 @@ import { getSession } from "@/lib/session";
 import { PACKAGE_SALE_OPEN, planBuyableNow } from "@/lib/flags";
 import { ownedPlans } from "@/application/pack-order";
 import { BuyButton } from "../buy-button";
+import { ScreenStrip } from "./screen-strip";
 import {
   PACKAGES,
   getPackage,
@@ -415,38 +416,16 @@ export default async function PackageDetailPage({
             <SectionTitle>{selected.name}는 이런 화면이 만들어집니다</SectionTitle>
             <p className="leading-relaxed text-muted-foreground">
               고쳐서 올린 그림이 아니라 <b className="text-foreground">AI팩을 넣고 그대로 뽑은 화면</b>
-              입니다. 전체 {selected.siteScreens}개 중 메뉴마다 첫 화면을 골랐어요.{" "}
+              입니다. 전체 {selected.siteScreens}개 중 메뉴마다 첫 화면을 골라 {shots.length}장을
+              담았어요. <span className="whitespace-nowrap">옆으로 밀면 다음 화면이 나오고,</span>{" "}
               <span className="whitespace-nowrap">눌러서 크게 보실 수 있습니다.</span>
             </p>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {shots.map((s) => (
-                <figure key={s.file} className="flex flex-col gap-2">
-                  {/* 눌러서 원본을 연다. 폰에서는 카드가 작아 화면 속 글자가 안 읽힌다 —
-                      「무엇을 받는지 보여 주는」 절인데 안 읽히면 절반만 하는 셈이다. */}
-                  <a
-                    href={s.file}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block overflow-hidden rounded-xl border border-border bg-muted transition-colors hover:border-primary"
-                  >
-                    {/* 원본이 1440×1000 이라 비율을 못 박아 둔다 — 안 그러면 불러오는 동안 글이 밀린다. */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={s.file}
-                      alt={`${pkg.title} ${selected.name} — ${s.name}`}
-                      width={1440}
-                      height={1000}
-                      loading="lazy"
-                      className="block h-auto w-full"
-                    />
-                  </a>
-                  <figcaption className="flex items-baseline gap-1.5 text-xs">
-                    <span className="font-bold text-muted-foreground">{s.id}</span>
-                    <span className="text-muted-foreground/80">{s.name}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
+            {/* 옆으로 민다 — 위 등급 카드와 같은 어법이다(스크롤 스냅).
+                열 장 넘는 화면을 세로로 쌓으면 페이지가 한없이 길어져서, 아래 절들이
+                아예 안 읽힌다. 넓은 화면에서 «두 장씩», 폰에서는 한 장씩 넘긴다.
+                화살표는 데스크톱용이다 — 마우스 휠은 세로로만 돌아서 화살표가 없으면
+                첫 두 장만 보고 지나간다. 스크롤 위치를 알아야 해서 그 줄만 클라이언트다. */}
+            <ScreenStrip shots={shots} alt={`${pkg.title} ${selected.name}`} />
             <p className="text-sm leading-relaxed text-muted-foreground">
               Claude Code(Opus 5 이상)로 만든 결과물입니다. 쓰시는 AI 도구에 따라 다르게 나올 수
               있어요. 색·글꼴은 같이 드리는 규칙 3종 중에 고르실 수 있습니다.
