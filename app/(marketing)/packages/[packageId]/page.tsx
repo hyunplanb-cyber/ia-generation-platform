@@ -286,7 +286,7 @@ export default async function PackageDetailPage({
     <div className="bg-background">
       {/* 히어로 */}
       <section className="bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
-        <div className="mx-auto max-w-5xl px-6 pb-12 pt-7">
+        <div className="mx-auto max-w-[1440px] px-6 pb-12 pt-7">
           <Link
             href="/packages"
             className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-base font-semibold text-foreground shadow-sm transition-colors hover:bg-muted"
@@ -321,7 +321,7 @@ export default async function PackageDetailPage({
         </div>
       </section>
 
-      <div className="mx-auto flex max-w-5xl flex-col gap-16 px-6 py-14">
+      <div className="mx-auto flex max-w-[1440px] flex-col gap-16 px-6 py-14">
         {/* 플랜 비교 — 이 페이지의 핵심. 고르면 아래 내용 전체가 그 규모로 바뀐다. */}
         <section id="plans" className="flex scroll-mt-20 flex-col gap-5">
           <SectionTitle>어떤 규모로 만드시나요?</SectionTitle>
@@ -350,7 +350,7 @@ export default async function PackageDetailPage({
               />
             ))}
           </div>
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="mx-auto max-w-[80ch] text-center text-sm text-muted-foreground">
             전 등급에 디자인 규칙(색·글꼴 3종 · 화면 배치 2종)이 들어 있어요.
             {hasPremium &&
               ` 검수 시나리오와 만들어 둔 화면은 ${builtPlans.map((p) => p.name).join("·")}에만 있습니다.`}{" "}
@@ -365,7 +365,7 @@ export default async function PackageDetailPage({
             <SectionTitle>어떻게 만들어지는지 영상으로 확인해 보세요</SectionTitle>
             {pkg.videoId && (
               <>
-                <p className="leading-relaxed text-muted-foreground">
+                <p className="max-w-[62ch] leading-relaxed text-muted-foreground">
                   이 AI팩의 프리미엄 지시서를 Claude Code에 넣고 돌린 기록입니다. 화면{" "}
                   {premium.stats.screens}개가 약 40분 만에 만들어졌어요.
                 </p>
@@ -414,7 +414,7 @@ export default async function PackageDetailPage({
         {shots.length > 0 && (
           <section className="flex flex-col gap-4">
             <SectionTitle>{selected.name}는 이런 화면이 만들어집니다</SectionTitle>
-            <p className="leading-relaxed text-muted-foreground">
+            <p className="max-w-[62ch] leading-relaxed text-muted-foreground">
               고쳐서 올린 그림이 아니라 <b className="text-foreground">AI팩을 넣고 그대로 뽑은 화면</b>
               입니다. 전체 {selected.siteScreens}개 중 메뉴마다 첫 화면을 골라 {shots.length}장을
               담았어요.
@@ -425,7 +425,7 @@ export default async function PackageDetailPage({
                 화살표는 데스크톱용이다 — 마우스 휠은 세로로만 돌아서 화살표가 없으면
                 첫 두 장만 보고 지나간다. 스크롤 위치를 알아야 해서 그 줄만 클라이언트다. */}
             <ScreenStrip shots={shots} alt={`${pkg.title} ${selected.name}`} />
-            <p className="text-sm leading-relaxed text-muted-foreground">
+            <p className="max-w-[72ch] text-sm leading-relaxed text-muted-foreground">
               Claude Code(Opus 5 이상)로 만든 결과물입니다. 쓰시는 AI 도구에 따라 다르게 나올 수
               있어요. 색·글꼴은 같이 드리는 규칙 3종 중에 고르실 수 있습니다.
             </p>
@@ -435,7 +435,7 @@ export default async function PackageDetailPage({
         {/* WHY — 값의 근거. 실무 기간을 칩으로 훑게 한다(표로 두면 "이만큼 걸린다"로 읽혀 부담이 된다). */}
         <section className="flex flex-col gap-4">
           <SectionTitle>사이트 하나 만들 때 개발 단계에서 꼭 요구되는 내용입니다</SectionTitle>
-          <p className="leading-relaxed text-muted-foreground">
+          <p className="max-w-[62ch] leading-relaxed text-muted-foreground">
             그 기간을 확실히 줄여 드려요. 실무에서 처음부터 만들면 이만큼 걸립니다.
           </p>
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
@@ -465,7 +465,7 @@ export default async function PackageDetailPage({
             ))}
           </div>
           <p className="text-sm text-muted-foreground">＊ 서비스 기획 실무 기준</p>
-          <p className="leading-relaxed text-muted-foreground">
+          <p className="max-w-[62ch] leading-relaxed text-muted-foreground">
             <b className="text-foreground">AI한테 시키면 되지 않냐고요?</b> 됩니다. 다만 문서
             하나하나를 따로 지시해야 하고,{" "}
             <b className="text-foreground">기준이 될 샘플이 없으면 원하는 대로 나오지 않습니다.</b>
@@ -475,7 +475,7 @@ export default async function PackageDetailPage({
         {/* SAMPLE — 이 페이지에서 유일하게 '실물'을 보여주는 곳. 말로 하는 것보다 빠르다. */}
         <section className="flex flex-col gap-4">
           <SectionTitle>이런 결과물이 들어 있어요</SectionTitle>
-          <p className="leading-relaxed text-muted-foreground">
+          <p className="max-w-[62ch] leading-relaxed text-muted-foreground">
             결과물은 구매하시는 등급에 따라 다르게 구성되어 있어요. 등급별 항목은 맨 아래{" "}
             <b className="text-foreground">등급별 구성</b>에서 확인해 주세요.
           </p>
@@ -486,7 +486,7 @@ export default async function PackageDetailPage({
             <h3 className="text-base font-bold text-foreground">
               만든 뒤에 확인할 방법까지 함께 드립니다
             </h3>
-            <div className="mt-3 flex flex-col gap-3 text-sm leading-relaxed text-muted-foreground">
+            <div className="mt-3 flex max-w-[72ch] flex-col gap-3 text-sm leading-relaxed text-muted-foreground">
               <p>
                 한 사이트를 만들기 위해서는 복잡한 흐름과 기능들이 있어요. 스펙에서 작성되는
                 지시문은 <b className="text-foreground">3,000줄 ~ 5,000줄 이상</b>입니다. AI가
@@ -674,7 +674,7 @@ export default async function PackageDetailPage({
               meta={`${selected.siteScreens}개`}
               badge={selected.name}
             >
-              <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+              <p className="mb-4 max-w-[72ch] text-sm leading-relaxed text-muted-foreground">
                 Claude Code(Opus 5 이상)로 제작한 결과물입니다. 사용하시는 AI 도구에 따라 다른
                 결과물이 나올 수 있습니다.
               </p>
@@ -708,10 +708,10 @@ export default async function PackageDetailPage({
           <DocCard title="디자인 규칙" meta="md · json">
             {/* "예쁜 색"으로 팔지 않는다 — AI도 색은 알아서 고른다. 프리셋이 하는 일은
                 화면 수십·수백 개가 끝까지 같은 얼굴을 유지하게 하는 것이다(2026-08-04). */}
-            <p className="mb-3 text-sm leading-relaxed text-foreground/85">
+            <p className="mb-3 max-w-[72ch] text-sm leading-relaxed text-foreground/85">
               <b className="text-foreground">{PRESET_WHY}</b>
             </p>
-            <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+            <p className="mb-4 max-w-[72ch] text-sm leading-relaxed text-muted-foreground">
               디자인 규칙에는 <b className="text-foreground">색·글꼴 규칙 3종</b>과{" "}
               <b className="text-foreground">화면 배치 규칙 2종</b>이 들어 있어요. 완성된 HTML과
               다른 스타일을 원하시면 AI 빌드 지시서 + 색·글꼴 규칙 1종 + 화면 배치 규칙 1종을 AI 코딩
@@ -841,7 +841,7 @@ export default async function PackageDetailPage({
         {/* HOW — 왜 우리 결과가 다른가. 숫자와 대화로 보여준다. */}
         <section className="flex flex-col gap-4">
           <SectionTitle>한 줄 프롬프트로 만든 사이트, 완벽할까요?</SectionTitle>
-          <p className="leading-relaxed text-muted-foreground">
+          <p className="max-w-[62ch] leading-relaxed text-muted-foreground">
             우리는 <b className="text-foreground">화면별 프롬프트 {selected.stats.screens}개</b>,{" "}
             <b className="text-foreground">기능 정의 {selected.stats.reqs}개</b>,{" "}
             <b className="text-foreground">화면 이동 흐름 {selected.stats.flows}개</b>를 근거로
@@ -962,7 +962,7 @@ export default async function PackageDetailPage({
               </div>
             ))}
           </div>
-          <p className="leading-relaxed text-muted-foreground">
+          <p className="max-w-[62ch] leading-relaxed text-muted-foreground">
             셋 다 만들다가 발견하면 <b className="text-foreground">구조를 갈아엎게 되는</b>{" "}
             것들입니다.
           </p>

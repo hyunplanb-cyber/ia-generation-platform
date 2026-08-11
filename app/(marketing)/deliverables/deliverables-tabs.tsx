@@ -99,7 +99,7 @@ export function DeliverablesTabs() {
     <div className="flex flex-col">
       {/* 탭 전환 — AI팩 / 사이트 검수 */}
       <div className="border-b border-border">
-        <div className="mx-auto flex max-w-5xl gap-1 px-6">
+        <div className="mx-auto flex max-w-[1440px] gap-1 px-6">
           <TabButton active={tab === "planning"} onClick={() => setTab("planning")} icon={PencilRuler}>
             AI팩
           </TabButton>
@@ -150,7 +150,7 @@ function PlanningDeliverables() {
         const reversed = i % 2 === 1;
         return (
           <section key={d.name} className={`border-b border-border ${reversed ? "bg-surface" : ""}`}>
-            <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 px-6 py-16 lg:grid-cols-2 lg:gap-16">
+            <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-10 px-6 py-16 lg:grid-cols-2 lg:gap-16">
               <div className={reversed ? "lg:order-2" : ""}>
                 <div className="flex items-center gap-3">
                   <span className={`flex size-11 items-center justify-center rounded-xl ${d.tone}`}>
@@ -259,7 +259,7 @@ function VerifyDeliverable() {
     <div className="flex flex-col">
       {/* 소개 */}
       <section className="border-b border-border bg-linear-to-br from-pastel-mint/30 via-surface to-background">
-        <div className="mx-auto max-w-5xl px-6 py-14">
+        <div className="mx-auto max-w-[1440px] px-6 py-14">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-pastel-mint px-3 py-1 text-xs font-semibold text-pastel-mint-foreground">
             <ShieldQuestion className="size-3.5" /> 오픈 전 검수
           </span>
@@ -279,7 +279,7 @@ function VerifyDeliverable() {
 
       {/* 입력 3가지 → 나오는 결과물 */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-5xl px-6 py-14">
+        <div className="mx-auto max-w-[1440px] px-6 py-14">
           <h3 className="text-lg font-bold text-foreground">무엇을 넣느냐에 따라 이렇게 나와요</h3>
           <p className="mt-2 text-sm text-muted-foreground">
             셋 다 재현 시나리오를 드려요. 카페인컬러로 만든 AI팩을 넣으면 가장 정확해요.
@@ -319,7 +319,7 @@ function VerifyDeliverable() {
 
       {/* 나오는 결과물 샘플 — 자동 검사 결과서 + 재현 시나리오 */}
       <section className="border-b border-border bg-surface">
-        <div className="mx-auto max-w-5xl px-6 py-14">
+        <div className="mx-auto max-w-[1440px] px-6 py-14">
           <h3 className="text-lg font-bold text-foreground">이런 결과물을 받아요</h3>
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* 자동 검사 결과서 */}
