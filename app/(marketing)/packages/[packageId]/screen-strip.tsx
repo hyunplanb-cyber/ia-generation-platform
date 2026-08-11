@@ -48,7 +48,13 @@ export function ScreenStrip({ shots, alt }: { shots: Shot[]; alt: string }) {
       <div
         ref={줄}
         onScroll={재보기}
-        className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0"
+        /* -mx-6 / px-6 은 폰에서 바깥 여백만큼 빼냈다가 안쪽으로 되돌리는 짝이다.
+           다음 장이 화면 끝에 살짝 걸치게 해서 «밀 수 있다»를 보이게 한다.
+           ⚠ scroll-px-6 이 «반드시» 따라와야 한다. 스냅은 기본적으로 스크롤 칸의
+           맨 끝(패딩 바깥)에 카드를 붙이므로, 이게 없으면 브라우저가 왼쪽 여백
+           24px 을 스스로 밀어내고(scrollLeft=24) 첫 장이 화면 끝에 딱 붙는다.
+           글은 여백 안에 있는데 그림만 튀어나와 보인다 — 실제로 그랬다(2026-08-11). */
+        className="-mx-6 flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto px-6 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:scroll-px-0 sm:px-0"
       >
         {shots.map((s) => (
           <figure

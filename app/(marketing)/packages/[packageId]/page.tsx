@@ -417,8 +417,7 @@ export default async function PackageDetailPage({
             <p className="leading-relaxed text-muted-foreground">
               고쳐서 올린 그림이 아니라 <b className="text-foreground">AI팩을 넣고 그대로 뽑은 화면</b>
               입니다. 전체 {selected.siteScreens}개 중 메뉴마다 첫 화면을 골라 {shots.length}장을
-              담았어요. <span className="whitespace-nowrap">옆으로 밀면 다음 화면이 나오고,</span>{" "}
-              <span className="whitespace-nowrap">눌러서 크게 보실 수 있습니다.</span>
+              담았어요.
             </p>
             {/* 옆으로 민다 — 위 등급 카드와 같은 어법이다(스크롤 스냅).
                 열 장 넘는 화면을 세로로 쌓으면 페이지가 한없이 길어져서, 아래 절들이
