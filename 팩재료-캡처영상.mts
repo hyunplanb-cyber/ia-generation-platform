@@ -40,7 +40,10 @@ import {
 } from "node:fs";
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
-const 팩방 = "판매용_템플릿/_판매팩";
+/* 팩은 두 자리에 있을 수 있다 — 다 된 것은 _판매팩, 만드는 중인 것은 _만드는중.
+   A 회차와 B 회차 사이에는 «만드는중» 에 있으므로 두 곳을 다 봐야 재료를 뽑을 수 있다.
+   (검수·zip·진열은 _판매팩 만 본다. 그것이 폴더를 가른 까닭이다 — 2026-08-11) */
+const 팩방들 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만드는중"];
 const 캡처방 = "판매용_템플릿/_마케팅/릴스영상/_화면캡처";
 const 영상방 = "판매용_템플릿/_마케팅/릴스영상";
 
@@ -77,6 +80,18 @@ if (!준인자) {
    폴더 이름은 lib/packages.ts 의 fileLabel 이 정한다. 여기서 따로 적어 두면 갈라진다. */
 const { PACKAGES } = await import("./lib/packages");
 const 인자 = PACKAGES.find((p) => p.id === 준인자)?.fileLabel ?? 준인자;
+
+/* 이 업종이 «어느 자리»에 있는지 한 번만 정한다. 한 업종의 네 칸은 늘 같은 자리에 있다. */
+const 찾은팩방 = 팩방들.find((방) => existsSync(방)
+  && readdirSync(방).some((n) => n === 인자 || n.startsWith(`${인자}_`)));
+if (!찾은팩방) {
+  console.error(`「${인자}」에 맞는 팩 폴더가 없습니다.`);
+  console.error(`  찾아본 곳: ${팩방들.join(" · ")}`);
+  process.exit(1);
+}
+/** 위에서 못 찾으면 여기 오기 전에 멈춘다. 타입만 좁혀 준다. */
+const 팩방: string = 찾은팩방;
+if (팩방.endsWith("_만드는중")) console.log(`※ «만드는 중»인 팩입니다 — ${팩방}\n`);
 
 /* ── 대상 고르기 ─────────────────────────────────────────────
    완성화면이 없는 등급(스탠다드·플러스)은 찍을 것이 없다. 조용히 건너뛰지 않고 말한다. */

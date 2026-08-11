@@ -150,7 +150,24 @@ for (const ind of INDUSTRIES) {
   }
 }
 
-const OUT = `${T}/_판매팩`;
+/* ── 「다 된 것」과 「만드는 중」을 폴더로 가른다 ─────────────────
+ *
+ * 왜 (2026-08-11, 사장님 지적)
+ *   판매팩은 «두 회차»에 걸쳐 만든다 — A 회차에 디럭스 화면까지, B 회차에 프리미엄까지.
+ *   그런데 검수 루틴은 «매주 화요일»에 돈다. 그러면 A 와 B 사이의 화요일에,
+ *   **만들다 만 팩이 검수에 걸려** FAIL 이 쏟아지고 마무리 루틴이 포장을 막는다.
+ *
+ * 어떻게
+ *   `_만드는중/` 에 있으면 아무도 안 본다 — 검수도, zip 도, 진열도.
+ *   **폴더가 곧 표시다.** 따로 표시 파일을 두지 않는다(두면 폴더와 갈라진다).
+ *
+ *   A 회차 :  npx tsx package-template.mts --만드는중 <업종키>
+ *   B 회차 :  npx tsx package-template.mts --내보내기 <업종키>   → _판매팩 으로 옮긴다
+ */
+const 판매팩방 = `${T}/_판매팩`;
+const 만드는중방 = `${T}/_만드는중`;
+const 만드는중모드 = process.argv.includes("--만드는중");
+const OUT = 만드는중모드 ? 만드는중방 : 판매팩방;
 
 /* 「사이트 내놓는 법」 안내서 — 원본은 한 벌뿐이다(_마케팅/부록_사이트_내놓는_법.html).
    판매팩에도 들어가고, 손님이 직접 만들어 받는 zip 에도 들어간다.
@@ -454,12 +471,62 @@ async function pack(p: Product) {
   return { key: p.zipName, planLabel: p.planLabel, title: p.title, missing, kb };
 }
 
+/* ── --내보내기 : 「만드는 중」을 「다 된 것」으로 옮긴다 ────────
+   B 회차가 검사를 다 통과한 뒤에 부른다. 여기서부터 검수·zip·진열이 본다.
+
+   ⚠ 아래 «상품 이름 검사»보다 먼저 와야 한다. `--내보내기 lms` 의 `lms` 는 «업종 키»지
+     상품 이름(`lms-deluxe`)이 아니라서, 검사에 먼저 걸리면 「알 수 없는 상품」이 된다.
+     실제로 그랬다(2026-08-11). */
+const 내보낼업종 = process.argv.includes("--내보내기")
+  ? process.argv[process.argv.indexOf("--내보내기") + 1]
+  : null;
+if (내보낼업종) {
+  const label = INDUSTRIES.find((i) => i.key === 내보낼업종)?.label;
+  if (!label) throw new Error(`알 수 없는 업종: ${내보낼업종}`);
+  if (!existsSync(만드는중방)) throw new Error(`${만드는중방} 이 없습니다 — 만드는 중인 것이 없습니다`);
+  const 옮길것 = readdirSync(만드는중방).filter((d) => d === label || d.startsWith(`${label}_`));
+  if (!옮길것.length) throw new Error(`${만드는중방} 에 ${label} 팩이 없습니다`);
+  mkdirSync(판매팩방, { recursive: true });
+  for (const d of 옮길것) {
+    const 갈곳 = `${판매팩방}/${d}`;
+    /* 이미 있으면 «지우고» 옮긴다. 섞이면 옛 파일이 남아 손님에게 나간다.
+       ⚠ 완성화면은 사람이 만든 것이라, 옮기는 쪽에 그게 들어 있는지 먼저 본다. */
+    if (existsSync(갈곳)) {
+      if (!existsSync(`${만드는중방}/${d}/완성화면`)) {
+        throw new Error(`${d} — 만드는중 쪽에 완성화면이 없습니다. 덮으면 사람이 만든 화면이 사라집니다`);
+      }
+      rmSync(갈곳, { recursive: true, force: true });
+    }
+    renameSync(`${만드는중방}/${d}`, 갈곳);
+    console.log(`  옮김 → ${갈곳}`);
+  }
+  if (!readdirSync(만드는중방).length) rmSync(만드는중방, { recursive: true, force: true });
+  console.log(`\n${label} ${옮길것.length}칸을 «다 된 것»으로 옮겼습니다.`);
+  console.log("  이제 `npx tsx package-template.mts --zip` 으로 zip 을 구우세요.");
+  process.exit(0);
+}
+
 // --zip 같은 깃발은 상품 이름이 아니다. 골라내지 않으면 `--zip`만 줬을 때 상품으로 읽힌다.
 const arg = process.argv.slice(2).find((a) => !a.startsWith("--"));
 if (arg && !ALL_PRODUCTS[arg]) {
   throw new Error(`알 수 없는 상품: ${arg} (가능: ${Object.keys(ALL_PRODUCTS).join(", ")})`);
 }
-const targets: Record<string, Product> = arg ? { [arg]: ALL_PRODUCTS[arg] } : ALL_PRODUCTS;
+
+let targets: Record<string, Product> = arg ? { [arg]: ALL_PRODUCTS[arg] } : ALL_PRODUCTS;
+
+/* 만드는 중인 팩을 «다 된 것» 쪽에 다시 만들지 않는다.
+   안 그러면 A 회차 뒤 아무나 `npm run pack` 을 돌리는 순간
+   반쯤 된 팩이 _판매팩 에 되살아나 검수에 걸린다. */
+if (!만드는중모드 && existsSync(만드는중방)) {
+  const 만드는중인것 = new Set(readdirSync(만드는중방));
+  const 뺀것: string[] = [];
+  targets = Object.fromEntries(Object.entries(targets).filter(([, p]) => {
+    const 폴더 = p.zipName;
+    if (만드는중인것.has(폴더)) { 뺀것.push(폴더); return false; }
+    return true;
+  }));
+  if (뺀것.length) console.log(`만드는 중이라 건너뜁니다 — ${뺀것.join(" · ")}\n`);
+}
 
 mkdirSync(OUT, { recursive: true });
 
