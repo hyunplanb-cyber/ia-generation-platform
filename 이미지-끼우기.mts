@@ -64,6 +64,15 @@ const 차트인가 = (글: string) => /지도|차트|그래프|추이/.test(글)
    ph-circle · ph-round 가 그 표시다(여섯 팩에서 387곳). */
 const 얼굴인가 = (여는: string) => /\bph-(circle|round)\b/.test(여는);
 
+/* 붙여 둔 CSS 덩어리를 떼어 낸다.
+   ⚠ 끝의 `\n` 을 «있어도 없어도» 되게 둔다. 2026-08-11 에 뷰티샵 디럭스의 base.css 가
+     줄바꿈 없이 끝나 있어서 정규식이 안 맞았다. 그러면 --빼기 가 조용히 실패하고,
+     다시 끼울 때 「이미 있다」며 건너뛰어 **옛 CSS 가 그대로 남는다.**
+     그 바람에 새로 넣은 .ph{position:relative} 가 그 팩에만 안 들어갔다.
+     둘 다 아무 말이 없어서 눈으로 보기 전엔 몰랐다. */
+const CSS떼기 = (글: string) =>
+  글.replace(/\n*\/\* ── 예시 사진[\s\S]*?\/\* ── 예시 사진 끝 ── \*\/\n*/g, "\n");
+
 /* ── 빼기 ───────────────────────────────────────────────────── */
 const pages = join(완성화면, "pages");
 if (뺄까) {
@@ -75,8 +84,7 @@ if (뺄까) {
     if (후 !== 전) { writeFileSync(길, 후, "utf8"); 고친장 += 1; }
   }
   const css = join(완성화면, "assets", "css", "base.css");
-  const 글 = readFileSync(css, "utf8").replace(/\n\/\* ── 예시 사진[\s\S]*?\/\* ── 예시 사진 끝 ── \*\/\n/, "\n");
-  writeFileSync(css, 글, "utf8");
+  writeFileSync(css, CSS떼기(readFileSync(css, "utf8")), "utf8");
   rmSync(넣을곳, { recursive: true, force: true });
   rmSync(join(완성화면, "사진바꾸기.csv"), { force: true });
   console.log(`\n${팩} — 예시 사진을 뺐습니다.`);
@@ -86,6 +94,9 @@ if (뺄까) {
 }
 
 /* ── 넣기 ───────────────────────────────────────────────────── */
+/** 배치.csv 에서 «(비움)» 으로 적어 둔 역할. 이 자리는 회색 자리표로 남긴다. */
+const 비울역할 = new Set<string>();
+
 /** 역할마다 쓸 사진 목록. 배치.csv 가 있으면 그것을 따르고, 없으면 만들어 준다. */
 function 사진고르기(): Map<string, string[]> {
   const 방 = join(이미지방, 업종);
@@ -105,6 +116,13 @@ function 사진고르기(): Map<string, string[]> {
     for (const 줄 of readFileSync(표길, "utf8").split(/\r?\n/).slice(1)) {
       const [파일, 역할] = 줄.split(",").map((s) => s?.trim());
       if (!파일 || !역할) continue;
+      /* 파일 자리에 «(비움)» 이라고 적으면 그 역할은 «일부러» 안 채운다.
+         2026-08-11 사장님 지적: 매칭 팩의 「짐 사진」·「첨부 사진」 자리에 패션 인물
+         사진이 들어갔다. 손님이 이삿짐을 찍어 올릴 자리다.
+         맞는 사진이 없을 때는 회색 자리표가 «더 정직하다» — 자리표는
+         「이미지 영역 (짐 사진 · 권장 1200×900)」이라고 «맞는 말»을 하는데,
+         엉뚱한 사진은 «틀린 말»을 한다. 빈 것보다 틀린 것이 나쁘다. */
+      if (파일 === "(비움)") { 비울역할.add(역할); continue; }
       const 어디 = 업종사진.includes(파일) ? `${업종}/${파일}` : `공용/${파일}`;
       if (!역할별.has(역할)) 역할별.set(역할, []);
       역할별.get(역할)!.push(어디);
@@ -145,6 +163,7 @@ for (const 상대 of 쓸것) {
 const 차례 = new Map<string, number>();
 let 이번화면에쓴것 = new Set<string>();
 function 뽑기(역할: string): string | null {
+  if (비울역할.has(역할)) return null;   // 배치.csv 가 「(비움)」이라 했다 — 자리표로 둔다
   const 목록 = 역할별.get(역할) ?? 역할별.get(기본역할) ?? [...역할별.values()][0];
   if (!목록?.length) return null;
   for (let n = 0; n < 목록.length; n += 1) {
@@ -231,14 +250,24 @@ for (const f of readdirSync(pages).filter((x) => x.endsWith(".html"))) {
   if (후 !== 전) { writeFileSync(길, 후, "utf8"); 고친장 += 1; }
 }
 
-/* CSS 는 «맨 뒤에 덧붙인다». 원래 규칙을 건드리지 않아야 빼기가 깨끗하다. */
+/* CSS 는 «맨 뒤에 덧붙인다». 원래 규칙을 건드리지 않아야 빼기가 깨끗하다.
+   ⚠ 있으면 «건너뛰지» 말고 «떼어 내고 새로 붙인다». 건너뛰면 옛 판이 그대로 남아,
+     규칙을 고쳐도 이미 한 번 끼운 팩에는 안 들어간다 — 2026-08-11 에 그랬다. */
 const css = join(완성화면, "assets", "css", "base.css");
-const 있던글 = readFileSync(css, "utf8");
-if (!있던글.includes("── 예시 사진")) {
+const 있던글 = CSS떼기(readFileSync(css, "utf8"));
+{
   writeFileSync(css, `${있던글}
 /* ── 예시 사진 ──────────────────────────────────────────────
    이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
    ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
+
+/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
+   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
+   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
+   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
+   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
+   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
+.ph{position:relative}
 .ph > img[data-예시]{
   position:absolute; inset:0; width:100%; height:100%;
   object-fit:cover; display:block;
