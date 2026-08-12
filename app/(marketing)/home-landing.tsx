@@ -50,7 +50,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               {/* 첫 화면에 "무료"가 없으면 값이 드는지 안 드는지 모르는 채로 누르게 된다.
                   가입 시 35크레딧이 있어 만들고 미리보기까지는 값을 안 받는다 — 그 말을 여기서 한다. */}
               <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
-                무료로 AI팩 만들기 <span aria-hidden="true">→</span>
+                AI팩 만들기 <span aria-hidden="true">→</span>
               </Link>
               <Link className="btn btn-teal" href="/verify">
                 내 사이트 검수하기 <span aria-hidden="true">→</span>

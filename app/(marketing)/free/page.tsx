@@ -7,6 +7,7 @@ import {
   FileCode2,
   Network,
   ListChecks,
+  ClipboardCheck,
   CalendarDays,
   PenTool,
   Presentation,
@@ -17,6 +18,7 @@ import {
 import { auth } from "@/lib/auth";
 import { buttonVariants } from "@/components/ui/button";
 import { splitFuncDef } from "@/lib/export/requirements";
+import { buildTemplateVerifySheets } from "@/lib/export/template-verify";
 import { CREATOR } from "@/template-data-creator";
 import { DownloadCta } from "./download-cta";
 
@@ -37,12 +39,27 @@ const exceptions = screens.filter((s) => /(empty|error|closed)/.test(s.role));
 // 화면에 적힌 숫자와 받아본 파일의 줄 수가 어긋난다.
 const reqCount = screens.reduce((n, s) => n + splitFuncDef(s.func).length, 0);
 
+// 검수 항목 수는 «세어서» 쓴다. 손으로 적으면 샘플이 자랄 때 화면과 zip 이 어긋난다
+// (2026-08-12 에 README 숫자 여섯 개가 그렇게 틀어져 있었다).
+// 파일을 만드는 함수를 그대로 불러 같은 값을 얻는다.
+const menuOf = new Map(CREATOR.menus.flatMap((m) => m.screens.map((s) => [s.ref, m.nameKo] as const)));
+const qaCount = buildTemplateVerifySheets(
+  "1인 크리에이터 콘텐츠 판매 사이트",
+  screens.map((s) => ({
+    pageId: s.ref, pageName: s.name, menuName: menuOf.get(s.ref) ?? "",
+    funcDef: s.func ?? "", role: s.role ?? "",
+  })),
+).scenarios.length;
+
 // 흐름도와 메뉴구조는 두 벌씩 들어 있다 — 하나는 보라고, 하나는 고쳐 쓰라고.
 // 쓰임이 다르므로 따로 센다.
 const FILES = [
   { icon: FileCode2, name: "AI 빌드 지시서", ext: "md", desc: "AI에 통째로 넣는 지시 문서", hot: true },
   { icon: FileSpreadsheet, name: "화면 목록", ext: "xlsx", desc: `화면 ${screens.length}개 + 화면별 프롬프트`, hot: true },
   { icon: ListChecks, name: "기능정의서", ext: "xlsx", desc: `요구사항 ${reqCount}개 · 업무 > 기능 > 구성`, hot: false },
+  // 2026-08-13 추가 — 광고에서 「화면목록 «과 검수 시나리오»」를 앞세우기로 했는데,
+  // 무료로 받은 사람이 그 절반을 못 보면 말이 안 맞는다. 규모(105 vs 216~944)로 벌린다.
+  { icon: ClipboardCheck, name: "검수 시나리오", ext: "xlsx", desc: `배포 전에 눌러 볼 확인 항목 ${qaCount}개`, hot: true },
   { icon: Network, name: "FLOW 흐름도", ext: "html", desc: "브라우저로 바로 열어 보기 · 메뉴별 5장", hot: false },
   { icon: PenTool, name: "FLOW 흐름도", ext: "drawio", desc: "draw.io에서 직접 고쳐 쓰기", hot: false },
   { icon: CalendarDays, name: "개발 일정표", ext: "xlsx", desc: "화면별 작업 일정 (주말 제외)", hot: false },
