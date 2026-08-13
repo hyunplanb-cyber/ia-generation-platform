@@ -21,7 +21,9 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, copyFi
 import { join } from "node:path";
 
 const 팩방들 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만드는중"];
-const 이미지방 = "판매용_템플릿/_이미지";
+/* ⚠ 2026-08-13 에 그림을 «_이미지» 한 곳으로 모았다. 워터마크가 박힌 것만 여기 있다 —
+   원본(사진·마스코트)은 절대 팩에 들어가면 안 되므로 이 아래에 두지 않는다. */
+const 이미지방 = "판매용_템플릿/_이미지/팩용";
 const 뺄까 = process.argv.includes("--빼기");
 const 팩 = process.argv.slice(2).find((a) => !a.startsWith("--"));
 
