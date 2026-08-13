@@ -43,7 +43,9 @@ export function HO0101(ctx) {
   const cats = sec('무슨 시술을 받으세요?', `<div class="cats">${CATS.map((c) =>
     `<a href="${link('SE0101')}"><div class="ic">${c.ic}</div><div class="nm">${c.nm}</div><div class="ct">${c.ct}</div></a>`).join('')}</div>`);
 
-  const hot = sec('내 주변 인기 매장', `<div class="mag">${shopCards(S.slice(0, 8), (s, i) => ({
+  /* 여덟 칸이라 «넷씩 두 줄»로 딱 떨어진다. 둘씩 놓으면 카드가 커서 한 화면에
+     두 개밖에 안 보였다(2026-08-13 사장님 지적). */
+  const hot = sec('내 주변 인기 매장', `<div class="mag mag-4">${shopCards(S.slice(0, 8), (s, i) => ({
     faved: i === 1, ribbon: i === 0 ? badge('이번 주 1위', 'b-pri') : '',
   }))}</div>`, { more: 'SE0101', desc: '강남구 기준 · 최근 4주 예약이 많은 순서' });
 

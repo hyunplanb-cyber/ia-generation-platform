@@ -2,6 +2,15 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "뷰티-프리미엄",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_판매팩/뷰티샵_프리미엄/완성화면",
+      "port": 4189
+    },
+    {
       "name": "렌탈-프리미엄",
       "runtimeExecutable": "node",
       "runtimeArgs": [

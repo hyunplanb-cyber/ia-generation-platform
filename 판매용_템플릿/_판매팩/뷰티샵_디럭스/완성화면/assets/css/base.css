@@ -326,6 +326,9 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .mcard.is-off{opacity:.6}
 .mcard.is-off .ph{filter:grayscale(1)}
 .mag-3{grid-template-columns:repeat(3,1fr)}
+/* 홈의 「내 주변 인기 매장」은 여덟 칸이라 넷씩 두 줄로 딱 떨어진다.
+   둘씩 놓으면 카드가 너무 커서 한 화면에 두 개밖에 안 보인다(2026-08-13 사장님 지적). */
+.mag-4{grid-template-columns:repeat(4,1fr)}
 
 /* 작은 카드(캐러셀·추천용) */
 .scard{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);box-shadow:var(--sh-card);overflow:hidden;position:relative}
@@ -714,6 +717,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
   .idx-list{grid-template-columns:repeat(2,1fr)}
   .gnb-nav{display:none}
   .mag-3{grid-template-columns:repeat(2,1fr)}
+  .mag-4{grid-template-columns:repeat(2,1fr)}
   .gal-6{grid-template-columns:repeat(4,1fr)}
   .map-lg{height:420px}
 }
@@ -723,7 +727,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
   .t-sec{font-size:20px}
   .g2,.g3,.g4,.g5,.g6{grid-template-columns:repeat(2,1fr)}
   .g1-m{grid-template-columns:1fr!important}
-  .mag,.mag-3{grid-template-columns:1fr}
+  .mag,.mag-3,.mag-4{grid-template-columns:1fr}
   .cats{grid-template-columns:repeat(4,1fr)}
   .mosaic,.detail-gal{grid-template-columns:1fr 1fr}
   .mosaic > *:first-child,.detail-gal > *:first-child{grid-column:span 2;grid-row:auto;height:auto;aspect-ratio:1/1}
