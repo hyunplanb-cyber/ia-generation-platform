@@ -42,8 +42,13 @@ const 오늘 = new Date().toISOString().slice(0, 10);
 const 고른팩 = process.argv[2];
 
 /** 몇 장을 볼까. 다 보면 오래 걸리고, 한 장만 보면 놓친다.
- *  대표 = 첫 화면(홈) + 무거운 화면 넷. 무거운 쪽에 덩어리가 많아 어긋남도 거기서 난다. */
-const 볼장수 = 5;
+ *
+ * 2026-08-13 에 5 → 14 로 늘렸다. 5장은 «홈 + 무거운 넷»이라 한쪽으로 쏠렸다 —
+ * 무거운 화면은 대개 목록·상세뿐이라 **예약·결제·마이페이지 쪽은 한 번도 안 봤다.**
+ * 사진을 넣은 뒤로는 화면마다 위험이 생겼는데(매칭에서 사진이 칸을 벗어난 적이 있다)
+ * 다섯 장으로는 그걸 만날 확률이 너무 낮다.
+ * 그래서 «메뉴 갈래마다 한 장씩» 먼저 집고, 남는 자리를 무거운 순으로 채운다. */
+const 볼장수 = 14;
 
 /* 브라우저 안에서 도는 자. 결과는 document.title 로 꺼낸다(--dump-dom 으로 읽는다).
    ⚠ 여유를 넉넉히 둔다. 1~2px 은 반올림이라 흠이 아니다 — 좁게 잡으면 거짓 경보로
@@ -158,7 +163,20 @@ function 대표고르기(pages: string): string[] {
   const 무거운순 = 다.filter((f) => f !== 홈)
     .map((f) => ({ f, n: statSync(join(pages, f)).size }))
     .sort((a, b) => b.n - a.n).map((x) => x.f);
-  return [홈, ...무거운순].slice(0, 볼장수);
+
+  /* 갈래(화면ID 앞 두 글자 — HO·PD·CT·BK·MY·RT…)마다 «가장 무거운 것» 을 하나씩 먼저 집는다.
+     이렇게 해야 예약·결제·마이페이지처럼 «가벼운 갈래» 도 한 번은 검사에 걸린다. */
+  const 갈래 = new Map<string, string>();
+  for (const f of 무거운순) {
+    const 앞 = f.slice(0, 2).toUpperCase();
+    if (!갈래.has(앞)) 갈래.set(앞, f);
+  }
+  const 고른것 = [홈, ...갈래.values()];
+  for (const f of 무거운순) {                       // 남는 자리는 무거운 순으로
+    if (고른것.length >= 볼장수) break;
+    if (!고른것.includes(f)) 고른것.push(f);
+  }
+  return [...new Set(고른것)].slice(0, 볼장수);
 }
 
 function 팩보기(팩: string) {

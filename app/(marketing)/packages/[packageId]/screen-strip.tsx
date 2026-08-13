@@ -17,7 +17,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-type Shot = { file: string; id: string; name: string };
+/** `kind` 는 주요 화면(main)인지 «실패·예외» 화면(edge)인지다.
+ *  팩화면-웹용.mts 가 화면 이름을 보고 적어 둔다. 옛 목록에는 없을 수 있어 기본은 main. */
+type Shot = { file: string; id: string; name: string; kind?: "main" | "edge" };
 
 export function ScreenStrip({ shots, alt }: { shots: Shot[]; alt: string }) {
   const 줄 = useRef<HTMLDivElement>(null);
@@ -80,7 +82,19 @@ export function ScreenStrip({ shots, alt }: { shots: Shot[]; alt: string }) {
                 className="block h-auto w-full"
               />
             </a>
-            <figcaption className="flex items-baseline gap-1.5 text-xs">
+            {/* 배지로 «주요»와 «실패»를 갈라 준다(2026-08-13 사장님 지시).
+                실패 화면이 우리가 파는 깊이인데, 배지가 없으면 그냥 비슷한 그림 열넉 장으로 보인다.
+                줄바꿈: 화면 이름이 길어도 낱말 가운데서 안 끊기게 keep-all 을 건다. */}
+            <figcaption className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-xs [word-break:keep-all]">
+              <span
+                className={`rounded px-1.5 py-0.5 text-[11px] font-bold ${
+                  s.kind === "edge"
+                    ? "bg-primary-soft text-primary-on-soft"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {s.kind === "edge" ? "실패·예외" : "주요"}
+              </span>
               <span className="font-bold text-muted-foreground">{s.id}</span>
               <span className="text-muted-foreground/80">{s.name}</span>
             </figcaption>

@@ -3,594 +3,1020 @@
     {
       "file": "/pack-screens/lms-deluxe/01.webp",
       "id": "HO-01",
-      "name": "홈 - 비로그인"
+      "name": "홈 - 비로그인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-deluxe/02.webp",
       "id": "TC-01",
-      "name": "강사센터 홈"
+      "name": "강사센터 홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-deluxe/03.webp",
       "id": "CO-01",
-      "name": "강의 목록"
+      "name": "강의 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-deluxe/04.webp",
       "id": "CL-01",
-      "name": "내 강의실 - 수강 중"
+      "name": "내 강의실 - 수강 중",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-deluxe/05.webp",
       "id": "CU-01",
-      "name": "내 강의 목록"
+      "name": "내 강의 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-deluxe/06.webp",
       "id": "ST-01",
-      "name": "수강생 목록"
+      "name": "수강생 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-deluxe/07.webp",
       "id": "GR-01",
-      "name": "출석 현황"
+      "name": "출석 현황",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-deluxe/08.webp",
       "id": "MY-01",
-      "name": "내 정보"
+      "name": "내 정보",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-deluxe/09.webp",
       "id": "AU-01",
-      "name": "로그인"
+      "name": "로그인",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/lms-deluxe/10.webp",
+      "id": "HO-02",
+      "name": "홈 - 수강생 로그인",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/lms-deluxe/11.webp",
+      "id": "CO-02",
+      "name": "강의 목록 - 검색 결과 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/lms-deluxe/12.webp",
+      "id": "CL-02",
+      "name": "내 강의실 - 비어 있음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/lms-deluxe/13.webp",
+      "id": "CU-05",
+      "name": "영상 업로드 - 실패",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/lms-deluxe/14.webp",
+      "id": "ST-02",
+      "name": "수강생 목록 - 검색 결과 없음",
+      "kind": "edge"
     }
   ],
   "lms-premium": [
     {
       "file": "/pack-screens/lms-premium/01.webp",
       "id": "HO0101",
-      "name": "홈 - 비로그인"
+      "name": "홈 - 비로그인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-premium/02.webp",
       "id": "TC0101",
-      "name": "강사센터 홈"
+      "name": "강사센터 홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-premium/03.webp",
       "id": "CO0101",
-      "name": "강의 목록"
+      "name": "강의 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-premium/04.webp",
       "id": "CL0101",
-      "name": "내 강의실 - 수강 중"
+      "name": "내 강의실 - 수강 중",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-premium/05.webp",
       "id": "CU0101",
-      "name": "내 강의 목록"
+      "name": "내 강의 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-premium/06.webp",
       "id": "ST0101",
-      "name": "수강생 목록"
+      "name": "수강생 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-premium/07.webp",
       "id": "GR0101",
-      "name": "출석 현황"
+      "name": "출석 현황",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-premium/08.webp",
       "id": "MY0101",
-      "name": "내 정보"
+      "name": "내 정보",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/lms-premium/09.webp",
       "id": "AU0101",
-      "name": "로그인"
+      "name": "로그인",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/lms-premium/10.webp",
+      "id": "HO0201",
+      "name": "홈 - 수강생 로그인",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/lms-premium/11.webp",
+      "id": "HO0202",
+      "name": "홈 - 수강생 로그인 > 이어보기 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/lms-premium/12.webp",
+      "id": "TC0103",
+      "name": "강사센터 홈 > 처리할 일 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/lms-premium/13.webp",
+      "id": "CO0201",
+      "name": "강의 목록 - 검색 결과 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/lms-premium/14.webp",
+      "id": "CO0402",
+      "name": "수강 신청 - 결제 > 쿠폰 적용 실패",
+      "kind": "edge"
     }
   ],
   "groupbuy-deluxe": [
     {
       "file": "/pack-screens/groupbuy-deluxe/01.webp",
       "id": "HO-01",
-      "name": "홈"
+      "name": "홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-deluxe/02.webp",
       "id": "DE-01",
-      "name": "공구 상세"
+      "name": "공구 상세",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-deluxe/03.webp",
       "id": "JO-01",
-      "name": "옵션·수량 선택"
+      "name": "옵션·수량 선택",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-deluxe/04.webp",
       "id": "MY-01",
-      "name": "내 공구함"
+      "name": "내 공구함",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-deluxe/05.webp",
       "id": "RV-01",
-      "name": "후기 작성·목록"
+      "name": "후기 작성·목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-deluxe/06.webp",
       "id": "AC-01",
-      "name": "로그인·회원가입"
+      "name": "로그인·회원가입",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-deluxe/07.webp",
       "id": "HS-01",
-      "name": "진행자 시작 안내"
+      "name": "진행자 시작 안내",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-deluxe/08.webp",
       "id": "HM-01",
-      "name": "진행자 대시보드"
+      "name": "진행자 대시보드",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-deluxe/09.webp",
       "id": "SE-01",
-      "name": "정산 내역"
+      "name": "정산 내역",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-deluxe/10.webp",
       "id": "CS-01",
-      "name": "이용 안내·자주 묻는 질문"
+      "name": "이용 안내·자주 묻는 질문",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/groupbuy-deluxe/11.webp",
+      "id": "HO-03",
+      "name": "마감 임박 타임딜",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/groupbuy-deluxe/12.webp",
+      "id": "DE-03",
+      "name": "공구 마감 - 성사",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/groupbuy-deluxe/13.webp",
+      "id": "JO-04",
+      "name": "결제 실패",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/groupbuy-deluxe/14.webp",
+      "id": "MY-04",
+      "name": "내 공구함 - 비어 있음",
+      "kind": "edge"
     }
   ],
   "groupbuy-premium": [
     {
       "file": "/pack-screens/groupbuy-premium/01.webp",
       "id": "HO0101",
-      "name": "홈"
+      "name": "홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-premium/02.webp",
       "id": "DE0101",
-      "name": "공구 상세"
+      "name": "공구 상세",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-premium/03.webp",
       "id": "JO0101",
-      "name": "옵션·수량 선택"
+      "name": "옵션·수량 선택",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-premium/04.webp",
       "id": "MY0101",
-      "name": "내 공구함"
+      "name": "내 공구함",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-premium/05.webp",
       "id": "RV0101",
-      "name": "후기 작성·목록"
+      "name": "후기 작성·목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-premium/06.webp",
       "id": "AC0101",
-      "name": "로그인·회원가입"
+      "name": "로그인·회원가입",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-premium/07.webp",
       "id": "HS0101",
-      "name": "진행자 시작 안내"
+      "name": "진행자 시작 안내",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-premium/08.webp",
       "id": "HM0101",
-      "name": "진행자 대시보드"
+      "name": "진행자 대시보드",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-premium/09.webp",
       "id": "SE0101",
-      "name": "정산 내역"
+      "name": "정산 내역",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/groupbuy-premium/10.webp",
       "id": "CS0101",
-      "name": "이용 안내·자주 묻는 질문"
+      "name": "이용 안내·자주 묻는 질문",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/groupbuy-premium/11.webp",
+      "id": "HO0104",
+      "name": "홈 > 진행 공구 없음(빈 상태)",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/groupbuy-premium/12.webp",
+      "id": "HO0301",
+      "name": "마감 임박 타임딜",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/groupbuy-premium/13.webp",
+      "id": "DE0106",
+      "name": "공구 상세 > 1인 최대수량 초과",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/groupbuy-premium/14.webp",
+      "id": "DE0301",
+      "name": "공구 마감 - 성사",
+      "kind": "edge"
     }
   ],
   "matching-deluxe": [
     {
       "file": "/pack-screens/matching-deluxe/01.webp",
       "id": "HO-01",
-      "name": "홈 - 비로그인"
+      "name": "홈 - 비로그인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/02.webp",
       "id": "SE-01",
-      "name": "고수 목록"
+      "name": "고수 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/03.webp",
       "id": "RQ-01",
-      "name": "서비스 고르기"
+      "name": "서비스 고르기",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/04.webp",
       "id": "QT-01",
-      "name": "견적 목록"
+      "name": "견적 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/05.webp",
       "id": "CH-01",
-      "name": "채팅 목록"
+      "name": "채팅 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/06.webp",
       "id": "PY-01",
-      "name": "결제"
+      "name": "결제",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/07.webp",
       "id": "MY-01",
-      "name": "내 요청 목록"
+      "name": "내 요청 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/08.webp",
       "id": "RV-01",
-      "name": "후기 작성"
+      "name": "후기 작성",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/09.webp",
       "id": "PR-01",
-      "name": "고수센터 홈"
+      "name": "고수센터 홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/10.webp",
       "id": "LD-01",
-      "name": "새 요청 목록"
+      "name": "새 요청 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-deluxe/11.webp",
-      "id": "JB-01",
-      "name": "일감 목록"
+      "id": "SE-02",
+      "name": "고수 목록 - 결과 없음",
+      "kind": "edge"
     },
     {
       "file": "/pack-screens/matching-deluxe/12.webp",
-      "id": "AU-01",
-      "name": "로그인"
+      "id": "PY-03",
+      "name": "결제 실패",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/matching-deluxe/13.webp",
+      "id": "MY-03",
+      "name": "내 요청 - 비어 있음",
+      "kind": "edge"
     }
   ],
   "matching-premium": [
     {
       "file": "/pack-screens/matching-premium/01.webp",
       "id": "HO0101",
-      "name": "홈 - 비로그인"
+      "name": "홈 - 비로그인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/02.webp",
       "id": "SE0101",
-      "name": "고수 목록"
+      "name": "고수 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/03.webp",
       "id": "RQ0101",
-      "name": "서비스 고르기"
+      "name": "서비스 고르기",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/04.webp",
       "id": "QT0101",
-      "name": "견적 목록"
+      "name": "견적 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/05.webp",
       "id": "CH0101",
-      "name": "채팅 목록"
+      "name": "채팅 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/06.webp",
       "id": "PY0101",
-      "name": "결제"
+      "name": "결제",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/07.webp",
       "id": "MY0101",
-      "name": "내 요청 목록"
+      "name": "내 요청 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/08.webp",
       "id": "RV0101",
-      "name": "후기 작성"
+      "name": "후기 작성",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/09.webp",
       "id": "PR0101",
-      "name": "고수센터 홈"
+      "name": "고수센터 홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/10.webp",
       "id": "LD0101",
-      "name": "새 요청 목록"
+      "name": "새 요청 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/matching-premium/11.webp",
-      "id": "JB0101",
-      "name": "일감 목록"
+      "id": "HO0202",
+      "name": "홈 - 손님 로그인 > 진행 중 요청 없음",
+      "kind": "edge"
     },
     {
       "file": "/pack-screens/matching-premium/12.webp",
-      "id": "AU0101",
-      "name": "로그인"
+      "id": "SE0201",
+      "name": "고수 목록 - 결과 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/matching-premium/13.webp",
+      "id": "SE0304",
+      "name": "고수 상세 > 휴무·응답 불가",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/matching-premium/14.webp",
+      "id": "QT0103",
+      "name": "견적 목록 > 견적 마감됨",
+      "kind": "edge"
     }
   ],
   "beauty-deluxe": [
     {
       "file": "/pack-screens/beauty-deluxe/01.webp",
       "id": "HO-01",
-      "name": "홈 - 비로그인"
+      "name": "홈 - 비로그인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/02.webp",
       "id": "SE-01",
-      "name": "매장 목록"
+      "name": "매장 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/03.webp",
       "id": "RE-01",
-      "name": "예약 1단계 - 시술 선택"
+      "name": "예약 1단계 - 시술 선택",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/04.webp",
       "id": "MY-01",
-      "name": "내 예약 - 예정"
+      "name": "내 예약 - 예정",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/05.webp",
       "id": "RV-01",
-      "name": "리뷰 작성"
+      "name": "리뷰 작성",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/06.webp",
       "id": "ST-01",
-      "name": "오늘 예약"
+      "name": "오늘 예약",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/07.webp",
       "id": "MG-01",
-      "name": "시술 메뉴 관리"
+      "name": "시술 메뉴 관리",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/08.webp",
       "id": "AC-01",
-      "name": "내 정보"
+      "name": "내 정보",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/09.webp",
       "id": "PT-01",
-      "name": "매장 홈"
+      "name": "매장 홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/10.webp",
       "id": "SA-01",
-      "name": "매장 정산 내역"
+      "name": "매장 정산 내역",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-deluxe/11.webp",
-      "id": "AU-01",
-      "name": "로그인"
+      "id": "SE-02",
+      "name": "매장 목록 - 검색 결과 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/beauty-deluxe/12.webp",
+      "id": "RE-05",
+      "name": "예약 3단계 - 가능한 시간 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/beauty-deluxe/13.webp",
+      "id": "MY-02",
+      "name": "내 예약 - 비어 있음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/beauty-deluxe/14.webp",
+      "id": "ST-03",
+      "name": "예약 목록 - 예약 없음",
+      "kind": "edge"
     }
   ],
   "beauty-premium": [
     {
       "file": "/pack-screens/beauty-premium/01.webp",
       "id": "HO0101",
-      "name": "홈 - 비로그인"
+      "name": "홈 - 비로그인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/02.webp",
       "id": "SE0101",
-      "name": "매장 목록"
+      "name": "매장 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/03.webp",
       "id": "RE0101",
-      "name": "예약 1단계 - 시술 선택"
+      "name": "예약 1단계 - 시술 선택",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/04.webp",
       "id": "MY0101",
-      "name": "내 예약 - 예정"
+      "name": "내 예약 - 예정",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/05.webp",
       "id": "RV0101",
-      "name": "리뷰 작성"
+      "name": "리뷰 작성",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/06.webp",
       "id": "ST0101",
-      "name": "오늘 예약"
+      "name": "오늘 예약",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/07.webp",
       "id": "MG0101",
-      "name": "시술 메뉴 관리"
+      "name": "시술 메뉴 관리",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/08.webp",
       "id": "AC0101",
-      "name": "내 정보"
+      "name": "내 정보",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/09.webp",
       "id": "PT0101",
-      "name": "매장 홈"
+      "name": "매장 홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/10.webp",
       "id": "SA0101",
-      "name": "매장 정산 내역"
+      "name": "매장 정산 내역",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/beauty-premium/11.webp",
-      "id": "AU0101",
-      "name": "로그인"
+      "id": "HO0202",
+      "name": "홈 - 고객 로그인 > 다가오는 예약 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/beauty-premium/12.webp",
+      "id": "SE0201",
+      "name": "매장 목록 - 검색 결과 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/beauty-premium/13.webp",
+      "id": "SE0303",
+      "name": "매장 지도 > 이 지역 결과 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/beauty-premium/14.webp",
+      "id": "RE0103",
+      "name": "예약 1단계 - 시술 선택 > 동시 예약 불가 조합",
+      "kind": "edge"
     }
   ],
   "travel-deluxe": [
     {
       "file": "/pack-screens/travel-deluxe/01.webp",
       "id": "HO-01",
-      "name": "홈"
+      "name": "홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-deluxe/02.webp",
       "id": "PR-01",
-      "name": "상품 목록"
+      "name": "상품 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-deluxe/03.webp",
       "id": "CT-01",
-      "name": "장바구니"
+      "name": "장바구니",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-deluxe/04.webp",
       "id": "BK-01",
-      "name": "여행자 정보 입력"
+      "name": "여행자 정보 입력",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-deluxe/05.webp",
       "id": "VC-01",
-      "name": "바우처 목록"
+      "name": "바우처 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-deluxe/06.webp",
       "id": "MY-01",
-      "name": "로그인"
+      "name": "로그인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-deluxe/07.webp",
       "id": "CS-01",
-      "name": "자주 묻는 질문"
+      "name": "자주 묻는 질문",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/travel-deluxe/08.webp",
+      "id": "HO-02",
+      "name": "여행지 홈",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/travel-deluxe/09.webp",
+      "id": "PR-02",
+      "name": "상품 상세",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/travel-deluxe/10.webp",
+      "id": "BK-02",
+      "name": "결제",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/travel-deluxe/11.webp",
+      "id": "HO-04",
+      "name": "검색 결과 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/travel-deluxe/12.webp",
+      "id": "PR-06",
+      "name": "예약 마감·품절",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/travel-deluxe/13.webp",
+      "id": "CT-02",
+      "name": "장바구니 비어 있음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/travel-deluxe/14.webp",
+      "id": "BK-04",
+      "name": "결제 실패",
+      "kind": "edge"
     }
   ],
   "travel-premium": [
     {
       "file": "/pack-screens/travel-premium/01.webp",
       "id": "HO0101",
-      "name": "홈"
+      "name": "홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-premium/02.webp",
       "id": "PR0101",
-      "name": "상품 목록"
+      "name": "상품 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-premium/03.webp",
       "id": "CT0101",
-      "name": "장바구니"
+      "name": "장바구니",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-premium/04.webp",
       "id": "BK0101",
-      "name": "여행자 정보 입력"
+      "name": "여행자 정보 입력",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-premium/05.webp",
       "id": "VC0101",
-      "name": "바우처 목록"
+      "name": "바우처 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-premium/06.webp",
       "id": "MY0101",
-      "name": "로그인"
+      "name": "로그인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/travel-premium/07.webp",
       "id": "CS0101",
-      "name": "자주 묻는 질문"
+      "name": "자주 묻는 질문",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/travel-premium/08.webp",
+      "id": "HO0201",
+      "name": "여행지 홈",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/travel-premium/09.webp",
+      "id": "PR0201",
+      "name": "상품 상세",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/travel-premium/10.webp",
+      "id": "BK0201",
+      "name": "결제",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/travel-premium/11.webp",
+      "id": "HO0401",
+      "name": "검색 결과 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/travel-premium/12.webp",
+      "id": "HO0503",
+      "name": "테마 기획전 > 기획전 종료",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/travel-premium/13.webp",
+      "id": "PR0303",
+      "name": "날짜·옵션 선택 > 잔여 좌석 초과",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/travel-premium/14.webp",
+      "id": "PR0601",
+      "name": "예약 마감·품절",
+      "kind": "edge"
     }
   ],
   "rental-deluxe": [
     {
       "file": "/pack-screens/rental-deluxe/01.webp",
       "id": "HO-01",
-      "name": "홈"
+      "name": "홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-deluxe/02.webp",
-      "id": "PD-03",
-      "name": "날짜별 가용 재고 달력"
+      "id": "PD-01",
+      "name": "장비 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-deluxe/03.webp",
       "id": "CT-01",
-      "name": "대여 장바구니"
+      "name": "대여 장바구니",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-deluxe/04.webp",
       "id": "BK-01",
-      "name": "대여 신청서"
+      "name": "대여 신청서",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-deluxe/05.webp",
-      "id": "RT-04",
-      "name": "반납 접수"
+      "id": "RT-01",
+      "name": "수령 확인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-deluxe/06.webp",
-      "id": "ST-02",
-      "name": "정산 내역 - 연체·파손 청구"
+      "id": "ST-01",
+      "name": "점검 진행 중",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-deluxe/07.webp",
       "id": "MY-01",
-      "name": "내 대여 내역"
+      "name": "내 대여 내역",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-deluxe/08.webp",
       "id": "CS-01",
-      "name": "자주 묻는 질문"
+      "name": "자주 묻는 질문",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/rental-deluxe/09.webp",
+      "id": "HO-02",
+      "name": "카테고리 홈",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/rental-deluxe/10.webp",
+      "id": "PD-02",
+      "name": "장비 상세",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/rental-deluxe/11.webp",
+      "id": "HO-04",
+      "name": "결과 없음 - 그 기간에 빈 장비가 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/rental-deluxe/12.webp",
+      "id": "PD-05",
+      "name": "대여 불가 - 그 날짜 마감",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/rental-deluxe/13.webp",
+      "id": "BK-04",
+      "name": "결제 실패",
+      "kind": "edge"
     }
   ],
   "rental-premium": [
     {
       "file": "/pack-screens/rental-premium/01.webp",
       "id": "HO0101",
-      "name": "홈"
+      "name": "홈",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-premium/02.webp",
-      "id": "PD0301",
-      "name": "날짜별 가용 재고 달력"
+      "id": "PD0101",
+      "name": "장비 목록",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-premium/03.webp",
       "id": "CT0101",
-      "name": "대여 장바구니"
+      "name": "대여 장바구니",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-premium/04.webp",
       "id": "BK0101",
-      "name": "대여 신청서"
+      "name": "대여 신청서",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-premium/05.webp",
-      "id": "RT0401",
-      "name": "반납 접수"
+      "id": "RT0101",
+      "name": "수령 확인",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-premium/06.webp",
-      "id": "ST0201",
-      "name": "정산 내역 - 연체·파손 청구"
+      "id": "ST0101",
+      "name": "점검 진행 중",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-premium/07.webp",
       "id": "MY0101",
-      "name": "내 대여 내역"
+      "name": "내 대여 내역",
+      "kind": "main"
     },
     {
       "file": "/pack-screens/rental-premium/08.webp",
       "id": "CS0101",
-      "name": "자주 묻는 질문"
+      "name": "자주 묻는 질문",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/rental-premium/09.webp",
+      "id": "HO0201",
+      "name": "카테고리 홈",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/rental-premium/10.webp",
+      "id": "PD0201",
+      "name": "장비 상세",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/rental-premium/11.webp",
+      "id": "HO0304",
+      "name": "기간으로 찾기 - 결과 > 마감 장비 뒤로 밀기",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/rental-premium/12.webp",
+      "id": "HO0401",
+      "name": "결과 없음 - 그 기간에 빈 장비가 없음",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/rental-premium/13.webp",
+      "id": "PD0501",
+      "name": "대여 불가 - 그 날짜 마감",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/rental-premium/14.webp",
+      "id": "BK0401",
+      "name": "결제 실패",
+      "kind": "edge"
     }
   ]
 }

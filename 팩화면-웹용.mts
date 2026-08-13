@@ -36,7 +36,7 @@ const 목록파일 = "lib/pack-screens.json";
 /** 상세 카드에 들어가는 폭. 2열로 놓으면 한 칸이 550px 안팎이라 두 배로 잡았다. */
 const 폭 = 1100;
 
-type 한장 = { file: string; id: string; name: string };
+type 한장 = { file: string; id: string; name: string; kind: "main" | "edge" };
 const 모음: Record<string, 한장[]> = {};
 
 /* 「LMS_디럭스_코럴선셋」 같은 폴더 이름을 팩키·등급으로 되돌린다.
@@ -95,9 +95,15 @@ for (const 폴더 of 폴더들) {
     const 이름 = 이름표.get(id.toUpperCase()) ?? 붙은이름;
     if (!이름표.has(id.toUpperCase())) console.log(`  ⚠ 스펙팩에 ${id} 가 없어 파일명을 씁니다`);
 
+    /* 주요 화면인지 «실패·예외» 화면인지 표시해 둔다 (2026-08-13 사장님 지시).
+       상세에서 배지 색을 갈라 보여 준다 — 우리가 파는 깊이가 예외 화면에 있어서다.
+       판단은 «화면 이름»으로 한다. 「취소규정」처럼 규정 안내는 실패가 아니라 「취소」는 뺐다. */
+    const 예외말 = /없음|없어|실패|품절|마감|오류|만료|비어|초과|거절|중단|불가|지연|미달|반려|정지|차단|잠김|한도|종료/;
+    const 갈래 = 예외말.test(이름) ? "edge" : "main";
+
     const 낼이름 = `${nn}.webp`;
     await sharp(join(가로, f)).resize({ width: 폭 }).webp({ quality: 78 }).toFile(join(갈곳, 낼이름));
-    적을것.push({ file: `/pack-screens/${키}/${낼이름}`, id: id.toUpperCase(), name: 이름 });
+    적을것.push({ file: `/pack-screens/${키}/${낼이름}`, id: id.toUpperCase(), name: 이름, kind: 갈래 });
     만든장 += 1;
   }
 

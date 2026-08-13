@@ -413,11 +413,13 @@ export default async function PackageDetailPage({
             ⚠ 완성 화면이 없는 등급(스탠다드·플러스)에서는 이 절이 통째로 안 나온다. */}
         {shots.length > 0 && (
           <section className="flex flex-col gap-4">
-            <SectionTitle>{selected.name}는 이런 화면이 만들어집니다</SectionTitle>
-            <p className="max-w-[62ch] leading-relaxed text-muted-foreground">
+            {/* 「프리미엄«는»」이라고 붙어 있어 조사가 틀렸다(2026-08-13). 이름을 안 쓰는 쪽으로 고쳤다. */}
+            <SectionTitle>{selected.name}은 더 깊이 있는 화면을 만들어 줍니다</SectionTitle>
+            <p className="max-w-[62ch] leading-relaxed text-muted-foreground [word-break:keep-all]">
               고쳐서 올린 그림이 아니라 <b className="text-foreground">AI팩을 넣고 그대로 뽑은 화면</b>
-              입니다. 전체 {selected.siteScreens}개 중 메뉴마다 첫 화면을 골라 {shots.length}장을
-              담았어요.
+              입니다. 전체 {selected.siteScreens}개 중 <b className="text-foreground">주요 화면</b>과
+              {" "}
+              <b className="text-foreground">실패·예외 화면</b>을 섞어 {shots.length}장을 담았어요.
             </p>
             {/* 옆으로 민다 — 위 등급 카드와 같은 어법이다(스크롤 스냅).
                 열 장 넘는 화면을 세로로 쌓으면 페이지가 한없이 길어져서, 아래 절들이
@@ -425,9 +427,10 @@ export default async function PackageDetailPage({
                 화살표는 데스크톱용이다 — 마우스 휠은 세로로만 돌아서 화살표가 없으면
                 첫 두 장만 보고 지나간다. 스크롤 위치를 알아야 해서 그 줄만 클라이언트다. */}
             <ScreenStrip shots={shots} alt={`${pkg.title} ${selected.name}`} />
-            <p className="max-w-[72ch] text-sm leading-relaxed text-muted-foreground">
+            <p className="max-w-[72ch] text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
               Claude Code(Opus 5 이상)로 만든 결과물입니다. 쓰시는 AI 도구에 따라 다르게 나올 수
-              있어요. 색·글꼴은 같이 드리는 규칙 3종 중에 고르실 수 있습니다.
+              있어요. 색·글꼴은 같이 드리는 디자인 프리셋과 레이아웃 프리셋을 골라 AI 도구에 넣어
+              보세요.
             </p>
           </section>
         )}
