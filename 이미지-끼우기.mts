@@ -123,6 +123,17 @@ const 짝목록: [string, string][] = (() => {
   return 것들;
 })();
 
+/* ⚠ 사진이 «어느 폴더»에 있는지는 배치표에도 짝표에도 안 적혀 있다. 파일 이름만 적는다.
+   그래서 팩용 아래를 다 뒤져 찾는다 — 제 업종 폴더를 먼저 본다.
+   2026-08-13: 배치.csv 는 업종 폴더와 공용만 뒤지고 있었다. 뷰티샵 히어로에 마스코트
+   살롱 그림을 넣으려 했더니 「공용/뷰티샵_네일_물범.webp」를 찾다가 멈췄다.
+   짝표는 이미 다 뒤지고 있었는데 배치표만 안 그랬다 — 같은 자리에서 두 번 걸리지 않게 합친다. */
+const 사진방들 = readdirSync(이미지방, { withFileTypes: true })
+  .filter((e) => e.isDirectory() && !e.name.startsWith("_"))
+  .map((e) => e.name)
+  .sort((a, b) => (a === 업종 ? -1 : b === 업종 ? 1 : 0));   // 제 업종 폴더를 먼저 본다
+const 어디있나 = (파일: string) => 사진방들.find((d) => existsSync(join(이미지방, d, 파일)));
+
 /** 역할마다 쓸 사진 목록. 배치.csv 가 있으면 그것을 따르고, 없으면 만들어 준다. */
 function 사진고르기(): Map<string, string[]> {
   const 방 = join(이미지방, 업종);
@@ -149,7 +160,9 @@ function 사진고르기(): Map<string, string[]> {
          「이미지 영역 (짐 사진 · 권장 1200×900)」이라고 «맞는 말»을 하는데,
          엉뚱한 사진은 «틀린 말»을 한다. 빈 것보다 틀린 것이 나쁘다. */
       if (파일 === "(비움)") { 비울역할.add(역할); continue; }
-      const 어디 = 업종사진.includes(파일) ? `${업종}/${파일}` : `공용/${파일}`;
+      const 방이름 = 어디있나(파일);
+      if (!방이름) { console.error(`배치.csv 가 부르는 사진을 못 찾았습니다: ${파일}`); process.exit(1); }
+      const 어디 = `${방이름}/${파일}`;
       if (!역할별.has(역할)) 역할별.set(역할, []);
       역할별.get(역할)!.push(어디);
     }
@@ -176,12 +189,8 @@ const 역할별 = 사진고르기();
    빠뜨리면 화면에 깨진 그림 표시가 뜬다.
    ⚠ 업종 폴더 «밖»도 뒤진다. LMS 의 강의 썸네일은 「직업」·「장소」에서 빌려 온다 —
      같은 사진을 폴더마다 복사해 두면 어느 것이 진짜인지 금세 모르게 된다. */
-const 사진방들 = readdirSync(이미지방, { withFileTypes: true })
-  .filter((e) => e.isDirectory() && !e.name.startsWith("_"))
-  .map((e) => e.name)
-  .sort((a, b) => (a === 업종 ? -1 : b === 업종 ? 1 : 0));   // 제 업종 폴더를 먼저 본다
 const 짝파일 = [...new Set(짝목록.map(([, f]) => f))].map((f) => {
-  const 방 = 사진방들.find((d) => existsSync(join(이미지방, d, f)));
+  const 방 = 어디있나(f);
   if (!방) { console.error(`짝.csv 가 부르는 사진을 못 찾았습니다: ${f}`); process.exit(1); }
   return `${방}/${f}`;
 });
