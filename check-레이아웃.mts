@@ -107,7 +107,11 @@ const 재는글 = `
     const 첫위 = 아이들[0].getBoundingClientRect().top;
     const 줄 = 아이들.filter((c) => Math.abs(c.getBoundingClientRect().top - 첫위) < 3);
     if (줄.length < 2) continue;
-    const 상자 = 줄.map((c) => c.getBoundingClientRect()).sort((a, b) => a.left - b.left);
+    /* 요소와 상자를 «짝지어» 왼쪽부터 세운다. 상자만 정렬하면 나중에 「이 칸이 무엇이었나」를
+       되짚을 수 없다 — 글자 한 자짜리(아이콘)를 가려내려면 요소가 있어야 한다. */
+    const 짝 = 줄.map((c) => ({ el: c, r: c.getBoundingClientRect() })).sort((a, b) => a.r.left - b.r.left);
+    const 상자 = 짝.map((x) => x.r);
+    const 자식 = 짝.map((x) => x.el);
 
     /* D1 — 겹침. 8px 넘게 겹칠 때만. 아바타 겹쳐 놓기 같은 것은 대개 그 밑이다. */
     for (let i = 1; i < 상자.length; i++) {
@@ -126,9 +130,22 @@ const 재는글 = `
          더 벌어지는데 그건 일부러 그런 것이다. 첫 판에서 그걸 다 잡아 37건이 나왔다.
          반대로 정한 값보다 «좁으면» 뭔가가 제 칸을 넘어와 틈을 먹은 것이다 —
          2026-08-11 에 고친 진짜 결함이 딱 그 모양이었다(gap 8px 인데 한쪽만 1px). */
-      const 좁은것 = 틈.filter((g) => g < 정한틈 - 3);
+      /* ⚠ «글자 한 자»짜리 칸은 상자로 재면 안 된다 (2026-08-13).
+         장비렌탈 아코디언의 ＋(전각, U+FF0B) 가 그랬다. 상자는 27px 인데 글자는 가운데
+         13px 만 그려지고 양옆에 7px 씩 빈다. 그래서 «상자 틈» 은 2px 로 나오는데
+         **눈에 보이는 틈은 9px** 이라 설계값 8px 과 맞다. 그려서 견줘 보고서야 알았다 —
+         고치기 전과 후 그림이 똑같았다.
+         글자 한 자짜리(아이콘·마크)는 이 검사에서 뺀다. 그 틈은 사람 눈으로 본다. */
+      const 글자하나 = (el) => (el.textContent || "").trim().length <= 1;
+      const 좁은것 = [];
+      for (let i = 1; i < 상자.length; i++) {
+        const g = Math.round(상자[i].left - 상자[i - 1].right);
+        if (g >= 정한틈 - 3) continue;
+        if (글자하나(자식[i]) || 글자하나(자식[i - 1])) continue;
+        좁은것.push(g);
+      }
       if (좁은것.length)
-        결과.틈.push(이름(부모) + " 는 gap " + Math.round(정한틈) + "px 인데 실제 " + 틈.join("·") + "px");
+        결과.틈.push(이름(부모) + " 는 gap " + Math.round(정한틈) + "px 인데 실제 " + 좁은것.join("·") + "px");
     }
   }
 
