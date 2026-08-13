@@ -152,9 +152,20 @@ export function ChargeClient({
 
       {error && <p className="text-center text-sm text-danger">{error}</p>}
 
+      {/* ⚠ 「언제 받고 언제까지 쓰나」를 이 화면에 «직접» 적는다 (2026-08-13).
+          토스페이먼츠 계약심사가 「구매자가 서비스제공기간을 인지할 수 있도록 상품페이지 내에
+          명확히 기재」를 요구한다. 전에는 「유효기간은 이용약관·FAQ에서 확인하세요」라고만
+          해서, 손님도 심사자도 이 화면만 봐서는 알 수 없었다.
+          ⚠ 약관 제6조 ⑤항과 같은 값이어야 한다 — 유상 1년(365일) · 무료 90일. */}
+      <p className="text-center text-xs leading-relaxed text-muted-foreground">
+        결제하면 <b className="text-foreground">바로</b> 크레딧이 들어오고, 충전한 크레딧은{" "}
+        <b className="text-foreground">충전일로부터 1년(365일)</b> 동안 쓸 수 있어요.
+        <br />
+        회원가입 때 드리는 무료 크레딧은 지급일로부터 90일간 쓸 수 있어요.
+      </p>
       <p className="text-center text-xs leading-relaxed text-muted-foreground">
         미리보기는 언제나 무료예요. 크레딧으로 <b className="text-foreground">AI팩 생성 · 사이트 검수 ·
-        파일 다운로드</b>를 이용해요. 각 기능의 크레딧 사용량과 환불·유효기간은 이용약관·FAQ에서 확인하세요.
+        파일 다운로드</b>를 이용해요. 각 기능의 크레딧 사용량과 환불 규정은 이용약관·FAQ에서 확인하세요.
       </p>
     </div>
   );
