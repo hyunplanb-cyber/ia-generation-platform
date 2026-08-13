@@ -39,7 +39,10 @@ const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const 팩방 = "판매용_템플릿/_판매팩";
 const 검수방뿌리 = "판매용_템플릿/_마케팅/검수";
 const 오늘 = new Date().toISOString().slice(0, 10);
-const 고른팩 = process.argv[2];
+/** --전부 를 주면 «모든 화면»을 본다. 평소에는 대표 14장만 본다(빠르게 돌리려고).
+ *  2026-08-13 사장님: 「다른 팩도 확인해줘」 — 14장으로는 "멀쩡하다"고 말하기 어렵다. */
+const 전부보기 = process.argv.includes("--전부");
+const 고른팩 = process.argv.slice(2).find((x) => !x.startsWith("--"));
 
 /** 몇 장을 볼까. 다 보면 오래 걸리고, 한 장만 보면 놓친다.
  *
@@ -193,6 +196,7 @@ function 대표고르기(pages: string): string[] {
     if (고른것.length >= 볼장수) break;
     if (!고른것.includes(f)) 고른것.push(f);
   }
+  if (전부보기) return [홈, ...무거운순];          // 전부 보기 — 홈부터, 나머지는 무거운 순
   return [...new Set(고른것)].slice(0, 볼장수);
 }
 
@@ -239,7 +243,11 @@ function 팩보기(팩: string) {
     합.겹침 += r.겹침; 합.넘침 += r.넘침; 합.틈 += r.틈; 합.글자 += r.글자; if (r.가로스크롤) 합.가로 += 1;
     for (const b of r.보기) if (보기.length < 5) 보기.push(`${f} — ${b}`);
 
-    /* 캡처를 «검수 폴더»에 남긴다 — 숫자만 주면 사장님이 확인할 길이 없다. */
+    /* 캡처를 «검수 폴더»에 남긴다 — 숫자만 주면 사장님이 확인할 길이 없다.
+       ⚠ 전부 보기(--전부)에서는 «흠이 난 화면만» 남긴다. 1,200장을 다 뜨면 600MB 가 되고,
+       그 안에서 흠 있는 장을 찾는 것도 일이 된다. */
+    const 흠났나 = r.겹침 + r.넘침 + r.틈 + r.글자 > 0 || r.가로스크롤;
+    if (전부보기 && !흠났나) continue;
     const 찍을길 = join(W, `${f.replace(/\.html$/, "")}.png`);
     try {
       execFileSync(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars",
