@@ -506,7 +506,12 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .tl-item .tm{font-size:13px;font-weight:700;color:var(--pri-text)}
 /* 가로 상태 타임라인 */
 .hsteps{display:flex;align-items:center;gap:0;flex-wrap:wrap}
-.hsteps .st{flex:1;min-width:120px;text-align:center;position:relative;padding:var(--s3) 4px}
+/* ⚠ 단계 칸에 «최소 폭»을 주면 안 된다 (2026-08-13).
+   min-width:120px 이면 셋에 384px 이 필요한데, 좁은 단(310px)에 들어가면
+   둘만 남고 셋째가 아래로 밀려 혼자 넓게 퍼진다. 「1 2 / 3」 꼴로 깨져 보였다.
+   좁아지는 까닭이 «화면 폭»이 아니라 «단»이라서 반응형 예외로는 안 잡힌다.
+   flex:1 1 0 + min-width:0 이면 칸이 알아서 줄어 셋이 늘 한 줄에 있는다. */
+.hsteps .st{flex:1 1 0;min-width:0;text-align:center;position:relative;padding:var(--s3) 4px}
 .hsteps .st .dot{width:32px;height:32px;border-radius:50%;background:#F0E7E4;color:var(--muted);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-weight:800;font-size:14px}
 .hsteps .st.done .dot{background:var(--pri-10);color:var(--pri-text)}
 .hsteps .st.on .dot{background:var(--primary);color:#fff}
