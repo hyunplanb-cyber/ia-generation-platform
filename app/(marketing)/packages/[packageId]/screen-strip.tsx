@@ -87,10 +87,13 @@ export function ScreenStrip({ shots, alt }: { shots: Shot[]; alt: string }) {
                 줄바꿈: 화면 이름이 길어도 낱말 가운데서 안 끊기게 keep-all 을 건다. */}
             <figcaption className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-xs [word-break:keep-all]">
               <span
+                /* 주요는 초록, 실패·예외는 주황. 회색으로 뒀더니 「주요인데 왜 흐리냐」는 말을
+                   들었다(2026-08-13). 둘 다 «있다»는 뜻이니 둘 다 색이 있어야 한다.
+                   초록은 사이트가 이미 쓰는 success 토큰이다 — 새 색을 만들지 않는다. */
                 className={`rounded px-1.5 py-0.5 text-[11px] font-bold ${
                   s.kind === "edge"
                     ? "bg-primary-soft text-primary-on-soft"
-                    : "bg-muted text-muted-foreground"
+                    : "bg-success-soft text-success"
                 }`}
               >
                 {s.kind === "edge" ? "실패·예외" : "주요"}
