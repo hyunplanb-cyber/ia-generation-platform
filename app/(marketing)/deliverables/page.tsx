@@ -2,7 +2,6 @@ import Link from "next/link";
 import { LayoutList, ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { DeliverablesTabs } from "./deliverables-tabs";
-import { HowToMake } from "./how-to-make";
 
 export const metadata = {
   title: "IA팩 사용가이드 · 카페인컬러",
@@ -27,9 +26,7 @@ export default function DeliverablesPage() {
         </div>
       </section>
 
-      <HowToMake />
-
-      {/* 탭: AI팩 / 사이트 검수 */}
+      {/* 탭: 만드는 방법 / AI팩 / 사이트 검수 */}
       <DeliverablesTabs />
 
       {/* CTA */}

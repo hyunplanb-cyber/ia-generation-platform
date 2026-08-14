@@ -20,6 +20,7 @@ import {
   Search,
   Palette,
   LayoutTemplate,
+  Wand2,
   type LucideIcon,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
@@ -33,6 +34,7 @@ import {
   PresetColorMockup,
   PresetLayoutMockup,
 } from "./deliverable-mockups";
+import { HowToMakeBody } from "./how-to-make";
 
 type Deliverable = {
   icon: LucideIcon;
@@ -112,16 +114,22 @@ const DELIVERABLES: Deliverable[] = [
   },
 ];
 
-type Tab = "planning" | "verify";
+/* ⚠ 「만드는 법」이 «맨 앞»이다 (2026-08-14 사장님 지시).
+   처음 오신 분은 「무엇을 받나」보다 「어떻게 만드나」가 먼저 궁금하다 —
+   몇 분 걸리는지, 뭘 적어야 하는지를 모르면 시작을 못 한다. */
+type Tab = "how" | "planning" | "verify";
 
 export function DeliverablesTabs() {
-  const [tab, setTab] = useState<Tab>("planning");
+  const [tab, setTab] = useState<Tab>("how");
 
   return (
     <div className="flex flex-col">
-      {/* 탭 전환 — AI팩 / 사이트 검수 */}
+      {/* 탭 전환 — 만드는 법 / AI팩 / 사이트 검수 */}
       <div className="border-b border-border">
         <div className="mx-auto flex max-w-[1440px] gap-1 px-6">
+          <TabButton active={tab === "how"} onClick={() => setTab("how")} icon={Wand2}>
+            만드는 방법
+          </TabButton>
           <TabButton active={tab === "planning"} onClick={() => setTab("planning")} icon={PencilRuler}>
             AI팩
           </TabButton>
@@ -131,7 +139,9 @@ export function DeliverablesTabs() {
         </div>
       </div>
 
-      {tab === "planning" ? <PlanningDeliverables /> : <VerifyDeliverable />}
+      {tab === "how" && <HowToMakeBody />}
+      {tab === "planning" && <PlanningDeliverables />}
+      {tab === "verify" && <VerifyDeliverable />}
     </div>
   );
 }

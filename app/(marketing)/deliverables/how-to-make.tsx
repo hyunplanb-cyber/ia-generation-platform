@@ -58,11 +58,12 @@ const 단계들: 단계[] = [
   },
 ];
 
-export function HowToMake() {
+/* 탭 안에 들어가는 «몸통». 절 껍데기(section·배경)를 두지 않는다 —
+   다른 탭(AI팩·사이트 검수)과 같은 결이라야 탭을 옮겨 다닐 때 안 튄다. */
+export function HowToMakeBody() {
   return (
-    <section className="border-b border-border bg-muted/30">
-      <div className="mx-auto max-w-5xl px-6 py-20">
-        <p className="text-xs font-bold tracking-wide text-primary">HOW TO</p>
+    <section>
+      <div className="mx-auto max-w-5xl px-6 py-16">
         <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl [word-break:keep-all]">
           AI팩은 이렇게 만들어져요
         </h2>
