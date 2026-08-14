@@ -77,13 +77,13 @@ const indexHtml = `<!doctype html>
 
 <main class="main"><div class="wrap">
   <div class="card mb8"><div class="card-bd">
-    <h2 class="t-card mb3">디자인 프리셋 — 가이드 03 코럴 선셋 × 레이아웃 B 사진 중심형</h2>
+    <h2 class="t-card mb3">디자인 프리셋 — 가이드 03 코럴 선셋 × 레이아웃 B 벤토 그리드형</h2>
     <div class="row wrap-row" style="gap:8px">
       ${swatch.map(([n, c]) => `<div style="width:116px"><div style="height:48px;border-radius:12px;border:1px solid var(--border);background:${c}"></div>
         <div class="t-sub mt1" style="font-size:12px">${n}<br>${c}</div></div>`).join('')}
     </div>
     <p class="t-sub mt4">${preset.typography.fontFamily} (폴백 ${preset.typography.fallback}) · 카드 ${preset.radius.card} / 버튼·입력 ${preset.radius.button} / 배지 ${preset.radius.badge} · ${preset.spacing}</p>
-    <p class="t-sub mt2">레이아웃 B — 히어로는 사진 모자이크, 목록은 매거진 2열(큰 사진 위에 제목·태그), 내비게이션은 2단 헤더, 상세는 전체 폭 갤러리 + 하단 고정 액션 바</p>
+    <p class="t-sub mt2">레이아웃 B — 히어로 없이 크기가 다른 블록을 한 판에 짜고, 목록은 블록 크기를 2:1:1로 섞고(첫 항목만 두 칸), 내비게이션은 한 줄로 단순하게, 상세는 큰 블록에 핵심 · 작은 블록에 세부</p>
   </div></div>
 
   <div class="box mb8" style="border-left:4px solid var(--primary)">
@@ -111,7 +111,7 @@ const indexHtml = `<!doctype html>
 
   <div class="box mt8">
     <h3 class="t-card mb2">이 사이트에 대해</h3>
-    <p class="t-sub">스펙팩(07_AI빌드_스펙팩.json)의 화면 정의에 디자인 프리셋 두 벌(가이드 03 코럴 선셋 · 레이아웃 B 사진 중심형)을 함께 넣어 만든 정적 프로토타입입니다.
+    <p class="t-sub">스펙팩(07_AI빌드_스펙팩.json)의 화면 정의에 디자인 프리셋 두 벌(가이드 03 코럴 선셋 · 레이아웃 B 벤토 그리드형)을 함께 넣어 만든 정적 프로토타입입니다.
     화면마다 스펙팩에 적힌 화면 프롬프트를 그대로 따라 만들었습니다. 탭·상태·예외까지 펼친 3뎁스는 프리미엄 등급에 들어 있습니다.
     사진 자리는 실제 사진 대신 <b>무엇이 들어갈 자리인지와 권장 크기</b>를 적은 옅은 블록으로 두었고, 적어 둔 비율을 그대로 지킵니다.
     각 화면 우하단의 <b>화면 정보</b> 버튼을 누르면 pageId · 화면명 · 기능정의와 연결 화면을 볼 수 있습니다.</p>
