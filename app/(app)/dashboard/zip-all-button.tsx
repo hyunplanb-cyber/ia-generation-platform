@@ -392,23 +392,15 @@ export function ZipAllButton({
         zip.file("08_검수시나리오.xlsx", XLSX.write(wb, { type: "array", bookType: "xlsx" }));
       }
 
-      /* 「사이트 내놓는 법」 안내서를 함께 넣는다 — 2026-08-10.
-         화면까지 만들어 드려도 「내 컴퓨터에서만 보인다」에서 멈추시는 분이 많다.
-         원본은 판매용_템플릿/_마케팅 한 벌이고, npm run pack 이 public/guide 로 복사한다.
+      /* 「사이트 내놓는 법」·「앱으로 내놓는 법» — 본문 대신 «안내장»을 넣는다 (2026-08-14).
+         화면까지 만들어 드려도 「내 컴퓨터에서만 보인다」에서 멈추시는 분이 많아 넣기 시작했다.
 
-         ⚠ 이것 때문에 zip 전체가 실패하면 안 된다 — 안내서는 «덤»이지 본체가 아니다.
-           못 가져오면 조용히 빼고 나머지를 내려준다. */
-      for (const [주소, 이름] of [
-        ["/guide/deploy-guide.html", "09_사이트_내놓는_법.html"],
-        ["/guide/app-guide.html", "10_앱으로_내놓는_법.html"],
-      ]) {
-        try {
-          const 안내 = await fetch(주소);
-          if (안내.ok) zip.file(이름, await 안내.arrayBuffer());
-        } catch {
-          // 무시 — 안내서 없이 산출물만 내려준다.
-        }
-      }
+         ⚠ 전에는 본문(90KB·38KB)을 통째로 담았다. 그러면 받으신 날 글이 그대로 굳어서,
+           배포 화면이 바뀌거나 앱 심사 기준이 바뀌어도 손님 파일은 옛날 글로 남는다.
+           지금은 한 장짜리 안내장만 넣고 본문은 웹에 둔다 — 언제 여셔도 최신이다.
+         ⚠ 판매팩과 «같은 곳»(lib/guide-links)에서 나온다. 두 곳에 적으면 갈린다. */
+      const { GUIDES, buildGuideCardHtml } = await import("@/lib/guide-links");
+      for (const a of GUIDES) zip.file(a.파일, buildGuideCardHtml(a));
 
       const blob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(blob);

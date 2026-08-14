@@ -23,6 +23,7 @@ import {
 import JSZip from "jszip";
 import { PACKAGES, BUILD_SCOPE, PLAN_NAMES, type PlanId } from "./lib/packages";
 import { CHECK_NOTE_FULL } from "./lib/export/template-verify";
+import { GUIDES, buildGuideCardHtml } from "./lib/guide-links";
 
 // 파는 것이 놓이는 곳. 여기에는 **팔 물건만** 둔다.
 const T = "판매용_템플릿";
@@ -234,8 +235,8 @@ ${검수} 디자인프리셋/
           가이드_01~03          색·글꼴·모서리 3벌 (.md / .json)
           레이아웃_A~B          화면 뼈대 2벌 (.md / .json)
           프리셋_미리보기.html   3벌 × 2벌 한눈에 비교
- 09_사이트_내놓는_법.html   배포·도메인·로그인·결제까지 내놓는 법 (브라우저로 열기)
- 10_앱으로_내놓는_법.html   앱 심사·권한·아이콘·스토어 등록 (브라우저로 열기)
+ 09_사이트_내놓는_법.html   배포·도메인·로그인·결제까지 내놓는 법 (열면 최신 안내서로 이어집니다)
+ 10_앱으로_내놓는_법.html   앱 심사·권한·아이콘·스토어 등록 (열면 최신 안내서로 이어집니다)
 ${사이트구성}
 ■ 사용법 - 파일 하나, 한 마디면 됩니다
 
@@ -369,8 +370,13 @@ async function pack(p: Product) {
   /* 모든 등급에 «인터넷에 올리는 법» 안내를 함께 넣는다(2026-08-10).
      화면까지 만들어 드려도 «내 컴퓨터에서만 보이는» 데서 멈추시는 분이 많다.
      팩마다 다시 쓰지 않고 한 벌을 복사한다 — 두 벌로 적으면 반드시 갈라진다. */
-  copyFileSync(내놓는법, `${outDir}/09_사이트_내놓는_법.html`);
-  copyFileSync(앱으로내놓는법, `${outDir}/10_앱으로_내놓는_법.html`);
+  /* ⭐ 2026-08-14 — 본문 대신 «안내장»을 넣는다 (사장님 지시).
+     배포 서비스 화면도 앱 심사 기준도 자주 바뀐다. 본문을 통째로 넣어 두면
+     이미 산 손님의 파일이 «그날 것»으로 굳어, 우리가 고쳐도 안 간다.
+     링크로 두면 언제 여셔도 최신 글이 나온다.
+     ⚠ 파일 이름(09_·10_)은 그대로 둔다 — 손님 습관을 바꾸지 않는다.
+     ⚠ 인터넷이 없어도 «무엇을 하는 글인지»는 읽히게 요약을 넣는다. */
+  for (const a of GUIDES) writeFileSync(`${outDir}/${a.파일}`, buildGuideCardHtml(a), "utf8");
 
   const packSite = `${outDir}/완성화면`;
   if (!p.sitePath && existsSync(packSite)) {
