@@ -225,19 +225,42 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               화면은 「콘텐츠 관리」 하나뿐이었고, 화면마다 AI에 넣을 프롬프트는 없었습니다.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* PROOF — 「무엇이 들어 있나」에서 「실제로 돌려봤다」로 이야기가 바뀌는 자리.
+          왜 쪼갰나 (2026-08-14 사장님 지시): 위 절 하나가 2,261px, 1440 화면으로 세 장이었다.
+          중간에 쉼표가 없으니 스크롤만 흐르고 읽히지 않는다. 여기서 배경색을 바꾸고
+          눈표를 하나 더 세워 «장이 바뀐다»를 눈으로 알린다.
+
+          ⚠ 번호(01·02·03)는 일부러 안 붙였다. 위쪽 띠의 「01 만들기 전 / 02 오픈 전」과
+          아래 절 번호가 지금 딱 맞물려 있다. 여기에 번호를 끼우면 그 짝이 통째로 밀린다. */}
+      <section className="sec sec-proof" id="proof">
+        <div className="wrap">
+          <div className="sec-eye">
+            <span className="mono" style={{ textTransform: "none" }}>
+              직접 돌려봤어요
+            </span>
+          </div>
 
           {/* 위의 주장("AI는 잘 되는 화면만 만든다")을 바로 받는 증거.
-              주장 → 증거 → 행동 순서가 되도록 CTA 바로 앞에 둔다. */}
+              주장 → 증거 → 행동 순서가 되도록 CTA 바로 앞에 둔다.
+
+              머리글을 sc-cap(19px)에서 h2 로 올렸다(2026-08-14). 절이 갈라지면서
+              이 절의 제일 큰 글자가 19px 이 되어 버렸는데, 옆 절 제목이 58px 이라
+              혼자 «잘린 조각»처럼 보였다. 문장은 그대로 옮겨 왔고 새로 짓지 않았다. */}
+          <h2>
+            AI팩을 주면<br />
+            <span className="o">이렇게 됩니다.</span>
+          </h2>
+          {/* 바로 위 절에서 「빠진 것」으로 말해 놓고 여기서 144개를 자랑하면 힘이 상쇄된다.
+              숫자를 근거가 아니라 배경으로 밀어낸다 — 앞에 오는 것은 「빠뜨린 화면까지」다. */}
+          <p className="lead">
+            지시서 파일 하나를 Claude Code에 넣고 돌린 기록이에요. 위에 적은 빠지기 쉬운 화면까지
+            한 벌로 넣어 돌렸고, 약 40분 만에 화면 144개가 만들어졌습니다.
+          </p>
+
           <div className="showcase">
-            <div className="sc-cap">
-              <b>AI팩을 주면 이렇게 됩니다</b>
-              {/* 바로 위에서 「빠진 것」으로 말해 놓고 여기서 144개를 자랑하면 힘이 상쇄된다.
-                  숫자를 근거가 아니라 배경으로 밀어낸다 — 앞에 오는 것은 「빠뜨린 화면까지」다. */}
-              <span>
-                지시서 파일 하나를 Claude Code에 넣고 돌린 기록이에요. 위에 적은 빠지기 쉬운 화면까지
-                한 벌로 넣어 돌렸고, 약 40분 만에 화면 144개가 만들어졌습니다.
-              </span>
-            </div>
             <div className="sc-frame">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${SHOWCASE_VIDEO_ID}`}
@@ -481,6 +504,14 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
       {/* MOAT */}
       <section className="moat">
         <div className="wrap">
+          {/* 마무리 절에도 눈표를 하나 세운다(2026-08-14). 앞 절이 AI팩 카드 목록이라
+              바로 다음에 큰 질문이 튀어나오면 «아직 카드 얘기인가» 싶다.
+              번호는 안 붙인다 — 파는 이야기가 아니라 맺음말이다. */}
+          <div className="sec-eye moat-eye">
+            <span className="mono" style={{ textTransform: "none" }}>
+              마지막으로
+            </span>
+          </div>
           <h2>
             바이브코딩으로 원하는 사이트 <span className="o">만들고</span>,<br />
             <span className="t">오픈할 준비</span> 되셨나요?
@@ -797,25 +828,18 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           line-height: 1.5;
         }
         /* 시연 영상 — 주장 바로 뒤에 붙는 증거 */
+        /* PROOF — planning 에서 갈라져 나온 절.
+           배경을 한 톤 밝게(paper → paper-2) 깔아 «여기서 장이 바뀐다»를 눈으로 알린다.
+           tpls 절도 같은 paper-2 인데, 그 사이에 짙은 초록 verify 절이 끼어 있어
+           두 밝은 절이 붙어 보이지 않는다. */
+        .sec-proof {
+          background: var(--paper-2);
+        }
+        .sec-proof h2 .o {
+          color: var(--orange);
+        }
         .showcase {
           margin-top: 40px;
-        }
-        .sc-cap {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          margin-bottom: 14px;
-        }
-        .sc-cap b {
-          font-size: 19px;
-          font-weight: 800;
-        }
-        .sc-cap span {
-          font-size: 16px;
-          font-weight: 400;
-          color: var(--ink-soft);
-          max-width: 760px;
-          line-height: 1.6;
         }
         .sc-frame {
           position: relative;
@@ -1320,6 +1344,10 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         .moat {
           padding: 100px 0;
           text-align: center;
+        }
+        /* 이 절만 가운데 정렬이라 눈표도 가운데로 세운다. */
+        .moat-eye {
+          justify-content: center;
         }
         .moat h2 {
           font-size: clamp(34px, 5vw, 58px);
