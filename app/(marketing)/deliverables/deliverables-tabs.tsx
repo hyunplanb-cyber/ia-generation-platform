@@ -18,6 +18,8 @@ import {
   Lock,
   ListChecks,
   Search,
+  Palette,
+  LayoutTemplate,
   type LucideIcon,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
@@ -28,6 +30,8 @@ import {
   FlowMockup,
   WbsMockup,
   SpecPackMockup,
+  PresetColorMockup,
+  PresetLayoutMockup,
 } from "./deliverable-mockups";
 
 type Deliverable = {
@@ -79,6 +83,24 @@ const DELIVERABLES: Deliverable[] = [
     role: "화면(작업)별 제작 일정을 정리해요. 전체 일정을 입력하면 화면 수에 맞춰 일정 초안을 자동으로 나눠주고, 손으로 조정한 화면은 그대로 유지돼요.",
     formats: ["엑셀"],
     mockup: <WbsMockup />,
+  },
+  {
+    /* 2026-08-14 사장님 지시로 넣었다. 팩에는 처음부터 들어 있었는데
+       이 목록에만 빠져 있어서, 손님이 «비용을 들여 만드는 것»을 못 보고 있었다. */
+    icon: Palette,
+    tone: "bg-primary-soft text-primary-on-soft",
+    name: "디자인 프리셋 3벌",
+    role: "색·글꼴·모서리·그림자를 한 벌로 못 박은 규칙이에요. 화면을 여러 번 나눠 만들면 AI가 매번 조금씩 다른 색을 쓰는데, 이 파일을 함께 넣으면 첫 화면부터 마지막 화면까지 같은 얼굴을 유지해요.",
+    formats: ["마크다운", "JSON"],
+    mockup: <PresetColorMockup />,
+  },
+  {
+    icon: LayoutTemplate,
+    tone: "bg-pastel-mint text-pastel-mint-foreground",
+    name: "레이아웃 프리셋 2벌",
+    role: "무엇을 어디에 놓을지 정한 화면 뼈대예요. 히어로·목록·상세·내비게이션의 자리를 정합니다. 색 3벌과 짝이 정해져 있지 않아서 여섯 가지로 섞어 쓸 수 있어요.",
+    formats: ["마크다운", "JSON"],
+    mockup: <PresetLayoutMockup />,
   },
   {
     icon: Bot,

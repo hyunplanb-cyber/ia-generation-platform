@@ -217,3 +217,68 @@ export function SpecPackMockup() {
     </Frame>
   );
 }
+
+/* 디자인 프리셋 — 색·글꼴이 한 벌로 묶여 있다는 것을 색 띠로 보여 준다.
+   ⚠ 값을 지어내지 않는다. lib/design-presets.ts 의 실제 세 벌에서 가져온 색이다
+     (코럴 선셋 · 모던 네이비 · 미니멀 모노). 2026-08-14. */
+export function PresetColorMockup() {
+  const 벌 = [
+    { 이름: "01 코럴 선셋", 색: ["#F0654F", "#F59E0B", "#FFF6F3", "#33221E"] },
+    { 이름: "02 모던 네이비", 색: ["#1E3A8A", "#0EA5E9", "#F5F7FA", "#16181D"] },
+    { 이름: "03 미니멀 모노", 색: ["#18181B", "#71717A", "#F4F4F5", "#09090B"] },
+  ];
+  return (
+    <Frame>
+      <div className="flex flex-col gap-3">
+        {벌.map((b) => (
+          <div key={b.이름} className="flex items-center gap-3">
+            <span className="w-24 shrink-0 text-[11px] font-semibold text-foreground">{b.이름}</span>
+            <div className="flex gap-1.5">
+              {b.색.map((c) => (
+                <span
+                  key={c}
+                  className="size-6 rounded-md border border-border"
+                  style={{ background: c }}
+                  title={c}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          색 · 글꼴 · 모서리 · 그림자까지 한 벌로 묶여 있어요
+        </p>
+      </div>
+    </Frame>
+  );
+}
+
+/* 레이아웃 프리셋 — 「무엇을 어디에」를 선 그림으로. 두 벌이 어떻게 다른지가 핵심이다. */
+export function PresetLayoutMockup() {
+  const 뼈대 = [
+    { 이름: "A 사진 중심형", 줄: ["hero-big", "grid-3", "grid-3"] },
+    { 이름: "B 여백 중심형", 줄: ["hero-slim", "row", "row"] },
+  ];
+  return (
+    <Frame>
+      <div className="grid grid-cols-2 gap-3">
+        {뼈대.map((t) => (
+          <div key={t.이름}>
+            <p className="mb-2 text-[11px] font-semibold text-foreground">{t.이름}</p>
+            <div className="flex flex-col gap-1 rounded-md border border-border p-2">
+              {t.줄.map((k, i) => (
+                <div key={i} className={k === "grid-3" ? "flex gap-1" : ""}>
+                  {k === "hero-big" && <div className="h-8 rounded bg-primary-soft" />}
+                  {k === "hero-slim" && <div className="h-3 w-2/3 rounded bg-primary-soft" />}
+                  {k === "grid-3" &&
+                    [0, 1, 2].map((n) => <div key={n} className="h-5 flex-1 rounded bg-muted" />)}
+                  {k === "row" && <div className="h-4 rounded bg-muted" />}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Frame>
+  );
+}

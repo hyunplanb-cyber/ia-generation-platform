@@ -46,7 +46,7 @@ export async function SiteHeader() {
             사이트 검수하기
           </NavLink>
           <NavLink href="/deliverables" icon={<LayoutList className="size-4" />}>
-            무엇을 받나요
+            IA팩 사용가이드
           </NavLink>
           <NavLink href="/packages" icon={<Package className="size-4" />}>
             AI팩 구매

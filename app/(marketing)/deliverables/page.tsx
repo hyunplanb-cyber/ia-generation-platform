@@ -2,9 +2,10 @@ import Link from "next/link";
 import { LayoutList, ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { DeliverablesTabs } from "./deliverables-tabs";
+import { HowToMake } from "./how-to-make";
 
 export const metadata = {
-  title: "무엇을 받나요 · 카페인컬러",
+  title: "IA팩 사용가이드 · 카페인컬러",
   description: "AI팩 결과물 6종(메뉴 구조·화면설계·기능정의서)과 사이트 검수 시나리오 — 무엇에 쓰는지 샘플과 함께",
 };
 
@@ -15,7 +16,7 @@ export default function DeliverablesPage() {
       <section className="border-b border-border bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
         <div className="mx-auto max-w-4xl px-6 py-20 text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-on-soft">
-            <LayoutList className="size-3.5" /> 무엇을 받나요
+            <LayoutList className="size-3.5" /> IA팩 사용가이드
           </span>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             만들기 전엔 AI팩, 오픈 전엔 검수
@@ -25,6 +26,8 @@ export default function DeliverablesPage() {
           </p>
         </div>
       </section>
+
+      <HowToMake />
 
       {/* 탭: AI팩 / 사이트 검수 */}
       <DeliverablesTabs />
