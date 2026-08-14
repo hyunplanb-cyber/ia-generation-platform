@@ -281,10 +281,18 @@ export function ZipAllButton({
           })),
       }));
 
+      /* ⭐ 파일 이름은 «번호 + 무엇인지»만 쓴다 — 판매팩과 똑같이 (2026-08-14 사장님 지시).
+         전에는 `IA_화면목록_나는 펫 유치원을 운영하고 있어. 반려동물 유치원사이트.xlsx` 처럼
+         손님이 적은 컨셉이 파일마다 따라붙었다. 길고, 읽기 나쁘고, 판매팩과 딴판이었다.
+         **프로젝트 이름은 zip 파일 이름 한 곳에만 둔다** — 판매팩도 폴더 이름이 그 몫을 한다.
+
+         ⚠ 덤으로 2026-08-11 의 사고가 «구조적으로» 사라졌다. 컨셉에 줄바꿈이 들어가면
+           윈도우가 그 이름의 파일을 못 만들어 압축을 풀 때 조용히 빠졌는데,
+           이제 안쪽 파일 이름에 손님 글이 아예 안 들어간다. */
       const zip = new JSZip();
-      zip.file(`메뉴구조_${base}.xlsx`, sheetBuf(rowsLib.buildMenuTreeRows(menus, screens), "메뉴구조"));
+      zip.file("01_메뉴구조.xlsx", sheetBuf(rowsLib.buildMenuTreeRows(menus, screens), "메뉴구조"));
       zip.file(
-        `IA_화면목록_${base}.xlsx`,
+        "02_IA_화면목록.xlsx",
         sheetBuf(
           rowsLib.buildScreenListRows(menus, screens, buttonActions),
           "화면목록",
@@ -292,10 +300,10 @@ export function ZipAllButton({
         ),
       );
       zip.file(
-        `기능정의서_${base}.xlsx`,
+        "03_기능정의서.xlsx",
         sheetBuf(reqLib.buildRequirementRows(menus, screens), "기능정의서"),
       );
-      zip.file(`WBS_${base}.xlsx`, sheetBuf(rowsLib.buildWbsRows(menus, screens), "WBS"));
+      zip.file("04_WBS.xlsx", sheetBuf(rowsLib.buildWbsRows(menus, screens), "WBS"));
       // drawio는 파일 하나에 탭을 여러 개 담을 수 있다. 메뉴 간 이동 한 장 +
       // 메뉴별 한 장씩으로 나눠야 열어서 고칠 수 있는 크기가 된다.
       const flowGroups = groupLib.buildFlowGroups(
@@ -313,13 +321,13 @@ export function ZipAllButton({
         flowEdges,
       );
       zip.file(
-        `FLOW_${base}.html`,
+        "05_FLOW_흐름도.html",
         flowGroups.length > 0
           ? flowLib.buildFlowHtmlTabs(concept || "프로젝트", flowGroups)
           : flowLib.buildFlowHtml(concept || "프로젝트", flowNodes, flowEdges),
       );
       zip.file(
-        `FLOW_${base}.drawio`,
+        "05_FLOW_흐름도.drawio",
         flowGroups.length > 0
           ? flowLib.buildDrawioTabs(flowGroups)
           : flowLib.buildDrawioXml(flowNodes, flowEdges),
@@ -327,16 +335,16 @@ export function ZipAllButton({
 
       const pptx = pptLib.createMenuPptx("사이트 전체", pptMenus);
       const pptBuf = (await pptx.write({ outputType: "arraybuffer" })) as ArrayBuffer;
-      zip.file(`메뉴구조_${base}.pptx`, pptBuf);
+      zip.file("06_메뉴구조.pptx", pptBuf);
 
       // AI 빌드용 스펙팩(마크다운 + JSON)
       const specProject = data.project ?? { concept, designConcept: "", deviceMode: "responsive", overallStart: "", overallEnd: "" };
       zip.file(
-        `스펙팩_${base}.md`,
+        "07_AI빌드_스펙팩.md",
         specLib.buildSpecPackMarkdown(specProject, menus, screens, buttonActions),
       );
       zip.file(
-        `스펙팩_${base}.json`,
+        "07_AI빌드_스펙팩.json",
         specLib.buildSpecPackJson(specProject, menus, screens, buttonActions),
       );
 
@@ -360,7 +368,7 @@ export function ZipAllButton({
               ["테스트ID", "페이지", "화면구분", "테스트영역", "테스트 방법", "결과", "비고"],
             ]);
         XLSX.utils.book_append_sheet(wb, scnWs, "검수 시나리오");
-        zip.file(`검수시나리오_${base}.xlsx`, XLSX.write(wb, { type: "array", bookType: "xlsx" }));
+        zip.file("08_검수시나리오.xlsx", XLSX.write(wb, { type: "array", bookType: "xlsx" }));
       }
 
       /* 「사이트 내놓는 법」 안내서를 함께 넣는다 — 2026-08-10.
@@ -370,8 +378,8 @@ export function ZipAllButton({
          ⚠ 이것 때문에 zip 전체가 실패하면 안 된다 — 안내서는 «덤»이지 본체가 아니다.
            못 가져오면 조용히 빼고 나머지를 내려준다. */
       for (const [주소, 이름] of [
-        ["/guide/deploy-guide.html", "사이트_내놓는_법.html"],
-        ["/guide/app-guide.html", "앱으로_내놓는_법.html"],
+        ["/guide/deploy-guide.html", "09_사이트_내놓는_법.html"],
+        ["/guide/app-guide.html", "10_앱으로_내놓는_법.html"],
       ]) {
         try {
           const 안내 = await fetch(주소);
