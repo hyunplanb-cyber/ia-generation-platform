@@ -348,11 +348,32 @@ export function ZipAllButton({
         specLib.buildSpecPackJson(specProject, menus, screens, buttonActions),
       );
 
-      // 디자인 프리셋(선택) — 디자인 시스템 문서
+      /* 디자인 프리셋(선택) — 판매팩과 «똑같은 열한 개»를 담는다 (2026-08-14 사장님 지적).
+         전에는 `디자인시스템_<제목>.md` 한 장뿐이었다. 판매팩은 가이드 3벌(md+json) ·
+         레이아웃 2벌(md+json) · 미리보기 = 11개다.
+         사장님: 「디자인 프리셋은 비용을 들여 만드는 것이라 판매팩처럼 나와야 한다.」
+
+         손님이 고른 색·뼈대를 «맨 앞»에 두고, 나머지를 채워 3벌 × 2벌로 만든다.
+         판매팩이 파는 값어치가 「3 × 2 = 여섯 가지로 섞어 쓴다」이므로 같은 값을 드린다.
+
+         ⚠ 만드는 코드는 `lib/preset-pack.ts` 한 곳에 있다 — 판매팩을 굽는
+           build-design-presets.mts 도 같은 것을 부른다. 두 곳에 적으면 반드시 갈린다. */
       if (withPreset && presetConfig) {
-        const { parsePresetConfig, buildDetailedPresetMarkdown } = await import("@/lib/design-presets");
+        const { parsePresetConfig, buildDetailedPresetMarkdown, DESIGN_OPTIONS, LAYOUTS } =
+          await import("@/lib/design-presets");
+        const { buildPresetPack } = await import("@/lib/preset-pack");
         const cfg = parsePresetConfig(presetConfig, designConcept ?? null);
-        zip.file(`디자인시스템_${base}.md`, buildDetailedPresetMarkdown(cfg, concept || undefined));
+
+        const 채우기 = (고른것: (string | undefined)[], 모두: string[], 몇: number) =>
+          [...new Set([...고른것.filter(Boolean) as string[], ...모두])].slice(0, 몇);
+        const styles = 채우기([cfg.style, cfg.styleB], DESIGN_OPTIONS.map((d) => d.key), 3);
+        const layouts = 채우기([cfg.layout], LAYOUTS.map((l) => l.key), 2);
+
+        for (const { name, text } of buildPresetPack({ styles, layouts })) {
+          zip.file(`디자인프리셋/${name}`, text);
+        }
+        // 프로젝트에 맞춘 상세 설명은 그대로 함께 넣는다 — 프리셋 3벌이 못 담는 «이 사이트» 이야기다.
+        zip.file("디자인프리셋/00_이 프로젝트에 맞춘 설명.md", buildDetailedPresetMarkdown(cfg, concept || undefined));
       }
 
       // 검수 시나리오(선택) — 엑셀(표지·현황·시나리오)
