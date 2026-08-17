@@ -38,6 +38,15 @@
       "port": 4186
     },
     {
+      "name": "인테리어-프리미엄",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_만드는중/인테리어_프리미엄/완성화면",
+      "port": 4187
+    },
+    {
       "name": "인테리어-프리셋",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
