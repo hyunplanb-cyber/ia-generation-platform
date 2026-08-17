@@ -64,8 +64,11 @@ const 눌러보는글 = `
     if (el.closest('.dev')) return false;              // 화면 정보 패널은 견본 장치라 뺀다
     if (el.classList.contains('is-off')) return false;
     /* ⚠ «이미 골라져 있는» 것을 누르면 아무 일도 안 일어나는 게 맞다.
-       지금 켜진 탭·칩·달력 날짜와 이미 찍힌 라디오는 죽은 게 아니다. */
-    if (el.classList.contains('on') || el.classList.contains('sel')) return false;
+       지금 켜진 탭·칩·달력 날짜와 이미 찍힌 라디오는 죽은 게 아니다.
+       ⚠ 다만 <select> 는 빼면 안 된다 — 이 팩들은 고르는 칸에 class="sel" 을 준다.
+         그것까지 건너뛰는 바람에 인테리어의 고르는 칸이 통째로 안 재어지고 있었다
+         (2026-08-18 에 달력 겹침을 쫓다가 드러났다). */
+    if ((el.classList.contains('on') || el.classList.contains('sel')) && el.tagName !== 'SELECT') return false;
     if (el.type === 'radio' && el.checked) return false;
     return el.offsetParent !== null || el.type === 'checkbox' || el.type === 'radio';
   });
