@@ -36,6 +36,7 @@ type 편모양 = {
   horizontalTitle: string;
   coverTitle: string;
   coverDataUri: string;
+  coverSub: string;
   ep: string;
   music: string;
   captionYoutube: string;
@@ -73,6 +74,8 @@ export function SnsReviewForm({
   /* 커버는 상단 띠와 «따로» 둔다 (2026-08-17 사장님 지시). 커버는 2초 안에 읽혀야 하고,
      상단 띠는 63초 내내 떠 있다. 같은 값을 쓰라는 법이 없다. 비우면 굽는 쪽이 세로제목을 쓴다. */
   const [커버제목, set커버제목] = useState(편.coverTitle || 편.verticalTitle);
+  const [커버부제, set커버부제] = useState(편.coverSub);
+  const [편이름, set편이름] = useState(편.ep);
   const [유튜브캡션, set유튜브캡션] = useState(편.captionYoutube);
   const [인스타캡션, set인스타캡션] = useState(편.captionInstagram);
   const [해시태그, set해시태그] = useState(편.hashtags);
@@ -107,13 +110,15 @@ export function SnsReviewForm({
       verticalTitle: 세로제목,
       horizontalTitle: 가로제목,
       coverTitle: 커버제목,
+      coverSub: 커버부제,
+      ep: 편이름,
       captionYoutube: 유튜브캡션,
       captionInstagram: 인스타캡션,
       hashtags: 해시태그,
       slotLabel: 올릴때,
       자막: Object.fromEntries(Object.entries(자막들).map(([k, v]) => [k, v.split("\n")])),
     }),
-    [세로제목, 가로제목, 커버제목, 유튜브캡션, 인스타캡션, 해시태그, 올릴때, 자막들],
+    [세로제목, 가로제목, 커버제목, 커버부제, 편이름, 유튜브캡션, 인스타캡션, 해시태그, 올릴때, 자막들],
   );
 
   const 저장 = () =>
@@ -281,12 +286,18 @@ export function SnsReviewForm({
               </div>
             )}
             <div className="mt-3">
-              <Field 라벨="커버 카피" 도움="| 가 줄바꿈입니다. 3~4줄, 글자 크기는 고정이라 «글»을 줄여서 맞춥니다">
+              <Field 라벨="커버 카피 (큰 글자)" 도움="| 가 줄바꿈입니다. 3줄, 한 줄 여덟 자 안팎. 넘치면 굽다가 멈춥니다">
                 <textarea
                   className={`${입력} min-h-20 leading-relaxed`}
                   value={커버제목}
                   onChange={(e) => set커버제목(e.target.value)}
                 />
+              </Field>
+            </div>
+            {/* ⭐ 부제 — 큰 카피 아래, 자막과 같은 54px (2026-08-18 사장님 지시) */}
+            <div className="mt-3">
+              <Field 라벨="커버 부제 (자막 크기)" 도움="「- 펫 유치원 편 -」처럼 이번 회차가 무엇인지. 한 줄로 씁니다">
+                <input className={입력} value={커버부제} onChange={(e) => set커버부제(e.target.value)} />
               </Field>
             </div>
           </div>
@@ -322,6 +333,12 @@ export function SnsReviewForm({
                   value={가로제목}
                   onChange={(e) => set가로제목(e.target.value)}
                 />
+              </Field>
+            </div>
+            {/* ⭐ 오른쪽 위 작은 태그 — 세로·가로·커버 세 곳에 같이 찍힌다 (2026-08-18) */}
+            <div className="mt-3">
+              <Field 라벨="오른쪽 위 태그" 도움="「반려동물 유치원 편」처럼. 세로·가로·커버 세 곳에 같이 들어갑니다">
+                <input className={입력} value={편이름} onChange={(e) => set편이름(e.target.value)} />
               </Field>
             </div>
           </div>

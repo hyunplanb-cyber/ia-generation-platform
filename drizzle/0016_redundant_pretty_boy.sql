@@ -1,0 +1,1 @@
+ALTER TABLE "sns_content" ADD COLUMN "cover_sub" text DEFAULT '' NOT NULL;

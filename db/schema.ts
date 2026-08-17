@@ -516,6 +516,9 @@ export const snsContent = pgTable(
     coverTitle: text("cover_title").notNull().default(""),
     /** 구운 커버 첫 프레임 (405px webp, data URI). 글만 고치면 실제로 어떻게 보이는지 모른다. */
     coverDataUri: text("cover_data_uri").notNull().default(""),
+    /** ⭐ 커버 «부제» — 큰 카피 아래, 자막과 같은 54px (2026-08-18 사장님 지시).
+     *  「-펫 유치원 편-」처럼 그 회차가 무엇인지 말하는 줄. 큰 카피에 넣으면 줄이 넘친다. */
+    coverSub: text("cover_sub").notNull().default(""),
     /** 오른쪽 위 작은 태그 — 「반려동물 유치원 편」. 업종 이름은 여기에만 둔다. */
     ep: text("ep").notNull().default(""),
     music: text("music").notNull().default(""),

@@ -44,6 +44,7 @@ export default async function SnsReviewDetailPage({
         horizontalTitle: 편.horizontalTitle,
         coverTitle: 편.coverTitle,
         coverDataUri: 편.coverDataUri,
+        coverSub: 편.coverSub,
         ep: 편.ep,
         music: 편.music,
         captionYoutube: 편.captionYoutube,

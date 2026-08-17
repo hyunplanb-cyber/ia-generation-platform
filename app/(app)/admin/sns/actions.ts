@@ -69,6 +69,8 @@ export async function saveContentAction(
     horizontalTitle: string;
     /** 커버(맨 앞 2초 표지) 글. 상단 띠와 따로 둔다 — 2초 안에 읽혀야 해서 더 짧다. */
     coverTitle: string;
+    coverSub: string;
+    ep: string;
     captionYoutube: string;
     captionInstagram: string;
     hashtags: string;
@@ -112,6 +114,8 @@ export async function saveContentAction(
         verticalTitle: 값.verticalTitle,
         horizontalTitle: 값.horizontalTitle,
         coverTitle: 값.coverTitle,
+        coverSub: 값.coverSub,
+        ep: 값.ep,
         captionYoutube: 값.captionYoutube,
         captionInstagram: 값.captionInstagram,
         hashtags: 값.hashtags,
