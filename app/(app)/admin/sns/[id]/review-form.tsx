@@ -26,6 +26,8 @@ type 편모양 = {
   status: string;
   verticalTitle: string;
   horizontalTitle: string;
+  coverTitle: string;
+  coverDataUri: string;
   ep: string;
   music: string;
   captionYoutube: string;
@@ -60,6 +62,9 @@ export function SnsReviewForm({
 }) {
   const [세로제목, set세로제목] = useState(편.verticalTitle);
   const [가로제목, set가로제목] = useState(편.horizontalTitle);
+  /* 커버는 상단 띠와 «따로» 둔다 (2026-08-17 사장님 지시). 커버는 2초 안에 읽혀야 하고,
+     상단 띠는 63초 내내 떠 있다. 같은 값을 쓰라는 법이 없다. 비우면 굽는 쪽이 세로제목을 쓴다. */
+  const [커버제목, set커버제목] = useState(편.coverTitle || 편.verticalTitle);
   const [유튜브캡션, set유튜브캡션] = useState(편.captionYoutube);
   const [인스타캡션, set인스타캡션] = useState(편.captionInstagram);
   const [해시태그, set해시태그] = useState(편.hashtags);
@@ -78,10 +83,13 @@ export function SnsReviewForm({
     .join(" ")
     .replace(/<[^>]*>/g, "")
     .replace(/\s/g, "").length;
+  /* 읽는 속도로 본다 — 절대 글자 수는 길이가 바뀌면 뜻이 없다 (2026-08-17). */
+  const 초당 = Number(요약.초) ? +(지금글자수 / Number(요약.초)).toFixed(1) : 0;
 
   const 모아서 = () => ({
     verticalTitle: 세로제목,
     horizontalTitle: 가로제목,
+    coverTitle: 커버제목,
     captionYoutube: 유튜브캡션,
     captionInstagram: 인스타캡션,
     hashtags: 해시태그,
@@ -139,11 +147,9 @@ export function SnsReviewForm({
         {세로제목.replaceAll("|", " ")}
       </h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        자막 {요약.칸수}칸 · {요약.초}초 · 공백 제외{" "}
-        <b className={지금글자수 < 290 || 지금글자수 > 370 ? "text-rose-700" : "text-foreground"}>
-          {지금글자수}자
-        </b>{" "}
-        <span className="text-xs">(300~360이 목표)</span>
+        자막 {요약.칸수}칸 · {요약.초}초 · 공백 제외 {지금글자수}자 ·{" "}
+        <b className={초당 < 3.5 || 초당 > 5.5 ? "text-rose-700" : "text-foreground"}>초당 {초당}자</b>{" "}
+        <span className="text-xs">(3.5~5.5가 목표 — 여행 편이 4.4였습니다)</span>
         {편.music && <span> · 음악 {편.music}</span>}
       </p>
 
@@ -165,17 +171,86 @@ export function SnsReviewForm({
         </div>
       )}
 
-      {/* ── 제목·캡션 ───────────────────────────────────────── */}
+      {/* ── ⭐ 커버와 상단 띠 — 글자만 고치면 어떻게 보이는지 모른다 ──────── */}
       <section className="mt-8 rounded-xl border border-border bg-surface p-5">
-        <h2 className="font-bold text-foreground">제목과 캡션</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <Field 라벨="세로(쇼츠) 제목" 도움="| 가 줄바꿈입니다">
-            <input className={입력} value={세로제목} onChange={(e) => set세로제목(e.target.value)} />
-          </Field>
-          <Field 라벨="가로(전체 영상) 제목" 도움="한 줄 7자까지 — 기둥이 좁습니다">
-            <input className={입력} value={가로제목} onChange={(e) => set가로제목(e.target.value)} />
-          </Field>
+        <h2 className="font-bold text-foreground">커버와 상단 띠</h2>
+        <p className="mt-1 text-sm text-muted-foreground [word-break:keep-all]">
+          <b className="text-foreground">둘은 다른 글입니다.</b> 커버는 맨 앞 2초에만 나오고, 상단 띠는
+          영상 내내 화면 위에 떠 있습니다. 커버는 2초에 읽혀야 하니 더 짧고 세게 씁니다.
+        </p>
+
+        <div className="mt-5 grid gap-6 sm:grid-cols-2">
+          {/* 커버 */}
+          <div>
+            <p className="mb-2 text-xs font-bold text-primary-on-soft">커버 — 맨 앞 2초</p>
+            {편.coverDataUri ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={편.coverDataUri}
+                alt="커버"
+                className="w-full max-w-[240px] rounded-lg border border-border"
+              />
+            ) : (
+              <div className="grid aspect-[9/16] w-full max-w-[240px] place-items-center rounded-lg border border-dashed border-border px-4 text-center text-xs text-muted-foreground [word-break:keep-all]">
+                커버 그림이 없습니다. 로컬에서 영상인트로를 돌린 뒤 다시 보내면 여기에 뜹니다.
+              </div>
+            )}
+            <div className="mt-3">
+              <Field 라벨="커버 카피" 도움="| 가 줄바꿈입니다. 3~4줄, 글자 크기는 고정이라 «글»을 줄여서 맞춥니다">
+                <textarea
+                  className={`${입력} min-h-20 leading-relaxed`}
+                  value={커버제목}
+                  onChange={(e) => set커버제목(e.target.value)}
+                />
+              </Field>
+            </div>
+          </div>
+
+          {/* 상단 띠 */}
+          <div>
+            <p className="mb-2 text-xs font-bold text-primary-on-soft">상단 띠 — 영상 내내</p>
+            {처음칸들[0]?.frameDataUri ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={처음칸들[0].frameDataUri}
+                alt="상단 띠가 보이는 첫 칸"
+                className="w-full max-w-[240px] rounded-lg border border-border"
+              />
+            ) : (
+              <div className="grid aspect-[9/16] w-full max-w-[240px] place-items-center rounded-lg border border-dashed border-border text-xs text-muted-foreground">
+                프레임 없음
+              </div>
+            )}
+            <div className="mt-3">
+              <Field 라벨="상단 띠 (세로·쇼츠)" 도움="| 가 줄바꿈입니다">
+                <textarea
+                  className={`${입력} min-h-20 leading-relaxed`}
+                  value={세로제목}
+                  onChange={(e) => set세로제목(e.target.value)}
+                />
+              </Field>
+            </div>
+            <div className="mt-3">
+              <Field 라벨="상단 띠 (가로)" 도움="한 줄 7자까지 — 기둥이 좁습니다">
+                <textarea
+                  className={`${입력} min-h-16 leading-relaxed`}
+                  value={가로제목}
+                  onChange={(e) => set가로제목(e.target.value)}
+                />
+              </Field>
+            </div>
+          </div>
         </div>
+
+        <p className="mt-4 rounded-lg bg-primary-soft px-3 py-2 text-xs text-primary-on-soft [word-break:keep-all]">
+          강조는 {"<span class='o'>말</span>"} 로 감쌉니다 — 숫자·핵심어 한 군데에만. 여기서 글을 고치면{" "}
+          <b>다음에 구울 때</b> 커버와 띠에 들어갑니다. 위 그림은 지금 나가 있는 판입니다.
+        </p>
+      </section>
+
+      {/* ── 캡션 ───────────────────────────────────────────── */}
+      <section className="mt-8 rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-bold text-foreground">캡션</h2>
         <div className="mt-4">
           <Field 라벨="언제 올릴 것인가" 도움="「3주 목 8/27 09:00」처럼">
             <input className={입력} value={올릴때} onChange={(e) => set올릴때(e.target.value)} />

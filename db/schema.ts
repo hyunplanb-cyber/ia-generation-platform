@@ -506,8 +506,16 @@ export const snsContent = pgTable(
     slug: text("slug").notNull(),
     /** waiting(검토 대기) · approved(검토 완료) · published(올림) · dropped(버림) */
     status: text("status").notNull().default("waiting"),
+    /** ⭐ 영상 «상단 띠» 글 — 본편 내내 화면 위에 떠 있다. `|` 가 줄바꿈이다.
+     *  대본 JSON 의 `세로제목`·`가로제목` 이 여기로 온다. */
     verticalTitle: text("vertical_title").notNull(),
     horizontalTitle: text("horizontal_title").notNull(),
+    /** ⭐ «커버»(맨 앞 2초 표지) 글. 상단 띠와 **따로 둔다** (2026-08-17 사장님 지시).
+     *  전에는 둘이 같은 값을 썼는데, 커버는 2초 안에 읽혀야 해서 더 짧고 세야 한다.
+     *  비어 있으면 굽는 쪽이 `verticalTitle` 을 그대로 쓴다. `인트로설정_*.json` 의 `title`. */
+    coverTitle: text("cover_title").notNull().default(""),
+    /** 구운 커버 첫 프레임 (405px webp, data URI). 글만 고치면 실제로 어떻게 보이는지 모른다. */
+    coverDataUri: text("cover_data_uri").notNull().default(""),
     /** 오른쪽 위 작은 태그 — 「반려동물 유치원 편」. 업종 이름은 여기에만 둔다. */
     ep: text("ep").notNull().default(""),
     music: text("music").notNull().default(""),

@@ -37,6 +37,7 @@ async function 다시검사(contentId: string): Promise<string> {
     이름: 편.slug,
     세로제목: 편.verticalTitle,
     가로제목: 편.horizontalTitle,
+    커버제목: 편.coverTitle,
     칸초: Number(편.secPerCard) || 1.8,
     칸들: 칸들.map((c): 대본칸 => ({
       cap: JSON.parse(c.captionJson || "[]") as string[],
@@ -66,6 +67,8 @@ export async function saveContentAction(
   값: {
     verticalTitle: string;
     horizontalTitle: string;
+    /** 커버(맨 앞 2초 표지) 글. 상단 띠와 따로 둔다 — 2초 안에 읽혀야 해서 더 짧다. */
+    coverTitle: string;
     captionYoutube: string;
     captionInstagram: string;
     hashtags: string;
@@ -88,6 +91,7 @@ export async function saveContentAction(
       .set({
         verticalTitle: 값.verticalTitle,
         horizontalTitle: 값.horizontalTitle,
+        coverTitle: 값.coverTitle,
         captionYoutube: 값.captionYoutube,
         captionInstagram: 값.captionInstagram,
         hashtags: 값.hashtags,

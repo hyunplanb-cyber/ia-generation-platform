@@ -93,8 +93,12 @@ export type 대본칸 = {
 
 export type 대본 = {
   이름?: string;
+  /** 영상 «상단 띠» — 본편 내내 떠 있다. */
   세로제목?: string;
   가로제목?: string;
+  /** «커버»(맨 앞 2초 표지) 글. `인트로설정_*.json` 의 `title` 에서 온다.
+   *  상단 띠와 따로 검사한다 — 둘 다 손님이 읽는 글이라 금지어가 새면 안 된다. */
+  커버제목?: string;
   칸초?: number;
   칸들?: 대본칸[];
 };
@@ -117,7 +121,7 @@ export function checkScript(편: 대본, 별명: Map<string, string> = new Map()
   const 칸들 = 편.칸들 ?? [];
   const 칸초 = 편.칸초 ?? 2.5;
   const 자막글 = 칸들.map((k) => (k.cap ?? []).join(" ")).join(" ");
-  const 표지글 = [편.세로제목, 편.가로제목].map(벗기기).join(" ");
+  const 표지글 = [편.세로제목, 편.가로제목, 편.커버제목].map(벗기기).join(" ");
   const 온글 = 벗기기(`${표지글} ${자막글}`);
 
   const 떼목록: [규칙[], string][] = [
