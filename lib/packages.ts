@@ -743,13 +743,12 @@ export const PACKAGES: PackageDef[] = [
     tagline:
       "아파트 리모델링·상가 인테리어를 맡아 하는 한 시공 업체의 사이트 AI팩. 예상 견적부터 공정표·현장 사진 일지·추가공사 승인·준공 검수·하자보수까지",
     /* A 회차(2026-08-17) — 디럭스(2뎁스 39화면)는 미니멀 모노 + 사진 중심형으로 만들었다.
-       프리미엄(3뎁스 198화면)은 B 회차 몫이라 아직 화면이 없다 — site.deep을 비워
-       프리미엄 플랜 자체가 안 생기게 한다(아래 makePlans 참고). */
+       B 회차(2026-08-17) — 프리미엄(3뎁스 198화면)을 레트로 페이퍼 + 대시보드형으로 만든다. */
     plans: makePlans(
       INTERIOR,
       INTERIOR_DEEP,
       { standard: null, plus: null, deluxe: null, premium: null },
-      { base: 39 },
+      { base: 39, deep: 198 },
     ),
     data: INTERIOR,
     deep: INTERIOR_DEEP,
