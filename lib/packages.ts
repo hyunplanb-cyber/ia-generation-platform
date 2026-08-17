@@ -743,12 +743,13 @@ export const PACKAGES: PackageDef[] = [
     tagline:
       "아파트 리모델링·상가 인테리어를 맡아 하는 한 시공 업체의 사이트 AI팩. 예상 견적부터 공정표·현장 사진 일지·추가공사 승인·준공 검수·하자보수까지",
     /* A 회차(2026-08-17) — 디럭스(2뎁스 39화면)는 미니멀 모노 + 사진 중심형으로 만들었다.
-       B 회차(2026-08-17) — 프리미엄(3뎁스 198화면)을 레트로 페이퍼 + 대시보드형으로 만든다. */
+       B 회차(2026-08-17) — 프리미엄(3뎁스 198화면)을 레트로 페이퍼 + 대시보드형으로 만든다.
+       2026-08-18 — 업체용 계정 화면(OW-07)을 더해 40화면 / 207화면이 됐다. */
     plans: makePlans(
       INTERIOR,
       INTERIOR_DEEP,
       { standard: null, plus: null, deluxe: null, premium: null },
-      { base: 39, deep: 198 },
+      { base: 40, deep: 207 },
     ),
     data: INTERIOR,
     deep: INTERIOR_DEEP,
@@ -804,6 +805,8 @@ export const PACKAGES: PackageDef[] = [
  * 2026-08-10 — 매칭을 더했다. **다섯 업종 스무 칸이 모두 찼다.**
  *   여행 43/144 · 뷰티샵 49/136 · 공동구매 37/125 · LMS 44/132 · 매칭 43/159
  *   (디럭스 2뎁스 화면 수 / 프리미엄 3뎁스 화면 수)
+ * 2026-08-18 — 인테리어에 업체용 계정 화면(OW-07)을 더해 39/198 → 40/207 이 됐다.
+ *   손님용 「내 정보」(AU-04)와 업체가 볼 것이 다른데 업체 자리가 없었다.
  */
 const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental", "interior"]);
 
