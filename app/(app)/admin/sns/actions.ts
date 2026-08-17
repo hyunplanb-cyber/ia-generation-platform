@@ -20,7 +20,7 @@ import { db } from "@/db/client";
 import { snsContent, snsCut } from "@/db/schema";
 import { getSession } from "@/lib/session";
 import { isOwner } from "@/lib/flags";
-import { checkScript, type 대본, type 대본칸 } from "@/lib/sns-caption-rules";
+import { checkScript, checkCaption, type 대본, type 대본칸 } from "@/lib/sns-caption-rules";
 
 async function 주인확인() {
   const session = await getSession();
@@ -47,7 +47,13 @@ async function 다시검사(contentId: string): Promise<string> {
         : [],
     })),
   };
-  const 걸림 = checkScript(대본);
+  /* 자막만 보면 안 된다 — 같은 이야기가 캡션에도 적혀 있다.
+     2026-08-17 에 자막에서 지운 말이 유튜브 설명에 그대로 남아 있었다. */
+  const 걸림 = [
+    ...checkScript(대본),
+    ...checkCaption(편.captionYoutube, "유튜브 설명"),
+    ...checkCaption(편.captionInstagram, "인스타 캡션"),
+  ];
   if (!걸림.length) return "";
   return 걸림.map((g) => `[${g.어디}] ${g.무엇} → ${g.대신}`).join("\n");
 }
