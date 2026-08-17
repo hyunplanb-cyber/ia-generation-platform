@@ -283,10 +283,10 @@ function gnb(activeId, o = {}) {
   // 레이아웃 A — 로고 왼쪽, 액션 버튼 오른쪽 끝. 한 줄로 끝낸다.
   const util = pro
     ? `<span class="badge b-pri">크레딧 42</span>
-       <button class="bell" type="button" aria-label="알림">🔔<span class="dot">3</span></button>
+       <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
        <a class="btn btn-ghost btn-sm" href="${link('HO-02')}">손님 화면으로</a><a class="gnb-ava" href="${link('AU-01')}" title="내 정보">${phAva(30, 'me')}</a>`
     : `<a href="${link('PR-01')}">고수센터</a>
-       <button class="bell" type="button" aria-label="알림">🔔<span class="dot">2</span></button>
+       <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">2</span></button>
        <a class="btn btn-pri btn-sm" href="${link('RQ-01')}">요청서 작성</a><a class="gnb-ava" href="${link('AU-01')}" title="내 정보">${phAva(30, 'me')}</a>`;
 
   return `<header class="gnb${pro ? ' pro' : ''}"><div class="gnb-in">

@@ -69,10 +69,13 @@ export function SnsReviewForm({
   const [인스타캡션, set인스타캡션] = useState(편.captionInstagram);
   const [해시태그, set해시태그] = useState(편.hashtags);
   const [올릴때, set올릴때] = useState(편.slotLabel);
-  /* 칸 id → 여러 줄 텍스트. 줄바꿈이 곧 «자막 줄»이다 — 배열을 그대로 만지게 하면
-     화면이 복잡해지고, 사장님이 고치는 것은 결국 «두 줄짜리 글»이다. */
+  /* ⭐ **칸 번호(ord)** → 여러 줄 텍스트. 줄바꿈이 곧 «자막 줄»이다 — 배열을 그대로 만지게 하면
+     화면이 복잡해지고, 사장님이 고치는 것은 결국 «두 줄짜리 글»이다.
+     ⚠ 전에는 칸 row id 를 열쇠로 썼다. 로컬이 다시 보내면 id 가 통째로 바뀌어서
+     저장이 «아무 줄도 안 고치고 조용히 성공»했다 (8/17에 자막을 통째로 잃었다).
+     ord 는 다시 보내도 1..N 그대로다. */
   const [자막들, set자막들] = useState<Record<string, string>>(
-    Object.fromEntries(처음칸들.map((c) => [c.id, c.자막.join("\n")])),
+    Object.fromEntries(처음칸들.map((c) => [String(c.ord), c.자막.join("\n")])),
   );
   const [검사, set검사] = useState(편.checkResult);
   const [상태, set상태] = useState(편.status);
@@ -333,8 +336,8 @@ export function SnsReviewForm({
               </label>
               <textarea
                 className={`${입력} mt-1 min-h-24 text-base leading-relaxed`}
-                value={자막들[c.id] ?? ""}
-                onChange={(e) => set자막들((p) => ({ ...p, [c.id]: e.target.value }))}
+                value={자막들[String(c.ord)] ?? ""}
+                onChange={(e) => set자막들((p) => ({ ...p, [String(c.ord)]: e.target.value }))}
               />
             </div>
           </li>

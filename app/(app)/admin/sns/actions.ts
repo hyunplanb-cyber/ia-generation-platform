@@ -15,7 +15,7 @@
  *   승인만 남기고, 굽기·올리기는 로컬이 `_작업/sns올리기.mts` 로 집어 간다.
  */
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { snsContent, snsCut } from "@/db/schema";
 import { getSession } from "@/lib/session";
@@ -73,19 +73,39 @@ export async function saveContentAction(
     captionInstagram: string;
     hashtags: string;
     slotLabel: string;
-    /** 칸 id → 자막 줄 배열. 빈 줄은 버린다. */
+    /** ⭐ **칸 번호(ord)** → 자막 줄 배열. 빈 줄은 버린다.
+     *
+     * ⚠ 전에는 «칸 row id» 로 받았는데, 로컬이 다시 보낼 때 칸을 지우고 새로 넣어서
+     *   id 가 통째로 바뀐다. 그러면 화면이 들고 있던 id 는 없는 id 가 되고,
+     *   `update … where id = <옛 id>` 가 **아무 줄도 안 고치고 조용히 성공**한다.
+     *   2026-08-17 에 사장님이 자막을 다 고쳐 넣으셨는데 그대로 사라졌다.
+     *   ord 는 1..N 이라 다시 보내도 안 바뀐다. 열쇠는 «안 바뀌는 것»이어야 한다. */
     자막: Record<string, string[]>;
   },
 ): Promise<저장결과> {
   try {
     await 주인확인();
-    for (const [cutId, 줄들] of Object.entries(값.자막)) {
+    /* 몇 줄이 실제로 바뀌었는지 «세어서» 확인한다. 0 이면 조용히 넘어가지 않고 알린다. */
+    const 지금칸들 = await db
+      .select({ id: snsCut.id, ord: snsCut.ord })
+      .from(snsCut)
+      .where(eq(snsCut.contentId, contentId));
+    const ord로찾기 = new Map(지금칸들.map((c) => [String(c.ord), c.id]));
+    const 못찾은: string[] = [];
+    for (const [ord, 줄들] of Object.entries(값.자막)) {
+      const cutId = ord로찾기.get(ord);
+      if (!cutId) { 못찾은.push(ord); continue; }
       const 깨끗한 = 줄들.map((s) => s.trim()).filter(Boolean);
       await db
         .update(snsCut)
         .set({ captionJson: JSON.stringify(깨끗한) })
-        .where(eq(snsCut.id, cutId));
+        .where(and(eq(snsCut.id, cutId), eq(snsCut.contentId, contentId)));
     }
+    if (못찾은.length)
+      return {
+        ok: false,
+        왜: `${못찾은.join("·")}번 칸을 못 찾아 자막을 저장하지 못했습니다. 그 사이에 칸 수가 바뀐 것 같습니다 — 지금 쓰신 글을 복사해 두고 새로고침한 뒤 다시 넣어 주세요.`,
+      };
     await db
       .update(snsContent)
       .set({

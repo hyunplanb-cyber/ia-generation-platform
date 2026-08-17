@@ -1017,3 +1017,58 @@
     });
   });
 })();
+
+/* ── 마지막 그물 ──────────────────────────────────────────
+   눌러도 아무 손잡이에 안 걸린 버튼에게 «그래도 답»을 준다.
+   누르기 전 화면을 적어 두고, 다른 손잡이가 다 돈 뒤에도 그대로일 때만 나선다.
+   ⚠ 이미 제대로 도는 버튼은 여기까지 오지 않는다 — 화면이 이미 바뀌었기 때문이다.
+   ────────────────────────────────────────────────────────── */
+(function () {
+  function 이름(t) {
+    var s = (t.getAttribute('aria-label') || t.textContent || '').trim().replace(/\s+/g, ' ');
+    return s.slice(0, 20);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('button:not([disabled])') : null;
+    if (!t) return;
+    if (t.closest('.dev')) return;                       // 화면 정보 패널은 견본 장치다
+    if (t.dataset && (t.dataset.toast || t.dataset.modal || t.dataset.go ||
+                      t.dataset.close || t.dataset.dismiss)) return;  // 이미 제 답이 있다
+    var 전 = document.body.innerHTML;
+    setTimeout(function () {
+      if (document.body.innerHTML !== 전) return;        // 누군가 이미 답했다
+
+      // ① 무리 지어 고르는 버튼 — 형제 중에 «골라진 것»이 있으면 그 표시를 옮긴다
+      var 상자 = t.parentElement;
+      if (상자) {
+        var 형제 = Array.prototype.filter.call(상자.children, function (c) { return c.tagName === 'BUTTON'; });
+        var 골라진 = 형제.filter(function (b) { return b.classList.contains('on') || b.classList.contains('sel'); });
+        if (형제.length > 1 && 골라진.length > 0) {
+          var 표 = 골라진[0].classList.contains('sel') ? 'sel' : 'on';
+          형제.forEach(function (b) { b.classList.remove(표); });
+          t.classList.add(표);
+          return;
+        }
+      }
+
+      // ② 앞뒤 화살표 — 가까이에 가로로 흐르는 목록이 있으면 굴린다
+      var 앞뒤 = /prev|next|이전|다음|‹|›/.test(t.className + ' ' + 이름(t));
+      if (앞뒤) {
+        var 둘레 = t.closest('section, .card, .box, div');
+        for (var i = 0; i < 3 && 둘레; i++) {
+          var 목록 = 둘레.querySelector('.carousel, [style*="overflow-x"], .row[style*="overflow"]');
+          if (목록 && 목록.scrollWidth > 목록.clientWidth) {
+            var 뒤로 = /prev|이전|‹/.test(t.className + ' ' + 이름(t));
+            목록.scrollLeft += (뒤로 ? -1 : 1) * Math.max(240, 목록.clientWidth * 0.8);
+            return;
+          }
+          둘레 = 둘레.parentElement;
+        }
+      }
+
+      // ③ 그 밖에는 제 이름으로 알림 — 견본 화면이 줄 수 있는 정직한 답이다
+      if (typeof window.toast === 'function') window.toast(이름(t) + ' — 눌렀어요');
+    }, 0);
+  }, true);
+})();
+/* ── 마지막 그물 끝 ── */
