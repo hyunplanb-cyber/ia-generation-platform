@@ -852,7 +852,7 @@ b,strong{font-weight:600}
 .cd{display:inline-flex;align-items:center;gap:5px;font-weight:600;font-variant-numeric:tabular-nums;
   background:transparent;color:var(--danger);border:1px solid rgba(207,34,46,.5);border-radius:var(--r-badge);padding:2px 7px;font-size:11px}
 .cd.calm{border-color:var(--border);color:var(--muted);font-weight:400}
-.tier{display:grid;grid-template-columns:auto 1fr auto;gap:10px 14px;align-items:center}
+.tier{display:grid;grid-template-columns:auto 1fr auto;gap:var(--s3) var(--s4);align-items:center}
 .tier .t-row{display:contents}
 .tier .n{font-weight:600;white-space:nowrap}
 .tier .now{background:#F5F5F4;border-radius:var(--r-input)}
