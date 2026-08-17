@@ -65,7 +65,7 @@ export default async function SnsReviewDetailPage({
         zoom: c.zoom,
         screenNote: c.screenNote,
       }))}
-      요약={{ 글자수, 초, 칸수: 칸들.length }}
+      요약={{ 글자수, 초, 칸수: 칸들.length, 칸초: Number(편.secPerCard) || 1.8 }}
     />
   );
 }

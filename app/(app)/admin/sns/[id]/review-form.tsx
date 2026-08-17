@@ -15,9 +15,17 @@
  *   · 사실을 쓰되 **우리 서비스의 흠은 쓰지 않는다**
  *   → 앞의 넷과 마지막은 `lib/sns-caption-rules.ts` 가 세어서 잡고, «화면과 맞나»는 여기서 눈으로 본다.
  */
-import { useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { approveContentAction, reopenContentAction, saveContentAction } from "../actions";
+
+/** 공백과 표시(span)를 뺀 글자 수 — 검사기와 같은 셈법이다. */
+const 글자수세기 = (s: string) => s.replace(/<[^>]*>/g, "").replace(/\s/g, "").length;
+
+/* 읽는 속도 눈금 (2026-08-17 실측) — 여행 편이 초당 4.4자였고 유지율 40%였다.
+   5.5자를 넘으면 못 읽고 지나간다. 3.0자 아래면 빈 화면처럼 보인다. */
+const 속도빛 = (초당: number) =>
+  초당 > 6.5 ? "text-rose-700" : 초당 > 5.5 ? "text-amber-700" : 초당 < 3.0 ? "text-amber-700" : "text-muted-foreground";
 
 type 편모양 = {
   id: string;
@@ -58,7 +66,7 @@ export function SnsReviewForm({
 }: {
   편: 편모양;
   칸들: 칸모양[];
-  요약: { 글자수: number; 초: string; 칸수: number };
+  요약: { 글자수: number; 초: string; 칸수: number; 칸초: number };
 }) {
   const [세로제목, set세로제목] = useState(편.verticalTitle);
   const [가로제목, set가로제목] = useState(편.horizontalTitle);
@@ -77,36 +85,110 @@ export function SnsReviewForm({
   const [자막들, set자막들] = useState<Record<string, string>>(
     Object.fromEntries(처음칸들.map((c) => [String(c.ord), c.자막.join("\n")])),
   );
+  /* ⭐ 한 상자에 모아서 고치기 (2026-08-17 사장님 요청) — 22칸을 하나씩 치는 게 제일 힘들다.
+     「N. 글」 꼴로 주고받는다. 번호 없는 줄은 «앞 칸의 둘째 줄»이다. */
+  const [모아보기, set모아보기] = useState(false);
+  const [모은글, set모은글] = useState("");
+  const [모은알림, set모은알림] = useState("");
+
   const [검사, set검사] = useState(편.checkResult);
   const [상태, set상태] = useState(편.status);
   const [알림, set알림] = useState("");
   const [도는중, 시작] = useTransition();
+  const [자동저장, set자동저장] = useState(true);
+  const [저장됨, set저장됨] = useState("");
 
-  const 지금글자수 = Object.values(자막들)
-    .join(" ")
-    .replace(/<[^>]*>/g, "")
-    .replace(/\s/g, "").length;
+  const 지금글자수 = 글자수세기(Object.values(자막들).join(" "));
   /* 읽는 속도로 본다 — 절대 글자 수는 길이가 바뀌면 뜻이 없다 (2026-08-17). */
   const 초당 = Number(요약.초) ? +(지금글자수 / Number(요약.초)).toFixed(1) : 0;
 
-  const 모아서 = () => ({
-    verticalTitle: 세로제목,
-    horizontalTitle: 가로제목,
-    coverTitle: 커버제목,
-    captionYoutube: 유튜브캡션,
-    captionInstagram: 인스타캡션,
-    hashtags: 해시태그,
-    slotLabel: 올릴때,
-    자막: Object.fromEntries(Object.entries(자막들).map(([k, v]) => [k, v.split("\n")])),
-  });
+  const 모아서 = useCallback(
+    () => ({
+      verticalTitle: 세로제목,
+      horizontalTitle: 가로제목,
+      coverTitle: 커버제목,
+      captionYoutube: 유튜브캡션,
+      captionInstagram: 인스타캡션,
+      hashtags: 해시태그,
+      slotLabel: 올릴때,
+      자막: Object.fromEntries(Object.entries(자막들).map(([k, v]) => [k, v.split("\n")])),
+    }),
+    [세로제목, 가로제목, 커버제목, 유튜브캡션, 인스타캡션, 해시태그, 올릴때, 자막들],
+  );
 
   const 저장 = () =>
     시작(async () => {
       const r = await saveContentAction(편.id, 모아서());
       if (!r.ok) return set알림(r.왜);
       set검사(r.검사);
+      set저장됨(새시각());
       set알림(r.검사 ? "저장했습니다 — 아래 검사에 걸린 것이 있어요." : "저장했습니다. 검사도 다 통과했어요.");
     });
+
+  /* ── 자동 저장 (2026-08-17 사장님 요청) ─────────────────────────────
+   * 「저장 눌렀는데 내가 입력한 내용이 다 없어졌어」를 겪으신 뒤라, 손으로 누르기 «전»에
+   * 이미 들어가 있게 둔다. 2.5초 동안 타이핑이 멈추면 조용히 저장한다.
+   * ⚠ 검토 완료된 것은 건드리지 않는다 — 사장님이 이미 판단을 내리신 것이다.
+   * ⚠ 저장이 실패하면 «조용히 다시 시도하지 않는다». 알리고 자동 저장을 끈다 —
+   *   조용한 재시도가 8/17 사고의 결이었다. */
+  const 첫바퀴 = useRef(true);
+  const 저장중 = useRef(false);
+  useEffect(() => {
+    if (첫바퀴.current) { 첫바퀴.current = false; return; }
+    if (!자동저장 || 상태 === "approved" || 상태 === "published") return;
+    const 시계 = setTimeout(async () => {
+      if (저장중.current) return;
+      저장중.current = true;
+      try {
+        const r = await saveContentAction(편.id, 모아서());
+        if (!r.ok) {
+          set자동저장(false);
+          set알림(`자동 저장이 실패했습니다 — ${r.왜} (자동 저장을 껐습니다. 쓰신 글은 화면에 그대로 있으니 복사해 두세요.)`);
+          return;
+        }
+        set검사(r.검사);
+        set저장됨(새시각());
+      } finally {
+        저장중.current = false;
+      }
+    }, 2500);
+    return () => clearTimeout(시계);
+  }, [모아서, 자동저장, 상태, 편.id]);
+
+  /* ── 한 상자 ↔ 칸별 옮기기 ──────────────────────────────────────── */
+  const 모아보기켜기 = () => {
+    set모은글(처음칸들.map((c) => `${c.ord}. ${(자막들[String(c.ord)] ?? "").split("\n").join("\n   ")}`).join("\n"));
+    set모은알림("");
+    set모아보기(true);
+  };
+
+  /** 「N. 글」 을 칸별로 되돌린다. 번호 없는 줄은 앞 칸에 붙는다. */
+  const 모은글적용 = () => {
+    const 새것: Record<string, string> = {};
+    let 지금: string | null = null;
+    for (const 줄 of 모은글.split("\n")) {
+      const m = 줄.match(/^\s*(\d+)\s*[.)]\s?(.*)$/);
+      if (m) {
+        지금 = m[1];
+        새것[지금] = m[2].trim();
+      } else if (지금 && 줄.trim()) {
+        새것[지금] = `${새것[지금]}\n${줄.trim()}`;
+      }
+    }
+    const 있어야할 = 처음칸들.map((c) => String(c.ord));
+    const 빠진 = 있어야할.filter((o) => !(o in 새것));
+    const 남는 = Object.keys(새것).filter((o) => !있어야할.includes(o));
+    if (빠진.length || 남는.length) {
+      set모은알림(
+        `칸 번호가 안 맞습니다 — ${빠진.length ? `빠진 칸 ${빠진.join("·")}번` : ""}${빠진.length && 남는.length ? " / " : ""}${남는.length ? `없는 칸 ${남는.join("·")}번` : ""}. ` +
+          `${있어야할.length}칸이 「1.」부터 「${있어야할.length}.」까지 다 있어야 합니다.`,
+      );
+      return;
+    }
+    set자막들(새것);
+    set모은알림("");
+    set모아보기(false);
+  };
 
   const 검토완료 = () =>
     시작(async () => {
@@ -295,6 +377,55 @@ export function SnsReviewForm({
         ②는 검사기가 못 봅니다.
       </p>
 
+      {/* ⭐ 한 상자에 모아서 — 22칸을 하나씩 치지 않아도 된다 */}
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        {모아보기 ? (
+          <>
+            <button
+              type="button"
+              onClick={모은글적용}
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground"
+            >
+              이대로 칸에 넣기
+            </button>
+            <button
+              type="button"
+              onClick={() => { set모아보기(false); set모은알림(""); }}
+              className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground"
+            >
+              그만두기
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={모아보기켜기}
+            className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground"
+          >
+            한 상자에 모아서 고치기
+          </button>
+        )}
+      </div>
+
+      {모아보기 && (
+        <div className="mt-3 rounded-xl border border-border bg-surface p-4">
+          <p className="text-xs text-muted-foreground [word-break:keep-all]">
+            <b className="text-foreground">「1.」부터 「{요약.칸수}.」까지</b> 번호를 붙여 씁니다. 번호 없는 줄은
+            앞 칸의 둘째 줄이 됩니다. 다른 데서 통째로 붙여넣으셔도 됩니다.
+          </p>
+          <textarea
+            className={`${입력} mt-2 min-h-96 font-mono text-sm leading-relaxed`}
+            value={모은글}
+            onChange={(e) => set모은글(e.target.value)}
+          />
+          {모은알림 && (
+            <p className="mt-2 rounded-lg bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-900 [word-break:keep-all]">
+              {모은알림}
+            </p>
+          )}
+        </div>
+      )}
+
       <ol className="mt-6 flex flex-col gap-6">
         {처음칸들.map((c) => (
           <li key={c.id} className="grid gap-4 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[240px_1fr]">
@@ -331,9 +462,23 @@ export function SnsReviewForm({
                   이 화면에 떠 있는 것: {c.screenNote}
                 </p>
               )}
-              <label className="text-xs font-semibold text-muted-foreground">
-                자막 (한 줄에 한 줄씩. 강조는 {"<span class='o'>말</span>"})
-              </label>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <label className="text-xs font-semibold text-muted-foreground">
+                  자막 (한 줄에 한 줄씩. 강조는 {"<span class='o'>말</span>"})
+                </label>
+                {/* ⭐ 칸마다 읽는 속도 — 편 평균이 괜찮아도 «이 칸»이 빠르면 여기서 놓친다 */}
+                {(() => {
+                  const n = 글자수세기(자막들[String(c.ord)] ?? "");
+                  const 초당칸 = 요약.칸초 ? +(n / 요약.칸초).toFixed(1) : 0;
+                  return (
+                    <span className={`text-xs font-semibold tabular-nums ${속도빛(초당칸)}`}>
+                      {n}자 · 초당 {초당칸}자
+                      {초당칸 > 5.5 && " — 빠릅니다"}
+                      {초당칸 > 0 && 초당칸 < 3.0 && " — 비어 보입니다"}
+                    </span>
+                  );
+                })()}
+              </div>
               <textarea
                 className={`${입력} mt-1 min-h-24 text-base leading-relaxed`}
                 value={자막들[String(c.ord)] ?? ""}
@@ -350,7 +495,7 @@ export function SnsReviewForm({
           {알림}
         </p>
       )}
-      <div className="sticky bottom-0 mt-6 flex flex-wrap gap-3 border-t border-border bg-background/95 py-4 backdrop-blur">
+      <div className="sticky bottom-0 mt-6 flex flex-wrap items-center gap-3 border-t border-border bg-background/95 py-4 backdrop-blur">
         <button
           type="button"
           onClick={저장}
@@ -359,6 +504,19 @@ export function SnsReviewForm({
         >
           {도는중 ? "…" : "저장"}
         </button>
+        {/* ⭐ 자동 저장 — 손으로 누르기 «전»에 이미 들어가 있게 둔다 (8/17 사고 뒤) */}
+        <label className="flex items-center gap-2 text-sm text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={자동저장}
+            onChange={(e) => set자동저장(e.target.checked)}
+            className="size-4 accent-[var(--primary)]"
+          />
+          자동 저장
+        </label>
+        {저장됨 && (
+          <span className="text-sm font-semibold text-emerald-800 tabular-nums">✓ {저장됨}에 저장됨</span>
+        )}
         {승인됨 ? (
           <button
             type="button"
@@ -395,6 +553,9 @@ export function SnsReviewForm({
 
 const 입력 =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary";
+
+const 새시각 = () =>
+  new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
 function Field({ 라벨, 도움, children }: { 라벨: string; 도움?: string; children: React.ReactNode }) {
   return (
