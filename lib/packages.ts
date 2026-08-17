@@ -805,7 +805,7 @@ export const PACKAGES: PackageDef[] = [
  *   여행 43/144 · 뷰티샵 49/136 · 공동구매 37/125 · LMS 44/132 · 매칭 43/159
  *   (디럭스 2뎁스 화면 수 / 프리미엄 3뎁스 화면 수)
  */
-const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental"]);
+const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental", "interior"]);
 
 /**
  * 이 등급 zip에 실제로 들어가는 것.
