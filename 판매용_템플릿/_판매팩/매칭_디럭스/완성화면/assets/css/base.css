@@ -716,7 +716,7 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 .idx-menu{margin-bottom:var(--s8)}
 .idx-menu h3{font-size:17px;font-weight:700;margin-bottom:var(--s3);display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
 .idx-menu .code{background:var(--primary);color:#fff;border-radius:var(--r-badge);padding:2px 8px;font-size:12px;font-weight:700}
-.idx-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:10px}
+.idx-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:var(--s2)}
 .idx-list a{display:flex;gap:9px;align-items:center;background:var(--surface);border:1px solid var(--border);
   border-radius:var(--r-btn);padding:11px 13px;font-size:14px}
 .idx-list a:hover{border-color:var(--primary);background:var(--pri-06)}

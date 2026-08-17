@@ -52,9 +52,14 @@ for (const 팩 of 팩들) {
 
   for (const f of readdirSync(pages).filter((x) => x.endsWith(".html"))) {
     const 글월 = readFileSync(join(pages, f), "utf8");
-    /* 여는 태그만 차례로 훑는다. 같은 클래스가 «연달아» 나오면 잇는다. */
+    /* 여는 태그만 차례로 훑는다. 같은 클래스가 «연달아» 나오면 잇는다.
+       ⚠ data-pane-body(탭 칸)가 끼어들면 «줄 세기」를 끊는다(2026-08-18) —
+       인테리어 CS-04 자재 탭은 바닥·벽·주방·욕실·창호 다섯 칸에 나눠 셋씩만
+       [hidden] 없이 보이는데, 이 글자 훑기는 다섯 칸을 이어 붙여 13개로 세고 있었다.
+       한 번에 하나의 탭만 눈에 보이므로 탭이 바뀌면 다른 줄이다. */
     let 앞클래스 = "", 이어짐 = 0;
-    for (const [, 클래스] of 글월.matchAll(/<div class="([^"]+)"/g)) {
+    for (const [토큰, 클래스] of 글월.matchAll(/<div class="([^"]+)"|data-pane-body=/g)) {
+      if (토큰 === "data-pane-body=") { 앞클래스 = ""; 이어짐 = 0; continue; }
       if (!카드인가(클래스)) continue;
       if (클래스 === 앞클래스) 이어짐 += 1;
       else { 앞클래스 = 클래스; 이어짐 = 1; }
