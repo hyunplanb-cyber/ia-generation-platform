@@ -104,6 +104,14 @@ const INDUSTRIES = [
        ⚠ siteBase·siteDeep 을 «일부러» 비운다. 완성화면이 이미 팩 안에 있어서
          가리키면 원본과 대상이 같아져 copyFileSync 가 자기 자신을 덮어쓴다.
          비워 두면 「팩에 있던 것을 그대로 둡니다」로 흘러가고 화면 수도 팩에서 센다. */ },
+  { key: "interior", label: "인테리어", title: "인테리어 시공 견적·시공관리",
+    base: `${W}/인테리어시공_견적상담`, deep: `${W}/인테리어시공_견적상담_상세IA`,
+    /* A 회차(2026-08-17) — 디럭스(미니멀 모노 × 사진 중심형)까지만 만든다.
+       프리미엄(레트로 페이퍼 × 대시보드형, 3뎁스)은 B 회차 몫이라 아직 화면이 없다.
+
+       ⚠ siteBase·siteDeep 을 «일부러» 비운다. 완성화면을 팩 자기 폴더 안에 만들
+         것이라 가리키면 원본과 대상이 같아져 copyFileSync 가 자기 자신을 덮어쓴다.
+         비워 두면 「팩에 있던 것을 그대로 둡니다」로 흘러가고 화면 수도 팩에서 센다. */ },
 ] as const satisfies readonly {
   key: string; label: string; title: string;
   base: string; deep: string; siteBase?: string; siteDeep?: string;

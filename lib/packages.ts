@@ -19,12 +19,14 @@ import { TRAVEL } from "@/template-data-travel";
 import { GROUPBUY } from "@/template-data-groupbuy";
 import { MATCHING } from "@/template-data-matching";
 import { RENTAL } from "@/template-data-rental";
+import { INTERIOR } from "@/template-data-interior";
 import { LMS_DEEP } from "@/template-data-lms-deep";
 import { BEAUTY_DEEP } from "@/template-data-beauty-deep";
 import { TRAVEL_DEEP } from "@/template-data-travel-deep";
 import { GROUPBUY_DEEP } from "@/template-data-groupbuy-deep";
 import { MATCHING_DEEP } from "@/template-data-matching-deep";
 import { RENTAL_DEEP } from "@/template-data-rental-deep";
+import { INTERIOR_DEEP } from "@/template-data-interior-deep";
 import type { DeepInput } from "@/template-deep";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
 
@@ -728,6 +730,66 @@ export const PACKAGES: PackageDef[] = [
         "장비 렌탈 기능정의서",
         "보증금 결제 기획",
         "날짜별 재고 관리 설계",
+      ],
+    },
+  },
+  {
+    id: "interior",
+    title: "인테리어 시공 견적·시공관리",
+    category: "commerce",
+    industry: "인테리어·시공",
+    // ⚠ 매칭(숨고형) 팩의 presetFits[0] "이사·인테리어처럼 금액이 큰 분야"와 헷갈리지 않게
+    //   가른다 — 매칭은 «여러 고수를 이어 주는 플랫폼», 이 팩은 «한 시공 업체»의 사이트다.
+    tagline:
+      "아파트 리모델링·상가 인테리어를 맡아 하는 한 시공 업체의 사이트 AI팩. 예상 견적부터 공정표·현장 사진 일지·추가공사 승인·준공 검수·하자보수까지",
+    /* A 회차(2026-08-17) — 디럭스(2뎁스 39화면)는 미니멀 모노 + 사진 중심형으로 만들었다.
+       프리미엄(3뎁스 198화면)은 B 회차 몫이라 아직 화면이 없다 — site.deep을 비워
+       프리미엄 플랜 자체가 안 생기게 한다(아래 makePlans 참고). */
+    plans: makePlans(
+      INTERIOR,
+      INTERIOR_DEEP,
+      { standard: null, plus: null, deluxe: null, premium: null },
+      { base: 39 },
+    ),
+    data: INTERIOR,
+    deep: INTERIOR_DEEP,
+    promptSamples: ["pr1", "pr4", "as1"],
+    presetStyles: ["mono", "navy", "retro"],
+    presetFits: [
+      "공간 사진이 주인공인 인테리어 스튜디오, 미니멀·모던 시공",
+      "아파트 리모델링·상업 공간처럼 금액이 크고 공정이 많은 시공, 표와 일정이 주인공인 화면",
+      "목공·타일·빈티지 감성 시공, 작은 공방형 업체",
+    ],
+    layoutKeys: ["showcase", "console"],
+    fileLabel: "인테리어",
+    integrations: [
+      { area: "로그인·회원가입", detail: "이메일 가입, 소셜 로그인, 손님·업체(현장 관리자) 두 권한 구분" },
+      { area: "결제·분할 청구", detail: "계약금·착공금·중도금·잔금 분할 결제, 카드·계좌이체·무통장" },
+      { area: "전자서명", detail: "계약서 서명과 준공 검수 확인에 쓰는 서명 캡처·저장" },
+      { area: "사진·영상 업로드", detail: "현장 사진 일지, 추가공사 근거 사진, 하자보수 접수 사진 저장" },
+      { area: "알림", detail: "실측 예약 확인·공정 진행·추가공사 승인 요청·하자보수 처리 발송" },
+      { area: "주소·지도", detail: "시공 현장 주소 검색과 실측·방문 일정 안내" },
+    ],
+    audience: [
+      "인테리어·리모델링 시공 업체의 사이트를 만들려는 분",
+      "여러 고수를 이어 주는 매칭이 아니라 «내 업체 하나»의 사이트가 필요한 분",
+      "견적뿐 아니라 공정표·현장 일지·추가공사 승인·준공 검수까지 갖춰야 하는 분",
+    ],
+    painPoints: [
+      "쇼핑몰은 물건 하나를 담아 한 번에 결제하지만, 인테리어는 실측 뒤 금액이 바뀌고 여러 날 여러 공정으로 갈라진다",
+      "공사 도중 생기는 추가공사는 변경 견적을 다시 받아 승인해야 하는데, 이 승인 화면 자체가 쇼핑몰 솔루션에는 없다",
+      "준공 검수와 하자보수는 결제가 끝난 뒤에도 이어지는 화면이라 설계에서 빠뜨리기 쉽다",
+    ],
+    seo: {
+      title: "인테리어 시공 견적·시공관리 화면설계서 · AI팩",
+      description:
+        "인테리어 시공 업체 사이트 AI팩(기획 산출물 한 벌)입니다. 예상 견적·공정표·현장 사진 일지·추가공사 승인·준공 검수·하자보수까지 화면 목록과 기능정의를 미리 확인하세요.",
+      keywords: [
+        "인테리어 시공 사이트 기획서",
+        "리모델링 견적 화면설계서",
+        "공정표 시스템 기획",
+        "인테리어 업체 홈페이지 기능정의서",
+        "하자보수 접수 화면 설계",
       ],
     },
   },
