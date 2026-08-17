@@ -477,3 +477,91 @@ export const packOrder = pgTable(
 export const packOrderRelations = relations(packOrder, ({ one }) => ({
   user: one(user, { fields: [packOrder.userId], references: [user.id] }),
 }));
+
+/* ── SNS 콘텐츠 검수 ─────────────────────────────────────────────────
+ *
+ * 왜 DB 에 두나 (2026-08-17 사장님 지시)
+ *   「루틴에 맞춰서 콘텐츠 작업해서 «검수하는 사이트»를 만들자.
+ *    로컬에만 말고 내 아이디만 볼 수 있게 열어줘 — 로컬이 자꾸 막히니까.」
+ *
+ *   그동안 검수는 «내가 보고서를 써서 알려 드리는» 방식이었다. 그래서 내가 못 본 것은
+ *   사장님도 못 보셨고, 유튜브에 올라간 뒤에야 「화면이 짤렸어」를 듣고 세 번 다시 올렸다.
+ *   이제 **칸마다 «실제로 나갈 프레임»과 «그 칸 자막»을 나란히** 놓고 사장님이 보신다.
+ *
+ * ⭐ 굽는 일은 «로컬에 남는다» — 이건 고를 수 있는 게 아니다.
+ *   ffmpeg · 헤드리스 크롬 · 11분짜리 녹화본 원본 · 유튜브 인증 토큰이 전부
+ *   사장님 컴퓨터에 있다. Vercel 함수는 그것을 못 돌린다. 그래서 이렇게 나눈다:
+ *
+ *     로컬 루틴  대본 → 자막검사 → 굽기 → 칸별 프레임 → 여기에 「검토 대기」로 넣는다
+ *     이 사이트  /admin/sns  자막·캡션을 고치고 「검토 완료」
+ *     로컬       승인된 것만 다시 굽고 유튜브(비공개) + G 드라이브
+ */
+export const snsContent = pgTable(
+  "sns_content",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** 몇 주차인가 — `3주차_2026-08-24` 처럼 드라이브 폴더 이름과 같게 둔다. */
+    batch: text("batch").notNull(),
+    /** 대본 JSON 의 `이름`. 로컬이 어느 대본인지 찾는 열쇠라 회차 안에서 겹치지 않는다. */
+    slug: text("slug").notNull(),
+    /** waiting(검토 대기) · approved(검토 완료) · published(올림) · dropped(버림) */
+    status: text("status").notNull().default("waiting"),
+    verticalTitle: text("vertical_title").notNull(),
+    horizontalTitle: text("horizontal_title").notNull(),
+    /** 오른쪽 위 작은 태그 — 「반려동물 유치원 편」. 업종 이름은 여기에만 둔다. */
+    ep: text("ep").notNull().default(""),
+    music: text("music").notNull().default(""),
+    /** 자막 한 칸이 몇 초인가. 지금은 1.8. */
+    secPerCard: text("sec_per_card").notNull().default("1.8"),
+    captionYoutube: text("caption_youtube").notNull().default(""),
+    captionInstagram: text("caption_instagram").notNull().default(""),
+    hashtags: text("hashtags").notNull().default(""),
+    /** 언제 올릴 것인가 — 「3주 목 8/27 09:00」. 사장님이 그 시각에 공개를 누르신다. */
+    slotLabel: text("slot_label").notNull().default(""),
+    /** `자막검사.mjs` 가 마지막으로 낸 결과. 통과면 빈 문자열. */
+    checkResult: text("check_result").notNull().default(""),
+    /** 올린 뒤 채운다. 옛 판을 지울 때 이 값으로 찾는다. */
+    youtubeVerticalId: text("youtube_vertical_id"),
+    youtubeHorizontalId: text("youtube_horizontal_id"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    approvedAt: timestamp("approved_at"),
+    publishedAt: timestamp("published_at"),
+  },
+  (table) => [uniqueIndex("sns_content_batch_slug_idx").on(table.batch, table.slug)],
+);
+
+export const snsCut = pgTable(
+  "sns_cut",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    contentId: uuid("content_id")
+      .notNull()
+      .references(() => snsContent.id, { onDelete: "cascade" }),
+    /** 몇 번째 칸인가 (1부터). */
+    ord: integer("ord").notNull(),
+    /** 그 칸 자막. 줄 배열을 JSON 으로 담는다 — `["첫 줄", "둘째 줄"]`.
+     *  `<span class='o'>…</span>` 같은 표시가 그대로 들어 있다(포인트 색). */
+    captionJson: text("caption_json").notNull().default("[]"),
+    /** ⭐ **실제로 나갈 프레임** — 구운 세로 영상에서 이 칸 가운데를 뽑아 405px webp 로 줄인 것.
+     *  data URI 로 담는다. 20칸 × 25KB 면 한 편에 500KB 다.
+     *  이게 있어야 「화면이 잘렸나」와 「자막이 화면과 맞나」를 눈으로 본다. */
+    frameDataUri: text("frame_data_uri").notNull().default(""),
+    pose: text("pose").notNull().default(""),
+    clip: text("clip").notNull().default(""),
+    ss: text("ss").notNull().default(""),
+    zoom: text("zoom").notNull().default(""),
+    /** 로컬이 붙인 메모 — 「이 칸에 무엇이 떠 있나」. 사장님이 자막을 고칠 때 근거가 된다. */
+    screenNote: text("screen_note").notNull().default(""),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex("sns_cut_content_ord_idx").on(table.contentId, table.ord)],
+);
+
+export const snsContentRelations = relations(snsContent, ({ many }) => ({
+  cuts: many(snsCut),
+}));
+
+export const snsCutRelations = relations(snsCut, ({ one }) => ({
+  content: one(snsContent, { fields: [snsCut.contentId], references: [snsContent.id] }),
+}));
