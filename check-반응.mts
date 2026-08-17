@@ -38,8 +38,16 @@ const 약속도 = process.argv.includes("--약속");
 
 /** 브라우저 안에서 도는 글. 결과는 document.title 로 꺼낸다(--dump-dom 으로 읽는다). */
 const 눌러보는글 = `
-(() => {
+(async () => {
+  /* ⚠ scroll-behavior:smooth 는 굴림을 ~300ms 에 걸쳐 «천천히» 옮긴다.
+     한 틱 뒤에 재면 아직 안 움직여서 «죽었다»고 잘못 센다. 재는 동안만 꺼 둔다. */
+  const 굴림끄기 = document.createElement("style");
+  굴림끄기.textContent = "*{scroll-behavior:auto !important}";
+  document.head.appendChild(굴림끄기);
+
   const 죽은것 = [];
+  const 값만 = [];
+  const 종류 = {};
   let 눌러본수 = 0;
 
   /* 누를 만한 것들. <a href> 는 «넘어가는 것»이 곧 반응이라 빼고,
@@ -62,6 +70,13 @@ const 눌러보는글 = `
     return el.offsetParent !== null || el.type === 'checkbox' || el.type === 'radio';
   });
 
+  /* 가로·세로로 굴러가는 것도 «반응»이다 — 굴린 자리는 innerHTML 에 안 남는다.
+     화살표로 목록을 굴리는 화면이 이것 때문에 죽은 것으로 잘못 세어졌다. */
+  const 굴린자리 = () => Array.prototype.map.call(
+    document.querySelectorAll("*"),
+    (n) => (n.scrollLeft || 0) + ":" + (n.scrollTop || 0)
+  ).join(",");
+
   const 이름 = (el) => {
     const t = (el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 24);
     if (t) return t;
@@ -71,12 +86,15 @@ const 눌러보는글 = `
   };
 
   for (const el of 후보) {
+    /* 손잡이가 setTimeout 으로 나중에 도는 것도 있다(마지막 그물이 그렇다).
+       한 틱 기다렸다 재야 «늦게 답하는 것»을 죽었다고 잘못 세지 않는다. */
     /* 알림(토스트)을 붙이는 것은 그 자체가 반응이다 — 먼저 인정하고 넘어간다. */
     if (el.dataset && (el.dataset.toast || el.dataset.modal || el.dataset.go || el.dataset.close || el.dataset.dismiss)) { 눌러본수++; continue; }
 
     const 전HTML = document.body.innerHTML;
     const 전주소 = location.href;
     const 전켜짐 = el.checked === undefined ? el.className : String(el.checked);
+    const 전굴림 = 굴린자리();
 
     try {
       if (el.tagName === 'SELECT') {
@@ -87,19 +105,32 @@ const 눌러보는글 = `
         el.click();
       }
     } catch (e) { /* 눌리다 터지면 그것도 죽은 것으로 친다 */ }
+    await new Promise((r) => setTimeout(r, 0));
 
     눌러본수++;
     const 바뀜 = document.body.innerHTML !== 전HTML
       || location.href !== 전주소
-      || (el.checked === undefined ? el.className : String(el.checked)) !== 전켜짐;
+      || (el.checked === undefined ? el.className : String(el.checked)) !== 전켜짐
+      || 굴린자리() !== 전굴림;
 
-    if (!바뀜) 죽은것.push(이름(el));
+    if (!바뀜) {
+      /* ⚠ <select> 는 고른 값이 «닫힌 칸에 그대로 보인다» — 그것만으로도 손님 눈에는
+         반응한 것이다. 그래서 죽었다고 못 박지 않고 «값만 바뀜»으로 따로 센다.
+         다만 그 select 가 목록을 거르거나 숫자를 다시 세라고 둔 것이면 반쪽짜리다 —
+         그건 기계가 못 가리므로 사람이 스펙팩 acts 와 견줘 봐야 한다. */
+      if (el.tagName === 'SELECT') { 값만.push(이름(el)); continue; }
+      죽은것.push(이름(el));
+      /* «무엇이» 죽었나를 같이 센다 — 고칠 자리는 글자가 아니라 이 종류다.
+         button.bell 이 146개면 낱낱이 고칠 게 아니라 ui.mjs 에 한 번 붙이면 된다. */
+      var 종 = el.tagName.toLowerCase() + (el.className ? '.' + String(el.className).split(' ')[0] : '');
+      종류[종] = (종류[종] || 0) + 1;
+    }
   }
 
-  return JSON.stringify({ 눌러본수, 죽은수: 죽은것.length, 죽은것: 죽은것.slice(0, 6) });
+  return JSON.stringify({ 눌러본수, 죽은수: 죽은것.length, 죽은것: 죽은것.slice(0, 6), 종류, 값만수: 값만.length });
 })()`;
 
-type 결과 = { 화면: string; 눌러본수: number; 죽은수: number; 죽은것: string[] };
+type 결과 = { 화면: string; 눌러본수: number; 죽은수: number; 죽은것: string[]; 종류: Record<string, number>; 값만수: number };
 
 function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[] } | null {
   const 완성화면 = join(팩방, 팩, "완성화면");
@@ -120,7 +151,7 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
     // load 뒤에 재야 app.js 가 붙어 있다. 결과는 title 로 꺼낸다.
     const 심은글 = 원본.replace(
       "</body>",
-      `<script>addEventListener("load",function(){setTimeout(function(){try{document.title=${눌러보는글};}catch(e){document.title=JSON.stringify({오류:String(e)});}},80);});</script></body>`,
+      `<script>addEventListener("load",function(){setTimeout(function(){${눌러보는글}.then(function(v){document.title=v;},function(e){document.title=JSON.stringify({오류:String(e)});});},80);});</script></body>`,
     );
     writeFileSync(길, 심은글, "utf8");
 
@@ -138,7 +169,7 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
     try { 값 = JSON.parse(m[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")); } catch { continue; }
     if (!값 || 값.죽은수 === undefined) continue;
 
-    결과.push({ 화면: f.replace(".html", ""), 눌러본수: 값.눌러본수, 죽은수: 값.죽은수, 죽은것: 값.죽은것 || [] });
+    결과.push({ 화면: f.replace(".html", ""), 눌러본수: 값.눌러본수, 죽은수: 값.죽은수, 죽은것: 값.죽은것 || [], 종류: 값.종류 || {}, 값만수: 값.값만수 || 0 });
   }
 
   rmSync(임시, { recursive: true, force: true });
@@ -163,6 +194,7 @@ const 팩들 = 고른팩
 console.log("눌러도 반응 없는 UI 가 있나 — 실제로 눌러서 잽니다\n");
 
 let FAIL = 0;
+let WARN = 0;
 for (const 팩 of 팩들) {
   const r = 팩보기(팩);
   if (!r) { console.log(`  ${팩} — 완성화면이 없어 건너뜁니다`); continue; }
@@ -171,15 +203,27 @@ for (const 팩 of 팩들) {
   const 총누름 = r.결과.reduce((n, x) => n + x.눌러본수, 0);
   const 총죽음 = r.결과.reduce((n, x) => n + x.죽은수, 0);
 
+  const 총값만 = r.결과.reduce((n, x) => n + x.값만수, 0);
   console.log(`  ${팩} — ${r.잰장}장에서 ${총누름}개를 눌러 봤습니다`);
+  if (총값만 > 0) {
+    WARN += 총값만;
+    console.log(`    △ 고른 값만 바뀌고 옆이 그대로인 select ${총값만}개 — 거르라고 둔 것이면 반쪽입니다.`);
+    console.log("      스펙팩 acts 에 「고르면 …가 바뀐다」고 적혀 있는지 견줘 보세요.");
+  }
   if (총죽음 === 0) {
-    console.log("    모두 반응합니다.\n");
+    console.log("    눌러서 죽은 것은 없습니다.\n");
   } else {
     FAIL += 총죽음;
     for (const x of 죽은화면) {
       console.log(`    ✗ [${x.화면}] ${x.죽은수}개가 눌러도 그대로: ${x.죽은것.join(" · ")}`);
     }
-    console.log("");
+    /* 고칠 자리는 «종류»다. 같은 종류가 여러 화면에 흩어져 있으면 낱낱이 고칠 게 아니라
+       그 팩의 ui.mjs·app.js 한 곳에 붙이면 한꺼번에 산다. */
+    const 종합: Record<string, number> = {};
+    for (const x of r.결과) for (const [k, v] of Object.entries(x.종류)) 종합[k] = (종합[k] || 0) + v;
+    const 줄 = Object.entries(종합).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`);
+    console.log(`    └ 무엇이 죽었나: ${줄.join(" · ")}`);
+    console.log("      같은 종류가 여러 곳이면 그 팩의 build/ui.mjs · assets/js/app.js 에서 한 번에 고칩니다.\n");
   }
 
   if (약속도) {
@@ -191,5 +235,5 @@ for (const 팩 of 팩들) {
   }
 }
 
-console.log(FAIL === 0 ? "못 넘긴 것 0건" : `못 넘긴 것 ${FAIL}건 — 눌러도 반응이 없습니다`);
+console.log(FAIL === 0 ? `못 넘긴 것 0건 · 봐줄 만한 것 ${WARN}건` : `못 넘긴 것 ${FAIL}건 — 눌러도 반응이 없습니다 · 봐줄 만한 것 ${WARN}건`);
 if (FAIL > 0) process.exitCode = 1;
