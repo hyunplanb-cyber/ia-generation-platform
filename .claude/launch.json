@@ -2,6 +2,18 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "팩전체",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "4200",
+        "판매용_템플릿/_판매팩"
+      ],
+      "port": 4200
+    },
+    {
       "name": "뷰티-프리미엄",
       "runtimeExecutable": "node",
       "runtimeArgs": [
@@ -254,6 +266,22 @@
       ],
       "cwd": "판매용_템플릿/_가이드용/LMS_디럭스_레이아웃_A_대시보드형/site",
       "port": 4195
+    },
+    {
+      "name": "펫유치원",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/Users/glim0/Downloads/나는 펫 유치원을 운영하고 있어. 반려동물 유치원사이트_산출물/serve.js"
+      ],
+      "port": 4321
+    },
+    {
+      "name": "펫유치원-새것",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/Users/glim0/Downloads/펫유치원_새로만들기/site/serve.js"
+      ],
+      "port": 5173
     }
   ]
 }
