@@ -542,6 +542,11 @@ export const snsContent = pgTable(
     slotLabel: text("slot_label").notNull().default(""),
     /** `자막검사.mjs` 가 마지막으로 낸 결과. 통과면 빈 문자열. */
     checkResult: text("check_result").notNull().default(""),
+    /* 길이 규칙(25~68초)을 건너뛰는 «사유». 대본의 「길이예외」에서 온다.
+       빈 문자열이면 예외가 아니다 — 사유 없는 예외는 그냥 구멍이다(2026-08-18).
+       이 칸이 없던 동안 검수 화면이 펫 유치원 편을 「검사 1건 걸림」으로 계속 띄웠다:
+       대본에는 사유를 적었는데 화면 쪽 재검사는 그걸 못 봐서 매번 다시 걸렸다. */
+    lengthExempt: text("length_exempt").notNull().default(""),
     /** 올린 뒤 채운다. 옛 판을 지울 때 이 값으로 찾는다. */
     youtubeVerticalId: text("youtube_vertical_id"),
     youtubeHorizontalId: text("youtube_horizontal_id"),

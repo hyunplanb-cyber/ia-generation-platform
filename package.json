@@ -11,7 +11,8 @@
     "qa": "tsx qa-site.mts",
     "pack": "tsx build-all.mts",
     "check-presets": "tsx check-presets.mts",
-    "check-pack": "tsx check-pack.mts"
+    "check-pack": "tsx check-pack.mts",
+    "sns-watch": "tsx \"판매용_템플릿/_마케팅/_작업/sns지킴이.mts\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.111.0",

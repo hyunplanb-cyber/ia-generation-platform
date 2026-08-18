@@ -39,6 +39,7 @@ async function 다시검사(contentId: string): Promise<string> {
     가로제목: 편.horizontalTitle,
     커버제목: 편.coverTitle,
     칸초: Number(편.secPerCard) || 1.8,
+    길이예외: 편.lengthExempt || undefined,
     칸들: 칸들.map((c): 대본칸 => ({
       cap: JSON.parse(c.captionJson || "[]") as string[],
       pose: c.pose || undefined,

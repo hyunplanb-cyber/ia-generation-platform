@@ -33,6 +33,12 @@ export function SnsListRow({
       /* 지워졌으면 revalidate 로 이 줄이 사라진다 — 따로 할 일이 없다. */
     });
 
+  /* ⏭ 로 시작하는 줄은 «사유를 적고 넘어간 것»이라 걸림이 아니다 (2026-08-18).
+     세는 곳이 세 군데(검수목록·이 화면·재검사)라 규칙을 같은 모양으로 둔다. */
+  const 검사줄 = (편.checkResult || "").split(String.fromCharCode(10)).filter(Boolean);
+  const 막는것 = 검사줄.filter((l) => !l.startsWith("⏭")).length;
+  const 넘어간것 = 검사줄.length - 막는것;
+
   return (
     <li className="relative">
       <Link
@@ -43,9 +49,14 @@ export function SnsListRow({
           <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${상태.반}`}>{상태.글}</span>
           <span className="font-mono text-xs text-muted-foreground">{편.batch}</span>
           {편.slotLabel && <span className="text-xs font-semibold text-primary-on-soft">{편.slotLabel}</span>}
-          {편.checkResult && (
+          {막는것 > 0 && (
             <span className="rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-bold text-rose-900">
-              검사 {편.checkResult.split("\n").length}건
+              검사 {막는것}건
+            </span>
+          )}
+          {넘어간것 > 0 && (
+            <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700">
+              넘어감 {넘어간것}
             </span>
           )}
         </div>

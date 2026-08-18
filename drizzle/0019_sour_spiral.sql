@@ -1,0 +1,1 @@
+ALTER TABLE "sns_content" ADD COLUMN "length_exempt" text DEFAULT '' NOT NULL;

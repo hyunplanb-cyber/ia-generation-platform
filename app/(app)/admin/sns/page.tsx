@@ -13,6 +13,7 @@ import { snsContent, snsCut } from "@/db/schema";
 import { getSession } from "@/lib/session";
 import { isOwner } from "@/lib/flags";
 import { SnsListRow } from "./list-row";
+import { WatcherSwitch } from "./watcher-switch";
 
 export const metadata = { title: "SNS 콘텐츠 검수 — 카페인컬러" };
 
@@ -37,6 +38,8 @@ export default async function SnsReviewListPage() {
         그 칸 자막이 나란히 있어요. <b className="text-foreground">검토 완료</b>를 누르면 그것만 영상으로 구워
         유튜브(비공개)와 구글 드라이브에 올립니다.
       </p>
+
+      <WatcherSwitch />
 
       {!목록.length ? (
         <div className="mt-10 rounded-xl border border-border bg-surface p-8 text-center">

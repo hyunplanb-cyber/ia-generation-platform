@@ -134,6 +134,13 @@
       "when": 1787015679639,
       "tag": "0018_even_maverick",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1787055613786,
+      "tag": "0019_sour_spiral",
+      "breakpoints": true
     }
   ]
 }
