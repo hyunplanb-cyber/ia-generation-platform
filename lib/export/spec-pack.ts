@@ -323,7 +323,10 @@ export function buildSpecPackModel(
           };
         }),
       // 화면 안에서 끝나는 조작 — [무엇을 누르면, 무엇이 바뀐다]
-      acts: (s as { acts?: [string, string][] }).acts ?? [],
+      /* ⛔ 죽은 칸 `acts` 를 뺐다 (2026-08-18). 2026-08-06 에 만들면서 채우는 곳을
+         안 만들어 146개 화면 전부 빈 채로 나갔다. 그 일을 하는 것은 바로 위
+         `화면안동작` 이다 — 기능정의 글에서 뽑는다. 칸만 있고 값이 없으면
+         있는 줄 알고 아무도 다시 안 본다. check-pack.mts 가 이걸 센다. */
       화면안동작: 화면안동작(s.funcDef ?? ""),
       schedule: { start: s.scheduleStart ?? "", end: s.scheduleEnd ?? "" },
     })),
@@ -452,12 +455,6 @@ export function buildSpecPackMarkdown(
     if (s.화면안동작.length > 0) {
       lines.push(`- **눌렀을 때 화면 안에서 끝나는 것** — 여기가 «포스터»가 되기 제일 쉬운 자리입니다:`);
       for (const 한줄 of s.화면안동작) lines.push(`  - ${한줄}`);
-    }
-    if (s.acts && s.acts.length > 0) {
-      lines.push(`- **눌렀을 때 (이 화면 안에서 끝남)**:`);
-      for (const [what, then] of s.acts) {
-        lines.push(`  - \`${what}\` → ${then}`);
-      }
     }
     lines.push(`- **생성 프롬프트**:`);
     lines.push("");
