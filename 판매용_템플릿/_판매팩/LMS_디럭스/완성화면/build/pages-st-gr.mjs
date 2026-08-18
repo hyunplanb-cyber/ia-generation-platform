@@ -307,7 +307,7 @@ P['GR-01'] = () => {
   const rows = STUDENTS.map((s, si) => {
     const cells = Array.from({ length: weeks }, (_, wi) => {
       const [cls, t] = cellFor(si, wi);
-      return `<td class="c"><button class="cell ${cls}" type="button" title="${s.nm} · ${wi + 1}주차" aria-label="${s.nm} ${wi + 1}주차 출결">${t}</button></td>`;
+      return `<td class="c" data-week="${wi + 1}"><button class="cell ${cls}" type="button" title="${s.nm} · ${wi + 1}주차" aria-label="${s.nm} ${wi + 1}주차 출결">${t}</button></td>`;
     }).join('');
     const ok = Array.from({ length: weeks }, (_, wi) => cellFor(si, wi)[0]).filter((c) => c === 'c-ok').length;
     const use = Array.from({ length: weeks }, (_, wi) => cellFor(si, wi)[0]).filter((c) => c !== 'c-na').length;
@@ -326,8 +326,8 @@ ${U.pageHd('출석 현황', '칸을 누르면 출석 → 지각 → 결석 → �
 <div class="card mb4"><div class="card-bd">
   <div class="row-b wrap-row">
     ${courseSel('gr-course')}
-    <select class="input" style="width:180px" aria-label="기간" data-toast="고른 기간의 출석표로 바뀝니다">
-      <option>1~12주 (전체)</option><option>1~6주</option><option>7~12주</option></select>
+    <select class="input" style="width:180px" aria-label="기간" data-week-range>
+      <option value="all">1~12주 (전체)</option><option value="1-6">1~6주</option><option value="7-12">7~12주</option></select>
     <span class="sp grow"></span>
     <div class="legend">
       <span><i style="background:rgba(15,122,82,.14)"></i>출석</span>
@@ -340,11 +340,11 @@ ${U.pageHd('출석 현황', '칸을 누르면 출석 → 지각 → 결석 → �
 
 <div class="table-wrap table-scroll"><table class="table mx table-fix" style="min-width:900px">
   <thead><tr><th style="width:110px">이름</th>
-    ${Array.from({ length: weeks }, (_, i) => `<th style="width:52px;text-align:center">${i + 1}주</th>`).join('')}
+    ${Array.from({ length: weeks }, (_, i) => `<th style="width:52px;text-align:center" data-week="${i + 1}">${i + 1}주</th>`).join('')}
     <th style="width:80px;text-align:right">출석률</th></tr></thead>
   <tbody>${rows}</tbody>
   <tfoot><tr><td>주차 평균</td>
-    ${avg.map((a) => `<td style="text-align:center">${a}%</td>`).join('')}
+    ${avg.map((a, i) => `<td style="text-align:center" data-week="${i + 1}">${a}%</td>`).join('')}
     <td class="right">${Math.round(avg.reduce((a, b) => a + b, 0) / weeks)}%</td></tr></tfoot>
 </table></div>
 

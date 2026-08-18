@@ -1,6 +1,6 @@
 /* MY 마이페이지 · AU 계정 */
 import * as U from './ui.mjs';
-import { SITE, CATS, COURSES, SETTLE, byId } from './data.mjs';
+import { SITE, CATS, COURSES, SETTLE, SETTLE_BY_MONTH, byId } from './data.mjs';
 
 const P = {};
 export default P;
@@ -95,7 +95,13 @@ P['MY-02'] = () => {
   ];
   const rows = hist.map((h, i) => {
     const c = byId(h.id);
-    return `<div data-tags="p:${h.to === '수강 중' ? 'now' : 'done'} y:2026">
+    /* ⚠ 「기간」 고르개가 알림만 띄우고 목록은 그대로였다(2026-08-18 검수 A).
+       스펙팩 acts 는 「이력 목록과 합계가 함께 걸러진다」고 약속해 두었다.
+       결제일 기준으로 «최근 3개월·최근 1년» 표를 미리 붙여 두면
+       이미 있는 거르개(data-tags)가 그대로 걸러 준다. 오늘은 2026-08-18. */
+    const 지난달수 = (2026 - Number(h.from.slice(0, 4))) * 12 + (8 - Number(h.from.slice(5, 7)));
+    const 기간표 = ['t:all', 지난달수 <= 12 ? 't:1y' : '', 지난달수 <= 3 ? 't:3m' : ''].filter(Boolean).join(' ');
+    return `<div data-tags="p:${h.to === '수강 중' ? 'now' : 'done'} y:2026 ${기간표}">
       <div class="acc-item">
         <button class="acc-q" type="button"><span class="row-c" style="gap:var(--gap-title)">
           ${U.ph('강의 썸네일', 'ph-thumb-sm', c.id)}
@@ -132,8 +138,8 @@ ${myNav(1)}
 <div class="card mb4"><div class="card-bd">
   <div class="row-b wrap-row">
     ${U.fchips('hist', 'p', ['*', ['now', '수강 중'], ['done', '수강 완료']], { allLabel: '전체' })}
-    <select class="input" style="width:180px" aria-label="기간" data-toast="고른 기간의 이력만 남습니다">
-      <option>전체 기간</option><option>최근 3개월</option><option>최근 1년</option></select>
+    <select class="input" style="width:180px" aria-label="기간" data-fselect="hist" data-fkey="t">
+      <option value="all">전체 기간</option><option value="3m">최근 3개월</option><option value="1y">최근 1년</option></select>
   </div>
   <p class="t-sub mt2">지금 <b class="pri" data-fcount="hist">5</b>건을 보고 있어요</p>
 </div></div>
@@ -176,7 +182,7 @@ ${myNav(2)}
 
 <div class="card mb4"><div class="card-bd">
   <div class="row-b wrap-row">
-    <select class="input" style="width:200px" aria-label="정산 월" data-toast="고른 달의 내역으로 바뀝니다">
+    <select class="input" style="width:200px" aria-label="정산 월" data-settle-month data-months='${U.esc(JSON.stringify(SETTLE_BY_MONTH))}'>
       <option>2026년 8월</option><option>2026년 7월</option><option>2026년 6월</option></select>
     ${U.btnSay('세금계산서 발행', '세금계산서 발행은 서버가 연결되면 동작합니다', { cls: 'btn-soft' })}
     ${U.btnSay('엑셀로 내려받기', '내려받기는 서버가 연결되면 동작합니다', { cls: 'btn-ghost' })}
@@ -187,7 +193,7 @@ ${U.table(
       [{ t: '강의', sort: 'text' }, { t: '판매', sort: 'num', w: '90px' }, { t: '총 매출', sort: 'num', w: '130px' },
       { t: '수수료 20%', sort: 'num', w: '130px' }, { t: '실 정산액', sort: 'num', w: '140px' }, { t: '상태', w: '110px' }],
       rows, {
-    scroll: true,
+    scroll: true, attr: ' data-settle-table',
     foot: `<tr><td>합계</td><td class="right">${U.nf(tot.n)}건</td><td class="right">${U.won(tot.gross)}</td>
       <td class="right">-${U.nf(tot.fee)}원</td><td class="right"><b class="pri">${U.won(tot.net)}</b></td><td></td></tr>`,
   })}

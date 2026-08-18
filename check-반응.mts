@@ -92,9 +92,21 @@ const 눌러보는글 = `
     /* 손잡이가 setTimeout 으로 나중에 도는 것도 있다(마지막 그물이 그렇다).
        한 틱 기다렸다 재야 «늦게 답하는 것»을 죽었다고 잘못 세지 않는다. */
     /* 알림(토스트)을 붙이는 것은 그 자체가 반응이다 — 먼저 인정하고 넘어간다. */
-    if (el.dataset && (el.dataset.toast || el.dataset.modal || el.dataset.go || el.dataset.close || el.dataset.dismiss)) { 눌러본수++; continue; }
+    /* ⚠ <select> 는 알림이 붙어 있어도 그냥 넘기지 않는다 (2026-08-18 검수 A 가 짚었다).
+       LMS 의 「기간」 고르개는 data-toast 만 걸려 있어 «반응함»으로 통과했는데,
+       스펙팩 acts 는 「표와 합계가 그 기간 것으로 다시 계산된다」고 약속하고 있었다.
+       알림 한 줄은 그 약속이 아니다 — 거르는 고르개는 옆이 같이 움직여야 한다. */
+    const 고르개인가 = el.tagName === 'SELECT';
+    if (!고르개인가 && el.dataset && (el.dataset.toast || el.dataset.modal || el.dataset.go || el.dataset.close || el.dataset.dismiss)) { 눌러본수++; continue; }
 
-    const 전HTML = document.body.innerHTML;
+    /* 알림(토스트)은 «옆이 움직였나»를 볼 때 셈에서 뺀다 — 고르개가 알림만 띄우고
+       표를 안 고쳐도 화면이 바뀐 것처럼 보이기 때문이다. */
+    const 알림뺀글 = () => {
+      const 사본 = document.body.cloneNode(true);
+      사본.querySelectorAll('.toast').forEach((t) => t.remove());
+      return 사본.innerHTML;
+    };
+    const 전HTML = 고르개인가 ? 알림뺀글() : document.body.innerHTML;
     const 전주소 = location.href;
     const 전켜짐 = el.checked === undefined ? el.className : String(el.checked);
     const 전굴림 = 굴린자리();
@@ -111,7 +123,7 @@ const 눌러보는글 = `
     await new Promise((r) => setTimeout(r, 0));
 
     눌러본수++;
-    const 바뀜 = document.body.innerHTML !== 전HTML
+    const 바뀜 = (고르개인가 ? 알림뺀글() : document.body.innerHTML) !== 전HTML
       || location.href !== 전주소
       || (el.checked === undefined ? el.className : String(el.checked)) !== 전켜짐
       || 굴린자리() !== 전굴림;

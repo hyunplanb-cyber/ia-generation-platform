@@ -135,6 +135,81 @@
     box.innerHTML = html || '<span class="t-sub">걸린 조건이 없어요. 전체를 보고 있습니다</span>';
   }
 
+  /* 정산 「월」 고르개 — 고른 달의 표와 합계로 다시 그린다.
+     달별 자료는 고르개의 data-months 에 실려 온다(build/data.mjs 의 SETTLE_BY_MONTH). */
+  document.addEventListener('change', function (e) {
+    var sel = e.target.closest && e.target.closest('[data-settle-month]');
+    if (!sel) return;
+    var 자료; try { 자료 = JSON.parse(sel.dataset.months || '{}'); } catch (err) { return; }
+    var 달 = 자료[sel.value] || 자료[sel.options[sel.selectedIndex].textContent];
+    var 상자 = document.querySelector('[data-settle-table]');
+    if (!달 || !상자) return;
+    var 원 = function (n) { return nf(n) + '원'; };
+    상자.querySelector('tbody').innerHTML = 달.map(function (s) {
+      return '<tr><td data-v="' + s.c + '"><b>' + s.c + '</b></td>'
+        + '<td class="right" data-v="' + s.n + '">' + nf(s.n) + '건</td>'
+        + '<td class="right" data-v="' + s.gross + '">' + 원(s.gross) + '</td>'
+        + '<td class="right" data-v="' + s.fee + '"><span class="muted">-' + nf(s.fee) + '원</span></td>'
+        + '<td class="right" data-v="' + s.net + '"><b>' + 원(s.net) + '</b></td>'
+        + '<td>' + s.st + '</td></tr>';
+    }).join('');
+    var 합 = 달.reduce(function (a, s) {
+      return { n: a.n + s.n, gross: a.gross + s.gross, fee: a.fee + s.fee, net: a.net + s.net };
+    }, { n: 0, gross: 0, fee: 0, net: 0 });
+    var 바닥 = 상자.querySelector('tfoot');
+    if (바닥) {
+      바닥.innerHTML = '<tr><td>합계</td><td class="right">' + nf(합.n) + '건</td>'
+        + '<td class="right">' + 원(합.gross) + '</td>'
+        + '<td class="right">-' + nf(합.fee) + '원</td>'
+        + '<td class="right"><b class="pri">' + 원(합.net) + '</b></td><td></td></tr>';
+    }
+  });
+
+  /* 출석표 「기간」 고르개 — 고른 주차만 남기고 출석률을 그 구간으로 다시 센다.
+     ⚠ 2026-08-18 검수: 알림만 뜨고 표는 그대로였다. 스펙팩 acts 는
+       「출석 표와 출석률 숫자가 함께 바뀐다」고 약속해 두었다. */
+  document.addEventListener('change', function (e) {
+    var sel = e.target.closest && e.target.closest('[data-week-range]');
+    if (!sel) return;
+    var v = sel.value || 'all';
+    var 부터 = 1, 까지 = 999;
+    if (v !== 'all') { var m = v.split('-'); 부터 = Number(m[0]); 까지 = Number(m[1]); }
+    var 표 = sel.closest('.card') ? document.querySelector('table.table') : document.querySelector('table.table');
+    if (!표) return;
+    표.querySelectorAll('[data-week]').forEach(function (c) {
+      var n = Number(c.dataset.week);
+      c.hidden = !(n >= 부터 && n <= 까지);
+    });
+    /* 줄마다 출석률을 «보이는 칸만»으로 다시 센다 */
+    표.querySelectorAll('tbody tr').forEach(function (tr) {
+      var 칸 = Array.prototype.filter.call(tr.querySelectorAll('td[data-week]'), function (c) { return !c.hidden; });
+      var 셈 = 0, 온것 = 0;
+      칸.forEach(function (c) {
+        var b = c.querySelector('.cell');
+        if (!b) return;
+        if (b.classList.contains('c-na')) return;
+        셈 += 1;
+        if (b.classList.contains('c-ok')) 온것 += 1;
+      });
+      var 값 = tr.querySelector('[data-rate]');
+      if (값) 값.textContent = 셈 ? Math.round(온것 / 셈 * 100) + '%' : '—';
+    });
+  });
+
+  /* 고르는 칸으로 거르기 — <select data-fselect="목록" data-fkey="t">
+     ⚠ 2026-08-18 검수: 「기간」 고르개들이 data-toast 만 걸려 있어 알림만 뜨고
+       목록은 그대로였다. 스펙팩 acts 는 「목록과 합계가 함께 걸러진다」고 약속해
+       두었다. 칩과 같은 거르개(fstate)에 태워 약속대로 돌게 한다. */
+  document.addEventListener('change', function (e) {
+    var t = e.target.closest && e.target.closest('[data-fselect][data-fkey]');
+    if (!t) return;
+    var list = t.dataset.fselect, k = t.dataset.fkey;
+    var v = t.value || (t.options[t.selectedIndex] && t.options[t.selectedIndex].value);
+    var st = ensure(list);
+    st[k] = (!v || v === 'all') ? [] : [v];
+    applyFilter(list);
+  });
+
   on('[data-fgroup][data-f]', 'click', function (e, t) {
     var list = t.dataset.fgroup, k = t.dataset.f, v = t.dataset.v;
     var st = ensure(list);
