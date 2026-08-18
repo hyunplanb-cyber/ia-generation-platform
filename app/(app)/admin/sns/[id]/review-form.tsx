@@ -17,7 +17,8 @@
  */
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
-import { approveContentAction, reopenContentAction, saveContentAction } from "../actions";
+import { approveContentAction, finalizeContentAction, reopenContentAction, saveContentAction } from "../actions";
+import { 상태보기 } from "@/lib/sns-status";
 
 /** 공백과 표시(span)를 뺀 글자 수 — 검사기와 같은 셈법이다. */
 const 글자수세기 = (s: string) => s.replace(/<[^>]*>/g, "").replace(/\s/g, "").length;
@@ -99,6 +100,7 @@ export function SnsReviewForm({
   const [알림, set알림] = useState("");
   const [도는중, 시작] = useTransition();
   const [자동저장, set자동저장] = useState(true);
+  const [판, set판] = useState<"916" | "169">("916");
   const [저장됨, set저장됨] = useState("");
 
   const 지금글자수 = 글자수세기(Object.values(자막들).join(" "));
@@ -195,6 +197,7 @@ export function SnsReviewForm({
     set모아보기(false);
   };
 
+  /* 검토 완료 = 「이 글로 다시 만들어 달라」. 여기까지는 «안쪽 일»이다 — 바깥으로 안 나간다. */
   const 검토완료 = () =>
     시작(async () => {
       const s = await saveContentAction(편.id, 모아서());
@@ -203,7 +206,19 @@ export function SnsReviewForm({
       if (!r.ok) return set알림(r.왜);
       set검사(r.검사);
       set상태("approved");
-      set알림("검토 완료로 두었습니다. 다음 굽기 때 이 판으로 영상을 만들어 유튜브(비공개)와 드라이브에 올립니다.");
+      set알림("검토 완료 — 이 내용으로 다시 만듭니다. 끝나면 「검토대기」로 돌아옵니다.");
+    });
+
+  /* ⭐ 최종 완료 = 「올려도 된다」. 유튜브·드라이브로 나가는 것은 이 단추 하나에만 걸려 있다. */
+  const 최종완료 = () =>
+    시작(async () => {
+      const s = await saveContentAction(편.id, 모아서());
+      if (!s.ok) return set알림(s.왜);
+      const r = await finalizeContentAction(편.id);
+      if (!r.ok) return set알림(r.왜);
+      set검사(r.검사);
+      set상태("final");
+      set알림("최종 완료 — 유튜브(비공개)와 구글 드라이브에 올립니다.");
     });
 
   const 되돌리기 = () =>
@@ -211,10 +226,10 @@ export function SnsReviewForm({
       const r = await reopenContentAction(편.id);
       if (!r.ok) return set알림(r.왜);
       set상태("waiting");
-      set알림("검토 대기로 되돌렸습니다.");
+      set알림("검토대기로 되돌렸습니다.");
     });
 
-  const 승인됨 = 상태 === "approved" || 상태 === "published";
+  const 진행중 = 상태 === "approved" || 상태 === "final" || 상태 === "published";
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
@@ -226,12 +241,11 @@ export function SnsReviewForm({
         <span className="font-mono text-xs text-muted-foreground">{편.batch}</span>
         <span className="font-mono text-xs text-muted-foreground">· {편.slug}</span>
         {편.ep && <span className="text-xs font-semibold text-primary-on-soft">{편.ep}</span>}
-        {승인됨 && (
-          <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-900">
-            검토 완료
-          </span>
-        )}
+        <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${상태보기(상태).반}`}>
+          {상태보기(상태).글}
+        </span>
       </div>
+      <p className="mt-1 text-xs text-muted-foreground [word-break:keep-all]">{상태보기(상태).풀이}</p>
 
       <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-foreground [word-break:keep-all]">
         {세로제목.replaceAll("|", " ")}
@@ -260,6 +274,41 @@ export function SnsReviewForm({
           </p>
         </div>
       )}
+
+      {/* ⭐⭐ 영상 — 정지 그림 말고 «실제로 나갈 것»을 돌려 본다 (2026-08-18 사장님 지시)
+              ⚠ 파일이 이 컴퓨터에 있으므로 localhost 로 열 때만 재생된다. */}
+      <section className="mt-8 rounded-xl border border-border bg-surface p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="font-bold text-foreground">영상 돌려 보기</h2>
+          <div className="flex gap-2">
+            {(["916", "169"] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => set판(p)}
+                className={`rounded-lg px-3 py-1.5 text-xs font-bold ${
+                  판 === p ? "bg-primary text-primary-foreground" : "border border-border bg-surface text-foreground"
+                }`}
+              >
+                {p === "916" ? "세로 (쇼츠)" : "가로"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mt-4 flex justify-center rounded-lg bg-neutral-900 p-3">
+          <video
+            key={판}
+            src={`/admin/sns/${편.id}/video?판=${판}`}
+            controls
+            preload="metadata"
+            className={판 === "916" ? "max-h-[70vh] rounded" : "w-full max-w-3xl rounded"}
+          />
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground [word-break:keep-all]">
+          안 나오면 <b className="text-foreground">localhost</b> 로 열어 보세요 — 영상 파일이 이 컴퓨터에
+          있어서 배포된 주소에서는 못 읽습니다. 칸별 그림과 자막은 어디서든 보입니다.
+        </p>
+      </section>
 
       {/* ── ⭐ 커버와 상단 띠 — 글자만 고치면 어떻게 보이는지 모른다 ──────── */}
       <section className="mt-8 rounded-xl border border-border bg-surface p-5">
@@ -534,24 +583,35 @@ export function SnsReviewForm({
         {저장됨 && (
           <span className="text-sm font-semibold text-emerald-800 tabular-nums">✓ {저장됨}에 저장됨</span>
         )}
-        {승인됨 ? (
+        {진행중 ? (
           <button
             type="button"
             onClick={되돌리기}
             disabled={도는중}
             className="rounded-lg border border-border bg-surface px-5 py-3 font-bold text-foreground disabled:opacity-50"
           >
-            검토 대기로 되돌리기
+            검토대기로 되돌리기
           </button>
         ) : (
-          <button
-            type="button"
-            onClick={검토완료}
-            disabled={도는중}
-            className="rounded-lg bg-primary px-5 py-3 font-bold text-primary-foreground disabled:opacity-50"
-          >
-            검토 완료 — 이대로 올려 주세요
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={검토완료}
+              disabled={도는중}
+              className="rounded-lg bg-primary px-5 py-3 font-bold text-primary-foreground disabled:opacity-50"
+            >
+              검토 완료 — 이 내용으로 다시 만들어 주세요
+            </button>
+            {/* ⚠ 여기서부터가 «바깥»이다. 유튜브·드라이브로 나가는 것은 이 단추 하나에만 걸려 있다. */}
+            <button
+              type="button"
+              onClick={최종완료}
+              disabled={도는중}
+              className="rounded-lg border-2 border-blue-600 bg-blue-50 px-5 py-3 font-bold text-blue-900 disabled:opacity-50"
+            >
+              최종 완료 — 유튜브·드라이브에 올려 주세요
+            </button>
+          </>
         )}
         {편.youtubeVerticalId && (
           <a

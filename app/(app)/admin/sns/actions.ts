@@ -151,6 +151,42 @@ export async function approveContentAction(contentId: string): Promise<저장결
   }
 }
 
+/** ⭐ 최종 완료 — 여기서부터가 «바깥»이다. 지킴이가 이것만 집어 유튜브·드라이브로 보낸다.
+ *  (2026-08-18 사장님 흐름: 검토완료는 다시 굽기까지, 최종완료라야 올린다) */
+export async function finalizeContentAction(contentId: string): Promise<저장결과> {
+  try {
+    await 주인확인();
+    const 검사 = await 다시검사(contentId);
+    await db
+      .update(snsContent)
+      .set({ status: "final", approvedAt: new Date(), checkResult: 검사 })
+      .where(eq(snsContent.id, contentId));
+    revalidatePath(`/admin/sns/${contentId}`);
+    revalidatePath("/admin/sns");
+    return { ok: true, 검사 };
+  } catch (e) {
+    return { ok: false, 왜: e instanceof Error ? e.message : "최종 완료로 두지 못했습니다." };
+  }
+}
+
+/** ⚠ 지운다 — «되돌릴 수 없다». 칸(sns_cut)은 스키마의 cascade 로 같이 지워진다.
+ *  이미 유튜브에 올린 것은 여기서 지워도 유튜브에는 그대로 남는다. 그건 스튜디오에서 지우신다. */
+export async function deleteContentAction(contentId: string): Promise<저장결과> {
+  try {
+    await 주인확인();
+    const [편] = await db
+      .select({ id: snsContent.id })
+      .from(snsContent)
+      .where(eq(snsContent.id, contentId));
+    if (!편) return { ok: false, 왜: "그 편이 이미 없습니다." };
+    await db.delete(snsContent).where(eq(snsContent.id, contentId));
+    revalidatePath("/admin/sns");
+    return { ok: true, 검사: "" };
+  } catch (e) {
+    return { ok: false, 왜: e instanceof Error ? e.message : "지우지 못했습니다." };
+  }
+}
+
 /** 검토 완료를 되돌린다 — 올리기 전에 마음이 바뀔 수 있다. */
 export async function reopenContentAction(contentId: string): Promise<저장결과> {
   try {

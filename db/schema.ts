@@ -504,8 +504,14 @@ export const snsContent = pgTable(
     batch: text("batch").notNull(),
     /** 대본 JSON 의 `이름`. 로컬이 어느 대본인지 찾는 열쇠라 회차 안에서 겹치지 않는다. */
     slug: text("slug").notNull(),
-    /** waiting(검토 대기) · approved(검토 완료) · published(올림) · dropped(버림) */
+    /** waiting(검토대기) · approved(제작중) · final(등록 중) · published(올림) · dropped(버림)
+     *  이름과 색은 `lib/sns-status.ts` 한 곳에만 둔다. */
     status: text("status").notNull().default("waiting"),
+    /** ⭐ 구운 영상이 «이 컴퓨터 어디에» 있나 (2026-08-18).
+     *  검수 화면에서 정지 그림 말고 **영상을 바로 돌려 보기** 위해 둔다.
+     *  ⚠ 로컬 경로다 — 배포된 사이트에서는 못 연다. `localhost` 로 검수할 때만 재생된다. */
+    videoVertical: text("video_vertical").notNull().default(""),
+    videoHorizontal: text("video_horizontal").notNull().default(""),
     /** ⭐ 영상 «상단 띠» 글 — 본편 내내 화면 위에 떠 있다. `|` 가 줄바꿈이다.
      *  대본 JSON 의 `세로제목`·`가로제목` 이 여기로 온다. */
     verticalTitle: text("vertical_title").notNull(),
