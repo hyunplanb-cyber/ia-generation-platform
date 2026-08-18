@@ -56,8 +56,15 @@ async function 다시검사(contentId: string): Promise<string> {
     ...checkCaption(편.captionYoutube, "유튜브 설명"),
     ...checkCaption(편.captionInstagram, "인스타 캡션"),
   ];
-  if (!걸림.length) return "";
-  return 걸림.map((g) => `[${g.어디}] ${g.무엇} → ${g.대신}`).join("\n");
+  /* ⏭ 로 시작하는 줄은 «사유를 적고 넘어간 것»이라 걸림이 아니다 (2026-08-18).
+     세는 곳이 넷이다 — 자막검사·검수보내기·검수목록·여기. 표시를 같은 모양으로 둔다.
+     여기만 옛 모양으로 남아 있어서 검수 화면이 계속 「1건 걸림」을 띄웠다. */
+  const 막는것 = 걸림.filter((g) => !g.넘어감);
+  const 넘어간것 = 걸림.filter((g) => g.넘어감);
+  return [
+    ...막는것.map((g) => `[${g.어디}] ${g.무엇} → ${g.대신}`),
+    ...넘어간것.map((g) => `⏭ [${g.어디}] ${g.무엇}`),
+  ].join(String.fromCharCode(10));
 }
 
 export type 저장결과 = { ok: true; 검사: string } | { ok: false; 왜: string };
