@@ -559,13 +559,8 @@ export function buildSpecPackMarkdown(
      · 146개 중 여덟 화면이 390px 에서 페이지째 좌우로 밀렸다 — 표가 아니라 «페이지 번호 줄»이 밀었다.
      · 상호가 데이터 파일 밖 열 곳에 글자로 박혀, 데이터만 고치면 옛 이름이 남았다.
      둘 다 「반응형」·「데이터는 한 곳에」 같은 두루뭉술한 말로는 안 걸러진다. 조건을 적어야 지켜진다. */
-  lines.push("");
-  lines.push("### 좁은 화면에서 넘치지 않게");
-  lines.push(
-    `- 만든 뒤 **폭 ${m.common.narrowOverflow.testWidth}px 로 줄여 좌우 스크롤바가 생기는지 확인하세요.** 생기면 그 화면은 아직 안 끝난 것입니다.`,
-  );
-  for (const r of m.common.narrowOverflow.rule) lines.push(`- ${r}`);
 
+  lines.push("");
   lines.push("### 바꿀 값은 한 곳에");
   lines.push(
     `- ${m.common.singleSourceData.fields.map((f) => `**${f}**`).join(" · ")} — 손님이 받아서 **제일 먼저 자기 것으로 바꾸는 값**입니다.`,
