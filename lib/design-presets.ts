@@ -1090,6 +1090,7 @@ export const NARROW_OVERFLOW = {
     "**「이전 · 다음」 같은 이동 단추**는 줄바꿈을 허용하고, 글자가 길면 줄여 적습니다(`다음 프로그램 ›` → `다음 ›`).",
     "**표**는 `overflow-x: auto` 상자로 감쌉니다. 표 자체를 좁히지 않습니다 — 칸 글자가 세로로 접혀 읽을 수 없게 됩니다.",
     "**탭 줄·필터 줄**도 같습니다. 개수가 늘어나는 줄은 전부 줄바꿈이나 상자 안 스크롤 중 하나를 씁니다.",
+  "⛔ 옆으로 흘려보낼 때는 **다른 축을 반드시 막습니다** — \`overflow: auto hidden\`. \`overflow-x\` 만 열면 브라우저가 세로도 함께 열어, 테두리 1px 때문에 세로 스크롤바가 생깁니다.",
   ],
 } as const;
 
@@ -1442,6 +1443,9 @@ export const COMMON_RULES: string[] = [
   "/* 개수가 늘어나는 줄은 접거나, 자기 상자 안에서 돌린다 */",
   ".pager { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }",
   ".tabs, .filters { display: flex; flex-wrap: wrap; gap: 8px; }",
+  "",
+  "/* 줄바꿈 대신 «옆으로 흘려보낼» 때는 반드시 두 축을 다 적는다 */",
+  ".scroll-x { overflow: auto hidden; }   /* overflow-x 만 쓰면 세로 스크롤바가 생긴다 */",
   "",
   "/* 표는 좁히지 말고 감싼다 — 좁히면 칸 글자가 세로로 접혀 못 읽는다 */",
   ".table-wrap { overflow-x: auto; }",
