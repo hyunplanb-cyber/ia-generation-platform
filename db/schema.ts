@@ -512,6 +512,11 @@ export const snsContent = pgTable(
      *  ⚠ 로컬 경로다 — 배포된 사이트에서는 못 연다. `localhost` 로 검수할 때만 재생된다. */
     videoVertical: text("video_vertical").notNull().default(""),
     videoHorizontal: text("video_horizontal").notNull().default(""),
+    /** ⭐ 이 편이 «어느 대본에서» 왔나 (2026-08-18).
+     *  지킴이(`_작업/sns지킴이.mts`)가 「검토 완료」를 집어 다시 구우려면 대본을 찾아야 한다.
+     *  이름으로 짐작하면 반드시 어긋나므로, 보낼 때 적어 둔다. 로컬 경로다. */
+    scriptPath: text("script_path").notNull().default(""),
+    introPath: text("intro_path").notNull().default(""),
     /** ⭐ 영상 «상단 띠» 글 — 본편 내내 화면 위에 떠 있다. `|` 가 줄바꿈이다.
      *  대본 JSON 의 `세로제목`·`가로제목` 이 여기로 온다. */
     verticalTitle: text("vertical_title").notNull(),
