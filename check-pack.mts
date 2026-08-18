@@ -38,27 +38,46 @@ const 나쁨 = (이름: string, 왜: string) => { 어긋남++; console.log(`✗ 
 const 좋음 = (이름: string, 값 = "") => console.log(`· ${이름}${값 ? "  " + 값 : ""}`);
 
 /* ── 손님 팩을 «실제로» 뽑는다 — 내려받기와 같은 함수로 ───────────── */
-const { db } = await import("./db/client");
-const { project } = await import("./db/schema");
-const { drizzleMenuRepository } = await import("./adapters/repository/drizzle/menu-repository");
-const { drizzleScreenRepository } = await import("./adapters/repository/drizzle/screen-repository");
-const { drizzleButtonActionRepository } = await import("./adapters/repository/drizzle/button-action-repository");
-
-const 찾을말 = process.argv[2] ?? "펫 유치원";
-const 편들 = await db.select().from(project).orderBy(desc(project.createdAt)).limit(40);
-const 대상 = 편들.find((p) => String(p.concept ?? "").includes(찾을말)) ?? 편들[0];
-if (!대상) { console.log("프로젝트가 없습니다."); process.exit(1); }
-
-const menus = await drizzleMenuRepository.listByProject(대상.id);
-const screensAll = await drizzleScreenRepository.listByProject(대상.id);
-const screens = screensAll.filter((s: { status: string }) => s.status === "active");
-const acts = await drizzleButtonActionRepository.listByProject(대상.id);
+/* ⚠ DB 없이도 돌아야 한다 — CI 에는 DB 가 없다. 되면 실제 프로젝트로, 안 되면
+   판매팩 자료(template-data-beauty)로 돈다. ①·①-2·③·④·⑤ 는 «규칙이 팩에 나가나»를
+   보는 것이라 어느 자료로 돌든 답이 같다. ②(빈 칸)만 실제 프로젝트라야 뜻이 있다. */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+let 대상: any, menus: any[], screens: any[], acts: any[];
+let 실제자료 = true;
+try {
+  const { db } = await import("./db/client");
+  const { project } = await import("./db/schema");
+  const { drizzleMenuRepository } = await import("./adapters/repository/drizzle/menu-repository");
+  const { drizzleScreenRepository } = await import("./adapters/repository/drizzle/screen-repository");
+  const { drizzleButtonActionRepository } = await import("./adapters/repository/drizzle/button-action-repository");
+  const 찾을말 = process.argv[2] ?? "펫 유치원";
+  const 편들 = await db.select().from(project).orderBy(desc(project.createdAt)).limit(40);
+  const 고름 = 편들.find((p: { concept: string | null }) => String(p.concept ?? "").includes(찾을말)) ?? 편들[0];
+  if (!고름) throw new Error("프로젝트 없음");
+  대상 = 고름 as never;
+  menus = await drizzleMenuRepository.listByProject(고름.id);
+  screens = (await drizzleScreenRepository.listByProject(고름.id)).filter((s: { status: string }) => s.status === "active");
+  acts = await drizzleButtonActionRepository.listByProject(고름.id);
+} catch {
+  실제자료 = false;
+  const { BEAUTY } = await import("./template-data-beauty");
+  대상 = { ...BEAUTY.project, id: "fixture", presetConfig: null, designConcept: BEAUTY.project.designConcept } as never;
+  menus = BEAUTY.menus.map((m, i) => ({ id: `m${i}`, menuCode: m.code, nameKo: m.nameKo, nameEn: m.nameEn, sortOrder: i }));
+  screens = BEAUTY.menus.flatMap((m, i) => (m.screens ?? []).map((x: any, j: number) => ({
+    id: `s${i}_${j}`, menuId: `m${i}`, pageId: String(x.ref).toUpperCase(), pageName: String(x.name),
+    screenGroup: null, funcDef: String(x.func ?? ""), prompt: String(x.prompt ?? ""),
+    screenRole: String(x.role ?? ""), status: "active", sortOrder: j,
+  })));
+  acts = [];
+  console.log("⚠ DB 없이 돕니다 — 판매팩 자료(뷰티샵)로 규칙만 봅니다.");
+  console.log("");
+}
 
 const md = buildSpecPackMarkdown(대상 as never, menus as never, screens as never, acts as never);
 const model = buildSpecPackModel(대상 as never, menus as never, screens as never, acts as never);
-const 이름 = new Map(menus.map((m: { id: string; nameKo: string }) => [m.id, m.nameKo]));
+const 이름 = new Map(menus.map((m: any) => [m.id, m.nameKo] as const));
 const 제목 = String(대상.concept).split(String.fromCharCode(10))[0];
-const 검수 = buildTemplateVerifySheets(제목, screens.map((s) => ({
+const 검수 = buildTemplateVerifySheets(제목, screens.map((s: any) => ({
   pageId: s.pageId, pageName: s.pageName,
   menuName: 이름.get(s.menuId) ?? "",
   funcDef: s.funcDef ?? "", role: s.screenRole ?? "",
@@ -115,9 +134,9 @@ for (const [이름표, 말] of 문장들) {
 /* ── ② 모델에 «만들어만 두고 안 채운 칸»이 있나 ────────────────────
  * `acts` 가 그랬다. 칸이 있으면 있는 줄 알고 아무도 다시 안 본다. */
 console.log("\n② 화면 칸 중 «전부 빈» 것이 있나");
-const 칸들 = Object.keys(model.screens[0] ?? {});
+const 칸들 = 실제자료 ? Object.keys(model.screens[0] ?? {}) : [];
 for (const 칸 of 칸들) {
-  const 찬것 = model.screens.filter((s: Record<string, unknown>) => {
+  const 찬것 = model.screens.filter((s: any) => {
     const v = s[칸];
     return Array.isArray(v) ? v.length > 0 : v != null && String(v).trim() !== "";
   }).length;

@@ -10,7 +10,8 @@
     "depcruise": "depcruise --config .dependency-cruiser.js --ts-config tsconfig.json domain application adapters",
     "qa": "tsx qa-site.mts",
     "pack": "tsx build-all.mts",
-    "check-presets": "tsx check-presets.mts"
+    "check-presets": "tsx check-presets.mts",
+    "check-pack": "tsx check-pack.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.111.0",

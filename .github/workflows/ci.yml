@@ -17,5 +17,13 @@ jobs:
       - run: npm ci
       - name: Enforce domain/adapters boundary
         run: npm run depcruise
+      # 글과 코드가 같은 말을 하나 (색·레이아웃 값)
+      - name: Check presets
+        run: npm run check-presets
+      # 코드가 아는 규칙이 손님 팩에 실제로 나가나
+      #   DB 가 없으므로 판매팩 자료(뷰티샵)로 «규칙만» 본다.
+      #   화면 칸이 비었는지(②)는 실제 프로젝트라야 뜻이 있어 여기선 건너뛴다.
+      - name: Check pack
+        run: npm run check-pack
       - name: Build
         run: npm run build
