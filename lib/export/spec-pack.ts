@@ -3,7 +3,10 @@
 import type { Menu } from "@/domain/menu/menu";
 import type { Screen } from "@/domain/screen/screen";
 import type { ButtonAction } from "@/domain/screen/button-action";
-import { IMAGE_PLACEHOLDER, CONTENT_WIDTH, READING_WIDTH, COMMON_RULES } from "@/lib/design-presets";
+import {
+  IMAGE_PLACEHOLDER, CONTENT_WIDTH, READING_WIDTH, COMMON_RULES,
+  NARROW_OVERFLOW, SINGLE_SOURCE_DATA,
+} from "@/lib/design-presets";
 
 export interface SpecPackProject {
   concept: string;
@@ -225,6 +228,17 @@ export function buildSpecPackModel(
         labelFormat: IMAGE_PLACEHOLDER.labelFormat,
         examples: IMAGE_PLACEHOLDER.examples,
         rule: IMAGE_PLACEHOLDER.rule,
+      },
+      /* 좁은 폭에서 페이지가 좌우로 밀리는 문제. 「반응형」이라고만 적혀 있었고
+         «넘치면 안 된다»는 말이 없었다 — 실측에서 여덟 화면이 밀렸다(2026-08-18). */
+      narrowOverflow: {
+        testWidth: NARROW_OVERFLOW.testWidth,
+        rule: NARROW_OVERFLOW.rule,
+      },
+      /* 손님이 자기 정보로 바꿀 값. 한 곳에 안 모으면 옛 상호가 남는다(2026-08-18). */
+      singleSourceData: {
+        fields: SINGLE_SOURCE_DATA.fields,
+        rule: SINGLE_SOURCE_DATA.rule,
       },
       /* 앱으로 낼 때만. PC 웹·반응형이면 null 이고 스펙에 아예 안 나온다 —
          안 쓸 것을 적어 두면 AI 가 쓸데없는 화면을 만든다. */
@@ -540,6 +554,23 @@ export function buildSpecPackMarkdown(
     `- 자리 안에 \`${m.common.imagePlaceholder.labelFormat}\` 형식으로 적으세요. 예: ${m.common.imagePlaceholder.examples.map((e) => `\`${e}\``).join(" · ")}`,
   );
   for (const r of m.common.imagePlaceholder.rule) lines.push(`- ${r}`);
+
+  /* ⛔ 이 두 절이 없어서 실제로 터졌다 (2026-08-18 펫 유치원 사이트 실측).
+     · 146개 중 여덟 화면이 390px 에서 페이지째 좌우로 밀렸다 — 표가 아니라 «페이지 번호 줄»이 밀었다.
+     · 상호가 데이터 파일 밖 열 곳에 글자로 박혀, 데이터만 고치면 옛 이름이 남았다.
+     둘 다 「반응형」·「데이터는 한 곳에」 같은 두루뭉술한 말로는 안 걸러진다. 조건을 적어야 지켜진다. */
+  lines.push("");
+  lines.push("### 좁은 화면에서 넘치지 않게");
+  lines.push(
+    `- 만든 뒤 **폭 ${m.common.narrowOverflow.testWidth}px 로 줄여 좌우 스크롤바가 생기는지 확인하세요.** 생기면 그 화면은 아직 안 끝난 것입니다.`,
+  );
+  for (const r of m.common.narrowOverflow.rule) lines.push(`- ${r}`);
+
+  lines.push("### 바꿀 값은 한 곳에");
+  lines.push(
+    `- ${m.common.singleSourceData.fields.map((f) => `**${f}**`).join(" · ")} — 손님이 받아서 **제일 먼저 자기 것으로 바꾸는 값**입니다.`,
+  );
+  for (const r of m.common.singleSourceData.rule) lines.push(`- ${r}`);
 
   /* 앱으로 낼 때만 붙는 절. PC 웹·반응형이면 통째로 안 나온다. */
   if (m.common.appExtra) {
