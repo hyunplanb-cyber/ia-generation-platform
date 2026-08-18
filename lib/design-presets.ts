@@ -869,7 +869,12 @@ export const THUMBS: {
 /* 글자가 사진 위에 놓이므로 어둠막이 없으면 밝은 사진에서 안 읽힌다 */
 .card .thumb::after { content: ""; position: absolute; inset: 0;
   background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.45) 38%, rgba(0,0,0,0) 72%); }
-.card .body { position: absolute; left: 14px; right: 14px; bottom: 12px; padding: 0; color: #fff; z-index: 1; }`,
+.card .body { position: absolute; left: 14px; right: 14px; bottom: 12px; padding: 0; color: #fff; z-index: 1; }
+/* ⭐ 사진이 아직 없을 때는 어둠막을 걷는다 — 옅은 자리표시자 위에 검정을 덮으면
+   자리표시자 글이 묻혀 «깨진 그림»처럼 보인다. 사진을 넣으면 이 줄만 지우면 된다. */
+.card .thumb.is-placeholder::after { display: none; }
+.card .thumb.is-placeholder + .body, .card .thumb.is-placeholder .body {
+  position: static; color: var(--text); padding: 12px 2px 0; }`,
     html: `<article class="card overlay">
   <div class="thumb">
     <img src="사진.jpg" alt="">
@@ -1134,6 +1139,11 @@ export const IMAGE_PLACEHOLDER = {
     "적어 둔 크기의 **비율을 실제로 지킨다** — `400×400`이라 적었으면 정사각으로 보여야 한다(aspect-ratio).",
     "특히 프로필·썸네일처럼 크기가 고정된 자리는, 가로로 나란히 놓아도 늘어나지 않게 한다. 목록·행 안에 넣을 때 `flex`가 잡아당겨 타원이 되는 일이 잦으니, 만든 뒤 실제로 열어 모양을 확인한다.",
     "썸네일처럼 작아서 글자가 안 들어가면 크기만 적거나 아이콘 하나만 둔다.",
+    /* ⛔ 2026-08-18: 자리표시자 규칙과 「사진 위 겹침」 카드가 서로를 안 보고 있었다.
+       겹침 카드는 사진 위에 검정 72% 어둠막을 깔고 흰 글자를 얹는데, 배달 시점엔
+       사진이 없고 옅은 파스텔 자리표시자가 온다. 그 위에 검정을 덮으니 자리표시자의
+       회색 글자가 묻혀 «썸네일이 깨졌다»로 보였다. 규칙 둘이 만나는 곳을 아무도 안 정했다. */
+    "**「사진 위 겹침」 카드에서는 사진이 들어오기 전까지 어둠막을 걸지 않는다.** 옅은 자리표시자 위에 어두운 막을 덮으면 안에 적은 글이 묻혀 «깨진 그림»으로 보인다. 제목·태그는 자리표시자 아래에 본문 색으로 두었다가, 실제 사진을 넣을 때 위로 올린다.",
     "실제 사진을 넣기 전까지 이 규칙을 유지한다 — 그래야 어디에 무엇을 넣어야 하는지 보인다.",
   ],
 } as const;
@@ -1467,6 +1477,15 @@ export const COMMON_RULES: string[] = [
   "  같은 팩 안의 상세 화면끼리 본문 폭이 달라 서로 다른 사이트처럼 보였습니다.",
   `- **카드 격자에는 쓰지 않습니다.** 여기는 «글»을 좁히는 값입니다. 카드를 몇 열로 놓을지는 레이아웃이 정합니다.`,
   "- 사진·표·코드처럼 넓어야 읽히는 것은 이 폭을 넘겨도 됩니다. 좁히는 건 글줄입니다.",
+  "",
+  "### 줄어드는 지점 — 두 곳만 씁니다",
+  "",
+  `화면이 좁아질 때 칸이 줄어드는 지점은 **${BREAKPOINTS.mid}px** 와 **${BREAKPOINTS.narrow}px**, 이 둘뿐입니다.`,
+  `${BREAKPOINTS.mid} 은 태블릿 가로, ${BREAKPOINTS.narrow} 은 세로입니다. ${BREAKPOINTS.narrow}px 아래에서는 좌우 여백도 ${BREAKPOINTS.padXNarrow} 로 줄입니다.`,
+  "",
+  "- **여기 없는 지점을 새로 만들지 마세요.** 560·860·520 처럼 지어낸 지점이 섞이면, 같은 팩으로 만든 화면끼리 줄어드는 자리가 달라 서로 다른 사이트처럼 보입니다.",
+  "- 더 잘게 나눠도 사람 눈에는 안 보입니다. 대신 **지킬 곳만 늘어납니다.**",
+  "- 두 지점에서 열이 어떻게 줄어드는지는 위 레이아웃 표에 적혀 있습니다(예: 3열 → 2열 → 1열).",
   "",
   "### 격자 — 카드를 늘어놓는 자리",
   "",
