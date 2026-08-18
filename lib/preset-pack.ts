@@ -85,7 +85,7 @@ const PRESETS: Preset[] = [
     space: "4px 배수 (4·8·12·16·24·32·48). 카드 내부 여백 20px, 섹션 간격 36px",
     shadow: "쓰지 않는다. 종이 느낌이라 깊이는 크림 배경과 갈색 border 대비로만 낸다",
     comp: [
-      ["버튼(주요)", "오렌지 배경, on-primary 글자, 높이 42px, radius 8px, 굵기 700"],
+      ["버튼(주요)", "오렌지 배경, on-primary(흰색) 글자, 높이 42px, 글자 19px, radius 8px, 굵기 700 — 흰 글자가 읽히려면 이 크기를 지켜야 합니다"],
       ["버튼(보조)", "크림 surface 배경, border 1px, text 색 글자. 같은 높이"],
       ["카드", "크림 surface, 연한 갈색 border 1px, radius 10px, 그림자 없음"],
       ["입력", "높이 42px, border 1px, focus 시 primary 테두리 2px"],
