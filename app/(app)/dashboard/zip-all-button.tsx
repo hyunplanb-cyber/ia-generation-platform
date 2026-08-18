@@ -376,20 +376,60 @@ export function ZipAllButton({
         zip.file("디자인프리셋/00_이 프로젝트에 맞춘 설명.md", buildDetailedPresetMarkdown(cfg, concept || undefined));
       }
 
-      // 검수 시나리오(선택) — 엑셀(표지·현황·시나리오)
+      /* ⛔⛔ 2026-08-18: 손님이 받는 검수 시나리오가 «다른 물건»이었다.
+         여기는 verifyReport(라이브 사이트를 돌며 채운 검수 «제품»의 결과)를 넣고 있었다.
+         그래서 팩에 든 08_검수시나리오.xlsx 를 판매팩의 것과 견주니 —
+
+           판매팩   테스트ID·메뉴·화면·화면ID·확인 항목·확인 방법·기대 결과   785줄
+           손님것   테스트ID·페이지·화면구분·테스트영역·테스트 방법          1,022줄
+                    화면ID 칸 없음 · 기대 결과 칸 없음 · 페이지 칸 1,022줄 전부 빈칸
+                    공통 점검(SCN-000) 0줄
+
+         「기대 결과」가 없으면 본 사람이 PASS/FAIL 을 못 고른다 — 점검표가 아니다
+         (지침 원칙 3). 「화면ID」가 없으면 어느 화면인지도 못 짚는다.
+         그리고 공통 점검(SCN-000) 열한 가지는 «뒤로가기·전체 화면 목록으로 가는 길·
+         눌러도 반응 없는 버튼·이미지 자리 비율·모바일 가로 스크롤»이다 —
+         우리가 사흘 동안 손으로 찾아낸 결함이 전부 그 안에 있었는데, 손님은 그 칸을
+         받은 적이 없다(지침 원칙 3-2 가 2026-08-04 사고로 이미 적어 둔 것이다).
+
+         고침: 팩에는 «설계도 기준 점검표»(buildTemplateVerifySheets)를 **늘** 넣는다.
+         판매팩 여덟 벌을 만든 바로 그 함수다. 라이브 검수 결과는 그 제품의 결과물이지
+         팩의 산출물이 아니다. */
+      {
+        const { buildTemplateVerifySheets } = await import("@/lib/export/template-verify");
+        const menuNameById = new Map(menus.map((m: { id: string; nameKo: string }) => [m.id, m.nameKo]));
+        const verify = buildTemplateVerifySheets(
+          concept || "프로젝트",
+          screens.map((s: { pageId: string; pageName: string; menuId: string; funcDef?: string; screenRole?: string }) => ({
+            pageId: s.pageId,
+            pageName: s.pageName,
+            menuName: menuNameById.get(s.menuId) ?? "",
+            funcDef: s.funcDef ?? "",
+            role: s.screenRole ?? "",
+          })),
+        );
+        const wb = XLSX.utils.book_new();
+        const coverWs = XLSX.utils.aoa_to_sheet(verify.cover);
+        coverWs["!cols"] = [{ wch: 3 }, { wch: 22 }, { wch: 74 }];
+        XLSX.utils.book_append_sheet(wb, coverWs, "표지");
+        const statusWs = XLSX.utils.aoa_to_sheet(verify.status);
+        statusWs["!cols"] = [{ wch: 24 }, { wch: 46 }];
+        XLSX.utils.book_append_sheet(wb, statusWs, "검수 현황");
+        const scnWs = XLSX.utils.json_to_sheet(verify.scenarios);
+        scnWs["!cols"] = [12, 16, 28, 12, 12, 40, 62, 10, 24].map((w) => ({ wch: w }));
+        XLSX.utils.book_append_sheet(wb, scnWs, "검수 시나리오");
+        zip.file("08_검수시나리오.xlsx", XLSX.write(wb, { type: "array", bookType: "xlsx" }));
+      }
+
+      /* 라이브 검수를 돌리셨으면 «그 결과»도 따로 넣는다 — 위 점검표와 다른 물건이다. */
       if (withVerify && verifyReport) {
         const { buildVerifyScenarioSheets } = await import("@/lib/export/verify-scenario");
         const { cover, status, scenarios } = buildVerifyScenarioSheets(verifyReport);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(cover), "표지");
         XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(status), "검수 현황");
-        const scnWs = scenarios.length
-          ? XLSX.utils.json_to_sheet(scenarios)
-          : XLSX.utils.aoa_to_sheet([
-              ["테스트ID", "페이지", "화면구분", "테스트영역", "테스트 방법", "결과", "비고"],
-            ]);
-        XLSX.utils.book_append_sheet(wb, scnWs, "검수 시나리오");
-        zip.file("08_검수시나리오.xlsx", XLSX.write(wb, { type: "array", bookType: "xlsx" }));
+        if (scenarios.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(scenarios), "검수 결과");
+        zip.file("08-1_검수결과(사이트).xlsx", XLSX.write(wb, { type: "array", bookType: "xlsx" }));
       }
 
       /* 「사이트 내놓는 법」·「앱으로 내놓는 법» — 본문 대신 «안내장»을 넣는다 (2026-08-14).
