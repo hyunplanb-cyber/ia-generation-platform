@@ -24,6 +24,7 @@ import {
   LAYOUTS, STRUCTURE_COLS, THUMBS, cardWidth,
   DESIGN_OPTIONS, colorsFor, CONTENT_BG, DARK_BG, contrast, TEXT_CONTRAST_MIN,
   accentTextOn, textOn, READING_WIDTH, BREAKPOINTS,
+  LARGE_TEXT_MIN, componentsFor,
 } from "./lib/design-presets";
 import { LMS } from "./template-data-lms";
 import { BEAUTY } from "./template-data-beauty";
@@ -171,7 +172,31 @@ for (const o of DESIGN_OPTIONS) {
       );
     }
     const 표값 = 색표[자리.startsWith("주색") ? "on-primary(주색 배경 위 글자)" : "on-accent(강조색 배경 위 글자)"];
-    if (표값 && 표값.toUpperCase() !== 글자.toUpperCase()) {
+
+    /* ⭐ «일부러 정한 값»은 통과시킨다 — 다만 그냥은 아니다 (2026-08-18).
+     *   코럴은 재면 먹색(6.01)이 이기는데, 주황 위 검은 글자가 탁해서 흰색으로 정하셨다.
+     *   재서 고른 값이 늘 답은 아니다. 그렇다고 아무 값이나 받으면 이 검사기가 할 일이 없어진다.
+     *   그래서 «큰 글자 기준(3.0)»은 반드시 넘게 하고, 넘더라도 4.5 미만이면
+     *   **버튼 글자 크기를 적어 뒀는지** 함께 본다. 크기를 안 적으면 작은 버튼에서 안 읽힌다. */
+    const 손으로정한것 = 자리.startsWith("주색") ? o.onPrimary : undefined;
+    if (손으로정한것) {
+      const 정한값 = contrast(손으로정한것, 바탕);
+      if (정한값 < LARGE_TEXT_MIN) {
+        문제.push(
+          `${자리} 위 글자를 ${손으로정한것} 로 정해 뒀는데 대비가 ${정한값.toFixed(2)} 입니다 — `
+            + `큰 글자 기준 ${LARGE_TEXT_MIN} 도 못 넘어 어떤 크기로도 안 읽힙니다`,
+        );
+      } else if (정한값 < TEXT_CONTRAST_MIN) {
+        const 버튼줄 = componentsFor(o.key).find(([이름]) => 이름.startsWith("버튼(주요)"))?.[1] ?? "";
+        if (!/글자 [0-9]+px/.test(버튼줄)) {
+          문제.push(
+            `${자리} 위 글자 ${손으로정한것} 는 대비 ${정한값.toFixed(2)} 라 «큰 글자»에서만 읽힙니다 — `
+              + `「버튼(주요)」에 「글자 19px」처럼 크기를 적어 두세요`,
+          );
+        }
+      }
+    }
+    if (표값 && !손으로정한것 && 표값.toUpperCase() !== 글자.toUpperCase()) {
       문제.push(`색 표의 ${자리} 위 글자가 ${표값} 인데 재서 고른 값은 ${글자} 입니다`);
     }
   }
@@ -269,7 +294,10 @@ for (const [업종, 컨셉] of 업종컨셉) {
  * 같은 것을 두 벌로 적으면 반드시 갈라진다. 일곱 번째다.
  * 고르라고 내놓고 못 만드는 것은 «없는 것보다 나쁘다» — 고른 사람이 그제야 안다. */
 {
-  const 굽는이 = readFileSync("build-design-presets.mts", "utf8");
+  /* ⛔ 2026-08-18: 이 검사가 «헛경보»를 6건 찍고 있었다.
+     PRESETS 는 2026-08-14 에 lib/preset-pack.ts 로 옮겼는데 여기는 옛 파일을 계속 봤다.
+     여섯 테마가 다 빨간 줄로 나오니 진짜 경고가 그 속에 묻힌다 — 늘 우는 검사기는 안 읽힌다. */
+  const 굽는이 = readFileSync("lib/preset-pack.ts", "utf8");
   /* 그 파일의 PRESETS 배열에 적힌 key 들만 뽑는다. */
   const 블록 = 굽는이.slice(굽는이.indexOf("const PRESETS: Preset[] = ["));
   const 만들수있는색 = new Set(
@@ -281,7 +309,7 @@ for (const [업종, 컨셉] of 업종컨셉) {
     for (const o of 못만드는색) {
       console.log(
         `✗ 「${o.title}」(${o.key}) — 가이드는 고를 수 있다고 내놓는데 ` +
-          `build-design-presets.mts 의 PRESETS 에 정의가 없습니다. 고르면 굽다가 죽습니다.`,
+          `lib/preset-pack.ts 의 PRESETS 에 정의가 없습니다. 고르면 굽다가 죽습니다.`,
       );
     }
   } else {

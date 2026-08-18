@@ -181,6 +181,16 @@ export const DESIGN_OPTIONS: {
    *  다섯 테마는 강조 원색이 어두운 바탕에서 그대로 잘 읽혀 accent 와 같다.
    *  레트로만 틸이 어두운 바탕에서 3.12 라 밝은 쪽 값을 따로 든다. */
   accentTextDark: string;
+  /** 주색 «위에» 얹을 글자색 — 안 적으면 흰/먹 중 «재서» 고른다(textOn).
+   *
+   * ⭐ 손으로 적는 자리다. 재서 고르는 값이 늘 답은 아니다 — 2026-08-18 사장님:
+   *   「코럴 테마에 포인트 컬러시 버튼 텍스트 흰색이 더 잘보일꺼 같아」
+   *   코럴 위에서 먹 글자는 6.01, 흰 글자는 3.14 로 «숫자는» 먹색이 낫다.
+   *   그런데 주황 위 검은 글자는 탁해 보인다. 세 안을 그려 놓고 고르셨다.
+   *   흰 글자는 **큰 글자 기준(3.0)** 은 넘으므로, 버튼 글자를 19px 굵게로
+   *   못 박아 근거를 맞췄다(아래 components 의 「버튼(주요)」).
+   * ⚠ 그래서 이 칸을 쓰는 테마는 **버튼 글자 크기도 같이 정해야 한다.** */
+  onPrimary?: string;
   /** 본문 글자색. PRESETS[key].colors 의 text(본문)과 같은 값이어야 한다. */
   ink: string;
 }[] = [
@@ -254,6 +264,9 @@ export const DESIGN_OPTIONS: {
     accent: "#F59E0B",
     accentText: "#8A5A00",
     accentTextDark: "#F59E0B", // 강조 원색 그대로 — 8.81
+    /* 재면 먹색(6.01)이 이기지만, 주황 위 검은 글자는 탁하다. 사장님이 흰색으로 정하셨다
+       (2026-08-18). 3.14 는 큰 글자 기준(3.0)을 넘으므로 버튼 글자를 19px 굵게로 둔다. */
+    onPrimary: "#FFFFFF",
     ink: "#33221E",
   },
 ];
@@ -291,6 +304,8 @@ export function contrast(hex: string, bg: string = CONTENT_BG): number {
 
 /** 본문 글자로 쓸 수 있는 대비 — WCAG AA 기준 */
 export const TEXT_CONTRAST_MIN = 4.5;
+/** 큰 글자(18.66px 굵게 · 24px 보통) 기준. 이것도 못 넘으면 어떤 크기로도 안 읽힌다. */
+export const LARGE_TEXT_MIN = 3.0;
 
 /** 이 바탕 위에서 강조를 글자로 쓸 때의 값.
  *
@@ -518,7 +533,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     ],
     radius: "카드 18px · 버튼 14px · 입력 14px · 배지 999px(알약)",
     components: [
-      ["버튼(주요)", "코럴 배경, on-primary 글자, 높이 44px, 굵기 700"],
+      ["버튼(주요)", "코럴 배경, on-primary(흰색) 글자, 높이 44px, 글자 19px, 굵기 700 — 흰 글자가 읽히려면 이 크기를 지켜야 합니다"],
       ["카드", "surface 배경, radius 18px, 부드러운 그림자"],
       ["표", "헤더 배경 연한 코럴, 행 구분 연하게, 행 높이 48px"],
     ],
@@ -535,14 +550,27 @@ const PRESETS: Record<DesignKey, Preset> = {
  *   여기에 값을 또 손으로 적으면 색을 조금 바꿀 때마다 같은 일이 되풀이된다.
  *   primary·accent 에서 «재서» 뽑으면 색을 바꿔도 글자색이 저절로 따라온다.
  */
+/** 주색 위에 얹을 글자색 — 손으로 정한 값이 있으면 그것, 없으면 재서 고른다.
+ *
+ * ⛔ 이 함수가 없던 동안 값이 두 곳에서 갈렸다 (2026-08-18).
+ *   lib/design-presets.ts 의 코럴만 흰색으로 고쳤더니 스펙팩은 흰색인데
+ *   디자인프리셋 가이드는 lib/preset-pack.ts 가 따로 textOn 을 불러 #111111 이 나갔다.
+ *   같은 팩 안의 두 문서가 서로 다른 버튼 글자색을 시키고 있었다.
+ *   주석이 계속 경고하던 «두 벌로 적으면 갈린다» 그대로다 — 부르는 곳을 하나로 묶는다. */
+export function onPrimaryFor(key: string, primary: string): string {
+  return DESIGN_OPTIONS.find((o) => o.key === key)?.onPrimary ?? textOn(primary);
+}
 for (const o of DESIGN_OPTIONS) {
   const c = PRESETS[o.key].colors;
-  c["on-primary(주색 배경 위 글자)"] = textOn(o.primary);
+  c["on-primary(주색 배경 위 글자)"] = onPrimaryFor(o.key, o.primary);
   c["on-accent(강조색 배경 위 글자)"] = textOn(o.accent);
 }
 
 /** 테마의 색 표 — 팩 문서의 「색상」 절이 그대로 이것이다.
  *  DESIGN_OPTIONS 와 두 벌로 적힌 값이라 check-presets.mts 가 둘이 같은지 잰다. */
+/** 테마의 부품 표(버튼·카드 …) — 검사기가 「버튼 글자 크기를 적었나」를 보려고 읽는다. */
+export const componentsFor = (k: DesignKey): [string, string][] => PRESETS[k].components;
+
 export const colorsFor = (k: DesignKey): Record<string, string> => PRESETS[k].colors;
 
 // 저장된 디자인 컨셉 텍스트(또는 키) → 프리셋. 못 찾으면 navy 기본.

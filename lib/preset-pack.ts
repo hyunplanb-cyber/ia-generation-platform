@@ -14,7 +14,7 @@
 import {
   LAYOUTS, THUMBS, thumbByKey, DENSITIES, SPACING_SLOTS, LINE_SLOTS,
   DEFAULT_LAYOUT, IMAGE_PLACEHOLDER, CONTENT_WIDTH, READING_WIDTH, COMMON_RULES, ACCENT_RULE, type DesignKey,
-  STRUCTURES, STRUCTURE_COLS, GRID_GAP, gridBaseCss, cardWidth, textOn,
+  STRUCTURES, STRUCTURE_COLS, GRID_GAP, gridBaseCss, cardWidth, textOn, onPrimaryFor,
 } from "./design-presets";
 
 /** 마크다운 표 안에 코드로 감싸 넣는다 — 중첩 백틱을 피하려고 함수로 뺐다. */
@@ -338,7 +338,7 @@ const PRESETS: Preset[] = [
     space: "4px 배수. 카드 내부 24px, 섹션 간격 40px. 답답하지 않게 띄운다",
     shadow: "0 2px 8px rgba(51,34,30,.07) — 카드와 떠 있는 요소에만",
     comp: [
-      ["버튼(주요)", "primary 배경, on-primary 글자, 높이 44px, radius 12px, 굵기 700"],
+      ["버튼(주요)", "primary 배경, on-primary(흰색) 글자, 높이 44px, 글자 19px, radius 12px, 굵기 700 — 흰 글자가 읽히려면 이 크기를 지켜야 합니다"],
       ["버튼(보조)", "primary 10% 배경, primary 글자. 테두리 없음"],
       ["카드", "surface 배경, radius 16px, 부드러운 그림자. 테두리는 연하게"],
       ["입력", "높이 44px, background #FFF9F7, 테두리 연하게, focus 시 primary 2px"],
@@ -374,7 +374,7 @@ for (const p of PRESETS) {
   };
   const primary = 찾기("primary (");
   const accent = 찾기("accent (강조");
-  if (primary) p.c["on-primary (주색 배경 위 글자)"] = textOn(primary);
+  if (primary) p.c["on-primary (주색 배경 위 글자)"] = onPrimaryFor(p.key, primary);
   if (accent) p.c["on-accent (강조색 배경 위 글자)"] = textOn(accent);
 }
 
