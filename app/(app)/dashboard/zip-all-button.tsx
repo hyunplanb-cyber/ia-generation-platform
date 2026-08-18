@@ -115,6 +115,13 @@ export function ZipAllButton({
   // 보강은 화면 수에 따라 1~3분까지 간다. 그동안 아무 말이 없으면 멈춘 줄 안다.
   const [polishing, setPolishing] = useState(false);
   const [error, setError] = useState(false);
+  /* ⭐ 다듬기(enrich) 결과를 손님에게 알린다 (2026-08-18 사장님 지시).
+   *   전에는 결과를 통째로 버렸다(try { await fetch } catch {}). 그래서 우리 회사
+   *   AI 잔액이 비거나 시간이 넘쳐 다듬기가 실패해도 손님은 «얇은 본문»을 받고도
+   *   그런 줄 몰랐다. 돈은 이미 나간 뒤다.
+   *   다시 받으면 크레딧은 안 빠지고(이미 풀린 프로젝트) 실패한 것만 다시 하므로,
+   *   알려 주기만 하면 손님이 스스로 고칠 수 있다. */
+  const [다듬기결과, set다듬기결과] = useState<{ 못한화면: number } | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [addPreset, setAddPreset] = useState(true);
   const [addVerify, setAddVerify] = useState(true);
@@ -199,8 +206,17 @@ export function ZipAllButton({
       // 화면 구성은 그대로고 설명만 촘촘해진다 — 그래서 "다듬는 중"이라고 쓴다.
       // 실패해도 멈추지 않는다. 미리보기 그대로의 본문으로라도 파일은 나가야 한다.
       setPolishing(true);
+      set다듬기결과(null);
       try {
-        await fetch(`/api/projects/${projectId}/enrich`, { method: "POST" });
+        const r = await fetch(`/api/projects/${projectId}/enrich`, { method: "POST" });
+        const 결과 = await r.json().catch(() => null);
+        /* 통째로 실패(ok:false)했거나 묶음 일부가 실패했으면 숫자로 알린다.
+           «다시 받으면 됩니다»가 핵심이다 — 그게 사실이고 크레딧도 더 안 빠진다. */
+        if (결과 && 결과.ok === false) set다듬기결과({ 못한화면: 0 });
+        else if (결과 && 결과.ok && Number(결과.failedChunks) > 0) {
+          const 남은 = Number(결과.total ?? 0) - (Number(결과.enriched ?? 0) + Number(결과.skipped ?? 0));
+          set다듬기결과({ 못한화면: Math.max(0, 남은) });
+        }
         // 화면에서 보던 본문도 같이 새로 고친다 — 받은 파일과 대시보드가
         // 다르면 "내가 뭘 받은 거지"가 된다.
         router.refresh();
@@ -502,6 +518,16 @@ export function ZipAllButton({
           )
         )}
       </button>
+
+      {다듬기결과 && (
+        <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900">
+          <b>본문 다듬기가 다 끝나지 않았습니다.</b>
+          {다듬기결과.못한화면 > 0 ? ` (화면 ${다듬기결과.못한화면}개)` : ""}
+          <br />
+          파일은 그대로 받으셨고, 그 화면들은 기본 본문으로 들어 있습니다.{" "}
+          <b>다시 받으시면 나머지도 채워집니다 — 크레딧은 더 빠지지 않습니다.</b>
+        </p>
+      )}
 
       {modalOpen && (
         <div
