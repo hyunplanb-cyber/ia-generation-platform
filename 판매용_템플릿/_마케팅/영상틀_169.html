@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>영상 틀 — 가로 16:9</title>
+<link rel="stylesheet" href="카드뉴스2.css">
+<style>
+/* 유튜브 가로 틀 — 1920×1080.
+ *
+ * 세로(영상틀_916)와 자막 자리가 반대다. 최종_뷰티샵_169 를 재서 맞췄다.
+ *   세로 9:16 — 자막이 영상 「아래」
+ *   가로 16:9 — 자막이 영상 「안」   ← 이 파일
+ *
+ * 가로는 폭이 남고 세로가 모자란다. 그래서 세로를 꽉(1080) 채우고
+ * 남는 폭을 오른쪽 기둥에 준다. 녹화본이 납작할수록 기둥이 좁아진다.
+ *   비율 1.15 → 영상 1242 · 기둥 678
+ *   비율 1.30 → 영상 1404 · 기둥 516
+ *   비율 1.32 → 영상 1426 · 기둥 494
+ * 어느 쪽이든 잘라내지 않는다. 기둥이 494 보다 좁아지면 글자가 안 들어가므로
+ * 그때는 영상 세로를 줄인다(--vid-h 로 자동).
+ *
+ * 유튜브가 덮는 자리
+ *   아래 ~90px 진행 막대와 조작 버튼(마우스 올리면)
+ *   오른쪽 아래 길이 표시
+ *   → 자막은 아래에서 96px 띄운다. 기둥 맨 아래도 비워 둔다.
+ *
+ * 두 겹으로 낸다 — 자막이 영상 「안」에 있어서다.
+ *   ?layer=back  바탕(종이·기둥). 이 위에 영상을 얹는다
+ *   ?layer=front 자막만. 배경이 비어 있어 영상 위에 덮는다
+ * 한 장으로 찍어서 영상을 얹었더니 자막이 통째로 가려졌다. 그래서 나눴다.
+ */
+:root {
+  --ratio: 1.15;            /* 녹화본 가로:세로 */
+  --col-min: 494px;         /* 오른쪽 기둥 최소 폭 */
+  --vid-w: min(calc(1920px - var(--col-min)), calc(1080px * var(--ratio)));
+  --vid-h: calc(var(--vid-w) / var(--ratio));
+}
+html, body { width: 1920px; height: 1080px; background: var(--paper); }
+/* ⭐⭐ 어두운 바탕 (2026-08-18 사장님 지시: 「커버는 밝게 유지하고, 다른 부분은 어둡게 가자」)
+ *   세로 틀과 같은 규칙이다. `#20261C` 는 우리 «글자색(--ink)» 이라 바탕과 글자를 맞바꾸면 된다.
+ *   ⚠ 되돌리려면 이 덩어리만 지운다. 아래 규칙은 한 줄도 안 고쳤다.
+ *   ⚠ 커버(썸네일틀)는 **밝은 채로 둔다** — 마스코트가 밝은 바탕에 서 있어야 한다. */
+:root {
+  --paper:      #20261C;
+  --paper-2:    #2B3326;
+  --ink:        #EAE8DE;
+  --ink-soft:   #C3C0B2;
+  --tan:        #C4B490;
+  --teal-text:  #6FD6C0;
+  /* ⚠ 표(.sheet)는 «종이 위»를 기준으로 짜여 있어 어두운 바탕에서 통째로 안 읽혔다.
+     바탕(--card)과 괘선(--line)도 같이 어둡게 뒤집어야 글자가 산다. */
+  --card:       #2B3326;
+  --line:       #4A5443;
+  --orange-text:#F2A05C;   /* 어두운 바탕용 — #C25D17 은 대비가 모자랐다 */
+}
+.f { width: 1920px; height: 1080px; position: relative; overflow: hidden;
+     background: var(--paper); }
+
+/* 영상 — 왼쪽. 세로 가운데. */
+.hole { position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+        width: var(--vid-w); height: var(--vid-h); background: #101010; }
+
+/* 자막 — 영상 「안」 아래쪽, **가로는 영상 칸 한가운데** (2026-08-10 에 옮겼다).
+ *
+ * 전에는 왼쪽에 붙여 뒀다(left 56). 그런데 가로판은 영상 칸이 1384px 이나 되어서
+ * 왼쪽 구석에 몰린 자막이 **한쪽으로 치우쳐 보였다.** 「영상 영역 중앙으로 옮겨 달라」는
+ * 지시를 받아 가운데로 세웠다.
+ *
+ * **세로는 여전히 아래쪽이다.** 정가운데로 올리면 화면에서 지금 말하고 있는 내용을 덮는다.
+ * 자막은 화면을 설명하는 것이지 화면을 대신하는 게 아니다.
+ *
+ * 크기도 54 → **60px** — 기둥 제목(.col .title)과 같은 크기다.
+ * 세로판에서 자막을 제목 크기(54px)에 맞춘 것과 같은 규칙이다.
+ *
+ * 어떤 화면 위에 얹힐지 모르므로 아래쪽에 어둠을 깔고 글자에 테두리를 준다. */
+/* ⚠ 그라데이션을 «반투명 검정»으로 두면 안 된다 (2026-08-18 사장님: 「아래 그라데이션 영역이 틀어진 것 같다」).
+ *   앞장을 투명(--default-background-color=00000000)으로 굽는데, 크롬은 투명 바탕 위의 반투명 검정을
+ *   **알파는 맞게, RGB 는 «흰색»으로** 쓴다. 그래서 어둠이 깔려야 할 자리가 뿌옇게 나왔다.
+ *   → 바탕은 «불투명한 어둠»으로 두고, 흐려지는 것은 mask 로 낸다. RGB 가 안 뒤집힌다. */
+/* ⛔ 그라데이션은 이제 **크롬이 안 그린다. ffmpeg 이 그린다** (2026-08-18).
+ *   두 번 고쳐도 안 됐다. ① 반투명 검정 → 크롬이 RGB 를 흰색으로 씀. ② mask 로 바꿈 →
+ *   RGB 는 맞아졌는데 **아래 110px 이 통째로 비었다**(알파 0). 앞장 PNG 를 픽셀로 떠서 확인했다.
+ *   투명 PNG 위의 그라데이션은 크롬에서 믿을 수 없다 — 그래서 굽는 쪽으로 옮겼다.
+ *   `영상굽기.mjs` 가 `scrim169.png` 를 만들어 영상 위에 얹는다. 여기서는 자리만 비워 둔다. */
+.scrim { display: none; }
+/* ⚠ z-index 6 — 마무리 칸에서 고양이(.catfull, z-index 4)가 자막을 통째로 덮어
+ *   「AI팩이 궁금하다면…」 마지막 자막이 가로판에서 사라져 있었다 (2026-08-18). */
+.cap { position: absolute; z-index: 6; left: 0; bottom: 96px; width: var(--vid-w);
+       padding: 0 56px; box-sizing: border-box; text-align: center;
+       font-size: 60px; font-weight: 900; line-height: 1.28; letter-spacing: -.03em;
+       color: #FBF6E9;
+       -webkit-text-stroke: 9px #16241D; paint-order: stroke fill; }
+.cap .o { color: #F7A15A; }
+.cap .t { color: #6FD6C0; }
+
+/* 마무리 자막(.cta) — 세로 틀과 같은 규칙이다. 문구도 색도 고정.
+ *   AI팩이 궁금하시다면, / 캡션과 프로필 링크를 확인해 주세요.
+ * 여기선 자막이 영상 「안」이라 글자에 굵은 테두리를 두르고 있는데,
+ * 바탕을 채우는 순간 테두리가 지저분해진다. 그래서 이 줄만 테두리를 끈다. */
+/* 세로와 같은 이유로 키운다. 가로 자막은 이미 bottom 기준이라 위로 자라 안 넘친다. */
+.cap .cta { background: var(--orange); color: #FCF3E2; -webkit-text-stroke: 0; font-size: 66px;
+            border-radius: 12px; padding: 2px 20px;
+            -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+/* 오른쪽 기둥 */
+/* ⛔ box-sizing 이 없어서 padding 112px 만큼 «왼쪽으로 넘쳐» 있었다 (2026-08-19 발견).
+   화면 칸이 검은색이라 틀만 보면 멀쩡했는데, 녹화본을 얹으니 띠 글자 왼쪽이 잘렸다 —
+   「카페인컬러」가 「페인컬러」로, 「파일 두 개」가 「일 두 개」로 나왔다. */
+.col { position: absolute; right: 0; top: 0; bottom: 0; width: calc(1920px - var(--vid-w));
+       padding: 64px 56px 96px; box-sizing: border-box; display: flex; flex-direction: column; }
+.col .logo { display: flex; align-items: center; gap: 13px; }
+.col .dot { width: 26px; height: 26px; border-radius: 50%; background: var(--orange); }
+.col .name { font-size: 30px; font-weight: 800; }
+
+.col .title { margin-top: 26px; font-size: 60px; font-weight: 900; line-height: 1.16;
+              letter-spacing: -.04em; }
+.col .title .o { color: var(--orange-text); }
+
+.col .rule { margin: 30px 0; height: 3px; background: var(--line); }
+
+.col .ep { font-size: 34px; font-weight: 800; color: var(--teal-text);
+           letter-spacing: -.02em; }
+
+.col .spacer { flex: 1; }
+
+/* 기둥 가운데 — 화면 목록 조각. 비워 두면 휑해서 넣었다.
+   말로 「예외 화면」이라 하는 것보다 점선 줄 두 개가 빠르다. */
+/* ⛔ 표를 뺐다 (2026-08-19 사장님: 「영상이 너무 많이 짤리네. 빨강박스 영역을 지워볼까?」)
+   표가 자리를 차지해 아래 마스코트 영상이 303px 밖에 못 들어갔고, 그래서 크게 잘렸다.
+   표를 빼면 영상이 두 배 넘게 커진다. 되살리려면 아래 display:none 한 줄만 지운다. */
+.col .sheet { display: none; }
+.col .sheet.__opt { margin-top: 40px; border: 3px solid var(--line); border-radius: 12px;
+              overflow: hidden; background: var(--card); }
+.col .sheet .r { display: flex; align-items: center; gap: 14px; padding: 16px 20px;
+                 border-top: 2px solid var(--line); font-size: 25px; font-weight: 700; }
+.col .sheet .r:first-child { border-top: 0; }
+.col .sheet .r.ghost { border-top-style: dashed; color: var(--tan); }
+.col .sheet .id { font-family: ui-monospace, "Consolas", monospace; font-size: 21px;
+                  color: var(--tan); }
+.col .sheet .q { margin-left: auto; font-weight: 900; color: var(--orange-text); }
+.col .sheet .ok { margin-left: auto; font-size: 21px; font-weight: 800; color: var(--teal-text); }
+
+/* 아래 — 「무엇으로 만들었나」. 최종본에도 있던 자리다. */
+.col .with { font-family: ui-monospace, "Consolas", monospace;
+             font-size: 27px; font-weight: 700; color: var(--ink-soft);
+             line-height: 1.5; }
+.col .brand { margin-top: 16px; font-size: 25px; font-weight: 700; color: var(--tan); }
+
+/* ── 고양이 — 본문에도 넣는다 (2026-08-09~) ─────────────────────
+ *
+ * 세로 틀과 같은 규칙이다. 자막이 하는 말에 맞는 포즈만, 한 편에 3~5번.
+ *
+ * ⚠️ **반드시 앞장(layer=front)에 얹는다.** 바탕에 넣으면 영상이 그 위를 덮어 안 보인다.
+ * 자막이 앞장에 있는 것과 같은 이유다. 아래 겹 나누기 코드에서 앞장에 남긴다.
+ *
+ * 자리는 세로판과 다르다. **오른쪽 기둥에 앉히려다 한 번 틀렸다** —
+ * 비어 보이지만 목록(.sheet)이 y 457~644 를, 서명이 849~966 를 쓰고 있어
+ * 실제로 남는 틈은 190px 뿐이었다. 고양이를 넣었더니 목록 글자를 통째로 덮었다.
+ *
+ * 그래서 **영상 안 오른쪽 아래**로 옮겼다. 가로판은 자막이 **왼쪽 아래**에 있어서
+ * 그 반대쪽이 늘 비어 있다. 앞장에 얹으니 영상 위로 올라오고, 어둠(.scrim) 위라 대비도 좋다.
+ *
+ *   ?cat=cut   영상 안 오른쪽 아래 (자막 반대쪽)
+ *   ?cat=full  영상 칸을 통째로 — 「커피 마시는 동안」처럼 화면이 안 움직이는 구간용 */
+/* bottom 100 → **300** (2026-08-10).
+   자막을 가운데로 옮기면서 자막 띠가 영상 폭을 다 쓰게 됐다.
+   고양이가 아래에 있으면 그 위로 겹친다 — 재 보니 고양이 y660~980, 자막 y830~984 로 물렸다.
+   그래서 고양이를 자막 위로 올렸다(y460~760). 자막과 70px 떨어진다. */
+.catcut { position: absolute; z-index: 4; display: none;
+          right: calc(1920px - var(--vid-w) + 30px); bottom: 300px; }
+.catcut.on { display: block; }
+.catcut img { display: block; height: 320px; width: auto;
+              filter: drop-shadow(0 18px 30px rgba(10,12,10,.45)); }
+
+.catfull { position: absolute; z-index: 4; left: 0; top: 50%;
+           transform: translateY(-50%);
+           width: var(--vid-w); height: var(--vid-h); background: var(--paper);
+           display: none; align-items: center; justify-content: center; }
+.catfull.on { display: flex; }
+.catfull img { display: block; height: calc(var(--vid-h) - 140px); width: auto;
+               filter: drop-shadow(0 22px 36px rgba(32,38,28,.20)); }
+
+/* 확인용 — 유튜브가 덮는 자리 */
+/* ══ 새 가이드 — 가로 (2026-08-19 사장님) ══════════════════════════
+ *
+ * 「가로버전은 기존과 거의 같은데 하단에 영상만 들어가는 구조야.」
+ *
+ * 실측(1920×1080) — `영상틀_새가이드_실측.md`
+ *   오른쪽 띠     x 1379~1920 (폭 541)
+ *   마스코트 영상  y 777~1080 (높이 303)  → 541:303 = 1.79 ≈ 16:9
+ *
+ * ⭐ 세로와 달리 «틀 위에» 얹는다. 띠 안쪽 자리라 구멍을 낼 필요가 없다.
+ *   그래서 가로 틀은 예전처럼 불투명하게 구워도 된다.
+ *
+ * ⚠ 「with. Claude Code / caffeinecolor.com」이 이 자리에 있었다.
+ *   가이드에는 안 보이므로 영상 위로 올려 띠 중간에 둔다 — 브랜드 표기라 지우지 않는다. */
+/* 표를 뺀 만큼 영상 자리를 키운다. 303 → 620 (띠 폭 528 기준 16:9 보다 세로로 길다 —
+   좌우를 안 자르고 넣으려면 높이가 남는 편이 낫다). */
+.catvid { position: absolute; right: 0; bottom: 0;
+          width: calc(1920px - var(--vid-w)); height: 620px; }
+/* with·brand 를 뺐으므로 자리 조정도 필요 없다. */
+
+.guide { position: absolute; inset: 0; pointer-events: none; display: none; }
+.guide.on { display: block; }
+.guide i { position: absolute; background: rgba(220,40,40,.18); }
+.guide .b { left: 0; right: 0; bottom: 0; height: 90px; }
+</style>
+</head>
+<body>
+
+<div class="f">
+  <div class="hole"></div>
+  <div class="scrim"></div>
+  <p class="cap" id="cap">시킨 건 한 마디,<br><span class="o">커피 마시는 동안 쌓였어요.</span></p>
+
+  <div class="col">
+    <div class="logo"><span class="dot"></span><span class="name">카페인컬러</span></div>
+    <h1 class="title" id="title">파일 두 개 넣었더니<br>화면이 <span class="o">쌓였어요.</span></h1>
+    <div class="rule"></div>
+    <div class="ep" id="ep">뷰티샵 예약 사이트 편</div>
+    <div class="sheet">
+      <div class="r"><span class="id">PCPR1000</span><span>예약하기</span><span class="ok">만듦</span></div>
+      <div class="r ghost"><span class="id">PCPR1001</span><span>예약 · 마감</span><span class="q">?</span></div>
+      <div class="r ghost"><span class="id">PCCH1002</span><span>결제 · 실패</span><span class="q">?</span></div>
+    </div>
+    <div class="spacer"></div>
+    <!-- ⛔ 브랜드 표기는 뺐다 (2026-08-19 사장님: 「with. Claude Code / caffeinecolor.com 는 빼줘」).
+         새 가이드에서 이 자리는 마스코트 영상(.catvid)이 쓴다. 로고가 위에 이미 있어 표기가 겹친다.
+         되살리려면 이 주석을 지우고 아래 두 줄을 되돌린다.
+         <div class="with">with.<br>Claude Code</div>
+         <div class="brand">caffeinecolor.com</div> -->
+  </div>
+
+  <div class="catvid"></div>
+
+  <div class="catcut"><img src="cat.png" alt=""></div>
+  <div class="catfull"><img src="cat.png" alt=""></div>
+
+  <div class="guide"><i class="b"></i></div>
+</div>
+
+<script>
+const q = new URLSearchParams(location.search);
+if (q.has("ratio")) document.documentElement.style.setProperty("--ratio", q.get("ratio"));
+if (q.has("ep"))    document.getElementById("ep").textContent = q.get("ep");
+if (q.has("title")) document.getElementById("title").innerHTML = q.get("title").split("|").join("<br>");
+if (q.has("cap"))   document.getElementById("cap").innerHTML = q.get("cap").split("|").join("<br>");
+if (q.has("guide")) document.querySelector(".guide").classList.add("on");
+
+/* ?rows= — 기둥의 화면 목록을 회차에 맞게 갈아 끼운다. 2026-08-17 에 넣었다.
+ *
+ * 넣기 전에는 이 세 줄이 «뷰티샵 예약» 값(PCPR1000 예약하기…)으로 박혀 있었다.
+ * 그래서 장비 렌탈 편을 만들었더니 기둥에는 예약 화면 ID 가 떠 있었다.
+ * 손님은 이 목록을 「그 사이트의 화면 목록」으로 읽는다 — 회차와 다르면 거짓말이 된다.
+ *
+ *   ?rows=BK0201,보증금·결제,ok|BK0401,결제 실패,q|BK0402,한도 부족 안내,q
+ *   줄은 | 로, 칸은 , 로 나눈다. 끝 값이 ok 면 「만듦」, 그 밖이면 점선 + 「?」.
+ * 세 줄이 기둥에 딱 맞는다. 네 줄을 넣으면 아래 서명을 밀어낸다. */
+if (q.has("rows")) {
+  document.querySelector(".col .sheet").innerHTML = q.get("rows").split("|").map((줄) => {
+    const [id, 이름, 상태] = 줄.split(",");
+    return 상태 === "ok"
+      ? `<div class="r"><span class="id">${id}</span><span>${이름}</span><span class="ok">만듦</span></div>`
+      : `<div class="r ghost"><span class="id">${id}</span><span>${이름}</span><span class="q">?</span></div>`;
+  }).join("");
+}
+
+/* 고양이 — ?cat=cut / full. 앞장에만 남는다(아래 겹 나누기 참고) */
+/* ⛔ 내용 칸의 PNG 마스코트는 안 쓴다 (2026-08-20 사장님: 「내용 중간에 나오는 기존 마스코트는 다 빼줘」).
+   새 가이드에서 오른쪽 띠 아래가 «마스코트 영상» 자리라, 화면 안에 PNG 마스코트가 또 나오면 둘이 겹친다.
+   마무리(cat="full")는 그대로 둔다 — 그 칸은 마스코트가 화면을 통째로 쓴다. */
+const cat = q.get("cat");
+if (cat === "full") document.querySelector(".catfull").classList.add("on");
+
+/* 겹 나누기 — 자막이 영상 안에 있으므로 앞뒤로 따로 찍는다 */
+const layer = q.get("layer");
+if (layer === "back") {                     // 바탕만 (영상이 이 위에 얹힌다)
+  document.querySelector(".scrim").style.display = "none";
+  document.getElementById("cap").style.display = "none";
+  // 고양이는 바탕에 남기면 영상에 덮인다. 앞장으로만 보낸다
+  document.querySelector(".catcut").style.display = "none";
+  document.querySelector(".catfull").style.display = "none";
+} else if (layer === "front") {             // 자막만 (영상 위에 덮는다)
+  document.documentElement.style.background = "transparent";
+  document.body.style.background = "transparent";
+  document.querySelector(".f").style.background = "transparent";
+  document.querySelector(".hole").style.display = "none";
+  document.querySelector(".col").style.display = "none";
+}
+</script>
+</body>
+</html>

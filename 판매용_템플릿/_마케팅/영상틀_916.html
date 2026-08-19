@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>영상 틀 — 세로 9:16</title>
+<link rel="stylesheet" href="카드뉴스2.css">
+<style>
+/* 릴스·쇼츠 세로 틀 — 1080×1920.
+ *
+ * 세 번 고쳤다. 무엇이 틀렸었는지 남겨 둔다.
+ *
+ * ① 처음엔 아래에 화면 목록 표를 놓았는데, 실제 릴스에서 계정 이름·캡션에
+ *    통째로 가려졌다. 앱 UI가 어디를 덮는지 계산에 안 넣은 탓이다.
+ *
+ * ② 그다음엔 화면 자리를 세로로 길게(854×1029) 잡았는데, 웹사이트 장면에서
+ *    가로의 37%가 잘려 나갔다. 왼쪽 메뉴가 사라지고 표가 반쯤 잘렸다.
+ *
+ * ③ 그다음엔 1080×800 으로 고정했는데, 실제 녹화본이 그보다 세로로 길었다.
+ *    「8. lms」 녹화본을 재보니 가로:세로가 1.15 ~ 1.30 이다.
+ *    1080 폭에 맞추면 세로가 831~939px 이 되어 800 칸에 안 들어간다.
+ *    → 화면 칸을 고정하지 않고 녹화본 비율대로 늘였다 줄였다 한다.
+ *
+ * 자막은 최종_뷰티샵_916.mp4 와 같은 자리다 — 화면 아래.
+ * 가로(16:9)는 반대로 영상 안에 자막을 얹는다(최종_뷰티샵_169.mp4 방식).
+ *
+ * 안전 영역 (1080×1920 기준)
+ *   위 220 · 아래 480 · 좌우 80
+ *   메타 광고 가이드(위 14%)와 크리에이터 실측치를 맞춘 값.
+ *   아래는 조사값이 550 이었는데, 그건 버튼이 붙는 광고 기준이다.
+ *   최종_뷰티샵_916 은 자막을 1390 까지 내려 쓰고도 안 가렸다.
+ *   그래서 480(=아래 끝 1440)으로 잡되, 자막은 1430 에서 끊는다.
+ *
+ * 여기서 중요한 것 — 안전 영역은 「글자」 기준이다.
+ * 영상은 그 밖으로 나가도 된다. 어차피 가려져도 되는 부분이니까.
+ */
+:root {
+  /* ⭐⭐ 어두운 바탕 (2026-08-18 사장님 제안)
+   *   「SNS 배경이 우리 사이트랑 같다 보니까 GNB 영역이 조금 이상해 보이지 않아?
+   *    SNS 배경을 우리 홈페이지에 쓰는 컬러 20261C 이걸로 해보는건 어떨까?」
+   *
+   *   맞는 지적이었다. 녹화본 속 우리 앱 바탕이 종이색(#EAE8DE)이라 틀과 똑같아서,
+   *   영상 칸의 경계가 사라지고 GNB 가 틀에 얹힌 것처럼 보였다.
+   *   #20261C 는 우리 «글자색(--ink)» 이다. 바탕과 글자를 맞바꾸면 되므로 여기서 값만 뒤집는다.
+   *
+   *   ⚠ 되돌리려면 이 덩어리만 지운다. 아래 규칙은 한 줄도 안 고쳤다. */
+  --paper:      #20261C;   /* 바탕 — 홈페이지 글자색 */
+  --paper-2:    #2B3326;
+  --ink:        #EAE8DE;   /* 글자 — 어두운 바탕 위 12.6:1 */
+  --ink-soft:   #C3C0B2;
+  --tan:        #C4B490;   /* 어두운 바탕에서 읽히게 밝혔다 (#9A8C68 은 3.6:1 로 모자랐다) */
+  --teal-text:  #6FD6C0;   /* 〃 (#0E6F60 은 어두운 바탕에서 안 읽힌다) */
+  --card:       #2B3326;
+  --line:       #4A5443;
+  --orange-text:#F2A05C;
+
+  --safe-t: 220px;
+  --safe-b: 480px;
+  --safe-x: 80px;
+
+  /* 녹화본 가로:세로. 촬영본마다 바꾼다.
+     1.15 = lms 디럭스 1·2  /  1.17 = 디럭스 3·4  /  1.30 = 디럭스 5  /  1.32 = 뷰티샵 */
+  --ratio: 1.15;
+
+  /* 화면 칸 — 가로는 1080 꽉, 세로는 비율대로. 단 --vid-max-h 를 넘지 않는다.
+     넘으면 세로를 거기 맞추고 가로를 줄인다. 어느 쪽이든 잘라내지 않는다. */
+  /* 340 → 400 → **500**.
+     400 은 제목을 두 줄 쓰려고 내린 값이었다(주제어를 첫 줄에 박기 위해).
+     500 은 2026-08-10 에 사장님이 「영상을 자막과 상단 텍스트 중간쯤으로 내려 달라」고
+     하셔서 다시 내린 값이다. 전에는 화면이 제목에 바짝 붙고(60px) 아래 500px 이 통째로 비어
+     위로 쏠려 보였다. 지금은 **제목 아래 160px · 화면 아래 96px** 로 화면이 가운데 놓인다.
+
+     내리려면 «화면을 그만큼 줄여야» 한다 — 자막은 화면에 매달려 있고 1430 에서 끊기니까.
+       500(위) + 700(화면) + 96(틈) = 1296 … 자막 두 줄 1416 ✅ (끊는 선 1430)
+     그래서 --vid-max-h 를 930 → 700 으로 같이 내렸다. 둘은 «항상 같이» 움직인다.
+     한쪽만 고치면 자막이 잘리거나 화면이 제목을 덮는다. */
+  /* ⭐ 500 → **400**, --vid-max-h 690 → **790** (2026-08-17 사장님 지적)
+     「우리가 약속한 비율이 있어서 맞춰서 녹화를 했는데 위아래가 왜 짤리지?」
+     「0810주차에 작업한거 비율이랑 비교해 보면 화면 영역 세로가 좀 짧은거 같아」
+
+     사장님은 약속대로 1.28 로 찍으셨는데 세로 칸이 1.565 라 위아래를 381px(17.6%) 잘라내고 있었다.
+     칸을 790 으로 키우고 위를 400 으로 올리면 1.28 녹화본이 **한 점도 안 잘린다**(1018×790).
+     ⚠ 400 + 790 + 88 = 1278 — **자막 자리는 그대로다.** 세 값은 늘 같이 움직인다. */
+  --vid-top: 416px;
+  /* 700 → 690, 틈 96 → 88.
+     2026-08-10 에 자막을 46 → 54px(제목과 같은 크기)로 키웠다. 두 줄이 141px 이 되면서
+     500+700+96 = 1296 에서 시작하면 끝이 1437 로 **끊는 선(1430)을 넘었다.**
+     자막을 키우려면 화면을 그만큼 내줘야 한다 — 세 값은 늘 같이 움직인다.
+       500 + 690 + 88 = 1278 … 두 줄 끝 1419 ✅ (11px 여유) */
+  --vid-max-h: 840px;
+  --cap-gap: 34px;
+  --vid-h: min(var(--vid-max-h), calc(1080px / var(--ratio)));
+  --vid-w: 1080px;
+}
+html, body { width: 1080px; height: 1920px; background: transparent; }  /* 2026-08-19 — 상단에 마스코트 영상이 비쳐야 한다. 바탕색은 .lower 가 아래쪽에만 깐다 */
+.reel { width: 1080px; height: 1920px; position: relative; overflow: hidden;
+        background: var(--paper); }
+
+/* 화면 — 가로 가운데. 비율대로 들어가므로 한 곳도 안 잘린다. */
+.hole { position: absolute; top: var(--vid-top);
+        left: 50%; transform: translateX(-50%);
+        width: var(--vid-w); height: var(--vid-h);
+        background: #101010; }
+
+/* 머리줄과 제목 — 위 안전선 안쪽, 화면 위 */
+.rtop { position: absolute; left: var(--safe-x); right: var(--safe-x); top: var(--safe-t); }
+.rhead { display: flex; align-items: center; justify-content: space-between; }
+.rhead .logo { display: flex; align-items: center; gap: 12px; }
+.rhead .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--orange); }
+.rhead .name { font-size: 26px; font-weight: 800; }
+.rhead .ep { font-size: 23px; font-weight: 600; color: var(--tan); }
+
+/* 한 줄 또는 두 줄. --vid-top 을 400 으로 내려서 두 줄이 들어간다.
+ *
+ * 여기 「무엇에 대한 영상인지」가 반드시 들어가야 한다.
+ * 「다 됐다더니, 눌러봤습니다」처럼 우리끼리 아는 말만 쓰면
+ * 스크롤하던 사람은 무슨 얘긴지 모르고 지나간다. 조사에서도 3초 유지율을 가장 크게 가르는 건
+ * 「누구에게 하는 말인지 + 무슨 문제인지」가 구체적으로 적혀 있느냐였다.
+ * 첫 줄에 주제어(바이브코딩·AI), 둘째 줄에 후킹. 이 순서를 지킨다. */
+.rtitle { margin-top: 14px; font-size: 54px; font-weight: 900; line-height: 1.18;
+          letter-spacing: -.035em; }
+.rtitle .o { color: var(--orange); }
+
+/* 자막 — 화면 바로 아래에 붙인다.
+ *
+ * 원래는 아래 끝에서부터 쌓았다(bottom: 490px). 줄 수가 바뀌어도 안 흔들리라고 그랬는데,
+ * 실제로 만들어 보니 화면과 자막 사이가 130~200px 씩 벌어져서 자막이 따로 노는 것처럼 보였다.
+ * 벌어지는 폭이 녹화본 비율마다 다른 것도 문제였다 — 비율이 납작할수록 더 멀어진다.
+ *
+ * 그래서 기준을 바꿨다. 아래 끝이 아니라 **화면 아래 모서리**에 매단다.
+ * 비율이 뭐든 화면과 자막 사이는 항상 56px 이다.
+ *
+ * 흔들림은 줄 수를 지켜서 막는다. --vid-top 500 · --vid-max-h 690 기준으로 재 두면
+ * (자막 끊는 선은 1430, 54px 한 줄이 70px):
+ *   어느 비율이든 화면은 690 에서 멈추므로 500+690+88 = **1278** 고정
+ *   → 한 줄 1348 ✅ · 두 줄 1419 ✅ · 세 줄 1489 ❌
+ * **두 줄까지.** 자막은 2.5초에 하나씩 지나가므로 두 줄이 읽기에도 맞다.
+ * 틈(88px)은 --cap-gap 으로 뺐다 — 화면 자리를 옮길 때 여기도 같이 보라는 뜻이다.
+ *
+ * 크기 46 → **54px** (2026-08-10).
+ * 「자막이 작다. 위에 있는 제목 수준까지 키워 달라」는 지시를 받았다.
+ * 제목(.rtitle)이 54px 이라 **같은 크기로 맞췄다.** 쇼츠는 손 안에서 보는 것이라
+ * 46px 은 화면 속 글자와 구별이 잘 안 됐다. 이제 자막이 확실히 앞에 선다.
+ */
+.cap { position: absolute; left: var(--safe-x); right: var(--safe-x);
+       top: calc(var(--vid-top) + var(--vid-h) + var(--cap-gap));
+       font-size: 54px; font-weight: 800; line-height: 1.3; letter-spacing: -.03em; }
+.cap .o { color: var(--orange); }
+.cap .t { color: var(--teal-text); }
+
+/* 마무리 자막(.cta) — 매 영상 마지막에 고정으로 들어가는 한 줄이다.
+ *
+ *   AI팩이 궁금하시다면,
+ *   캡션과 프로필 링크를 확인해 주세요.
+ *
+ * 문구를 바꾸지 않는다. 매번 같은 자리에서 같은 말이 나와야 사람이 기억한다.
+ *
+ * 색을 왜 채우느냐면 — 본문 자막이 이미 오렌지(.o)와 틸(.t)을 쓰고 있어서
+ * 글자색만 바꿔서는 「하려는 말」이 안 튄다. 여기만 **바탕을 채워** 딴 것과 갈라 놓는다.
+ * 종이 위 오렌지 원색은 작은 글자엔 못 쓰지만(2.5:1), 46px 굵은 글자에 흰 글씨를 얹으면 통과한다.
+ * 영상에서 유일하게 「눌러 달라」고 말하는 자리이니 여기만 이렇게 쓴다. */
+/* 본문 자막을 54px 로 키운 뒤에도 **이 줄만 46px 로 둔다** (2026-08-10).
+   「캡션과 프로필 링크를 확인해 주세요.」는 열여덟 글자짜리 «고정 문구»다.
+   54px 로 키우면 한 줄이 975px 이 되어 쓸 수 있는 폭(920px)을 넘고 **세 줄로 접힌다.**
+   그러면 끊는 선(1430)을 넘어 잘린다. 문구는 못 바꾸니 이 줄의 크기를 지킨다.
+   바탕을 채운 줄이라 조금 작아도 제일 먼저 눈에 들어온다. */
+/* ⭐ 2026-08-18 저녁: 사장님이 마무리 자막에 「무료 샘플 링크도 있어요.」 줄을 더하셨다.
+   46px 세 줄이 되니 맨 아래가 1495 로 «끊는 선 1430 을 65px 넘었다» — 인스타 UI 가 덮는다.
+   위에서부터 쌓으면 줄이 늘 때마다 아래로 밀려 넘친다.
+   그래서 마무리 자막 칸만 **아래에서부터 쌓아 올린다.** 줄이 늘어도 위로 자라니 안 넘고,
+   그 덕에 글자도 키울 수 있다(46 → 54px, 본문 자막과 같은 크기).
+   ⚠ 마무리 칸은 영상 구멍이 없는 «full» 칸이라 위쪽을 비워도 된다. 본문 칸은 그대로 둔다. */
+/* ⚠ 마무리 칸은 마스코트(.catfull, z-index 3)가 화면을 가득 채운다.
+   자막을 위로 올리면 마스코트 발치와 겹치는데, 자막에 z-index 가 없어
+   첫 줄 윗부분이 마스코트에 덮여 잘려 보였다. 가로 틀에서 이미 겪은 것과 같다 —
+   자막을 위로 올린다. */
+.cap:has(.cta) { top: auto; bottom: 512px; z-index: 6; }
+.cap .cta { background: var(--orange); color: #FCF3E2; font-size: 54px;
+            border-radius: 10px; padding: 3px 16px;
+            -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+/* ── 고양이 — 본문에도 넣는다 (2026-08-09~) ─────────────────────
+ *
+ * 전에는 맨 앞 표지 1.4초에만 나왔다. 본문은 녹화 화면과 자막뿐이라 심심했다.
+ * **장식으로 뿌리지 말고 「지금 자막이 하는 말」에 맞는 포즈만** 넣는다.
+ * 한 편에 3~5번. 자막마다 넣으면 화면을 못 보고 눈만 피로하다.
+ *
+ * 자막처럼 **이 틀 PNG 에 같이 구워 넣는다.** 그래야 컷을 나누든 배속을 바꾸든 안 어긋난다.
+ * 영상 위에 따로 얹는 방식은 쓰지 않는다 — 그 순간부터 시각을 손으로 맞춰야 한다.
+ *
+ * 자리를 왜 여기로 잡았나 —
+ * 세로판은 빈 데가 거의 없다. 위는 제목, 가운데는 영상, 그 아래 56px 만 띄우고 자막,
+ * 자막 아래 1430 부터는 인스타 UI 가 덮는다. 그래서 **영상 칸 아래 모서리에 걸터앉힌다.**
+ * 발이 모서리선에 닿고 몸은 영상 위로 조금 올라간다 — 빈자리를 새로 만들지 않고
+ * 이미 있는 경계선을 쓰는 셈이다. 높이는 260 으로 묶었다(영상 칸 774~930 의 3분의 1 밑).
+ *
+ *   ?cat=cut   영상 아래 모서리에 걸터앉기 — 반응 컷용
+ *   ?cat=full  영상 칸을 통째로 고양이로 — 「커피 마시는 동안」처럼 화면이 안 움직이는 구간용
+ *
+ * full 이 제일 쓸모 있다. 기다리는 구간은 녹화본이 원래 정지해 있어 제일 지루한데,
+ * 거기를 고양이로 갈아 끼우면 지루함과 캐릭터 노출이 한 번에 풀린다.
+ * 굽기 전에 고른 포즈를 `cat.png` 로 옆에 복사해 둔다(썸네일틀과 같다). */
+.catcut { position: absolute; z-index: 3; right: 56px; display: none;
+          bottom: calc(1920px - var(--vid-top) - var(--vid-h) - 20px); }
+.catcut.on { display: block; }
+.catcut img { display: block; height: 260px; width: auto;
+              filter: drop-shadow(0 18px 30px rgba(32,38,28,.28)); }
+.catcut.left { left: 56px; right: auto; }
+
+/* 영상 칸을 통째로 덮는다. 검은 칸이 아니라 종이로 깔아야 우리 얼굴이 된다 */
+.catfull { position: absolute; z-index: 3; left: 0; top: var(--vid-top);
+           width: 1080px; height: var(--vid-h); background: var(--paper);
+           display: none; align-items: center; justify-content: center; }
+.catfull.on { display: flex; }
+.catfull img { display: block; height: calc(var(--vid-h) - 90px); width: auto;
+               filter: drop-shadow(0 22px 36px rgba(32,38,28,.20)); }
+
+/* 안전선 확인용 — .on 을 붙이면 가려지는 자리가 붉게 보인다 */
+/* ⭐ 위쪽 흰 띠 (2026-08-19 사장님)
+ *   「내가 만든 예시처럼 위에 흰색으로 해도 될거 같긴한데.
+ *    아래 자막 나오는 부분은 기존 색으로 하고」
+ *
+ *   ⚠ 어두운 바탕을 쓴 까닭(위 :root 주석 — 녹화본 앱 바탕이 종이색이라 영상 칸 경계가
+ *     사라진다)은 «아래쪽»에서 그대로 지킨다. 위쪽에는 녹화본이 없으므로 흰색이어도
+ *     경계가 흐려지지 않는다. 자막이 있는 아래는 손대지 않았다.
+ *
+ *   흰색을 #FEFEFE 로 잡은 것은 «마스코트 영상 배경과 같은 값»이라서다(실측).
+ *   같은 값이라야 마스코트를 얹을 때 배경을 안 빼도 이음매가 안 보인다. */
+.rband { position: absolute; left: 0; top: 0; width: 1080px; height: var(--vid-top);
+         background: #FEFEFE; }
+/* 흰 띠 위 글자 — 어두운 바탕용 값(--ink·--tan)을 그대로 두면 흰 종이에 흰 글자가 된다. */
+.rband ~ .rtop { color: #20261C; }
+.rband ~ .rtop .ep { color: #7A6E52; }          /* 흰 바탕 위 5.2:1 */
+.rband ~ .rtop .rtitle .o { color: #C2410C; }   /* 흰 바탕 위 5.9:1 — 어두운 바탕용 #F2A05C 는 2.1:1 로 안 읽힌다 */
+.rband ~ .rtop .dot { background: #C2410C; }    /* --orange 가 정의돼 있지 않아 점이 안 보였다 */
+
+/* ══ 새 가이드 (2026-08-19 사장님) ═══════════════════════════════════
+ *
+ * 상단이 «흰 띠»에서 «마스코트 영상 배경»으로 바뀌었다. 자리도 다 옮겼다.
+ * 값은 사장님이 주신 가이드 영상을 픽셀로 재서 옮긴 것이다 —
+ * 자세한 실측표는 `영상틀_새가이드_실측.md` 에 있다.
+ *
+ *   마스코트 영상 배경   y 0~513      (1080×513 로 받는다. 안 맞으면 위아래를 자른다)
+ *   로고                y ~250
+ *   제목 두 줄           y 329 · 413   흰 글자 + 검은 테두리, 강조는 주황 + 밑줄
+ *   화면 칸             y 513~1353    (높이 840 — 예전과 같다. 시작만 416→513 내려갔다)
+ *   자막 두 줄           y 1398 · 1469
+ *   서브카피            y 1620        자막 끝에서 104px 아래
+ *
+ * ⭐ 자막과 서브카피 사이 104px 은 «일부러» 띄운 것이다(사장님).
+ *   촬영본이 세로로 길면 화면 칸이 늘어 자막이 따라 내려오는데, 그때 서브카피와 붙지 않게 한다.
+ *
+ * ⛔ 상단은 «투명»으로 굽는다. 그래야 그 자리에 마스코트 영상이 비친다.
+ *   그래서 바탕색을 .reel 이 아니라 아래쪽(.lower)에만 깐다. */
+:root {
+  --vid-top: 513px;      /* 새 가이드 실측 */
+  --cap-gap: 45px;       /* 화면 칸 끝(1353) → 자막(1398) */
+  --sub-gap: 104px;      /* 자막 끝(1516) → 서브카피(1620) */
+}
+.reel { background: transparent; }                 /* 상단이 비쳐야 한다 */
+.lower { position: absolute; left: 0; top: var(--vid-top);
+         width: 1080px; height: calc(1920px - var(--vid-top));
+         background: var(--paper); }
+
+/* 상단 글자 — 영상 위에 얹히므로 검은 테두리로 읽히게 한다(사장님이 그렇게 만드셨다). */
+.rtop { top: 258px; color: #FFFFFF;
+        text-shadow: 0 0 6px rgba(0,0,0,.85), 2px 2px 0 #000, -2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000; }
+/* ⛔ 회차는 상단에 두지 않는다 (2026-08-19 가이드 실측).
+   가이드에는 로고만 있고 오른쪽은 비어 있다 — 그 몫은 아래 서브카피(-반려동물 유치원편-)가 한다.
+   기존 틀의 양쪽 정렬(.rhead)을 그대로 두면 회차가 오른쪽에 남아 가이드와 어긋난다. */
+.rtop .ep { display: none; }
+.rhead { justify-content: flex-start; }
+.rhead .name { font-size: 36px; }           /* 실측 글자 높이 33 */
+.rtitle { margin-top: 38px; font-size: 62px; line-height: 1.34; }   /* 로고 끝 291 → 제목 329 */
+/* 강조 — 주황 글자에 주황 밑줄. 밑줄은 글자 아래 살짝 띄운다. */
+.rtitle .o { color: #F2A05C;
+             border-bottom: 5px solid #F2A05C; padding-bottom: 4px; }
+
+/* 서브카피 — 새로 생긴 자리. 자막 아래 104px. */
+.subcap { position: absolute; left: var(--safe-x); right: var(--safe-x);
+          top: calc(var(--vid-top) + var(--vid-h) + var(--cap-gap) + var(--cap-h, 118px) + var(--sub-gap));
+          font-size: 34px; font-weight: 800; color: var(--teal-text);
+          letter-spacing: -.02em; }
+
+.guide { position: absolute; inset: 0; pointer-events: none; display: none; }
+.guide.on { display: block; }
+.guide i { position: absolute; background: rgba(220,40,40,.16); }
+.guide .t { left: 0; right: 0; top: 0; height: var(--safe-t); }
+.guide .b { left: 0; right: 0; bottom: 0; height: var(--safe-b); }
+.guide .l { left: 0; top: 0; bottom: 0; width: var(--safe-x); }
+.guide .r { right: 0; top: 0; bottom: 0; width: var(--safe-x); }
+</style>
+</head>
+<body>
+
+<div class="reel">
+  <div class="lower"></div>
+  <div class="hole"></div>
+
+  <div class="rtop">
+    <div class="rhead">
+      <span class="logo"><span class="dot"></span><span class="name">카페인컬러</span></span>
+      <span class="ep" id="ep">뷰티샵 예약 사이트 편</span>
+    </div>
+    <h1 class="rtitle" id="title">파일 두 개 넣었더니 화면 <span class="o">136개.</span></h1>
+  </div>
+
+  <p class="cap" id="cap">시킨 건 한 마디,<br><span class="o">커피 마시는 동안 쌓였어요.</span></p>
+
+  <p class="subcap" id="subcap"></p>
+
+  <div class="catcut"><img src="cat.png" alt=""></div>
+  <div class="catfull"><img src="cat.png" alt=""></div>
+
+  <div class="guide"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i></div>
+</div>
+
+<script>
+/* 주소로 갈아 끼운다 — 자막이 구간마다 바뀌므로 한 장씩 찍어 낸다.
+   ?ratio=1.15&cap=시킨 건 한 마디,|커피 마시는 동안 쌓였어요.
+   줄바꿈은 | 로 나눈다. */
+const q = new URLSearchParams(location.search);
+if (q.has("ratio")) document.documentElement.style.setProperty("--ratio", q.get("ratio"));
+if (q.has("ep"))    document.getElementById("ep").textContent = q.get("ep");
+if (q.has("title")) document.getElementById("title").innerHTML = q.get("title").split("|").join("<br>");
+if (q.has("cap"))   document.getElementById("cap").innerHTML = q.get("cap").split("|").join("<br>");
+if (q.has("subcap")) document.getElementById("subcap").textContent = q.get("subcap");
+if (q.has("guide")) document.querySelector(".guide").classList.add("on");
+
+/* 고양이 — ?cat=cut(모서리에 걸터앉기) / full(영상 칸을 통째로).
+   ?catside=left 면 왼쪽에 앉힌다. 고른 포즈를 cat.png 로 복사해 두는 건 굽는 쪽 몫이다. */
+const cat = q.get("cat");
+if (cat === "cut" || cat === "full") {
+  document.querySelector(cat === "cut" ? ".catcut" : ".catfull").classList.add("on");
+  if (cat === "cut" && q.get("catside") === "left")
+    document.querySelector(".catcut").classList.add("left");
+}
+
+/* ?cathide=1 — 고양이 «자리»는 그대로 두고 «그림만» 뺀다. 2026-08-11 에 넣었다.
+ *
+ * 왜 필요한가 — 맨 앞 2초 인트로(영상인트로.mjs)는 고양이를 살짝 흔든다.
+ * 흔들려면 고양이를 «따로» 얹어야 하므로, 바탕에는 고양이가 없어야 한다.
+ * 그렇다고 cat 을 아예 안 주면 영상 칸이 «빈 구멍»으로 남아 고양이 둘레에 그 구멍이 비친다.
+ * .catfull 은 종이색 배경을 깔고 그 위에 고양이를 놓는 칸이라, 칸은 켜고 그림만 빼면 된다.
+ * 썸네일틀의 ?facehide=1 과 같은 뜻이다 — 자리 계산은 그대로, 그림만. */
+/* ?titlex= · ?capx= — 제목과 아래 글자를 «몇 배»로 키운다. 2026-08-11 에 넣었다.
+ *
+ * 왜 필요한가 — 맨 앞 2초 인트로는 «읽는» 장면이라 본문 자막보다 글자가 커야 한다.
+ * 본문은 화면 위에 자막이 얹히지만 인트로는 글자밖에 없어서, 같은 54px 이면
+ * 텅 빈 화면에 작은 글씨가 뜬 것처럼 보인다.
+ *
+ * ⚠ 기본값은 1 이다. **본문 자막 크기는 건드리지 않는다** —
+ *   54px 은 「자막이 작다」는 지적을 받고 맞춘 값이다(2026-08-10). 인트로에서만 키운다.
+ * ⚠ 키우면 줄이 늘어난다. 안쪽 폭이 920px 이라 한글은 대략 «920 ÷ 글자크기» 자에서 접힌다.
+ *   굽고 나서 반드시 눈으로 본다. */
+const 배 = (k, sel) => {
+  const v = parseFloat(q.get(k));
+  if (!Number.isFinite(v) || v <= 0) return;
+  for (const el of document.querySelectorAll(sel)) {
+    const 지금 = parseFloat(getComputedStyle(el).fontSize);
+    el.style.fontSize = Math.round(지금 * v) + "px";
+  }
+};
+배("titlex", ".rtitle");
+배("capx", ".cap");
+
+if (q.get("cathide") === "1") {
+  document.querySelector(".catfull").classList.add("on");
+  const img = document.querySelector(".catfull img");
+  if (img) img.style.visibility = "hidden";   // display:none 이면 칸 크기가 달라진다
+}
+
+/* ?layer=front — 고양이만 남기고 나머지를 투명하게. 2026-08-17 에 넣었다.
+ *
+ * 왜 필요한가 — 세로판은 «틀 PNG 를 깔고 그 위에 영상을 얹는» 차례다.
+ * 그런데 걸터앉는 고양이(.catcut)는 영상 칸 위로 올라오게 그려져 있어서,
+ * 틀에 같이 구워 두면 **영상이 고양이를 덮어 버린다.** 2026-08-09 첫 시도에서
+ * 고양이가 아예 안 보였던 게 이것이다. 그때는 굽는 쪽에서 손으로 오려 냈는데,
+ * 그러면 다음 사람이 틀만 보고 또 같은 데서 막힌다. 그래서 틀이 알아서 내주게 했다.
+ *
+ * 가로판(영상틀_169)이 자막을 앞장으로 빼는 것과 똑같은 방식이다. 세 겹으로 낸다:
+ *   layer 없음   틀 전체 (자막 포함) — 이 위에 영상을 얹는다
+ *   layer=front  고양이만 (배경 투명) — 영상 위에 덮는다
+ * 자막은 앞장에 넣지 않는다. 세로판 자막은 영상 «아래»라 영상이 덮을 일이 없다.
+ *
+ * ?cat=full 은 앞장이 필요 없다 — 영상 칸을 통째로 채우므로 그 구간엔 영상을 안 얹으면 된다. */
+if (q.get("layer") === "front") {
+  for (const el of document.querySelectorAll(".hole, .rtop, .cap, .catfull"))
+    el.style.display = "none";
+  document.documentElement.style.background = "transparent";
+  document.body.style.background = "transparent";
+  document.querySelector(".reel").style.background = "transparent";
+}
+</script>
+</body>
+</html>
