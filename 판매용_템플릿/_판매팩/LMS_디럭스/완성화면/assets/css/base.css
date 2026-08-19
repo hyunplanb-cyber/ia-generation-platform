@@ -259,13 +259,13 @@ dl,dd{margin:0}
 .chip .x{font-size:12px;font-weight:800}
 .chip-sm{height:30px;font-size:13px;padding:0 10px}
 
-.tabs{display:flex;gap:var(--s6);border-bottom:1px solid var(--border);margin-bottom:var(--s6);overflow-x:auto}
+.tabs{display:flex;gap:var(--s6);border-bottom:1px solid var(--border);margin-bottom:var(--s6);overflow:auto hidden}
 .tab{position:relative;padding:0 2px 12px;font-size:15px;font-weight:700;color:var(--muted);background:none;border:0;cursor:pointer;white-space:nowrap;transition:color var(--t-hover)}
 .tab .cnt{font-size:13px;font-weight:700;margin-left:5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .tab.on{color:var(--pri-ink)}
 .tab.on .cnt{color:var(--pri-ink)}
 .tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--primary)}
-.tabs-pill{display:inline-flex;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-badge);padding:4px;gap:4px;margin-bottom:var(--gap-title);max-width:100%;overflow-x:auto}
+.tabs-pill{display:inline-flex;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-badge);padding:4px;gap:4px;margin-bottom:var(--gap-title);max-width:100%;overflow:auto hidden}
 .tabs-pill .tab{padding:6px 14px;border-radius:var(--r-badge);font-size:14px}
 .tabs-pill .tab.on{background:var(--surface);color:var(--pri-ink);box-shadow:var(--sh-card)}
 .tabs-pill .tab.on::after{display:none}
@@ -274,7 +274,7 @@ dl,dd{margin:0}
 
 /* ---------- 표 ---------- */
 .table-wrap{border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;background:var(--surface)}
-.table-scroll{overflow-x:auto}
+.table-scroll{overflow:auto hidden}
 .table{width:100%;border-collapse:collapse;background:var(--surface);font-size:14px;font-variant-numeric:tabular-nums}
 .table th{background:var(--bg);font-size:13px;font-weight:700;text-align:left;padding:0 var(--gap-title);height:44px;border-bottom:1px solid var(--border);white-space:nowrap}
 .table th.sortable{cursor:pointer;user-select:none}
@@ -369,7 +369,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .stars{color:var(--acc-ink);letter-spacing:1px;font-size:13px}
 
 /* 가로로 넘기는 줄 */
-.rail{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - var(--grid-x)*3)/4);column-gap:var(--grid-x);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px}
+.rail{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - var(--grid-x)*3)/4);column-gap:var(--grid-x);overflow:auto hidden;scroll-snap-type:x mandatory;padding-bottom:4px}
 .rail>*{scroll-snap-align:start}
 .rail::-webkit-scrollbar{height:6px}
 .rail::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
@@ -478,7 +478,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .legend i{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
 
 /* 잔디 그래프 */
-.grass{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,12px);gap:var(--s1);overflow-x:auto;padding-bottom:4px}
+.grass{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,12px);gap:var(--s1);overflow:auto hidden;padding-bottom:4px}
 .grass i{width:12px;height:12px;border-radius:3px;background:#F2E2DD;cursor:pointer;transition:transform var(--t-hover)}
 .grass i:hover{transform:scale(1.25)}
 .grass i.l1{background:#FBD3CA}.grass i.l2{background:#F7A695}.grass i.l3{background:#F0654F}.grass i.l4{background:#C4432E}
@@ -588,7 +588,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
   .t-sec{font-size:20px}
   .app{grid-template-columns:1fr}
   .side{position:sticky;top:0;z-index:31;height:auto;grid-row:auto;border-right:0;border-bottom:1px solid var(--border);padding:var(--s3);
-    display:flex;gap:6px;overflow-x:auto;align-items:center;min-width:0;width:100%;max-width:100%}
+    display:flex;gap:6px;overflow:auto hidden;align-items:center;min-width:0;width:100%;max-width:100%}
   .appmain{min-width:0;max-width:100%}
   .side .logo{padding:0 var(--gap-group) 0 0;font-size:15px;flex:none}
   .side .gl{display:none}
@@ -639,3 +639,19 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
    지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
 .ph > img[data-예시] ~ .lb{display:none}
 /* ── 예시 사진 끝 ── */
+
+/* ⛔ 2026-08-19 검수 촬영에서 잡은 것 — 세 가지를 한 번에 고친다.
+   ① overflow-x 만 열면 세로축이 딸려 올라와 테두리 1px 때문에 세로 스크롤바가 생긴다.
+   ② 푸터가 바닥에 안 붙어, 짧은 화면에서는 화면 가운데 떠 있었다.
+   ③ 그리드 칸의 자식이 min-width:auto 라 칸보다 넓은 내용이 옆 칸을 덮었다. */
+body{min-height:100dvh;display:flex;flex-direction:column}
+body>*:first-child{flex:1 0 auto;min-height:0}
+/* 푸터가 main 안에 있는 짜임(.app-ed > main > .ft)까지 닿게 한다 */
+.app-ed,.app,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+/* flex 자식은 shrink-to-fit 이라 폭이 내용만큼 줄어든다 — width:100% 로 되돌린다 */
+.app-ed>main,.app-ed>.edmain,.app>main,.app>.appmain,.page-wrap>main{flex:1 0 auto;display:flex;flex-direction:column;width:100%}
+body>*:first-child{width:100%}
+.ft{margin-top:auto}
+/* 푸터를 품은 main 은 아래 여백을 푸터에 넘긴다 — 안 그러면 푸터 밑에 64px 이 남는다 */
+main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
+.split-r>*,.split-l>*,.app>*,.edcols>*{min-width:0}

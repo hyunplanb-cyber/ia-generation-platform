@@ -316,6 +316,13 @@
   /* 페이지 번호 */
   on('[data-page]', 'click', function (e, t) {
     var box = t.closest('[data-pager]');
+    /* ⛔ 2026-08-19: 아무 데나 눌러도 이 처리가 돌았다.
+       화면 ID 를 <body data-page="HO-01"> 로 붙여 놨는데, 쪽번호 단추도 data-page 를 쓴다.
+       closest 가 위로 거슬러 올라가다 결국 body 를 잡아서, 빈 자리를 눌러도
+       t 가 body 가 되고 t.textContent(= 그 화면 글자 전부)가 안내 문구로 튀어나왔다.
+       화면을 통째로 덮었다가 3.2초 뒤 사라진다 — 손님은 「눌렀더니 뭐가 확 떴다」로 겪는다.
+       쪽번호 단추는 반드시 [data-pager] 안에 있다. 그 밖이면 아무 일도 안 한다. */
+    if (!box) return;
     if (box) $$('[data-page]', box).forEach(function (x) { x.classList.remove('on'); });
     t.classList.add('on');
     var list = box && box.dataset.pager;

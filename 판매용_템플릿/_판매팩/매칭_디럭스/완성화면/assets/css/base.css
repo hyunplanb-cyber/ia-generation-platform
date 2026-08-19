@@ -309,13 +309,13 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .chip.sm{height:28px;padding:0 11px;font-size:13px}
 
 /* ---------- 탭 ---------- */
-.tabs{display:flex;gap:var(--s6);border-bottom:1px solid var(--border);margin-bottom:var(--sp-block);overflow-x:auto}
+.tabs{display:flex;gap:var(--s6);border-bottom:1px solid var(--border);margin-bottom:var(--sp-block);overflow:auto hidden}
 .tab{background:none;border:0;padding:10px 0;font-size:15px;color:var(--muted);cursor:pointer;
   border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
 .tab.on{color:var(--primary);font-weight:600;border-bottom-color:var(--primary)}
 .tab .cnt{background:var(--bg-soft);border-radius:999px;padding:0 6px;font-size:12px;font-weight:600}
 .tab.on .cnt{background:var(--pri-10);color:var(--primary)}
-.tabs-pill{display:flex;gap:6px;background:var(--bg-soft);border-radius:999px;padding:4px;margin-bottom:var(--sp-block);width:fit-content;max-width:100%;overflow-x:auto}
+.tabs-pill{display:flex;gap:6px;background:var(--bg-soft);border-radius:999px;padding:4px;margin-bottom:var(--sp-block);width:fit-content;max-width:100%;overflow:auto hidden}
 .tabs-pill .tab{border:0;border-radius:999px;padding:6px 16px;margin:0}
 .tabs-pill .tab.on{background:var(--surface);box-shadow:var(--sh-card);color:var(--text)}
 
@@ -429,7 +429,7 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 
 /* ---------- 표 ---------- */
 .table-wrap{border:1px solid var(--border);border-radius:var(--r-card);background:var(--surface);overflow:hidden}
-.table-scroll{overflow-x:auto}
+.table-scroll{overflow:auto hidden}
 .table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
 .table th{background:var(--bg-soft);font-size:13px;font-weight:600;color:var(--muted);text-align:left;
   padding:11px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
@@ -620,7 +620,7 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 
 /* ---------- 가로 스크롤 줄 — 스크롤바 대신 좌우 화살표 ---------- */
 .car{position:relative}
-.carousel{display:flex;gap:var(--card-gap);overflow-x:auto;scroll-behavior:smooth;padding-bottom:var(--s1);scrollbar-width:none}
+.carousel{display:flex;gap:var(--card-gap);overflow:auto hidden;scroll-behavior:smooth;padding-bottom:var(--s1);scrollbar-width:none}
 .carousel::-webkit-scrollbar{display:none}
 .carousel>*{flex:none;width:288px}
 .carousel.wide>*{width:352px}
@@ -778,7 +778,7 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 .gnb-ava{display:inline-flex;border-radius:50%;cursor:pointer}
 .gnb-ava:hover .ph{border-color:var(--primary)}
 
-/* 가로 스크롤 상자는 세로도 같이 잘린다(overflow-x:auto 면 세로가 visible 로 안 남는다).
+/* 가로 스크롤 상자는 세로도 같이 잘린다(overflow:auto hidden 면 세로가 visible 로 안 남는다).
    카드가 hover 로 떠오르면 위쪽 테두리가 잘려 나가므로, 위아래로 숨 쉴 자리를 주고
    그만큼 바깥 여백에서 뺀다 — 자리는 그대로 두면서 안 잘린다(2026-08-06). */
 .car .carousel{padding-top:5px;padding-bottom:5px;margin-top:-5px;margin-bottom:-5px}
@@ -830,3 +830,19 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
    지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
 .ph > img[data-예시] ~ .lb{display:none}
 /* ── 예시 사진 끝 ── */
+
+/* ⛔ 2026-08-19 검수 촬영에서 잡은 것 — 세 가지를 한 번에 고친다.
+   ① overflow-x 만 열면 세로축이 딸려 올라와 테두리 1px 때문에 세로 스크롤바가 생긴다.
+   ② 푸터가 바닥에 안 붙어, 짧은 화면에서는 화면 가운데 떠 있었다.
+   ③ 그리드 칸의 자식이 min-width:auto 라 칸보다 넓은 내용이 옆 칸을 덮었다. */
+body{min-height:100dvh;display:flex;flex-direction:column}
+body>*:first-child{flex:1 0 auto;min-height:0}
+/* 푸터가 main 안에 있는 짜임(.app-ed > main > .ft)까지 닿게 한다 */
+.app-ed,.app,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+/* flex 자식은 shrink-to-fit 이라 폭이 내용만큼 줄어든다 — width:100% 로 되돌린다 */
+.app-ed>main,.app-ed>.edmain,.app>main,.app>.appmain,.page-wrap>main{flex:1 0 auto;display:flex;flex-direction:column;width:100%}
+body>*:first-child{width:100%}
+.ft{margin-top:auto}
+/* 푸터를 품은 main 은 아래 여백을 푸터에 넘긴다 — 안 그러면 푸터 밑에 64px 이 남는다 */
+main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
+.split-r>*,.split-l>*,.app>*,.edcols>*{min-width:0}
