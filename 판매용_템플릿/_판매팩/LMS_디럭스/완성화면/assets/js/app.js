@@ -2,6 +2,12 @@
    화면 안에서 끝나는 조작은 진짜로 값이 바뀐다.
    서버가 있어야 하는 것(저장·발송·결제)만 안내 문구로 대신한다. */
 (function () {
+  /* 받침을 보고 조사를 고른다 — 「비밀번호를」·「이메일을」처럼 읽히게 한다.
+     2026-08-19 검수: 「을(를)」·「(으)로」가 손님 화면에 그대로 나갔다. */
+  function 조사붙이기(말, 있, 없) {
+    var c = String(말).charCodeAt(String(말).length - 1) - 0xac00;
+    return 말 + (c >= 0 && c <= 11171 && c % 28 !== 0 ? 있 : 없);
+  }
   'use strict';
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -401,6 +407,10 @@
     }
     if (t.dataset.label) {
       $$('[data-pick-out="' + name + '"]').forEach(function (x) { x.textContent = t.dataset.label; });
+      /* 이름이 바뀌면 뒤에 붙는 조사도 같이 바꾼다 — 「카카오페이로」·「신용카드로」 */
+      $$('[data-josa-for="' + name + '"]').forEach(function (x) {
+        x.textContent = 조사붙이기(t.dataset.label || '', '으로', '로').slice((t.dataset.label || '').length);
+      });
     }
     recalc();
   });
@@ -459,7 +469,7 @@
     });
     $$('[data-gatemsg="' + g + '"]').forEach(function (m) {
       m.hidden = !tried[g] || need.length === 0;
-      if (need.length) m.textContent = '⚠ ' + need.map(function (x) { return x.dataset.label || '필수 항목'; }).join(' · ') + ' 을(를) 아직 채우지 않았어요';
+      if (need.length) m.textContent = '⚠ ' + need.map(function (x) { return x.dataset.label || '필수 항목'; }).join(' · ') + '' + 조사붙이기(need[need.length-1].dataset.label || '필수 항목', '을', '를').slice(-1) + ' 아직 채우지 않았어요';
     });
   }
   window.gate = gate;
