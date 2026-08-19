@@ -96,6 +96,9 @@ export function isOwner(email: string | null | undefined): boolean {
  *
  * 켜면 이렇게 된다
  *   · 오푸스 보강을 건너뛴다        다운로드 1건 3,000~10,000원 → 0원
+ *     ⭐ 다만 **주인은 예외**다(2026-08-19). 팔기 전에 손님이 받을 파일을 직접
+ *       봐야 하는데 심사 모드가 그것까지 막고 있었다. 주인이 받을 때는 진짜 돈이
+ *       나간다 — 심사관·손님은 그대로 막힌다. `application/enrich-download.ts` 참고
  *   · 충전은 계정당 REVIEW_MAX_CHARGES 회까지
  *   · 팩은 REVIEW_OPEN_PLAN 등급만 살 수 있다 (나머지는 「준비 중」)
  *

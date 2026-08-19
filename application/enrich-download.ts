@@ -5,7 +5,8 @@ import type { EnrichScreenInput } from "@/domain/ports/ia-enricher";
 import type { EnrichedFields } from "@/domain/ports/screen-repository";
 import { MAX_FUNC_DEF_LENGTH } from "@/domain/screen/func-def-limit";
 import { withProjectAuth } from "@/application/with-project-auth";
-import { REVIEW_MODE } from "@/lib/flags";
+import { REVIEW_MODE, isOwner } from "@/lib/flags";
+import { getSession } from "@/lib/session";
 
 export type EnrichDownloadResult =
   | { ok: true; total: number; enriched: number; skipped: number; failedChunks: number }
@@ -30,7 +31,11 @@ export async function enrichForDownload(projectId: string): Promise<EnrichDownlo
        심사는 「결제창이 뜨는가」를 보는 절차라 결과물 품질이 기준이 아니고,
        사용처는 우리가 캡처해 PPT 로 제출한다. 다운로드 자체는 그대로 되고
        기본본(하이쿠로 이미 만든 것)이 나간다 — 추가 지출만 0이 된다. */
-    if (REVIEW_MODE) {
+    /* ⭐ 주인은 건너뛰지 않는다 (2026-08-19 사장님 지시).
+       「내 계정만 오퍼스로 돌게 해줘」 — 손님이 받을 파일이 하이쿠본과 어떻게 다른지
+       팔기 전에 직접 봐야 하는데, 심사 모드가 그것까지 막고 있었다.
+       ⚠ 주인 다운로드 1건에 진짜 돈이 3,000~10,000원 나간다. 심사관은 그대로 막힌다. */
+    if (REVIEW_MODE && !isOwner((await getSession())?.user.email)) {
       const all = await drizzleScreenRepository.listByProject(projectId);
       const live = all.filter((s) => s.status === "active");
       return { ok: true, total: live.length, enriched: 0, skipped: live.length, failedChunks: 0 };
