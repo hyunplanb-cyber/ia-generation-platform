@@ -14,6 +14,7 @@
  *   node _작업/대기점검.mjs [날짜]      날짜 없으면 오늘
  */
 import { readdirSync, readFileSync, existsSync } from "node:fs";
+import { 쪼개 } from "./검수표검사.mjs";   /* 따옴표 안의 쉼표까지 제대로 나눈다 */
 
 const 날짜 = process.argv[2] || new Date().toISOString().slice(0, 10);
 const 팩이름 = /^[^_\s]+_(스탠다드|플러스|디럭스|프리미엄)$/;
@@ -26,9 +27,13 @@ const 파일들 = existsSync("검수")
 
 for (const f of 파일들) {
   for (const l of readFileSync("검수/" + f, "utf8").split(/\r?\n/).slice(1).filter(Boolean)) {
-    const c = l.split(",");
-    const 팩 = (c[2] || "").trim();
-    if (c[c.length - 1].trim().startsWith("고침") && 팩이름.test(팩)) 고친.add(팩);
+    const c = 쪼개(l);
+    if (c.length !== 7) continue;                  /* 모양이 틀린 줄은 검수표검사.mjs 가 잡는다 */
+    if (!c[6].trim().startsWith("고침")) continue;
+    /* 한 줄이 여러 팩을 말할 수 있다 */
+    for (const 팩 of c[2].split(",").map((x) => x.trim())) {
+      if (팩이름.test(팩)) 고친.add(팩);
+    }
   }
 }
 

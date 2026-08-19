@@ -15,6 +15,8 @@ import { getSession } from "@/lib/session";
 import { isOwner } from "@/lib/flags";
 import { 판단읽기, 차례대로 } from "@/lib/qa-decisions";
 import { DecisionRow } from "./decision-row";
+import { 검수기록읽기 } from "@/lib/qa-record";
+import { RecordSection } from "./record-section";
 
 export const metadata = { title: "검수 판단 — 카페인컬러" };
 /* 루틴이 파일을 고치면 바로 보여야 한다 — 캐시로 굳히지 않는다. */
@@ -25,7 +27,7 @@ export default async function 검수판단페이지() {
   /* 주인이 아니면 «없는 페이지»로 둔다 — SNS 검수기와 같은 규칙. */
   if (!isOwner(session?.user.email)) notFound();
 
-  const 목록 = await 판단읽기();
+  const [목록, 회차] = await Promise.all([판단읽기(), 검수기록읽기()]);
   const 것들 = 차례대로(목록.건);
   const 기다림 = 것들.filter((x) => x.상태 === "기다림");
   const 처리됨 = 것들.filter((x) => x.상태 !== "기다림");
@@ -88,6 +90,8 @@ export default async function 검수판단페이지() {
           )}
         </>
       )}
+
+      <RecordSection 회차={회차} />
     </div>
   );
 }
