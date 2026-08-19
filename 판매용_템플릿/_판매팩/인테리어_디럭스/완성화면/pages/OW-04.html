@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>자재·원가 · 집짓다</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<header class="gnb"><div class="gnb-in">
+  <a class="logo" href="HO-01.html"><span class="mark">집</span>집짓다</a>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="CS-01.html">시공사례</a><a href="ES-01.html">예상 견적</a><a href="VS-01.html">실측 예약</a><a href="HO-03.html">비용 안내</a></nav>
+  <div class="gnb-right">
+    <a class="btn btn-ghost btn-sm" href="OW-01.html">업체 관리자</a>
+    <a class="btn btn-pri btn-sm" href="AU-01.html">로그인</a>
+  </div>
+</div></header>
+
+<main class="main"><div class="owner-shell">
+    <nav class="owner-side"><a class="" href="OW-01.html">대시보드</a><a class="" href="OW-02.html">견적 요청함</a><a class="" href="OW-03.html">현장 상세</a><a class="on" href="OW-04.html">자재·원가</a><a class="" href="OW-05.html">청구·수금</a><a class="" href="OW-06.html">일정 캘린더</a><a class="" href="OW-07.html">업체 정보</a></nav>
+    <div class="owner-main">
+
+<div class="page-hd">
+  <div><h1 class="t-page">자재·원가</h1></div>
+  <div class="btns"><button class="btn btn-ghost btn-sm" type="button" data-modal="m-add-material">자재 추가</button><button class="btn btn-pri btn-sm" type="button" data-modal="m-po">발주서 내보내기</button></div></div>
+
+<div class="g4">
+  <div class="box"><div class="t-card">413만원</div><div class="t-sub mt2">자재 원가</div></div>
+  <div class="box"><div class="t-card">3,596만원</div><div class="t-sub mt2">계약금액</div></div>
+  
+  <div class="box"><div class="t-card">3,181만원</div><div class="t-sub mt2">자재 빼고 남은 돈</div></div>
+  <div class="box"><div class="t-card pri">12%</div><div class="t-sub mt2">계약금액 대비 자재비</div></div>
+</div>
+
+
+<div class="banner banner-warn mt6"><span class="ico">⚠</span><div class="grow">발주 안 한 자재 <b data-po-left>3</b>건 · 그중 2건은 3일 안에 써야 합니다</div></div>
+
+<section class="sec mt6">
+  
+  
+  <div class="chips"><button class="chip on" type="button" data-proc-chip>전체</button><button class="chip" type="button" data-proc-chip>철거</button><button class="chip" type="button" data-proc-chip>설비</button><button class="chip" type="button" data-proc-chip>전기</button><button class="chip" type="button" data-proc-chip>목공</button><button class="chip" type="button" data-proc-chip>타일</button><button class="chip" type="button" data-proc-chip>도배</button><button class="chip" type="button" data-proc-chip>마루</button></div></section>
+
+<section class="sec mt6">
+  
+  
+  <div class="table-wrap table-scroll"><table class="table tbl-mat"><thead><tr><th>공정</th><th>품명</th><th>규격</th><th>수량</th><th>견적단가</th><th>실제단가</th><th>차액</th><th>발주상태</th><th>납품예정</th></tr></thead><tbody><tr class="mat-row"><td>목공</td><td>MDF 9T (아트월)</td><td>1220×2440</td><td>8장</td><td><span class="num">45,000원</span></td><td><span class="num">47,000원</span></td><td class="r"><span class="num dan">+16,000원</span></td><td class=""><span data-po-badge><span class="badge b-ok">입고됨</span></span><select class="sel" data-po-st data-po-cls="b-mut,b-warn,b-ok"><option>발주전</option><option>발주함</option><option selected>입고됨</option></select></td><td>9/12</td></tr><tr class="mat-row"><td>목공</td><td>PB 18T (붙박이장)</td><td>1220×2440</td><td>6장</td><td><span class="num">38,000원</span></td><td><span class="num">38,000원</span></td><td class="r"><span class="num pri">0원</span></td><td class=""><span data-po-badge><span class="badge b-ok">입고됨</span></span><select class="sel" data-po-st data-po-cls="b-mut,b-warn,b-ok"><option>발주전</option><option>발주함</option><option selected>입고됨</option></select></td><td>9/12</td></tr><tr class="mat-row"><td>타일</td><td>포세린 타일</td><td>600×600</td><td>42장</td><td><span class="num">12,000원</span></td><td><span class="num">-</span></td><td>-</td><td class=""><span data-po-badge><span class="badge b-warn">발주함</span></span><select class="sel" data-po-st data-po-cls="b-mut,b-warn,b-ok"><option>발주전</option><option selected>발주함</option><option>입고됨</option></select></td><td>9/23</td></tr><tr class="mat-row"><td>타일</td><td>줄눈 시멘트</td><td>25kg</td><td>4포</td><td><span class="num">18,000원</span></td><td><span class="num">-</span></td><td>-</td><td class=""><span data-po-badge><span class="badge b-mut">발주전</span></span><select class="sel" data-po-st data-po-cls="b-mut,b-warn,b-ok"><option selected>발주전</option><option>발주함</option><option>입고됨</option></select></td><td class="dan strong">9/23</td></tr><tr class="mat-row"><td>도배</td><td>실크벽지</td><td>폭 106cm</td><td>12롤</td><td><span class="num">32,000원</span></td><td><span class="num">-</span></td><td>-</td><td class=""><span data-po-badge><span class="badge b-mut">발주전</span></span><select class="sel" data-po-st data-po-cls="b-mut,b-warn,b-ok"><option selected>발주전</option><option>발주함</option><option>입고됨</option></select></td><td>9/25</td></tr><tr class="mat-row"><td>마루</td><td>강마루</td><td>155×1200</td><td>38평</td><td><span class="num">68,000원</span></td><td><span class="num">-</span></td><td>-</td><td class=""><span data-po-badge><span class="badge b-mut">발주전</span></span><select class="sel" data-po-st data-po-cls="b-mut,b-warn,b-ok"><option selected>발주전</option><option>발주함</option><option>입고됨</option></select></td><td>9/26</td></tr></tbody><tfoot><tr><td>합계</td><td></td><td></td><td></td><td><span class="num">4,132,000원</span></td><td><span class="num">4,148,000원</span></td><td></td><td></td><td></td></tr></tfoot></table></div></section>
+
+<template id="m-add-material"><div class="modal">
+  <div class="m-hd"><h3 class="t-card">자재 추가</h3><button class="x" type="button" data-dismiss aria-label="닫기">✕</button></div>
+  <div class="m-bd">
+  <div class="field"><span class="lb">공정</span><select class="sel"><option>철거·폐기물</option><option>설비·배관</option><option>전기·조명</option><option selected>목공</option><option>타일</option><option>도배</option><option>마루</option></select></div>
+  <div class="field"><span class="lb">품명</span><input class="in " type="text" placeholder="예: MDF 9T (아트월)"></div>
+  <div class="row" style="gap:var(--sp-btn)">
+    <div class="field grow"><span class="lb">규격</span><input class="in " type="text" placeholder="1220×2440"></div>
+    <div class="field grow"><span class="lb">수량</span><input class="in " type="number" placeholder="8"></div>
+  </div>
+  <div class="field"><span class="lb">거래처</span><select class="sel"><option selected>한샘 자재</option><option>동화기업</option><option>LX하우시스</option><option>지역 자재상 (성수)</option></select></div>
+  <div class="field"><span class="lb">견적 단가</span><input class="in " type="number" placeholder="45000"></div>
+  <div class="field"><span class="lb">납품 예정일</span><input class="in " type="date"></div>
+</div><div class="m-ft"><button class="btn btn-ghost" type="button" data-dismiss>취소</button><button class="btn btn-pri" type="button" data-dismiss data-toast="자재를 한 줄 넣었어요" data-toast-kind="ok">넣기</button></div></div></template>
+
+<template id="m-po"><div class="modal">
+  <div class="m-hd"><h3 class="t-card">발주서 내보내기</h3><button class="x" type="button" data-dismiss aria-label="닫기">✕</button></div>
+  <div class="m-bd">
+  <p class="t-sub mb4">발주 안 한 자재만 골라 거래처별로 묶어 드려요.</p>
+  <div class="field"><span class="lb">어느 현장</span><select class="sel"><option selected>성동구 왕십리 ○○아파트 101동 1203호</option><option>마포구 아현동 ○○빌라 2층</option></select></div>
+  <div class="field"><span class="lb">거래처</span><select class="sel"><option selected>한샘 자재 (3건)</option><option>동화기업 (1건)</option><option>LX하우시스 (2건)</option><option>전체 거래처</option></select></div>
+  <div class="field"><span class="lb">공정</span><select class="sel"><option selected>발주 안 한 것 전부</option><option>목공</option><option>타일</option><option>도배</option><option>마루</option></select></div>
+  <div class="stack mt2"><label class="check none">
+  <input type="checkbox" checked>
+  <span>납품 예정일이 3일 안인 것만</span></label><label class="check none">
+  <input type="checkbox">
+  <span>단가를 뺀 채로 내보내기</span></label></div>
+  <div class="field mt4"><span class="lb">보낼 방법</span><select class="sel"><option selected>PDF 내려받기</option><option>거래처 이메일로 보내기</option><option>문자로 링크 보내기</option></select></div>
+</div><div class="m-ft"><button class="btn btn-ghost" type="button" data-dismiss>취소</button><button class="btn btn-pri" type="button" data-dismiss data-toast="발주서를 내보냈어요" data-toast-kind="ok">발주서 만들기</button></div></div></template>
+</div>
+  </div></main>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">OW-04 · 자재·원가</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>현장 관리</dd>
+        <dt>기능정의</dt><dd>현장별 자재 목록(공정·품명·규격·수량·견적 단가·실제 단가·차액) · 실제 단가를 넣으면 계산되는 차액과 마진 · 발주 상태 배지(발주 전·발주함·입고됨·반품) · 발주 안 한 것 수를 위에 · 납품 예정일과 늦어지는 것 표시 · 공정별 필터 · 원가 합계와 계약금액 대비 마진율 · 자재 추가와 거래처 · 발주서 내보내기</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="OW-03.html">현장 상세 → 현장 상세 - 공정 편집</a><a href="OW-05.html">청구·수금 → 기성 청구·수금</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

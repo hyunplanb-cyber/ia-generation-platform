@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>자재·원가 · 마루공방</title>
+<meta name="description" content="현장별 자재 목록(공정·품명·규격·수량·견적 단가·실제 단가·차액) · 실제 단가를 넣으면 계산되는 차액과 마진 · 발주 상태 배지(발주 전·발주함·입고됨·반품) · 발주 안 한 것 수를 위에 · 납품 예정일과 늦어지는 것 표시 · 공정별 필터 · 원가 합계와 계약금액">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="OW0401">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="OW0101.html"><span class="em">마</span>마루공방 <span class="t-sub" style="font-weight:500">사장님</span></a>
+    <div class="gl">현장 관리</div><a href="OW0101.html">현장 대시보드</a><a href="OW0201.html">견적 요청함</a><a href="OW0301.html">현장 상세</a><a href="OW0401.html" class="on" aria-current="page">자재·원가</a><a href="OW0501.html">기성 청구·수금</a><a href="OW0601.html">일정 캘린더</a><div class="gl">업체 설정</div><a href="OW0701.html">업체 정보·직원</a>
+    <div class="side-ft">
+      <a href="HO0101.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    <form class="tb-search" role="search"><span class="ico" aria-hidden="true">🔍</span>
+      <input type="search" placeholder="시공 사례·자재를 검색해 보세요" aria-label="검색"></form>
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="OW0101.html"><span class="ava">이</span>이도목님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="OW0101.html">‹ 현장 대시보드</a>
+    <span class="path">현장 관리 › <b>자재·원가</b></span>
+  </nav>
+    
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">자재·원가</h1><p class="t-sub">성수동 리버뷰 아파트</p></div></div>
+
+<div class="g4 mb6"><button class="stat s-warn" type="button">
+  
+  <span class="l">발주 안 한 것</span>
+  <span class="v"><span data-po-left>3</span>건</span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button><button class="stat " type="button">
+  
+  <span class="l">원가 합계</span>
+  <span class="v">13,122,135원</span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button><button class="stat s-ok" type="button">
+  
+  <span class="l">계약금액 대비 자재비 비중</span>
+  <span class="v">38%</span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button><button class="stat s-mut" type="button">
+  
+  <span class="l">납품 지연</span>
+  <span class="v">1건</span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button></div>
+
+<section class="sec ">
+  
+  <div class="chips"><button class="chip on" type="button" data-proc-chip>전체</button><button class="chip" type="button" data-proc-chip>철거</button><button class="chip" type="button" data-proc-chip>설비</button><button class="chip" type="button" data-proc-chip>전기</button><button class="chip" type="button" data-proc-chip>목공</button><button class="chip" type="button" data-proc-chip>타일</button><button class="chip" type="button" data-proc-chip>도배</button></div></section>
+
+<div class="table-wrap table-scroll"><table class="table tbl-mat">
+    <thead><tr><th>공정</th><th>품명</th><th>수량</th><th>견적 단가</th><th>실제 단가</th><th>차액</th><th>발주 상태</th></tr></thead><tbody><tr class="mat-row"><td>철거·폐기물</td><td>철거·폐기물 자재 일체</td><td>1식</td><td>1,151,822원</td><td>1,197,895원</td><td>46,073원</td><td><span data-po-badge><span class="badge b-mut">발주 전</span></span><select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px"><option selected>발주 전</option><option>발주함</option><option>입고됨</option></select></td></tr><tr class="mat-row"><td>설비·배관</td><td>설비·배관 자재 일체</td><td>1식</td><td>1,223,811원</td><td>1,223,811원</td><td>0원</td><td><span data-po-badge><span class="badge b-pri">발주함</span></span><select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px"><option>발주 전</option><option selected>발주함</option><option>입고됨</option></select></td></tr><tr class="mat-row"><td>전기·조명</td><td>전기·조명 자재 일체</td><td>1식</td><td>1,295,800원</td><td>1,295,800원</td><td>0원</td><td><span data-po-badge><span class="badge b-ok">입고됨</span></span><select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px"><option>발주 전</option><option>발주함</option><option selected>입고됨</option></select></td></tr><tr class="mat-row"><td>목공</td><td>목공 자재 일체</td><td>1식</td><td>1,367,789원</td><td>1,422,501원</td><td>54,712원</td><td><span data-po-badge><span class="badge b-mut">발주 전</span></span><select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px"><option selected>발주 전</option><option>발주함</option><option>입고됨</option></select></td></tr><tr class="mat-row"><td>타일</td><td>타일 자재 일체</td><td>1식</td><td>1,439,778원</td><td>1,439,778원</td><td>0원</td><td><span data-po-badge><span class="badge b-pri">발주함</span></span><select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px"><option>발주 전</option><option selected>발주함</option><option>입고됨</option></select></td></tr><tr class="mat-row"><td>도배</td><td>도배 자재 일체</td><td>1식</td><td>1,511,767원</td><td>1,511,767원</td><td>0원</td><td><span data-po-badge><span class="badge b-ok">입고됨</span></span><select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px"><option>발주 전</option><option>발주함</option><option selected>입고됨</option></select></td></tr><tr class="mat-row"><td>마루</td><td>마루 자재 일체</td><td>1식</td><td>1,583,756원</td><td>1,647,106원</td><td>63,350원</td><td><span data-po-badge><span class="badge b-mut">발주 전</span></span><select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px"><option selected>발주 전</option><option>발주함</option><option>입고됨</option></select></td></tr><tr class="mat-row"><td>도장</td><td>도장 자재 일체</td><td>1식</td><td>1,655,744원</td><td>1,655,744원</td><td>0원</td><td><span data-po-badge><span class="badge b-pri">발주함</span></span><select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px"><option>발주 전</option><option selected>발주함</option><option>입고됨</option></select></td></tr><tr class="mat-row"><td>청소</td><td>청소 자재 일체</td><td>1식</td><td>1,727,733원</td><td>1,727,733원</td><td>0원</td><td><span data-po-badge><span class="badge b-ok">입고됨</span></span><select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px"><option>발주 전</option><option>발주함</option><option selected>입고됨</option></select></td></tr></tbody></table></div>
+
+<section class="sec ">
+  
+  <div class="banner banner-warn "><span class="ico">🚚</span><div class="grow"><b>납품 지연</b> — 타일(포세린 600×600)이 9/23 예정에서 9/25로 늦어졌어요.</div></div></section>
+
+<div class="btns mt4"><button class="btn btn-ghost" type="button">자재 추가</button><button class="btn btn-ghost" type="button">거래처 관리</button><button class="btn btn-primary" type="button">발주서 내보내기</button></div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 마루공방 · (주)마루공방 · 대표 이도목 · 서울 성동구 성수이로 12</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">OW0401</div><div class="nm">자재·원가</div>
+    <div class="fd">현장별 자재 목록(공정·품명·규격·수량·견적 단가·실제 단가·차액) · 실제 단가를 넣으면 계산되는 차액과 마진 · 발주 상태 배지(발주 전·발주함·입고됨·반품) · 발주 안 한 것 수를 위에 · 납품 예정일과 늦어지는 것 표시 · 공정별 필터 · 원가 합계와 계약금액 대비 마진율 · 자재 추가와 거래처 · 발주서 내보내기</div>
+    <div class="lk"><a href="OW0301.html">현장 상세 ›</a><a href="OW0501.html">청구·수금 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">OW0401 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

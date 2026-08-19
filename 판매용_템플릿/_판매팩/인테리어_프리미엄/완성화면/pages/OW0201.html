@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>견적 요청함 · 마루공방</title>
+<meta name="description" content="상태 탭(새 요청·확인 중·실측 잡힘·계약됨·놓침) · 요청 목록(들어온 시각·평수·분야·자동 계산 금액·연락처 가림) · 새 요청은 표시가 다르게 · 줄을 펼치면 나오는 손님이 넣은 조건 전부 · 담당자 배정 드롭다운 · 몇 시간 안에 연락했는지 응답 시간 표시 · ">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="OW0201">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="OW0101.html"><span class="em">마</span>마루공방 <span class="t-sub" style="font-weight:500">사장님</span></a>
+    <div class="gl">현장 관리</div><a href="OW0101.html">현장 대시보드</a><a href="OW0201.html" class="on" aria-current="page">견적 요청함</a><a href="OW0301.html">현장 상세</a><a href="OW0401.html">자재·원가</a><a href="OW0501.html">기성 청구·수금</a><a href="OW0601.html">일정 캘린더</a><div class="gl">업체 설정</div><a href="OW0701.html">업체 정보·직원</a>
+    <div class="side-ft">
+      <a href="HO0101.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    <form class="tb-search" role="search"><span class="ico" aria-hidden="true">🔍</span>
+      <input type="search" placeholder="시공 사례·자재를 검색해 보세요" aria-label="검색"></form>
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="OW0101.html"><span class="ava">이</span>이도목님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="OW0101.html">‹ 현장 대시보드</a>
+    <span class="path">현장 관리 › <b>견적 요청함</b></span>
+  </nav>
+    
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">견적 요청함</h1><p class="t-sub">요청 5건 · 계약 성사율 34%</p></div></div>
+
+<div class="tabs"><button class="tab on" type="button" >새 요청<span class="cnt">1</span></button><button class="tab" type="button" >확인 중<span class="cnt">1</span></button><button class="tab" type="button" >실측 잡힘<span class="cnt">1</span></button><button class="tab" type="button" >계약됨<span class="cnt">1</span></button><button class="tab" type="button" >놓침<span class="cnt">1</span></button></div>
+
+<div class="table-wrap table-scroll"><table class="table ">
+    <thead><tr><th>들어온 시각</th><th>평수</th><th>분야</th><th>자동 계산 금액</th><th>연락처</th><th>담당자</th><th>상태</th></tr></thead><tbody><tr><td>10분 전</td><td>28평</td><td>아파트 전체</td><td>29,800,000원</td><td>010-****-2231</td><td><select class="input" style="height:34px;padding:0 8px"><option>미배정</option><option>김하은</option><option>이도목</option></select></td><td><span class="badge b-acc">새 요청</span></td></tr><tr><td>1시간 전</td><td>12평</td><td>욕실</td><td>9,200,000원</td><td>010-****-8842</td><td><select class="input" style="height:34px;padding:0 8px"><option>미배정</option><option>김하은</option><option>이도목</option></select></td><td><span class="badge b-pri">확인 중</span></td></tr><tr><td>어제</td><td>34평</td><td>아파트 전체</td><td>36,500,000원</td><td>010-****-1190</td><td><select class="input" style="height:34px;padding:0 8px"><option>미배정</option><option>김하은</option><option>이도목</option></select></td><td><span class="badge b-pri">실측 잡힘</span></td></tr><tr><td>2일 전</td><td>9평</td><td>주방</td><td>8,400,000원</td><td>010-****-5521</td><td><select class="input" style="height:34px;padding:0 8px"><option>미배정</option><option>김하은</option><option>이도목</option></select></td><td><span class="badge b-ok">계약됨</span></td></tr><tr><td>3일 전</td><td>18평</td><td>상업공간</td><td>16,900,000원</td><td>010-****-7710</td><td><select class="input" style="height:34px;padding:0 8px"><option>미배정</option><option>김하은</option><option>이도목</option></select></td><td><span class="badge b-danger">놓침</span></td></tr></tbody></table></div>
+
+<section class="sec ">
+  
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">놓친 요청 — RQ-0227</h3></div>
+  <div class="card-bd "><p class="t-sub">응답 시간 8시간 초과로 자동 마감됐습니다.</p>
+  <div class="field mt3"><label class="lb">놓친 까닭</label><select class="input"><option>담당자 부재</option><option>예산 범위 밖</option><option>지역 밖</option></select></div></div>
+  </div></section>
+
+<div class="center mt4"><a class="btn btn-primary" href="VS0101.html">실측 예약으로 바로 넘기기</a></div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 마루공방 · (주)마루공방 · 대표 이도목 · 서울 성동구 성수이로 12</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">OW0201</div><div class="nm">견적 요청함</div>
+    <div class="fd">상태 탭(새 요청·확인 중·실측 잡힘·계약됨·놓침) · 요청 목록(들어온 시각·평수·분야·자동 계산 금액·연락처 가림) · 새 요청은 표시가 다르게 · 줄을 펼치면 나오는 손님이 넣은 조건 전부 · 담당자 배정 드롭다운 · 몇 시간 안에 연락했는지 응답 시간 표시 · 놓친 요청과 그 까닭 적기 · 실측 예약으로 바로 넘기기 · 요청 수와 계약 성사율</div>
+    <div class="lk"><a href="OW0101.html">현장 대시보드 ›</a><a href="OW0301.html">현장 상세 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">OW0201 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

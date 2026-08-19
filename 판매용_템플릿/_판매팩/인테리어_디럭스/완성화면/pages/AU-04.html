@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내 정보 · 집짓다</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<header class="gnb"><div class="gnb-in">
+  <a class="logo" href="HO-01.html"><span class="mark">집</span>집짓다</a>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="CS-01.html">시공사례</a><a href="ES-01.html">예상 견적</a><a href="VS-01.html">실측 예약</a><a href="HO-03.html">비용 안내</a></nav>
+  <div class="gnb-right">
+    <a class="btn btn-ghost btn-sm" href="OW-01.html">업체 관리자</a>
+    <a class="btn btn-pri btn-sm" href="AU-01.html">로그인</a>
+  </div>
+</div></header>
+
+<main class="main"><div class="wrap"><a class="back" href="AU-01.html">‹ 로그인</a><div class="page-hd">
+  <div><h1 class="t-page">내 정보</h1></div>
+  </div>
+
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">프로필</h3></div>
+  <div class="card-bd "><div class="row" style="gap:var(--sp-card-pad)"><span class="av">홍</span><div class="grow"><div class="t-card">홍길동</div><div class="t-sub">010-0000-0000</div></div><button class="btn btn-ghost btn-sm" type="button" data-toast="프로필을 고칠 수 있어요">고치기</button></div></div>
+  </div>
+
+<section class="sec mt6">
+  <div class="sec-hd"><h2 class="t-sec">내 현장</h2></div>
+  
+  <div class="g2">
+  <div class="box"><div class="t-card">성동구 왕십리로 000</div><div class="t-sub mt2">진행 중 · 62%</div><a class="btn btn-pri mt3 btn-sm" href="PR-01.html">공사 진행 보기</a></div>
+  <div class="box"><div class="t-card">마포구 아현동</div><div class="t-sub mt2">준공 2026-08-05 · 보증 13개월 남음</div><a class="btn mt3 btn-sm" href="AS-01.html">하자보수 접수</a></div>
+</div></section>
+
+<section class="sec mt6">
+  <div class="sec-hd"><h2 class="t-sec">저장한 견적</h2></div>
+  
+  <div class="table-wrap table-scroll"><table class="table "><thead><tr><th>견적 이름</th><th>총액</th><th>유효기간</th><th></th></tr></thead><tbody><tr><td>성동구 32평 전체시공</td><td>3,240만~3,980만</td><td>2026-09-16</td><td class="r"><a class="btn btn-ghost btn-sm" href="ES-02.html">보기</a><button class="btn btn-ghost btn-sm" type="button" data-toast="견적을 지웠어요">지우기</button></td></tr></tbody></table></div></section>
+
+<section class="sec mt6">
+  <div class="sec-hd"><h2 class="t-sec">관심 시공 분야</h2></div>
+  
+  <div class="chips"><button class="chip on" type="button">아파트 전체</button><button class="chip on" type="button">주방</button><button class="chip" type="button">욕실</button></div></section>
+
+<section class="sec mt6">
+  <div class="sec-hd"><h2 class="t-sec">알림 설정</h2></div>
+  
+  <div class="stack">
+  <div class="row-b"><div><div>공사 진행 알림</div><div class="t-sub">공사 진행 알림 소식을 알려드려요</div></div><button class="toggle on" type="button" aria-pressed="true"></button></div><div class="row-b"><div><div>추가공사 요청</div><div class="t-sub">추가공사 요청 소식을 알려드려요</div></div><button class="toggle on" type="button" aria-pressed="true"></button></div><div class="row-b"><div><div>대금 청구</div><div class="t-sub">대금 청구 소식을 알려드려요</div></div><button class="toggle on" type="button" aria-pressed="true"></button></div><div class="row-b"><div><div>하자보수 처리</div><div class="t-sub">하자보수 처리 소식을 알려드려요</div></div><button class="toggle" type="button" aria-pressed="false"></button></div>
+</div></section>
+
+<section class="sec mt6">
+  <div class="sec-hd"><h2 class="t-sec">알림 받을 방법</h2></div>
+  
+  <div class="row" style="gap:var(--sp-btn)">
+  <button class="radio on" data-group="notify" type="button">문자</button>
+  <button class="radio" data-group="notify" type="button">카카오톡</button>
+  <button class="radio" data-group="notify" type="button">앱 알림</button>
+</div></section>
+
+<section class="sec mt6">
+  
+  
+  <button class="btn btn-ghost" type="button" data-toast="비밀번호 바꾸기 창을 띄웁니다">비밀번호 바꾸기</button></section>
+
+<div class="mt8"><button class="btn btn-dan btn-sm" type="button" data-modal="m-leave">회원 탈퇴</button></div>
+
+<template id="m-leave"><div class="modal">
+  <div class="m-hd"><h3 class="t-card">정말 탈퇴하시겠어요?</h3><button class="x" type="button" data-dismiss aria-label="닫기">✕</button></div>
+  <div class="m-bd"><p>보증 기간이 13개월 남아 있어요. 탈퇴하시면 하자보수 접수가 어려워집니다.</p></div><div class="m-ft"><button class="btn btn-ghost" type="button" data-dismiss>취소</button><button class="btn btn-dan" type="button">탈퇴하기</button></div></div></template></div></main>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">AU-04 · 내 정보</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>계정</dd>
+        <dt>기능정의</dt><dd>프로필 사진과 이름·연락처 고치기 · 내 현장 목록(진행 중·끝남)과 각각으로 가는 길 · 저장한 견적 목록 · 관심 시공 분야 칩 고치기 · 알림 설정 스위치(공사 진행·추가공사·청구·하자보수) · 알림 받을 방법(문자·카톡·앱) · 비밀번호 바꾸기 · 회원 탈퇴와 그 전에 알려 줄 것(보증 기간이 남았다는 것)</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="PR-01.html">공사 진행 → 공정표</a><a href="ES-05.html">저장한 견적 견주기 → 견적 견주기</a><a href="AS-01.html">하자보수 접수 → 하자보수 접수</a><a href="HO-01.html">홈으로 → 홈</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

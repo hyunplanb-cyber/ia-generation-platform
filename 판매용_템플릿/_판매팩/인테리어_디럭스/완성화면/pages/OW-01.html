@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>현장 대시보드 · 집짓다</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<header class="gnb"><div class="gnb-in">
+  <a class="logo" href="HO-01.html"><span class="mark">집</span>집짓다</a>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="CS-01.html">시공사례</a><a href="ES-01.html">예상 견적</a><a href="VS-01.html">실측 예약</a><a href="HO-03.html">비용 안내</a></nav>
+  <div class="gnb-right">
+    <a class="btn btn-ghost btn-sm" href="OW-01.html">업체 관리자</a>
+    <a class="btn btn-pri btn-sm" href="AU-01.html">로그인</a>
+  </div>
+</div></header>
+
+<main class="main"><div class="owner-shell">
+    <nav class="owner-side"><a class="on" href="OW-01.html">대시보드</a><a class="" href="OW-02.html">견적 요청함</a><a class="" href="OW-03.html">현장 상세</a><a class="" href="OW-04.html">자재·원가</a><a class="" href="OW-05.html">청구·수금</a><a class="" href="OW-06.html">일정 캘린더</a><a class="" href="OW-07.html">업체 정보</a></nav>
+    <div class="owner-main">
+<div class="page-hd">
+  <div><h1 class="t-page">현장 대시보드</h1></div>
+  <div class="btns"><select class="sel" data-period-pick><option value="0" selected data-매출="189900000" data-미수금="38200000" data-매출라벨="이달 매출">이번 달</option><option value="1" data-매출="167200000" data-미수금="41500000" data-매출라벨="지난달 매출">지난 달</option><option value="2" data-매출="1524000000" data-미수금="52800000" data-매출라벨="올해 누적 매출">올해</option></select></div></div>
+
+<div class="g4">
+  <div class="box"><div class="t-page pri">7<span style="font-size:14px">곳</span></div><div class="t-sub mt2">진행 중 현장</div></div>
+  <div class="box"><div class="t-page pri"><span data-stat-num="매출">18,990</span><span style="font-size:14px">만원</span></div><div class="t-sub mt2" data-stat-label="매출">이달 매출</div></div>
+  <div class="box"><div class="t-page dan"><span data-stat-num="미수금">3,820</span><span style="font-size:14px">만원</span></div><div class="t-sub mt2">미수금</div></div>
+  <div class="box"><div class="t-page dan">2<span style="font-size:14px">건</span></div><div class="t-sub mt2">밀린 공정</div></div>
+</div>
+
+<section class="sec mt8">
+  <div class="sec-hd"><h2 class="t-sec">오늘 할 일</h2></div>
+  
+  <div class="table-wrap table-scroll"><table class="table "><thead><tr><th>할 일</th><th></th></tr></thead><tbody><tr><td>기성 청구 2건</td><td class="r"><a class="btn btn-ghost btn-sm" href="OW-05.html">처리하러 가기</a></td></tr><tr><td>자재 발주 1건</td><td class="r"><a class="btn btn-ghost btn-sm" href="OW-04.html">처리하러 가기</a></td></tr><tr><td>준공 검수 방문 1건</td><td class="r"><a class="btn btn-ghost btn-sm" href="OW-03.html">처리하러 가기</a></td></tr></tbody></table></div></section>
+
+<section class="sec mt8">
+  <div class="sec-hd"><h2 class="t-sec">진행 중 현장</h2></div>
+  
+  <div class="stack"><div class="rowcard" data-href="OW-03.html">
+  <div class="grow">
+    <div class="row-b"><span class="t-card">성동구 왕십리 ○○아파트 101동 1203호</span><span class="badge b-ok">정상</span></div>
+    <div class="t-sub mt1">32평 · 지금 목공 · 다음 일정 9/24 타일 색 확인</div>
+    <div class="progress"><div class="fill " style="width:62%"></div></div>
+  </div>
+  <div class="side"><span class="t-card">62%</span></div>
+</div><div class="rowcard" data-href="OW-03.html">
+  <div class="grow">
+    <div class="row-b"><span class="t-card">마포구 아현동 ○○빌라 2층</span><span class="badge b-ok">정상</span></div>
+    <div class="t-sub mt1">24평 · 지금 타일 · 다음 일정 9/23 도배 자재 입고</div>
+    <div class="progress"><div class="fill " style="width:78%"></div></div>
+  </div>
+  <div class="side"><span class="t-card">78%</span></div>
+</div><div class="rowcard bad" data-href="OW-03.html">
+  <div class="grow">
+    <div class="row-b"><span class="t-card">용산구 한강로 카페 상가 1층</span><span class="badge b-dan">밀림</span></div>
+    <div class="t-sub mt1">28평 · 지금 전기 · 다음 일정 9/25 소방 점검</div>
+    <div class="progress"><div class="fill " style="width:34%"></div></div>
+  </div>
+  <div class="side"><span class="t-card">34%</span></div>
+</div><div class="rowcard" data-href="OW-03.html">
+  <div class="grow">
+    <div class="row-b"><span class="t-card">송파구 잠실동 ○○아파트 3동 802호</span><span class="badge b-ok">정상</span></div>
+    <div class="t-sub mt1">34평 · 지금 준공청소 · 다음 일정 9/21 준공 검수</div>
+    <div class="progress"><div class="fill " style="width:96%"></div></div>
+  </div>
+  <div class="side"><span class="t-card">96%</span></div>
+</div><div class="rowcard" data-href="OW-03.html">
+  <div class="grow">
+    <div class="row-b"><span class="t-card">광진구 구의동 원룸</span><span class="badge b-ok">정상</span></div>
+    <div class="t-sub mt1">18평 · 지금 도배 · 다음 일정 9/23 마루 시공</div>
+    <div class="progress"><div class="fill " style="width:55%"></div></div>
+  </div>
+  <div class="side"><span class="t-card">55%</span></div>
+</div><div class="rowcard bad" data-href="OW-03.html">
+  <div class="grow">
+    <div class="row-b"><span class="t-card">강동구 천호동 ○○아파트 5동 401호</span><span class="badge b-dan">밀림</span></div>
+    <div class="t-sub mt1">32평 · 지금 설비 · 다음 일정 9/24 배관 교체</div>
+    <div class="progress"><div class="fill " style="width:18%"></div></div>
+  </div>
+  <div class="side"><span class="t-card">18%</span></div>
+</div><div class="rowcard" data-href="OW-03.html">
+  <div class="grow">
+    <div class="row-b"><span class="t-card">노원구 상계동 ○○아파트 12동 1502호</span><span class="badge b-ok">정상</span></div>
+    <div class="t-sub mt1">42평 · 지금 철거 · 다음 일정 9/22 폐기물 반출</div>
+    <div class="progress"><div class="fill " style="width:8%"></div></div>
+  </div>
+  <div class="side"><span class="t-card">8%</span></div>
+</div></div></section>
+
+<section class="sec mt8">
+  <div class="sec-hd"><h2 class="t-sec">이번 주 일정</h2></div>
+  
+  <div class="row" style="gap:var(--sp-item);overflow-x:auto">
+  <div class="box" style="flex:none;width:150px">
+    <div class="t-sub strong">월</div>
+    <div class="t-sub mt2">성동구 · 목공팀</div></div><div class="box" style="flex:none;width:150px">
+    <div class="t-sub strong">화</div>
+    <div class="t-sub mt2">마포구 · 타일팀</div></div><div class="box" style="flex:none;width:150px">
+    <div class="t-sub strong">수</div>
+    <div class="t-sub mt2">용산구 · 전기팀</div></div><div class="box" style="flex:none;width:150px">
+    <div class="t-sub strong">목</div>
+    <div class="t-sub mt2">송파구 · 준공청소팀</div></div><div class="box" style="flex:none;width:150px">
+    <div class="t-sub strong">금</div>
+    <div class="t-sub mt2">광진구 · 도배팀</div></div>
+</div></section>
+
+<div class="banner banner-info mt8"><span class="ico">ℹ</span><div class="grow">어제 들어온 견적 요청 2건</div><a class="btn btn-pri btn-sm" href="OW-02.html">보러 가기</a></div>
+
+<section class="sec mt8">
+  <div class="sec-hd"><h2 class="t-sec">월별 매출</h2></div>
+  
+  <div class="row" style="align-items:flex-end;gap:var(--sp-item);height:140px">
+  <div style="flex:1;text-align:center">
+    <div style="height:62px;background:var(--pri-10);border-radius:4px 4px 0 0"></div>
+    <div class="t-sub mt1">4월</div></div><div style="flex:1;text-align:center">
+    <div style="height:74px;background:var(--pri-10);border-radius:4px 4px 0 0"></div>
+    <div class="t-sub mt1">5월</div></div><div style="flex:1;text-align:center">
+    <div style="height:58px;background:var(--pri-10);border-radius:4px 4px 0 0"></div>
+    <div class="t-sub mt1">6월</div></div><div style="flex:1;text-align:center">
+    <div style="height:90px;background:var(--pri-10);border-radius:4px 4px 0 0"></div>
+    <div class="t-sub mt1">7월</div></div><div style="flex:1;text-align:center">
+    <div style="height:71px;background:var(--pri-10);border-radius:4px 4px 0 0"></div>
+    <div class="t-sub mt1">8월</div></div><div style="flex:1;text-align:center">
+    <div style="height:100px;background:var(--primary);border-radius:4px 4px 0 0"></div>
+    <div class="t-sub mt1">9월</div></div>
+</div><p class="t-sub mt2">오른쪽 끝 값이 위 「이달 매출」 카드와 같습니다.</p></section>
+</div>
+  </div></main>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">OW-01 · 현장 대시보드</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>현장 관리</dd>
+        <dt>기능정의</dt><dd>숫자 카드 넷(진행 중 현장·이달 매출·미수금·밀린 공정) · 기간 바꾸기와 그에 따라 다시 계산되는 숫자 · 오늘 해야 할 일 목록(기성 청구·자재 발주·검수 방문) · 진행 중 현장 카드 목록(주소·공정·진행률·다음 일정·밀림 표시) · 이번 주 일정 가로 띠 · 새 견적 요청 알림 · 매출 그래프(월별)</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="OW-02.html">견적 요청함 → 견적 요청함</a><a href="OW-03.html">현장 상세 → 현장 상세 - 공정 편집</a><a href="OW-05.html">청구·수금 → 기성 청구·수금</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

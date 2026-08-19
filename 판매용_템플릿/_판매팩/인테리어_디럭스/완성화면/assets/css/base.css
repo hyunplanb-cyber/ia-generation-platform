@@ -1,0 +1,800 @@
+@charset "utf-8";
+/* ============================================================
+   인테리어 시공 견적·시공관리 — 디자인 시스템 (디럭스 · 2뎁스 39화면)
+   가이드 프리셋 01 미니멀 모노 + 레이아웃 프리셋 A 사진 중심형
+
+   값은 스펙팩/가이드_01_미니멀모노.json 과 레이아웃_A_사진중심형.json 에서
+   그대로 옮겨 온 것이다. 눈대중으로 정한 값은 하나도 없다.
+
+   밀도는 «컴팩트»를 쓴다 — 공정표·자재표·정산표처럼 표가 많은 화면이 뒤를 받친다.
+
+   이 팩의 알맹이는 «공정표 · 현장 사진 일지 · 추가공사 승인 · 준공 검수·하자보수»다.
+   .compare(비포·애프터 손잡이) · .gantt(공정 막대) · .plog(사진 일지) ·
+   .chk-row(검수 체크) 네 조각이 그것이다.
+   ============================================================ */
+
+:root{
+  /* ---------- 색 — 가이드_01_미니멀모노 ---------- */
+  --primary:#111111;
+  --primary-hover:#000000;
+  --accent:#D97757;
+  --accent-text:#A84B28;        /* 흰 배경 위 글자용 */
+  --accent-text-dark:#D97757;
+  --bg:#F0EFEB;
+  --surface:#FFFFFF;
+  --text:#111111;
+  --muted:#666666;
+  --border:#E5E5E5;
+  --success:#197B35;
+  --warning:#916100;
+  --danger:#CF222E;
+  --on-primary:#FFFFFF;
+  --on-accent:#111111;
+
+  --pri-10:rgba(17,17,17,.08);
+  --pri-08:rgba(17,17,17,.06);
+  --pri-04:rgba(17,17,17,.04);
+  --acc-12:rgba(217,119,87,.14);
+  --warn-12:rgba(145,97,0,.12);
+  --dan-12:rgba(207,34,46,.12);
+
+  /* ---------- 글꼴 ---------- */
+  --font:Paperlogy,Pretendard,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;
+  --fs-page:28px;   --fw-page:600;
+  --fs-sec:18px;    --fw-sec:600;
+  --fs-card:15px;   --fw-card:600;
+  --fs-body:14px;
+  --fs-sub:13px;
+  --fs-th:12px;     --fw-th:500;
+
+  --lh-hero:1.2; --lh-title:1.3; --lh-body:1.6; --lh-tight:1.35;
+
+  /* ---------- 모서리 ---------- */
+  --r-card:6px; --r-btn:6px; --r-in:6px; --r-badge:4px;
+
+  /* ---------- 간격 — 컴팩트 눈금 12개 ---------- */
+  --sp-wrap:16px;
+  --wrap-pb:72px;      /* .wrap 아래 여백 — 하단 고정 바가 이만큼 끌어내려진다 */
+  --sp-sec:28px;
+  --sp-card-pad:16px;
+  --card-pad:16px;
+  --sp-card-gap:14px;
+  --sp-block:20px;
+  --sp-stack:6px;
+  --sp-title:12px;
+  --sp-item:8px;
+  --sp-btn:6px;
+  --sp-btn-stack:8px;
+  --row-h:40px;
+
+  /* 가이드가 "그림자를 쓰지 않는다"고 정했다 — 카드는 border 1px만. */
+  --sh-card:none;
+  --sh-pop:0 6px 20px rgba(17,17,17,.16);
+
+  --hair:1px;
+  --gnb-h:60px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+/* ⚠ 화면마다 세로 길이가 달라서, 스크롤바가 있다 없다 하며 본문 폭이 15px씩
+   흔들렸다(OW-01→OW-02 처럼 짧은 화면·긴 화면을 오갈 때 특히 심함).
+   스크롤바 자리를 항상 잡아 두어 폭이 안 변하게 한다. */
+html{-webkit-text-size-adjust:100%;overflow-y:scroll}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--font);font-size:var(--fs-body);line-height:var(--lh-body);
+  -webkit-font-smoothing:antialiased;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+img{max-width:100%}
+h1,h2,h3,h4,p,dl,dd,figure{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-5Medium.woff2') format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-8ExtraBold.woff2') format('woff2');font-weight:800;font-display:swap}
+
+/* ============================================================
+   뼈대 — GNB (레이아웃 A 사진 중심형: 상단 가로 GNB 한 줄)
+   ============================================================ */
+.gnb{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}
+.gnb-in{
+  max-width:1240px;margin:0 auto;padding:0 var(--sp-wrap);
+  height:var(--gnb-h);display:flex;align-items:center;gap:var(--sp-block);
+}
+.gnb .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:var(--fs-card);flex:none}
+.gnb .mark{
+  width:26px;height:26px;border-radius:var(--r-badge);background:var(--primary);
+  color:var(--on-primary);display:grid;place-items:center;font-size:13px;font-weight:700;
+}
+.gnb-nav{display:flex;gap:var(--sp-block);font-size:var(--fs-body)}
+.gnb-nav a:hover{color:var(--primary)}
+.gnb-right{margin-left:auto;display:flex;align-items:center;gap:var(--sp-item)}
+
+/* ⚠ .btn 등에 display 를 직접 준 것들이 브라우저 기본 [hidden]{display:none} 을
+   눌러 이긴다 — 감췄는데 그대로 보인다. 그래서 여기서 한 번 못 박는다. */
+[hidden]{display:none !important}
+
+.main{min-height:60vh}
+.wrap{width:100%;max-width:1240px;margin:0 auto;padding:var(--sp-sec) var(--sp-wrap) var(--wrap-pb)}
+.wrap-read{width:100%;max-width:780px;margin:0 auto}
+
+/* ---------- 히어로 — 사진 중심형: 준공 사진 한 장을 크게, 그 위에 큰 CTA ---------- */
+/* 배경은 사진 + 어둠막(.hero-ph::after)이 만들지만, 사진이 늦게 뜨는 순간에도
+   흰 글자가 읽히도록 히어로 자체에 어두운 바탕을 깔아 둔다(대비 1.15 → 15+). */
+.hero{position:relative;color:#fff;padding:0;background:#1F1E1C}
+.hero .hero-ph{width:100%;aspect-ratio:16/7;min-height:320px;background:#3a3a38;position:relative;overflow:hidden}
+.hero .hero-ph::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(17,17,17,.15) 0%,rgba(17,17,17,.62) 100%)}
+.hero .hero-in{position:absolute;left:0;right:0;bottom:0;max-width:1240px;margin:0 auto;padding:0 var(--sp-wrap) 40px;z-index:1}
+.hero h1{font-size:34px;font-weight:700;line-height:var(--lh-hero);letter-spacing:-.6px}
+.hero .lead{margin-top:var(--sp-title);font-size:var(--fs-body);opacity:.94;max-width:640px}
+.hero .cta-row{margin-top:var(--sp-block);display:flex;gap:var(--sp-btn);flex-wrap:wrap}
+.hero .cta-row .btn-lg{background:var(--surface);color:var(--text)}
+.hero .cta-row .btn-lg:hover{background:#F1F1F1}
+
+/* 평수 칩 띠 — 이 서비스의 첫 입력 */
+.pyeong-row{
+  background:var(--surface);border-radius:var(--r-card);border:1px solid var(--border);
+  padding:var(--sp-item);display:flex;gap:var(--sp-item);align-items:center;flex-wrap:wrap;
+  box-shadow:var(--sh-pop);color:var(--text);
+}
+.pyeong-row .lb{font-size:var(--fs-sub);color:var(--muted);font-weight:600;flex:none}
+.pyeong-row .pyeong-val{margin-left:auto;font-size:var(--fs-sub);color:var(--text)}
+.pyeong-row .pyeong-val b{font-size:16px;color:var(--accent-text)}
+
+/* ============================================================
+   글자 위계
+   ============================================================ */
+.t-page{font-size:var(--fs-page);font-weight:var(--fw-page);line-height:var(--lh-hero);letter-spacing:-.4px}
+.t-sec{font-size:var(--fs-sec);font-weight:var(--fw-sec);line-height:var(--lh-title)}
+.t-card{font-size:var(--fs-card);font-weight:var(--fw-card);line-height:var(--lh-title)}
+.t-sub{font-size:var(--fs-sub);color:var(--muted);line-height:var(--lh-body)}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+.strong{font-weight:600}
+.pri{color:var(--primary)}
+.dan{color:var(--danger)}
+.warn{color:var(--warning)}
+.acc{color:var(--accent-text)}
+
+.page-hd{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-item);
+  flex-wrap:wrap;margin-bottom:var(--sp-block);
+}
+.page-hd .t-sub{margin-top:4px}
+.back{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:var(--fs-sub);color:var(--muted);margin-bottom:var(--sp-item);
+}
+.back:hover{color:var(--primary)}
+
+/* ============================================================
+   카드 — "surface 배경, border 1px만. 그림자·배경색 없음"
+   ============================================================ */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);box-shadow:var(--sh-card);
+}
+.card-hd{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-item);
+  padding:var(--sp-card-pad);border-bottom:1px solid var(--border);
+}
+.card-bd{padding:var(--sp-card-pad)}
+/* 표를 카드에 담을 때 — 표가 이미 제 여백을 가지므로 카드 안 여백은 뺀다 */
+.card-bd.pad0{padding:0}
+
+/* 견적 요청 줄을 펼쳤을 때 나오는 «손님이 넣은 조건» 칸 */
+.lead-detail > td{background:var(--pri-04);padding:var(--sp-card-pad)}
+.card-ft{padding:var(--sp-card-pad);border-top:1px solid var(--border)}
+.box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);padding:var(--sp-card-pad);
+}
+
+/* 고를 수 있는 상자 — 지금 골라진 것 (하자 부위 고르기 등) */
+.box.on{border-color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary)}
+
+.sec{margin-bottom:var(--sp-sec)}
+.sec:last-child{margin-bottom:0}
+.sec-hd{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-item);
+  margin-bottom:var(--sp-title);
+}
+.more{font-size:var(--fs-sub);color:var(--primary);font-weight:600}
+.more:hover{text-decoration:underline}
+
+.g2,.g3,.g4,.g5,.g6{display:grid;gap:var(--sp-block) var(--sp-card-gap)}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.g6{grid-template-columns:repeat(6,minmax(0,1fr))}
+.split-r{display:grid;grid-template-columns:minmax(0,1fr) 336px;gap:var(--sp-block);align-items:start}
+.split-l{display:grid;grid-template-columns:236px minmax(0,1fr);gap:var(--sp-block);align-items:start}
+.sticky{position:sticky;top:calc(var(--gnb-h) + var(--sp-wrap))}
+
+.row{display:flex;align-items:center;gap:var(--sp-item)}
+.row-b{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-item)}
+.wrap-row{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.stack{display:flex;flex-direction:column;gap:var(--sp-stack)}
+
+.mt1{margin-top:4px}.mt2{margin-top:var(--sp-stack)}.mt3{margin-top:var(--sp-item)}
+.mt4{margin-top:var(--sp-title)}.mt6{margin-top:var(--sp-card-pad)}.mt8{margin-top:var(--sp-block)}
+.mb1{margin-bottom:4px}.mb2{margin-bottom:var(--sp-stack)}.mb3{margin-bottom:var(--sp-item)}
+.mb4{margin-bottom:var(--sp-title)}.mb6{margin-bottom:var(--sp-card-pad)}.mb8{margin-bottom:var(--sp-block)}
+
+/* ============================================================
+   시공 사례 카드 — 사진이 카드 위쪽을 4:3 으로 채우고 아래에 정보
+   ============================================================ */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-block) var(--sp-card-gap)}
+.item{
+  display:flex;flex-direction:column;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-card);
+  overflow:hidden;transition:border-color .12s;
+}
+.item:hover{border-color:var(--primary)}
+.item .thumb{position:relative;aspect-ratio:4/3}
+.item .bd{padding:var(--sp-card-pad);display:flex;flex-direction:column;gap:var(--sp-stack);flex:1}
+.item .nm{font-size:var(--fs-card);font-weight:var(--fw-card);line-height:var(--lh-tight)}
+.item .meta{font-size:var(--fs-sub);color:var(--muted)}
+.item .price{margin-top:auto;padding-top:var(--sp-stack)}
+.item .price .d{font-size:18px;font-weight:700}
+.item .price .u{font-size:var(--fs-sub);color:var(--muted);font-weight:400}
+.on-thumb{position:absolute;top:8px;left:8px;display:flex;gap:4px;flex-wrap:wrap}
+.on-thumb.r{left:auto;right:8px}
+.heart{
+  position:absolute;z-index:2;top:8px;right:8px;width:32px;height:32px;border:none;
+  border-radius:50%;background:rgba(255,255,255,.92);cursor:pointer;
+  font-size:16px;line-height:1;color:var(--danger);
+}
+.heart.on{background:var(--danger);color:#fff}
+
+.rowcard{
+  display:flex;gap:var(--sp-card-pad);align-items:flex-start;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);padding:var(--sp-card-pad);
+}
+.rowcard .thumb{flex:none;width:96px}
+.rowcard .bd{flex:1;min-width:0}
+.rowcard .side{flex:none;text-align:right}
+.rowcard.bad{border-color:var(--danger);background:var(--dan-12)}
+
+/* ============================================================
+   ★ 비포·애프터 손잡이 — 시공사례의 주인공
+   ============================================================ */
+.compare{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:var(--r-card);background:#3a3a38;user-select:none}
+.compare .cp-after,.compare .cp-before{position:absolute;inset:0}
+.compare .cp-after{clip-path:inset(0 0 0 var(--cp,50%))}
+.compare .cp-tag{position:absolute;top:8px;font-size:11px;font-weight:700;background:rgba(17,17,17,.68);color:#fff;padding:3px 8px;border-radius:999px;letter-spacing:.3px}
+.compare .cp-tag.before{left:8px}
+.compare .cp-tag.after{right:8px}
+.compare .cp-line{position:absolute;top:0;bottom:0;left:var(--cp,50%);width:2px;background:#fff;transform:translateX(-1px);pointer-events:none}
+.compare .cp-handle{
+  position:absolute;top:50%;left:var(--cp,50%);width:38px;height:38px;border-radius:50%;
+  background:#fff;transform:translate(-50%,-50%);display:grid;place-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:ew-resize;font-size:14px;color:var(--text);
+}
+.compare .cp-range{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+
+/* ============================================================
+   배지
+   ============================================================ */
+.badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 8px;border-radius:var(--r-badge);
+  font-size:12px;font-weight:600;line-height:1.6;white-space:nowrap;
+  background:var(--pri-10);color:var(--primary);border:1px solid transparent;
+}
+.badge.b-mut{background:transparent;color:var(--muted);border-color:var(--border)}
+.badge.b-ok{background:rgba(25,123,53,.10);color:var(--success)}
+.badge.b-warn{background:var(--warn-12);color:var(--warning)}
+.badge.b-dan{background:var(--dan-12);color:var(--danger)}
+.badge.b-acc{background:var(--acc-12);color:var(--accent-text)}
+.badge.b-solid{background:var(--primary);color:var(--on-primary)}
+.badge.b-line{background:transparent;color:var(--text);border-color:var(--border)}
+
+/* ============================================================
+   버튼 — "검정 배경, 흰 글자, 높이 36px, radius 6px, 굵기 500"
+   ============================================================ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  height:36px;padding:0 16px;border-radius:var(--r-btn);
+  font-size:var(--fs-body);font-weight:500;line-height:1;white-space:nowrap;
+  border:1px solid transparent;background:transparent;cursor:pointer;
+  transition:background-color .12s,border-color .12s;
+}
+.btn-pri{background:var(--primary);color:var(--on-primary)}
+.btn-pri:hover{background:var(--primary-hover)}
+.btn-acc{background:var(--accent);color:var(--on-accent);font-weight:600}
+.btn-acc:hover{filter:brightness(.94)}
+.btn-ghost{background:var(--surface);border-color:var(--border);color:var(--text)}
+.btn-ghost:hover{background:#F6F6F6;border-color:var(--text)}
+.btn-dan{background:var(--surface);border-color:var(--border);color:var(--danger)}
+.btn-dan:hover{background:var(--dan-12)}
+.btn-sm{height:30px;padding:0 11px;font-size:var(--fs-sub);border-radius:var(--r-badge)}
+.btn-lg{height:46px;padding:0 22px;font-size:16px}
+.btn-w{width:100%}
+.btn:disabled,.btn.is-off{opacity:.4;cursor:not-allowed}
+.btns{display:flex;gap:var(--sp-btn);flex-wrap:wrap}
+.btns-v{display:flex;flex-direction:column;gap:var(--sp-btn-stack)}
+
+/* ============================================================
+   입력 — "높이 36px, border 1px, focus 시 검정 테두리 1px + 외곽선"
+   ============================================================ */
+.field{display:block;margin-bottom:var(--sp-title)}
+.field:last-child{margin-bottom:0}
+.field > .lb{display:block;font-size:var(--fs-sub);font-weight:600;margin-bottom:var(--sp-stack)}
+.field .req{color:var(--danger);margin-left:2px}
+/* ⚠ 여기의 .sel 은 «고르는 칸(select)» 이라는 뜻이다. 그런데 달력은 «골라진 날»을
+   같은 이름으로 쓴다(.cal-d.sel). 태그를 안 적어 두면 이 폼 생김새가 달력 칸에
+   들이닥쳐 높이 36px·모서리 6px 로 눌러 버린다 — 실제로 9월 3일 칸만 검은 알약처럼
+   삐져나와 있었다(2026-08-18 사장님 지적). 그래서 select 에만 걸리게 못 박는다. */
+.in,select.sel,.ta{
+  width:100%;height:36px;padding:0 11px;
+  border:1px solid var(--border);border-radius:var(--r-in);
+  background:var(--surface);color:var(--text);font:inherit;font-size:var(--fs-body);
+}
+.ta{height:auto;min-height:88px;padding:9px 11px;line-height:var(--lh-body);resize:vertical}
+select.sel{appearance:none;padding-right:28px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 15px) 16px,calc(100% - 10px) 16px;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.in:focus,select.sel:focus,.ta:focus{outline:2px solid var(--pri-10);outline-offset:0;border-color:var(--text)}
+.in::placeholder,.ta::placeholder{color:#9B9B98}
+.in:disabled,select.sel:disabled{background:#F4F4F2;color:var(--muted)}
+.hint{font-size:12px;color:var(--muted);margin-top:4px}
+.err{font-size:12px;color:var(--danger);margin-top:4px;font-weight:600}
+.in.is-err{border-color:var(--danger)}
+.f2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-item)}
+.f3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-item)}
+.in-row{display:flex;gap:var(--sp-btn)}
+.in-row .in{flex:1}
+
+.check{display:flex;align-items:flex-start;gap:8px;font-size:var(--fs-body);cursor:pointer;padding:4px 0}
+.check input{width:17px;height:17px;margin:2px 0 0;accent-color:var(--primary);flex:none}
+.check.none{padding:0}
+.check .sub{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+
+.toggle{
+  width:42px;height:24px;border-radius:999px;background:var(--border);
+  border:none;position:relative;cursor:pointer;flex:none;padding:0;
+}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:var(--surface);transition:left .15s;
+}
+.toggle.on{background:var(--primary)}
+.toggle.on::after{left:21px}
+
+.step{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:var(--r-btn);overflow:hidden}
+.step button{width:34px;height:34px;border:none;background:var(--surface);cursor:pointer;font-size:16px;color:var(--text)}
+.step button:hover{background:var(--pri-08)}
+.step .v{min-width:40px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ============================================================
+   탭 · 칩 — «탭과 몸통은 같은 상자 안에» (지뢰 3)
+   ============================================================ */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);overflow:auto hidden}
+.tab{
+  padding:9px 14px;border:none;background:none;cursor:pointer;white-space:nowrap;
+  font-size:var(--fs-body);color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;
+}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--text);font-weight:600;border-bottom-color:var(--text)}
+.tab .cnt{font-size:12px;color:var(--muted);margin-left:4px;font-variant-numeric:tabular-nums}
+.tabs-pill{display:flex;gap:var(--sp-btn);flex-wrap:wrap}
+.tabs-pill .tab{border:1px solid var(--border);border-radius:999px;padding:6px 14px;margin:0;background:var(--surface)}
+.tabs-pill .tab.on{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+
+.chips{display:flex;gap:var(--sp-btn);flex-wrap:wrap}
+.chip{
+  border:1px solid var(--border);background:var(--surface);border-radius:999px;
+  padding:6px 13px;font-size:var(--fs-sub);cursor:pointer;color:var(--text);
+}
+.chip:hover{border-color:var(--text)}
+.chip.on{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.chip .x{opacity:.7;margin-left:3px}
+.chip.is-off{opacity:.45;cursor:not-allowed}
+
+.filters{display:flex;gap:var(--sp-item);flex-wrap:wrap;align-items:center;margin-bottom:var(--sp-title)}
+.filters .in,.filters .sel{width:auto;min-width:140px}
+.filters .search{min-width:248px}
+
+/* ============================================================
+   ★ 공정표(간트) — pr1·ow3, 이 팩의 알맹이
+   ============================================================ */
+.gantt{border:1px solid var(--border);border-radius:var(--r-card);overflow:auto hidden}
+.gantt-in{min-width:760px}
+.gantt-row{display:flex;align-items:center;border-bottom:1px solid var(--border)}
+.gantt-row:last-child{border-bottom:none}
+.gantt-lb{
+  flex:none;width:132px;padding:10px var(--sp-item);font-size:var(--fs-sub);font-weight:600;
+  position:sticky;left:0;background:var(--surface);border-right:1px solid var(--border);
+}
+.gantt-track{flex:1;position:relative;height:44px;background:
+  repeating-linear-gradient(90deg,transparent,transparent calc(100%/22 - 1px),var(--border) calc(100%/22 - 1px),var(--border) calc(100%/22));
+}
+.gantt-bar{
+  position:absolute;top:9px;height:26px;border-radius:5px;background:var(--pri-10);
+  border:1px solid var(--border);display:flex;align-items:center;padding:0 8px;font-size:11px;
+  font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;cursor:pointer;
+}
+.gantt-bar.done{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.gantt-bar.on{background:var(--acc-12);border-color:var(--accent);color:var(--accent-text)}
+.gantt-bar.wait{background:var(--surface);border-style:dashed;color:var(--muted)}
+.gantt-bar.late{background:var(--dan-12);border-color:var(--danger);color:var(--danger)}
+.gantt-today{position:absolute;top:0;bottom:0;width:2px;background:var(--danger);z-index:2}
+.gantt-today::after{content:'오늘';position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--danger);font-weight:700;white-space:nowrap}
+.gantt-detail{border-top:1px solid var(--border);padding:var(--sp-card-pad);font-size:var(--fs-sub);background:#FAFAF8}
+
+/* ============================================================
+   ★ 현장 사진 일지 — pr3
+   ============================================================ */
+.plog-day{border-bottom:1px solid var(--border);padding:var(--sp-block) 0}
+.plog-day:last-child{border-bottom:none}
+.plog-hd{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-item);margin-bottom:var(--sp-title);cursor:pointer}
+.plog-hd .t{font-size:var(--fs-body);font-weight:600}
+.plog-hd .n{font-size:var(--fs-sub);color:var(--muted)}
+.plog-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-item)}
+.plog-shot{aspect-ratio:4/3;border-radius:var(--r-badge);overflow:hidden;position:relative;background:#3a3a38}
+.plog-shot .tag{position:absolute;left:5px;bottom:5px;font-size:10px;background:rgba(17,17,17,.68);color:#fff;padding:2px 6px;border-radius:999px}
+.plog-day.closed .plog-grid{display:none}
+.plog-day .mk{transition:transform .12s}
+.plog-day.closed .mk{transform:rotate(-90deg)}
+
+/* ============================================================
+   ★ 검수 체크 — pr5·as1 (준공 검수·하자보수)
+   ============================================================ */
+.chk-row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-item);padding:var(--sp-item) 0;border-bottom:1px solid var(--border)}
+.chk-row:last-child{border-bottom:none}
+.chk-row .nm{font-size:var(--fs-body);font-weight:600}
+.chk-row .ds{font-size:var(--fs-sub);color:var(--muted);margin-top:2px}
+.chk-row .go{flex:none;display:flex;gap:var(--sp-btn)}
+.chk-row.bad{background:var(--dan-12);margin:0 calc(var(--sp-card-pad) * -1);padding-left:var(--sp-card-pad);padding-right:var(--sp-card-pad)}
+.chk-sub{margin-top:var(--sp-item);padding:var(--sp-item);background:#FAFAF8;border-radius:var(--r-badge);border:1px solid var(--border)}
+.upload-drop{
+  border:1px dashed var(--border);border-radius:var(--r-card);padding:22px;text-align:center;
+  color:var(--muted);font-size:var(--fs-sub);cursor:pointer;
+}
+.upload-drop:hover{border-color:var(--text);color:var(--text)}
+.upload-thumbs{display:flex;gap:var(--sp-item);flex-wrap:wrap;margin-top:var(--sp-item)}
+.upload-thumbs .u-item{position:relative;width:64px;height:64px;border-radius:var(--r-badge)}
+.upload-thumbs .u-item button{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--text);color:#fff;border:none;font-size:11px;line-height:1;cursor:pointer}
+
+/* 서명란 */
+.sig-pad{
+  border:1px dashed var(--border);border-radius:var(--r-card);height:120px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:var(--fs-sub);
+  background:repeating-linear-gradient(135deg,transparent,transparent 8px,#FAFAF8 8px,#FAFAF8 16px);position:relative;
+}
+.sig-pad.signed{color:var(--text);font-family:cursive;font-size:22px;background:var(--surface)}
+.sig-clear{position:absolute;top:6px;right:6px}
+
+/* ============================================================
+   금액 요약 · 진행 단계 · 이력
+   ============================================================ */
+.kv{display:grid;grid-template-columns:auto 1fr;gap:var(--sp-stack) var(--sp-title);font-size:var(--fs-body);margin:0}
+.kv dt{color:var(--muted);white-space:nowrap}
+.kv dd{margin:0;text-align:right}
+.kv.left dd{text-align:left}
+
+.sum-row{display:flex;justify-content:space-between;gap:var(--sp-item);padding:6px 0;font-size:var(--fs-body)}
+.sum-row.minus span:last-child{color:var(--danger)}
+.sum-row.total{border-top:1px solid var(--border);margin-top:var(--sp-stack);padding-top:var(--sp-item);font-weight:700}
+.sum-row.total .price{font-size:20px}
+
+.steps{display:flex;gap:0;flex-wrap:wrap}
+.steps .st{
+  flex:1;min-width:104px;padding:var(--sp-item) var(--sp-item) var(--sp-item) 20px;
+  border-top:3px solid var(--border);font-size:var(--fs-sub);color:var(--muted);position:relative;
+}
+.steps .st::before{
+  content:'';position:absolute;top:-8px;left:0;width:11px;height:11px;border-radius:50%;
+  background:var(--bg);border:3px solid var(--border);
+}
+.steps .st.done{border-top-color:var(--primary);color:var(--text)}
+.steps .st.done::before{background:var(--primary);border-color:var(--primary)}
+/* ⚠ 지금 «서 있는» 단계는 아직 지나온 게 아니다 — 그 칸의 윗줄까지 칠하면
+   이미 끝낸 것처럼 보인다. 점만 테두리로 강조하고 줄은 회색으로 둔다. */
+.steps .st.on{color:var(--primary);font-weight:700}
+.steps .st.on::before{background:var(--surface);border-color:var(--primary)}
+.steps .st .dt{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+
+.tl{position:relative;padding-left:20px}
+.tl::before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.tl-item{position:relative;padding:5px 0 var(--sp-item)}
+.tl-item::before{
+  content:'';position:absolute;left:-20px;top:11px;width:12px;height:12px;border-radius:50%;
+  background:var(--surface);border:2px solid var(--border);
+}
+.tl-item.done::before{background:var(--primary);border-color:var(--primary)}
+.tl-item.on::before{border-color:var(--primary);border-width:3px}
+.tl-item .t{font-size:var(--fs-body);font-weight:600;line-height:var(--lh-tight)}
+.tl-item .d{font-size:var(--fs-sub);color:var(--muted);margin-top:2px}
+.tl-item:last-child{padding-bottom:0}
+
+.progress{height:8px;background:var(--border);border-radius:999px;overflow:hidden}
+.progress .fill{height:100%;background:var(--primary);border-radius:999px}
+.progress .fill.warn{background:var(--warning)}
+.progress .fill.dan{background:var(--danger)}
+
+/* ============================================================
+   알림 띠 · 빈 화면 · 표
+   ============================================================ */
+.banner{
+  display:flex;align-items:flex-start;gap:var(--sp-item);
+  padding:var(--sp-item) var(--sp-card-pad);border-radius:var(--r-card);
+  border:1px solid var(--border);background:var(--surface);font-size:var(--fs-body);
+  line-height:var(--lh-tight);
+}
+.banner .ico{flex:none;line-height:1.4}
+.banner-info{border-left:4px solid var(--primary);background:var(--pri-04)}
+.banner-ok{border-left:4px solid var(--success);background:rgba(25,123,53,.08)}
+.banner-warn{border-left:4px solid var(--warning);background:var(--warn-12)}
+.banner-dan{border-left:4px solid var(--danger);background:var(--dan-12)}
+
+.empty{
+  text-align:center;padding:64px var(--sp-card-pad);
+  background:var(--surface);border:1px dashed var(--border);border-radius:var(--r-card);
+}
+.empty .ico{font-size:34px;margin-bottom:var(--sp-item);opacity:.5}
+.empty .msg{color:var(--muted);font-size:var(--fs-body);margin-top:var(--sp-item);max-width:520px;margin-inline:auto}
+.empty .btns{justify-content:center;margin-top:var(--sp-block)}
+
+.table-wrap{width:100%}
+.table-scroll{overflow:auto hidden}
+.table{width:100%;border-collapse:collapse;font-size:var(--fs-body)}
+.table.table-fix{table-layout:fixed}
+.table th{
+  font-size:var(--fs-th);font-weight:var(--fw-th);color:var(--muted);
+  text-align:left;white-space:nowrap;background:transparent;border-bottom:2px solid var(--border);
+  padding:9px var(--sp-item);
+}
+.table td{
+  padding:0 var(--sp-item);height:var(--row-h);
+  border-bottom:1px solid var(--border);vertical-align:middle;line-height:var(--lh-tight);
+}
+.table tbody tr:hover{background:var(--pri-04)}
+.table tbody tr.bad td{background:var(--dan-12)}
+.table tfoot td{font-weight:700;border-bottom:none;border-top:2px solid var(--border)}
+.table .r{text-align:right;font-variant-numeric:tabular-nums}
+.table .c{text-align:center}
+.table .nowrap{white-space:nowrap}
+.table .sub{font-size:12px;color:var(--muted)}
+
+.acc-item{border-bottom:1px solid var(--border)}
+.acc-item:last-child{border-bottom:none}
+.acc-q{
+  width:100%;text-align:left;padding:14px 0;border:none;background:none;cursor:pointer;
+  font-size:var(--fs-body);font-weight:600;display:flex;justify-content:space-between;gap:var(--sp-item);
+}
+.acc-q .mk{color:var(--text);flex:none}
+.acc-a{display:none;padding:0 0 14px;font-size:var(--fs-body);color:var(--muted);line-height:var(--lh-body)}
+.acc-item.on .acc-a{display:block}
+.acc-item.on .acc-q .mk{transform:rotate(45deg)}
+
+.stars{color:var(--accent-text);letter-spacing:-1px}
+
+/* ============================================================
+   이미지 자리
+   ============================================================ */
+.ph{
+  border:1px solid var(--border);background:#EEF2F7;
+  display:grid;place-items:center;text-align:center;padding:8px;overflow:hidden;
+}
+.ph .lb{font-size:12px;color:var(--muted);line-height:1.5}
+.ph .sz{white-space:nowrap}
+.ph.t1{background:#EEF2F7}.ph.t2{background:#F2EFF7}.ph.t3{background:#EDF4F1}
+.ph.t4{background:#F7F1EC}.ph.t5{background:#F2F4F7}
+.ph-tiny .lb{font-size:10px}
+.ph-fix{flex:none}
+.ph-round{border-radius:50%}
+.ph-sq{border-radius:var(--r-badge)}
+.ph-card{border:none;border-radius:0}
+
+.av{
+  width:34px;height:34px;border-radius:50%;background:var(--pri-10);flex:none;
+  display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--text);
+}
+
+/* ⚠ 이 바는 .wrap 안 마지막 칸이다. .wrap 아래에 여백이 72px 있어서, 끝까지 내려도
+   화면 바닥에 안 닿고 그만큼 «떠 있는» 것처럼 보였다(2026-08-18 사장님 지적).
+   좌우 여백도 물려받아 바가 화면 폭을 다 못 썼다. 둘 다 음수 여백으로 밀어낸다. */
+.stick{
+  position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--border);
+  box-shadow:0 -2px 12px rgba(17,17,17,.08);z-index:20;
+  margin:0 calc(var(--sp-wrap) * -1) calc(var(--wrap-pb) * -1);
+}
+.stick-in{
+  max-width:1240px;margin:0 auto;padding:var(--sp-item) var(--sp-wrap);
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-block);flex-wrap:wrap;
+}
+
+/* ============================================================
+   현장 관리(업체) — 좌측 사이드바
+   ============================================================ */
+/* ⚠ 손님용 글 화면의 읽기 폭(.wrap, 1240px)을 그대로 물려받고 있었다.
+   자재·원가 같은 표 많은 관리자 화면은 그 폭이 좁아 넓은 화면에서 오른쪽이
+   통째로 빈다. 사이드바+본문 전체(owner-shell)는 폭을 안 묶고, 대신 안쪽
+   owner-main 이 제 폭만큼 넓게 쓰게 둔다. */
+/* ⚠ 폭 제한을 푼 뒤로는 «양옆 여백을 스스로 만들어야» 한다. 예전에는 1240px 로
+   묶고 가운데 두어서 남는 자리가 여백 노릇을 했는데, 그 버팀목이 사라지자
+   사이드바가 왼쪽 끝에, 표가 오른쪽 끝에 딱 붙었다(2026-08-18 사장님 지적). */
+.owner-shell{display:grid;grid-template-columns:212px minmax(0,1fr);gap:0;padding:0 var(--sp-block)}
+.owner-side{padding:var(--sp-sec) var(--sp-item) var(--sp-sec) 0;border-right:1px solid var(--border)}
+.owner-side a{
+  display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--r-btn);
+  font-size:var(--fs-body);color:var(--muted);border-left:2px solid transparent;
+}
+.owner-side a:hover{color:var(--text)}
+.owner-side a.on{color:var(--text);font-weight:600;border-left-color:var(--text);background:var(--pri-04)}
+.owner-main{padding:var(--sp-sec) 0 72px var(--sp-block)}
+
+/* ============================================================
+   화면 정보 패널
+   ============================================================ */
+.dev{position:fixed;right:14px;bottom:14px;z-index:60;max-width:min(430px,calc(100vw - 28px))}
+.dev-btn{
+  margin-left:auto;display:flex;align-items:center;gap:5px;
+  height:34px;padding:0 14px;border-radius:999px;cursor:pointer;
+  background:var(--primary);color:var(--on-primary);border:none;
+  font-size:var(--fs-sub);font-weight:600;
+}
+.dev-bd{
+  display:none;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);padding:var(--sp-card-pad);margin-bottom:var(--sp-item);
+  font-size:var(--fs-sub);line-height:var(--lh-body);max-height:56vh;overflow:auto;
+  box-shadow:var(--sh-pop);
+}
+.dev.on .dev-bd{display:block}
+.dev-bd .pid{font-weight:700;font-size:var(--fs-card);display:block;margin-bottom:var(--sp-stack)}
+.dev-bd dt{color:var(--muted);font-size:12px;margin-top:var(--sp-item)}
+.dev-bd dd{margin:2px 0 0}
+.dev-bd .lks{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.dev-bd .lks a{border:1px solid var(--border);border-radius:var(--r-badge);padding:2px 7px;font-size:12px}
+.dev-bd .lks a:hover{background:var(--pri-08);border-color:var(--text)}
+
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:80;
+  background:var(--text);color:#fff;border-radius:var(--r-btn);padding:12px 16px;
+  display:flex;align-items:center;gap:var(--sp-title);
+  font-size:var(--fs-body);max-width:min(540px,calc(100vw - 32px));
+}
+.toast-ok{background:var(--success)}
+.toast .act{font-weight:700;cursor:pointer;text-decoration:underline;white-space:nowrap}
+
+.dim{position:fixed;inset:0;z-index:70;background:rgba(17,17,17,.48);display:grid;place-items:center;padding:var(--sp-card-pad)}
+.modal{
+  background:var(--surface);border-radius:var(--r-card);width:100%;max-width:460px;
+  max-height:86vh;overflow:auto;box-shadow:var(--sh-pop);
+}
+.modal .m-hd{padding:var(--sp-card-pad);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:var(--sp-item)}
+.modal .m-bd{padding:var(--sp-card-pad)}
+.modal .m-ft{padding:var(--sp-card-pad);border-top:1px solid var(--border);display:flex;gap:var(--sp-btn);justify-content:flex-end}
+.modal .x{background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);line-height:1}
+
+/* 완료 화면 제목 앞의 체크 표시 — 「저장됐다는 체크 표시」(스펙팩) */
+.ok-mark{
+  display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;
+  background:rgba(25,123,53,.10);color:var(--success);
+  font-size:17px;font-weight:700;margin-right:10px;vertical-align:2px;
+}
+
+.solo-wrap{min-height:calc(100vh - var(--gnb-h));display:grid;place-items:center;padding:var(--sp-block) var(--sp-wrap)}
+.solo-card{
+  width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);padding:36px;box-shadow:0 1px 3px rgba(17,17,17,.08);
+}
+
+/* ============================================================
+   전체 화면 목록(index.html)
+   ============================================================ */
+.idx-hero{background:var(--primary);color:var(--on-primary);padding:48px 0 44px}
+.idx-menu{margin-bottom:var(--sp-sec)}
+.idx-menu h3{font-size:var(--fs-sec);font-weight:var(--fw-sec);margin-bottom:var(--sp-title);display:flex;align-items:center;gap:var(--sp-item)}
+.idx-menu .code{
+  font-size:12px;font-weight:700;background:var(--pri-10);color:var(--text);
+  border-radius:var(--r-badge);padding:2px 8px;
+}
+.idx-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:var(--sp-btn)}
+.idx-list a{
+  display:flex;align-items:center;gap:var(--sp-item);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
+  padding:11px var(--sp-item);font-size:var(--fs-body);
+}
+.idx-list a:hover{border-color:var(--text)}
+.idx-list .pid{font-size:12px;font-weight:700;color:var(--text);flex:none;font-variant-numeric:tabular-nums}
+.ft{background:var(--surface);border-top:1px solid var(--border);margin-top:var(--sp-sec)}
+.ft-in{max-width:1240px;margin:0 auto;padding:var(--sp-block) var(--sp-wrap)}
+.ft-bot{display:flex;justify-content:space-between;gap:var(--sp-item);flex-wrap:wrap;font-size:var(--fs-sub);color:var(--muted)}
+
+/* ============================================================
+   좁은 화면
+   ============================================================ */
+@media (max-width:1080px){
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .split-r,.split-l{grid-template-columns:minmax(0,1fr)}
+  .sticky{position:static}
+  .g4,.g5,.g6{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* ⚠ 1fr 하나만 두면 안 된다 — grid 트랙은 minmax(0,…) 없이는 내용의
+     최소고유폭(min-content)만큼 넓어져 좁은 화면에서 삐져나간다.
+     실제로 이 자리에서 782px 로 넘쳐 375px 화면이 통째로 흘렀다. */
+  .owner-shell{grid-template-columns:minmax(0,1fr)}
+  .owner-side{border-right:none;border-bottom:1px solid var(--border);display:flex;gap:4px;overflow:auto hidden;padding:var(--sp-item) 0}
+  .owner-side a{border-left:none;border-bottom:2px solid transparent;white-space:nowrap}
+  .owner-side a.on{border-left:none;border-bottom-color:var(--text)}
+  .owner-main{padding-left:0}
+}
+@media (max-width:760px){
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .gnb-nav{display:none}
+  .g2,.g3,.g4,.g5,.g6{grid-template-columns:minmax(0,1fr)}
+  .f2,.f3{grid-template-columns:minmax(0,1fr)}
+  .rowcard{flex-wrap:wrap}
+  .rowcard .side{text-align:left;width:100%}
+  .t-page{font-size:23px}
+  .hero h1{font-size:24px}
+  .plog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* ---------- 좁은 화면에서 옆 칸이 짜부라지지 않게 ---------- */
+.row.wrap-row > .grow{min-width:220px}
+.row.wrap-row > *{max-width:100%}
+/* ── 실측 예약 달력(.cal-d) — 날짜와 잔여 자리 수가 한 줄로 붙어 보이던 것을 가른다 (2026-08-17)
+   .dd(날짜)·.n(자리 수)에 스타일이 하나도 없어서 "8"과 "1자리"가 같은 줄에 붙어
+   "81자리"처럼 읽혔다. 세로로 쌓고 자리 수는 작고 옅은 글자로 가른다. */
+.cal-d{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;padding:8px 0;background:var(--surface);border:none;font:inherit;color:var(--text);cursor:pointer}
+.cal-d .dd{font-size:var(--fs-body)}
+.cal-d .n{font-size:var(--fs-th);color:var(--muted)}
+.cal-d.few .n{color:var(--warning)}
+.cal-d.past{color:var(--muted);cursor:default}
+/* 달이 시작·끝나기 전의 빈 칸 — 흰 칸으로 채워 격자 배경이 비치지 않게 한다 */
+.cal-blank{cursor:default}
+.cal-d.sel{background:var(--primary);color:var(--on-primary)}
+.cal-d.sel .n{color:var(--on-primary)}
+/* 자재 표의 발주상태 칸 — 배지 아래에 고르개가 붙는다(2026-08-18) */
+.tbl-mat td [data-po-badge]{display:block;margin-bottom:4px}
+.tbl-mat td select.sel{min-width:90px}
+
+/* ── 예시 사진 ──────────────────────────────────────────────
+   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
+   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
+
+/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
+   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
+   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
+   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
+   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
+   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
+.ph{position:relative}
+.ph > img[data-예시]{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
+   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
+.ph > img[data-예시] ~ .lb{display:none}
+/* ── 예시 사진 끝 ── */
+
+/* ⛔ 2026-08-19 검수 촬영에서 잡은 것 — 세 가지를 한 번에 고친다.
+   ① overflow-x 만 열면 세로축이 딸려 올라와 테두리 1px 때문에 세로 스크롤바가 생긴다.
+   ② 푸터가 바닥에 안 붙어, 짧은 화면에서는 화면 가운데 떠 있었다.
+   ③ 그리드 칸의 자식이 min-width:auto 라 칸보다 넓은 내용이 옆 칸을 덮었다. */
+body{min-height:100dvh;display:flex;flex-direction:column}
+body>*:first-child{flex:1 0 auto;min-height:0}
+/* 푸터가 main 안에 있는 짜임(.app-ed > main > .ft)까지 닿게 한다 */
+.app-ed,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+/* .app 은 사이드바형이라 grid 2열이다 — 여기 넣으면 사이드바가 폭을 다 먹는다 */
+/* flex 자식은 shrink-to-fit 이라 폭이 내용만큼 줄어든다 — width:100% 로 되돌린다 */
+.app-ed>main,.app-ed>.edmain,.app>main,.app>.appmain,.page-wrap>main{flex:1 0 auto;display:flex;flex-direction:column;width:100%}
+body>*:first-child{width:100%}
+.ft{margin-top:auto}
+/* 푸터를 품은 main 은 아래 여백을 푸터에 넘긴다 — 안 그러면 푸터 밑에 64px 이 남는다 */
+main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
+.split-r>*,.split-l>*,.app>*,.edcols>*{min-width:0}

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>기성 청구·수금 · 마루공방</title>
+<meta name="description" content="미수금 총액과 이달 수금액을 맨 위에 · 현장별·회차별 청구 목록(계약금·착공금·중도금·잔금) · 회차마다 예정일·금액·상태(예정·청구함·수금 완료·연체) · 청구서 만들기와 문자로 보내기 · 입금 확인 체크 · 연체된 건 위로 올리고 며칠 늦었는지 · 세금계산서 발행">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="OW0501">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="OW0101.html"><span class="em">마</span>마루공방 <span class="t-sub" style="font-weight:500">사장님</span></a>
+    <div class="gl">현장 관리</div><a href="OW0101.html">현장 대시보드</a><a href="OW0201.html">견적 요청함</a><a href="OW0301.html">현장 상세</a><a href="OW0401.html">자재·원가</a><a href="OW0501.html" class="on" aria-current="page">기성 청구·수금</a><a href="OW0601.html">일정 캘린더</a><div class="gl">업체 설정</div><a href="OW0701.html">업체 정보·직원</a>
+    <div class="side-ft">
+      <a href="HO0101.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    <form class="tb-search" role="search"><span class="ico" aria-hidden="true">🔍</span>
+      <input type="search" placeholder="시공 사례·자재를 검색해 보세요" aria-label="검색"></form>
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="OW0101.html"><span class="ava">이</span>이도목님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="OW0101.html">‹ 현장 대시보드</a>
+    <span class="path">현장 관리 › <b>기성 청구·수금</b></span>
+  </nav>
+    
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">기성 청구·수금</h1></div></div>
+
+<div class="g4 mb6"><button class="stat s-warn" type="button">
+  
+  <span class="l">미수금 총액</span>
+  <span class="v">20,460,000원</span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button><button class="stat " type="button">
+  
+  <span class="l">이달 수금액</span>
+  <span class="v">17,050,000원</span>
+  <span class="foot"><span class="delta up">▴ 8%</span></span>
+</button><button class="stat s-ok" type="button">
+  
+  <span class="l">연체 건</span>
+  <span class="v">0건</span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button><button class="stat " type="button">
+  
+  <span class="l">세금계산서 미발행</span>
+  <span class="v">1건</span>
+  <span class="foot"><span class="t-sub"></span></span>
+</button></div>
+
+<section class="sec ">
+  
+  <div class="chips"><button class="chip" type="button">전체 현장</button><button class="chip on" type="button">성수동 리버뷰 아파트</button><button class="chip" type="button">한강로 카페 상가</button><button class="chip" type="button">옥수동 욕실</button></div></section>
+
+<div class="table-wrap table-scroll"><table class="table ">
+    <thead><tr><th>회차</th><th>금액</th><th>예정일</th><th>상태</th><th></th></tr></thead><tbody><tr><td>계약금</td><td>3,410,000원</td><td>2026-08-20</td><td><span class="badge b-ok">수금 완료</span></td><td><label class="check"><input type="checkbox" checked disabled>입금 확인</label></td></tr><tr><td>착공금</td><td>10,230,000원</td><td>2026-09-10</td><td><span class="badge b-ok">수금 완료</span></td><td><label class="check"><input type="checkbox" checked disabled>입금 확인</label></td></tr><tr><td>중도금</td><td>13,640,000원</td><td>2026-09-24</td><td><span class="badge b-mut">예정</span></td><td><button class="btn btn-ghost" type="button" data-toast="청구서를 만들었어요. 상태가 「청구함」으로 바뀌었어요">청구서 만들기</button></td></tr><tr><td>잔금</td><td>6,820,000원</td><td>2026-10-08</td><td><span class="badge b-mut">예정</span></td><td><button class="btn btn-ghost" type="button" data-toast="청구서를 만들었어요. 상태가 「청구함」으로 바뀌었어요">청구서 만들기</button></td></tr></tbody></table></div>
+
+<section class="sec ">
+  <div class="sec-hd"><div><h2 class="t-sec">세금계산서</h2></div></div>
+  <div class="table-wrap table-scroll"><table class="table ">
+    <thead><tr><th>회차</th><th>발행 상태</th></tr></thead><tbody><tr><td>계약금</td><td><span class="badge b-ok">발행 완료</span></td></tr><tr><td>착공금</td><td><span class="badge b-ok">발행 완료</span></td></tr><tr><td>중도금</td><td><span class="badge b-mut">미발행</span></td></tr></tbody></table></div></section>
+
+<section class="sec ">
+  <div class="sec-hd"><div><h2 class="t-sec">수금 예정 달력</h2></div></div>
+  <div class="cal">
+    <div class="cal-hd"><button class="btn btn-ghost btn-sm cal-mv" type="button" data-mv="-1">‹</button><b class="cal-m">2026년 9월</b><button class="btn btn-ghost btn-sm cal-mv" type="button" data-mv="1">›</button></div>
+    <div class="cal-grid"><span class="dow">일</span><span class="dow">월</span><span class="dow">화</span><span class="dow">수</span><span class="dow">목</span><span class="dow">금</span><span class="dow">토</span><span></span><span></span><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">1</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">2</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">3</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">4</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">5</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">6</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">7</span><span class="p"></span></button><button class="cal-d off   mark" type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">8</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">9</span><span class="p"></span></button><button class="cal-d    " type="button"><span class="dd">10</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">11</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">12</span><span class="p">가능</span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="정기 휴무일이에요(일요일)"><span class="dd">13</span><span class="p">휴무</span></button><button class="cal-d    " type="button"><span class="dd">14</span><span class="p">가능</span></button><button class="cal-d off full  " type="button" disabled aria-disabled="true" data-why="이 날은 방문이 모두 찼어요"><span class="dd">15</span><span class="p">마감</span></button><button class="cal-d    " type="button"><span class="dd">16</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">17</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">18</span><span class="p">가능</span></button><button class="cal-d off full  " type="button" disabled aria-disabled="true" data-why="이 날은 방문이 모두 찼어요"><span class="dd">19</span><span class="p">마감</span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="정기 휴무일이에요(일요일)"><span class="dd">20</span><span class="p">휴무</span></button><button class="cal-d    " type="button"><span class="dd">21</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">22</span><span class="p">가능</span></button><button class="cal-d off full  " type="button" disabled aria-disabled="true" data-why="이 날은 방문이 모두 찼어요"><span class="dd">23</span><span class="p">마감</span></button><button class="cal-d   sel mark" type="button"><span class="dd">24</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">25</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">26</span><span class="p">가능</span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="정기 휴무일이에요(일요일)"><span class="dd">27</span><span class="p">휴무</span></button><button class="cal-d    " type="button"><span class="dd">28</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">29</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">30</span><span class="p">가능</span></button></div>
+    <div class="row-c mt4 t-sub" style="gap:16px;flex-wrap:wrap"><span>진하게 = 방문 가능</span><span class="muted">취소선 = 휴무·마감</span></div>
+  </div></section>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 마루공방 · (주)마루공방 · 대표 이도목 · 서울 성동구 성수이로 12</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">OW0501</div><div class="nm">기성 청구·수금</div>
+    <div class="fd">미수금 총액과 이달 수금액을 맨 위에 · 현장별·회차별 청구 목록(계약금·착공금·중도금·잔금) · 회차마다 예정일·금액·상태(예정·청구함·수금 완료·연체) · 청구서 만들기와 문자로 보내기 · 입금 확인 체크 · 연체된 건 위로 올리고 며칠 늦었는지 · 세금계산서 발행 상태 · 현장별 필터 · 수금 예정 달력</div>
+    <div class="lk"><a href="OW0101.html">현장 대시보드 ›</a><a href="OW0401.html">자재·원가 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">OW0501 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

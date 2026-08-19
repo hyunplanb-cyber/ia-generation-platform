@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>인테리어 디럭스 · 미니멀모노 — 자동 넘김</title>
+<style>
+  html,body{margin:0;height:100%;background:#F0EFEB;overflow:hidden}
+  iframe{width:100%;height:calc(100% - 44px);border:0;display:block}
+  .tag{height:44px;box-sizing:border-box;padding:11px 18px;background:#1C2B22;color:#fff;
+    font:700 15px/1.4 Paperlogy,Pretendard,'Malgun Gothic',sans-serif;
+    display:flex;justify-content:space-between}
+</style></head><body>
+<iframe id="f" src="pages/HO-01.html"></iframe>
+<div class="tag"><span id="t">홈</span><span>인테리어 디럭스 · 미니멀모노</span></div>
+<script>
+/* 한 장에 4초. 화면 녹화만 눌러도 쓸 수 있는 길이다. */
+const 장 = [{"f":"HO-01.html","t":"홈"},{"f":"CS-01.html","t":"시공사례 목록"},{"f":"ES-01.html","t":"견적 조건 입력 - 단계별"},{"f":"VS-01.html","t":"방문 실측 예약"},{"f":"CT-01.html","t":"계약서 확인·서명"},{"f":"PR-01.html","t":"공정표"},{"f":"AS-01.html","t":"하자보수 접수"},{"f":"OW-01.html","t":"현장 대시보드"},{"f":"AU-01.html","t":"로그인"}];
+let i = 0;
+setInterval(() => {
+  i = (i + 1) % 장.length;
+  document.getElementById("f").src = "pages/" + 장[i].f;
+  document.getElementById("t").textContent = 장[i].t;
+}, 4000);
+</script></body></html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>현장 상세 - 공정 편집 · 마루공방</title>
+<meta name="description" content="현장 머리(주소·평수·계약금액·진행률·담당 소장) · 탭(공정·자재·사진·정산) · 공정 탭의 편집 가능한 일정표(막대를 끌어 날짜 바꾸기) · 앞 공정을 밀면 뒤가 따라 밀리는 것 · 공정별 팀 배정과 일정 충돌 경고 · 공정 추가·지우기 · 실제 진행률 입력 · 손">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="OW0301">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="OW0101.html"><span class="em">마</span>마루공방 <span class="t-sub" style="font-weight:500">사장님</span></a>
+    <div class="gl">현장 관리</div><a href="OW0101.html">현장 대시보드</a><a href="OW0201.html">견적 요청함</a><a href="OW0301.html" class="on" aria-current="page">현장 상세</a><a href="OW0401.html">자재·원가</a><a href="OW0501.html">기성 청구·수금</a><a href="OW0601.html">일정 캘린더</a><div class="gl">업체 설정</div><a href="OW0701.html">업체 정보·직원</a>
+    <div class="side-ft">
+      <a href="HO0101.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    <form class="tb-search" role="search"><span class="ico" aria-hidden="true">🔍</span>
+      <input type="search" placeholder="시공 사례·자재를 검색해 보세요" aria-label="검색"></form>
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="OW0101.html"><span class="ava">이</span>이도목님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="OW0101.html">‹ 현장 대시보드</a>
+    <span class="path">현장 관리 › <b>현장 상세 - 공정 편집</b></span>
+  </nav>
+    
+    
+<section class="sec ">
+  
+  <div class="row-b wrap-row"><div>
+  <h1 class="t-page" style="font-size:24px">성수동 리버뷰 아파트</h1>
+  <p class="t-sub">32평 · 계약금액 34,100,000원 · 진행률 52% · 담당 이도목</p></div>
+  <span class="badge b-ok">정상 진행</span></div></section>
+
+<div><div class="tabs"><button class="tab on" type="button" data-pane="process">공정</button><button class="tab" type="button" data-pane="material">자재</button><button class="tab" type="button" data-pane="photo">사진</button><button class="tab" type="button" data-pane="billing">정산</button></div><div data-pane-body="process">
+      <div class="pbar-wrap"><div class="pbar"><div class="seg ok" style="left:0.00%;width:8.70%" title="철거·폐기물 · 철거팀 · 2일 · 끝남"></div><div class="seg ok" style="left:8.70%;width:13.04%" title="설비·배관 · 설비1팀 · 3일 · 끝남"></div><div class="seg ok" style="left:21.74%;width:8.70%" title="전기·조명 · 전기팀 · 2일 · 끝남"></div><div class="seg " style="left:30.43%;width:26.09%" title="목공 · 목공1팀 · 6일 · 하는 중"></div><div class="seg " style="left:56.52%;width:13.04%" title="타일 · 타일팀 · 3일 · 기다림"></div><div class="seg " style="left:69.57%;width:8.70%" title="도배 · 도배팀 · 2일 · 기다림"></div><div class="seg " style="left:78.26%;width:8.70%" title="마루 · 마루팀 · 2일 · 기다림"></div><div class="seg " style="left:86.96%;width:8.70%" title="도장 · 도장팀 · 2일 · 기다림"></div><div class="seg " style="left:95.65%;width:4.35%" title="청소 · 청소팀 · 1일 · 기다림"></div><div class="pbar-today" style="left:52%"></div></div></div>
+      <p class="t-sub mt2">막대를 끌면 시작·끝 날짜가 바뀌고 뒤 공정이 따라 밀립니다. 이 견본에서는 표로 편집합니다.</p>
+      <div class="table-wrap table-scroll"><table class="table ">
+    <thead><tr><th>공정</th><th>담당 팀</th><th>일정</th><th>상태</th></tr></thead><tbody><tr><td>철거·폐기물</td><td><select class="input" data-team style="height:34px;padding:0 8px"><option selected>철거팀</option><option>설비1팀</option><option>설비2팀</option><option>전기팀</option><option>목공1팀</option><option>목공2팀</option><option>타일팀</option><option>도배팀</option><option>마루팀</option><option>도장팀</option><option>청소팀</option></select></td><td>1~2일차 (2일)</td><td><span class="badge b-ok">끝남</span></td></tr><tr><td>설비·배관</td><td><select class="input" data-team style="height:34px;padding:0 8px"><option>철거팀</option><option selected>설비1팀</option><option>설비2팀</option><option>전기팀</option><option>목공1팀</option><option>목공2팀</option><option>타일팀</option><option>도배팀</option><option>마루팀</option><option>도장팀</option><option>청소팀</option></select></td><td>3~5일차 (3일)</td><td><span class="badge b-ok">끝남</span></td></tr><tr><td>전기·조명</td><td><select class="input" data-team style="height:34px;padding:0 8px"><option>철거팀</option><option>설비1팀</option><option>설비2팀</option><option selected>전기팀</option><option>목공1팀</option><option>목공2팀</option><option>타일팀</option><option>도배팀</option><option>마루팀</option><option>도장팀</option><option>청소팀</option></select></td><td>6~7일차 (2일)</td><td><span class="badge b-ok">끝남</span></td></tr><tr><td>목공</td><td><select class="input" data-team style="height:34px;padding:0 8px"><option>철거팀</option><option>설비1팀</option><option>설비2팀</option><option>전기팀</option><option selected>목공1팀</option><option>목공2팀</option><option>타일팀</option><option>도배팀</option><option>마루팀</option><option>도장팀</option><option>청소팀</option></select></td><td>8~13일차 (6일)</td><td><span class="badge b-pri">하는 중</span></td></tr><tr><td>타일</td><td><select class="input" data-team style="height:34px;padding:0 8px"><option>철거팀</option><option>설비1팀</option><option>설비2팀</option><option>전기팀</option><option>목공1팀</option><option>목공2팀</option><option selected>타일팀</option><option>도배팀</option><option>마루팀</option><option>도장팀</option><option>청소팀</option></select></td><td>14~16일차 (3일)</td><td><span class="badge b-mut">기다림</span></td></tr><tr><td>도배</td><td><select class="input" data-team style="height:34px;padding:0 8px"><option>철거팀</option><option>설비1팀</option><option>설비2팀</option><option>전기팀</option><option>목공1팀</option><option>목공2팀</option><option>타일팀</option><option selected>도배팀</option><option>마루팀</option><option>도장팀</option><option>청소팀</option></select></td><td>17~18일차 (2일)</td><td><span class="badge b-mut">기다림</span></td></tr><tr><td>마루</td><td><select class="input" data-team style="height:34px;padding:0 8px"><option>철거팀</option><option>설비1팀</option><option>설비2팀</option><option>전기팀</option><option>목공1팀</option><option>목공2팀</option><option>타일팀</option><option>도배팀</option><option selected>마루팀</option><option>도장팀</option><option>청소팀</option></select></td><td>19~20일차 (2일)</td><td><span class="badge b-mut">기다림</span></td></tr><tr><td>도장</td><td><select class="input" data-team style="height:34px;padding:0 8px"><option>철거팀</option><option>설비1팀</option><option>설비2팀</option><option>전기팀</option><option>목공1팀</option><option>목공2팀</option><option>타일팀</option><option>도배팀</option><option>마루팀</option><option selected>도장팀</option><option>청소팀</option></select></td><td>21~22일차 (2일)</td><td><span class="badge b-mut">기다림</span></td></tr><tr><td>청소</td><td><select class="input" data-team style="height:34px;padding:0 8px"><option>철거팀</option><option>설비1팀</option><option>설비2팀</option><option>전기팀</option><option>목공1팀</option><option>목공2팀</option><option>타일팀</option><option>도배팀</option><option>마루팀</option><option>도장팀</option><option selected>청소팀</option></select></td><td>23~23일차 (1일)</td><td><span class="badge b-mut">기다림</span></td></tr></tbody></table></div>
+      <div class="banner banner-danger "><span class="ico">⚠️</span><div class="grow"><span data-team-out data-busy="타일팀"
+        data-when="9월 24일" data-where="용산구 한강로 카페 상가"><b>타일팀 배정 충돌</b> — 9월 24일에 다른 현장(용산구 한강로 카페 상가)과 겹칩니다.</span></div></div>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button">공정 추가</button><button class="btn btn-ghost btn-sm" type="button">공정 지우기</button></div></div><div data-pane-body="material" hidden><a class="btn btn-primary" href="OW0401.html">자재·원가로 이동</a></div><div data-pane-body="photo" hidden><div class="g4"><div class="ph ph-11 ph-t2" role="img" aria-label="현장 사진 이미지 자리, 권장 800×800"><span class="lb">이미지 영역 (현장 사진 · 권장 800×800)</span></div><div class="ph ph-11 ph-t3" role="img" aria-label="현장 사진 이미지 자리, 권장 800×800"><span class="lb">이미지 영역 (현장 사진 · 권장 800×800)</span></div><div class="ph ph-11 ph-t4" role="img" aria-label="현장 사진 이미지 자리, 권장 800×800"><span class="lb">이미지 영역 (현장 사진 · 권장 800×800)</span></div><div class="ph ph-11 ph-t5" role="img" aria-label="현장 사진 이미지 자리, 권장 800×800"><span class="lb">이미지 영역 (현장 사진 · 권장 800×800)</span></div><div class="ph ph-11 ph-t1" role="img" aria-label="현장 사진 이미지 자리, 권장 800×800"><span class="lb">이미지 영역 (현장 사진 · 권장 800×800)</span></div><div class="ph ph-11 ph-t2" role="img" aria-label="현장 사진 이미지 자리, 권장 800×800"><span class="lb">이미지 영역 (현장 사진 · 권장 800×800)</span></div><div class="ph ph-11 ph-t3" role="img" aria-label="현장 사진 이미지 자리, 권장 800×800"><span class="lb">이미지 영역 (현장 사진 · 권장 800×800)</span></div><div class="ph ph-11 ph-t4" role="img" aria-label="현장 사진 이미지 자리, 권장 800×800"><span class="lb">이미지 영역 (현장 사진 · 권장 800×800)</span></div></div></div><div data-pane-body="billing" hidden><a class="btn btn-primary" href="OW0501.html">기성 청구·수금으로 이동</a></div></div>
+
+<section class="sec ">
+  <div class="sec-hd"><div><h2 class="t-sec">손님에게 보이는 것 / 안 보이는 것</h2></div></div>
+  <div class="g2">
+  <div class="box-ok"><b>손님에게 보임</b><ul class="list-plain mt2"><li>· 공정표 진행률</li><li>· 현장 사진 일지</li><li>· 추가공사 승인 요청</li></ul></div>
+  <div class="box"><b>안 보임</b><ul class="list-plain mt2"><li>· 원가·마진</li><li>· 팀 배정 내부 메모</li><li>· 거래처 연락처</li></ul></div>
+</div></section>
+
+<section class="sec ">
+  <div class="sec-hd"><div><h2 class="t-sec">변경 이력</h2></div></div>
+  <div class="table-wrap table-scroll"><table class="table ">
+    <thead><tr><th>시각</th><th>내용</th></tr></thead><tbody><tr><td>9/20 08:40</td><td>타일팀 배정 — 타일 공정</td></tr><tr><td>9/18 17:02</td><td>목공 일정 2일 연장</td></tr><tr><td>9/10 09:00</td><td>착공</td></tr></tbody></table></div></section>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 마루공방 · (주)마루공방 · 대표 이도목 · 서울 성동구 성수이로 12</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">OW0301</div><div class="nm">현장 상세 - 공정 편집</div>
+    <div class="fd">현장 머리(주소·평수·계약금액·진행률·담당 소장) · 탭(공정·자재·사진·정산) · 공정 탭의 편집 가능한 일정표(막대를 끌어 날짜 바꾸기) · 앞 공정을 밀면 뒤가 따라 밀리는 것 · 공정별 팀 배정과 일정 충돌 경고 · 공정 추가·지우기 · 실제 진행률 입력 · 손님에게 보이는 것과 안 보이는 것 갈라 두기 · 변경 이력</div>
+    <div class="lk"><a href="OW0401.html">자재·원가 ›</a><a href="OW0501.html">청구·수금 ›</a><a href="OW0601.html">일정 캘린더 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">OW0301 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

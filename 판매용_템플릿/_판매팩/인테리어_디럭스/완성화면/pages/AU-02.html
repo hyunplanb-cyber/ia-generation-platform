@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>회원가입 · 집짓다</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<header class="gnb"><div class="gnb-in">
+  <a class="logo" href="HO-01.html"><span class="mark">집</span>집짓다</a>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="CS-01.html">시공사례</a><a href="ES-01.html">예상 견적</a><a href="VS-01.html">실측 예약</a><a href="HO-03.html">비용 안내</a></nav>
+  <div class="gnb-right">
+    <a class="btn btn-ghost btn-sm" href="OW-01.html">업체 관리자</a>
+    <a class="btn btn-pri btn-sm" href="AU-01.html">로그인</a>
+  </div>
+</div></header>
+
+<main class="main"><div class="wrap"><a class="back" href="AU-01.html">‹ 로그인</a><div class="solo-wrap"><div class="solo-card">
+  <h1 class="t-sec mb2">회원가입</h1>
+    <div class="steps"><div class="st on">정보 입력</div><div class="st ">인증</div><div class="st ">완료</div></div>
+    <div class="field mt6"><span class="lb">이름</span><input class="in " type="text" placeholder="이름"></div>
+    <div class="field"><span class="lb">휴대폰 번호</span><div class="row"><span class="grow"><input class="in " type="text" placeholder="010-0000-0000"></span><button class="btn btn-ghost btn-sm" type="button" data-toast="인증번호를 보냈어요" data-toast-kind="ok">인증번호 받기</button></div>
+      <div class="row mt2" style="gap:8px"><span class="in" style="width:100px;height:32px;display:flex;align-items:center;justify-content:center">인증번호</span><span class="t-sub num">2:58</span><a class="more">다시 받기</a></div></div>
+    <div class="field"><span class="lb">비밀번호</span><input class="in " type="password">
+      <div class="stack mt2"><span class="t-sub">✓ 8자 이상</span><span class="t-sub">✓ 영문과 숫자 섞기</span><span class="t-sub">✓ 특수문자 하나 이상</span></div></div>
+    <div class="field"><span class="lb">비밀번호 확인</span><input class="in " type="password"></div>
+    <div class="field"><span class="lb">관심 시공 분야 (선택)</span><div class="chips"><button class="chip" type="button">아파트 전체</button><button class="chip" type="button">주방</button><button class="chip" type="button">욕실</button><button class="chip" type="button">상업공간</button></div></div>
+    <div data-agree-scope>
+    <div class="stack mt4">
+      <label class="check">
+  <input type="checkbox" data-agree-all>
+  <span>전체 동의</span></label>
+      <label class="check">
+  <input type="checkbox" data-agree>
+  <span>이용약관 (필수)</span></label>
+      <label class="check">
+  <input type="checkbox" data-agree>
+  <span>개인정보 처리방침 (필수)</span></label>
+      <label class="check none">
+  <input type="checkbox">
+  <span>마케팅 수신 (선택)</span></label>
+    </div>
+    <div class="mt6"><button class="btn btn-pri btn-w is-off" id="btn-signup" type="button" disabled data-go="AU-04.html" data-unlock-all="btn-signup">가입하기</button></div>
+    </div>
+    <p class="t-sub mt3">이미 가입된 번호면 <a class="more" href="AU-01.html">로그인하러 가기</a></p>
+  </div></div></div></main>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">AU-02 · 회원가입</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>계정</dd>
+        <dt>기능정의</dt><dd>이름·휴대폰 번호와 인증번호 받기 · 남은 시간과 다시 받기 · 비밀번호와 조건 세 줄이 하나씩 채워지는 표시 · 비밀번호 확인 · 관심 시공 분야 고르기(선택) · 약관 동의(전체 동의와 항목별) · 필수를 다 해야 열리는 가입 버튼 · 이미 가입된 번호일 때 안내</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="AU-04.html">가입 완료 → 내 정보</a><a href="AU-01.html">로그인 → 로그인</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>방문 실측 예약 · 마루공방</title>
+<meta name="description" content="가능한 날짜를 보여 주는 달력(꽉 찬 날은 흐리게, 오늘 이전은 안 눌림) · 고른 날의 시간대 칸(오전·오후 2시간 단위, 남은 자리 수 표시) · 주소와 동·호수 입력 · 현장 상황 체크(거주 중·공실·짐 있음) · 실측에 걸리는 시간과 준비할 것 안내 · 오른쪽 ">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="VS0101">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="HO0101.html"><span class="em">마</span>마루공방</a>
+    <div class="gl">둘러보기</div><a href="HO0101.html">홈</a><a href="CS0101.html">시공사례</a><a href="HO0301.html">비용 안내</a><div class="gl">견적·예약</div><a href="ES0101.html">견적 내기</a><a href="VS0101.html" class="on" aria-current="page">실측 예약</a><a href="CT0101.html">계약·결제</a><div class="gl">진행·보수</div><a href="PR0101.html">공사 진행</a><a href="AS0101.html">하자보수</a><div class="gl">계정</div><a href="AU0101.html">로그인</a><a href="AU0401.html">내 정보</a>
+    <div class="side-ft">
+      <a href="OW0101.html">↪ 사장님 화면으로</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    <form class="tb-search" role="search"><span class="ico" aria-hidden="true">🔍</span>
+      <input type="search" placeholder="시공 사례·자재를 검색해 보세요" aria-label="검색"></form>
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="AU0401.html"><span class="ava">김</span>김하은님</a>
+  </header>
+  <main class="appmain">
+    
+    
+    
+<div class="page-hd"><div>
+  <h1 class="t-page">방문 실측 예약</h1><p class="t-sub">실측은 40분에서 1시간 걸려요. 방문비는 받지 않습니다.</p></div></div>
+<div class="split-r">
+  <div>
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">날짜 고르기</h3></div>
+  <div class="card-bd "><div class="cal">
+    <div class="cal-hd"><button class="btn btn-ghost btn-sm cal-mv" type="button" data-mv="-1">‹</button><b class="cal-m">2026년 9월</b><button class="btn btn-ghost btn-sm cal-mv" type="button" data-mv="1">›</button></div>
+    <div class="cal-grid"><span class="dow">일</span><span class="dow">월</span><span class="dow">화</span><span class="dow">수</span><span class="dow">목</span><span class="dow">금</span><span class="dow">토</span><span></span><span></span><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">1</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">2</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">3</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">4</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">5</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">6</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">7</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">8</span><span class="p"></span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="지난 날짜예요"><span class="dd">9</span><span class="p"></span></button><button class="cal-d    " type="button"><span class="dd">10</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">11</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">12</span><span class="p">가능</span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="정기 휴무일이에요(일요일)"><span class="dd">13</span><span class="p">휴무</span></button><button class="cal-d    " type="button"><span class="dd">14</span><span class="p">가능</span></button><button class="cal-d off full  " type="button" disabled aria-disabled="true" data-why="이 날은 방문이 모두 찼어요"><span class="dd">15</span><span class="p">마감</span></button><button class="cal-d    " type="button"><span class="dd">16</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">17</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">18</span><span class="p">가능</span></button><button class="cal-d off full  " type="button" disabled aria-disabled="true" data-why="이 날은 방문이 모두 찼어요"><span class="dd">19</span><span class="p">마감</span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="정기 휴무일이에요(일요일)"><span class="dd">20</span><span class="p">휴무</span></button><button class="cal-d    " type="button"><span class="dd">21</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">22</span><span class="p">가능</span></button><button class="cal-d off full  " type="button" disabled aria-disabled="true" data-why="이 날은 방문이 모두 찼어요"><span class="dd">23</span><span class="p">마감</span></button><button class="cal-d    " type="button"><span class="dd">24</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">25</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">26</span><span class="p">가능</span></button><button class="cal-d off   " type="button" disabled aria-disabled="true" data-why="정기 휴무일이에요(일요일)"><span class="dd">27</span><span class="p">휴무</span></button><button class="cal-d    " type="button"><span class="dd">28</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">29</span><span class="p">가능</span></button><button class="cal-d    " type="button"><span class="dd">30</span><span class="p">가능</span></button></div>
+    <div class="row-c mt4 t-sub" style="gap:16px;flex-wrap:wrap"><span>진하게 = 방문 가능</span><span class="muted">취소선 = 휴무·마감</span></div>
+  </div></div>
+  </div>
+    <div class="card mt4">
+  <div class="card-hd"><h3 class="t-card">시간대</h3></div>
+  <div class="card-bd "><div class="slots"><button class="slot  " type="button"><span class="dd">09:00</span><span class="n">2자리</span></button><button class="slot full " type="button" data-why="이미 방문이 찬 시간이에요"><span class="dd">11:00</span><span class="n">마감</span></button><button class="slot  on" type="button"><span class="dd">14:00</span><span class="n">2자리</span></button><button class="slot  " type="button"><span class="dd">16:00</span><span class="n">2자리</span></button></div></div>
+  </div>
+  </div>
+  <div class="sticky">
+    <div class="card ">
+  <div class="card-hd"><h3 class="t-card">예약 요약</h3></div>
+  <div class="card-bd ">
+      <div class="field"><label class="lb">주소</label><input class="input" placeholder="우편번호 찾기 + 상세주소"></div>
+      <div class="field"><label class="lb">동·호수</label><input class="input" placeholder="101동 1203호"></div>
+      <div class="field"><label class="lb">연락처</label><input class="input" placeholder="010-0000-0000"></div>
+      <div class="field"><label class="lb">현장 상황</label>
+        <div class="radios-h"><label class="radio on"><input type="radio" name="site-state">거주 중</label><label class="radio"><input type="radio" name="site-state">비어 있음</label><label class="radio"><input type="radio" name="site-state">짐만 있음</label></div></div>
+      <div class="field"><label class="lb">연결할 견적</label><select class="input"><option>성동구 32평 전체시공 (EST-20260817-0042)</option></select></div>
+      <div class="banner banner-mut "><span class="ico">ℹ️</span><div class="grow">실측은 40분에서 1시간 걸려요. 하루 전까지 연락 주시면 바꿔 드려요.</div></div>
+      <div class="mt4"><a class="btn btn-primary btn-block btn-lg" href="VS0201.html">예약하기</a></div></div>
+  </div>
+  </div>
+</div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 마루공방 · (주)마루공방 · 대표 이도목 · 서울 성동구 성수이로 12</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">VS0101</div><div class="nm">방문 실측 예약</div>
+    <div class="fd">가능한 날짜를 보여 주는 달력(꽉 찬 날은 흐리게, 오늘 이전은 안 눌림) · 고른 날의 시간대 칸(오전·오후 2시간 단위, 남은 자리 수 표시) · 주소와 동·호수 입력 · 현장 상황 체크(거주 중·공실·짐 있음) · 실측에 걸리는 시간과 준비할 것 안내 · 오른쪽 예약 요약 카드(날짜·시간·주소·담당) · 연결할 견적 고르기 · 방문비 무료 안내와 취소 규정</div>
+    <div class="lk"><a href="VS0201.html">예약 확인 ›</a><a href="ES0201.html">견적 결과 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">VS0101 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

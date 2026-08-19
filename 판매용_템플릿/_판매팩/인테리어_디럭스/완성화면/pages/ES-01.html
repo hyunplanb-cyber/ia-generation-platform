@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>견적 조건 입력 - 단계별 · 집짓다</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+<header class="gnb"><div class="gnb-in">
+  <a class="logo" href="HO-01.html"><span class="mark">집</span>집짓다</a>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="CS-01.html">시공사례</a><a href="ES-01.html">예상 견적</a><a href="VS-01.html">실측 예약</a><a href="HO-03.html">비용 안내</a></nav>
+  <div class="gnb-right">
+    <a class="btn btn-ghost btn-sm" href="OW-01.html">업체 관리자</a>
+    <a class="btn btn-pri btn-sm" href="AU-01.html">로그인</a>
+  </div>
+</div></header>
+
+<main class="main"><div class="wrap"><div class="page-hd">
+  <div><h1 class="t-page">예상 견적 내기</h1></div>
+  </div>
+
+<div data-wizard data-step-now="1" data-step-total="6">
+<div class="progress"><div class="fill " style="width:0%"></div></div>
+<p class="t-sub mt2 mb6"><span data-step-label>6단계 중 1번째</span> · 대략 2분이면 끝나요</p>
+<div class="steps"><div class="st on" data-step-dot="1" style="cursor:pointer">평수</div><div class="st " data-step-dot="2" style="cursor:pointer">공사 범위</div><div class="st " data-step-dot="3" style="cursor:pointer">공간</div><div class="st " data-step-dot="4" style="cursor:pointer">마감 등급</div><div class="st " data-step-dot="5" style="cursor:pointer">거주 여부</div><div class="st " data-step-dot="6" style="cursor:pointer">연락처</div></div>
+
+<div class="split-r"><div><div data-step="1"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">평수가 어떻게 되시나요?</h3></div>
+  <div class="card-bd ">
+      <p class="t-sub mb4">등기부나 관리비 고지서에 적힌 «공급면적» 기준이면 돼요</p>
+      <div class="banner banner-info mb4" data-from-home hidden><span class="ico">ℹ</span><div class="grow">홈에서 <b data-from-home-label>30평대</b><span data-from-home-josa>를</span> 고르고 오셨어요. 정확한 평수로 고쳐 주세요.</div></div>
+      <div class="field"><span class="lb">평수</span>
+        <div class="row"><input class="in" type="number" data-pyeong value="32" min="5" max="200" style="max-width:120px"><span class="t-sub">평 = <b data-pyeong-m2>105.8㎡</b></span></div>
+      </div></div>
+  </div></div>
+
+    <div data-step="2" hidden><div class="card ">
+  <div class="card-hd"><h3 class="t-card">어디를 손보시나요?</h3></div>
+  <div class="card-bd ">
+      <p class="t-sub mb4">하나만 골라 주세요</p>
+      <div class="g2">
+        <label class="box" style="text-align:center;cursor:pointer">
+          <input type="radio" name="범위" data-field="공사 범위" value="전체 시공" checked style="margin-bottom:6px">
+          <div class="t-card">전체 시공</div>
+          <div class="t-sub mt1">집 전체를 다시 손봅니다</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <input type="radio" name="범위" data-field="공사 범위" value="부분 시공" style="margin-bottom:6px">
+          <div class="t-card">부분 시공</div>
+          <div class="t-sub mt1">고칠 곳만 골라 손봅니다</div></label>
+      </div></div>
+  </div></div>
+
+    <div data-step="3" hidden><div class="card ">
+  <div class="card-hd"><h3 class="t-card">어느 공간을 손보시나요?</h3></div>
+  <div class="card-bd ">
+      <p class="t-sub mb4">여러 개 고를 수 있어요</p>
+      <div class="g3" data-space-pick>
+        <label class="box" style="text-align:center;cursor:pointer">
+          <div class="ph t2 ph-card " style="aspect-ratio:400/300"><img data-예시 src="../assets/예시/인테리어 - 13.webp" alt=""><span class="lb">이미지 영역 (거실 사진 · <span class="sz">권장 400×300</span>)</span></div>
+          <input type="checkbox" data-space="거실" checked style="margin:8px 0 4px">
+          <div class="t-card">거실</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <div class="ph t2 ph-card " style="aspect-ratio:400/300"><img data-예시 src="../assets/예시/인테리어 - 14.webp" alt=""><span class="lb">이미지 영역 (주방 사진 · <span class="sz">권장 400×300</span>)</span></div>
+          <input type="checkbox" data-space="주방" checked style="margin:8px 0 4px">
+          <div class="t-card">주방</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <div class="ph t5 ph-card " style="aspect-ratio:400/300"><img data-예시 src="../assets/예시/인테리어 - 15.webp" alt=""><span class="lb">이미지 영역 (욕실 사진 · <span class="sz">권장 400×300</span>)</span></div>
+          <input type="checkbox" data-space="욕실" checked style="margin:8px 0 4px">
+          <div class="t-card">욕실</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <div class="ph t3 ph-card " style="aspect-ratio:400/300"><img data-예시 src="../assets/예시/인테리어 - 16.webp" alt=""><span class="lb">이미지 영역 (침실 사진 · <span class="sz">권장 400×300</span>)</span></div>
+          <input type="checkbox" data-space="침실" style="margin:8px 0 4px">
+          <div class="t-card">침실</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <div class="ph t1 ph-card " style="aspect-ratio:400/300"><img data-예시 src="../assets/예시/인테리어 - 17.webp" alt=""><span class="lb">이미지 영역 (베란다 사진 · <span class="sz">권장 400×300</span>)</span></div>
+          <input type="checkbox" data-space="베란다" style="margin:8px 0 4px">
+          <div class="t-card">베란다</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <div class="ph t2 ph-card " style="aspect-ratio:400/300"><img data-예시 src="../assets/예시/인테리어 - 18.webp" alt=""><span class="lb">이미지 영역 (현관 사진 · <span class="sz">권장 400×300</span>)</span></div>
+          <input type="checkbox" data-space="현관" style="margin:8px 0 4px">
+          <div class="t-card">현관</div></label>
+      </div></div>
+  </div></div>
+
+    <div data-step="4" hidden><div class="card ">
+  <div class="card-hd"><h3 class="t-card">마감은 어느 등급으로 볼까요?</h3></div>
+  <div class="card-bd ">
+      <p class="t-sub mb4">나중에 견적 결과에서도 바꿔 볼 수 있어요</p>
+      <div class="g3">
+        <label class="box" style="text-align:center;cursor:pointer">
+          <input type="radio" name="등급" data-field="마감 등급" value="기본" style="margin-bottom:6px">
+          <div class="t-card">기본</div>
+          <div class="t-sub mt1">공사 20일 · 보증 1년</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <input type="radio" name="등급" data-field="마감 등급" value="고급" checked style="margin-bottom:6px">
+          <div class="t-card">고급</div>
+          <div class="t-sub mt1">공사 22일 · 보증 2년</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <input type="radio" name="등급" data-field="마감 등급" value="프리미엄" style="margin-bottom:6px">
+          <div class="t-card">프리미엄</div>
+          <div class="t-sub mt1">공사 25일 · 보증 3년</div></label>
+      </div></div>
+  </div></div>
+
+    <div data-step="5" hidden><div class="card ">
+  <div class="card-hd"><h3 class="t-card">지금 살고 계신가요?</h3></div>
+  <div class="card-bd ">
+      <p class="t-sub mb4">사시는 채로 하는 공사는 순서와 날수가 달라져요</p>
+      <div class="g3">
+        <label class="box" style="text-align:center;cursor:pointer">
+          <input type="radio" name="거주" data-field="거주 여부" value="거주 중" checked style="margin-bottom:6px">
+          <div class="t-card">거주 중</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <input type="radio" name="거주" data-field="거주 여부" value="비어 있음" style="margin-bottom:6px">
+          <div class="t-card">비어 있음</div></label><label class="box" style="text-align:center;cursor:pointer">
+          <input type="radio" name="거주" data-field="거주 여부" value="짐만 있음" style="margin-bottom:6px">
+          <div class="t-card">짐만 있음</div></label>
+      </div>
+      <div class="field mt6"><span class="lb">언제쯤 시작하고 싶으세요?</span>
+        <select class="sel" data-field="희망 착공"><option selected>9월</option><option>10월</option><option>11월</option><option>아직 모르겠어요</option></select>
+      </div></div>
+  </div></div>
+
+    <div data-step="6" hidden><div class="card ">
+  <div class="card-hd"><h3 class="t-card">견적을 어디로 보내 드릴까요?</h3></div>
+  <div class="card-bd ">
+      <p class="t-sub mb4">실측 예약 때 말고는 연락드리지 않아요</p>
+      <div class="field"><span class="lb">이름</span><input class="in " type="text" placeholder="김하은"></div>
+      <div class="field"><span class="lb">연락처</span><input class="in " type="tel" placeholder="010-0000-0000"></div>
+      <label class="check none">
+  <input type="checkbox" checked>
+  <span>공사 진행 소식을 문자로 받을게요</span></label></div>
+  </div></div>
+
+    <div class="row-b mt6">
+      <button class="btn btn-ghost" type="button" data-step-prev>이전</button>
+      <div class="row" style="gap:var(--sp-btn)">
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="임시저장했어요">나중에 이어서 하기</button>
+        <button class="btn btn-pri" type="button" data-step-next>다음</button>
+        <a class="btn btn-pri" href="ES-02.html" data-step-done hidden>견적 결과 보기</a>
+      </div>
+    </div></div><div class="sticky stack" style="gap:var(--sp-block)"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">지금까지 고른 조건</h3></div>
+  <div class="card-bd ">
+      <dl class="kv" data-answers>
+        <dt>평수</dt><dd data-answer="평수">32평</dd>
+        <dt>공사 범위</dt><dd data-answer="공사 범위">전체 시공</dd>
+        <dt>고른 공간</dt><dd><span data-space-list>거실, 주방, 욕실</span></dd>
+        <dt>마감 등급</dt><dd data-answer="마감 등급">고급</dd>
+        <dt>거주 여부</dt><dd data-answer="거주 여부">거주 중</dd>
+        <dt>희망 착공</dt><dd data-answer="희망 착공">9월</dd>
+      </dl>
+      <div class="row-b mt4"><span class="t-sub">예상 금액</span><span class="t-card acc" data-space-price>2,400만원 ~ 3,100만원</span></div>
+    </div>
+  </div></div></div>
+</div></div></main>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">ES-01 · 견적 조건 입력 - 단계별</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>견적</dd>
+        <dt>기능정의</dt><dd>한 번에 한 가지만 묻는 단계별 입력(6단계) — 한 화면 안에서 여섯 단계가 앞뒤로 오간다 · 1단계 평수와 ㎡ 환산 · 2단계 공사 범위(전체·부분) · 3단계 손볼 공간 체크(거실·주방·욕실·침실·베란다·현관) · 4단계 마감 등급 3단 · 5단계 거주 여부와 희망 착공 시기 · 6단계 연락처 · 위쪽 진행 막대는 «끝낸 만큼»만 찬다 · 오른쪽에 실시간으로 오르내리는 예상 금액 미리보기 · 이전으로 돌아가도 답이 남는 것 · 「나중에 이어서 하기」 임시저장</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="ES-02.html">견적 결과 보기 → 견적 결과</a><a href="CS-04.html">자재 둘러보기 → 자재·마감 둘러보기</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

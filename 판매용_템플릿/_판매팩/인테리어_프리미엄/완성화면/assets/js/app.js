@@ -1,0 +1,613 @@
+/* 동네 서비스 매칭 플랫폼 — 공통 인터랙션
+   프로토타입용 최소 동작: 탭 / 아코디언 / 칩 / 찜 / 별점 / 토스트 / 모달 /
+   단계 진행 / 견적 고르기 / 카운트다운 / 가로 스크롤 화살표 */
+(function () {
+  /* 받침을 보고 조사를 고른다 — 「비밀번호를」·「이메일을」처럼 읽히게 한다.
+     2026-08-19 검수: 「을(를)」·「(으)로」가 손님 화면에 그대로 나갔다. */
+  function 조사붙이기(말, 있, 없) {
+    var c = String(말).charCodeAt(String(말).length - 1) - 0xac00;
+    return 말 + (c >= 0 && c <= 11171 && c % 28 !== 0 ? 있 : 없);
+  }
+  'use strict';
+
+  function on(sel, ev, fn) {
+    document.addEventListener(ev, function (e) {
+      var t = e.target.closest(sel);
+      if (t) fn(e, t);
+    });
+  }
+
+  /* 탭 — 같은 묶음 안에서만 활성 전환. data-go 가 있으면 해당 화면으로 이동 */
+  on('.tab', 'click', function (e, t) {
+    if (t.dataset.go) { location.href = t.dataset.go; return; }
+    var box = t.closest('.tabs, .tabs-pill');
+    if (!box) return;
+    box.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('on'); });
+    t.classList.add('on');
+    var key = t.dataset.pane;
+    if (key) {
+      var scope = box.parentElement;
+      scope.querySelectorAll('[data-pane-body]').forEach(function (p) {
+        p.hidden = p.dataset.paneBody !== key;
+      });
+    }
+  });
+
+  /* 아코디언 */
+  on('.acc-q', 'click', function (e, t) {
+    t.closest('.acc-item').classList.toggle('on');
+  });
+
+  /* 칩 필터 */
+  on('.chip', 'click', function (e, t) {
+    if (t.dataset.go) { location.href = t.dataset.go; return; }
+    if (t.classList.contains('is-off')) return;
+    /* 「전체」가 든 묶음은 하나만 골라진다 — 「전체」와 「텐트」가 같이 켜지면 안 된다.
+       고른 것에 ✕ 가 붙은 묶음(여러 개 고르는 것)은 그대로 둔다. */
+    var 묶음 = t.closest('.chips');
+    var 한개만 = 묶음 && Array.prototype.some.call(묶음.querySelectorAll('.chip'), function (c) {
+      return /^전체(\s*보기)?$/.test((c.textContent || '').trim());
+    }) && !묶음.querySelector('.chip .x');
+    if (한개만) {
+      묶음.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); });
+      t.classList.add('on');
+      return;
+    }
+    t.classList.toggle('on');
+  });
+
+  /* 찜하기 */
+  on('.heart', 'click', function (e, t) {
+    e.preventDefault();
+    var isOn = t.classList.toggle('on');
+    t.textContent = isOn ? '♥' : '♡';
+    toast(isOn ? '찜한 고수에 담았어요' : '찜을 해제했어요', isOn ? '찜 목록 보기' : '되돌리기');
+  });
+
+  /* 토글 스위치 */
+  on('.toggle', 'click', function (e, t) {
+    t.classList.toggle('on');
+    if (t.dataset.toast) toast(t.dataset.toast);
+  });
+
+  /* 고르는 카드(라디오) */
+  on('.radio', 'click', function (e, t) {
+    if (t.classList.contains('is-off')) return;
+    var name = t.dataset.group;
+    if (!name) return;
+    document.querySelectorAll('.radio[data-group="' + name + '"]').forEach(function (x) { x.classList.remove('on'); });
+    t.classList.add('on');
+  });
+
+  /* 별점 입력 — 별을 누르면 그 자리까지 채운다 */
+  on('.rate-in .st b', 'click', function (e, t) {
+    var box = t.closest('.st');
+    var list = Array.prototype.slice.call(box.querySelectorAll('b'));
+    var i = list.indexOf(t);
+    list.forEach(function (x, n) {
+      x.classList.toggle('on', n <= i);
+      x.textContent = n <= i ? '★' : '☆';
+    });
+    var v = box.parentElement.querySelector('.v');
+    if (v) v.textContent = (i + 1) + '점';
+  });
+
+  /* 견적 고르기 — 체크한 개수가 하단 고정 바에 뜬다 */
+  function syncPick() {
+    var boxes = document.querySelectorAll('[data-pick]');
+    if (!boxes.length) return;
+    var n = 0;
+    boxes.forEach(function (b) { if (b.checked) n++; });
+    var bar = document.querySelector('[data-pick-bar]');
+    if (!bar) return;
+    bar.hidden = n < 1;
+    bar.querySelectorAll('[data-pick-n]').forEach(function (x) { x.textContent = n; });
+    var go = bar.querySelector('[data-pick-go]');
+    if (go) {
+      var few = n < 2;
+      go.classList.toggle('is-off', few);
+      go.disabled = few;
+    }
+  }
+  document.addEventListener('change', function (e) {
+    if (e.target.matches('[data-pick]')) syncPick();
+  });
+  document.addEventListener('DOMContentLoaded', syncPick);
+
+  /* 잠글 수 있는 버튼은 <a> 대신 <button data-go="…"> 로 만든다(레이아웃견본_발견기록.md 지뢰 6).
+     열려 있을 때만 눌러서 이동한다 — disabled 인 동안은 브라우저가 클릭 자체를 막지만,
+     한 번 더 확인해 조용히 잠금이 풀리는 일을 막는다. */
+  on('button[data-go]', 'click', function (e, t) {
+    if (t.disabled) return;
+    location.href = t.dataset.go;
+  });
+
+  /* 동의 체크박스 하나로 버튼 잠금 해제 — data-unlock="버튼id" */
+  document.addEventListener('change', function (e) {
+    var t = e.target.closest('[data-unlock]');
+    if (!t) return;
+    var b = document.getElementById(t.dataset.unlock);
+    if (!b) return;
+    b.disabled = !t.checked;
+    b.classList.toggle('is-off', !t.checked);
+  });
+
+  /* 여러 체크박스를 «다» 체크해야 열리는 버튼 — 체크박스(data-agree)와
+     버튼(data-unlock-all)이 반드시 같은 [data-agree-scope] 상자 안에 있어야 서로를 본다.
+     레이아웃견본_발견기록.md: 두 상자로 갈라 두면 영영 안 열린다. */
+  function syncUnlockAll(scope) {
+    var boxes = scope.querySelectorAll('[data-agree]');
+    var allOn = boxes.length > 0 && Array.prototype.every.call(boxes, function (b) { return b.checked; });
+    scope.querySelectorAll('[data-unlock-all]').forEach(function (b) {
+      b.disabled = !allOn;
+      b.classList.toggle('is-off', !allOn);
+    });
+  }
+  document.addEventListener('change', function (e) {
+    var t = e.target.closest('[data-agree]');
+    if (!t) return;
+    var scope = t.closest('[data-agree-scope]');
+    if (scope) syncUnlockAll(scope);
+  });
+
+  /* 전체 동의 — 아래 항목을 모두 따라가게 */
+  document.addEventListener('change', function (e) {
+    var t = e.target.closest('[data-agree-all]');
+    if (!t) return;
+    var scope = t.closest('[data-agree-scope]') || document;
+    scope.querySelectorAll('[data-agree]').forEach(function (x) { x.checked = t.checked; });
+  });
+
+  /* 올린 사진 삭제 — 아이콘 버튼(✕)을 누르면 그 미리보기 칸을 지운다.
+     이름이 같은 ✕ 가 여러 개라 「마지막 그물」의 이름-echo 토스트로는 둘째부터
+     안 바뀐 것으로 보였다(2026-08-18). 지우는 게 진짜 삭제의 뜻이라 그걸로 고쳤다. */
+  on('.icon-btn[aria-label="삭제"]', 'click', function (e, t) {
+    var box = t.closest('div[style*="position:relative"]') || t.parentElement;
+    if (box && box.parentElement) box.remove();
+  });
+
+  /* 첨부 이미지 「크게 보기」 — 제 글자를 접기/펼치기로 스스로 바꾼다.
+     이름이 같은 버튼이 여럿이라 토스트만으로는 둘째부터 안 바뀐 것으로 보였다. */
+  on('.btn-ghost.btn-sm', 'click', function (e, t) {
+    var txt = t.textContent.trim();
+    if (txt !== '크게 보기' && txt !== '접기') return;
+    t.textContent = txt === '크게 보기' ? '접기' : '크게 보기';
+  });
+
+  /* 닫기 (배너·토스트·모달) */
+  on('[data-close]', 'click', function (e, t) {
+    var box = t.closest(t.dataset.close || '*');
+    if (box) box.remove();
+  });
+
+  /* 모달 열기 */
+  on('[data-modal]', 'click', function (e, t) {
+    var tpl = document.getElementById(t.dataset.modal);
+    if (!tpl) return;
+    var d = document.createElement('div');
+    d.className = 'dim';
+    d.innerHTML = tpl.innerHTML;
+    d.addEventListener('click', function (ev) {
+      if (ev.target === d || ev.target.closest('[data-dismiss]')) d.remove();
+    });
+    document.body.appendChild(d);
+    syncPick();
+  });
+
+  /* 달력 이전/다음 달 — 화면 안에서 끝나는 조작이라 실제로 바뀌어야 한다.
+     프로토타입이라 날짜 칸은 그대로 두고 월 표시만 옮긴다. */
+  on('.cal-mv', 'click', function (e, t) {
+    var box = t.closest('.cal-hd'); if (!box) return;
+    var el = box.querySelector('.cal-m'); if (!el) return;
+    var m = /(\d{4})년\s*(\d{1,2})월/.exec(el.textContent); if (!m) return;
+    var y = +m[1], mo = +m[2] + (+t.dataset.mv);
+    if (mo < 1) { mo = 12; y -= 1; } else if (mo > 12) { mo = 1; y += 1; }
+    el.textContent = y + '년 ' + mo + '월';
+  });
+
+  /* 달력 날짜 선택 */
+  on('.cal-d', 'click', function (e, t) {
+    if (t.classList.contains('off')) { toast(t.dataset.why || '이 날짜는 고를 수 없어요'); return; }
+    var g = t.closest('.cal-grid');
+    g.querySelectorAll('.cal-d').forEach(function (x) { x.classList.remove('sel'); });
+    t.classList.add('sel');
+  });
+
+  /* 카운트다운 — data-count="180" (초). 시간 단위까지 센다. */
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-count]').forEach(function (el) {
+      var left = parseInt(el.dataset.count, 10) || 0;
+      var p = function (n) { return (n < 10 ? '0' : '') + n; };
+      var tick = function () {
+        var h = Math.floor(left / 3600), m = Math.floor((left % 3600) / 60), s = left % 60;
+        el.textContent = h > 0 ? h + ':' + p(m) + ':' + p(s) : m + ':' + p(s);
+        if (left <= 0) return;
+        left--;
+        setTimeout(tick, 1000);
+      };
+      tick();
+    });
+  });
+  /* 행·카드 전체를 누르면 이동 — data-href.
+     <a> 로 감싸면 그 안에 버튼(<a>)을 못 넣는다(브라우저가 바깥 <a> 를 끊는다).
+     안의 링크·버튼을 눌렀을 때는 그쪽이 이긴다. */
+  on('[data-href]', 'click', function (e, t) {
+    if (e.target.closest('a, button, input, label, select, textarea')) return;
+    location.href = t.dataset.href;
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var t = e.target.closest && e.target.closest('[data-href]');
+    if (t && e.target === t) location.href = t.dataset.href;
+  });
+
+
+  /* 토스트 */
+  var tRef = null;
+  function toast(msg, action, kind) {
+    if (tRef) tRef.remove();
+    var d = document.createElement('div');
+    d.className = 'toast' + (kind === 'ok' ? ' toast-ok' : '');
+    d.innerHTML = '<span></span>' + (action ? '<span class="act">' + action + '</span>' : '<span class="act" data-close=".toast">닫기</span>');
+    d.firstChild.textContent = msg;
+    document.body.appendChild(d);
+    tRef = d;
+    setTimeout(function () { if (d.parentNode) d.remove(); }, 3400);
+  }
+  window.toast = toast;
+  on('[data-toast]', 'click', function (e, t) {
+    toast(t.dataset.toast, t.dataset.toastAct || '', t.dataset.toastKind || '');
+  });
+
+  /* 지도 핀 — 누르면 옆 미리보기의 이름이 바뀐다 */
+  on('.map .pin', 'click', function (e, t) {
+    var m = t.closest('.map');
+    m.querySelectorAll('.pin').forEach(function (x) { x.classList.remove('on'); });
+    t.classList.add('on');
+    var pv = document.querySelector('[data-map-preview]');
+    if (pv && t.dataset.name) {
+      pv.querySelectorAll('[data-map-name]').forEach(function (x) { x.textContent = t.dataset.name; });
+    }
+  });
+
+  /* 화면 정보 패널 */
+  on('.dev-btn', 'click', function (e, t) {
+    var box = t.closest('.dev');
+    box.classList.toggle('on');
+    try { localStorage.setItem('mt.spec', box.classList.contains('on') ? '1' : '0'); } catch (_) {}
+  });
+  document.addEventListener('DOMContentLoaded', function () {
+    /* 화면 정보 패널은 «언제나 닫힌 채로» 시작한다 — 2026-08-09.
+       전에는 마지막으로 열어 둔 상태를 기억해서, 한 번 열어 본 사람은 그 뒤 모든
+       화면에서 개발용 패널이 펼쳐진 채로 열렸다. 손님이 받는 견본에서 가장 먼저
+       보이면 안 되는 것이다. 누를 때만 열린다. */
+  });
+
+  /* 폼 전송은 프로토타입이므로 막고 안내만 */
+  document.addEventListener('submit', function (e) {
+    e.preventDefault();
+    toast('프로토타입 화면이에요. 실제로 전송되지 않습니다');
+  });
+
+  /* 가로로 넘치는 줄 — 아래 스크롤바 대신 좌우 화살표로 넘긴다.
+     스크롤바는 있는 줄 모르고 지나치기 쉽다. */
+  function carSync(box) {
+    var wrap = box.closest('.car'); if (!wrap) return;
+    var prev = wrap.querySelector('.car-nav.prev'), next = wrap.querySelector('.car-nav.next');
+    var max = box.scrollWidth - box.clientWidth;
+    if (prev) prev.disabled = box.scrollLeft <= 2;
+    if (next) next.disabled = box.scrollLeft >= max - 2;
+  }
+  on('.car-nav', 'click', function (e, t) {
+    var box = t.closest('.car').querySelector('.carousel');
+    var card = box.firstElementChild;
+    var step = card ? card.getBoundingClientRect().width + 20 : 288;
+    box.scrollLeft += (t.classList.contains('prev') ? -1 : 1) * step * 2;
+    setTimeout(function () { carSync(box); }, 350);
+  });
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.car .carousel').forEach(function (b) {
+      carSync(b);
+      b.addEventListener('scroll', function () { carSync(b); });
+    });
+  });
+  function 돈(n) { return Math.round(n).toLocaleString('ko-KR') + '원'; }
+  /* 카드 목록 정렬 — <select data-sort-cards="키"> 와 <div data-sort-list="키">
+     ⚠ 2026-08-18: 정렬 고르개가 색만 바뀌고 차례는 그대로였다. 스펙팩 acts 의
+       「목록 차례가 …으로 바뀐다」를 지킨다. 카드에 실어 둔 값으로 그 자리에서 줄 세운다. */
+  document.addEventListener('change', function (e) {
+    var sel = e.target.closest && e.target.closest('[data-sort-cards]');
+    if (!sel) return;
+    var 상자 = document.querySelector('[data-sort-list="' + sel.dataset.sortCards + '"]');
+    if (!상자) return;
+    var 키 = sel.value || 'new';
+    var 카드 = Array.prototype.slice.call(상자.children);
+    카드.sort(function (a, b) {
+      return Number(a.dataset[키] || 0) - Number(b.dataset[키] || 0);
+    });
+    카드.forEach(function (c) { 상자.appendChild(c); });
+  });
+
+  /* ---------- ★ ES-02 견적 결과 — 마감 등급 탭 · 「포함」 토글이 금액에 반영된다.
+     data-base 는 「기본」(mult 1.0) 기준값이다 — 등급 탭을 누르면 base×mult 로
+     다시 계산해서 각 칸·범위·공사 기간을 바꾸고, 합계는 켜진(포함) 줄만 더한다. ---------- */
+  function es02합계() {
+    var totalEl = document.querySelector('[data-grade-total]');
+    if (!totalEl) return;
+    var sum = 0;
+    /* ⚠ 프리미엄은 「포함」을 .toggle 버튼이 아니라 checkbox 로 그린다.
+       디럭스 손잡이를 그대로 옮겼더니 아무것도 안 세어져 합계가 0원이 됐다. */
+    document.querySelectorAll('[data-base]').forEach(function (b) {
+      if (b.tagName !== 'INPUT') return;
+      if (b.checked) sum += Number(b.dataset.amt);
+    });
+    totalEl.textContent = 돈(sum);
+  }
+  on('[data-grade-pick] .tab', 'click', function (e, t) {
+    var box = t.closest('[data-grade-pick]');
+    box.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('on'); });
+    t.classList.add('on');
+    var mult = Number(t.dataset.mult);
+    document.querySelectorAll('[data-base]').forEach(function (el) {
+      var amt = Math.round(Number(el.dataset.base) * mult);
+      el.dataset.amt = amt;
+      if (!el.classList.contains('toggle')) el.textContent = 돈(amt);
+    });
+    var priceEl = document.querySelector('[data-grade-price]');
+    if (priceEl) {
+      priceEl.textContent = 돈(Number(priceEl.dataset.minBase) * mult) + ' ~ ' + 돈(Number(priceEl.dataset.maxBase) * mult);
+    }
+    var daysEl = document.querySelector('[data-grade-days]');
+    /* 「(주말 제외)」는 프리미엄 화면에 이미 옆 칸으로 있다 — 여기서 또 붙이면 두 번 나온다 */
+    if (daysEl) daysEl.textContent = t.dataset.days + '일';
+    es02합계();
+  });
+  /* 「포함」 체크를 끄면 총액에서 빠지고 그 줄에 취소선이 생긴다(스펙팩 acts). */
+  document.addEventListener('change', function (e) {
+    var cb = e.target.closest && e.target.closest('input[data-base]');
+    if (!cb) return;
+    var 줄 = cb.closest('tr');
+    if (줄) {
+      줄.style.textDecoration = cb.checked ? '' : 'line-through';
+      줄.style.opacity = cb.checked ? '' : '.55';
+    }
+    es02합계();
+  });
+
+  /* ---------- ★ ES-01 견적 마법사 — 화면 하나에 6단계가 다 들어 있다.
+     앞뒤로 오가도 답이 남고(단계는 감추기만 한다), 막대·「N단계 중 M번째」·오른쪽
+     「지금까지 고른 조건」이 함께 따라 움직인다. ---------- */
+  function 마법사그리기(wz) {
+    var now = Number(wz.dataset.stepNow);
+    var total = Number(wz.dataset.stepTotal);
+    wz.querySelectorAll('[data-step]').forEach(function (p) {
+      p.hidden = Number(p.dataset.step) !== now;
+    });
+    wz.querySelectorAll('[data-step-dot]').forEach(function (d) {
+      var n = Number(d.dataset.stepDot);
+      d.classList.toggle('on', n === now);
+      d.classList.toggle('done', n < now);
+    });
+    /* 막대도 «끝낸 만큼»만 채운다 — 4단계에 서 있으면 3칸(50%)이 찬 것이다.
+       단계 띠의 칠해진 줄과 막대가 같은 자리에서 끝나야 안 헷갈린다. */
+    var fill = wz.querySelector('.progress .fill');
+    if (fill) fill.style.width = Math.round((now - 1) / total * 100) + '%';
+    var label = wz.querySelector('[data-step-label]');
+    if (label) label.textContent = total + '단계 중 ' + now + '번째';
+    var prev = wz.querySelector('[data-step-prev]');
+    if (prev) { prev.disabled = now === 1; prev.classList.toggle('is-off', now === 1); }
+    var next = wz.querySelector('[data-step-next]');
+    var done = wz.querySelector('[data-step-done]');
+    if (next) next.hidden = now === total;
+    if (done) done.hidden = now !== total;
+  }
+  on('[data-step-next]', 'click', function (e, t) {
+    var wz = t.closest('[data-wizard]');
+    var now = Number(wz.dataset.stepNow);
+    if (now >= Number(wz.dataset.stepTotal)) return;
+    wz.dataset.stepNow = now + 1;
+    마법사그리기(wz);
+  });
+  on('[data-step-prev]', 'click', function (e, t) {
+    var wz = t.closest('[data-wizard]');
+    var now = Number(wz.dataset.stepNow);
+    if (now <= 1) return;
+    wz.dataset.stepNow = now - 1;
+    마법사그리기(wz);
+  });
+  /* 막대의 단계 이름을 눌러서도 건너뛴다 — 이미 지나온 단계로 돌아가기 쉽게 */
+  on('[data-step-dot]', 'click', function (e, t) {
+    var wz = t.closest('[data-wizard]');
+    wz.dataset.stepNow = t.dataset.stepDot;
+    마법사그리기(wz);
+  });
+  /* 고른 답을 오른쪽 요약에 그대로 옮긴다 */
+  document.addEventListener('change', function (e) {
+    var f = e.target.closest('[data-field]');
+    if (!f) return;
+    var dd = document.querySelector('[data-answer="' + f.dataset.field + '"]');
+    if (dd) dd.textContent = f.value;
+  });
+  /* 평수를 고치면 ㎡ 환산과 요약이 같이 바뀐다 (1평 = 3.3058㎡) */
+  document.addEventListener('input', function (e) {
+    var p = e.target.closest('[data-pyeong]');
+    if (!p) return;
+    var v = Number(p.value) || 0;
+    var m2 = document.querySelector('[data-pyeong-m2]');
+    if (m2) m2.textContent = (v * 3.3058).toFixed(1) + '㎡';
+    var dd = document.querySelector('[data-answer="평수"]');
+    if (dd) dd.textContent = v + '평';
+  });
+  /* 홈에서 평수 구간을 고르고 왔으면 2단계에 미리 채워 둔다.
+     ⚠ 단계는 «건너뛰지 않는다» — 1단계부터 시작해서, 2단계에 오면 이미 값이
+       들어 있고 「홈에서 30평대를 고르고 오셨어요」라고 알려 준다. */
+  function 홈에서온평수(wz) {
+    var q = new URLSearchParams(location.search);
+    var py = Number(q.get('pyeong'));
+    if (!py) return;
+    var input = wz.querySelector('[data-pyeong]');
+    if (input) { input.value = py; input.dispatchEvent(new Event('input', { bubbles: true })); }
+    var band = q.get('band');
+    var note = wz.querySelector('[data-from-home]');
+    if (note && band) {
+      var lb = note.querySelector('[data-from-home-label]');
+      if (lb) lb.textContent = band;
+      /* 「30평대를」 / 「40평대 이상을」 — 앞 글자에 받침이 있으면 «을», 없으면 «를». */
+      var josa = note.querySelector('[data-from-home-josa]');
+      if (josa) {
+        var last = band.charCodeAt(band.length - 1) - 0xAC00;
+        josa.textContent = (last >= 0 && last <= 11171 && last % 28 !== 0) ? '을' : '를';
+      }
+      note.hidden = false;
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-wizard]').forEach(function (wz) {
+      홈에서온평수(wz);
+      마법사그리기(wz);
+    });
+  });
+
+  /* ---------- ★ ES-01 견적 3단계 — 고른 공간에 따라 미리보기 금액이 바뀐다.
+     아직 4·5단계(마감 등급·착공 시기)를 안 물은 시점이라, 확정 견적(ESTIMATE_BASE)보다
+     낮은 범위 안에서만 움직인다 — 공간을 다 골라도 확정액을 넘어서면 안 된다. ---------- */
+  on('[data-space-pick] input[type=checkbox]', 'change', function () {
+    var pick = document.querySelector('[data-space-pick]');
+    var checked = pick.querySelectorAll('input[type=checkbox]:checked');
+    var names = Array.prototype.map.call(checked, function (c) { return c.dataset.space; });
+    var listEl = document.querySelector('[data-space-list]');
+    if (listEl) listEl.textContent = names.length ? names.join(', ') : '아직 고르지 않음';
+    var priceEl = document.querySelector('[data-space-price]');
+    if (priceEl) {
+      var n = names.length;
+      var min = 19500000 + n * 1500000;
+      var max = 25600000 + n * 1800000;
+      priceEl.textContent = 만원(min) + ' ~ ' + 만원(max);
+    }
+  });
+
+
+})();
+
+/* ── 마지막 그물 ──────────────────────────────────────────
+   눌러도 아무 손잡이에 안 걸린 버튼에게 «그래도 답»을 준다.
+   누르기 전 화면을 적어 두고, 다른 손잡이가 다 돈 뒤에도 그대로일 때만 나선다.
+   ⚠ 이미 제대로 도는 버튼은 여기까지 오지 않는다 — 화면이 이미 바뀌었기 때문이다.
+   ────────────────────────────────────────────────────────── */
+(function () {
+  function 이름(t) {
+    var s = (t.getAttribute('aria-label') || t.textContent || '').trim().replace(/\s+/g, ' ');
+    return s.slice(0, 20);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('button:not([disabled])') : null;
+    if (!t) return;
+    if (t.closest('.dev')) return;                       // 화면 정보 패널은 견본 장치다
+    if (t.dataset && (t.dataset.toast || t.dataset.modal || t.dataset.go ||
+                      t.dataset.close || t.dataset.dismiss)) return;  // 이미 제 답이 있다
+    var 전 = document.body.innerHTML;
+    setTimeout(function () {
+      if (document.body.innerHTML !== 전) return;        // 누군가 이미 답했다
+
+      // ① 무리 지어 고르는 버튼 — 형제 중에 «골라진 것»이 있으면 그 표시를 옮긴다
+      var 상자 = t.parentElement;
+      if (상자) {
+        var 형제 = Array.prototype.filter.call(상자.children, function (c) { return c.tagName === 'BUTTON'; });
+        var 골라진 = 형제.filter(function (b) { return b.classList.contains('on') || b.classList.contains('sel'); });
+        if (형제.length > 1 && 골라진.length > 0) {
+          var 표 = 골라진[0].classList.contains('sel') ? 'sel' : 'on';
+          형제.forEach(function (b) { b.classList.remove(표); });
+          t.classList.add(표);
+          return;
+        }
+      }
+
+      // ② 앞뒤 화살표 — 가까이에 가로로 흐르는 목록이 있으면 굴린다
+      var 앞뒤 = /prev|next|이전|다음|‹|›/.test(t.className + ' ' + 이름(t));
+      if (앞뒤) {
+        var 둘레 = t.closest('section, .card, .box, div');
+        for (var i = 0; i < 3 && 둘레; i++) {
+          var 목록 = 둘레.querySelector('.carousel, [style*="overflow-x"], .row[style*="overflow"]');
+          if (목록 && 목록.scrollWidth > 목록.clientWidth) {
+            var 뒤로 = /prev|이전|‹/.test(t.className + ' ' + 이름(t));
+            목록.scrollLeft += (뒤로 ? -1 : 1) * Math.max(240, 목록.clientWidth * 0.8);
+            return;
+          }
+          둘레 = 둘레.parentElement;
+        }
+      }
+
+      // ③ 그 밖에는 제 이름으로 알림 — 견본 화면이 줄 수 있는 정직한 답이다
+      if (typeof window.toast === 'function') window.toast(이름(t) + ' — 눌렀어요');
+    }, 0);
+  }, true);
+})();
+/* ── 마지막 그물 끝 ── */
+
+/* 2026-08-18 — 디럭스 재점검에서 나온 「고르개가 옆을 못 움직이는」 자리 넷을
+   프리미엄에도 그대로 옮긴다. 한쪽 등급만 고치고 끝내지 않는다(검수항목 G7). */
+(function () {
+  var 천 = function (n) { return Math.round(n).toLocaleString('ko-KR'); };
+  var 조사 = function (말, 있, 없) {
+    var c = 말.charCodeAt(말.length - 1) - 0xac00;
+    return 말 + (c >= 0 && c <= 11171 && c % 28 !== 0 ? 있 : 없);
+  };
+
+  document.addEventListener('change', function (e) {
+    var t = e.target; if (!t || !t.matches) return;
+
+    /* CT0201 할부 개월 → 월 납입액 */
+    if (t.matches('[data-halbu]')) {
+      var 액 = Number(t.dataset.amt || 0);
+      var 달 = Number((t.value.match(/\d+/) || [1])[0]);
+      var 글 = document.querySelector('[data-halbu-out]');
+      if (글) 글.textContent = 달 <= 1
+        ? '일시불 — ' + 천(액) + '원을 한 번에 냅니다.'
+        : t.value + ' — 월 ' + 천(액 / 달) + '원 · 6개월까지 무이자입니다.';
+    }
+
+    /* OW0301 팀 배정 → 겹침 경고 */
+    if (t.matches('[data-team]')) {
+      var 알림 = document.querySelector('[data-team-out]');
+      var 공정 = t.closest('tr') ? t.closest('tr').cells[0].textContent.trim() : '이 공정';
+      if (알림) {
+        var 바쁨 = (알림.dataset.busy || '').split(',').indexOf(t.value) >= 0;
+        알림.innerHTML = 바쁨
+          ? '<b>' + t.value + ' 배정 충돌</b> — ' + (알림.dataset.when || '') + '에 다른 현장('
+            + (알림.dataset.where || '') + ')과 겹칩니다. ' + 조사(공정, '을', '를') + ' 다시 보세요.'
+          : '<b>겹치는 일정 없음</b> — ' + 조사(공정, '을', '를') + ' ' + t.value + '에 배정했어요.';
+      }
+    }
+
+    /* OW0401 발주 상태 → 그 줄 배지 + 위 「발주 안 한 것」 숫자 */
+    if (t.matches('[data-po-st]')) {
+      var 색 = (t.dataset.poCls || '').split(',')[t.selectedIndex] || 'b-mut';
+      var 배지 = t.closest('td').querySelector('[data-po-badge]');
+      if (배지) 배지.innerHTML = '<span class="badge ' + 색 + '">' + t.value + '</span>';
+      var 남 = document.querySelector('[data-po-left]');
+      if (남) 남.textContent = Array.prototype.filter.call(
+        document.querySelectorAll('[data-po-st]'), function (s) { return s.selectedIndex === 0; }).length;
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    /* OW0401 공정 칩 → 자재 목록을 그 공정 것만 남긴다 */
+    var 칩 = e.target.closest && e.target.closest('[data-proc-chip]');
+    if (칩) {
+      var 골 = 칩.textContent.trim();
+      Array.prototype.forEach.call(document.querySelectorAll('.tbl-mat tr.mat-row'), function (tr) {
+        tr.hidden = !(골 === '전체' || tr.cells[0].textContent.trim().indexOf(골) >= 0);
+      });
+    }
+
+    /* CT0301 착공일 달력 → 위 안내 문구의 날짜 */
+    var 날 = e.target.closest && e.target.closest('[data-chakgong] .cal-d');
+    if (날 && !날.classList.contains('off') && 날.textContent.trim()) {
+      /* 칸 안에 '30가능'처럼 뒷말이 붙어 있어 앞의 숫자만 떼어 낸다 */
+      var d = Number((날.textContent.trim().match(/^\d+/) || [0])[0]);
+      var 글자 = document.querySelector('[data-chakgong-out]');
+      /* 위 안내 문구가 처음부터 '2026-09-10' 꼴이라 같은 꼴로 맞춘다 */
+      if (글자 && d) 글자.textContent = '2026-09-' + (d < 10 ? '0' + d : d);
+    }
+  });
+})();

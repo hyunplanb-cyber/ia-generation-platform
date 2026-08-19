@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>업체 정보·직원 관리 · 마루공방</title>
+<meta name="description" content="업체 기본 정보(상호·사업자번호·대표·주소·전화)와 고치기 · 손님 화면에 보이는 소개 글과 대표 사진 · 직원 계정 목록과 권한 3단(대표·소장·경리) · 권한마다 볼 수 있는 화면 표 · 직원 부르기(문자 초대) · 거래처 목록(자재상·인력팀·연락처·거래 조건) ·">
+<link rel="stylesheet" href="../assets/css/base.css"></head>
+<body data-page="OW0701">
+<div class="app">
+  <aside class="side">
+    <a class="logo" href="OW0101.html"><span class="em">마</span>마루공방 <span class="t-sub" style="font-weight:500">사장님</span></a>
+    <div class="gl">현장 관리</div><a href="OW0101.html">현장 대시보드</a><a href="OW0201.html">견적 요청함</a><a href="OW0301.html">현장 상세</a><a href="OW0401.html">자재·원가</a><a href="OW0501.html">기성 청구·수금</a><a href="OW0601.html">일정 캘린더</a><div class="gl">업체 설정</div><a href="OW0701.html" class="on" aria-current="page">업체 정보·직원</a>
+    <div class="side-ft">
+      <a href="HO0101.html">↩ 고객 화면 보기</a>
+      <a href="../index.html">🗂 화면 목록</a>
+    </div>
+  </aside>
+  <header class="topbar">
+    <form class="tb-search" role="search"><span class="ico" aria-hidden="true">🔍</span>
+      <input type="search" placeholder="시공 사례·자재를 검색해 보세요" aria-label="검색"></form>
+    <span class="sp"></span>
+    <a class="btn btn-ghost btn-sm" href="../index.html">화면 목록</a>
+    <button class="icon-btn" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔</button>
+    <a class="who" href="OW0101.html"><span class="ava">이</span>이도목님</a>
+  </header>
+  <main class="appmain">
+    <nav class="crumb" aria-label="현재 위치">
+    <a class="back" href="OW0101.html">‹ 현장 대시보드</a>
+    <span class="path">현장 관리 › <b>업체 정보·직원 관리</b></span>
+  </nav>
+    
+    <div class="page-hd"><div>
+  <h1 class="t-page">업체 정보·직원 관리</h1><p class="t-sub">손님 화면의 「내 정보」와는 다른 곳이에요 — 여기는 사업자·직원·거래처를 다룹니다</p></div></div>
+<div class="split-r"><div>
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">업체 기본 정보</h3></div>
+  <div class="card-bd "><dl class="kv"><dt>상호</dt><dd>(주)마루공방</dd><dt>사업자등록번호</dt><dd>123-45-67890 <span class="t-sub">🔒 바꾸려면 문의해 주세요</span></dd><dt>대표자</dt><dd>이도목</dd><dt>주소</dt><dd>서울 성동구 성수이로 12</dd><dt>대표 전화</dt><dd>02-000-0000</dd></dl><div class="mt3"><button class="btn btn-ghost" type="button" data-toast="업체 정보를 고칠 수 있어요">고치기</button></div></div>
+  </div>
+<section class="sec mt4">
+  <div class="sec-hd"><div><h2 class="t-sec">직원 계정</h2></div></div>
+  <div class="table-wrap table-scroll"><table class="table ">
+    <thead><tr><th>이름</th><th>연락처</th><th>권한</th><th>마지막 접속</th><th></th></tr></thead><tbody><tr><td>이도목</td><td>010-0000-0001</td><td><select class="input" data-staff-role style="width:110px"><option selected>대표</option><option>소장</option><option>경리</option></select></td><td>오늘 08:12</td><td><button class="btn btn-sm" type="button" data-toast="이도목 님을 내보냈어요">내보내기</button></td></tr><tr><td>김현장</td><td>010-0000-0002</td><td><select class="input" data-staff-role style="width:110px"><option>대표</option><option selected>소장</option><option>경리</option></select></td><td>오늘 07:40</td><td><button class="btn btn-sm" type="button" data-toast="김현장 님을 내보냈어요">내보내기</button></td></tr><tr><td>박경리</td><td>010-0000-0003</td><td><select class="input" data-staff-role style="width:110px"><option>대표</option><option>소장</option><option selected>경리</option></select></td><td>어제 18:22</td><td><button class="btn btn-sm" type="button" data-toast="박경리 님을 내보냈어요">내보내기</button></td></tr></tbody></table></div></section>
+<p class="t-sub mt2" data-role-note>권한을 바꾸면 그 사람이 볼 수 있는 화면이 바로 달라져요.</p>
+<section class="sec mt5">
+  <div class="sec-hd"><div><h2 class="t-sec">권한별로 볼 수 있는 화면</h2></div></div>
+  <div class="table-wrap table-scroll"><table class="table ">
+    <thead><tr><th>화면</th><th>대표</th><th>소장</th><th>경리</th></tr></thead><tbody><tr><td>현장 대시보드</td><td>O</td><td>O</td><td>X</td></tr><tr><td>견적 요청함</td><td>O</td><td>O</td><td>X</td></tr><tr><td>현장 상세</td><td>O</td><td>O</td><td>X</td></tr><tr><td>자재·원가</td><td>O</td><td>O</td><td>O</td></tr><tr><td>청구·수금</td><td>O</td><td>X</td><td>O</td></tr><tr><td>일정 캘린더</td><td>O</td><td>O</td><td>X</td></tr></tbody></table></div></section>
+<section class="sec mt5">
+  <div class="sec-hd"><div><h2 class="t-sec">거래처</h2><p class="t-sub mt1">자재·원가 화면에서 발주서를 만들 때 여기 거래처를 고릅니다.</p></div></div>
+  <div class="table-wrap table-scroll"><table class="table ">
+    <thead><tr><th>거래처</th><th>담당자</th><th>연락처</th><th>거래 조건</th></tr></thead><tbody><tr><td>한샘 자재</td><td>정담당</td><td>010-1111-2222</td><td>월말 결제</td></tr><tr><td>동화기업</td><td>최담당</td><td>010-3333-4444</td><td>주문 시 선결제</td></tr><tr><td>성수 인력팀</td><td>오반장</td><td>010-5555-6666</td><td>주급</td></tr></tbody></table></div></section>
+<div class="mt3"><button class="btn btn-ghost" type="button" data-toast="거래처를 넣었어요">거래처 추가</button><button class="btn btn-primary" type="button" data-toast="초대 문자를 보냈어요">직원 부르기</button></div>
+</div><div class="sticky">
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">손님 화면에 보이는 것</h3></div>
+  <div class="card-bd "><div class="ph ph-43 ph-t3" role="img" aria-label="업체 대표 사진 이미지 자리, 권장 1200×900"><img data-예시 src="../assets/예시/인테리어 - 1.webp" alt=""><span class="lb">이미지 영역 (업체 대표 사진 · 권장 1200×900)</span></div><p class="t-sub mt3">2008년부터 성동구에서 아파트 리모델링을 해 왔습니다. 공정마다 사진으로 알려 드립니다.</p><div class="mt3"><a class="btn btn-sm" href="HO0101.html">손님 화면에서 보기</a></div></div>
+  </div>
+<div class="card mt4">
+  <div class="card-hd"><h3 class="t-card">알림 받을 사람</h3></div>
+  <div class="card-bd "><dl class="kv"><dt>견적 요청</dt><dd>이도목</dd><dt>기성 청구</dt><dd>박경리</dd><dt>하자 접수</dt><dd>김현장</dd></dl></div>
+  </div>
+<div class="card mt4">
+  <div class="card-hd"><h3 class="t-card">사업자 서류</h3></div>
+  <div class="card-bd "><dl class="kv"><dt>사업자등록증</dt><dd>올림</dd><dt>통장 사본</dt><dd>아직</dd></dl><p class="t-sub mt2">세금계산서 발행에 쓰입니다.</p></div>
+  </div>
+</div></div>
+    <footer class="ft"><div class="ft-in"><div class="ft-bot">
+  <span>© 2026 마루공방 · (주)마루공방 · 대표 이도목 · 서울 성동구 성수이로 12</span>
+  <span><a href="../index.html">화면 목록</a> · 기획 검토용 화면 견본이라 실제로 저장·결제되지 않습니다</span>
+</div></div></footer>
+  </main>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">OW0701</div><div class="nm">업체 정보·직원 관리</div>
+    <div class="fd">업체 기본 정보(상호·사업자번호·대표·주소·전화)와 고치기 · 손님 화면에 보이는 소개 글과 대표 사진 · 직원 계정 목록과 권한 3단(대표·소장·경리) · 권한마다 볼 수 있는 화면 표 · 직원 부르기(문자 초대) · 거래처 목록(자재상·인력팀·연락처·거래 조건) · 알림 받을 사람 고르기(견적 요청·기성 청구·하자 접수 각각) · 사업자 서류 올리기(사업자등록증·통장사본) · 세금계산서 기본 정보</div>
+    <div class="lk"><a href="OW0101.html">현장 대시보드 ›</a><a href="OW0401.html">자재·원가 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div><button class="dev-btn" type="button">OW0701 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
