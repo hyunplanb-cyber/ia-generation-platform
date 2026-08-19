@@ -1,0 +1,167 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<title>가이드 프리셋 · 레이아웃 프리셋</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Pretendard,"Malgun Gothic",sans-serif;background:#EFEFF2;padding:40px;color:#1F2024}
+h1{font-size:26px;font-weight:800;margin-bottom:6px}
+.note{font-size:13px;color:#4A4A52;background:#fff;border:1px solid #DEDEE4;border-radius:10px;padding:12px 14px;margin:14px 0 20px}
+.sub{color:#6B6F76;font-size:15px;margin-bottom:26px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1240px}
+.lab{margin-bottom:10px}.lab b{display:block;font-size:17px;font-weight:800}
+.lab span{display:block;font-size:13px;color:#6B6F76;margin-top:3px;line-height:1.5}
+.demo{border-radius:14px;padding:22px;min-height:330px;border:1px solid #E0E0E5}
+.dcard{padding:18px}
+.sec{font-size:17px;font-weight:800;margin:30px 0 12px}
+.grid2{grid-template-columns:repeat(2,1fr);max-width:820px}
+.lay{background:#fff;border:1px solid #DEDEE4;border-radius:12px;padding:16px}
+.wire{margin:10px 0;height:96px;border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:5px;background:#fff}
+.wire i{display:block;border-radius:3px;background:#E6E6EB}
+.wire .w3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;flex:1}
+.wire .w4{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.wire .w4 i{height:14px}
+.wire .wmo{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:5px;flex:1}
+.wire .wmo .big{grid-row:span 2}
+.wire .wsp{display:flex;gap:5px;flex:1}
+.wire .wsp .side{width:24%}
+.wire .wsp .half{width:40%}
+.wire .wcol{display:flex;flex-direction:column;gap:5px;flex:1}
+.wire .wcol i{flex:1}
+.lay-kv{display:grid;grid-template-columns:78px 1fr;gap:4px 10px;font-size:11.5px;line-height:1.5}
+.lay-kv dt{color:#6B6F76}
+.lay-kv dd{color:#1F2024}
+.lay-fit{margin-top:8px;font-size:11.5px;color:#6B6F76}
+.dt{margin-bottom:4px}.dm{margin-bottom:14px}
+.drow{display:flex;gap:8px;margin-bottom:16px}
+.dbadge{font-size:11px;font-weight:700;padding:4px 10px}
+.dfield{font-size:13px;padding:9px 12px;margin-bottom:14px}
+.dbtns{display:flex;gap:8px}
+.db,.db2{font-size:13px;font-weight:700;padding:9px 16px}
+.dnums{display:flex;gap:26px;margin-top:20px}
+.dnums div{display:flex;flex-direction:column}
+.dnums span{font-size:12px;font-weight:600;margin-top:2px}
+.dsw{display:flex;gap:5px;margin-top:20px}
+.dsw i{width:26px;height:26px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
+</style></head><body>
+<h1>가이드 프리셋 · 레이아웃 프리셋</h1>
+<p class="sub">색과 화면 뼈대를 따로 드립니다. 원하는 조합을 스펙팩과 함께 AI에 넣으면 그 모습으로 만들어집니다.<br>
+아래 글자는 자리표시용이며, 색·굵기·모서리·여백과 뼈대가 어떻게 달라지는지 보시면 됩니다.</p>
+<p class="note"><b>가이드 프리셋 3벌과 레이아웃 프리셋 2벌을 따로 드립니다.</b>
+짝이 정해져 있지 않아 마음에 드는 대로 섞으시면 됩니다 —
+가이드 3종 × 레이아웃 2종 = <b>6가지</b>.
+쓰실 때는 <b>가이드 프리셋 1종 + 레이아웃 프리셋 1종</b>을 스펙팩과 함께 AI에 넣으세요.</p>
+
+<h2 class="sec">가이드 프리셋 3벌 — 색 · 글꼴 · 모서리</h2>
+<div class="grid">
+  <div class="col">
+    <div class="lab"><b>01. 모던 네이비</b><span>신뢰감과 밀도. 실무형 서비스의 기본값.</span></div>
+    <div class="demo" style="background:#F0EFEB;color:#16233F">
+      <div class="dcard" style="background:#FFFFFF;border:1px solid #DFE4EC;border-radius:12px;
+           box-shadow:0 1px 3px rgba(22,35,63,.08)">
+        <p class="dt" style="font-size:18px;font-weight:600">제목입니다</p>
+        <p class="dm" style="color:#5A6B8C;font-size:13px">서브 카피입니다</p>
+        <div class="drow">
+          <span class="dbadge" style="background:#FF7A3022;color:#A84B28;border-radius:6px;
+                border:1px solid #FF7A3055">배지 1</span>
+          <span class="dbadge" style="background:transparent;color:#5A6B8C;border:1px solid #DFE4EC;
+                border-radius:6px">배지 2</span>
+        </div>
+        <div class="dfield" style="border:1px solid #DFE4EC;border-radius:8px;color:#5A6B8C">
+          입력창입니다
+        </div>
+        <div class="dbtns">
+          <span class="db" style="background:#2B4A8B;color:#fff;border-radius:8px">메인 버튼</span>
+          <span class="db2" style="border:1px solid #DFE4EC;color:#16233F;border-radius:8px">보조 버튼</span>
+        </div>
+      </div>
+      <div class="dnums">
+        <div><b style="color:#2B4A8B;font-size:32px;font-weight:700">00</b><span style="color:#5A6B8C">지표 1</span></div>
+        <div><b style="color:#2B4A8B;font-size:32px;font-weight:700">00</b><span style="color:#5A6B8C">지표 2</span></div>
+      </div>
+      <div class="dsw"><i style="background:#2B4A8B"></i><i style="background:#1F3A73"></i><i style="background:#FF7A30"></i><i style="background:#A84B28"></i><i style="background:#FF7A30"></i><i style="background:#F0EFEB"></i><i style="background:#FFFFFF"></i></div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="lab"><b>02. 미니멀 모노</b><span>여백과 활자. 색은 한 곳에만 남긴다.</span></div>
+    <div class="demo" style="background:#F0EFEB;color:#111111">
+      <div class="dcard" style="background:#FFFFFF;border:1px solid #E5E5E5;border-radius:6px;
+           box-shadow:none">
+        <p class="dt" style="font-size:15px;font-weight:600">제목입니다</p>
+        <p class="dm" style="color:#666666;font-size:13px">서브 카피입니다</p>
+        <div class="drow">
+          <span class="dbadge" style="background:#D9775722;color:#A84B28;border-radius:4px;
+                border:1px solid #D9775755">배지 1</span>
+          <span class="dbadge" style="background:transparent;color:#666666;border:1px solid #E5E5E5;
+                border-radius:4px">배지 2</span>
+        </div>
+        <div class="dfield" style="border:1px solid #E5E5E5;border-radius:6px;color:#666666">
+          입력창입니다
+        </div>
+        <div class="dbtns">
+          <span class="db" style="background:#111111;color:#fff;border-radius:6px">메인 버튼</span>
+          <span class="db2" style="border:1px solid #E5E5E5;color:#111111;border-radius:6px">보조 버튼</span>
+        </div>
+      </div>
+      <div class="dnums">
+        <div><b style="color:#111111;font-size:28px;font-weight:600">00</b><span style="color:#666666">지표 1</span></div>
+        <div><b style="color:#111111;font-size:28px;font-weight:600">00</b><span style="color:#666666">지표 2</span></div>
+      </div>
+      <div class="dsw"><i style="background:#111111"></i><i style="background:#000000"></i><i style="background:#D97757"></i><i style="background:#A84B28"></i><i style="background:#D97757"></i><i style="background:#F0EFEB"></i><i style="background:#FFFFFF"></i></div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="lab"><b>03. 내추럴 그린</b><span>차분한 자연. 건강하고 정직한 인상.</span></div>
+    <div class="demo" style="background:#F0EFEB;color:#1C2B22">
+      <div class="dcard" style="background:#FFFFFF;border:1px solid #DCE7DD;border-radius:14px;
+           box-shadow:0 1px 4px rgba(28,43,34,.07)">
+        <p class="dt" style="font-size:17px;font-weight:600">제목입니다</p>
+        <p class="dm" style="color:#5F7268;font-size:13px">서브 카피입니다</p>
+        <div class="drow">
+          <span class="dbadge" style="background:#65A30D22;color:#166534;border-radius:8px;
+                border:1px solid #65A30D55">배지 1</span>
+          <span class="dbadge" style="background:transparent;color:#5F7268;border:1px solid #DCE7DD;
+                border-radius:8px">배지 2</span>
+        </div>
+        <div class="dfield" style="border:1px solid #DCE7DD;border-radius:10px;color:#5F7268">
+          입력창입니다
+        </div>
+        <div class="dbtns">
+          <span class="db" style="background:#15803D;color:#fff;border-radius:10px">메인 버튼</span>
+          <span class="db2" style="border:1px solid #DCE7DD;color:#1C2B22;border-radius:10px">보조 버튼</span>
+        </div>
+      </div>
+      <div class="dnums">
+        <div><b style="color:#15803D;font-size:32px;font-weight:700">00</b><span style="color:#5F7268">지표 1</span></div>
+        <div><b style="color:#15803D;font-size:32px;font-weight:700">00</b><span style="color:#5F7268">지표 2</span></div>
+      </div>
+      <div class="dsw"><i style="background:#15803D"></i><i style="background:#116632"></i><i style="background:#65A30D"></i><i style="background:#166534"></i><i style="background:#65A30D"></i><i style="background:#F0EFEB"></i><i style="background:#FFFFFF"></i></div>
+    </div>
+  </div></div>
+
+<h2 class="sec">레이아웃 프리셋 2벌 — 무엇을 어디에 놓을지</h2>
+<div class="grid grid2">
+  <div class="col">
+    <div class="lab"><b>A. 목록 중심형</b><span>훑어보고 비교한다. 한 화면에 많이 담는다.</span></div>
+    <div class="lay">
+      <div class="wire" style="border:1px solid #DEDEE4"><i style="background:#5A647055;height:8px"></i><div class="wsp"><i class="side" style="background:#5A647014"></i><div class="wcol"><i style="background:#5A647022"></i><i style="background:#5A647014"></i><i style="background:#5A647014"></i></div></div></div>
+      <dl class="lay-kv">
+        <dt>첫 화면 위쪽</dt><dd>히어로를 두지 않는다. 제목 + 필터 칩 줄로 바로 시작.</dd>
+        <dt>목록 화면</dt><dd>좌측 필터 패널 + 우측 가로 리스트 행(썸네일 왼쪽, 정보 오른쪽, 액션 끝).</dd>
+        <dt>내비게이션</dt><dd>상단 가로 GNB + 목록 화면에서만 좌측 필터 사이드바.</dd>
+        <dt>상세 화면</dt><dd>상단 요약 바 + 탭으로 나눈 본문.</dd>
+      </dl>
+      <p class="lay-fit">어울리는 곳: 비교해서 고르는 서비스(중개·구인·상품 비교)</p>
+    </div>
+  </div>
+  <div class="col">
+    <div class="lab"><b>B. 검색 중심형</b><span>찾는 게 분명한 서비스. 검색창이 첫 화면의 주인공.</span></div>
+    <div class="lay">
+      <div class="wire" style="border:1px solid #DEDEE4"><i style="background:#5A647055;height:8px"></i><i style="background:#5A647022;height:22px"></i><div class="w3"><i></i><i></i><i></i></div></div>
+      <dl class="lay-kv">
+        <dt>첫 화면 위쪽</dt><dd>화면 폭을 꽉 채운 배경 위에 큰 검색바 1개(입력칸 2~3개 + 검색 버튼). 아래에 숫자 지표 3개.</dd>
+        <dt>목록 화면</dt><dd>카드 그리드 3~4열. 카드마다 이미지 → 제목 → 보조정보 → 가격 순.</dd>
+        <dt>내비게이션</dt><dd>상단 가로 GNB 한 줄. 로고 · 검색 · 메뉴 · 로그인.</dd>
+        <dt>상세 화면</dt><dd>본문 왼쪽 + 오른쪽에 따라다니는 요약·액션 카드(sticky).</dd>
+      </dl>
+      <p class="lay-fit">어울리는 곳: 예약·검색이 시작점인 서비스(숙소·강의·매장 찾기)</p>
+    </div>
+  </div></div>
+</body></html>

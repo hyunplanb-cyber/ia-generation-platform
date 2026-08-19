@@ -19,6 +19,7 @@ import { TRAVEL } from "@/template-data-travel";
 import { GROUPBUY } from "@/template-data-groupbuy";
 import { MATCHING } from "@/template-data-matching";
 import { RENTAL } from "@/template-data-rental";
+import { TICKET } from "@/template-data-ticket";
 import { INTERIOR } from "@/template-data-interior";
 import { LMS_DEEP } from "@/template-data-lms-deep";
 import { BEAUTY_DEEP } from "@/template-data-beauty-deep";
@@ -26,6 +27,7 @@ import { TRAVEL_DEEP } from "@/template-data-travel-deep";
 import { GROUPBUY_DEEP } from "@/template-data-groupbuy-deep";
 import { MATCHING_DEEP } from "@/template-data-matching-deep";
 import { RENTAL_DEEP } from "@/template-data-rental-deep";
+import { TICKET_DEEP } from "@/template-data-ticket-deep";
 import { INTERIOR_DEEP } from "@/template-data-interior-deep";
 import type { DeepInput } from "@/template-deep";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
@@ -793,6 +795,66 @@ export const PACKAGES: PackageDef[] = [
       ],
     },
   },
+  {
+    id: "ticket",
+    title: "공연 티켓 파트너 관리자",
+    category: "commerce",
+    industry: "공연·티켓",
+    tagline:
+      "기획사가 직접 들어와 공연 티켓을 등록하고 파는 파트너 관리자 AI팩. 좌석배치도부터 회차·캐스팅, 취소 정책, QR 검표, 정산까지",
+    /* 왜 이 팩인가 — 지금 업계는 «의뢰서를 이메일로 보내면 3~4일 걸려 대신 등록해 주는»
+       구조다(티켓링크 공식 안내, 2026-08-19 확인). 정산도 종료 후 이메일로 오간다.
+       이 팩은 그 일을 주최사가 직접 끝내는 셀프서비스 화면으로 다시 짠 것이다.
+       2뎁스 46화면은 모던 네이비 + 목록 중심형, 3뎁스 228화면은 미니멀 모노 + 검색 중심형. */
+    plans: makePlans(
+      TICKET,
+      TICKET_DEEP,
+      { standard: null, plus: null, deluxe: null, premium: null },
+      { base: 46, deep: 228 },
+    ),
+    data: TICKET,
+    deep: TICKET_DEEP,
+    promptSamples: ["vn3", "op3", "st2"],
+    presetStyles: ["navy", "mono", "forest"],
+    presetFits: [
+      "뮤지컬·콘서트처럼 좌석 등급과 회차가 많은 공연, 표와 숫자가 주인공인 화면",
+      "전시·페스티벌처럼 자유석과 기간권이 섞인 행사, 여백을 넉넉히 쓰는 화면",
+      "스포츠 구단·지역 문화재단처럼 정기 공연을 반복해 올리는 곳",
+    ],
+    layoutKeys: ["list", "search"],
+    fileLabel: "공연티켓",
+    integrations: [
+      { area: "좌석 관리", detail: "«몇 장 남았나»가 아니라 «어느 자리가 남았나» — 구역·열·번 단위 재고" },
+      { area: "회차·캐스팅", detail: "한 공연에 수십 회차, 회차마다 다른 캐스팅이 사실상 다른 상품" },
+      { area: "결제·취소", detail: "취소 시점별 수수료 단계, 부분 취소, 우천 일괄취소(수수료 0원)" },
+      { area: "QR 검표", detail: "현장에서 폰으로 쓰는 검표와 오프라인 저장 후 전송" },
+      { area: "정산", detail: "판매수수료·카드수수료·예매수수료가 각각 다른 주체의 몫" },
+      { area: "알림", detail: "예매 확인·공연 하루 전·회차 변경·환불 완료 문자와 알림톡" },
+    ],
+    audience: [
+      "공연 기획사·주최사가 직접 티켓을 등록·관리하는 시스템을 만들려는 분",
+      "티켓 예매 플랫폼을 만들면서 «파는 쪽» 화면이 필요한 분",
+      "공연장·문화재단처럼 여러 주최사의 공연을 받아 운영하는 곳",
+    ],
+    painPoints: [
+      "좌석은 개수가 아니라 «자리»다. 쇼핑몰 재고 모델로는 시야제한석 하나도 표현이 안 된다",
+      "취소 정책을 주최사가 정하는데 예매수수료는 플랫폼 규칙이라, 두 규칙이 한 화면에서 부딪힌다",
+      "우천 취소는 수수료가 0원인데 손님이 직접 취소하면 수수료가 붙는다 — 이 차이가 화면에 안 보이면 반드시 분쟁이 난다",
+      "회차 90개짜리 공연을 하나씩 만들 수는 없는데, 일괄 생성은 겹침·공휴일·캐스팅이 얽힌다",
+    ],
+    seo: {
+      title: "공연 티켓 파트너 관리자 화면설계서 · AI팩",
+      description:
+        "공연 티켓 파트너 관리자(주최사 셀프 등록·관리 백오피스) AI팩입니다. 좌석배치도·회차·캐스팅·취소 정책·QR 검표·정산까지 화면 목록과 기능정의를 미리 확인하고 구매하세요.",
+      keywords: [
+        "공연 티켓 관리자 화면설계서",
+        "티켓 예매 플랫폼 기획서",
+        "공연 예매 시스템 기획",
+        "좌석배치도 관리 화면",
+        "티켓 정산 화면설계서",
+      ],
+    },
+  },
 ];
 
 /**
@@ -808,7 +870,7 @@ export const PACKAGES: PackageDef[] = [
  * 2026-08-18 — 인테리어에 업체용 계정 화면(OW-07)을 더해 39/198 → 40/207 이 됐다.
  *   손님용 「내 정보」(AU-04)와 업체가 볼 것이 다른데 업체 자리가 없었다.
  */
-const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental", "interior"]);
+const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental", "interior", "ticket"]);
 
 /**
  * 이 등급 zip에 실제로 들어가는 것.
