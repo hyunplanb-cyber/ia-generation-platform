@@ -1,0 +1,18 @@
+{
+  "기준일": "2026-08-18",
+  "만든때": "2026-08-19T00:30:00+09:00",
+  "새판매팩": [],
+  "새지시": [
+    { "파일": "lib/design-presets.ts", "무엇": "빗금(트레일링 슬래시)·overflow·footer·min-width 어긋남·[hidden] 속성이 필터 CSS 특이도에 밀리는 문제 등 판매팩·생성팩 공통 규칙 다수 수정 (커밋 7건 + 미커밋 69줄 추가 — 아직 커밋 안 된 변경 있음)" },
+    { "파일": "lib/export/spec-pack.ts", "무엇": "손님이 받는 스펙팩 생성 로직 수정 — 화면목록에 제 이름 주기·「아는 것이 손님에게 가나」 검사기 연동 (커밋 5건 + 미커밋 60줄 추가 — 아직 커밋 안 된 변경 있음)" },
+    { "파일": "lib/export/template-verify.ts", "무엇": "템플릿 검증 규칙 수정 — 공통 점검을 §7과 짝 맞춤" },
+    { "파일": "lib/preset-pack.ts", "무엇": "버튼 글자색을 흰색으로 통일 (레트로·코럴 테마)" }
+  ],
+  "몫": {
+    "pack-qa-new": [],
+    "pack-qa-spec-a": ["LMS", "뷰티샵", "여행", "공동구매"],
+    "pack-qa-spec-b": ["매칭", "장비렌탈", "인테리어"],
+    "pack-qa-userpack": ["lib/design-presets.ts", "lib/export/spec-pack.ts", "lib/export/template-verify.ts", "lib/preset-pack.ts"]
+  },
+  "만드는중": []
+}

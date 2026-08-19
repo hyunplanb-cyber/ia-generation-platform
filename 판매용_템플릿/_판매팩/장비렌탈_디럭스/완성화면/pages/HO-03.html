@@ -69,12 +69,12 @@
   </div></div>
   </div></div><div>
   <div class="row-b mb6 wrap-row">
-    <div class="chips"><button class="chip on" type="button">전체</button><button class="chip" type="button">텐트</button><button class="chip" type="button">타프</button><button class="chip" type="button">화로대</button><button class="chip" type="button">의자</button><button class="chip" type="button">카메라</button></div>
+    <div class="chips"><button class="chip on" type="button" data-catf="*">전체</button><button class="chip" type="button" data-catf="텐트">텐트</button><button class="chip" type="button" data-catf="타프">타프</button><button class="chip" type="button" data-catf="화로대">화로대</button><button class="chip" type="button" data-catf="의자">의자</button><button class="chip" type="button" data-catf="촬영">촬영 장비</button></div>
     <select class="sel"><option selected>추천순</option><option>대여료 낮은 순</option><option>별점 높은 순</option><option>많이 남은 순</option></select>
   </div>
 
-  <div class="cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-    <a class="item" href="PD-02.html">
+  <div class="cards" data-catlist style="grid-template-columns:repeat(3,minmax(0,1fr))">
+    <a class="item" data-cat="텐트" href="PD-02.html">
     <div class="thumb"><div class="ph t3 ph-card " style="aspect-ratio:800/800"><img data-예시 src="../assets/예시/장비- 22.webp" alt=""><span class="lb">이미지 영역 (장비 사진 · <span class="sz">권장 800×800</span>)</span></div>
       <div class="on-thumb"><span class="badge left-n few">5대 중 2대 남음</span></div>
       <button class="heart" type="button" aria-label="찜하기">♡</button>
@@ -85,7 +85,7 @@
       
       <div class="price"><span class="d">46,300</span><span class="u">원 / 1일</span>
         <div class="t-sub">보증금 100,000원</div></div>
-    </div></a><a class="item" href="PD-02.html">
+    </div></a><a class="item" data-cat="타프" href="PD-02.html">
     <div class="thumb"><div class="ph t4 ph-card " style="aspect-ratio:800/800"><img data-예시 src="../assets/예시/장비- 23.webp" alt=""><span class="lb">이미지 영역 (장비 사진 · <span class="sz">권장 800×800</span>)</span></div>
       <div class="on-thumb"><span class="badge left-n">4대 중 4대 남음</span></div>
       <button class="heart" type="button" aria-label="찜하기">♡</button>
@@ -96,7 +96,7 @@
       
       <div class="price"><span class="d">32,000</span><span class="u">원 / 1일</span>
         <div class="t-sub">보증금 80,000원</div></div>
-    </div></a><a class="item" href="PD-02.html">
+    </div></a><a class="item" data-cat="화로대" href="PD-02.html">
     <div class="thumb"><div class="ph t5 ph-card " style="aspect-ratio:800/800"><img data-예시 src="../assets/예시/장비- 24.webp" alt=""><span class="lb">이미지 영역 (장비 사진 · <span class="sz">권장 800×800</span>)</span></div>
       <div class="on-thumb"><span class="badge left-n">8대 중 8대 남음</span></div>
       <button class="heart" type="button" aria-label="찜하기">♡</button>
@@ -107,7 +107,7 @@
       
       <div class="price"><span class="d">18,000</span><span class="u">원 / 1일</span>
         <div class="t-sub">보증금 40,000원</div></div>
-    </div></a><a class="item" href="PD-02.html">
+    </div></a><a class="item" data-cat="의자" href="PD-02.html">
     <div class="thumb"><div class="ph t1 ph-card " style="aspect-ratio:800/800"><img data-예시 src="../assets/예시/장비- 25.webp" alt=""><span class="lb">이미지 영역 (장비 사진 · <span class="sz">권장 800×800</span>)</span></div>
       <div class="on-thumb"><span class="badge left-n">12대 중 12대 남음</span></div>
       <button class="heart" type="button" aria-label="찜하기">♡</button>
@@ -118,7 +118,7 @@
       
       <div class="price"><span class="d">14,000</span><span class="u">원 / 1일</span>
         <div class="t-sub">보증금 60,000원</div></div>
-    </div></a><a class="item" href="PD-02.html">
+    </div></a><a class="item" data-cat="촬영" href="PD-02.html">
     <div class="thumb"><div class="ph t2 ph-card " style="aspect-ratio:800/800"><img data-예시 src="../assets/예시/장비- 3.webp" alt=""><span class="lb">이미지 영역 (장비 사진 · <span class="sz">권장 800×800</span>)</span></div>
       <div class="on-thumb"><span class="badge left-n">3대 중 3대 남음</span></div>
       <button class="heart" type="button" aria-label="찜하기">♡</button>
@@ -129,7 +129,7 @@
       
       <div class="price"><span class="d">78,000</span><span class="u">원 / 1일</span>
         <div class="t-sub">보증금 500,000원</div></div>
-    </div></a><a class="item" href="PD-02.html">
+    </div></a><a class="item" data-cat="촬영" href="PD-02.html">
     <div class="thumb"><div class="ph t3 ph-card " style="aspect-ratio:800/800"><img data-예시 src="../assets/예시/장비- 4.webp" alt=""><span class="lb">이미지 영역 (장비 사진 · <span class="sz">권장 800×800</span>)</span></div>
       <div class="on-thumb"><span class="badge left-n">4대 중 4대 남음</span></div>
       <button class="heart" type="button" aria-label="찜하기">♡</button>
@@ -140,7 +140,7 @@
       
       <div class="price"><span class="d">52,000</span><span class="u">원 / 1일</span>
         <div class="t-sub">보증금 300,000원</div></div>
-    </div></a><a class="item" href="PD-02.html">
+    </div></a><a class="item" data-cat="촬영" href="PD-02.html">
     <div class="thumb"><div class="ph t4 ph-card " style="aspect-ratio:800/800"><img data-예시 src="../assets/예시/장비- 5.webp" alt=""><span class="lb">이미지 영역 (장비 사진 · <span class="sz">권장 800×800</span>)</span></div>
       <div class="on-thumb"><span class="badge left-n few">2대 중 2대 남음</span></div>
       <button class="heart" type="button" aria-label="찜하기">♡</button>
@@ -151,7 +151,7 @@
       
       <div class="price"><span class="d">44,000</span><span class="u">원 / 1일</span>
         <div class="t-sub">보증금 250,000원</div></div>
-    </div></a><a class="item" href="PD-02.html">
+    </div></a><a class="item" data-cat="촬영" href="PD-02.html">
     <div class="thumb"><div class="ph t5 ph-card " style="aspect-ratio:800/800"><img data-예시 src="../assets/예시/장비- 6.webp" alt=""><span class="lb">이미지 영역 (장비 사진 · <span class="sz">권장 800×800</span>)</span></div>
       <div class="on-thumb"><span class="badge left-n">3대 중 3대 남음</span></div>
       <button class="heart" type="button" aria-label="찜하기">♡</button>

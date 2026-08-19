@@ -48,6 +48,7 @@
 
   /* 칩 필터 */
   on('.chip', 'click', function (e, t) {
+    if (t.dataset.catf) return;   /* 갈래 거르개가 따로 맡는다 — 여기서 뒤집으면 서로 싸운다 */
     if (t.dataset.go) { location.href = t.dataset.go; return; }
     if (t.classList.contains('is-off')) return;
     /* 「전체」가 든 묶음은 하나만 골라진다 — 「전체」와 「텐트」가 같이 켜지면 안 된다.
@@ -333,3 +334,55 @@
   }, true);
 })();
 /* ── 마지막 그물 끝 ── */
+
+/* ── 갈래 칩으로 목록 거르기 ────────────────────────────────────────
+   ⛔ 2026-08-19 검수: 「텐트」·「타프」 칩을 눌러도 켜짐 표시만 바뀌고
+      장비 목록이 그대로였다. 거르는 장치가 아예 안 걸려 있었다.
+
+   자료는 이미 화면에 있었다 — 물건 이름이 「…4인 텐트」·「타프 헥사」다.
+   그래서 카드마다 data-cat 을 적어 두고 칩과 짝지었다.
+   ⚠ 「침낭」 칩은 해당 물건이 한 대도 없어서 캠핑 화면에서 뺐다.
+      (HO0202 는 칩에 「침낭 5」처럼 진짜 규모를 적는 자리라 그대로 두고,
+       눌러서 비면 안내를 띄운다.)
+   ⚠ 거르는 것은 «첫 목록»뿐이다. 「함께 빌리면 좋아요」·「이 기간엔 다 나갔어요」는
+      다른 뜻의 목록이라 건드리지 않는다. */
+(function 갈래거르기() {
+  var 목록 = document.querySelector('[data-catlist]');
+  if (!목록) return;
+  var 카드 = [].slice.call(목록.querySelectorAll('[data-cat]'));
+  var 칩 = [].slice.call(document.querySelectorAll('[data-catf]'));
+  if (!카드.length || !칩.length) return;
+
+  /* 하나도 안 남았을 때 띄울 안내 — 빈 채로 두면 고장으로 보인다 */
+  var 빈칸 = document.createElement('div');
+  빈칸.className = 'empty mt6';
+  빈칸.hidden = true;
+  빈칸.innerHTML =
+    '<div class="ico">🔍</div>' +
+    '<h3 class="t-sec">고르신 종류는 이 견본에 안 담겨 있어요</h3>' +
+    '<p class="msg">보여 드리는 화면에는 몇 가지만 담아 두었습니다. ' +
+    '「전체」를 누르시면 다시 보여 드려요.</p>';
+  목록.insertAdjacentElement('afterend', 빈칸);
+
+  function 그리기(고른) {
+    var 남은 = 0;
+    카드.forEach(function (c) {
+      var ok = 고른 === '*' || c.dataset.cat === 고른;
+      c.hidden = !ok;
+      if (ok) 남은++;
+    });
+    빈칸.hidden = 남은 > 0;
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('[data-catf]') : null;
+    if (!t) return;
+    칩.forEach(function (x) { x.classList.remove('on'); });
+    t.classList.add('on');
+    그리기(t.dataset.catf);
+  });
+
+  var 처음 = 칩.filter(function (x) { return x.classList.contains('on'); })[0] || 칩[0];
+  처음.classList.add('on');
+  그리기(처음.dataset.catf);
+})();

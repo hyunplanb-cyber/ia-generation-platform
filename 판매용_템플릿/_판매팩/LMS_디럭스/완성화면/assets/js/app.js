@@ -44,6 +44,18 @@
   /* ---------- 화면 이동 ---------- */
   on('[data-go]', 'click', function (e, t) { location.href = t.dataset.go; });
 
+
+  /* 한 번 누르면 끝나는 단추 — 누른 뒤 글자를 바꾸고 다시 눌리지 않게 한다.
+     ⛔ 2026-08-19 검수: 쿠폰 「받기」 를 몇 번이고 눌러도 「받았어요」 가 또 나왔다.
+     받았는지 손님이 알 수 없었다. */
+  on('[data-once]', 'click', function (e, t) {
+    if (t.dataset.onceDone) { e.preventDefault(); e.stopPropagation(); return; }
+    t.dataset.onceDone = '1';
+    t.textContent = t.dataset.once || '완료';
+    t.classList.add('is-off');
+    t.disabled = true;
+  });
+
   /* ================= 탭 ================= */
   on('.tab', 'click', function (e, t) {
     if (t.dataset.go) return;
@@ -51,6 +63,10 @@
     if (!box) return;
     $$('.tab', box).forEach(function (x) { x.classList.remove('on'); });
     t.classList.add('on');
+    /* 탭 줄이 화면 아래쪽에 있으면 위로 올린다 — 바뀐 내용이 화면 밖에 있으면
+       손님은 아무것도 안 바뀐 줄 안다 (2026-08-19 검수) */
+    var 탭자리 = box.getBoundingClientRect();
+    if (탭자리.top > innerHeight * 0.4 && box.scrollIntoView) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     var key = t.dataset.pane;
     if (key) {
       var scope = box.dataset.panes ? $('[data-pane-set="' + box.dataset.panes + '"]') : box.parentElement;
@@ -122,6 +138,17 @@
     });
     var emptyBox = $('[data-list-empty="' + list + '"]');
     if (emptyBox) emptyBox.hidden = shown > 0;
+    /* 쪽 번호 — 조건을 걸어 결과가 줄면 한 쪽에 다 들어간다. 그때는 쪽 번호를 감춘다.
+       ⛔ 2026-08-19: 전에는 2개만 남아도 「1 2 3 4 5」 가 그대로 있었고,
+       어느 쪽을 눌러도 같은 목록이 나왔다. 조건이 바뀌면 1쪽으로도 되돌린다. */
+    var pager = $('[data-pager="' + list + '"]');
+    if (pager) {
+      var 줄었다 = shown < items.length;
+      pager.hidden = 줄었다;
+      $$('[data-page]', pager).forEach(function (x) {
+        x.classList.toggle('on', x.dataset.page === '1');
+      });
+    }
     var chipBox = $('[data-chipbar="' + list + '"]');
     if (chipBox) renderChipbar(list, chipBox);
   }
@@ -229,15 +256,32 @@
     } else {
       st[k] = (st[k] && st[k][0] === v) ? [] : [v];
     }
-    /* 같은 묶음 안 표시 갱신 */
-    if (group) {
-      $$('[data-f="' + k + '"]', group).forEach(function (x) {
-        var xv = x.dataset.v;
-        var act = xv === '*' ? !(st[k] && st[k].length) : (st[k] || []).indexOf(xv) >= 0;
-        x.classList.toggle('on', act);
-      });
-    }
+    /* 켜짐 표시 갱신 — 화면 전체에서 같은 무리를 찾는다.
+       ⛔ 2026-08-19: 전에는 data-fset 상자 안에서만 갱신했다. 그런데 홈의 「전체 보기」는
+       그 상자 밖(.chips)에 있어서, 「디자인」을 눌러도 「전체 보기」가 안 꺼지고
+       「전체 보기」를 눌러도 「디자인」이 안 꺼졌다. 목록은 맞게 걸러지는데
+       켜짐 표시만 손님을 속였다. 상자를 넘어 같은 list+갈래를 모두 갱신한다. */
+    $$('[data-fgroup="' + list + '"][data-f="' + k + '"]').forEach(function (x) {
+      var xv = x.dataset.v;
+      if (!xv) return;
+      if (x.closest('[data-chipbar]')) return;   /* 칩은 renderChipbar 가 다시 그린다 */
+      var act = xv === '*' ? !(st[k] && st[k].length) : (st[k] || []).indexOf(xv) >= 0;
+      x.classList.toggle('on', act);
+    });
     applyFilter(list);
+  });
+
+
+  /* 검색 단추 — 몇 개가 남았는지 말해 준다.
+     ⛔ 2026-08-19 검수: 「걸러졌어요」라고만 했는데 실제 결과는 0개였다. */
+  on('[data-search-go]', 'click', function (e, t) {
+    var list = t.dataset.searchGo;
+    applyFilter(list);
+    var 셈칸 = $('[data-fcount="' + list + '"]');
+    var n = 셈칸 ? (셈칸.textContent || '').trim() : '';
+    toast(n === '0'
+      ? '조건에 맞는 강의가 없어요. 조건을 하나씩 풀어 보세요'
+      : '아래 목록에 ' + n + '개가 남았어요');
   });
 
   on('[data-fclearq]', 'click', function (e, t) {
@@ -373,6 +417,8 @@
     e.preventDefault(); e.stopPropagation();
     var isOn = t.classList.toggle('on');
     t.textContent = isOn ? '♥' : '♡';
+    t.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+    t.setAttribute('aria-label', isOn ? '찜 해제하기' : '찜하기');
     toast(isOn ? '찜한 강의에 담았어요' : '찜을 해제했어요');
   });
 
@@ -467,14 +513,51 @@
       b.disabled = need.length > 0;
       b.classList.toggle('is-off', need.length > 0);
     });
+    /* 켜진 뒤에는 「동의해야 결제 버튼이 켜집니다」 안내를 거둔다 —
+       2026-08-19 검수: 단추가 켜졌는데도 안내가 그대로 남아 있었다 */
+    $$('[data-gatehint="' + g + '"]').forEach(function (h) { h.hidden = need.length === 0; });
     $$('[data-gatemsg="' + g + '"]').forEach(function (m) {
       m.hidden = !tried[g] || need.length === 0;
       if (need.length) m.textContent = '⚠ ' + need.map(function (x) { return x.dataset.label || '필수 항목'; }).join(' · ') + '' + 조사붙이기(need[need.length-1].dataset.label || '필수 항목', '을', '를').slice(-1) + ' 아직 채우지 않았어요';
     });
   }
+
+  /* ── 결제 화면에서 고른 것을 완료 화면으로 넘긴다 ─────────────────────
+     ⛔ 2026-08-19 검수: 12개월 할부를 골라 「매달 5,270원 × 12개월」까지 확인했는데
+        완료 화면은 「신용카드 (일시불)」이었다. 고른 값이 다음 화면으로 안 넘어갔다. */
+  function 결제내용저장() {
+    try {
+      var 수단 = document.querySelector('[data-pick-out="pay"]');
+      if (!수단) return;
+      var 할부 = document.querySelector('.chip.on[data-inst]');
+      var 금액 = document.querySelector('[data-out-final]');
+      sessionStorage.setItem('결제내용', JSON.stringify({
+        수단: (수단.textContent || '').trim(),
+        할부: 할부 ? Number(할부.dataset.inst || 1) : 1,
+        금액: 금액 ? (금액.textContent || '').trim() : ''
+      }));
+    } catch (err) { /* 저장이 막혀 있어도 화면은 그대로 돈다 */ }
+  }
+
+  function 결제내용받기() {
+    var 자리 = document.querySelector('[data-paid-method]');
+    if (!자리) return;
+    var 내용 = null;
+    try { 내용 = JSON.parse(sessionStorage.getItem('결제내용') || 'null'); } catch (err) { return; }
+    if (!내용 || !내용.수단) return;
+    /* 카드가 아니면 할부라는 말 자체가 없다 */
+    var 할부말 = 내용.수단.indexOf('카드') >= 0
+      ? ' (' + (내용.할부 > 1 ? 내용.할부 + '개월' : '일시불') + ')'
+      : '';
+    자리.textContent = 내용.수단 + 할부말;
+    var 금 = document.querySelector('[data-paid-amount]');
+    if (금 && 내용.금액) 금.textContent = 내용.금액;
+  }
+
   window.gate = gate;
+  결제내용받기();
   on('[data-gated]', 'click', function (e, t) {
-    if (!t.disabled && !t.classList.contains('is-off')) return;
+    if (!t.disabled && !t.classList.contains('is-off')) { 결제내용저장(); return; }
     e.preventDefault();   /* 아직 못 누르는 링크는 넘어가지 않는다 */
     e.stopPropagation();
     var g = t.dataset.gated;
@@ -484,6 +567,23 @@
       if (x.classList) x.classList.toggle('err', bad);
     });
     gate(g);
+  });
+
+
+  /* 과제를 내면 그 자리에서 낸 것을 보여 준다.
+     ⛔ 2026-08-19 검수: 「제출하기」를 누르면 알림 한 줄 없이 강의 재생 화면으로 튕겨 나왔다.
+     냈는지 손님이 알 수 없었다. */
+  on('[data-submit-done]', 'click', function (e, t) {
+    if (t.classList.contains('is-off')) return;   /* 못 채웠으면 gate 가 막는다 */
+    e.preventDefault();
+    if (t.dataset.hwDone) return;
+    t.dataset.hwDone = '1';
+    t.textContent = '제출됨';
+    t.classList.add('is-off');
+    $$('[data-gate="hw"]').forEach(function (x) { x.readOnly = true; x.disabled = true; });
+    var 상태 = $('[data-hw-state]');
+    if (상태) { 상태.textContent = '제출'; 상태.className = 'badge b-ok'; }
+    toast(t.dataset.submitDone || '냈어요', '', 'ok');
   });
 
   /* ================= 계산 ================= */
@@ -1020,6 +1120,19 @@
     var box = row.parentElement;
     var out = $('[data-resolve-count="' + key + '"]');
     if (out) out.textContent = nf(Math.max(0, (parseInt(out.textContent.replace(/,/g, ''), 10) || 0) - Number(t.dataset.n || 1)));
+    /* 위 지표 카드도 같이 줄인다 —
+       ⛔ 2026-08-19 검수: 아래에서 「채점 대기 과제 24건」을 처리해 「남은 일 0건」이 됐는데
+       위 카드는 그대로 「채점 대기 24건」이었다. */
+    var 지표키 = t.dataset.metricKey;
+    if (지표키) {
+      var 지표 = $('[data-metric="' + 지표키 + '"]');
+      if (지표) {
+        var 작 = 지표.querySelector('small');
+        var 남 = Math.max(0, (parseInt((지표.textContent || '').replace(/[^0-9]/g, ''), 10) || 0) - Number(t.dataset.n || 1));
+        지표.textContent = nf(남);
+        if (작) 지표.appendChild(작);
+      }
+    }
     row.remove();
     if (!box.children.length) {
       var em = $('[data-resolve-empty="' + key + '"]'); if (em) em.hidden = false;
@@ -1164,3 +1277,155 @@
   }, true);
 })();
 /* ── 마지막 그물 끝 ── */
+
+(function () {
+
+  /* ── 견본 날짜를 오늘 기준으로 옮긴다 ──────────────────────────────────
+     견본은 만든 날에 맞춰 날짜가 적혀 있다. 그대로 두면 몇 달 뒤 여는 손님은
+     지난 마감·지난 주문일만 보게 된다.
+     ⛔ 2026-08-19 검수: 「D-3 · 마감 8월 10일」인데 그날은 8월 19일이었다.
+        마감이 9일 전에 지났는데 「3일 남음」이라고 했다.
+     기준일과 오늘의 차이만큼 화면의 날짜를 통째로 민다. 날짜 사이 간격은 그대로라
+     「D-3」이나 「수강 기간 6개월」 같은 계산값은 손대지 않아도 맞는다. */
+  var 견본기준일 = '2026-08-07';   /* 이 견본을 만든 날 */
+
+  function 날짜를오늘로() {
+    var ㄱ = 견본기준일.split('-');
+    var 기준 = new Date(Number(ㄱ[0]), Number(ㄱ[1]) - 1, Number(ㄱ[2]));
+    var 오늘 = new Date(); 오늘.setHours(0, 0, 0, 0);
+    var 민날 = Math.round((오늘 - 기준) / 86400000);
+    if (!민날) return;
+
+    function 밀기(y, m, d) {
+      var t = new Date(y, m - 1, d);
+      t.setDate(t.getDate() + 민날);
+      return t;
+    }
+    var 두자리 = function (n) { return (n < 10 ? '0' : '') + n; };
+
+    var 훑개 = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var 마디, 바꿀것 = [];
+    while ((마디 = 훑개.nextNode())) {
+      var 부모 = 마디.parentNode;
+      if (!부모) continue;
+      var 태그 = 부모.nodeName;
+      if (태그 === 'SCRIPT' || 태그 === 'STYLE') continue;
+      바꿀것.push(마디);
+    }
+
+    바꿀것.forEach(function (마디) {
+      var 글 = 마디.nodeValue;
+      if (!글 || 글.indexOf('20') < 0 && 글.indexOf('/') < 0) return;
+      var 새글 = 글;
+
+      /* 2026-08-07 */
+      새글 = 새글.replace(/(20\d\d)-(\d\d)-(\d\d)/g, function (_, y, m, d) {
+        var t = 밀기(Number(y), Number(m), Number(d));
+        return t.getFullYear() + '-' + 두자리(t.getMonth() + 1) + '-' + 두자리(t.getDate());
+      });
+
+      /* 2026년 8월 10일 */
+      새글 = 새글.replace(/(20\d\d)년\s*(\d{1,2})월\s*(\d{1,2})일/g, function (_, y, m, d) {
+        var t = 밀기(Number(y), Number(m), Number(d));
+        return t.getFullYear() + '년 ' + (t.getMonth() + 1) + '월 ' + t.getDate() + '일';
+      });
+
+      /* ORD-20260807-004182 */
+      새글 = 새글.replace(/(20\d\d)(\d\d)(\d\d)(?=-\d)/g, function (전, y, m, d) {
+        var t = 밀기(Number(y), Number(m), Number(d));
+        return '' + t.getFullYear() + 두자리(t.getMonth() + 1) + 두자리(t.getDate());
+      });
+
+      /* 차트 축의 8/7 — svg 안에서만 바꾼다. 「12/18차시」 같은 것을 건드리면 안 된다 */
+      if (마디.parentNode.closest && 마디.parentNode.closest('svg')) {
+        새글 = 새글.replace(/^(\d{1,2})\/(\d{1,2})$/, function (_, m, d) {
+          var t = 밀기(기준.getFullYear(), Number(m), Number(d));
+          return (t.getMonth() + 1) + '/' + t.getDate();
+        });
+      }
+
+      if (새글 !== 글) 마디.nodeValue = 새글;
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', 날짜를오늘로);
+  else 날짜를오늘로();
+})();
+
+(function () {
+
+  /* ── 히어로 검색칸 자동완성 ────────────────────────────────────────────
+     ⛔ 2026-08-19 검수: 화면 목록에 「검색어 자동완성」 화면이 따로 있는데
+     정작 홈 검색칸에 글자를 넣어도 아무것도 안 떴다.
+     아래 목록에 실린 강의 이름·강사 이름에서 골라 보여 준다. */
+  function 자동완성달기() {
+    var 칸 = document.querySelector('input[data-search="pop"]');
+    if (!칸) return;
+    var 줄기 = 칸.closest('.input-row') || 칸.parentNode;
+    if (!줄기 || 줄기.querySelector('[data-ac]')) return;
+    if (getComputedStyle(줄기).position === 'static') 줄기.style.position = 'relative';
+
+    var 상자 = document.createElement('div');
+    상자.setAttribute('data-ac', '');
+    상자.hidden = true;
+    상자.style.cssText = 'position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:20;'
+      + 'background:var(--surface,#fff);border:1px solid var(--border,#ddd);border-radius:12px;'
+      + 'box-shadow:0 8px 24px rgba(0,0,0,.10);overflow:hidden';
+    줄기.appendChild(상자);
+
+    /* 후보 — 아래 목록에 실린 강의에서 이름과 강사를 모은다 */
+    function 후보모으기() {
+      var 것 = [];
+      var 목록 = document.querySelector('[data-list="pop"]');
+      if (!목록) return 것;
+      Array.prototype.forEach.call(목록.querySelectorAll('[data-tags]'), function (카드) {
+        var 이름 = 카드.querySelector('.nm');
+        var 강사 = 카드.querySelector('.by');
+        if (이름) 것.push({ 말: (이름.textContent || '').trim(), 갈래: '강의' });
+        if (강사) {
+          var g = (강사.textContent || '').trim();
+          if (g && 것.every(function (x) { return x.말 !== g; })) 것.push({ 말: g, 갈래: '강사' });
+        }
+      });
+      return 것;
+    }
+
+    function 그리기() {
+      var q = (칸.value || '').trim();
+      if (!q) { 상자.hidden = true; 상자.innerHTML = ''; return; }
+      var 맞는것 = 후보모으기().filter(function (x) { return x.말.indexOf(q) >= 0; }).slice(0, 6);
+      if (!맞는것.length) {
+        상자.innerHTML = '<div class="t-sub" style="padding:12px 14px">'
+          + q + '(으)로 찾을 수 있는 강의가 없어요</div>';
+        상자.hidden = false;
+        return;
+      }
+      상자.innerHTML = 맞는것.map(function (x) {
+        var 표시 = x.말.split(q).join('<span class="mark">' + q + '</span>');
+        return '<button type="button" data-ac-pick="' + x.말.replace(/"/g, '&quot;') + '"'
+          + ' style="display:flex;gap:8px;align-items:center;width:100%;padding:10px 14px;border:0;'
+          + 'background:none;cursor:pointer;text-align:left">'
+          + '<span class="badge b-pri">' + x.갈래 + '</span><span class="grow">' + 표시 + '</span></button>';
+      }).join('');
+      상자.hidden = false;
+    }
+
+    칸.addEventListener('input', 그리기);
+    칸.addEventListener('focus', 그리기);
+    document.addEventListener('click', function (e) {
+      if (!줄기.contains(e.target)) { 상자.hidden = true; }
+    });
+    상자.addEventListener('click', function (e) {
+      var 고른것 = e.target.closest && e.target.closest('[data-ac-pick]');
+      if (!고른것) return;
+      칸.value = 고른것.dataset.acPick;
+      상자.hidden = true;
+      if (typeof window.applyFilter === 'function') {
+        칸.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', 자동완성달기);
+  else 자동완성달기();
+})();

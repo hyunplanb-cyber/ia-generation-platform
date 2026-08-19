@@ -41,7 +41,11 @@ createServer(async (req, res) => {
         실제 = join(실제, "index.html");
       }
     } catch { }
-    const 몸 = await readFile(실제);
+    /* 확장자 없이 온 주소도 받는다 — 옛 서버(npx serve)가 .html 을 떼고 다녀서
+       그 주소가 히스토리·즐겨찾기에 남아 있다. 없으면 .html 을 붙여 다시 찾는다. */
+    let 몸;
+    try { 몸 = await readFile(실제); }
+    catch { 몸 = await readFile(실제 + ".html"); 실제 += ".html"; }
     res.writeHead(200, { "content-type": 종류[extname(실제).toLowerCase()] || "application/octet-stream" });
     res.end(몸);
   } catch {

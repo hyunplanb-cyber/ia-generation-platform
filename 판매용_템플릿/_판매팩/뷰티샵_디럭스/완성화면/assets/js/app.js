@@ -41,6 +41,9 @@
   on('.chip', 'click', function (e, t) {
     if (t.dataset.go) { location.href = t.dataset.go; return; }
     if (t.classList.contains('is-off')) return;
+    /* ⛔ 2026-08-19: 거르는 칩(data-shopf)은 «매장 거르기»가 켜짐을 맡는다.
+       여기서 또 toggle 하면 켠 것을 곧바로 다시 꺼 버린다. */
+    if (t.dataset.shopf) return;
     t.classList.toggle('on');
   });
 
@@ -313,3 +316,97 @@
   }, true);
 })();
 /* ── 마지막 그물 끝 ── */
+
+(function () {
+
+  /* ── 매장 목록 거르기 ────────────────────────────────────────────────
+     ⛔ 2026-08-19 검수: 「최소 평점」·「편의」 칩을 눌러도 켜짐 표시만 바뀌고
+        매장 12곳이 그대로였다. 거르는 장치가 아예 안 걸려 있었다.
+
+     자료는 이미 카드에 있다 — 평점은 `.bd b`(4.9), 편의는 위쪽 `.tags .badge`(주차가능).
+     칩 이름과 배지 글자가 조금 다를 뿐이라(「주차 가능」 ↔ 「주차가능」) 짝만 지어 주면 된다.
+     ⚠ 「야간 영업」은 짝지을 배지가 없어서 칩을 뺐다 — 근거 없이 지어 붙이지 않는다. */
+  (function 매장거르기() {
+    var 목록 = document.querySelector('.mag');
+    if (!목록) return;
+    var 카드들 = [].slice.call(목록.querySelectorAll('.mcard'));
+    if (!카드들.length) return;
+
+    /* 칩 이름 → 카드 배지에 실제로 쓰인 말들 */
+    var 편의짝 = {
+      '주차 가능': ['주차가능', '주차2시간', '발렛'],
+      '1인샵': ['1인샵'],
+      '여성 전용': ['여성전용'],
+    };
+
+    /* 카드마다 «무엇을 갖췄나»를 미리 읽어 둔다 */
+    카드들.forEach(function (카드) {
+      var 배지 = [].slice.call(카드.querySelectorAll('.tags .badge')).map(function (b) {
+        return (b.textContent || '').trim();
+      });
+      카드.__편의 = 배지;
+      var 평 = 카드.querySelector('.bd b');
+      카드.__평점 = 평 ? parseFloat((평.textContent || '').replace(/[^0-9.]/g, '')) || 0 : 0;
+    });
+
+    var 고른평점 = 0;      /* 0 이면 안 걸린 것 */
+    var 고른편의 = [];     /* 여러 개 고를 수 있다 */
+
+    function 다시그리기() {
+      var 남은 = 0;
+      카드들.forEach(function (카드) {
+        var ok = true;
+        if (고른평점 && 카드.__평점 < 고른평점) ok = false;
+        if (ok && 고른편의.length) {
+          ok = 고른편의.every(function (이름) {
+            var 후보 = 편의짝[이름] || [];
+            return 카드.__편의.some(function (b) { return 후보.indexOf(b) >= 0; });
+          });
+        }
+        카드.hidden = !ok;
+        if (ok) 남은++;
+      });
+
+      /* 「전체 1,204곳 가운데 12곳만…」 옆에 지금 몇 곳인지 보탠다 */
+      var 셈칸 = document.querySelector('[data-shop-count]');
+      if (셈칸) 셈칸.textContent = 남은;
+
+      /* 하나도 안 남으면 알려 준다 — 빈 채로 두면 고장으로 보인다 */
+      var 빈칸 = document.querySelector('[data-shop-empty]');
+      if (빈칸) 빈칸.hidden = 남은 > 0;
+    }
+
+    /* 칩을 누르면 — 평점은 하나만, 편의는 여러 개 */
+    document.addEventListener('click', function (e) {
+      var 칩 = e.target.closest && e.target.closest('[data-shopf]');
+      if (!칩) return;
+      var 갈래 = 칩.dataset.shopf;
+      var 값 = 칩.dataset.shopv;
+
+      if (갈래 === 'rate') {
+        var 껐다 = 칩.classList.contains('on');
+        document.querySelectorAll('[data-shopf="rate"]').forEach(function (x) {
+          x.classList.remove('on');
+          var xx = x.querySelector('.x'); if (xx) xx.remove();
+        });
+        고른평점 = 껐다 ? 0 : parseFloat(값);
+        if (!껐다) {
+          칩.classList.add('on');
+          if (!칩.querySelector('.x')) {
+            var s = document.createElement('span'); s.className = 'x'; s.textContent = ' ✕';
+            칩.appendChild(s);
+          }
+        }
+      } else if (갈래 === 'amenity') {
+        var i = 고른편의.indexOf(값);
+        if (i >= 0) { 고른편의.splice(i, 1); 칩.classList.remove('on'); }
+        else { 고른편의.push(값); 칩.classList.add('on'); }
+      } else return;
+
+      다시그리기();
+    });
+
+    다시그리기();
+  })();
+
+})();

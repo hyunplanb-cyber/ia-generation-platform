@@ -428,3 +428,34 @@
   })();
 
 })();
+
+/* ── 최근 검색어 지우기 ──────────────────────────────────────────────
+   ⛔ 2026-08-19 검수: 「이 검색어만 지웠어요」·「모두 지웠어요」라고 알려 놓고
+      칩은 그대로 남아 있었다. 지웠다고 말해 놓고 안 지우는 것은 거짓말이다.
+   다 지우면 「최근 검색어」 제목까지 감춘다 — 제목만 남으면 빈 자리로 보인다. */
+(function 최근검색어() {
+  var 구역 = document.querySelector('[data-recent]');
+  if (!구역) return;
+
+  function 남았나() {
+    var n = 구역.querySelectorAll('[data-recent-x]').length;
+    if (n === 0) 구역.hidden = true;
+  }
+
+  document.addEventListener('click', function (e) {
+    if (!e.target || !e.target.closest) return;
+
+    var 전부 = e.target.closest('[data-recent-clear]');
+    if (전부) {
+      구역.querySelectorAll('[data-recent-x]').forEach(function (c) { c.remove(); });
+      구역.hidden = true;
+      return;
+    }
+
+    var 하나 = e.target.closest('[data-recent-x]');
+    if (하나 && 구역.contains(하나)) {
+      하나.remove();
+      남았나();
+    }
+  });
+})();

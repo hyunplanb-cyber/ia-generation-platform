@@ -471,9 +471,11 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .ccard .meta{font-size:13px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .ccard .badges{margin-top:var(--s2)}
 .ccard:hover .nm{color:var(--pri-ink)}
-.ccard .heart{position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.92);
+.ccard .heart{position:absolute;z-index:2;right:10px;top:10px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.92);
   font-size:16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);box-shadow:var(--sh-card)}
 .ccard .heart.on{color:var(--pri-ink)}
+/* ⛔ 2026-08-19: z-index 가 없어 카드 사진이 하트를 덮었다.
+   찜 단추를 눌러도 찜이 안 되고 강의 상세로 넘어갔다. */
 
 /* 가격 묶음 — 판매가 · 정가 · 할인율 */
 .price{display:flex;align-items:baseline;gap:8px;margin-top:var(--s2);flex-wrap:wrap}
@@ -765,7 +767,8 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 body{min-height:100dvh;display:flex;flex-direction:column}
 body>*:first-child{flex:1 0 auto;min-height:0}
 /* 푸터가 main 안에 있는 짜임(.app-ed > main > .ft)까지 닿게 한다 */
-.app-ed,.app,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+.app-ed,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+/* .app 은 grid 2열이라 여기 넣지 않는다 — 넣으면 사이드바가 폭을 다 먹는다 */
 /* flex 자식은 shrink-to-fit 이라 폭이 내용만큼 줄어든다 — width:100% 로 되돌린다 */
 .app-ed>main,.app-ed>.edmain,.app>main,.app>.appmain,.page-wrap>main{flex:1 0 auto;display:flex;flex-direction:column;width:100%}
 body>*:first-child{width:100%}

@@ -734,3 +734,45 @@ main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
 /* [hidden] 은 브라우저 기본값이라 .lrow{display:flex} 같은 규칙에 진다.
    거르기가 목록을 못 줄이는 사고가 여기서 난다 — 반드시 이겨 두어야 한다. */
 [hidden]{display:none !important}
+
+/* ══ 레이아웃 B 사진 중심형 ═══════════════════════════════════════════════
+   2026-08-19: 디럭스와 프리미엄이 둘 다 「검색 중심형」이라 상품 목록이 판박이였다.
+   사진만 다르고 격자·카드·글이 똑같아서 등급 차이가 안 보였다.
+
+   여행은 사진이 곧 상품이다. 디럭스가 「빨리 찾기」라면
+   프리미엄은 「크게 보여 주기」로 간다.
+   HTML 은 그대로 두고 CSS 로만 바꾼다 — 144쪽을 손대지 않는다. */
+
+/* ── ① 상품 격자를 한 단계씩 넓힌다. 사진이 그만큼 커진다 ──
+   상품 목록 3열 → 2열 (사진 390px → 680px)
+   홈·기획전 4열 → 3열 */
+.g3:has(> .pcard) { grid-template-columns: repeat(2, 1fr); gap: var(--s8); }
+.g4:has(> .pcard) { grid-template-columns: repeat(3, 1fr); gap: var(--s6); }
+
+/* ── ② 사진 비율은 4:3 그대로 둔다 ──
+   3:2 로 넓혔더니 object-fit:cover 가 사진 아래를 잘라
+   사진에 박힌 「예시 이미지」 띠가 반 토막 났다.
+   2열로 놓는 것만으로 사진이 390px → 680px 로 커진다. */
+
+/* ── ③ 테두리·그림자를 걷어 사진이 주인공이 되게 ──
+   상자 안에 든 사진이 아니라, 사진 아래 글이 달린 모양으로 바꾼다. */
+.pcard {
+  background: transparent; border: 0; box-shadow: none;
+  border-radius: 0; overflow: visible;
+}
+.pcard .ph { border-radius: var(--r-card); }
+.pcard .body { padding: var(--s4) 2px 0; gap: 8px; }
+.pcard .name { font-size: 17px; font-weight: 700; line-height: 1.35; }
+.pcard .meta { font-size: 14px; }
+
+/* 사진 위에 얹히는 것들은 사진 모서리를 따라간다 */
+.pcard .heart { z-index: 2; }
+
+/* 마우스를 올리면 사진이 살짝 커진다 — 사진이 주인공인 화면다운 반응 */
+.pcard .ph img { transition: transform .35s ease; }
+.pcard:hover .ph img { transform: scale(1.04); }
+
+/* ── ④ 좁은 화면에서는 한 열로 ── */
+@media (max-width: 860px) {
+  .g3:has(> .pcard), .g4:has(> .pcard) { grid-template-columns: 1fr; gap: var(--s6); }
+}
