@@ -869,8 +869,13 @@ export const PACKAGES: PackageDef[] = [
  *   (디럭스 2뎁스 화면 수 / 프리미엄 3뎁스 화면 수)
  * 2026-08-18 — 인테리어에 업체용 계정 화면(OW-07)을 더해 39/198 → 40/207 이 됐다.
  *   손님용 「내 정보」(AU-04)와 업체가 볼 것이 다른데 업체 자리가 없었다.
+ * 2026-08-19 — 공연 티켓 파트너 관리자(ticket)를 만들었으나 진열하지 않는다.
+ *   문서는 다 나왔지만(46/228, 지금까지 가장 큼) 완성화면(HTML)이 아직 없다.
+ *   디럭스·프리미엄 상세가 「완성 화면 228개」를 약속하므로 그대로 열면
+ *   «약속과 실물이 다른» 상태가 된다 — 같은 날 README 에서 겪은 그 문제다.
+ *   팩과 zip 은 만들어 두었으니, 화면을 만든 뒤 여기에 ticket 을 더하면 바로 열린다.
  */
-const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental", "interior", "ticket"]);
+const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental", "interior"]);
 
 /**
  * 이 등급 zip에 실제로 들어가는 것.
