@@ -643,6 +643,8 @@ export function buildSpecPackMarkdown(
   lines.push("- 거르면 하나도 안 남는 조건도 눌러 보세요. **「결과가 없습니다」 화면**이 나와야 합니다 — 빈 채로 두면 고장으로 보입니다.");
   lines.push("- 정렬(최신순·낮은 요금순)도 같습니다. 순서가 **눈에 보이게** 바뀌어야 합니다.");
   lines.push("");
+  lines.push("⛔ **안 줄어들면 열에 아홉은 이것입니다** — `[hidden]` 은 브라우저 기본값이라 `.row { display: flex }` 한 줄에도 집니다. 「지금 2개 보고 있어요」로 숫자만 바뀌고 목록은 그대로면, CSS 에 `[hidden] { display: none !important; }` 이 있는지 보세요.");
+  lines.push("");
   lines.push("### 7-3. 뒤로가기는 4장에 적힌 그 화면으로 갑니다");
   lines.push(`- ${backCount}개 화면에 뒤로가기가 있고, 나머지 ${m.screens.length - backCount}개(메뉴 첫 화면)에는 **없어야** 합니다.`);
   lines.push("- 화면마다 4장의 `뒤로가기` 항목과 **하나씩 대 봅니다.** 「대충 상위 메뉴로」가 아니라 적힌 그 화면입니다.");

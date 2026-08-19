@@ -655,3 +655,7 @@ body>*:first-child{width:100%}
 /* 푸터를 품은 main 은 아래 여백을 푸터에 넘긴다 — 안 그러면 푸터 밑에 64px 이 남는다 */
 main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
 .split-r>*,.split-l>*,.app>*,.edcols>*{min-width:0}
+
+/* [hidden] 은 브라우저 기본값이라 .lrow{display:flex} 같은 규칙에 진다.
+   거르기가 목록을 못 줄이는 사고가 여기서 난다 — 반드시 이겨 두어야 한다. */
+[hidden]{display:none !important}
