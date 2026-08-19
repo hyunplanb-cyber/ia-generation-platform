@@ -42,6 +42,17 @@
   on('.chip', 'click', function (e, t) {
     if (t.dataset.go) { location.href = t.dataset.go; return; }
     if (t.classList.contains('is-off')) return;
+    /* 「전체」가 든 묶음은 하나만 골라진다 — 「전체」와 「텐트」가 같이 켜지면 안 된다.
+       고른 것에 ✕ 가 붙은 묶음(여러 개 고르는 것)은 그대로 둔다. */
+    var 묶음 = t.closest('.chips');
+    var 한개만 = 묶음 && Array.prototype.some.call(묶음.querySelectorAll('.chip'), function (c) {
+      return /^전체(\s*보기)?$/.test((c.textContent || '').trim());
+    }) && !묶음.querySelector('.chip .x');
+    if (한개만) {
+      묶음.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); });
+      t.classList.add('on');
+      return;
+    }
     t.classList.toggle('on');
   });
 
@@ -314,3 +325,106 @@
   }, true);
 })();
 /* ── 마지막 그물 끝 ── */
+
+(function () {
+
+  /* ── 견본 날짜를 오늘 기준으로 옮긴다 ──────────────────────────────────
+     견본은 만든 날에 맞춰 날짜가 적혀 있다. 그대로 두면 몇 달 뒤 여는 손님은
+     지난 마감·지난 일정만 보게 된다.
+     ⛔ 2026-08-19 검수: 「마감까지 2일」은 오늘을 8/18 로 가리키는데
+        「이번 주」가 붙은 일감은 8월 첫째 주였다. 자료끼리도 어긋나 있었다.
+
+     기준일과 오늘의 차이만큼 화면의 날짜를 통째로 민다. 날짜 사이 간격은 그대로라
+     「마감까지 2일」·「이번 주」 같은 말은 손대지 않아도 계속 맞는다.
+     ⭐ 요일도 함께 다시 적는다 — 날짜만 밀면 「8월 20일 (목)」이 엉뚱한 요일이 된다. */
+  var 견본기준일 = '2026-08-18';   /* 이 견본이 「오늘」로 삼은 날 */
+
+  (function () {
+    var 요일이름 = ['일', '월', '화', '수', '목', '금', '토'];
+    var ㄱ = 견본기준일.split('-');
+    var 기준 = new Date(Number(ㄱ[0]), Number(ㄱ[1]) - 1, Number(ㄱ[2]));
+    var 오늘 = new Date(); 오늘.setHours(0, 0, 0, 0);
+    var 민날 = Math.round((오늘 - 기준) / 86400000);
+
+    function 밀기(y, m, d) {
+      var t = new Date(y, m - 1, d);
+      t.setDate(t.getDate() + 민날);
+      return t;
+    }
+    var 두자리 = function (n) { return (n < 10 ? '0' : '') + n; };
+    var 요일of = function (t) { return 요일이름[t.getDay()]; };
+
+    function 옮기기() {
+      var 훑개 = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+      var 마디, 것들 = [];
+      while ((마디 = 훑개.nextNode())) {
+        var 부모 = 마디.parentNode;
+        if (!부모) continue;
+        if (부모.nodeName === 'SCRIPT' || 부모.nodeName === 'STYLE') continue;
+        것들.push(마디);
+      }
+
+      것들.forEach(function (마디) {
+        var 글 = 마디.nodeValue;
+        if (!글) return;
+        var 새글 = 글;
+
+        /* 2026-08-24 (월) — 요일이 붙었으면 요일도 다시 적는다 */
+        새글 = 새글.replace(/(20\d\d)-(\d\d)-(\d\d)(\s*)\((월|화|수|목|금|토|일)\)/g,
+          function (_, y, m, d, 틈) {
+            var t = 밀기(Number(y), Number(m), Number(d));
+            return t.getFullYear() + '-' + 두자리(t.getMonth() + 1) + '-' + 두자리(t.getDate())
+              + 틈 + '(' + 요일of(t) + ')';
+          });
+
+        /* 2026-08-24 */
+        새글 = 새글.replace(/(20\d\d)-(\d\d)-(\d\d)/g, function (_, y, m, d) {
+          var t = 밀기(Number(y), Number(m), Number(d));
+          return t.getFullYear() + '-' + 두자리(t.getMonth() + 1) + '-' + 두자리(t.getDate());
+        });
+
+        /* 8월 24일 (월) — 해는 안 적혔으니 기준일의 해로 본다 */
+        새글 = 새글.replace(/(\d{1,2})월(\s*)(\d{1,2})일(\s*)\((월|화|수|목|금|토|일)\)/g,
+          function (_, m, t1, d, t2) {
+            var t = 밀기(기준.getFullYear(), Number(m), Number(d));
+            return (t.getMonth() + 1) + '월' + t1 + t.getDate() + '일' + t2 + '(' + 요일of(t) + ')';
+          });
+
+        /* 2026년 8월 24일 */
+        새글 = 새글.replace(/(20\d\d)년(\s*)(\d{1,2})월(\s*)(\d{1,2})일/g,
+          function (_, y, t1, m, t2, d) {
+            var t = 밀기(Number(y), Number(m), Number(d));
+            return t.getFullYear() + '년' + t1 + (t.getMonth() + 1) + '월' + t2 + t.getDate() + '일';
+          });
+
+        /* 8/24 (월) */
+        새글 = 새글.replace(/(\d{1,2})\/(\d{1,2})(\s*)\((월|화|수|목|금|토|일)\)/g,
+          function (_, m, d, 틈) {
+            var t = 밀기(기준.getFullYear(), Number(m), Number(d));
+            return (t.getMonth() + 1) + '/' + t.getDate() + 틈 + '(' + 요일of(t) + ')';
+          });
+
+        /* 주문·예약 번호에 박힌 날짜 (R-20260807-0009 처럼) */
+        새글 = 새글.replace(/(20\d\d)(\d\d)(\d\d)(?=-\d)/g, function (_, y, m, d) {
+          var t = 밀기(Number(y), Number(m), Number(d));
+          return '' + t.getFullYear() + 두자리(t.getMonth() + 1) + 두자리(t.getDate());
+        });
+
+        /* 차트 축의 8/7 — svg 안에서만. 「12/18차시」 같은 것을 건드리면 안 된다 */
+        if (마디.parentNode.closest && 마디.parentNode.closest('svg')) {
+          새글 = 새글.replace(/^(\d{1,2})\/(\d{1,2})$/, function (_, m, d) {
+            var t = 밀기(기준.getFullYear(), Number(m), Number(d));
+            return (t.getMonth() + 1) + '/' + t.getDate();
+          });
+        }
+
+        if (새글 !== 글) 마디.nodeValue = 새글;
+      });
+    }
+
+    /* 민 날이 0이어도 요일은 다시 적어 둔다 — 만든 날의 달력이 틀렸을 수 있다 */
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', 옮기기);
+    else 옮기기();
+  })();
+
+})();

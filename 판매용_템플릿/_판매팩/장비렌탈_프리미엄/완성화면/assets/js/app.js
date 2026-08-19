@@ -50,6 +50,17 @@
   on('.chip', 'click', function (e, t) {
     if (t.dataset.go) { location.href = t.dataset.go; return; }
     if (t.classList.contains('is-off')) return;
+    /* 「전체」가 든 묶음은 하나만 골라진다 — 「전체」와 「텐트」가 같이 켜지면 안 된다.
+       고른 것에 ✕ 가 붙은 묶음(여러 개 고르는 것)은 그대로 둔다. */
+    var 묶음 = t.closest('.chips');
+    var 한개만 = 묶음 && Array.prototype.some.call(묶음.querySelectorAll('.chip'), function (c) {
+      return /^전체(\s*보기)?$/.test((c.textContent || '').trim());
+    }) && !묶음.querySelector('.chip .x');
+    if (한개만) {
+      묶음.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); });
+      t.classList.add('on');
+      return;
+    }
     t.classList.toggle('on');
   });
 

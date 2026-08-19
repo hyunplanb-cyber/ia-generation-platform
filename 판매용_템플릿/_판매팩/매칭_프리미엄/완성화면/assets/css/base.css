@@ -853,7 +853,8 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 body{min-height:100dvh;display:flex;flex-direction:column}
 body>*:first-child{flex:1 0 auto;min-height:0}
 /* 푸터가 main 안에 있는 짜임(.app-ed > main > .ft)까지 닿게 한다 */
-.app-ed,.app,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+.app-ed,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+/* .app 은 사이드바형이라 grid 2열이다 — 여기 넣으면 사이드바가 폭을 다 먹는다 */
 /* flex 자식은 shrink-to-fit 이라 폭이 내용만큼 줄어든다 — width:100% 로 되돌린다 */
 .app-ed>main,.app-ed>.edmain,.app>main,.app>.appmain,.page-wrap>main{flex:1 0 auto;display:flex;flex-direction:column;width:100%}
 body>*:first-child{width:100%}
@@ -865,3 +866,74 @@ main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
 /* [hidden] 은 브라우저 기본값이라 .lrow{display:flex} 같은 규칙에 진다.
    거르기가 목록을 못 줄이는 사고가 여기서 난다 — 반드시 이겨 두어야 한다. */
 [hidden]{display:none !important}
+
+/* ══ 레이아웃 B 대시보드형 ═══════════════════════════════════════════════
+   2026-08-19: 디럭스와 프리미엄이 둘 다 「좌우 분할형」이라 홈 화면이 판박이였다.
+   눈에 보이는 차이가 단추 색 하나뿐이어서 등급 차이가 안 보였다.
+
+   프리미엄은 고수용 화면이 47쪽(159쪽 가운데 30%)이라 관리 도구 성격이 강하다.
+   그래서 위 메뉴를 왼쪽 세로 바로 옮겨 대시보드형으로 세운다.
+   HTML 은 그대로 두고 CSS 로만 옮긴다 — 159쪽을 손대지 않는다. */
+
+:root { --side-w: 248px; }
+
+ body > header.gnb:not(.pro) {
+  position: fixed; top: 0; bottom: 0; left: 0; width: var(--side-w);
+  border-bottom: 0; border-right: 1px solid var(--border);
+  overflow: hidden auto; z-index: 50;
+}
+.gnb-in {
+  max-width: none; height: auto; min-height: 100%;
+  flex-direction: column; align-items: stretch;
+  gap: var(--s6); padding: var(--s6) var(--s5);
+}
+.gnb .logo { font-size: 19px; }
+
+.gnb-nav {
+  flex-direction: column; align-items: stretch;
+  gap: 2px; flex: 0 0 auto; overflow: visible;
+}
+.gnb-nav a {
+  padding: 10px 12px; border-radius: 10px;
+  border-bottom: 0;                      /* 가로 메뉴의 밑줄 표시는 세로에서 어울리지 않는다 */
+  white-space: normal;
+}
+.gnb-nav a:hover { background: var(--bg); color: var(--text); }
+.gnb-nav a.on { background: var(--pri-10); color: var(--text); font-weight: 700; }
+
+/* 로그인·요청서 작성 같은 것은 사이드바 «맨 아래»로 내린다 */
+.gnb-util {
+  flex-direction: column; align-items: stretch;
+  gap: var(--s2); margin-top: auto; white-space: normal;
+}
+.gnb-util > a:not(.btn) { padding: 6px 12px; color: var(--muted); font-size: 14px; }
+.gnb-util .btn { width: 100%; justify-content: center; }
+
+/* 본문을 사이드바만큼 밀어 준다 — body 를 밀면 푸터·뒤로가기 바까지 한 번에 따라온다 */
+body:has(> header.gnb:not(.pro)) { padding-left: var(--side-w); }
+
+/* 사이드바가 자리를 먹으니 본문 폭도 그만큼 줄인다 */
+body:has(> header.gnb:not(.pro)) .wrap { max-width: calc(var(--wrap) - var(--side-w)); }
+
+/* ── 좁은 화면에서는 원래대로 위에 둔다 ──
+   사이드바를 그대로 두면 손바닥만 한 화면에서 본문이 사라진다. */
+@media (max-width: 1080px) {
+  :root { --side-w: 0px; }
+  body:has(> header.gnb:not(.pro)) { padding-left: 0; }
+  body > header.gnb:not(.pro) {
+    position: sticky; top: 0; bottom: auto; left: auto; width: auto;
+    border-right: 0; border-bottom: 1px solid var(--border); overflow: visible;
+  }
+  .gnb-in {
+    max-width: var(--wrap); margin: 0 auto; height: 68px; min-height: 0;
+    flex-direction: row; align-items: center;
+    gap: var(--s8); padding: 0 var(--sp-wrap);
+  }
+  .gnb-nav { flex-direction: row; align-items: center; gap: var(--s6); flex: 1; overflow: hidden; }
+  .gnb-nav a { padding: 6px 0; border-radius: 0; background: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .gnb-nav a.on { background: none; }
+  .gnb-util { flex-direction: row; align-items: center; gap: var(--s3); margin-top: 0; white-space: nowrap; }
+  .gnb-util > a:not(.btn) { padding: 0; }
+  .gnb-util .btn { width: auto; }
+  body:has(> header.gnb:not(.pro)) .wrap { max-width: var(--wrap); }
+}

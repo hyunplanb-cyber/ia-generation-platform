@@ -838,7 +838,8 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 body{min-height:100dvh;display:flex;flex-direction:column}
 body>*:first-child{flex:1 0 auto;min-height:0}
 /* 푸터가 main 안에 있는 짜임(.app-ed > main > .ft)까지 닿게 한다 */
-.app-ed,.app,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+.app-ed,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+/* .app 은 사이드바형이라 grid 2열이다 — 여기 넣으면 사이드바가 폭을 다 먹는다 */
 /* flex 자식은 shrink-to-fit 이라 폭이 내용만큼 줄어든다 — width:100% 로 되돌린다 */
 .app-ed>main,.app-ed>.edmain,.app>main,.app>.appmain,.page-wrap>main{flex:1 0 auto;display:flex;flex-direction:column;width:100%}
 body>*:first-child{width:100%}
