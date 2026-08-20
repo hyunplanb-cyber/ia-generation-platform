@@ -28,6 +28,18 @@ import { isOwner } from "@/lib/flags";
 /** 구운 영상이 놓이는 곳. `영상굽기.mjs` 의 `W` 와 같아야 한다. */
 const 구운방 = resolve((process.env.TEMP ?? tmpdir()).replace(/\\/g, "/"), "cc-vid-w2");
 
+/** ⭐ 「다시 못 굽는 것」 — 원본 녹화본이 사라져 «구운 것이 유일본»인 편들 (2026-08-20).
+ *
+ *  %TEMP% 는 언젠가 지워지는 자리라 그 넷을 여기로 옮겨 두었다.
+ *  ⛔ 그런데 이 길을 열어 두지 않으면 검수 화면에서 영상이 «안 나온다» —
+ *     안전장치가 구운방 밖을 막기 때문이다. 실제로 2026-08-20 에 그렇게 막혔다.
+ *  ⚠ 여전히 «이 두 곳»만 연다. 아무 데나 열어 주면 그 순간 구멍이 된다. */
+const 보관방 = resolve(process.cwd(), "판매용_템플릿/_마케팅/릴스영상/_다시못굽는것");
+
+/** 열어도 되는 자리인가 — 폴더 «안»에 있어야 한다. */
+const 열어도되나 = (길: string) =>
+  [구운방, 보관방].some((방) => 길 === 방 || 길.startsWith(방 + sep));
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -46,9 +58,9 @@ export async function GET(
     return new Response("영상 경로가 아직 안 적혔습니다 — 검수보내기를 다시 돌리세요.", { status: 404 });
   }
 
-  /* 구운 영상 폴더 «안»인지 확인한다. 밖이면 안 연다. */
+  /* 열어도 되는 폴더 «안»인지 확인한다. 밖이면 안 연다. */
   const 길 = resolve(적힌길);
-  if (!(길 === 구운방 || 길.startsWith(구운방 + sep))) {
+  if (!열어도되나(길)) {
     return new Response("그 자리는 못 엽니다.", { status: 403 });
   }
   if (!existsSync(길)) {

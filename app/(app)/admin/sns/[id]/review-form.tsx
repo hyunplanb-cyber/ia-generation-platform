@@ -251,8 +251,13 @@ export function SnsReviewForm({
       </div>
       <p className="mt-1 text-xs text-muted-foreground [word-break:keep-all]">{상태보기(상태).풀이}</p>
 
+      {/* ⛔ 표시 태그(<span class='o'>…)를 걷어내고 보여 준다 (2026-08-20).
+          목록(list-row.tsx)은 걷어내는데 여기만 빠뜨려서, 제목이
+          「예약 확인하는 <span class='o'>운영자 화면</span>은…」 처럼 날것으로 찍혔다.
+          ⚠ 고치는 칸(아래 입력란)에는 태그가 그대로 있어야 한다 — 그게 실제로 굽히는 값이다.
+             여기 «머리»만 읽기 좋게 씻는다. */}
       <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-foreground [word-break:keep-all]">
-        {세로제목.replaceAll("|", " ")}
+        {세로제목.replaceAll("|", " ").replace(/<[^>]*>/g, "")}
       </h1>
       <p className="mt-2 text-sm text-muted-foreground">
         자막 {요약.칸수}칸 · {요약.초}초 · 공백 제외 {지금글자수}자 ·{" "}
