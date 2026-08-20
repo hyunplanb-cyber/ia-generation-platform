@@ -191,17 +191,29 @@ const 재는글 = `
     적기("H8", 이름(el) + " «" + (el.textContent || "").trim().slice(0, 14) +
       "» 는 눌러도 아무 데도 안 갑니다 (href 가 비었습니다)");
   }
+  /* ⚠ 2026-08-21 사장님 결정 — 「그냥 지금 유지하고 견본인 것도 안내하지 말자.
+       우리는 이미 «화면 목록»으로 각 다른 케이스를 보여 주는 거니까」.
+     그래서 「카드가 다 같은 상세로 간다」는 흠으로 치지 않는다.
+
+     ⛔ 다만 «성격이 다른 상품»은 다르다 — 사장님 말씀 —
+       「바로 구매 상품, 경매 상품, 예약 상품 이런 것들은 상세에서 보여주는 내용도 다르고
+        구매하는 과정도 다르니까. 만약에 하나의 사이트에 여러 개 케이스가 나오면」
+     그 판정은 팩의 «화면 목록»을 봐야 해서 아래(Node 쪽)에서 한다.
+     여기서는 목록마다 «카드의 글과 가는 곳»만 모아 내보낸다. */
+  const 카드모음 = [];
   for (const 목록 of document.querySelectorAll(".grid, .g2, .g3, .g4, .g5, .cards, .list, .rail")) {
     if (!보이나(목록)) continue;
     const 카드고리 = [...목록.children]
       .map((c) => (c.tagName === "A" ? c : c.querySelector("a[href]")))
       .filter((a) => a && 보이나(a) && !갈곳없나(a));
-    if (카드고리.length < 3) continue;
-    const 간곳 = new Set(카드고리.map((a) => (a.getAttribute("href") || "").split("#")[0]));
-    if (간곳.size === 1)
-      적기("H8", 이름(목록) + " 안 카드 " + 카드고리.length + "개가 «모두 같은 곳»으로 갑니다 (" +
-        [...간곳][0] + ") — 어느 것을 눌러도 같은 상세가 열립니다. " +
-        "카드마다 제 상세로 잇거나, 견본이면 «견본이라 한 곳으로 갑니다»라고 화면에 적으세요");
+    if (카드고리.length < 2) continue;
+    for (const a of 카드고리) {
+      if (카드모음.length >= 80) break;
+      카드모음.push({
+        글: (a.textContent || "").replace(/s+/g, " ").trim().slice(0, 60),
+        간곳: (a.getAttribute("href") || "").split("/").pop().split("#")[0],
+      });
+    }
   }
 
   /* ───────── H2 — 덩어리가 맞붙었나 ─────────
@@ -454,6 +466,7 @@ const 재는글 = `
     뒤로가기: !!document.querySelector(".back, [class*=back]"),
     장탭: [...document.querySelectorAll("[data-go]")].map((x) => x.getAttribute("data-go")).slice(0, 12),
     탭칸: !!document.querySelector(".tabs, .tabs-pill"),
+    카드모음,
     흠,
   });
 })()`;
@@ -463,6 +476,7 @@ const 재는글 = `
 type 잰것 = {
   화면: string; 콘텐츠폭: number; 세로막대: number; 상단고정: string; 위틈: number | null; 아래틈: number | null;
   뒤로가기: boolean; 장탭: string[]; 탭칸: boolean; 흠: string[];
+  카드모음: { 글: string; 간곳: string }[];
 };
 
 function 한장재기(길: string, 화면: string): 잰것 | null {
@@ -544,6 +558,48 @@ function 팩보기(팩: string) {
     흠들.push(`H6 · 팩 전체 — ${잰장.length}장 중 ${있}장에만 세로 막대가 있어 옮길 때마다 ` +
       `${잰장.find((p) => p.세로막대 > 0)?.세로막대 ?? 15}px 씩 좌우로 밀립니다 ` +
       `(html{scrollbar-gutter:stable} 로 자리를 늘 잡아 두면 멎습니다)`);
+  }
+
+  /* ── H8 — «성격이 다른 상품»인데 같은 상세로 가나 ──────────────────────
+     사장님(2026-08-21) — 「제품의 성격이 다른 경우 상세는 각각 가야 해. 예를 들어
+     바로 구매 상품, 경매 상품, 예약 상품 이런 것들은 상세에서 보여 주는 내용도 다르고
+     구매하는 과정도 다르니까. 만약에 하나의 사이트에 여러 개 케이스가 나오면」
+
+     ⚠ 갈래말을 «지어내지 않는다». 팩의 화면 제목에서 뽑는다 —
+       「상품 상세」와 「패스 상품 상세」가 나란히 있으면 그 팩은 «패스»를 갈래로 친 것이다.
+       그 갈래말을 단 카드가 갈래 상세가 아닌 곳으로 가면 흠이다. */
+  const 상세들: { 화면: string; 이름: string }[] = [];
+  for (const f of readdirSync(pages)) {
+    if (!f.endsWith(".html")) continue;
+    const t = /<title>([^<]*)<\/title>/.exec(readFileSync(join(pages, f), "utf8"))?.[1] ?? "";
+    /* 「상품 상세 &gt; 코스 일정 탭」 같은 속화면은 앞부분만 본다 */
+    const 이름 = t.split("·")[0].split("&gt;")[0].split(">")[0].trim();
+    if (/상세$/.test(이름) && !상세들.some((d) => d.이름 === 이름)) 상세들.push({ 화면: f, 이름 });
+  }
+  /* ⚠ «가장 짧은 것»을 기본으로 삼으면 안 된다 — 여행 팩에서 「예약 상세」가 뽑혀
+     「패스 상품 상세」와 짝이 안 맞았다. «끝말이 겹치는 짝»을 찾는다:
+       「패스 상품 상세」 는 「상품 상세」 로 끝난다 → 갈래말은 «패스» 다. */
+  const 갈래상세: { 갈래: string; 화면: string; 기본: string }[] = [];
+  for (const 넓 of 상세들) {
+    for (const 좁 of 상세들) {
+      if (넓 === 좁 || !넓.이름.endsWith(좁.이름) || 넓.이름 === 좁.이름) continue;
+      const 갈래 = 넓.이름.slice(0, 넓.이름.length - 좁.이름.length).trim();
+      if (갈래.length < 2) continue;
+      갈래상세.push({ 갈래, 화면: 넓.화면, 기본: 좁.화면 });
+    }
+  }
+  if (갈래상세.length) {
+    for (const p of 잰장) {
+      for (const c of p.카드모음 ?? []) {
+        for (const g of 갈래상세) {
+          if (!c.글.includes(g.갈래)) continue;
+          if (c.간곳 === g.화면) continue;
+          흠들.push(`H8 · ${p.화면} — 「${g.갈래}」 카드가 ${c.간곳} 로 갑니다. ` +
+            `이 팩에는 «${g.갈래}» 전용 상세(${g.화면})가 따로 있습니다 — 성격이 다른 상품은 제 상세로 보내세요`);
+          break;
+        }
+      }
+    }
   }
 
   /* ── H6 — «탭»으로 옮기는데 뒤로가기가 생기나 ──

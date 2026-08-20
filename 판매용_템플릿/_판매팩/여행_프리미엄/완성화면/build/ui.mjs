@@ -35,7 +35,12 @@ export const badge = (t, k = '') => `<span class="badge ${k}">${t}</span>`;
 export function pcard(p, o = {}) {
   const d = off(p.was, p.price);
   const cls = ['pcard', o.dim ? 'is-off' : ''].join(' ');
-  return `<a class="${cls}" href="${link(o.href || 'PR0201')}">
+  /* ⚠ 성격이 다른 상품은 «제 상세»로 보낸다 (검수항목 H8 · 2026-08-21 사장님)
+     「바로 구매 상품, 경매 상품, 예약 상품 이런 것들은 상세에서 보여 주는 내용도
+      다르고 구매하는 과정도 다르니까」. 이 팩은 패스 전용 상세(PR0401)를 따로 갖고 있는데,
+     카드는 갈래(p.cat)를 알면서도 늘 일반 상세로 보내고 있었다. */
+  const 갈곳 = o.href || (p.cat === 'pass' ? 'PR0401' : 'PR0201');
+  return `<a class="${cls}" href="${link(갈곳)}">
   ${o.noHeart ? '' : `<button class="heart${o.faved ? ' on' : ''}" type="button" aria-label="찜하기">${o.faved ? '♥' : '♡'}</button>`}
   ${o.ribbon ? `<span class="ribbon">${o.ribbon}</span>` : ''}
   ${ph(p.id + (o.seed || ''), 'ph-43')}
