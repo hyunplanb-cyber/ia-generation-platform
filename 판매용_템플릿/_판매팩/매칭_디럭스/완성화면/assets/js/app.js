@@ -325,3 +325,45 @@
   }, true);
 })();
 /* ── 마지막 그물 끝 ── */
+
+/* ── GNB·LNB 에 «지금 여기»를 켠다 (검수항목 H5 · 2026-08-21 사장님 지적) ──
+ *
+ * 무엇이 잘못돼 있었나
+ *   빌더가 «앞 두 글자»만 맞으면 다 켰다 —
+ *     n.id.slice(0,2) === activeId.slice(0,2)
+ *   그래서 HO-01 을 보고 있으면 홈·공구 목록·마감 임박이 «한꺼번에» 켜졌다.
+ *   반대로 어떤 팩은 아무것도 안 켜져서, 어느 메뉴에 와 있는지 알 길이 없었다.
+ *   («.gnb-nav a.on» 스타일 규칙은 만들어 두고 켜는 자리가 없던 팩도 있었다.)
+ *
+ * 어떻게 고치나 — 켜진 것은 «언제나 하나»여야 한다
+ *   ① 지금 쪽과 «딱 맞는» 링크가 있으면 그것
+ *   ② 없으면 «같은 갈래의 첫 링크»(대표 화면)
+ *   ③ 그 밖은 모두 끈다
+ *
+ * ⚠ 페이지를 다시 찍지 않고 여기서 바로잡는다 — 다시 찍으면 끼워 둔 사진이 날아간다. */
+(function () {
+  'use strict';
+  var 지금 = (document.body && document.body.dataset && document.body.dataset.page) || '';
+  if (!지금) return;
+  var 갈래 = 지금.slice(0, 2);
+  var 칸들 = document.querySelectorAll('.gnb-nav, .ednav-menu, .gnb-menu, .nav-menu, .side, .edrail, .lnb, .snb');
+  for (var i = 0; i < 칸들.length; i++) {
+    var 칸 = 칸들[i];
+    if (칸.closest && 칸.closest('footer, .ft')) continue;
+    var 고리 = 칸.querySelectorAll('a[href]');
+    if (고리.length < 2) continue;
+    var 딱 = null, 같은갈래 = null;
+    for (var j = 0; j < 고리.length; j++) {
+      var 갈곳 = (고리[j].getAttribute('href') || '').split('/').pop().split('#')[0].replace(/\.html$/, '');
+      if (!갈곳) continue;
+      if (갈곳 === 지금) { 딱 = 고리[j]; break; }
+      if (!같은갈래 && 갈곳.slice(0, 2) === 갈래) 같은갈래 = 고리[j];
+    }
+    var 켤것 = 딱 || 같은갈래;
+    for (var k = 0; k < 고리.length; k++) {
+      고리[k].classList.remove('on');
+      고리[k].removeAttribute('aria-current');
+    }
+    if (켤것) { 켤것.classList.add('on'); 켤것.setAttribute('aria-current', 'page'); }
+  }
+})();

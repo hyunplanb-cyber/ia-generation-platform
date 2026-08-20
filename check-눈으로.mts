@@ -1,4 +1,4 @@
-/* 사람이 보듯 «옮겨 다니고 눌러 보며» 잰다 — 검수항목 H1~H13.
+/* 사람이 보듯 «옮겨 다니고 눌러 보며» 잰다 — 검수항목 H1~H15.
  *
  * 왜 만드나 (2026-08-20 사장님이 조목조목 적어 주심)
  *   「사람이 누르는 것처럼 하나씩 눌러보며 검수하며 / 아래 내용은 사람이 보는 것처럼
@@ -145,6 +145,55 @@ const 재는글 = `
     if (밑에남은것 > 8) 적기("H3", "푸터 밑에 " + 밑에남은것 + "px 가 비어 있습니다 — 바닥에 안 붙었습니다");
   }
 
+  /* ───────── H5 — GNB·LNB 가 «지금 여기»를 알려 주나 ─────────
+     2026-08-21 사장님 추가 — 「gnb와 lnb가 네비게이션 역할을 하는가?
+     (선택한 메뉴가 포커싱되어 있는가를 재는 항목)」
+     메뉴는 있는데 «지금 어느 메뉴에 와 있는지» 표시가 없으면 손님은 길을 잃는다.
+     우리 짜임은 켜진 것에 class="on" 이나 aria-current 를 준다. 그것을 센다. */
+  for (const 메뉴칸 of document.querySelectorAll("nav, .ednav-menu, .gnb-menu, .side, .edrail, .lnb, .snb")) {
+    if (!보이나(메뉴칸)) continue;
+    if (메뉴칸.closest(".ft, footer")) continue;                 // 푸터 링크 묶음은 메뉴가 아니다
+    const 고리 = [...메뉴칸.querySelectorAll("a[href]")].filter(보이나);
+    if (고리.length < 3) continue;                                // 두엇뿐이면 메뉴라 보기 어렵다
+    const 켜진것 = 고리.filter((a) => {
+      const c = " " + (a.className || "") + " ";
+      return /[ ](on|active|current|is-on|selected)[ ]/.test(c) || a.hasAttribute("aria-current");
+    });
+    if (켜진것.length === 0)
+      적기("H5", 이름(메뉴칸) + " 에 «지금 여기» 표시가 없습니다 — 링크 " + 고리.length +
+        "개 가운데 켜진 것이 하나도 없습니다");
+    else if (켜진것.length > 1)
+      적기("H5", 이름(메뉴칸) + " 에 «지금 여기» 가 " + 켜진것.length + "군데 켜져 있습니다");
+  }
+
+  /* ───────── H8 — 배너·썸네일·버튼·탭이 «정확히» 반응하나 ─────────
+     2026-08-21 사장님 추가. ⚠ 여기서 «썸네일»은 강의·고수·상품 같은 목록 카드다.
+     check-반응 은 <a href> 를 «넘어가는 것이 곧 반응»이라며 일부러 뺐다 —
+     그래서 배너와 목록 카드가 통째로 검사 밖에 있었다. 여기서 본다.
+       ① 갈 곳이 없는 것 — href 가 없거나 #·javascript:void(0)
+       ② 목록 카드가 «전부 같은 데»로 가는 것 — 눌러도 다 같은 상세가 열린다 */
+  const 갈곳없나 = (a) => {
+    const h = (a.getAttribute("href") || "").trim();
+    return !h || h === "#" || /^javascript:/i.test(h);
+  };
+  for (const el of document.querySelectorAll("a.card, a.promo, a.banner, .card > a, .banner a, .promo a, [class*=card] > a")) {
+    if (!보이나(el) || !갈곳없나(el)) continue;
+    적기("H8", 이름(el) + " «" + (el.textContent || "").trim().slice(0, 14) +
+      "» 는 눌러도 아무 데도 안 갑니다 (href 가 비었습니다)");
+  }
+  for (const 목록 of document.querySelectorAll(".grid, .g2, .g3, .g4, .g5, .cards, .list, .rail")) {
+    if (!보이나(목록)) continue;
+    const 카드고리 = [...목록.children]
+      .map((c) => (c.tagName === "A" ? c : c.querySelector("a[href]")))
+      .filter((a) => a && 보이나(a) && !갈곳없나(a));
+    if (카드고리.length < 3) continue;
+    const 간곳 = new Set(카드고리.map((a) => (a.getAttribute("href") || "").split("#")[0]));
+    if (간곳.size === 1)
+      적기("H8", 이름(목록) + " 안 카드 " + 카드고리.length + "개가 «모두 같은 곳»으로 갑니다 (" +
+        [...간곳][0] + ") — 어느 것을 눌러도 같은 상세가 열립니다. " +
+        "카드마다 제 상세로 잇거나, 견본이면 «견본이라 한 곳으로 갑니다»라고 화면에 적으세요");
+  }
+
   /* ───────── H2 — 덩어리가 맞붙었나 ─────────
      같은 부모의 «세로로 쌓인» 형제들 틈을 잰다. 다른 형제들은 벌어져 있는데
      한 쌍만 0 이면 그것이 붙은 것이다. 처음부터 다 붙어 있는 칸(목록·표)은 흠이 아니다. */
@@ -203,7 +252,7 @@ const 재는글 = `
     const s = getComputedStyle(el), r = el.getBoundingClientRect();
     const 둥근가 = s.borderTopLeftRadius.includes("%") && parseFloat(s.borderTopLeftRadius) >= 40;
     if (둥근가 && r.width / r.height > 1.5)
-      적기("H9", 이름(el) + " 는 동그란 버튼인데 " + 반올림(r.width) + "×" + 반올림(r.height) +
+      적기("H11", 이름(el) + " 는 동그란 버튼인데 " + 반올림(r.width) + "×" + 반올림(r.height) +
         " 로 늘어나 타원이 됐습니다");
   }
   /* ⓑ 나란한 버튼끼리 키가 다른 것. 같은 부모의 형제 버튼만 견준다. */
@@ -225,7 +274,7 @@ const 재는글 = `
       if (것들.length < 2) continue;
       const 키 = 것들.map((b) => 반올림(b.getBoundingClientRect().height));
       if (Math.max(...키) - Math.min(...키) > 6)
-        적기("H9", 이름(부모) + " 안 " + 등급 + " 버튼끼리 키가 다릅니다 — " + 키.join("·") + "px");
+        적기("H11", 이름(부모) + " 안 " + 등급 + " 버튼끼리 키가 다릅니다 — " + 키.join("·") + "px");
     }
     /* ⛔ 「span.btn 은 가짜 버튼」이라는 규칙을 처음에 넣었다가 710장을 헛짚었다(2026-08-20).
        카드 전체가 <a> 인 짜임에서는 그 «안»에 <a>·<button> 을 넣을 수 없다(HTML 이 금한다).
@@ -233,7 +282,7 @@ const 재는글 = `
     for (const b of 버튼) {
       if (b.tagName.toLowerCase() !== "span") continue;
       if (b.closest("a, button")) continue;
-      적기("H9", 이름(부모) + " 안 «" + (b.textContent || "").trim().slice(0, 14) +
+      적기("H11", 이름(부모) + " 안 «" + (b.textContent || "").trim().slice(0, 14) +
         "» 는 span 이라 눌리지 않습니다 (감싼 링크도 없습니다)");
     }
   }
@@ -287,7 +336,7 @@ const 재는글 = `
     if (목록.length < 2) continue;
     const 키 = 목록.map((b) => 반올림(b.getBoundingClientRect().height));
     if (Math.max(...키) - Math.min(...키) > 4)
-      적기("H12", 이름(p) + " 안 배지 키가 제각각입니다 — " + 키.join("·") + "px");
+      적기("H14", 이름(p) + " 안 배지 키가 제각각입니다 — " + 키.join("·") + "px");
   }
   /* H13 — 배지가 제 칸을 벗어났나. 겹쳐 얹는 배지(absolute)는 부모 밖으로 나가면 흠이다. */
   for (const b of 배지들) {
@@ -298,7 +347,7 @@ const 재는글 = `
     const 나간폭 = Math.max(0, pr.left - br.left, br.right - pr.right);
     const 나간높 = Math.max(0, pr.top - br.top, br.bottom - pr.bottom);
     if (나간폭 > 12 || 나간높 > 12)
-      적기("H13", 이름(b) + " 배지가 " + 이름(기준) + " 밖으로 " +
+      적기("H15", 이름(b) + " 배지가 " + 이름(기준) + " 밖으로 " +
         반올림(Math.max(나간폭, 나간높)) + "px 벗어났습니다");
   }
 
@@ -311,7 +360,7 @@ const 재는글 = `
     if (el.scrollWidth <= el.clientWidth + 2) continue;
     const 막대두께 = el.offsetHeight - el.clientHeight - parseFloat(s.borderTopWidth) - parseFloat(s.borderBottomWidth);
     if (막대두께 > 2)
-      적기("H10", 이름(el) + " 에 가로 막대가 " + 반올림(막대두께) + "px 드러납니다 — 화살표로 넘겨야 합니다");
+      적기("H12", 이름(el) + " 에 가로 막대가 " + 반올림(막대두께) + "px 드러납니다 — 화살표로 넘겨야 합니다");
   }
 
   /* ───────── H11 — 표가 틀어졌나 ─────────
@@ -322,9 +371,9 @@ const 재는글 = `
     const 칸수 = 줄.map((tr) => [...tr.children].reduce((n, td) => n + (Number(td.getAttribute("colspan")) || 1), 0));
     const 다른칸수 = [...new Set(칸수)];
     if (다른칸수.length > 1)
-      적기("H11", "표의 줄마다 칸 수가 다릅니다 — " + 다른칸수.join("·") + "칸");
+      적기("H13", "표의 줄마다 칸 수가 다릅니다 — " + 다른칸수.join("·") + "칸");
     if (표.scrollWidth > 표.parentElement.clientWidth + 4)
-      적기("H11", "표가 제 칸보다 " + 반올림(표.scrollWidth - 표.parentElement.clientWidth) + "px 넓습니다");
+      적기("H13", "표가 제 칸보다 " + 반올림(표.scrollWidth - 표.parentElement.clientWidth) + "px 넓습니다");
   }
   /* 격자로 만든 «표 흉내» — 줄마다 칸 수가 다르면 세로줄이 어긋난다 */
   for (const 격자 of document.querySelectorAll(".table, .price-tb, .grid-tb")) {
@@ -333,7 +382,7 @@ const 재는글 = `
     if (줄들.length < 2) continue;
     const 왼끝 = 줄들.map((r) => 반올림(r.getBoundingClientRect().left));
     if (Math.max(...왼끝) - Math.min(...왼끝) > 4)
-      적기("H11", 이름(격자) + " 의 줄 왼끝이 어긋났습니다 — " + [...new Set(왼끝)].join("·"));
+      적기("H13", 이름(격자) + " 의 줄 왼끝이 어긋났습니다 — " + [...new Set(왼끝)].join("·"));
   }
 
   /* ───────── H7 — 포인트 색 위 글자가 흰색인가 ─────────
@@ -356,7 +405,7 @@ const 재는글 = `
     if (바탕 > 0.5 || 바탕 < 0.02) continue;                            // 밝은 바탕·검정은 여기서 안 본다
     const 글 = 밝기(s.color); if (글 === null) continue;
     if (글 < 0.7)
-      적기("H7", 이름(el) + " 는 포인트 색 위인데 글자가 흰색이 아닙니다 (" + s.color + " on " + s.backgroundColor + ")");
+      적기("H9", 이름(el) + " 는 포인트 색 위인데 글자가 흰색이 아닙니다 (" + s.color + " on " + s.backgroundColor + ")");
   }
 
   /* ───────── H8 — 나란한 썸네일 크기가 같은가 ───────── */
@@ -366,7 +415,7 @@ const 재는글 = `
     if (썸.length < 2) continue;
     const 키 = 썸.map((t) => 반올림(t.getBoundingClientRect().height));
     if (Math.max(...키) - Math.min(...키) > 8)
-      적기("H8", 이름(부모) + " 안 썸네일 키가 제각각입니다 — " + [...new Set(키)].join("·") + "px");
+      적기("H10", 이름(부모) + " 안 썸네일 키가 제각각입니다 — " + [...new Set(키)].join("·") + "px");
   }
 
   /* ───────── H5 — 눌렀을 때 흔들리나 ─────────
@@ -384,9 +433,9 @@ const 재는글 = `
     막대상태.add(document.documentElement.scrollHeight > window.innerHeight);
   }
   if (잰폭.size > 1)
-    적기("H5", "탭을 누를 때마다 본문 폭이 " + [...잰폭].join("→") + "px 로 흔들립니다");
+    적기("H6", "탭을 누를 때마다 본문 폭이 " + [...잰폭].join("→") + "px 로 흔들립니다");
   else if (막대상태.size > 1)
-    적기("H5", "탭에 따라 세로 막대가 생겼다 없어집니다 — 폭이 통째로 밀립니다 (scrollbar-gutter 로 자리를 잡아 두세요)");
+    적기("H6", "탭에 따라 세로 막대가 생겼다 없어집니다 — 폭이 통째로 밀립니다 (scrollbar-gutter 로 자리를 잡아 두세요)");
 
   const 세로막대 = 반올림(window.innerWidth - document.documentElement.clientWidth);
 
@@ -482,7 +531,7 @@ function 팩보기(팩: string) {
   const 있 = 잰장.filter((p) => p.세로막대 > 0).length;
   const 적은쪽 = Math.min(있, 잰장.length - 있);
   if (적은쪽 > 0 && 적은쪽 >= 잰장.length * 0.1) {
-    흠들.push(`H5 · 팩 전체 — ${잰장.length}장 중 ${있}장에만 세로 막대가 있어 옮길 때마다 ` +
+    흠들.push(`H6 · 팩 전체 — ${잰장.length}장 중 ${있}장에만 세로 막대가 있어 옮길 때마다 ` +
       `${잰장.find((p) => p.세로막대 > 0)?.세로막대 ?? 15}px 씩 좌우로 밀립니다 ` +
       `(html{scrollbar-gutter:stable} 로 자리를 늘 잡아 두면 멎습니다)`);
   }
@@ -495,15 +544,15 @@ function 팩보기(팩: string) {
     if (!p.탭칸) continue;
     for (const 간곳 of new Set(p.장탭)) {
       if (!간곳 || 간곳 === p.화면) {
-        if (간곳 === p.화면) 흠들.push(`H6 · ${p.화면} — 탭 하나가 «제 화면»을 가리킵니다 (눌러도 그 자리)`);
+        if (간곳 === p.화면) 흠들.push(`H7 · ${p.화면} — 탭 하나가 «제 화면»을 가리킵니다 (눌러도 그 자리)`);
         continue;
       }
       const 저쪽 = 장별.get(간곳);
       if (!저쪽) continue;                                   // 안 잰 장은 견줄 수 없다
       if (저쪽.뒤로가기 && !p.뒤로가기)
-        흠들.push(`H6 · ${p.화면} → ${간곳} — 탭인데 «뒤로가기»가 생깁니다 (그만큼 화면이 아래로 밀립니다)`);
+        흠들.push(`H7 · ${p.화면} → ${간곳} — 탭인데 «뒤로가기»가 생깁니다 (그만큼 화면이 아래로 밀립니다)`);
       if (Math.abs(저쪽.콘텐츠폭 - p.콘텐츠폭) > 4)
-        흠들.push(`H5 · ${p.화면} → ${간곳} — 탭으로 옮기는데 폭이 ${p.콘텐츠폭}→${저쪽.콘텐츠폭}px 로 흔들립니다`);
+        흠들.push(`H6 · ${p.화면} → ${간곳} — 탭으로 옮기는데 폭이 ${p.콘텐츠폭}→${저쪽.콘텐츠폭}px 로 흔들립니다`);
     }
   }
 
@@ -533,7 +582,7 @@ const 팩들 = readdirSync(팩방, { withFileTypes: true })
   .filter((e) => e.isDirectory() && !e.name.startsWith("_") && (!고른팩 || e.name === 고른팩))
   .map((e) => e.name);
 
-console.log("사람이 보듯 옮겨 다니며 잽니다 — H1~H13\n");
+console.log("사람이 보듯 옮겨 다니며 잽니다 — H1~H15\n");
 let 나쁨 = 0;
 for (const 팩 of 팩들) {
   const r = 팩보기(팩);
