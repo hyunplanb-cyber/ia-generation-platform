@@ -181,7 +181,9 @@ const 재는글 = `
       const 좁음 = 리듬 >= 20 && x.틈 < 리듬 * 0.45;
       if (!붙음 && !좁음) continue;
       /* 같은 생김새가 이어지는 것(목록 줄)은 붙는 것이 제 모습이다 */
-      const 같은것 = (x.앞.className || "") === (x.뒤.className || "");
+      /* 뒤에 붙은 여백 클래스까지 견주면 "card mb3" 와 "card mb6" 를 다른 것으로 봐서 헛짚는다.
+         여행 프리미엄 여덟 장에서 그렇게 잡혔다(2026-08-20). «첫 클래스»만 본다. */
+      const 같은것 = (x.앞.className || "").trim().split(/ +/)[0] === (x.뒤.className || "").trim().split(/ +/)[0];
       if (같은것) continue;
       /* 제목 → 부제는 «붙어야» 맞다. 리듬보다 좁다고 잡으면 잘 만든 자리를 흠이라 한다. */
       const 제목인가 = /^h[1-4]$/.test(x.앞.tagName.toLowerCase()) || /t-sec|t-card|t-page|lb/.test(x.앞.className || "");

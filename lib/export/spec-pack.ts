@@ -760,7 +760,9 @@ export function buildSpecPackMarkdown(
     for (const x of 틈들) {
       const 붙 = x.v <= 2, 좁 = 리듬 >= 20 && x.v < 리듬 * 0.45;
       if (!붙 && !좁) continue;
-      if ((x.앞.className || "") === (x.뒤.className || "")) continue;   // 목록 줄은 붙는 게 맞다
+      // 같은 «종류»가 이어지는 줄은 붙는 게 맞다. 뒤에 붙은 여백 클래스(mb3·total)까지
+      // 견주면 "card mb3" 와 "card mb6" 를 서로 다른 것으로 봐서 헛짚는다.
+      if ((x.앞.className || "").trim().split(/ +/)[0] === (x.뒤.className || "").trim().split(/ +/)[0]) continue;
       if (x.뒤 === 푸터) continue;
       if (!붙 && /^h[1-4]$/.test(x.앞.tagName.toLowerCase())) continue;  // 제목 밑 부제는 붙는 게 맞다
       적기("간격", 이름(x.뒤) + " 와 위 " + 이름(x.앞) + " 사이 " + x.v + "px (이 칸 리듬은 " + 리듬 + "px)");
