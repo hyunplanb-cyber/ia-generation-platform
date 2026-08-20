@@ -17,7 +17,7 @@
   /* ---------- 색 — 가이드_01_내추럴그린 ---------- */
   --primary:#15803D;
   --primary-hover:#116632;
-  --accent:#65A30D;
+  --accent:#508307;
   --accent-text:#166534;        /* 흰 배경 위 글자용. 연두 원색은 2.68 이라 못 쓴다 */
   --accent-text-dark:#65A30D;
   --bg:#F0EFEB;                 /* 콘텐츠 바탕은 중립으로 고정 */
@@ -29,13 +29,13 @@
   --warning:#A16207;
   --danger:#B91C1C;
   --on-primary:#FFFFFF;         /* 주색 배경 위 글자 */
-  --on-accent:#111111;          /* 강조색 배경 위 글자 */
+  --on-accent:#FFFFFF;          /* 강조색 배경 위 글자 */
 
   /* 옅게 까는 자리 — 배지는 primary 10% 배경 + primary 진한 글자(가이드 components) */
   --pri-10:rgba(21,128,61,.10);
   --pri-08:rgba(21,128,61,.08);
   --pri-04:rgba(21,128,61,.04);
-  --acc-12:rgba(101,163,13,.14);
+  --acc-12:rgba(80,131,7,.14);
   --warn-12:rgba(161,98,7,.12);
   --dan-12:rgba(185,28,28,.12);
 

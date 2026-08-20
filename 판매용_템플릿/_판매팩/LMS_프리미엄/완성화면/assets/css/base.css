@@ -32,7 +32,7 @@
   /* 색 — 가이드_01 모던 네이비 (스펙팩/가이드_01_모던네이비.json 그대로) */
   --primary:#2B4A8B;
   --primary-hover:#1F3A73;
-  --accent:#FF7A30;
+  --accent:#CC4900;
   --bg:#F0EFEB;
   --surface:#FFFFFF;
   --text:#16233F;
@@ -51,11 +51,11 @@
   /* 색 «위에» 얹는 글자 — 가이드의 on-primary · on-accent.
      흰색이 기본이 아니다. 오렌지 위 흰 글자는 2.60 이라 못 쓴다. */
   --on-pri:#FFFFFF;
-  --on-acc:#111111;
+  --on-acc:#FFFFFF;
 
   --pri-10:rgba(43,74,139,.10);
   --pri-16:rgba(43,74,139,.16);
-  --acc-12:rgba(255,122,48,.12);
+  --acc-12:rgba(204,73,0,.12);
 
   /* 모서리 */
   --r-card:16px;

@@ -5,9 +5,9 @@
     "fits": "B2C 강의 서비스, 취미·키즈 교육, 일반 사용자 대상"
   },
   "colors": {
-    "primary (주요 액션)": "#F0654F",
-    "primary-hover": "#D9503B",
-    "accent (강조·배지)": "#F59E0B",
+    "primary (주요 액션)": "#E02A0E",
+    "primary-hover": "#C4250C",
+    "accent (강조·배지)": "#A46803",
     "background (페이지)": "#F0EFEB",
     "surface (카드)": "#FFFFFF",
     "text (본문)": "#33221E",

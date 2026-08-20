@@ -20,9 +20,9 @@
 
 :root{
   /* 색 — 가이드_03 코럴 선셋 */
-  --primary:#F0654F;
-  --primary-hover:#D9503B;
-  --accent:#F59E0B;
+  --primary:#E02A0E;
+  --primary-hover:#C4250C;
+  --accent:#A46803;
   --bg:#F0EFEB;
   --surface:#FFFFFF;
   --text:#33221E;
@@ -34,9 +34,9 @@
   /* 원색은 흰 배경에서 글자 대비가 모자란다. 글자용 한 단계 어두운 색을 따로 둔다 */
   --pri-ink:#BC402C;
   --acc-ink:#8A5A00;
-  --pri-10:rgba(240,101,79,.10);
-  --pri-16:rgba(240,101,79,.16);
-  --acc-12:rgba(245,158,11,.12);
+  --pri-10:rgba(224,42,14,.10);
+  --pri-16:rgba(224,42,14,.16);
+  --acc-12:rgba(164,104,3,.12);
 
   /* 모서리 */
   --r-card:16px;
@@ -223,7 +223,7 @@ dl,dd{margin:0}
 .btn-soft:hover{background:var(--pri-16)}
 .btn-ghost{background:var(--surface);border-color:var(--border);color:var(--text)}
 .btn-ghost:hover{background:var(--bg);border-color:var(--muted)}
-.btn-accent{background:var(--accent);color:#33221E}
+.btn-accent{background:var(--accent);color:#fff}
 .btn-danger{background:var(--surface);border-color:rgba(192,57,43,.45);color:var(--danger)}
 .btn-danger:hover{background:rgba(192,57,43,.06)}
 .btn-sm{height:34px;padding:0 var(--gap-group);font-size:13px;border-radius:10px}

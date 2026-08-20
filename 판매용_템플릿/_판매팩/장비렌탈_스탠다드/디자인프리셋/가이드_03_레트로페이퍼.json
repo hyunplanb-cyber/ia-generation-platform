@@ -5,8 +5,8 @@
     "fits": "빈티지·감성 소품 대여, 파티·촬영 소품처럼 분위기를 파는 대여"
   },
   "colors": {
-    "primary (주요 액션)": "#DE6F26",
-    "primary-hover": "#C25D1B",
+    "primary (주요 액션)": "#BC5918",
+    "primary-hover": "#A54D15",
     "accent (강조·배지)": "#0E6F60",
     "accent-text (강조 글자용)": "#0E6F60",
     "accent-text-dark (어두운 바탕 글자용)": "#1AA48F",
@@ -18,7 +18,7 @@
     "success": "#197B35",
     "warning": "#926013",
     "danger": "#C0392B",
-    "on-primary (주색 배경 위 글자)": "#111111",
+    "on-primary (주색 배경 위 글자)": "#FFFFFF",
     "on-accent (강조색 배경 위 글자)": "#FFFFFF"
   },
   "typography": {

@@ -58,7 +58,7 @@ const PRESETS: Preset[] = [
     fits: "감성 브랜드, 편집숍형 매장, 빈티지·수공예처럼 분위기를 파는 것",
     font: { family: "Paperlogy", alt: "Pretendard", note: "한 벌만 쓴다. 위계는 글꼴이 아니라 크기와 굵기로 만든다" },
     c: {
-      "primary (주요 액션)": "#DE6F26",
+      "primary (주요 액션)": "#BC5918",
       "primary-hover": "#C25D1B",
       "accent (강조·배지)": "#0E6F60",
       // 여섯 중 유일하게 강조 원색을 그대로 글자에 쓸 수 있다(종이색 위 5.27).
@@ -111,7 +111,7 @@ const PRESETS: Preset[] = [
     c: {
       "primary (주요 액션)": "#2B4A8B",
       "primary-hover": "#1F3A73",
-      "accent (강조·배지)": "#FF7A30",
+      "accent (강조·배지)": "#CC4900",
       "accent-text (강조 글자용)": "#A84B28",
       "accent-text-dark (어두운 바탕 글자용)": "#FF7A30",
       "background (페이지)": "#F0EFEB",
@@ -161,7 +161,7 @@ const PRESETS: Preset[] = [
     c: {
       "primary (주요 액션)": "#111111",
       "primary-hover": "#000000",
-      "accent (강조·배지)": "#D97757",
+      "accent (강조·배지)": "#C64F28",
       "accent-text (강조 글자용)": "#A84B28",
       "accent-text-dark (어두운 바탕 글자용)": "#D97757",
       "background (페이지)": "#F0EFEB",
@@ -213,7 +213,7 @@ const PRESETS: Preset[] = [
     c: {
       "primary (주요 액션)": "#5B4FE5",
       "primary-hover": "#4A3DD1",
-      "accent (강조·배지)": "#FFD54A",
+      "accent (강조·배지)": "#917000",
       "accent-text (강조 글자용)": "#8A5A00",
       "accent-text-dark (어두운 바탕 글자용)": "#FFD54A",
       "background (페이지)": "#F0EFEB",
@@ -264,7 +264,7 @@ const PRESETS: Preset[] = [
     c: {
       "primary (주요 액션)": "#15803D",
       "primary-hover": "#116632",
-      "accent (강조·배지)": "#65A30D",
+      "accent (강조·배지)": "#508307",
       "accent-text (강조 글자용)": "#166534",
       "accent-text-dark (어두운 바탕 글자용)": "#65A30D",
       "background (페이지)": "#F0EFEB",
@@ -312,9 +312,9 @@ const PRESETS: Preset[] = [
     fits: "취미·키즈 교육, 일반 사용자 대상 B2C 서비스",
     font: { family: "Paperlogy", alt: "Pretendard", note: "제목을 크고 굵게. 친근한 인상이 먼저 오게" },
     c: {
-      "primary (주요 액션)": "#F0654F",
+      "primary (주요 액션)": "#E02A0E",
       "primary-hover": "#D9503B",
-      "accent (강조·배지)": "#F59E0B",
+      "accent (강조·배지)": "#A46803",
       "accent-text (강조 글자용)": "#8A5A00",
       "accent-text-dark (어두운 바탕 글자용)": "#F59E0B",
       "background (페이지)": "#F0EFEB",

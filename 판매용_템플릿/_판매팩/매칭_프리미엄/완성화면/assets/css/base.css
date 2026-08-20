@@ -19,7 +19,7 @@
   /* ---------- 색 — 가이드_02_미니멀모노 (스펙팩 JSON 그대로) ---------- */
   --primary:#111111;
   --primary-hover:#000000;
-  --accent:#D97757;
+  --accent:#C64F28;
   --bg:#F0EFEB;            /* 클라우드 댄서 — 콘텐츠 바탕은 중립으로 둔다 */
   --surface:#FFFFFF;
   --text:#111111;
@@ -32,7 +32,7 @@
   /* 색 «위에» 얹는 글자 — 가이드의 on-primary · on-accent.
      흰색이 기본이 아니다. 강조색 #D97757 위 흰 글자는 3.12 라 못 쓴다. */
   --on-pri:#FFFFFF;
-  --on-acc:#111111;
+  --on-acc:#FFFFFF;
 
   /* 밝은 바탕 위 "글자"로 쓸 색 — 원색 그대로는 대비가 모자란 것들 */
   --pri-text:#111111;      /* 먹색은 16.4:1 이라 그대로 쓴다 */
@@ -42,7 +42,7 @@
 
   --pri-10:rgba(17,17,17,.08);
   --pri-06:rgba(17,17,17,.05);
-  --acc-12:rgba(217,119,87,.14);
+  --acc-12:rgba(198,79,40,.14);
   --bg-soft:#F5F5F4;       /* 표 헤더·연한 채움 */
   --hl:#F2DFD6;            /* 형광펜 — 테라코타를 옅게 */
 
@@ -247,7 +247,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
   font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s}
 .btn-pri{background:var(--primary);color:var(--on-pri)}
 .btn-pri:hover{background:var(--primary-hover)}
-.btn-acc{background:var(--accent);color:#2B1400}
+.btn-acc{background:var(--accent);color:#fff}
 .btn-acc:hover{filter:brightness(.95)}
 .btn-ghost{border-color:var(--border);color:var(--text)}
 .btn-ghost:hover{background:var(--bg-soft)}

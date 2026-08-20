@@ -5,9 +5,9 @@
     "fits": "B2C 강의 서비스, 취미·키즈 교육, 일반 사용자 대상"
   },
   "colors": {
-    "primary (주요 액션)": "#F0654F",
-    "primary-hover": "#D9503B",
-    "accent (강조·배지)": "#F59E0B",
+    "primary (주요 액션)": "#E02A0E",
+    "primary-hover": "#C4250C",
+    "accent (강조·배지)": "#A46803",
     "accent-text (강조 글자용)": "#8A5A00",
     "accent-text-dark (어두운 바탕 글자용)": "#F59E0B",
     "background (페이지)": "#F0EFEB",
@@ -18,8 +18,8 @@
     "success": "#0F7A52",
     "warning": "#B45309",
     "danger": "#C0392B",
-    "on-primary (주색 배경 위 글자)": "#111111",
-    "on-accent (강조색 배경 위 글자)": "#111111"
+    "on-primary (주색 배경 위 글자)": "#FFFFFF",
+    "on-accent (강조색 배경 위 글자)": "#FFFFFF"
   },
   "typography": {
     "fontFamily": "Paperlogy",

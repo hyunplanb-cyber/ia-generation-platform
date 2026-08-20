@@ -19,8 +19,8 @@
 
 :root{
   /* 색 — 가이드_03 레트로 페이퍼 */
-  --primary:#DE6F26;
-  --primary-hover:#C25D1B;
+  --primary:#BC5918;
+  --primary-hover:#A54D15;
   --accent:#0E6F60;
   --bg:#F0EFEB;
   --surface:#FFFDF8;
@@ -30,13 +30,13 @@
   --success:#197B35;
   --warning:#926013;
   --danger:#C0392B;
-  --on-primary:#111111;
+  --on-primary:#FFFFFF;
   --on-accent:#FFFFFF;
   /* 원색은 흰 배경에서 글자 대비가 모자란다. 글자용 한 단계 진한 색을 따로 둔다 */
   --pri-ink:#A84B28;
   --acc-ink:#0E6F60;
-  --pri-10:rgba(222,111,38,.10);
-  --pri-16:rgba(222,111,38,.16);
+  --pri-10:rgba(188,89,24,.10);
+  --pri-16:rgba(188,89,24,.16);
   --acc-12:rgba(14,111,96,.12);
 
   /* 모서리 */

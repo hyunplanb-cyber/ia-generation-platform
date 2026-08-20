@@ -12,7 +12,7 @@
   /* colors — 가이드 프리셋 03 소프트 파스텔 */
   --primary:#5B4FE5;
   --primary-hover:#4A3DD1;
-  --accent:#FFD54A;
+  --accent:#917000;
   --bg:#F0EFEB;   /* 클라우드 댄서 — 배경은 중립으로 두고 색은 주색이 낸다 */
   --surface:#FFFFFF;
   --text:#1F2024;
@@ -159,7 +159,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .btn-primary:hover{background:var(--primary-hover)}
 .btn-ghost{background:var(--surface);border-color:var(--border);color:var(--text)}
 .btn-ghost:hover{background:var(--bg)}
-.btn-accent{background:var(--accent);color:#111111}
+.btn-accent{background:var(--accent);color:#fff}
 .btn-danger{background:var(--surface);border-color:rgba(192,57,43,.5);color:var(--danger)}
 .btn-danger:hover{background:rgba(192,57,43,.06)}
 .btn-line-pri{background:var(--surface);border-color:var(--primary);color:var(--primary)}
@@ -323,7 +323,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .gnb-nav a.on{color:var(--primary)}
 .gnb-util{display:flex;align-items:center;gap:var(--s3);flex:none}
 .gnb-util .icon-btn{position:relative;width:36px;height:36px;border-radius:var(--r-btn);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:15px}
-.gnb-util .dot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:999px;background:var(--accent);color:#111111;font-size:11px;font-weight:700;line-height:18px;padding:0 4px}
+.gnb-util .dot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:999px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;line-height:18px;padding:0 4px}
 .gnb-burger{display:none}
 
 /* 상단 고정 알림(현지 이슈 등) */
@@ -557,7 +557,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 
 .state-bar{background:rgba(255,122,48,.09);border-bottom:1px solid rgba(255,122,48,.28)}
 .state-bar .in{max-width:var(--wrap);margin:0 auto;padding:10px var(--s6);font-size:13px;color:#8A4415;display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
-.state-bar .tag{background:var(--accent);color:#111111;border-radius:var(--r-badge);font-size:11px;font-weight:700;padding:2px 6px;flex:none}
+.state-bar .tag{background:var(--accent);color:#fff;border-radius:var(--r-badge);font-size:11px;font-weight:700;padding:2px 6px;flex:none}
 
 /* ---------- index page ---------- */
 .idx-hero{background:linear-gradient(135deg,#4A3DD1,#5B4FE5);color:#fff;padding:var(--s12) 0}

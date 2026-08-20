@@ -9,7 +9,7 @@
   /* ---------- 색 — 가이드_01_모던네이비 ---------- */
   --primary:#2B4A8B;
   --primary-hover:#1F3A73;
-  --accent:#FF7A30;
+  --accent:#CC4900;
   --bg:#F0EFEB;            /* 클라우드 댄서 — 콘텐츠 바탕은 중립으로 둔다 */
   --surface:#FFFFFF;
   --text:#16233F;
@@ -27,7 +27,7 @@
 
   --pri-10:rgba(43,74,139,.10);
   --pri-06:rgba(43,74,139,.06);
-  --acc-12:rgba(255,122,48,.14);
+  --acc-12:rgba(204,73,0,.14);
   --bg-soft:#F5F7FA;       /* 표 헤더·연한 채움 */
   --hl:#FFE0C7;            /* 형광펜 */
 
@@ -232,7 +232,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
   font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s}
 .btn-pri{background:var(--primary);color:#fff}
 .btn-pri:hover{background:var(--primary-hover)}
-.btn-acc{background:var(--accent);color:#2B1400}
+.btn-acc{background:var(--accent);color:#fff}
 .btn-acc:hover{filter:brightness(.95)}
 .btn-ghost{border-color:var(--border);color:var(--text)}
 .btn-ghost:hover{background:var(--bg-soft)}

@@ -11,9 +11,15 @@
   --sh-pop:0 12px 32px rgba(0,0,0,.18);
   --s7:28px;
   /* colors — 가이드_03_코럴선셋 */
-  --primary:#F0654F;
-  --primary-hover:#D9503B;
-  --accent:#F59E0B;
+  --primary:#E02A0E;
+  --primary-hover:#C4250C;
+  --accent:#A46803;
+
+  /* 짙은 히어로 위 글자용 — 진하게 한 강조색(#A46803)은 어두운 바탕에서 3.83 까지 떨어진다.
+
+     밝은 옛 색을 여기 남겨 둔다. 바탕이 어두우면 밝은 글자가 읽힌다(2026-08-20). */
+
+  --acc-on-dark:#F59E0B;
   --bg:#F0EFEB;   /* 클라우드 댄서 — 배경은 중립으로 두고 색은 주색이 낸다 */
   --surface:#FFFFFF;
   --text:#33221E;
@@ -23,9 +29,9 @@
   --warning:#B45309;
   --danger:#C0392B;
 
-  --pri-10:rgba(240,101,79,.1);
-  --pri-06:rgba(240,101,79,.06);
-  --acc-10:rgba(245,158,11,.18);
+  --pri-10:rgba(224,42,14,.1);
+  --pri-06:rgba(224,42,14,.06);
+  --acc-10:rgba(164,104,3,.18);
   --pri-text:#B23A26;       /* 흰 배경 위 글자용 — --primary 는 3.1:1 라 본문에 못 쓴다 */
   --star:#AD5009;           /* 별점 — accent(옅은 노랑)는 흰 배경에서 안 보인다 */
   --hl:#FDE4B0;              /* 형광펜 */
@@ -184,7 +190,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .btn-soft:hover{background:rgba(240,101,79,.18)}
 .btn-ghost{background:var(--surface);border-color:var(--border);color:var(--text)}
 .btn-ghost:hover{background:var(--bg)}
-.btn-accent{background:var(--accent);color:#4A2E03}
+.btn-accent{background:var(--accent);color:#fff}
 .btn-danger{background:var(--surface);border-color:rgba(192,57,43,.45);color:var(--danger)}
 .btn-danger:hover{background:rgba(192,57,43,.06)}
 .btn-sm{height:36px;padding:0 var(--s3);font-size:13px;border-radius:10px}
@@ -626,7 +632,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .map .lb{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--ph-text);z-index:1}
 .map .pin{position:absolute;z-index:2;min-width:30px;height:30px;border-radius:999px;padding:0 8px;background:var(--muted);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(51,34,30,.28);transform:translate(-50%,-50%);cursor:pointer;border:0;font-family:inherit}
 .map .pin.free{background:var(--primary)}
-.map .pin.on{background:var(--accent);color:#3B2503;height:36px;font-size:13px}
+.map .pin.on{background:var(--accent);color:#fff;height:36px;font-size:13px}
 .map-16{aspect-ratio:16/9}
 .map-lg{height:560px}
 .map-sm{aspect-ratio:2/1}
@@ -725,7 +731,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 
 .state-bar{background:var(--acc-10);border-bottom:1px solid rgba(245,158,11,.55)}
 .state-bar .in{max-width:var(--wrap);margin:0 auto;padding:10px var(--s6);font-size:13px;color:#8A5A05;display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
-.state-bar .tag{background:var(--accent);color:#3B2503;border-radius:999px;font-size:11px;font-weight:800;padding:3px 9px;flex:none}
+.state-bar .tag{background:var(--accent);color:#fff;border-radius:999px;font-size:11px;font-weight:800;padding:3px 9px;flex:none}
 
 /* 단독 화면(로그인·가입) */
 .solo{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--s10) var(--s4)}
@@ -858,9 +864,9 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 
 /* 히어로 — 어두운 배경에 큰 제목, 아래 지표 4개 */
 .hero-bold{background:var(--ink);color:#fff;padding:var(--s10) 0 var(--s8)}
-.hero-bold .kicker{font-size:14px;font-weight:800;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+.hero-bold .kicker{font-size:14px;font-weight:800;letter-spacing:.14em;color:var(--acc-on-dark);text-transform:uppercase}
 .hero-bold h1{font-size:clamp(34px,5.4vw,68px);font-weight:800;line-height:1.32;letter-spacing:-.035em;margin-top:14px}
-.hero-bold h1 em{font-style:normal;color:var(--accent)}
+.hero-bold h1 em{font-style:normal;color:var(--acc-on-dark)}
 .hero-bold .sub{color:rgba(255,255,255,.74);font-size:17px;margin-top:16px;max-width:640px}
 .hero-bold .figs{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--hair);background:rgba(255,255,255,.16);
   border:1px solid rgba(255,255,255,.16);border-radius:var(--r-card);overflow:hidden;margin-top:var(--s8)}
