@@ -270,7 +270,10 @@ html, body { width: 1080px; height: 1920px; background: transparent; }  /* 2026-
 .rtop .ep { display: none; }
 .rhead { justify-content: flex-start; }
 .rhead .name { font-size: 36px; }           /* 실측 글자 높이 33 */
-.rtitle { margin-top: 38px; font-size: 62px; line-height: 1.34; }   /* 로고 끝 291 → 제목 329 */
+/* ⚠ 줄 간격을 넉넉히 잡으면 «제목이 긴 편»에서 둘째 줄이 화면 칸(513)에 물린다.
+   2026-08-20 에 「실제 사이트로 내놓는 방법을 / 넣어드렸어요.」가 그렇게 잘렸다.
+   62 × 1.22 = 76px, 두 줄 152px → 332+152+밑줄 9 = 493 으로 513 앞에서 끝난다. */
+.rtitle { margin-top: 38px; font-size: 62px; line-height: 1.22; }   /* 로고 끝 291 → 제목 329 */
 /* 강조 — 주황 글자에 주황 밑줄. 밑줄은 글자 아래 살짝 띄운다. */
 .rtitle .o { color: #F2A05C;
              border-bottom: 5px solid #F2A05C; padding-bottom: 4px; }

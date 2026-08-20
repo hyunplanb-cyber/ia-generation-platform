@@ -165,6 +165,18 @@ function 마스코트영상고르기(편이름) {
   const 후보 = readdirSync(마스코트영상방).filter((f) => /\.(mp4|mov|webm)$/i.test(f));
   if (!후보.length) return null;
 
+  /* ⭐ 한 번 고른 편은 «다시 굽어도 같은 영상» 을 쓴다 (2026-08-20 사장님).
+     그러지 않으면 세로·가로·커버가 따로 구워질 때마다 각자 다른 마스코트를 뽑는다.
+     실제로 「예약화면 확인」편이 세로는 아침테라스, 가로는 온천으로 나갔다.
+     일부러 다른 영상으로 바꾸려면 _편별.json 에서 그 편 줄을 지운다. */
+  const 편별길 = `${마스코트영상방}/_편별.json`;
+  let 편별 = {};
+  try { 편별 = JSON.parse(readFileSync(편별길, "utf8")); } catch { /* 처음 */ }
+  if (편별[편이름] && 후보.includes(편별[편이름])) {
+    console.log(`   마스코트 영상: ${편별[편이름]}  (전에 고른 것을 그대로 씀)`);
+    return `${마스코트영상방}/${편별[편이름]}`;
+  }
+
   let 최근 = [];
   try { 최근 = JSON.parse(readFileSync(최근길, "utf8")).최근 ?? []; } catch { /* 처음이면 빈 목록 */ }
 
@@ -183,9 +195,6 @@ function 마스코트영상고르기(편이름) {
      _최근.json 은 마지막 편 것만 기억해서, 여러 편을 이어 구우면 커버가 엉뚱한 짝을 잡는다.
      2026-08-20 에 실제로 그랬다(두 편 다 「온천」으로 잡혔다). */
   try {
-    const 편별길 = `${마스코트영상방}/_편별.json`;
-    let 편별 = {};
-    try { 편별 = JSON.parse(readFileSync(편별길, "utf8")); } catch { /* 처음 */ }
     편별[편이름] = 고른것;
     writeFileSync(편별길, JSON.stringify(편별, null, 1) + String.fromCharCode(10), "utf8");
 
