@@ -776,3 +776,20 @@ main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
 @media (max-width: 860px) {
   .g3:has(> .pcard), .g4:has(> .pcard) { grid-template-columns: 1fr; gap: var(--s6); }
 }
+
+
+/* ═══ 검수항목 H4 · H5 — 2026-08-20 사장님 지적으로 붙였다 ═══
+
+   H5 «화면이동시 화면의 흔들림»
+     세로 막대는 «생길 때만» 15px 을 먹는다. 그래서 목록이 짧은 화면에서 긴 화면으로
+     옮기면 본문이 통째로 15px 좌우로 튄다. 사장님이 CL0101 에서 「수강중·수강완료에서
+     전체로 이동시 화면 흔들림」이라 짚은 것이 바로 이것이다.
+     scrollbar-gutter 로 «막대 자리»를 늘 비워 두면 생기든 말든 폭이 안 바뀐다.
+
+   H4 «푸터 영역과 콘텐츠 영역의 간격»
+     .ft{margin-top:auto} 는 «자리가 남을 때만» 벌어진다. 내용이 한 화면을 넘기면 0 이 되어
+     푸터 윗선이 버튼에 그대로 맞붙는다 — MY0101 「강사로 전환 신청」 바로 아래가 그랬다.
+     auto 는 그대로 두고(짧은 화면에서 푸터를 바닥에 붙이는 일은 auto 만 할 수 있다),
+     푸터 «바로 앞 덩어리»에 최소 간격을 준다. :has(+.ft) 가 「다음이 푸터인 것」을 집는다. */
+html{scrollbar-gutter:stable}
+:where(main,.edmain,.appmain,.page-wrap)>*:has(+.ft){margin-bottom:var(--s8)}
