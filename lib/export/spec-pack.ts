@@ -627,6 +627,35 @@ export function buildSpecPackMarkdown(
   lines.push("> **세 가지를 봅니다 — ① 화면연결·레이아웃·UI 를 눈으로 ② 뒤로가기·버튼·탭·썸네일·배너를 직접 눌러서 ③ 데이터가 화면끼리 맞는지.**");
   lines.push("> 훑어보는 것이 아니라 **세어서** 확인하고, **나온 오류는 그 자리에서 고칩니다.** 하나라도 남으면 고치고 다시 셉니다.");
   lines.push("");
+  lines.push("");
+  lines.push("### 7-0. 검수는 «두 갈래»입니다 — 둘 다 하세요");
+  lines.push("> **화면을 다 만들었으면 여기서 끝이 아닙니다.** 성격이 다른 두 가지를 각각 봅니다.");
+  lines.push("");
+  lines.push("| | 무엇을 보나 | 어떻게 아나 | 어디서 |");
+  lines.push("|---|---|---|---|");
+  lines.push("| **① 사람처럼 보는 검수** | 보이는 것 — 레이아웃 · 눌러 본 반응 · 생김새 | **열고 눌러 보고 굴려야** 안다 | 아래 7-1 ~ 7-9 |");
+  lines.push("| **② 기계가 보는 검수** | 파일 · 값 · 문서끼리 앞뒤 | **열어 보지 않아도** 파일만 보면 안다 | 아래 7-9-2 |");
+  lines.push("");
+  lines.push("⛔ **한 갈래만 하면 반드시 새어 나갑니다.**");
+  lines.push("보기에 멀쩡한데 링크가 죽어 있거나, 파일은 다 맞는데 화면이 무너져 있습니다.");
+  lines.push("");
+  lines.push("**① 사람처럼 보는 검수 — 열다섯 가지**");
+  lines.push("");
+  lines.push("| 갈래 | 무엇을 보나 |");
+  lines.push("|---|---|");
+  lines.push("| 레이아웃 | ① 콘텐츠 폭이 모든 화면에서 같은가 ② 콘텐츠 사이 간격이 균일한가 ③ GNB 상단·푸터 하단 고정 ④ GNB↔콘텐츠·푸터↔콘텐츠 간격 ⑤ GNB·LNB 가 지금 메뉴를 켜 주는가 ⑥ 화면 이동 시 흔들림이 없는가 |");
+  lines.push("| UX | ⑦ 뒤로가기가 적절한가(화면 안 탭에는 두지 않는다) ⑧ 배너·썸네일·버튼·탭이 정확히 반응하는가 |");
+  lines.push("| UI | ⑨ 배경 위 글자색이 적절한가 ⑩ 썸네일 크기가 적당한가 ⑪ 버튼 크기·모양이 균일한가 ⑫ 좌우로 넘기는 곳에 가로 막대가 드러나지 않는가 ⑬ UI 가 틀어지지 않았는가 ⑭ 배지 크기·모양이 균일한가 ⑮ 배지 위치가 적절한가 |");
+  lines.push("");
+  lines.push("**② 기계가 보는 검수 — 화면을 안 열어도 아는 것**");
+  lines.push("");
+  lines.push("- **글자 대비** — 본문 4.5 · 큰 글자 3.0 을 넘는가 (색을 고른 뒤 반드시 재세요)");
+  lines.push("- **끊어진 링크** — `href` 가 가리키는 화면이 실제로 있는가");
+  lines.push("- **없는 그림** — `src` 가 가리키는 파일이 실제로 있는가");
+  lines.push("- **외톨이 화면** — 만들어 놓고 아무 데서도 안 이어지는 화면이 있는가");
+  lines.push("- **화면 수가 맞는가** — 이 문서가 약속한 화면 수와 실제로 만든 수가 같은가");
+  lines.push("- **굳은 날짜** — 견본 날짜가 «오늘»에서 거꾸로 잡혀 있는가 (지난 날짜가 보이면 안 됩니다)");
+  lines.push("");
   lines.push("### 7-1. 화면연결 · 레이아웃 · UI 를 «눈으로» 봅니다");
   lines.push("- **화면 목록에서 시작해 링크를 눌러 다닙니다.** 주소창에 직접 쳐 넣지 마세요 — 그러면 화면이 서로 이어지는지가 안 보입니다.");
   lines.push("- 묶음마다 대표 화면을 열어 **무너진 곳 · 겹친 곳 · 잘린 글 · 화면 밖으로 나간 것**을 봅니다.");
@@ -828,6 +857,63 @@ export function buildSpecPackMarkdown(
   lines.push("- **콘텐츠폭** 이 화면마다 다르면 옮길 때 글이 좌우로 밀립니다. 모든 화면이 한 값이어야 합니다.");
   lines.push("- **세로막대** 가 어떤 화면은 0, 어떤 화면은 15 면 그만큼 화면이 좌우로 튑니다. `html { scrollbar-gutter: stable; }` 로 잡으세요.");
   lines.push("- **뒤로가기** 가 `탭이가는곳` 으로 이어진 화면들 사이에서 갈리면 안 됩니다. 탭이면 넷 다 없는 쪽이 맞습니다.");
+  lines.push("");
+  lines.push("");
+  lines.push("### 7-9-2. 기계가 보는 검수 — 파일만 보고 재기");
+  lines.push("> 7-9 가 «그려 봐야 아는 것»을 잰다면, 이것은 **화면을 안 열어도 아는 것**을 잡습니다.");
+  lines.push("> 만든 폴더에서 한 번 돌리면 끊어진 링크·없는 그림·외톨이 화면이 한꺼번에 나옵니다.");
+  lines.push("");
+  lines.push("```js");
+  lines.push(String.raw`// node 로 돌리세요:  node 검수.mjs ./내사이트
+import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
+import { join, resolve, dirname } from "node:path";
+
+const 방 = process.argv[2] || ".";
+const 쪽들 = readdirSync(방).filter((f) => f.endsWith(".html"));
+const 흠 = [];
+const 이어진곳 = new Set();
+
+for (const 쪽 of 쪽들) {
+  const 길 = join(방, 쪽);
+  const s = readFileSync(길, "utf8");
+
+  // ① 끊어진 링크 — 같은 폴더의 .html 만 본다
+  for (const m of s.matchAll(/href="([^"]+)"/g)) {
+    const v = m[1];
+    if (!v || v.startsWith("#") || v.startsWith("http") || v.startsWith("mailto:")) continue;
+    const 갈곳 = resolve(dirname(길), v.split("#")[0].split("?")[0]);
+    이어진곳.add(갈곳);
+    if (v.endsWith(".html") && !existsSync(갈곳)) 흠.push("[끊어진 링크] " + 쪽 + " -> " + v);
+  }
+
+  // ② 없는 그림
+  for (const m of s.matchAll(/src="([^"]+)"/g)) {
+    const v = m[1];
+    if (!v || v.startsWith("http") || v.startsWith("data:")) continue;
+    if (!existsSync(resolve(dirname(길), v.split("?")[0]))) 흠.push("[없는 그림] " + 쪽 + " -> " + v);
+  }
+
+  // ③ 눌러도 아무 데도 안 가는 것
+  const 빈링크 = (s.match(/href="(#|javascript:void\(0\))"/g) || []).length;
+  if (빈링크) 흠.push("[빈 링크] " + 쪽 + " 에 " + 빈링크 + "개 — 아직 없는 화면이면 «흐리게 + 안 눌리게» 두세요");
+
+  // ④ 0바이트
+  if (statSync(길).size === 0) 흠.push("[빈 파일] " + 쪽);
+}
+
+// ⑤ 외톨이 화면 — 만들어 놓고 아무 데서도 안 이어지는 쪽
+for (const 쪽 of 쪽들) {
+  if (/^(index|home)\./i.test(쪽)) continue;
+  if (!이어진곳.has(resolve(방, 쪽))) 흠.push("[외톨이] " + 쪽 + " 은 어느 화면에서도 이어지지 않습니다");
+}
+
+console.log("화면 " + 쪽들.length + "장 · 흠 " + 흠.length + "건");
+for (const h of 흠) console.log("  " + h);
+if (!흠.length) console.log("  깨끗합니다");`);
+  lines.push("```");
+  lines.push("");
+  lines.push("**글자 대비는 브라우저에서 잽니다** — 7-9 의 글과 같은 자리에 붙여 넣으세요.");
+  lines.push("본문 글자는 **4.5**, 24px 이상이거나 굵은 18.66px 이상은 **3.0** 을 넘어야 합니다.");
   lines.push("");
   lines.push("### 7-10. 나온 오류는 «그 자리에서» 고칩니다");
   lines.push("> 적어 두고 넘어가면 다음에 또 나옵니다. 찾은 김에 고치는 것이 제일 쌉니다.");
