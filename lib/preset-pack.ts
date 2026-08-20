@@ -213,7 +213,7 @@ const PRESETS: Preset[] = [
     c: {
       "primary (주요 액션)": "#5B4FE5",
       "primary-hover": "#4A3DD1",
-      "accent (강조·배지)": "#917000",
+      "accent (강조·배지)": "#FFD54A",
       "accent-text (강조 글자용)": "#8A5A00",
       "accent-text-dark (어두운 바탕 글자용)": "#FFD54A",
       "background (페이지)": "#F0EFEB",

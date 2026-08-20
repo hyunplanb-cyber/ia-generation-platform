@@ -12,7 +12,7 @@
   /* colors — 가이드_03_소프트파스텔 */
   --primary:#5B4FE5;
   --primary-hover:#4A3DD1;
-  --accent:#917000;
+  --accent:#FFD54A;
   --bg:#F0EFEB;   /* 클라우드 댄서 — 배경은 중립으로 두고 색은 주색이 낸다 */
   --surface:#FFFFFF;
   --text:#1F2024;
@@ -24,7 +24,7 @@
 
   --pri-10:rgba(91,79,229,.1);
   --pri-06:rgba(91,79,229,.06);
-  --acc-10:rgba(145,112,0,.18);
+  --acc-10:rgba(255,213,74,.18);
   --star:#896800;           /* 별점 — accent(옅은 노랑)는 흰 배경에서 안 보인다 */
   --hl:#FFF6D9;              /* 형광펜 */
 
@@ -176,7 +176,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .btn-soft:hover{background:rgba(91,79,229,.18)}
 .btn-ghost{background:var(--surface);border-color:var(--border);color:var(--text)}
 .btn-ghost:hover{background:var(--bg)}
-.btn-accent{background:var(--accent);color:#fff}
+.btn-accent{background:var(--accent);color:#111}
 .btn-danger{background:var(--surface);border-color:rgba(192,57,43,.45);color:var(--danger)}
 .btn-danger:hover{background:rgba(192,57,43,.06)}
 .btn-sm{height:36px;padding:0 var(--s3);font-size:13px;border-radius:10px}
@@ -604,7 +604,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .map .lb{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--ph-text);z-index:1}
 .map .pin{position:absolute;z-index:2;min-width:30px;height:30px;border-radius:999px;padding:0 8px;background:var(--muted);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(51,34,30,.28);transform:translate(-50%,-50%);cursor:pointer;border:0;font-family:inherit}
 .map .pin.free{background:var(--primary)}
-.map .pin.on{background:var(--accent);color:#fff;height:36px;font-size:13px}
+.map .pin.on{background:var(--accent);color:#111;height:36px;font-size:13px}
 .map-16{aspect-ratio:16/9}
 .map-lg{height:560px}
 .map-sm{aspect-ratio:2/1}
@@ -685,7 +685,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 
 .state-bar{background:var(--acc-10);border-bottom:1px solid rgba(255,213,74,.55)}
 .state-bar .in{max-width:var(--wrap);margin:0 auto;padding:10px var(--s6);font-size:13px;color:#8A5A05;display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
-.state-bar .tag{background:var(--accent);color:#fff;border-radius:999px;font-size:11px;font-weight:800;padding:3px 9px;flex:none}
+.state-bar .tag{background:var(--accent);color:#111;border-radius:999px;font-size:11px;font-weight:800;padding:3px 9px;flex:none}
 
 /* 단독 화면(로그인·가입) */
 .solo{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--s10) var(--s4)}

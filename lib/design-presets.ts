@@ -222,7 +222,7 @@ export const DESIGN_OPTIONS: {
     desc: "부드럽고 친근한 분위기",
     concept: "부드럽고 친근한 파스텔 톤. 둥근 모서리와 넉넉한 여백으로 편안한 느낌.",
     primary: "#5B4FE5",
-    accent: "#917000",
+    accent: "#FFD54A",
     accentText: "#8A5A00",
     accentTextDark: "#FFD54A", // 밝은 옛 강조색 — 어두운 바탕 위에서는 이게 잘 읽힌다. 대비 13.39
     ink: "#1F2024",
