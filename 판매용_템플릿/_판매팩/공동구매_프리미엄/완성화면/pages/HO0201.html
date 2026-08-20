@@ -25,27 +25,26 @@
   <div class="page-hd row-b wrap-row"><div>
   <h1 class="t-page">공구 목록</h1><p class="t-sub">진행 중인 공구 128개</p></div></div>
   <div class="searchbar mb4">
-    <input class="input" type="search" placeholder="상품명·진행자 이름으로 검색">
-    <button class="btn btn-primary" type="button" data-toast="검색했어요">검색</button>
+    <input class="input" type="search" placeholder="상품명·진행자 이름으로 검색" data-search="deals">
+    <button class="btn btn-primary" type="button" data-search-go="deals">검색</button>
   </div>
 
-  <div class="tabs"><button class="tab on" type="button">전체</button><button class="tab" type="button">식품·간편식</button><button class="tab" type="button">생활·주방</button><button class="tab" type="button">뷰티</button><button class="tab" type="button">유아·육아</button><button class="tab" type="button">반려동물</button><button class="tab" type="button">디지털·가전</button></div>
+  <div class="tabs" data-fset><button class="tab on" type="button" data-fgroup="deals" data-f="cat" data-v="*">전체</button><button class="tab" type="button" data-fgroup="deals" data-f="cat" data-v="식품·간편식">식품·간편식</button><button class="tab" type="button" data-fgroup="deals" data-f="cat" data-v="생활·주방">생활·주방</button><button class="tab" type="button" data-fgroup="deals" data-f="cat" data-v="뷰티">뷰티</button><button class="tab" type="button" data-fgroup="deals" data-f="cat" data-v="유아·육아">유아·육아</button><button class="tab" type="button" data-fgroup="deals" data-f="cat" data-v="반려동물">반려동물</button><button class="tab" type="button" data-fgroup="deals" data-f="cat" data-v="디지털·가전">디지털·가전</button><button class="tab" type="button" data-fgroup="deals" data-f="cat" data-v="패션">패션</button><button class="tab" type="button" data-fgroup="deals" data-f="cat" data-v="건강식품">건강식품</button></div>
   <div class="row-b mt4 mb4 wrap-row" style="gap:12px">
     <div class="row wrap-row" style="gap:8px">
-      <div class="chips"><button class="chip on" type="button" >진행 중 <span class="x">✕</span></button><button class="chip" type="button" >마감 임박</button><button class="chip" type="button" >달성률 80%+</button><button class="chip" type="button" >무료배송</button></div>
-      <button class="btn-link" type="button" data-toast="조건을 모두 지웠어요">전체 초기화</button>
+      <div class="chips" data-fset data-multi><button class="chip on is-off" type="button" disabled>진행 중</button><button class="chip" type="button" data-fgroup="deals" data-f="임박" data-v="y">마감 임박</button><button class="chip" type="button" data-fgroup="deals" data-f="달성" data-v="y">달성률 80%+</button><button class="chip" type="button" data-fgroup="deals" data-f="무료" data-v="y">무료배송</button></div><button class="btn-link" type="button" data-freset="deals">전체 초기화</button>
     </div>
     <div class="row" style="gap:10px">
-      <span class="t-sub">128개</span>
-      <select class="select" style="width:160px"><option>인기순</option><option>마감 임박순</option><option>달성률 높은순</option><option>할인율순</option><option>최신순</option></select>
+      <span class="t-sub"><b data-fcount="deals">128</b>개 보임</span>
+      <select class="select" style="width:160px" data-sortlist="deals"><option value="pop">인기순</option><option value="left">마감 임박순</option><option value="rate">달성률 높은순</option><option value="disc">할인율순</option></select>
     </div>
   </div>
 
-  <div class="stair"><a class="deal" href="DE0101.html">
+  <div class="empty" data-list-empty="deals" hidden style="padding:48px 0;text-align:center"><div style="font-size:40px">🔍</div><b class="t-card" style="display:block;margin-top:8px">조건에 맞는 공구가 없어요</b><p class="t-sub mt1">조건을 하나씩 풀어 보세요.</p><button class="btn btn-soft btn-sm mt3" type="button" data-freset="deals">조건 모두 풀기</button></div><div class="stair" data-list="deals"><a class="deal" href="DE0101.html" data-tags="cat:식품·간편식 임박:y 달성:y 무료:y" data-v-left="187" data-v-rate="82" data-v-disc="36" data-q="제주 한라봉">
     <span class="rank"><i>인기</i>1<i>위</i></span>
     <div class="ph t5  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 16.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
-      <div class="row-b"><span class="badge b-acc">36%</span><span class="cd calm">⏱ 3시간 7분 남음</span></div>
+      <div class="row-b"><span class="badge b-acc">36%</span><span class="cd calm">⏱ 3시간 7분 남음</span><span class="badge b-ok" style="margin-left:6px">무료배송</span></div>
       <div class="ttl">제주 한라봉 5kg 산지직송 (특대과)</div>
       <div class="mt2"><span class="price-old">39,000원</span> <span class="price">24,900원</span></div>
       <div class="mt3"><div class="gauge-row">
@@ -53,7 +52,7 @@
     <span class="pct">82%</span></div></div>
       <div class="row-b mt1"><span class="t-sub">247명 참여 · 목표 300명</span>
         <span class="t-sub">동네장터 지현</span></div>
-    </div></a><a class="deal" href="DE0101.html">
+    </div></a><a class="deal" href="DE0101.html" data-tags="cat:생활·주방 임박:y 달성:y" data-v-left="42" data-v-rate="101" data-v-disc="48" data-q="독일산 스테인리스">
     <span class="rank"><i>인기</i>2<i>위</i></span>
     <div class="ph t1  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 17.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
@@ -65,11 +64,11 @@
     <span class="pct">101%</span></div></div>
       <div class="row-b mt1"><span class="t-sub">151명 참여 · 목표 150명</span>
         <span class="t-sub">살림고수 미란</span></div>
-    </div></a><a class="deal" href="DE0101.html">
+    </div></a><a class="deal" href="DE0101.html" data-tags="cat:뷰티 임박:y 달성:y 무료:y" data-v-left="21" data-v-rate="97" data-v-disc="52" data-q="병풀 진정 앰플">
     <span class="rank"><i>인기</i>3<i>위</i></span>
     <div class="ph t2  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 18.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
-      <div class="row-b"><span class="badge b-acc">52%</span><span class="cd">⏱ 21분 남음</span></div>
+      <div class="row-b"><span class="badge b-acc">52%</span><span class="cd">⏱ 21분 남음</span><span class="badge b-ok" style="margin-left:6px">무료배송</span></div>
       <div class="ttl">병풀 진정 앰플 30ml × 3개입</div>
       <div class="mt2"><span class="price-old">87,000원</span> <span class="price">41,400원</span></div>
       <div class="mt3"><div class="gauge-row">
@@ -77,11 +76,11 @@
     <span class="pct">97%</span></div></div>
       <div class="row-b mt1"><span class="t-sub">486명 참여 · 목표 500명</span>
         <span class="t-sub">뷰티진행자 은채</span></div>
-    </div></a><a class="deal" href="DE0101.html">
+    </div></a><a class="deal" href="DE0101.html" data-tags="cat:유아·육아 무료:y" data-v-left="1440" data-v-rate="44" data-v-disc="34" data-q="유기농 밴드형 기저귀">
     <span class="rank"><i>인기</i>4<i>위</i></span>
     <div class="ph t3  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 1.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
-      <div class="row-b"><span class="badge b-acc">34%</span><span class="cd calm">⏱ 1일 0시간 남음</span></div>
+      <div class="row-b"><span class="badge b-acc">34%</span><span class="cd calm">⏱ 1일 0시간 남음</span><span class="badge b-ok" style="margin-left:6px">무료배송</span></div>
       <div class="ttl">유기농 밴드형 기저귀 대용량 4팩</div>
       <div class="mt2"><span class="price-old">76,000원</span> <span class="price">49,900원</span></div>
       <div class="mt3"><div class="gauge-row">
@@ -89,7 +88,7 @@
     <span class="pct">44%</span></div></div>
       <div class="row-b mt1"><span class="t-sub">88명 참여 · 목표 200명</span>
         <span class="t-sub">두아이맘 소라</span></div>
-    </div></a><a class="deal" href="DE0101.html">
+    </div></a><a class="deal" href="DE0101.html" data-tags="cat:반려동물 임박:y 달성:y" data-v-left="96" data-v-rate="99" data-v-disc="40" data-q="동결건조 닭가슴살">
     <span class="rank"><i>인기</i>5<i>위</i></span>
     <div class="ph t4  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 2.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
@@ -101,7 +100,7 @@
     <span class="pct">99%</span></div></div>
       <div class="row-b mt1"><span class="t-sub">119명 참여 · 목표 120명</span>
         <span class="t-sub">멍냥집사 태호</span></div>
-    </div></a><a class="deal" href="DE0101.html">
+    </div></a><a class="deal" href="DE0101.html" data-tags="cat:디지털·가전" data-v-left="2880" data-v-rate="33" data-v-disc="37" data-q="노이즈캔슬링">
     <span class="rank"><i>인기</i>6<i>위</i></span>
     <div class="ph t5  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 6.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
@@ -113,11 +112,11 @@
     <span class="pct">33%</span></div></div>
       <div class="row-b mt1"><span class="t-sub">132명 참여 · 목표 400명</span>
         <span class="t-sub">가전진행자 준영</span></div>
-    </div></a><a class="deal" href="DE0101.html">
+    </div></a><a class="deal" href="DE0101.html" data-tags="cat:건강식품 임박:y 달성:y 무료:y" data-v-left="660" data-v-rate="81" data-v-disc="46" data-q="유산균 100억">
     <span class="rank"><i>인기</i>7<i>위</i></span>
     <div class="ph t1  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 7.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
-      <div class="row-b"><span class="badge b-acc">46%</span><span class="cd calm">⏱ 11시간 0분 남음</span></div>
+      <div class="row-b"><span class="badge b-acc">46%</span><span class="cd calm">⏱ 11시간 0분 남음</span><span class="badge b-ok" style="margin-left:6px">무료배송</span></div>
       <div class="ttl">유산균 100억 CFU 3개월분</div>
       <div class="mt2"><span class="price-old">96,000원</span> <span class="price">52,000원</span></div>
       <div class="mt3"><div class="gauge-row">
@@ -125,7 +124,7 @@
     <span class="pct">81%</span></div></div>
       <div class="row-b mt1"><span class="t-sub">203명 참여 · 목표 250명</span>
         <span class="t-sub">헬스진행자 다은</span></div>
-    </div></a><a class="deal" href="DE0101.html">
+    </div></a><a class="deal" href="DE0101.html" data-tags="cat:패션" data-v-left="4320" data-v-rate="14" data-v-disc="49" data-q="겨울 기모">
     <span class="rank"><i>인기</i>8<i>위</i></span>
     <div class="ph t2  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 8.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
@@ -138,11 +137,11 @@
       <div class="row-b mt1"><span class="t-sub">41명 참여 · 목표 300명</span>
         <span class="t-sub">옷장정리 하윤</span></div>
     </div></a></div>
-  <div class="stair"><a class="deal" href="DE0101.html">
+  <div class="stair"><a class="deal" href="DE0101.html" data-tags="cat:식품·간편식 임박:y 달성:y 무료:y" data-v-left="187" data-v-rate="82" data-v-disc="36" data-q="제주 한라봉">
     
     <div class="ph t5  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 9.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
-      <div class="row-b"><span class="badge b-acc">36%</span><span class="cd calm">⏱ 3시간 7분 남음</span></div>
+      <div class="row-b"><span class="badge b-acc">36%</span><span class="cd calm">⏱ 3시간 7분 남음</span><span class="badge b-ok" style="margin-left:6px">무료배송</span></div>
       <div class="ttl">제주 한라봉 5kg 산지직송 (특대과)</div>
       <div class="mt2"><span class="price-old">39,000원</span> <span class="price">24,900원</span></div>
       <div class="mt3"><div class="gauge-row">
@@ -150,7 +149,7 @@
     <span class="pct">82%</span></div></div>
       <div class="row-b mt1"><span class="t-sub">247명 참여 · 목표 300명</span>
         <span class="t-sub">동네장터 지현</span></div>
-    </div></a><a class="deal" href="DE0101.html">
+    </div></a><a class="deal" href="DE0101.html" data-tags="cat:생활·주방 임박:y 달성:y" data-v-left="42" data-v-rate="101" data-v-disc="48" data-q="독일산 스테인리스">
     
     <div class="ph t1  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 11.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
@@ -162,11 +161,11 @@
     <span class="pct">101%</span></div></div>
       <div class="row-b mt1"><span class="t-sub">151명 참여 · 목표 150명</span>
         <span class="t-sub">살림고수 미란</span></div>
-    </div></a><a class="deal" href="DE0101.html">
+    </div></a><a class="deal" href="DE0101.html" data-tags="cat:뷰티 임박:y 달성:y 무료:y" data-v-left="21" data-v-rate="97" data-v-disc="52" data-q="병풀 진정 앰플">
     
     <div class="ph t2  ph-tiny" style="aspect-ratio:1000/1000"><img data-예시 src="../assets/예시/제품 - 12.webp" alt=""><span class="lb">1000×1000</span></div>
     <div class="bd">
-      <div class="row-b"><span class="badge b-acc">52%</span><span class="cd">⏱ 21분 남음</span></div>
+      <div class="row-b"><span class="badge b-acc">52%</span><span class="cd">⏱ 21분 남음</span><span class="badge b-ok" style="margin-left:6px">무료배송</span></div>
       <div class="ttl">병풀 진정 앰플 30ml × 3개입</div>
       <div class="mt2"><span class="price-old">87,000원</span> <span class="price">41,400원</span></div>
       <div class="mt3"><div class="gauge-row">
@@ -177,7 +176,7 @@
     </div></a></div>
 
   <div class="center mt6">
-    <button class="btn btn-ghost btn-lg" type="button" data-toast="공구 12개를 더 불러왔어요">더 보기 (116개 남음)</button>
+    <button class="btn btn-ghost btn-lg" type="button" data-morelabel="deals" data-moretotal="128" data-toast="견본 화면이라 여기까지만 들고 있습니다"><span data-moretext>더 보기 (116개 남음)</span></button>
   </div></div></main>
 
 <footer class="ft"><div class="ft-in">

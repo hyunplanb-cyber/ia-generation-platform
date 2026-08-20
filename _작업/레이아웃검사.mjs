@@ -88,21 +88,30 @@ const 잴것 = `
       else if (문서 < H - 4) 푸터틈 = Math.round(H - 문서); /* 문서가 창보다 짧다 */
     }
 
-    /* ④ 글자 겹침 — 형제끼리 사각형이 포개진 것 */
+    /* ④ 글자 겹침 — 형제끼리 사각형이 포개진 것
+       ⛔ getBoundingClientRect 를 쓰면 «여러 줄로 흐른 글»에 헛짚는다 (2026-08-20 · 장비렌탈 PD0201).
+          「원 / 1일」이 두 줄로 갈리면 그 «합친 상자»가 왼쪽 끝까지 늘어나 옆 글자를 덮은 것처럼 보인다.
+          실제로는 줄이 나뉜 것뿐 겹치지 않았다. 그래서 getClientRects() 로 «줄 상자»끼리 견준다. */
     const 겹침 = [];
     const 글자 = [...document.querySelectorAll("h1,h2,h3,h4,p,span,strong,em,li,td,th,label,dd,dt")]
       .filter((e) => e.children.length === 0 && e.textContent.trim().length > 1)
-      .map((e) => ({ e, r: e.getBoundingClientRect() }))
-      .filter((o) => o.r.width > 4 && o.r.height > 4);
+      .map((e) => ({ e, 줄: [...e.getClientRects()].filter((r) => r.width > 4 && r.height > 4) }))
+      .filter((o) => o.줄.length);
     for (let i = 0; i < 글자.length && 겹침.length < 4; i += 1) {
-      for (let j = i + 1; j < 글자.length; j += 1) {
+      let 걸림 = false;
+      for (let j = i + 1; j < 글자.length && !걸림; j += 1) {
         const a = 글자[i], b = 글자[j];
         if (a.e.parentElement !== b.e.parentElement) continue;
-        const 겹폭 = Math.min(a.r.right, b.r.right) - Math.max(a.r.left, b.r.left);
-        const 겹높 = Math.min(a.r.bottom, b.r.bottom) - Math.max(a.r.top, b.r.top);
-        if (겹폭 > 4 && 겹높 > 4) {
-          겹침.push(a.e.textContent.trim().slice(0, 10) + " ✕ " + b.e.textContent.trim().slice(0, 10));
-          break;
+        for (const ra of a.줄) {
+          for (const rb of b.줄) {
+            const 겹폭 = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
+            const 겹높 = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
+            if (겹폭 > 4 && 겹높 > 4) {
+              겹침.push(a.e.textContent.trim().slice(0, 10) + " ✕ " + b.e.textContent.trim().slice(0, 10));
+              걸림 = true; break;
+            }
+          }
+          if (걸림) break;
         }
       }
     }

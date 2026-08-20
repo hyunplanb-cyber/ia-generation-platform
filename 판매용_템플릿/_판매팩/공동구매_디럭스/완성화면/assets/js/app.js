@@ -314,3 +314,234 @@
   }, true);
 })();
 /* ── 마지막 그물 끝 ── */
+
+/* ================= 거르기 · 정렬 · 검색 (2026-08-20) =================
+ *
+ * 왜 붙였나 — 촬영 검수에서 사장님이 카테고리 탭을 눌러 보셨는데 «밑줄만» 옮겨 갔다.
+ *   목록은 한 글자도 안 바뀌었다. 칩도 켜졌다 꺼졌다 할 뿐 아무것도 거르지 않았다.
+ *   공동구매 두 팩은 탭 33/33 · 칩 48/48 이 전부 그랬다.
+ *
+ * ⛔ LMS 때와 «까닭이 다르다». 그때는 엔진이 제대로 돌았는데 [hidden] 이 CSS 에 져서
+ *   목록만 그대로였다(한 줄로 고쳤다). 여기는 엔진 자체가 없었다.
+ *
+ * 쓰는 법 — LMS 프리미엄과 같은 약속이다.
+ *   목록: <div data-list="deals"> 안의 항목마다 data-tags="cat:뷰티 st:임박"
+ *   조작: <button data-fgroup="deals" data-f="cat" data-v="뷰티">
+ *   전체: data-v="*"  (그 갈래의 조건을 푼다)
+ *   세기: <span data-fcount="deals">   · 비었을 때: <div data-list-empty="deals">
+ *   풀기: <button data-freset="deals"> · 검색: <input data-search="deals">
+ *   정렬: <select data-sortlist="deals"> 의 value 는 data-v<이름> 을 가리킨다
+ */
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var nf = function (n) { return Number(n).toLocaleString('ko-KR'); };
+  function on(sel, ev, fn) {
+    document.addEventListener(ev, function (e) {
+      var t = e.target.closest && e.target.closest(sel);
+      if (t) fn(e, t);
+    });
+  }
+  function 알림(m) { if (typeof window.toast === 'function') window.toast(m); }
+
+  var 상태 = {};                                   /* { 목록이름: { 갈래: [값] } } */
+  function 챙기기(list) { if (!상태[list]) 상태[list] = {}; return 상태[list]; }
+
+  function 거르기(list) {
+    if (!list) return;
+    var box = $('[data-list="' + list + '"]');
+    if (!box) return;
+    var st = 챙기기(list);
+    var q = (st.__q || '').trim().toLowerCase();
+    var items = $$('[data-tags]', box);
+    var 남은수 = 0;
+
+    items.forEach(function (it) {
+      var tags = (it.dataset.tags || '').split(/\s+/);
+      var ok = true;
+      Object.keys(st).forEach(function (k) {
+        if (k.indexOf('__') === 0) return;
+        var vals = st[k];
+        if (!vals || !vals.length) return;
+        var 맞음 = vals.some(function (v) { return tags.indexOf(k + ':' + v) >= 0; });
+        if (!맞음) ok = false;
+      });
+      if (ok && q) ok = (it.dataset.q || it.textContent).toLowerCase().indexOf(q) >= 0;
+      if (ok) 남은수 += 1;                          /* 「더 보기」로 접은 것도 수에는 넣는다 */
+      it.hidden = !ok || it.hasAttribute('data-more-hidden');
+    });
+
+    $$('[data-fcount="' + list + '"]').forEach(function (el) { el.textContent = nf(남은수); });
+
+    /* 탭 옆 숫자 — 갈래별로 몇 개인지 */
+    $$('[data-fgroup="' + list + '"][data-f]').forEach(function (btn) {
+      var cnt = btn.querySelector('.cnt');
+      if (!cnt || !btn.dataset.v) return;
+      var k = btn.dataset.f, v = btn.dataset.v;
+      cnt.textContent = nf(items.filter(function (it) {
+        return v === '*' ? true : (it.dataset.tags || '').split(/\s+/).indexOf(k + ':' + v) >= 0;
+      }).length);
+    });
+
+    var 빈칸 = $('[data-list-empty="' + list + '"]');
+    if (빈칸) 빈칸.hidden = 남은수 > 0;
+
+    /* 「더 보기 (N개 남음)」 — 조건을 걸면 남는 수가 달라진다.
+       ⛔ 조건을 걸었는데 「120개 남음」이 그대로면 손님이 속는다. */
+    /* ⛔ 조건이 걸리면 「더 보기」를 감춘다.
+       조건에 맞는 것이 «몇 개 더» 있는지 우리는 모른다 — 견본 여덟 개만 들고 있다.
+       그런데 「120개 남음」을 그대로 두면 손님은 뷰티가 120개 더 있다고 읽는다. */
+    var 조건걸림 = !!(st.__q && st.__q.trim()) || Object.keys(st).some(function (k) {
+      return k.indexOf('__') !== 0 && st[k] && st[k].length;
+    });
+    $$('[data-morelabel="' + list + '"]').forEach(function (el) {
+      var 전체 = Number(el.dataset.moretotal || 0);
+      el.hidden = 조건걸림;
+      var 글 = el.querySelector('[data-moretext]') || el;
+      글.textContent = '더 보기 (' + nf(Math.max(0, 전체 - 남은수)) + '개 남음)';
+    });
+
+    var 칩바 = $('[data-chipbar="' + list + '"]');
+    if (칩바) 칩바그리기(list, 칩바);
+  }
+  window.거르기 = 거르기;
+
+  function 칩바그리기(list, box) {
+    var st = 챙기기(list);
+    var html = '';
+    if (st.__q) html += '<button class="chip on" type="button" data-fclearq="' + list + '">검색어 “' + st.__q + '” <span class="x">✕</span></button>';
+    Object.keys(st).forEach(function (k) {
+      if (k.indexOf('__') === 0) return;
+      (st[k] || []).forEach(function (v) {
+        if (v === '*') return;
+        html += '<button class="chip on" type="button" data-fgroup="' + list + '" data-f="' + k + '" data-v="' + v + '">' + v + ' <span class="x">✕</span></button>';
+      });
+    });
+    box.innerHTML = html;
+  }
+
+  /* 탭·칩을 누르면 */
+  on('[data-fgroup][data-f]', 'click', function (e, t) {
+    var list = t.dataset.fgroup, k = t.dataset.f, v = t.dataset.v;
+    var st = 챙기기(list);
+    var 무리 = t.closest('[data-fset]');
+    var 여럿 = 무리 ? 무리.hasAttribute('data-multi') : t.hasAttribute('data-multi');
+
+    if (v === '*') { st[k] = []; }
+    else if (여럿) {
+      st[k] = st[k] || [];
+      var i = st[k].indexOf(v);
+      if (i >= 0) st[k].splice(i, 1); else st[k].push(v);
+    } else {
+      st[k] = (st[k] && st[k][0] === v) ? [] : [v];
+    }
+
+    /* 켜짐 표시는 «화면 전체»에서 같은 무리를 찾아 갱신한다.
+       ⛔ 상자 안에서만 갱신하면, 같은 갈래를 가리키는 다른 자리의 단추가 안 꺼진다.
+          목록은 맞게 걸러지는데 표시만 손님을 속인다 (LMS 8/19 에 실제로 그랬다). */
+    $$('[data-fgroup="' + list + '"][data-f="' + k + '"]').forEach(function (x) {
+      var xv = x.dataset.v;
+      if (!xv) return;
+      if (x.closest('[data-chipbar]')) return;      /* 칩바는 다시 그린다 */
+      x.classList.toggle('on', xv === '*' ? !(st[k] && st[k].length) : (st[k] || []).indexOf(xv) >= 0);
+    });
+    거르기(list);
+  });
+
+  /* 조건 모두 풀기 */
+  on('[data-freset]', 'click', function (e, t) {
+    var list = t.dataset.freset;
+    상태[list] = {};
+    $$('[data-fgroup="' + list + '"]').forEach(function (x) {
+      if (x.closest('[data-chipbar]')) return;
+      x.classList.toggle('on', x.dataset.v === '*');
+    });
+    $$('[data-search="' + list + '"]').forEach(function (x) { x.value = ''; });
+    거르기(list);
+    알림('조건을 모두 풀었어요');
+  });
+
+  on('[data-fclearq]', 'click', function (e, t) {
+    var list = t.dataset.fclearq;
+    챙기기(list).__q = '';
+    $$('[data-search="' + list + '"]').forEach(function (x) { x.value = ''; });
+    거르기(list);
+  });
+
+  /* 검색 — 몇 개가 남았는지 «말해 준다».
+     ⛔ 「걸러졌어요」라고만 하고 실제 결과가 0개인 것은 거짓말이다 (LMS 8/19). */
+  on('[data-search-go]', 'click', function (e, t) {
+    var list = t.dataset.searchGo;
+    거르기(list);
+    var 칸 = $('[data-fcount="' + list + '"]');
+    var n = 칸 ? (칸.textContent || '').trim() : '';
+    알림(n === '0' ? '조건에 맞는 공구가 없어요. 조건을 하나씩 풀어 보세요'
+                   : '아래 목록에 ' + n + '개가 남았어요');
+  });
+
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (t.dataset && t.dataset.search) {
+      챙기기(t.dataset.search).__q = t.value;
+      거르기(t.dataset.search);
+    }
+  });
+
+  /* 정렬 — 카드를 실제로 다시 늘어세운다 */
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (!t.dataset || !t.dataset.sortlist) return;
+    var box = $('[data-list="' + t.dataset.sortlist + '"]');
+    if (!box) return;
+    var key = t.value || (t.options[t.selectedIndex] && t.options[t.selectedIndex].dataset.k);
+    if (!key) return;
+    var 칸 = 'v' + key.charAt(0).toUpperCase() + key.slice(1);
+    var items = $$('[data-tags]', box);
+    var 오름 = key === 'left';                      /* 마감 임박순만 «적을수록 먼저» */
+    items.sort(function (a, b) {
+      var av = Number(a.dataset[칸] || 0), bv = Number(b.dataset[칸] || 0);
+      return 오름 ? av - bv : bv - av;
+    });
+    items.forEach(function (x) { box.appendChild(x); });
+
+    /* 「인기 N위」 배지는 «인기순»일 때만 뜻이 있다.
+       ⛔ 마감 임박순으로 늘어세웠는데 배지가 3위·2위·5위… 로 남으면 손님이 순서를 못 읽는다.
+          배지는 카드에 붙어 다니지 차례를 따라오지 않는다. */
+    var 인기순 = key === 'pop';
+    items.forEach(function (x) {
+      var 배지 = x.querySelector('.rank');
+      if (배지) 배지.hidden = !인기순;
+    });
+
+    알림((t.options[t.selectedIndex] ? t.options[t.selectedIndex].textContent : '') + '으로 다시 늘어세웠어요');
+  });
+
+  /* 화면이 열릴 때 한 번 — 마크업에 「on」으로 적어 둔 것을 상태에 실어 준다.
+     그래야 처음부터 걸려 있는 조건과 목록이 어긋나지 않는다. */
+  document.addEventListener('DOMContentLoaded', function () {
+    $$('[data-list]').forEach(function (box) {
+      var list = box.dataset.list;
+      var st = 챙기기(list);
+      $$('[data-fgroup="' + list + '"][data-f].on').forEach(function (x) {
+        if (x.closest('[data-chipbar]')) return;
+        if (!x.dataset.v || x.dataset.v === '*') return;
+        st[x.dataset.f] = st[x.dataset.f] || [];
+        if (st[x.dataset.f].indexOf(x.dataset.v) < 0) st[x.dataset.f].push(x.dataset.v);
+      });
+      거르기(list);
+    });
+  });
+})();
+
+/* ── 촬영용 — 오른쪽 아래 개발 단추를 숨긴다 (2026-08-20) ──
+ * 주소 뒤에 ?촬영 을 붙이면 「☰ 화면 목록」·「HO-01 화면 정보」가 사라진다.
+ * 녹화할 때 그 단추가 화면마다 찍혀서 만들었다. 한 번 켜면 그 창에서는 계속 꺼져 있다. */
+(function () {
+  'use strict';
+  try {
+    if (location.search.indexOf('촬영') >= 0) sessionStorage.setItem('촬영', '1');
+    if (location.search.indexOf('촬영끄기') >= 0) sessionStorage.removeItem('촬영');
+    if (sessionStorage.getItem('촬영') === '1') document.documentElement.classList.add('촬영중');
+  } catch (e) { /* 저장이 막혀 있어도 화면은 뜬다 */ }
+})();

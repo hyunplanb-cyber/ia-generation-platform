@@ -992,3 +992,7 @@ main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
    점이 설 자리를 항목 안에 만들어 준다. */
 .ticker .tl-item{padding-left:21px;padding-bottom:0}
 .ticker .tl-item::before{left:0}   /* ⚠ 여백만 주면 안 된다 — 점은 여전히 테두리 밖(-21px)에 있다 */
+
+/* 촬영용 — 주소 뒤에 ?촬영 을 붙이면 오른쪽 아래 개발 단추가 사라진다 (2026-08-20).
+   녹화할 때 「☰ 화면 목록」·「HO-01 화면 정보」가 화면마다 찍혀서 만들었다. */
+.촬영중 .dev{display:none !important}

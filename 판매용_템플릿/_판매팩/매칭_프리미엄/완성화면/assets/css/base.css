@@ -937,3 +937,11 @@ body:has(> header.gnb:not(.pro)) .wrap { max-width: calc(var(--wrap) - var(--sid
   .gnb-util .btn { width: auto; }
   body:has(> header.gnb:not(.pro)) .wrap { max-width: var(--wrap); }
 }
+
+/* 인증번호 칸이 input 일 때도 span 과 같은 모양이 되게 한다 (2026-08-20 검수 · AU0302).
+   없으면 flex 칸이 제멋대로 늘어나 카드를 뚫고 나간다. */
+.otp .otp-cell{width:46px;height:56px;flex:none;border:1px solid var(--border);border-radius:var(--r-input);
+  text-align:center;font-size:24px;font-weight:700;background:var(--surface);color:var(--text);padding:0}
+.otp .otp-cell:focus{border-color:var(--primary);border-width:2px;outline:none}
+.otp .otp-cell.err{border-color:var(--danger)}
+@media (max-width:480px){.otp .otp-cell{width:40px;height:50px;font-size:20px}}
