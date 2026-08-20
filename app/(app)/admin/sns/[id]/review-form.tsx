@@ -44,6 +44,7 @@ type 편모양 = {
   captionInstagram: string;
   hashtags: string;
   slotLabel: string;
+  fixNote: string;
   checkResult: string;
   youtubeVerticalId: string | null;
   youtubeHorizontalId: string | null;
@@ -81,6 +82,8 @@ export function SnsReviewForm({
   const [인스타캡션, set인스타캡션] = useState(편.captionInstagram);
   const [해시태그, set해시태그] = useState(편.hashtags);
   const [올릴때, set올릴때] = useState(편.slotLabel);
+  /* 카피·캡션·자막 말고 고칠 것 — 지킴이가 이걸 보면 다시 굽지 않는다. */
+  const [그밖에, set그밖에] = useState(편.fixNote);
   /* ⭐ **칸 번호(ord)** → 여러 줄 텍스트. 줄바꿈이 곧 «자막 줄»이다 — 배열을 그대로 만지게 하면
      화면이 복잡해지고, 사장님이 고치는 것은 결국 «두 줄짜리 글»이다.
      ⚠ 전에는 칸 row id 를 열쇠로 썼다. 로컬이 다시 보내면 id 가 통째로 바뀌어서
@@ -118,9 +121,10 @@ export function SnsReviewForm({
       captionInstagram: 인스타캡션,
       hashtags: 해시태그,
       slotLabel: 올릴때,
+      fixNote: 그밖에,
       자막: Object.fromEntries(Object.entries(자막들).map(([k, v]) => [k, v.split("\n")])),
     }),
-    [세로제목, 가로제목, 커버제목, 커버부제, 편이름, 유튜브캡션, 인스타캡션, 해시태그, 올릴때, 자막들],
+    [세로제목, 가로제목, 커버제목, 커버부제, 편이름, 유튜브캡션, 인스타캡션, 해시태그, 올릴때, 그밖에, 자막들],
   );
 
   const 저장 = () =>
@@ -432,6 +436,27 @@ export function SnsReviewForm({
         </div>
       </section>
 
+
+      {/* ── 그 밖 고칠 것 (2026-08-20 사장님) ─────────────────
+          글은 위에서 고치면 로컬이 그대로 가져간다. 그런데 「커버에 엉뚱한 그림이
+          들어갔다」 같은 것은 굽는 쪽을 손봐야 한다. 적을 자리가 없어 채팅으로만 오갔다. */}
+      <section className="mt-8 rounded-xl border border-amber-300/60 bg-amber-50/50 p-5 dark:border-amber-500/30 dark:bg-amber-500/5">
+        <h2 className="font-bold text-foreground">그 밖에 고칠 것</h2>
+        <p className="mt-1 text-sm text-muted-foreground [word-break:keep-all]">
+          카피·캡션·자막 <b className="text-foreground">말고</b> 고칠 것을 적어 주세요 —
+          커버에 들어간 그림, 상단에 깔린 영상, 화면이 잘린 자리, 음악 같은 것들입니다.
+        </p>
+        <div className="mt-4">
+          <Field 라벨="무엇을 고쳐야 하나" 도움="여기에 적으면 지킴이가 다시 굽지 않고 저에게 넘깁니다 — 같은 재료로 다시 구우면 같은 것이 또 나오니까요">
+            <textarea
+              className={`${입력} min-h-28 leading-relaxed`}
+              placeholder={"보기)\n커버 마스코트가 제목을 가려요\n상단 영상이 다른 편 것 같아요\n12번 칸 화면이 오른쪽에서 잘렸어요"}
+              value={그밖에}
+              onChange={(e) => set그밖에(e.target.value)}
+            />
+          </Field>
+        </div>
+      </section>
       {/* ── 칸별 — 프레임과 자막을 나란히 ────────────────────── */}
       <h2 className="mt-10 font-bold text-foreground">
         칸마다 — 실제로 나갈 화면과 그 칸 자막

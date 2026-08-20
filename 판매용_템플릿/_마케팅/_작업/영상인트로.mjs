@@ -41,6 +41,23 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync, rmSync } from "node:fs";
 
+/* ⛔ 헤드리스 크롬은 부를 때마다 %TEMP% 아래 HeadlessChrome<난수> 를 만들고 «끝나도 안 지운다».
+   한 쪽에 한 번씩 부르는 도구는 그것이 그대로 쌓인다 —
+   2026-08-20 에 23,299개 · 34GB 가 쌓여 C 드라이브를 먹고 있었다.
+   프로필 자리를 우리가 정해 주고, 다 돌면 그 자리를 지운다. */
+const 크롬찌꺼기 = `${(process.env.TEMP || "/tmp").split(String.fromCharCode(92)).join("/")}/cc-chrome-${process.pid}`;
+(() => {                       /* 시작할 때 «묵은 것»부터 치운다 — 크롬이 물고 있어 못 지운 자리들 */
+  const fs_ = require("node:fs");
+  const 방 = 크롬찌꺼기.slice(0, 크롬찌꺼기.lastIndexOf("/"));
+  try {
+    for (const d of fs_.readdirSync(방)) {
+      if (!d.startsWith("cc-chrome-")) continue;
+      try { fs_.rmSync(방 + "/" + d, { recursive: true, force: true }); } catch { /* 아직 쓰는 중이면 다음에 */ }
+    }
+  } catch { /* 폴더가 없으면 그만 */ }
+})();
+process.on("exit", () => { try { require("node:fs").rmSync(크롬찌꺼기, { recursive: true, force: true }); } catch {} });
+
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const 마케팅 = "C:/Users/glim0/OneDrive/문서/Claude/Projects/02. 웹기획자/판매용_템플릿/_마케팅";
 /* ⚠ 2026-08-14 — 그림을 «_이미지» 한 곳으로 모을 때 이 파일을 빠뜨렸다.
@@ -121,7 +138,7 @@ function 고양이자리(q) {
         적은줄:big.querySelectorAll("br").length+1,
         고양이:네모(i), 목록:sheet?네모(sheet):null, 서명:ft?네모(ft):null});});
   <\/script></body>`), "utf8");
-  const dom = execFileSync(CHROME, ["--headless=new", "--disable-gpu", "--window-size=1080,1920",
+  const dom = execFileSync(CHROME, ["--headless=new", "--user-data-dir=" + 크롬찌꺼기,  "--disable-gpu", "--window-size=1080,1920",
     "--virtual-time-budget=5000", "--dump-dom", `file:///${잴것}?${q}`],
     { encoding: "utf8", stdio: "pipe", maxBuffer: 1 << 26 });
   const t = /<title>([\s\S]*?)<\/title>/.exec(dom)?.[1];
@@ -190,7 +207,7 @@ for (const t of 목록) {
      그래서 넉넉히 찍고 정확히 1080×1920 으로 잘라낸다(2026-08-12 재서 알았다). */
   const 넉넉 = `${W}/bg_raw.png`;
   const 바탕 = `${W}/bg.png`;
-  sh(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
+  sh(CHROME, ["--headless=new", "--user-data-dir=" + 크롬찌꺼기,  "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
     "--window-size=1080,2060", `--screenshot=${넉넉}`, "--virtual-time-budget=5000",
     `file:///${W}/cover.html?${주소(공통)}`]);
   if (!existsSync(넉넉)) throw new Error("인트로 바탕을 못 구웠습니다 (경로에 한글이 있나?)");

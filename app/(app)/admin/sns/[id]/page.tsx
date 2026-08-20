@@ -51,6 +51,7 @@ export default async function SnsReviewDetailPage({
         captionInstagram: 편.captionInstagram,
         hashtags: 편.hashtags,
         slotLabel: 편.slotLabel,
+        fixNote: 편.fixNote,
         checkResult: 편.checkResult,
         youtubeVerticalId: 편.youtubeVerticalId,
         youtubeHorizontalId: 편.youtubeHorizontalId,

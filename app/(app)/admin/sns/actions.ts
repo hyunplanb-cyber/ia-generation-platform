@@ -83,6 +83,8 @@ export async function saveContentAction(
     captionInstagram: string;
     hashtags: string;
     slotLabel: string;
+    /* 카피·캡션·자막 말고 고칠 것 — 커버 그림, 상단 영상 따위. */
+    fixNote: string;
     /** ⭐ **칸 번호(ord)** → 자막 줄 배열. 빈 줄은 버린다.
      *
      * ⚠ 전에는 «칸 row id» 로 받았는데, 로컬이 다시 보낼 때 칸을 지우고 새로 넣어서
@@ -128,6 +130,7 @@ export async function saveContentAction(
         captionInstagram: 값.captionInstagram,
         hashtags: 값.hashtags,
         slotLabel: 값.slotLabel,
+        fixNote: 값.fixNote,
         updatedAt: new Date(),
       })
       .where(eq(snsContent.id, contentId));
