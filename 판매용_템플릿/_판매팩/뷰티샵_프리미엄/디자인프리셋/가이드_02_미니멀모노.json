@@ -7,7 +7,7 @@
   "colors": {
     "primary (주요 액션)": "#111111",
     "primary-hover": "#000000",
-    "accent (강조·배지)": "#C64F28",
+    "accent (강조·배지)": "#D97757",
     "accent-text (강조 글자용)": "#A84B28",
     "accent-text-dark (어두운 바탕 글자용)": "#D97757",
     "background (페이지)": "#F0EFEB",
@@ -19,7 +19,7 @@
     "warning": "#916100",
     "danger": "#CF222E",
     "on-primary (주색 배경 위 글자)": "#FFFFFF",
-    "on-accent (강조색 배경 위 글자)": "#FFFFFF"
+    "on-accent (강조색 배경 위 글자)": "#111111"
   },
   "typography": {
     "fontFamily": "Paperlogy",
