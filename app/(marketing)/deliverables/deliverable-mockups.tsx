@@ -1,5 +1,6 @@
 // 산출물 소개 페이지용 — 각 산출물의 "샘플 화면" 미니 목업(정적, 레트로모던).
 import { ArrowRight, Check, X, Lock } from "lucide-react";
+import { DESIGN_OPTIONS, colorsFor, type DesignKey } from "@/lib/design-presets";
 
 function Frame({ children }: { children: React.ReactNode }) {
   return (
@@ -219,14 +220,23 @@ export function SpecPackMockup() {
 }
 
 /* 디자인 프리셋 — 색·글꼴이 한 벌로 묶여 있다는 것을 색 띠로 보여 준다.
-   ⚠ 값을 지어내지 않는다. lib/design-presets.ts 의 실제 세 벌에서 가져온 색이다
-     (코럴 선셋 · 모던 네이비 · 미니멀 모노). 2026-08-14. */
+   ⚠ 값을 지어내지 않는다. lib/design-presets.ts 의 실제 세 벌을 «읽어서» 쓴다.
+     2026-08-14 에는 손으로 적어 두었는데, 2026-08-20 에 포인트 색을 진하게 하면서
+     그대로 갈렸다 — 손님 화면은 코럴을 #F0654F 로 보여 주는데 팩은 #E02A0E 를 담고 있었다.
+     **손으로 적으면 반드시 갈라진다.** 뿌리에서 읽으면 다시는 안 갈린다. */
 export function PresetColorMockup() {
-  const 벌 = [
-    { 이름: "01 코럴 선셋", 색: ["#F0654F", "#F59E0B", "#FFF6F3", "#33221E"] },
-    { 이름: "02 모던 네이비", 색: ["#1E3A8A", "#0EA5E9", "#F5F7FA", "#16181D"] },
-    { 이름: "03 미니멀 모노", 색: ["#18181B", "#71717A", "#F4F4F5", "#09090B"] },
+  const 고를것: { key: DesignKey; 번호: string }[] = [
+    { key: "coral", 번호: "01" },
+    { key: "navy", 번호: "02" },
+    { key: "mono", 번호: "03" },
   ];
+  const 벌 = 고를것.map(({ key, 번호 }) => {
+    const o = DESIGN_OPTIONS.find((x: (typeof DESIGN_OPTIONS)[number]) => x.key === key)!;
+    const 바탕 =
+      Object.entries(colorsFor(key)).find(([k]) => k.replace(/ /g, "").includes("background("))?.[1] ??
+      "#F0EFEB";
+    return { 이름: `${번호} ${o.title}`, 색: [o.primary, o.accent, 바탕, o.ink] };
+  });
   return (
     <Frame>
       <div className="flex flex-col gap-3">

@@ -366,7 +366,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     font: "Pretendard (대체: Noto Sans KR). 숫자는 tabular-nums로 정렬.",
     colors: {
       "primary(주요 액션)": "#2B4A8B",
-      "accent(강조·배지)": "#FF7A30",
+      "accent(강조·배지)": "#CC4900",
       "accent-text(강조 글자용)": "#A84B28",
       "accent-text-dark(어두운 바탕 글자용)": "#FF7A30",
       "background(페이지)": "#F0EFEB",
@@ -396,7 +396,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     font: "Pretendard (대체: Inter + Noto Sans KR). 크기보다 굵기·여백으로 위계.",
     colors: {
       "primary(주요 액션)": "#111111",
-      "accent(강조)": "#D97757",
+      "accent(강조)": "#C64F28",
       "accent-text(강조 글자용)": "#A84B28",
       "accent-text-dark(어두운 바탕 글자용)": "#D97757",
       "background(페이지)": "#F0EFEB",
@@ -488,7 +488,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     font: "Pretendard (대체: Noto Sans KR). 넉넉한 줄간격으로 편안하게.",
     colors: {
       "primary(주요 액션)": "#15803D",
-      "accent(강조·배지)": "#65A30D",
+      "accent(강조·배지)": "#508307",
       "accent-text(강조 글자용)": "#166534",
       "accent-text-dark(어두운 바탕 글자용)": "#65A30D",
       "background(페이지)": "#F0EFEB",
@@ -518,7 +518,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     font: "한 벌만 쓴다. 제목을 둥글고 크게, 경쾌하게.",
     colors: {
       "primary(주요 액션)": "#E02A0E",
-      "accent(강조·배지)": "#F59E0B",
+      "accent(강조·배지)": "#A46803",
       "accent-text(강조 글자용)": "#8A5A00",
       "accent-text-dark(어두운 바탕 글자용)": "#F59E0B",
       "background(페이지)": "#F0EFEB",
