@@ -37,7 +37,7 @@
  *   npx tsx check-눈으로.mts             (완성화면이 든 팩 전부)
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, cpSync, rmSync, statSync } from "node:fs";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { readdirSync as 훑기, rmSync as 지우기 } from "node:fs";
@@ -143,6 +143,46 @@ const 재는글 = `
     /* H3 — 푸터가 «맨 아래»에 있나. 내용이 짧은데 푸터 밑이 비면 바닥에 안 붙은 것이다. */
     const 밑에남은것 = 반올림(document.documentElement.scrollHeight - (푸터.getBoundingClientRect().bottom + window.scrollY));
     if (밑에남은것 > 8) 적기("H3", "푸터 밑에 " + 밑에남은것 + "px 가 비어 있습니다 — 바닥에 안 붙었습니다");
+  }
+
+
+  /* ───────── G5 — 진행 막대가 «끝낸 만큼만» 차는가 ─────────
+     2026-08-21 에 붙였다. 사장님이 겪은 것 — 「4단계에 서 있는데 4칸이 칠해져
+     이미 끝낸 것처럼 보였다」. 지금 서 있는 단계는 «아직 안 끝난» 것이다. */
+  for (const 막대 of document.querySelectorAll(".steps, .hsteps, .stepper, .wizard, .progress-steps")) {
+    if (!보이나(막대)) continue;
+    const 칸 = [...막대.children].filter(보이나);
+    if (칸.length < 3) continue;
+    const 켜 = (el) => /(^| )(on|active|current)( |$)/.test(" " + (el.className || "") + " ");
+    const 끝 = (el) => /(^| )(done|complete|finished|past)( |$)/.test(" " + (el.className || "") + " ");
+    const 지금 = 칸.findIndex(켜);
+    if (지금 < 0) continue;
+    /* 지금 칸 «뒤»가 끝난 것으로 칠해져 있으면 앞서 간 것이다 */
+    const 앞선것 = 칸.slice(지금 + 1).filter(끝).length;
+    if (앞선것)
+      적기("G5", 이름(막대) + " — " + (지금 + 1) + "단계에 서 있는데 뒤쪽 " + 앞선것 +
+        "칸이 «끝난 것»으로 칠해져 있습니다 (지금 서 있는 단계는 아직 안 끝난 것입니다)");
+    /* 지금 칸 «앞»에 안 끝난 것이 있으면 건너뛴 것이다 */
+    const 빠뜨린것 = 칸.slice(0, 지금).filter((el) => !끝(el) && !켜(el)).length;
+    if (빠뜨린것)
+      적기("G5", 이름(막대) + " — " + (지금 + 1) + "단계에 서 있는데 앞쪽 " + 빠뜨린것 +
+        "칸이 «안 끝난 것»으로 남아 있습니다");
+  }
+
+  /* ───────── G6 — 로그인 상자 폭(420px)을 «내용 많은 화면»에 쓰지 않았나 ─────────
+     사장님이 겪은 것 — 「완료 화면 셋이 좁은 기둥에 갇혀 화면이 텅 비었다」.
+     좁은 기둥은 로그인·비밀번호처럼 «칸 몇 개»짜리 화면에 쓰는 것이다. */
+  for (const 기둥 of document.querySelectorAll("main, .wrap, .card, .box, .auth, .narrow, [class*=wrap]")) {
+    if (!보이나(기둥)) continue;
+    const r = 기둥.getBoundingClientRect();
+    if (r.width < 300 || r.width > 480) continue;                 // 좁은 기둥만
+    if (기둥.closest(".gnb, header, footer, .ft, aside")) continue;
+    /* 이 안에 «내용»이 얼마나 들었나 — 글자 수와 덩어리 수로 잰다 */
+    const 글자 = (기둥.textContent || "").replace(/\s+/g, " ").trim().length;
+    const 덩어리 = 기둥.querySelectorAll(".card, section, table, .g2, .g3, .g4, .list, .row").length;
+    if (글자 > 900 || 덩어리 >= 4)
+      적기("G6", 이름(기둥) + " 는 " + 반올림(r.width) + "px 짜리 좁은 기둥인데 글자 " + 글자 +
+        "자 · 덩어리 " + 덩어리 + "개가 들었습니다 — 로그인 상자 폭은 칸 몇 개짜리 화면에 씁니다");
   }
 
   /* ───────── H5 — GNB·LNB 가 «지금 여기»를 알려 주나 ─────────
@@ -466,6 +506,26 @@ const 재는글 = `
     뒤로가기: !!document.querySelector(".back, [class*=back]"),
     장탭: [...document.querySelectorAll("[data-go]")].map((x) => x.getAttribute("data-go")).slice(0, 12),
     탭칸: !!document.querySelector(".tabs, .tabs-pill"),
+    /* G3 — 화면이 스스로 「N/M단계」라고 말하는가 */
+    /* G3 — 화면이 스스로 「N/M단계」라고 말하는가.
+       ⚠ 여기는 템플릿 문자열 안이라 역슬래시가 먹힌다 — 정규식을 쓰면 깨진다.
+         2026-08-21 에 그렇게 재는 글이 통째로 죽어 열네 팩이 «못 잰 장»으로 나왔다.
+         손으로 훑는다. */
+    단계말: (() => {
+      const 글 = (document.body.innerText || "");
+      const 나온것 = [];
+      let 자리 = 글.indexOf("단계");
+      while (자리 > 0 && 나온것.length < 4) {
+        const 앞 = 글.slice(Math.max(0, 자리 - 10), 자리).trim();
+        const 쪽 = 앞.split("/");
+        if (쪽.length === 2) {
+          const a = Number(쪽[0].trim()), b = Number(쪽[1].trim());
+          if (a > 0 && b > 0 && b < 40 && 나온것.indexOf(a + "/" + b) < 0) 나온것.push(a + "/" + b);
+        }
+        자리 = 글.indexOf("단계", 자리 + 1);
+      }
+      return 나온것;
+    })(),
     카드모음,
     흠,
   });
@@ -475,7 +535,7 @@ const 재는글 = `
 
 type 잰것 = {
   화면: string; 콘텐츠폭: number; 세로막대: number; 상단고정: string; 위틈: number | null; 아래틈: number | null;
-  뒤로가기: boolean; 장탭: string[]; 탭칸: boolean; 흠: string[];
+  뒤로가기: boolean; 장탭: string[]; 탭칸: boolean; 흠: string[]; 단계말?: string[];
   카드모음: { 글: string; 간곳: string }[];
 };
 
@@ -494,6 +554,119 @@ function 한장재기(길: string, 화면: string): 잰것 | null {
   const t = /<title>([\s\S]*?)<\/title>/.exec(dom)?.[1];
   if (!t || !t.startsWith("{")) return null;
   try { return { 화면, ...JSON.parse(t) } as 잰것; } catch { return null; }
+}
+
+
+/* ───────── D6 · H12(폰 폭) — 375px 에서 가로로 밀리나 ─────────
+   ⛔ 오래 「못 잰다」고 적혀 있던 자리다. 헤드리스 크롬은 --window-size=390 을 줘도
+     467 밑으로 안 내려간다. 그래서 검수항목 D6 이 👁 로 남아 있었다.
+
+   ⚠ 그런데 «폭 375 짜리 iframe» 안은 진짜 375 다.
+     같은 출처(localhost)면 그 안을 들여다볼 수 있다 —
+     그래서 팩을 잠깐 서버로 띄우고, 몰이 화면 하나가 쪽들을 차례로 열어 잰다.
+     2026-08-21 에 일부러 900px 짜리를 넣어 보고 잡히는 것을 확인했다. */
+function 폰폭재기(W: string, 볼것: string[]): Map<string, { 창폭: number; 문서폭: number }> {
+  const 나온것 = new Map<string, { 창폭: number; 문서폭: number }>();
+  const 몰이 = join(W, "_폰폭.html");
+  writeFileSync(몰이, `<!doctype html><meta charset="utf-8"><body style="margin:0">
+<style>iframe{scrollbar-width:none}</style><script>
+ const 쪽들=${JSON.stringify(볼것)}, 결과=[]; let i=0;
+ const f=document.createElement("iframe");
+ f.style.cssText="width:375px;height:812px;border:0;position:absolute;left:0;top:0";
+ document.body.appendChild(f);
+ function 다음(){ if(i>=쪽들.length){document.title=JSON.stringify(결과);return;}
+  const 쪽=쪽들[i++];
+  f.onload=()=>{ try{ const d=f.contentDocument.documentElement;
+     결과.push({쪽,창폭:d.clientWidth,문서폭:d.scrollWidth});
+   }catch(e){ /* 못 들여다보면 그 장은 건너뛴다 */ }
+   setTimeout(다음,120); };
+  f.src="pages/"+쪽; }
+ 다음();
+<\/script></body>`, "utf8");
+
+  const 항 = 4300 + (process.pid % 500);
+  const 서버 = spawn("node", ["-e", `
+   const http=require("http"),fs=require("fs"),p=require("path");
+   http.createServer((q,s)=>{const 길=p.join(${JSON.stringify(W)},decodeURIComponent(q.url.split("?")[0]));
+    try{const b=fs.readFileSync(길);
+      s.writeHead(200,{"content-type":길.endsWith(".html")?"text/html; charset=utf-8":길.endsWith(".css")?"text/css":길.endsWith(".js")?"text/javascript":"application/octet-stream"});
+      s.end(b);}catch{s.writeHead(404);s.end("no");}}).listen(${항});
+  `], { stdio: "ignore" });
+  try {
+    execFileSync("node", ["-e", "setTimeout(()=>{},900)"], { stdio: "ignore" });   // 서버가 뜨기를 잠깐 기다린다
+    let dom = "";
+    try {
+      dom = execFileSync(CHROME, ["--headless=new", "--user-data-dir=" + 크롬찌꺼기, "--disable-gpu",
+        "--window-size=1200,900", "--virtual-time-budget=" + (3000 + 볼것.length * 900), "--dump-dom",
+        `http://localhost:${항}/_폰폭.html`], { encoding: "utf8", stdio: "pipe", maxBuffer: 1 << 26 });
+    } catch { /* 아래에서 «못 쟀다»로 지나간다 */ }
+    const t = (/<title>([\s\S]*?)<\/title>/.exec(dom)?.[1] ?? "").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
+    if (t.startsWith("[")) for (const x of JSON.parse(t)) 나온것.set(x.쪽, { 창폭: x.창폭, 문서폭: x.문서폭 });
+  } finally { 서버.kill(); }
+  return 나온것;
+}
+
+
+/* ───────── F6 — 밝은 화면에 «혼자 새까만» 사진이 박혔나 ─────────
+   사장님이 겪은 것 — 「뷰티샵 홈 히어로 오른쪽 위. 내용이 아니라 «밝기»가 안 맞아 튄다」.
+   ⚠ 사진 «내용»은 기계가 모른다. 그런데 «밝기»는 잴 수 있다 —
+     canvas 에 그려 화소 평균을 낸다. 옆 사진들보다 훨씬 어두우면 구멍처럼 보인다.
+   ⚠ file:// 에서는 canvas 가 더럽혀져 화소를 못 읽는다. 같은 출처(localhost)라야 한다 —
+     그래서 D6 과 같은 «몰이 화면»에 얹어 서버 한 번으로 같이 잰다. */
+function 사진밝기재기(W: string, 볼것: string[]): Map<string, string[]> {
+  const 나온것 = new Map<string, string[]>();
+  const 몰이 = join(W, "_밝기.html");
+  writeFileSync(몰이, `<!doctype html><meta charset="utf-8"><body style="margin:0"><script>
+ const 쪽들=${JSON.stringify(볼것)}, 결과={}; let i=0;
+ const f=document.createElement("iframe");
+ f.style.cssText="width:1440px;height:900px;border:0;position:absolute;left:-4000px";
+ document.body.appendChild(f);
+ const 밝기 = (img) => { try{
+   const c=document.createElement("canvas"); c.width=24; c.height=24;
+   const x=c.getContext("2d",{willReadFrequently:true});
+   x.drawImage(img,0,0,24,24);
+   const d=x.getImageData(0,0,24,24).data; let 합=0;
+   for(let k=0;k<d.length;k+=4) 합 += 0.2126*d[k] + 0.7152*d[k+1] + 0.0722*d[k+2];
+   return 합/(d.length/4)/255;
+ }catch(e){ return null; } };
+ function 다음(){ if(i>=쪽들.length){document.title=JSON.stringify(결과);return;}
+  const 쪽=쪽들[i++];
+  f.onload=()=>{ setTimeout(()=>{ try{
+      const 것들=[...f.contentDocument.querySelectorAll("img")].filter(im=>im.complete&&im.naturalWidth>8);
+      const 잰것=것들.map(im=>({이름:(im.getAttribute("src")||"").split("/").pop(),밝:밝기(im)})).filter(x=>x.밝!==null);
+      if(잰것.length>=3){
+        const 값=잰것.map(x=>x.밝).sort((a,b)=>a-b);
+        const 가운데=값[Math.floor(값.length/2)];
+        const 튀는것=잰것.filter(x=>가운데-x.밝>0.28&&x.밝<0.22);
+        if(튀는것.length) 결과[쪽]=튀는것.map(x=>x.이름+" (밝기 "+x.밝.toFixed(2)+" · 옆은 "+가운데.toFixed(2)+")");
+      }
+    }catch(e){}
+    setTimeout(다음,60); },260); };
+  f.src="pages/"+쪽; }
+ 다음();
+<\/script></body>`, "utf8");
+
+  const 항 = 4800 + (process.pid % 400);
+  const 서버 = spawn("node", ["-e", `
+   const http=require("http"),fs=require("fs"),p=require("path");
+   http.createServer((q,s)=>{const 길=p.join(${JSON.stringify(W)},decodeURIComponent(q.url.split("?")[0]));
+    try{const b=fs.readFileSync(길);
+      const e=길.split(".").pop().toLowerCase();
+      s.writeHead(200,{"content-type":e==="html"?"text/html; charset=utf-8":e==="css"?"text/css":e==="js"?"text/javascript":e==="webp"?"image/webp":e==="png"?"image/png":e==="jpg"||e==="jpeg"?"image/jpeg":"application/octet-stream"});
+      s.end(b);}catch{s.writeHead(404);s.end("no");}}).listen(${항});
+  `], { stdio: "ignore" });
+  try {
+    execFileSync("node", ["-e", "setTimeout(()=>{},900)"], { stdio: "ignore" });
+    let dom = "";
+    try {
+      dom = execFileSync(CHROME, ["--headless=new", "--user-data-dir=" + 크롬찌꺼기, "--disable-gpu",
+        "--window-size=1500,1000", "--virtual-time-budget=" + (4000 + 볼것.length * 1200), "--dump-dom",
+        `http://localhost:${항}/_밝기.html`], { encoding: "utf8", stdio: "pipe", maxBuffer: 1 << 26 });
+    } catch { /* 못 재면 지나간다 */ }
+    const t = (/<title>([\s\S]*?)<\/title>/.exec(dom)?.[1] ?? "").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
+    if (t.startsWith("{")) for (const [쪽, 것들] of Object.entries(JSON.parse(t))) 나온것.set(쪽, 것들 as string[]);
+  } finally { 서버.kill(); }
+  return 나온것;
 }
 
 function 대표고르기(pages: string): string[] {
@@ -539,6 +712,21 @@ function 팩보기(팩: string) {
 
   /* ── H1 — 콘텐츠 폭이 화면마다 같은가. «가장 흔한 폭»을 기준으로 삼는다. ── */
   const 흠들: string[] = [];
+
+  /* ── F6 — 혼자 새까만 사진 ── */
+  for (const [화면, 것들] of 사진밝기재기(W, 볼것))
+    for (const c of 것들)
+      흠들.push(`F6 · ${화면} — ${c} 가 옆 사진들보다 훨씬 어둡습니다. 밝은 화면에서 «구멍»처럼 보입니다`);
+
+
+  /* ── D6 — 폰 폭(375)에서 가로로 밀리나 ──
+     한 장씩 재는 것이 아니라 «몰이 화면» 하나로 한꺼번에 잰다(서버를 한 번만 띄운다). */
+  const 폰폭 = 폰폭재기(W, 볼것);
+  for (const [화면, v] of 폰폭) {
+    if (v.문서폭 > v.창폭 + 1)
+      흠들.push(`D6 · ${화면} — 폰 폭에서 가로로 ${v.문서폭 - v.창폭}px 밀립니다 ` +
+        `(창 ${v.창폭} · 문서 ${v.문서폭}). 표·그림은 «제 상자 안에서만» 넘기세요`);
+  }
   /* 막대를 «뺀» 폭으로 견준다. 안 그러면 목록이 길어 막대가 생긴 화면이 죄다
      「폭이 다르다」로 잡힌다 — 첫 판에서 매칭 4장이 그랬다. 폭이 다른 게 아니라
      막대가 자리를 뺏은 것이고, 그건 H1 이 아니라 H5(흔들림)다. */
@@ -560,6 +748,71 @@ function 팩보기(팩: string) {
       `(html{scrollbar-gutter:stable} 로 자리를 늘 잡아 두면 멎습니다)`);
   }
 
+  /* ── G3 — 중간 한 장면을 «못 박아» 흐름이 끊기지 않았나 ──
+     사장님이 겪은 것 — 「ES-01 이 «6단계 중 3번째»로 굳어 있었다. 나머지 다섯 단계가
+     어디에도 없었다」. 화면이 「N/M단계」라고 말하면 M개가 팩에 있어야 한다. */
+  {
+    const 말한단계 = new Map<string, { 지금: number; 모두: number }>();
+    for (const p of 잰장) for (const s of p.단계말 ?? []) {
+      const m = /^(\d+)\/(\d+)$/.exec(s);
+      if (m) 말한단계.set(p.화면, { 지금: +m[1], 모두: +m[2] });
+    }
+    /* 같은 «갈래»(앞 두 글자)의 화면이 몇 장인지 센다 */
+    const 갈래수 = new Map<string, number>();
+    for (const f of readdirSync(pages)) {
+      if (!f.endsWith(".html")) continue;
+      const k = f.slice(0, 2).toUpperCase();
+      갈래수.set(k, (갈래수.get(k) ?? 0) + 1);
+    }
+    for (const [화면, v] of 말한단계) {
+      const 있는것 = 갈래수.get(화면.slice(0, 2).toUpperCase()) ?? 0;
+      if (v.모두 > 있는것)
+        흠들.push(`G3 · ${화면} — 「${v.지금}/${v.모두}단계」라고 적었는데 그 갈래 화면은 ` +
+          `${있는것}장뿐입니다. 나머지 ${v.모두 - 있는것}단계가 팩에 없습니다`);
+    }
+  }
+
+  /* ── G7 — 한쪽 등급만 고치고 «다른 등급»을 빠뜨리지 않았나 ──
+     사장님이 겪은 것 — 「디럭스 견적 마법사를 6단계로 고치고 프리미엄은 3단계에 얼어붙은 채였다」.
+     같은 업종의 두 등급을 나란히 놓고, «같은 이름 화면»의 짜임을 견준다. */
+  {
+    const 업종 = 팩.split("_")[0];
+    const 짝 = 팩.endsWith("디럭스") ? `${업종}_프리미엄` : 팩.endsWith("프리미엄") ? `${업종}_디럭스` : null;
+    const 짝쪽 = 짝 ? join(팩방, 짝, "완성화면", "pages") : null;
+    if (짝쪽 && existsSync(짝쪽)) {
+      /* 두 등급이 «같은 이름»으로 부르는 화면을 제목으로 맞춘다 */
+      const 제목모으기 = (방: string) => {
+        const m = new Map<string, string>();
+        for (const f of readdirSync(방)) {
+          if (!f.endsWith(".html")) continue;
+          const t = /<title>([^<]*)<\/title>/.exec(readFileSync(join(방, f), "utf8"))?.[1] ?? "";
+          const 이름 = t.split("·")[0].split("&gt;")[0].split(">")[0].trim();
+          if (이름 && !m.has(이름)) m.set(이름, f);
+        }
+        return m;
+      };
+      const 이쪽 = 제목모으기(join(팩방, 팩, "완성화면", "pages"));
+      const 저쪽 = 제목모으기(짝쪽);
+      const 단계말빼기 = (방: string, f: string) => {
+        const s = readFileSync(join(방, f), "utf8");
+        return [...s.matchAll(/(\d+)\s*\/\s*(\d+)\s*단계/g)].map((m) => `${m[1]}/${m[2]}`);
+      };
+      let 어긋남 = 0;
+      for (const [이름, 이파일] of 이쪽) {
+        const 저파일 = 저쪽.get(이름);
+        if (!저파일 || 어긋남 >= 3) continue;
+        const a = 단계말빼기(join(팩방, 팩, "완성화면", "pages"), 이파일);
+        const b = 단계말빼기(짝쪽, 저파일);
+        if (!a.length || !b.length) continue;
+        const A = a[0].split("/")[1], B = b[0].split("/")[1];
+        if (A !== B) {
+          흠들.push(`G7 · ${이파일} — 「${이름}」이 이 등급은 ${A}단계인데 ${짝} 의 ${저파일} 은 ${B}단계입니다 ` +
+            `— 한쪽만 고치고 다른 등급을 빠뜨린 자국입니다`);
+          어긋남 += 1;
+        }
+      }
+    }
+  }
   /* ── H8 — «성격이 다른 상품»인데 같은 상세로 가나 ──────────────────────
      사장님(2026-08-21) — 「제품의 성격이 다른 경우 상세는 각각 가야 해. 예를 들어
      바로 구매 상품, 경매 상품, 예약 상품 이런 것들은 상세에서 보여 주는 내용도 다르고
