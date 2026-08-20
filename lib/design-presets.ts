@@ -332,6 +332,9 @@ export function accentTextOn(o: (typeof DESIGN_OPTIONS)[number], bg: string): st
  *   **「이 색 «위에» 글자를 얹을 때」가 없었다.** 그래서 AI 가 만든 화면이
  *   전부 흰 글자를 얹었고, 재 보니 두 테마의 버튼 글자가 안 읽혔다.
  *     레트로 #DE6F26 위 흰 글자 3.28 · 코럴 #F0654F 위 흰 글자 3.14
+ *   ⚠ 위 두 색은 «그때의» 값이다. 2026-08-20 에 사장님이 「코랄 조금 더 진하게 가고
+ *     흰글자로 가자」 하셔서 레트로는 #BC5918(4.58) · 코럴은 #E02A0E(4.66) 로 바꿨다.
+ *     지금은 여섯 테마가 다 흰 글자로 4.5 를 넘는다 — 노랑(#FFD54A)만 검은 글자를 쓴다.
  *   강조색은 더 나쁘다 — **여섯 중 다섯이 흰 글자로는 미달**이다
  *     네이비 2.60 · 모노 3.12 · 바이올렛 1.41 · 포레스트 3.09 · 코럴 2.15
  *
@@ -1284,12 +1287,12 @@ export function secondPreset(cfg: PresetConfig): PresetConfig | null {
 
 // 고른 "큰 방향"에 어울리는 주 색상 후보. 각 세트의 첫 색이 그 방향의 기본 주색.
 export const PRIMARY_SWATCHES_BY_STYLE: Record<DesignKey, string[]> = {
-  navy: ["#2B4A8B", "#1E3A6E", "#3B5BA5", "#2563EB", "#0E7490", "#FF7A30"],
-  mono: ["#111111", "#2B2B2B", "#454545", "#6B7280", "#0E6F60", "#DE6F26"],
-  pastel: ["#5B4FE5", "#7C6FF0", "#EC4899", "#F59E0B", "#14B8A6", "#0EA5E9"],
-  retro: ["#DE6F26", "#C2410C", "#0E6F60", "#B45309", "#A63D2A", "#1F6F5C"],
-  forest: ["#15803D", "#166534", "#0E7C66", "#65A30D", "#4D7C0F", "#0E7490"],
-  coral: ["#F0654F", "#EF4444", "#FB7185", "#F97316", "#F59E0B", "#E11D48"],
+  navy: ["#2B4A8B", "#1E3A6E", "#3B5BA5", "#2563EB", "#0E7490", "#CC4900"],
+  mono: ["#111111", "#2B2B2B", "#454545", "#6B7280", "#0E6F60", "#BC5918"],
+  pastel: ["#5B4FE5", "#7C6FF0", "#EC4899", "#A46803", "#14B8A6", "#0EA5E9"],
+  retro: ["#BC5918", "#C2410C", "#0E6F60", "#B45309", "#A63D2A", "#1F6F5C"],
+  forest: ["#15803D", "#166534", "#0E7C66", "#508307", "#4D7C0F", "#0E7490"],
+  coral: ["#E02A0E", "#EF4444", "#FB7185", "#F97316", "#A46803", "#E11D48"],
 };
 
 export function primarySwatchesFor(style: DesignKey): string[] {
