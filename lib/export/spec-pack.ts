@@ -692,7 +692,142 @@ export function buildSpecPackMarkdown(
   lines.push("- 위 「좁은 화면에서 넘치지 않게」를 **다 만든 뒤에 다시** 확인합니다. 화면이 늘어나면서 새로 넘치는 곳이 생깁니다.");
   lines.push("");
   lines.push("");
-  lines.push("### 7-9. 나온 오류는 «그 자리에서» 고칩니다");
+  /* ⛔ 2026-08-20 사장님: 「손님이 AI 도구에 스펙팩을 넣고 돌릴 때 화면이 완성되면,
+     이렇게 검수해 라고 지시할 순 없어?」 — 맞는 말이다.
+     7-1~7-8 은 전부 「눈으로 보세요 · 눌러 보세요」다. 화면이 146개면 사람은 120번째에서 놓친다.
+     우리 팩은 check-눈으로.mts 가 대신 재 준다. 손님 팩에는 그 «재는 글»을 통째로 실어 보낸다.
+     읽으라고 적어 두는 것과, 돌릴 것을 쥐여 주는 것은 다르다. */
+  lines.push("### 7-9. 기계로 재기 — 이 글을 화면마다 돌리세요");
+  lines.push("> **눈으로 세지 마세요.** 아래 글이 «옮겨 다니며 봐야 보이는 것»을 대신 재 줍니다 —");
+  lines.push("> 푸터가 본문에 맞붙었는지 · 덩어리 간격이 어긋났는지 · 버튼과 배지가 늘어났는지 ·");
+  lines.push("> 좌우로 미는 칸에 막대가 드러났는지 · 표가 제 칸을 넘쳤는지.");
+  lines.push("");
+  lines.push("**돌리는 법** — 편한 것 하나만 고르세요.");
+  lines.push("- 브라우저 개발자도구 콘솔에 그대로 붙여 넣기");
+  lines.push("- 화면마다 <script> 로 잠깐 끼워 넣고 결과를 찍기");
+  lines.push("- 헤드리스 브라우저로 열어 결과를 document.title 에 담아 꺼내기");
+  lines.push("");
+  lines.push("```js");
+  lines.push(String.raw`(() => {
+  const 흠 = [], 적기 = (칸, 말) => { const k = "[" + 칸 + "] " + 말; if (!흠.includes(k)) 흠.push(k); };
+  const 보이나 = (el) => { const s = getComputedStyle(el);
+    if (s.display === "none" || s.visibility === "hidden") return false;
+    const r = el.getBoundingClientRect(); return r.width > 2 && r.height > 2; };
+  const 이름 = (el) => el.tagName.toLowerCase() +
+    (typeof el.className === "string" && el.className ? "." + el.className.trim().split(/ +/)[0] : "");
+  const 반 = (n) => Math.round(n);
+  const 본문 = document.querySelector("main") || document.body;
+  const bs = getComputedStyle(본문);
+  const 콘텐츠폭 = 반(본문.getBoundingClientRect().width - parseFloat(bs.paddingLeft) - parseFloat(bs.paddingRight));
+  const 세로막대 = 반(window.innerWidth - document.documentElement.clientWidth);
+  const 푸터 = document.querySelector("footer");
+
+  // ① GNB 가 위에 붙어 있나
+  const 상단바 = document.querySelector("header, nav");
+  if (상단바) { const p = getComputedStyle(상단바).position;
+    if (p !== "sticky" && p !== "fixed") 적기("고정", 이름(상단바) + " 가 position:" + p + " — 굴리면 따라 올라갑니다"); }
+
+  // ② 본문과 푸터 사이가 붙었나 (그릇이 아니라 «안 마지막 알맹이»까지 잰다)
+  if (푸터 && 푸터.previousElementSibling) {
+    let 끝 = 푸터.previousElementSibling;
+    if (보이나(끝) && !/sticky|fixed/.test(getComputedStyle(끝).position)) {
+      for (let i = 0; i < 6; i++) {
+        const 안 = [...끝.children].filter((c) => 보이나(c) && getComputedStyle(c).position === "static");
+        if (!안.length) break; 끝 = 안[안.length - 1];
+      }
+      const 틈 = 반(푸터.getBoundingClientRect().top - 끝.getBoundingClientRect().bottom);
+      if (틈 >= 0 && 틈 < 16) 적기("간격", "본문과 푸터 사이가 " + 틈 + "px — " + 이름(끝) + " 바로 아래 푸터");
+    }
+  }
+
+  // ③ 덩어리 사이 간격이 그 칸의 «리듬»을 벗어났나
+  for (const 부모 of [본문, ...본문.querySelectorAll("*")]) {
+    if (!보이나(부모) || 부모.closest("table, svg")) continue;
+    const ps = getComputedStyle(부모);
+    if (/flex|grid/.test(ps.display) && ps.flexDirection !== "column") continue;
+    const 아이 = [...부모.children].filter((c) => 보이나(c) && getComputedStyle(c).position !== "absolute");
+    if (아이.length < 3) continue;
+    const 틈들 = [];
+    for (let i = 1; i < 아이.length; i++) {
+      const a = 아이[i - 1].getBoundingClientRect(), b = 아이[i].getBoundingClientRect();
+      if (b.top < a.bottom - 2) continue;
+      틈들.push({ v: 반(b.top - a.bottom), 앞: 아이[i - 1], 뒤: 아이[i] });
+    }
+    if (틈들.length < 3) continue;
+    const 벌 = 틈들.filter((x) => x.v >= 8);
+    if (벌.length < 틈들.length * 0.6) continue;
+    const 리듬 = 틈들.map((x) => x.v).sort((a, b) => a - b)[Math.floor(틈들.length / 2)];
+    for (const x of 틈들) {
+      const 붙 = x.v <= 2, 좁 = 리듬 >= 20 && x.v < 리듬 * 0.45;
+      if (!붙 && !좁) continue;
+      if ((x.앞.className || "") === (x.뒤.className || "")) continue;   // 목록 줄은 붙는 게 맞다
+      if (x.뒤 === 푸터) continue;
+      if (!붙 && /^h[1-4]$/.test(x.앞.tagName.toLowerCase())) continue;  // 제목 밑 부제는 붙는 게 맞다
+      적기("간격", 이름(x.뒤) + " 와 위 " + 이름(x.앞) + " 사이 " + x.v + "px (이 칸 리듬은 " + 리듬 + "px)");
+    }
+  }
+
+  // ④ 버튼·배지가 늘어났나 / 동그란 버튼이 타원이 됐나
+  const 부품 = [...document.querySelectorAll(".badge, .btn, button, [class*=badge], [class*=btn]")].filter((el) => {
+    if (!보이나(el)) return false;
+    // 버튼을 «담는 칸»(.btns 같은 것)은 부품이 아니다 — 넓은 게 맞다
+    if (el.querySelector(".badge, .btn, button")) return false;
+    // 일부러 칸을 꽉 채우라고 시킨 것
+    if (/block|full|wide/.test(el.className || "")) return false;
+    return true;
+  });
+  const 무리 = new Map();
+  const 열쇠 = (el) => (el.className || "").trim().split(/ +/)[0] || el.tagName;
+  for (const el of 부품) { const k = 열쇠(el); if (!무리.has(k)) 무리.set(k, []); 무리.get(k).push(el); }
+  for (const el of 부품) {
+    const s = getComputedStyle(el), r = el.getBoundingClientRect();
+    if (s.borderTopLeftRadius.includes("%") && parseFloat(s.borderTopLeftRadius) >= 40 && r.width / r.height > 1.5)
+      적기("버튼", 이름(el) + " 는 동그란 버튼인데 " + 반(r.width) + "x" + 반(r.height) + " 로 늘어나 타원이 됐습니다");
+    const rg = document.createRange(); rg.selectNodeContents(el);
+    const 글폭 = rg.getBoundingClientRect().width; if (!글폭) continue;
+    const 또래 = 무리.get(열쇠(el)) || [];
+    const 또래폭 = 또래.map((x) => x.getBoundingClientRect().width).sort((a, b) => a - b)[Math.floor(또래.length / 2)];
+    if (또래.length >= 2 && r.width < 또래폭 * 2.5) continue;             // 다 같이 넓으면 일부러 그런 것
+    const 남 = 반(r.width - 글폭 - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight));
+    if (남 > 140) 적기("늘어남", 이름(el) + " 가 " + 반(r.width) + "px 인데 글은 " + 반(글폭) +
+      "px — 부모가 flex 세로칸이면 align-items 를 주세요");
+  }
+
+  // ⑤ 좌우로 미는 칸에 «막대»가 드러났나
+  for (const el of document.querySelectorAll("*")) {
+    if (!보이나(el)) continue;
+    const s = getComputedStyle(el);
+    if (!/auto|scroll/.test(s.overflowX) || el.scrollWidth <= el.clientWidth + 2) continue;
+    const 두께 = el.offsetHeight - el.clientHeight - parseFloat(s.borderTopWidth) - parseFloat(s.borderBottomWidth);
+    if (두께 > 2) 적기("막대", 이름(el) + " 에 가로 막대가 " + 반(두께) + "px 드러납니다");
+  }
+
+  // ⑥ 표가 제 칸을 넘쳤나
+  for (const t of document.querySelectorAll("table")) {
+    if (!보이나(t) || !t.parentElement) continue;
+    const 넘침 = 반(t.scrollWidth - t.parentElement.clientWidth);
+    if (넘침 > 4) 적기("표", "표가 제 칸보다 " + 넘침 + "px 넓습니다");
+  }
+
+  return JSON.stringify({
+    화면: location.pathname.split("/").pop() || "(첫 화면)",
+    콘텐츠폭, 세로막대,
+    뒤로가기: !!document.querySelector(".back, [class*=back]"),
+    탭이가는곳: [...document.querySelectorAll("[data-go], .tab[href], .tabs a")]
+      .map((x) => x.getAttribute("data-go") || x.getAttribute("href")).filter(Boolean),
+    흠,
+  }, null, 1);
+})()`);
+  lines.push("```");
+  lines.push("");
+  lines.push("**`흠` 에 담겨 나온 것은 그 화면에서 바로 고치세요.** 하나도 안 남을 때까지 다시 돌립니다.");
+  lines.push("");
+  lines.push("**화면 «하나»로는 알 수 없는 것 셋** — 여러 화면의 결과를 모아 견주세요.");
+  lines.push("- **콘텐츠폭** 이 화면마다 다르면 옮길 때 글이 좌우로 밀립니다. 모든 화면이 한 값이어야 합니다.");
+  lines.push("- **세로막대** 가 어떤 화면은 0, 어떤 화면은 15 면 그만큼 화면이 좌우로 튑니다. `html { scrollbar-gutter: stable; }` 로 잡으세요.");
+  lines.push("- **뒤로가기** 가 `탭이가는곳` 으로 이어진 화면들 사이에서 갈리면 안 됩니다. 탭이면 넷 다 없는 쪽이 맞습니다.");
+  lines.push("");
+  lines.push("### 7-10. 나온 오류는 «그 자리에서» 고칩니다");
   lines.push("> 적어 두고 넘어가면 다음에 또 나옵니다. 찾은 김에 고치는 것이 제일 쌉니다.");
   lines.push("");
   lines.push("- 고친 뒤에는 **그 화면을 다시 눌러** 정말 고쳐졌는지 봅니다. 고쳤다고 생각만 하고 넘어가는 일이 잦습니다.");
@@ -701,7 +836,7 @@ export function buildSpecPackMarkdown(
   lines.push("- 같은 뿌리에서 난 것이면 **한 곳만 고치고 끝내지 말고** 같은 자리를 다 찾아 고칩니다.");
   lines.push("- 고칠 수 없는 것(자료가 없어서, 화면이 아직 없어서)은 **화면에 솔직히 적습니다.** 「견본이라 어느 것을 눌러도 이 화면이 열립니다」처럼요.");
   lines.push("");
-  lines.push("### 7-10. 무엇을 확인했는지 적어 주세요");
+  lines.push("### 7-11. 무엇을 확인했는지 적어 주세요");
   lines.push("- 위 항목을 **숫자로** 적어 남깁니다 — 「눌러 본 화면 N개 · 빈 링크 0개 · 반응 없는 단추 0개 · 안 걸러지는 필터 0개 · 안 눌리는 썸네일·배너 0개 · 뒤로가기 어긋남 0개 · 화면 목록 단추 없는 화면 0개 · 화면끼리 안 맞는 숫자 0개 · 가로 넘침 0개 · **고친 것 N건**」.");
   lines.push("- 숫자를 적을 수 없으면 아직 확인한 것이 아닙니다.");
   lines.push("");
