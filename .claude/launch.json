@@ -3,13 +3,10 @@
   "configurations": [
     {
       "name": "팩전체",
-      "runtimeExecutable": "npx",
+      "runtimeExecutable": "node",
       "runtimeArgs": [
-        "--yes",
-        "serve",
-        "-l",
-        "4200",
-        "판매용_템플릿/_판매팩"
+        "_작업/팩서버.mjs",
+        "4200"
       ],
       "port": 4200
     },

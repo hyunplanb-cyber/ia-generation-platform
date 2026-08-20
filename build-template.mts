@@ -30,7 +30,6 @@ import { CREATOR } from "./template-data-creator";
 import { TRAVEL } from "./template-data-travel";
 import { ADMIN } from "./template-data-admin";
 import { RENTAL } from "./template-data-rental";
-import { TICKET } from "./template-data-ticket";
 import { INTERIOR } from "./template-data-interior";
 import { MATCHING } from "./template-data-matching";
 import { GROUPBUY } from "./template-data-groupbuy";
@@ -42,7 +41,6 @@ const TEMPLATES = {
   travel: { data: TRAVEL, out: "_작업/해외투어_티켓예약", title: "해외 투어·티켓 예약 플랫폼" },
   admin: { data: ADMIN, out: "_작업/비즈니스관리_관리자시스템", title: "통합 비즈니스 관리자 시스템" },
   rental: { data: RENTAL, out: "_작업/장비렌탈_대여예약", title: "장비 렌탈·대여 예약 플랫폼" },
-  ticket: { data: TICKET, out: "_작업/공연티켓_파트너관리자", title: "공연 티켓 파트너 관리자" },
   interior: { data: INTERIOR, out: "_작업/인테리어시공_견적상담", title: "인테리어 시공 견적·시공관리" },
   matching: { data: MATCHING, out: "_작업/동네서비스_매칭플랫폼", title: "동네 서비스 매칭 플랫폼" },
   groupbuy: { data: GROUPBUY, out: "_작업/공동구매_공구플랫폼", title: "공동구매(공구) 플랫폼" },

@@ -22,7 +22,6 @@ import { buildTemplateVerifySheets, SCREEN_LIST_NOTE } from "./lib/export/templa
 
 import { expandDeep, type DeepInput } from "./template-deep";
 import { RENTAL_DEEP } from "./template-data-rental-deep";
-import { TICKET_DEEP } from "./template-data-ticket-deep";
 import { INTERIOR_DEEP } from "./template-data-interior-deep";
 import { MATCHING_DEEP } from "./template-data-matching-deep";
 import { GROUPBUY_DEEP } from "./template-data-groupbuy-deep";
@@ -38,7 +37,6 @@ const TEMPLATES: Record<string, { data: DeepInput; out: string; title: string }>
   beauty: { data: BEAUTY_DEEP, out: "_작업/뷰티샵_예약플랫폼_상세IA", title: "뷰티샵 예약 플랫폼 — 상세 IA" },
   travel: { data: TRAVEL_DEEP, out: "_작업/해외투어_티켓예약_상세IA", title: "해외 투어·티켓 예약 플랫폼 — 상세 IA" },
   rental: { data: RENTAL_DEEP, out: "_작업/장비렌탈_대여예약_상세IA", title: "장비 렌탈·대여 예약 플랫폼 — 상세 IA" },
-  ticket: { data: TICKET_DEEP, out: "_작업/공연티켓_파트너관리자_상세IA", title: "공연 티켓 파트너 관리자 — 상세 IA" },
   interior: { data: INTERIOR_DEEP, out: "_작업/인테리어시공_견적상담_상세IA", title: "인테리어 시공 견적·시공관리 — 상세 IA" },
   matching: { data: MATCHING_DEEP, out: "_작업/동네서비스_매칭플랫폼_상세IA", title: "동네 서비스 매칭 플랫폼 — 상세 IA" },
   groupbuy: { data: GROUPBUY_DEEP, out: "_작업/공동구매_공구플랫폼_상세IA", title: "공동구매(공구) 플랫폼 — 상세 IA" },
