@@ -88,14 +88,21 @@ const 잴것 = `
       else if (문서 < H - 4) 푸터틈 = Math.round(H - 문서); /* 문서가 창보다 짧다 */
     }
 
-    /* ④ 글자 겹침 — 형제끼리 사각형이 포개진 것
-       ⛔ getBoundingClientRect 를 쓰면 «여러 줄로 흐른 글»에 헛짚는다 (2026-08-20 · 장비렌탈 PD0201).
-          「원 / 1일」이 두 줄로 갈리면 그 «합친 상자»가 왼쪽 끝까지 늘어나 옆 글자를 덮은 것처럼 보인다.
-          실제로는 줄이 나뉜 것뿐 겹치지 않았다. 그래서 getClientRects() 로 «줄 상자»끼리 견준다. */
+    /* ④ 글자 겹침 — 형제끼리 «글자»가 포개진 것
+       ⛔ 2026-08-20 에 두 번 헛짚었다. 둘 다 «상자»를 쟀기 때문이다:
+          · 장비렌탈 PD0201 — 「원 / 1일」이 두 줄로 갈리자 합친 상자가 왼쪽 끝까지 늘어났다
+          · LMS ST0101 — 「전체 수강생」은 블록이라 상자가 칸 전체(53~452)를 먹는데
+            글자는 53~117 뿐이다. 오른쪽 끝의 👥(424~452)와 상자만 겹쳤다
+       ⭐ Range 로 «글자가 실제로 앉은 자리»를 잰다. 상자가 아니라 잉크를 본다. */
+    const 잉크 = (e) => {
+      const r = document.createRange();
+      r.selectNodeContents(e);
+      return [...r.getClientRects()].filter((x) => x.width > 4 && x.height > 4);
+    };
     const 겹침 = [];
     const 글자 = [...document.querySelectorAll("h1,h2,h3,h4,p,span,strong,em,li,td,th,label,dd,dt")]
       .filter((e) => e.children.length === 0 && e.textContent.trim().length > 1)
-      .map((e) => ({ e, 줄: [...e.getClientRects()].filter((r) => r.width > 4 && r.height > 4) }))
+      .map((e) => ({ e, 줄: 잉크(e) }))
       .filter((o) => o.줄.length);
     for (let i = 0; i < 글자.length && 겹침.length < 4; i += 1) {
       let 걸림 = false;
