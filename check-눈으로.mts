@@ -78,7 +78,14 @@ const 재는글 = `
   document.head.appendChild(굴림끄기);
 
   const 흠 = [];
-  const 적기 = (칸, 말) => { if (흠.length < 60) 흠.push(칸 + "|" + 말); };
+  const 본말 = new Set();
+  /* ⚠ 목록은 같은 줄이 여럿이라 «같은 흠»이 줄 수만큼 나온다. 한 장에서 한 번만 적는다.
+     첫 판에서 HO-01 한 장이 같은 말을 여덟 번 찍어 보고를 덮었다(2026-08-20). */
+  const 적기 = (칸, 말) => {
+    const k = 칸 + "|" + 말;
+    if (본말.has(k) || 흠.length >= 60) return;
+    본말.add(k); 흠.push(k);
+  };
   const 보이나 = (el) => {
     const s = getComputedStyle(el);
     if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) === 0) return false;
@@ -141,9 +148,13 @@ const 재는글 = `
   /* ───────── H2 — 덩어리가 맞붙었나 ─────────
      같은 부모의 «세로로 쌓인» 형제들 틈을 잰다. 다른 형제들은 벌어져 있는데
      한 쌍만 0 이면 그것이 붙은 것이다. 처음부터 다 붙어 있는 칸(목록·표)은 흠이 아니다. */
-  const 세로칸 = [본문, ...본문.querySelectorAll(".card-bd, .card, section, .split-r > div, .edcols > div")];
+  /* ⚠ 첫 판은 «.card-bd·.card·section…» 처럼 이름을 정해 놓고 훑었다. 그래서 매칭 CH-01 을
+     통째로 놓쳤다 — 거기는 main > … > div.split > div 로 이름 없는 칸 안에 들어 있었다.
+     사장님이 짚은 자리를 검사기가 못 보면 ✅ 라고 적은 것이 거짓말이 된다. 다 훑는다. */
+  const 세로칸 = [본문, ...본문.querySelectorAll("*")];
   for (const 부모 of 세로칸) {
     if (!부모 || !보이나(부모)) continue;
+    if (부모.closest("table, svg, .dev")) continue;
     const ps = getComputedStyle(부모);
     if (/flex|grid/.test(ps.display) && ps.flexDirection !== "column") continue;   // 가로로 세운 칸은 건너뛴다
     const 아이들 = [...부모.children].filter((c) => 보이나(c) && getComputedStyle(c).position !== "absolute");
@@ -160,14 +171,25 @@ const 재는글 = `
     /* ⚠ «대부분» 벌어져 있을 때만 붙은 것이 흠이다. 한 줄만 벌어진 칸은 영수증처럼
        원래 줄이 붙는 칸이다(매칭 .sum-row 가 그랬다 — 합계 줄만 떨어져 있다). */
     if (벌어진것.length < 잰것.length * 0.6) continue;
+    /* 이 칸이 «스스로 쓰는 리듬» — 가운뎃값. 이보다 눈에 띄게 좁으면 붙어 보인다.
+       사장님이 짚은 CH-01 「이런 것을 할 수 있어요」는 0px 이 아니라 «옆보다 좁아서» 붙어 보였다.
+       0px 만 잡으면 그런 것을 영영 못 본다. */
+    const 줄세운틈 = 잰것.map((x) => x.틈).sort((a, b) => a - b);
+    const 리듬 = 줄세운틈[Math.floor(줄세운틈.length / 2)];
     for (const x of 잰것) {
-      if (x.틈 > 2) continue;
+      const 붙음 = x.틈 <= 2;
+      const 좁음 = 리듬 >= 20 && x.틈 < 리듬 * 0.45;
+      if (!붙음 && !좁음) continue;
       /* 같은 생김새가 이어지는 것(목록 줄)은 붙는 것이 제 모습이다 */
       const 같은것 = (x.앞.className || "") === (x.뒤.className || "");
       if (같은것) continue;
+      /* 제목 → 부제는 «붙어야» 맞다. 리듬보다 좁다고 잡으면 잘 만든 자리를 흠이라 한다. */
+      const 제목인가 = /^h[1-4]$/.test(x.앞.tagName.toLowerCase()) || /t-sec|t-card|t-page|lb/.test(x.앞.className || "");
+      const 부제인가 = /t-sub|sub|desc|help|hint|caption/.test(x.뒤.className || "");
+      if (!붙음 && 제목인가 && 부제인가) continue;
       if (x.뒤 === 푸터) continue;                    // 푸터는 H4 가 맡는다 — 두 번 세지 않는다
-      적기("H2", 이름(x.뒤) + " 가 바로 위 " + 이름(x.앞) + " 에 맞붙었습니다 (다른 칸들은 " +
-        Math.min(...벌어진것.map((y) => y.틈)) + "px 이상 벌어져 있습니다)");
+      적기("H2", 이름(x.뒤) + " 와 바로 위 " + 이름(x.앞) + " 사이가 " + x.틈 + "px — " +
+        (붙음 ? "맞붙었습니다" : "이 칸이 쓰는 " + 리듬 + "px 보다 훨씬 좁습니다"));
     }
   }
 
@@ -203,10 +225,50 @@ const 재는글 = `
       if (Math.max(...키) - Math.min(...키) > 6)
         적기("H9", 이름(부모) + " 안 " + 등급 + " 버튼끼리 키가 다릅니다 — " + 키.join("·") + "px");
     }
-    /* 같은 «생김새»여야 하는데 태그가 다른 것 — span.btn 은 눌리지도 않는다 */
-    const 태그 = [...new Set(버튼.map((b) => b.tagName.toLowerCase()))];
-    if (태그.includes("span"))
-      적기("H9", 이름(부모) + " 안에 «span class=btn» 이 섞였습니다 — 눌리지 않고 크기도 따로 놉니다");
+    /* ⛔ 「span.btn 은 가짜 버튼」이라는 규칙을 처음에 넣었다가 710장을 헛짚었다(2026-08-20).
+       카드 전체가 <a> 인 짜임에서는 그 «안»에 <a>·<button> 을 넣을 수 없다(HTML 이 금한다).
+       그래서 span 으로 버튼 «모양»만 내는 것이 오히려 맞다. 밖에 감싼 것이 없을 때만 흠이다. */
+    for (const b of 버튼) {
+      if (b.tagName.toLowerCase() !== "span") continue;
+      if (b.closest("a, button")) continue;
+      적기("H9", 이름(부모) + " 안 «" + (b.textContent || "").trim().slice(0, 14) +
+        "» 는 span 이라 눌리지 않습니다 (감싼 링크도 없습니다)");
+    }
+  }
+  /* ⓒ «제 몸보다 늘어난» 배지·버튼.
+     flex 세로칸은 align-items 를 안 주면 stretch 라 배지도 버튼도 칸 폭 그대로 늘어난다.
+     공동구매 HO0101 에서 배지가 40px 이어야 할 자리에서 767px, 버튼도 102px 이 767px 이었다.
+     글이 실제로 차지한 폭(Range)과 상자 폭을 견주면 «늘어난 것»이 그대로 드러난다. */
+  /* ⚠ 「글보다 넓으면 늘어난 것」만으로는 부족하다. 로그인 화면의 SNS 버튼들처럼
+     «셋 다 나란히 꽉 채운» 것은 일부러 그런 것이다(매칭 AU-01·AU-02 가 그랬다).
+     그래서 «같은 부품끼리» 견준다 — 이 화면의 다른 .badge 가 40px 인데 혼자 767px 이면
+     그건 늘어난 것이고, 셋 다 358px 이면 그게 이 화면의 제 모습이다. */
+  const 같은부품 = new Map();
+  for (const el of document.querySelectorAll(".badge, .btn, button")) {
+    if (!보이나(el)) continue;
+    const 키 = (el.className || "").trim().split(/[ ]+/)[0] || el.tagName.toLowerCase();
+    if (!같은부품.has(키)) 같은부품.set(키, []);
+    같은부품.get(키).push(el);
+  }
+  const 가운뎃값 = (a) => { const b = [...a].sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
+  for (const el of document.querySelectorAll(".badge, .btn, button")) {
+    if (!보이나(el)) continue;
+    if (/btn-block|btn-full/.test(el.className || "")) continue;       // 일부러 꽉 채운 것
+    const r = el.getBoundingClientRect();
+    const 범위 = document.createRange(); 범위.selectNodeContents(el);
+    const 글폭 = 범위.getBoundingClientRect().width;
+    if (!글폭) continue;
+    const s = getComputedStyle(el);
+    const 안여백 = parseFloat(s.paddingLeft) + parseFloat(s.paddingRight);
+    const 남는폭 = 반올림(r.width - 글폭 - 안여백);
+    const 또래 = 같은부품.get((el.className || "").trim().split(/[ ]+/)[0] || el.tagName.toLowerCase()) || [];
+    const 또래폭 = 가운뎃값(또래.map((x) => x.getBoundingClientRect().width));
+    if (또래.length >= 2 && r.width < 또래폭 * 2.5) continue;           // 또래와 비슷하면 제 모습이다
+    if (남는폭 > 140)
+      적기(/badge/.test(el.className || "") ? "H12" : "H9",
+        이름(el) + " «" + (el.textContent || "").trim().slice(0, 14) + "» 가 " + 반올림(r.width) +
+        "px 로 늘어났습니다 — 글은 " + 반올림(글폭) + "px 뿐입니다 (" + 이름(el.parentElement) +
+        " 가 flex 인데 align-items 를 안 줘서 stretch 된 자리입니다)");
   }
 
   /* ───────── H12 · H13 — 배지 ───────── */
@@ -443,10 +505,19 @@ function 팩보기(팩: string) {
     }
   }
 
-  /* ── 장마다 잡은 흠 ── */
+  /* ── 장마다 잡은 흠. 여러 장에 똑같이 난 것은 묶어서 한 줄로 말한다 ──
+     같은 뼈대로 찍어 낸 화면들이라 한 흠은 대개 수십 장에 똑같이 난다.
+     장마다 한 줄씩 찍으면 84줄이 되고, 그러면 아무도 안 읽는다. */
+  const 같은말 = new Map<string, string[]>();
   for (const p of 잰장) for (const h of p.흠) {
+    if (!같은말.has(h)) 같은말.set(h, []);
+    같은말.get(h)!.push(p.화면);
+  }
+  for (const [h, 장들] of 같은말) {
     const [칸, 말] = h.split("|");
-    흠들.push(`${칸} · ${p.화면} — ${말}`);
+    흠들.push(장들.length === 1
+      ? `${칸} · ${장들[0]} — ${말}`
+      : `${칸} · ${장들.length}장 (${장들.slice(0, 3).join(", ")}${장들.length > 3 ? " …" : ""}) — ${말}`);
   }
 
   rmSync(W, { recursive: true, force: true });

@@ -868,3 +868,38 @@ main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
      푸터 «바로 앞 덩어리»에 최소 간격을 준다. :has(+.ft) 가 「다음이 푸터인 것」을 집는다. */
 html{scrollbar-gutter:stable}
 :where(main,.edmain,.appmain,.page-wrap)>*:has(+.ft){margin-bottom:var(--s8)}
+
+/* ═══ 검수항목 H9 · H12 · H13 — 2026-08-20 사장님이 짚은 세 가지 ═══
+
+   H12·H9 «배지·버튼 사이즈가 이상함» (공동구매 HO0101)
+     .promo .in 은 flex 세로칸인데 align-items 를 안 줬다. flex 의 기본값은 stretch 라
+     배지도 버튼도 칸 폭 그대로 늘어난다 — 배지가 40px 이어야 할 자리에서 767px 이 됐고
+     버튼도 102px 이어야 할 것이 767px 이 됐다. 한 뿌리에 두 증상이었다.
+     글(b·p)은 넓게 두어야 하니 «배지와 버튼만» 제 몸에 맞게 줄인다.
+
+   H13 «읽지 않는 채팅 개수 배지 위치가 이상함» (매칭 CH-01)
+     .rt 는 «14:31<div class=unread>2</div>» 처럼 시각과 개수를 함께 담는다.
+     그런데 .unread 가 display:inline-grid 라 «시각 옆»에 나란히 붙어 버렸다.
+     margin-top:4px 을 준 걸 보면 원래는 시각 «아래»에 놓을 셈이었다.
+     블록으로 바꾸고 margin-left:auto 로 오른쪽에 맞춘다.
+
+   H9 «찜하기 버튼 모양이 이상함» (매칭 SE-03)
+     .heart 는 34px 동그라미다. 거기에 grow·width:auto 를 얹어 가로로 늘여 타원이 됐다.
+     ⛔ 클래스를 떼면 안 된다 — app.js 가 .heart 로 찜 켜고 끄기를 붙든다.
+     넓게 쓸 때(.grow)만 동그라미를 풀고 옆 버튼과 같은 40px 로 맞춘다. */
+.promo .in>.badge,.promo .in>.btn{align-self:flex-start}
+.ch-row .unread{display:grid;width:max-content;margin:4px 0 0 auto}
+.heart.grow{width:auto;height:40px;padding:0 18px;border-radius:var(--r-btn);
+  font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+
+/* ═══ 검수항목 H10 — 2026-08-20 사장님 지적 ═══
+   「스와이프 또는 좌우 롤링으로 넘어가는 UI에 가로 스크롤이 노출되는가.
+     노출되지 않고, 화살표로 표시해야함.」
+
+   .rail 은 좌우로 밀어 보는 카드 줄이고, app.js 가 이미 «‹ ›» 화살표를 붙여 준다.
+   그런데 막대까지 같이 드러나서 카드 밑에 6px 짜리 회색 띠가 깔렸다.
+   화살표가 있으니 막대는 감춘다 — 넘길 길은 그대로 남는다.
+   ⛔ 표(.table-scroll)에는 손대지 않는다. 거기엔 화살표가 없어서
+      막대를 감추면 «넘길 수 있다는 것»을 알 길이 사라진다. */
+.rail{scrollbar-width:none;-ms-overflow-style:none}
+.rail::-webkit-scrollbar{display:none}
