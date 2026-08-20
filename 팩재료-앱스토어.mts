@@ -37,6 +37,23 @@
 import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+
+/* ⛔ 헤드리스 크롬은 부를 때마다 %TEMP% 아래 HeadlessChrome<난수> 를 만들고 «끝나도 안 지운다».
+   한 쪽에 한 번씩 부르는 도구는 그것이 그대로 쌓인다 —
+   2026-08-20 에 23,299개 · 34GB 가 쌓여 C 드라이브를 먹고 있었다.
+   프로필 자리를 우리가 정해 주고, 다 돌면 그 자리를 지운다. */
+const 크롬찌꺼기 = `${(process.env.TEMP || "/tmp").split(String.fromCharCode(92)).join("/")}/cc-chrome-${process.pid}`;
+(() => {                       /* 시작할 때 «묵은 것»부터 치운다 — 크롬이 물고 있어 못 지운 자리들 */
+  const fs_ = require("node:fs");
+  const 방 = 크롬찌꺼기.slice(0, 크롬찌꺼기.lastIndexOf("/"));
+  try {
+    for (const d of fs_.readdirSync(방)) {
+      if (!d.startsWith("cc-chrome-")) continue;
+      try { fs_.rmSync(방 + "/" + d, { recursive: true, force: true }); } catch { /* 아직 쓰는 중이면 다음에 */ }
+    }
+  } catch { /* 폴더가 없으면 그만 */ }
+})();
+process.on("exit", () => { try { require("node:fs").rmSync(크롬찌꺼기, { recursive: true, force: true }); } catch {} });
 import {
   existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, copyFileSync, rmSync, cpSync,
 } from "node:fs";
@@ -194,7 +211,7 @@ for (const 팩 of 대상) {
        오른쪽 16px·아래 90px 에 «흰 띠»가 남고 글자가 치우쳤다(2026-08-10).
        헤드리스가 창 크기와 «그리는 자리»를 꼭 같게 잡아 주지는 않는다.
        크게 찍어서 왼쪽 위 모서리부터 정확히 잘라 내면 이 어긋남이 사라진다. */
-    execFileSync(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars",
+    execFileSync(CHROME, ["--headless=new", "--user-data-dir=" + 크롬찌꺼기,  "--disable-gpu", "--hide-scrollbars",
       "--force-device-scale-factor=1", `--window-size=${크기 + 240},${크기 + 240}`,
       `--screenshot=${큰것}`, "--virtual-time-budget=2500", `file:///${WORK}/icon.html`], { stdio: "pipe" });
     if (!existsSync(큰것)) throw new Error(`아이콘 ${크기} 를 못 찍었습니다`);
@@ -228,7 +245,7 @@ for (const 팩 of 대상) {
     writeFileSync(`${WORK}/shot.html`, 샷판(색, 말, `site/pages/${장.pageId}.html`), "utf8");
     const 큰것 = `${WORK}/shot_raw.png`;
     /* 아이콘과 같은 까닭으로 크게 찍어 잘라 낸다. */
-    execFileSync(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars",
+    execFileSync(CHROME, ["--headless=new", "--user-data-dir=" + 크롬찌꺼기,  "--disable-gpu", "--hide-scrollbars",
       "--force-device-scale-factor=1", `--window-size=${샷.w + 240},${샷.h + 240}`,
       `--screenshot=${큰것}`, "--virtual-time-budget=3500", `file:///${WORK}/shot.html`], { stdio: "pipe" });
     if (!existsSync(큰것)) throw new Error(`스크린샷 ${장.pageId} 를 못 찍었습니다`);

@@ -8,6 +8,23 @@
 import { execFileSync } from "node:child_process";
 import { readdirSync, existsSync, unlinkSync } from "node:fs";
 import { resolve } from "node:path";
+
+/* ⛔ 헤드리스 크롬은 부를 때마다 %TEMP% 아래 HeadlessChrome<난수> 를 만들고 «끝나도 안 지운다».
+   한 쪽에 한 번씩 부르는 도구는 그것이 그대로 쌓인다 —
+   2026-08-20 에 23,299개 · 34GB 가 쌓여 C 드라이브를 먹고 있었다.
+   프로필 자리를 우리가 정해 주고, 다 돌면 그 자리를 지운다. */
+const 크롬찌꺼기 = `${(process.env.TEMP || "/tmp").split(String.fromCharCode(92)).join("/")}/cc-chrome-${process.pid}`;
+(() => {                       /* 시작할 때 «묵은 것»부터 치운다 — 크롬이 물고 있어 못 지운 자리들 */
+  const fs_ = require("node:fs");
+  const 방 = 크롬찌꺼기.slice(0, 크롬찌꺼기.lastIndexOf("/"));
+  try {
+    for (const d of fs_.readdirSync(방)) {
+      if (!d.startsWith("cc-chrome-")) continue;
+      try { fs_.rmSync(방 + "/" + d, { recursive: true, force: true }); } catch { /* 아직 쓰는 중이면 다음에 */ }
+    }
+  } catch { /* 폴더가 없으면 그만 */ }
+})();
+process.on("exit", () => { try { require("node:fs").rmSync(크롬찌꺼기, { recursive: true, force: true }); } catch {} });
 import sharp from "sharp";
 
 const DIR = "판매용_템플릿/_배포/판매_6종/크몽_상세이미지";
@@ -55,7 +72,7 @@ for (const f of files) {
   execFileSync(
     CHROME,
     [
-      "--headless=new",
+      "--headless=new", "--user-data-dir=" + 크롬찌꺼기, 
       "--disable-gpu",
       "--hide-scrollbars",
       "--force-device-scale-factor=2", // 크몽에서 확대해도 안 뭉개지게 2배로
