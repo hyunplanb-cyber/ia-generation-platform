@@ -101,7 +101,9 @@ async function 팩보기(zip파일: string) {
     if (!안("완성화면/assets/css/base.css")) 못됨(이름, "완성화면/assets/css/base.css 가 없습니다 — 화면이 민무늬로 열립니다");
 
     /* 옛 파일이 섞여 있으면 손님이 어느 것을 열지 헷갈린다. */
-    const 옛것 = 길들.filter((p) => /index_old|_old\.|\.bak$/.test(p)).map((p) => p.slice(뿌리.length + 1));
+    /* ⚠ 2026-08-21: build/qa.html — «우리 점검용» 화면이 네 팩의 zip 에 섞여 나갔다.
+       손님 것이 아닌데 손님이 받는다. 옛 파일과 같은 갈래로 여기서 함께 잡는다. */
+    const 옛것 = 길들.filter((p) => /index_old|_old\.|\.bak$|[\\/]qa\.html$/.test(p)).map((p) => p.slice(뿌리.length + 1));
     if (옛것.length) 걸림(이름, `옛 파일이 섞여 있습니다 — ${옛것.join(", ")}`);
 
     /* ── 예시 사진 (2026-08-11) ────────────────────────────────

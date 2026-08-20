@@ -865,19 +865,31 @@ export function buildSpecPackMarkdown(
   lines.push("");
   lines.push("```js");
   lines.push(String.raw`// node 로 돌리세요:  node 검수.mjs ./내사이트
+// ⚠ «사이트 뿌리»를 주세요. 하위 폴더까지 훑습니다 —
+//    pages/ 만 주면 한 층 위의 화면 목록(index.html)을 못 봐서
+//    거기서만 이어지는 화면이 죄다 «외톨이»로 잘못 잡힙니다.
 import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
-import { join, resolve, dirname } from "node:path";
+import { join, resolve, dirname, relative } from "node:path";
 
-const 방 = process.argv[2] || ".";
-const 쪽들 = readdirSync(방).filter((f) => f.endsWith(".html"));
+const 뿌리 = process.argv[2] || ".";
+const 쪽들 = [];
+(function 훑기(방) {
+  for (const e of readdirSync(방, { withFileTypes: true })) {
+    if (e.name.startsWith(".") || e.name === "node_modules") continue;
+    const 길 = join(방, e.name);
+    if (e.isDirectory()) 훑기(길);
+    else if (e.name.endsWith(".html")) 쪽들.push(길);
+  }
+})(뿌리);
+
 const 흠 = [];
 const 이어진곳 = new Set();
 
-for (const 쪽 of 쪽들) {
-  const 길 = join(방, 쪽);
+for (const 길 of 쪽들) {
+  const 쪽 = relative(뿌리, 길);
   const s = readFileSync(길, "utf8");
 
-  // ① 끊어진 링크 — 같은 폴더의 .html 만 본다
+  // ① 끊어진 링크
   for (const m of s.matchAll(/href="([^"]+)"/g)) {
     const v = m[1];
     if (!v || v.startsWith("#") || v.startsWith("http") || v.startsWith("mailto:")) continue;
@@ -895,16 +907,17 @@ for (const 쪽 of 쪽들) {
 
   // ③ 눌러도 아무 데도 안 가는 것
   const 빈링크 = (s.match(/href="(#|javascript:void\(0\))"/g) || []).length;
-  if (빈링크) 흠.push("[빈 링크] " + 쪽 + " 에 " + 빈링크 + "개 — 아직 없는 화면이면 «흐리게 + 안 눌리게» 두세요");
+  if (빈링크) 흠.push("[빈 링크] " + 쪽 + " 에 " + 빈링크 + "개 — 갈 곳이 있으면 잇고, 없으면 «안 눌리게» 두세요");
 
   // ④ 0바이트
   if (statSync(길).size === 0) 흠.push("[빈 파일] " + 쪽);
 }
 
 // ⑤ 외톨이 화면 — 만들어 놓고 아무 데서도 안 이어지는 쪽
-for (const 쪽 of 쪽들) {
+for (const 길 of 쪽들) {
+  const 쪽 = relative(뿌리, 길);
   if (/^(index|home)\./i.test(쪽)) continue;
-  if (!이어진곳.has(resolve(방, 쪽))) 흠.push("[외톨이] " + 쪽 + " 은 어느 화면에서도 이어지지 않습니다");
+  if (!이어진곳.has(resolve(길))) 흠.push("[외톨이] " + 쪽 + " 은 어느 화면에서도 이어지지 않습니다");
 }
 
 console.log("화면 " + 쪽들.length + "장 · 흠 " + 흠.length + "건");
