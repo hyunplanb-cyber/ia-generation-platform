@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>썸네일 틀</title>
+<link rel="stylesheet" href="카드뉴스2.css">
+<style>
+/* 썸네일 — 가로 1920×1080(유튜브) · 세로 1080×1920(쇼츠·릴스 커버)
+ * ?v=16 / ?v=9 로 고른다.
+ *
+ * 기존 썸네일(썸네일_16_뷰티샵)에서 가져온 것
+ *   with. Claude Code + 마스코트 · [업종] 편 · 큰 글자 두 줄
+ * 바꾼 것
+ *   어두운 사진 배경 + 형광 연두 → 종이 바탕 + 우리 색.
+ *   사진은 매번 업종에 맞는 걸 구해야 해서 매주 만들기가 어렵다.
+ *   종이 바탕은 글자만 갈아 끼우면 되고, 피드에서 우리 것끼리 묶여 보인다.
+ *
+ * 한 번 틀렸던 것 — 가로판을 세로판처럼 위아래로만 쌓았더니
+ * 오른쪽 절반이 텅 비고 아래가 잘렸다. 가로는 두 칸으로 나눠야 한다.
+ *
+ * 썸네일에서 지켜야 할 것 (조사값)
+ *   ① **큰 글자는 4어절 이하.** 처음엔 6단어로 적어 뒀는데 2026-08-08 에 다시 찾아보니
+ *      4단어 미만이 CTR 이 30% 높다는 값이 나왔다. 짧을수록 낫다.
+ *   ② 가장 큰 글자는 폭의 80% 이상 차지
+ *   ③ 색 대비 4.5:1 이상 — orange-text(3.51은 큰 글자 기준 통과)·teal-text(4.94) 사용,
+ *      orange(2.47)는 배경 전용
+ *   ④ 영상 첫 장면과 달라야 한다. 같으면 안 누른다
+ *   ⑤ **무엇에 대한 것인지는 부제(.sub)가 맡는다.**
+ *      큰 글자에 주제어까지 넣으려다 길어지면 ①을 어기게 된다.
+ *      큰 글자 = 후킹, 부제 = 「바이브코딩으로 …」 같은 주제어. 이 분담을 지킨다.
+ *      「다 됐다더니」처럼 우리끼리 아는 말만 큰 글자에 넣었다가
+ *      「무슨 영상인지 모르겠다」는 말을 들었다(2026-08-08).
+ */
+:root { --w: 1920px; --h: 1080px; }
+html, body { background: #55524A; }
+.t { width: var(--w); height: var(--h); position: relative; overflow: hidden;
+     background: var(--paper); display: flex; flex-direction: column;
+     padding: 56px 72px 52px; }
+
+/* 왼쪽 굵은 세로 막대 — 카드뉴스의 rule 을 세운 것 */
+.t::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 18px;
+             background: var(--orange); }
+
+.hd { display: flex; align-items: center; justify-content: space-between; flex: none; }
+.hd .with { font-family: ui-monospace, "Consolas", monospace; font-size: 32px;
+            font-weight: 700; color: var(--orange-text); letter-spacing: -.02em; }
+.hd .mascot { width: 44px; height: 33px; }
+
+/* 가운데 — 가로는 두 칸, 세로는 위아래 */
+.mid { flex: 1; display: flex; align-items: center; gap: 64px; min-height: 0; }
+.mid .l { flex: 1; min-width: 0; }
+.mid .r { width: 640px; flex: none; }
+
+.big { font-weight: 900; letter-spacing: -.045em; line-height: 1.08; font-size: 106px; }
+.big .o { color: var(--orange-text); }
+.big .t2 { color: var(--teal-text); }
+.sub { margin-top: 44px; font-size: 42px; font-weight: 800; color: var(--ink-soft);
+       letter-spacing: -.03em; line-height: 1.32; }
+
+/* 화면 목록 조각 — 점선 두 줄이 「안 만들어 주는 화면」을 말 없이 보여준다
+ *
+ * ⚠ **목록은 «언제나» 고양이보다 위에 있다** (z-index 3 > .face 의 2).
+ *   2026-08-11 사장님 지적: 「이번에도 동일하게 올라오길래 가이드가 잘못된 거 같아서.」
+ *   영상 1 도 영상 3 도 고양이가 목록의 화면 ID 를 가린 채로 올라갔다. 두 번 났다.
+ *
+ *   전에는 자리(pos)·제목 줄 수·목록 줄 수를 «사람이 눈으로» 맞춰야 겹치지 않았다.
+ *   셋 중 하나만 바뀌어도 다시 어긋나니 언젠가 또 난다. 그래서 눈이 아니라 규칙으로 막는다.
+ *
+ *   **고양이가 목록 뒤로 들어간다.** 겹쳐도 글자는 안 가려지고, 뒤에서 빼꼼 나온 것처럼
+ *   보여서 오히려 자연스럽다. 이제 pos 를 아무 데나 놓아도 목록은 늘 읽힌다.
+ *   ⚠ z-index 는 position 이 있어야 먹는다. relative 를 빼지 마라. */
+.sheet { border: 3px solid var(--line); border-radius: 16px; overflow: hidden;
+         background: var(--card); position: relative; z-index: 3; }
+.sheet .cap { padding: 18px 26px; background: var(--green); color: #EFE9D9;
+              font-size: 26px; font-weight: 800; }
+.sheet .r { display: flex; align-items: center; gap: 18px; padding: 22px 26px;
+            border-top: 2px solid var(--line); font-size: 32px; font-weight: 700; }
+.sheet .r.ghost { border-top-style: dashed; color: var(--tan); }
+.sheet .id { font-family: ui-monospace, "Consolas", monospace; font-size: 25px;
+             color: var(--tan); width: 176px; flex: none; }
+.sheet .q { margin-left: auto; font-size: 30px; font-weight: 900; color: var(--orange-text); }
+.sheet .ok { margin-left: auto; font-size: 25px; font-weight: 800; color: var(--teal-text); }
+
+.ft { flex: none; padding-top: 30px; border-top: 3px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between; }
+.ft .logo { display: flex; align-items: center; gap: 13px; }
+.ft .dot { width: 26px; height: 26px; border-radius: 50%; background: var(--orange); }
+.ft .name { font-size: 31px; font-weight: 800; }
+.ft .ep { font-size: 31px; font-weight: 800; color: var(--teal-text); }
+
+/* 세로판 */
+.v9 .t { padding: 100px 76px 92px; }
+/* 가운데 정렬이던 것을 «위쪽»으로 바꿨다 (2026-08-12 사장님: 「제목 위치가 좀 아래긴해」).
+   가운데로 두면 제목이 화면 한복판까지 내려온다. 쇼츠는 위 3분의 1 에서 읽히므로 올려야 한다.
+   padding-top 으로 머리말과의 사이만 띄운다. */
+.v9 .mid { flex-direction: column; align-items: stretch; justify-content: flex-start;
+           gap: 56px; padding-top: 150px; }
+/* 가로판의 flex:1 을 안 풀면 왼쪽 칸이 세로로 늘어나 목록이 바닥에 붙는다.
+   실제로 그렇게 나왔었다. */
+.v9 .mid .l { flex: none; }
+.v9 .mid .r { width: auto; }
+/* ⚠ 큰 글자는 «절대 줄이지 않는다» (2026-08-12 사장님: 「폰트 사이즈를 왜케 줄였어」).
+   줄이 넘치면 글자를 줄이고 싶어지는데, 그러면 후킹이 죽는다. **글자는 두고 카피를 고친다.**
+   한 줄에 «일곱 자 남짓»(118px 기준)까지다. 넘치면 줄을 나눈다 — 넉 줄까지 내려와도 된다.
+   아래에 여유가 넉넉하다. 나누는 자리는 낱말과 뜻을 보고 정한다(가로 폭에 맡기지 않는다). */
+.v9 .big { font-size: 118px; }
+.v9 .sub { font-size: 54px; color: var(--orange-text); }
+.v9 .hd .with { font-size: 36px; }
+.v9 .sheet .r { font-size: 36px; padding: 26px 30px; }
+.v9 .sheet .id { font-size: 28px; width: 200px; }
+
+/* 얼굴 — ?face=cat 하나뿐이다.
+   2026-08-09 에 캐릭터를 삼색 고양이로 정하면서 개(숯먹개)·사람 아바타·짝을 다 뺐다.
+   자리를 남겨 두면 언젠가 누가 다시 쓴다. 주인공이 둘이면 어느 쪽도 안 기억된다. */
+.face { position: absolute; display: none; z-index: 2; }
+.face img { display: block; }
+.face.on { display: block; }
+/* 삼색 고양이 — 2026-08-09 부터 이게 주인공이다(아바타·숯먹개는 안 쓴다).
+   포즈마다 가로세로가 제각각이라(늘어짐은 눕고 기본_앞모습은 선다) 폭이 아니라
+   **높이**를 고정한다. 폭으로 맞추면 누운 포즈가 커지고 선 포즈가 작아진다.
+   굽기 전에 고른 포즈를 `cat.png` 라는 이름으로 옆에 복사해 둔다. */
+.face.cat { right: 40px; bottom: 84px; }
+.face.cat img { height: 440px; width: auto;
+                filter: drop-shadow(0 26px 40px rgba(32,38,28,.22)); }
+/* bottom 140 → 175 (2026-08-12). 140 이면 고양이 발이 아래 «서명줄»을 21px 넘어가
+   로고와 편 이름 위에 얹혔다. 서명줄 위가 1759, 고양이 아래가 1780 이었다.
+   175 로 올리면 아래가 1745 라 14px 남는다. 영상인트로.mjs 가 이걸 재서 막는다. */
+.v9 .face.cat { right: 30px; bottom: 175px; }
+.v9 .face.cat img { height: 480px; }
+
+/* ── 어디에 놓을지 — 오른쪽 아래에만 놓지 않는다 ──────────────────
+ *
+ * 다섯 장을 오른쪽 아래로 통일해 냈더니 피드에서 다 같은 카드로 보였다.
+ * 고양이는 표정과 자세가 제각각인데 자리까지 같으면 그 재미가 안 산다.
+ * 그래서 자리를 골라 쓴다 — `?face=cat` 에 `?pos=` 를 더한다.
+ *
+ *   br    오른쪽 아래 (기본)
+ *   bl    왼쪽 아래 — 글이 오른쪽으로 몰릴 때
+ *   tr    오른쪽 위 — 제목 위 여백이 빌 때
+ *   peek  아래에서 빼꼼. 일부러 잘리게 올린다. 놀람·의심에 잘 맞는다
+ *   big   크게, 가장자리 밖으로 흘림 — 표지처럼 한 장으로 세울 때
+ *   head  얼굴만 동그랗게 확대 — 표정이 세게 잡힐 때(굳이_·깜짝 같은 것)
+ *
+ * ⚠ **자리 때문에 목록이 가려질 걱정은 하지 않아도 된다.** 목록(.sheet)이 고양이보다
+ *   위에 오게 해 두었다(2026-08-11). 겹치면 고양이가 뒤로 들어간다.
+ *   전에는 여기에 「아래 「목록 접기」 항목 참고」라고 적혀 있었는데 **그런 항목이 없었다.**
+ *   없는 데를 보라고 적어 두고 사람이 눈으로 맞추게 두었더니 두 번 어긋난 채로 나갔다.
+ *
+ * ⚠ 그래도 **굽고 나면 눈으로 한 번 본다.** 고양이가 «제목»을 무는 것은 z-index 로
+ *   안 막힌다 — 제목은 목록이 아니니까. 제목이 세 줄이 되면 tr 과 부딪친다.
+ *   그때는 제목을 두 줄로 줄인다. 자리를 옮기는 것보다 그쪽이 낫다. */
+.face.cat.bl   { left: 40px; right: auto; bottom: 84px; }
+/* tr(오른쪽 위) — top 36 → 118, 높이 330 → 250 (2026-08-18).
+   옛 삼색 고양이는 그림 둘레에 빈 자리가 있어 36 이어도 안 부딪혔다.
+   긴머리 그림은 둘레를 바짝 잘라 놔서 36 이면 «머리 위 커피잔»이 위로 잘리고
+   오른쪽 위 로고와 겹친다. 머리띠 줄이 y 96 에서 끝나고 산출물 표가 y 380 에서
+   시작하므로, 그 사이(118~368)에 넣는다. */
+  .face.cat.tr   { right: 56px; bottom: auto; top: 118px; }
+  .face.cat.tr img { height: 250px; }
+/* 일부러 잘리게 두는 게 핵심이다. 다 보이면 「빼꼼」이 아니다.
+   처음엔 아래로 잘리게 했는데 **맨 아래 서명줄(카페인컬러 · OO 편)을 덮었다.**
+   아래는 늘 글자가 있는 자리라 안 된다. 그래서 **오른쪽 가장자리로** 들이밀게 바꿨다. */
+.face.cat.peek { right: -90px; bottom: 200px; }
+.face.cat.peek img { height: 470px; }
+/* 크게 쓸 땐 아래 서명줄을 밟기 쉽다.
+   계산으로는 아래 여백 52 + 윗선 30 + 글자 31 ≈ 113 이면 될 것 같지만,
+   **실제로 재 보니 120 으로도 의자 다리가 「공동구매 사이트 편」 글자를 물었다.**
+   포즈 그림마다 아래쪽 여백이 달라서 계산만으로는 안 맞는다. 넉넉히 170 을 준다. */
+.face.cat.big  { right: -30px; bottom: 170px; }
+.face.cat.big img { height: 600px; }
+.v9 .face.cat.bl   { left: 24px; right: auto; bottom: 140px; }
+/* ⛔ 세로 커버에서 tr(오른쪽 위)은 «제목을 가린다» (2026-08-20 사장님 지적).
+   세로 제목은 118px 로 크고 두세 줄이라 위쪽을 다 쓴다. 거기에 그림을 얹으면 둘째 줄
+   오른쪽이 통째로 덮인다 — 「같은 지시서인데」·「내 사업엔 화면이」가 그랬다.
+   그래서 세로판 tr 은 «제목 아래»로 내린다. */
+.v9 .face.cat.tr   { right: 30px; bottom: auto; top: 620px; }
+.v9 .face.cat.tr img { height: 420px; }
+.v9 .face.cat.peek { right: -80px; bottom: 300px; }
+.v9 .face.cat.peek img { height: 520px; }
+/* 세로판은 아래 여백 92 + 윗선 30 + 글자 31 ≈ 153 이라 160 부터 안전하다 */
+.v9 .face.cat.big  { right: -40px; bottom: 160px; }
+.v9 .face.cat.big img { height: 700px; }
+
+/* 얼굴만 — 포즈 그림은 몸까지 다 들어 있어서 작게 넣으면 표정이 안 보인다.
+   동그라미로 오려 확대한다. 맞춰야 하는 값이 둘이다:
+     --facey   얼굴이 그림의 위아래 어디쯤인지 (위쪽일수록 작은 값). 기본 14%
+     --facezoom 얼마나 당길지. 기본 1
+   **세로로 긴 포즈(굳이_ 1647×2578)는 오려내기만 해도 얼굴이 차는데,
+   정사각에 가까운 포즈(커피_없어 2185×2578)는 오려도 몸이 다 들어와서 얼굴이 작다.**
+   그때 --facezoom 을 1.6~1.9 로 준다. 당기는 기준점도 얼굴 자리로 맞춰야 안 어긋난다. */
+.face.cat.head { right: 72px; top: 50%; bottom: auto; transform: translateY(-50%);
+                 width: 400px; height: 400px; overflow: hidden; border-radius: 999px;
+                 background: var(--card); border: 12px solid var(--primary-soft);
+                 box-shadow: 0 26px 40px rgba(32,38,28,.20); }
+.face.cat.head img { width: 100%; height: 100%; object-fit: cover;
+                     object-position: 50% var(--facey, 14%);
+                     transform: scale(var(--facezoom, 1));
+                     transform-origin: 50% var(--facey, 14%); filter: none; }
+.v9 .face.cat.head { right: 40px; top: auto; bottom: 230px; transform: none;
+                     width: 440px; height: 440px; }
+/* 세로판에서 얼굴 동그라미가 목록 오른쪽 끝(「?」 칸)을 물었다. 목록을 더 줄여 비켜 준다 */
+body.pos-head.v9 .sheet { max-width: 520px; }
+
+
+/* 얼굴이 들어가면 목록과 겹치므로 목록 폭을 줄인다 */
+.hasface .sheet { max-width: 620px; }
+.v9.hasface .sheet { max-width: 600px; }
+
+/* 가로판에 고양이를 앉히면 목록 칸을 덮는다 — 폭을 줄이는 걸로는 안 된다.
+ *
+ * 재 보면 답이 나온다. 가로판은 1920 폭에 좌우 여백 72,
+ * 목록 칸(.mid .r)이 640 이라 x 1208~1848 을 쓴다.
+ * 고양이는 오른쪽에서 40 띄우고 높이 440 인데, **폭이 포즈마다 다르다** —
+ * 세로로 선 포즈(기본_앞모습)는 282, 옆으로 누운 포즈(늘어짐)는 532 까지 간다.
+ * 넓은 포즈면 x 1348~1880 이라 **목록의 절반이 통째로 가린다.**
+ * (사람 아바타를 쓰던 시절에도 같은 일이 있었다 — 「됨」 배지가 뒤로 숨었다.)
+ *
+ * 목록을 620 으로 줄여 봐야 640 에서 20 줄어드는 것이라 아무 소용이 없다.
+ * 게다가 포즈마다 폭이 달라서 「이만큼 줄이면 된다」는 값을 못 정한다.
+ * 그래서 가로판에서 **오른쪽에 몸통째로 서는 자리(br·big·peek)일 때만 목록을 접는다.**
+ * 큰 글자와 고양이만 남는데, 썸네일 규칙 ①②(짧은 글자·큰 글자)와도 오히려 맞는다.
+ *
+ * **왼쪽(bl)·위(tr)·얼굴만(head) 은 목록을 그대로 둔다** — 안 겹치니까 접을 이유가 없다.
+ * 오히려 목록까지 같이 보여야 「우리는 산출물을 파는 곳」이라는 게 전해진다.
+ * 세로판은 위아래로 쌓여서 어느 자리든 안 겹치므로 늘 목록을 둔다.
+ */
+body.pos-br:not(.v9) .mid .r,
+body.pos-big:not(.v9) .mid .r,
+body.pos-peek:not(.v9) .mid .r { display: none; }
+body.pos-br:not(.v9) .mid,
+body.pos-big:not(.v9) .mid,
+body.pos-peek:not(.v9) .mid { gap: 0; }
+</style>
+</head>
+<body>
+
+<div class="t">
+  <div class="hd">
+    <span class="with">with. Claude Code</span>
+    <svg class="mascot" viewBox="0 0 46 34"><g fill="#E4762C">
+      <rect x="8" y="4" width="30" height="26" rx="3"/><rect x="0" y="12" width="8" height="6"/>
+      <rect x="38" y="12" width="8" height="6"/><rect x="12" y="30" width="6" height="4"/>
+      <rect x="28" y="30" width="6" height="4"/></g>
+      <g fill="#FBF6E9"><rect x="14" y="12" width="6" height="7"/><rect x="26" y="12" width="6" height="7"/></g>
+    </svg>
+  </div>
+
+  <div class="mid">
+    <div class="l">
+      <h1 class="big" id="big">어떤 화면은<br><span class="o">안 만들어 줍니다.</span></h1>
+      <p class="sub" id="sub">사이트는 다 나온 것처럼<br>보이는데요.</p>
+    </div>
+    <div class="r">
+      <div class="sheet">
+        <div class="cap">02_IA_화면목록.xlsx</div>
+        <div class="r"><span class="id">PCPR1000</span><span>예약하기</span><span class="ok">만듦</span></div>
+        <div class="r ghost"><span class="id">PCPR1001</span><span>예약 · 마감</span><span class="q">?</span></div>
+        <div class="r ghost"><span class="id">PCCH1002</span><span>결제 · 실패</span><span class="q">?</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span class="logo"><span class="dot"></span><span class="name">카페인컬러</span></span>
+    <span class="ep" id="ep">뷰티샵 예약 사이트 편</span>
+  </div>
+
+  <div class="face cat"><img src="cat.png" alt=""></div></div>
+
+<script>
+const q = new URLSearchParams(location.search);
+if (q.get("v") === "9") {
+  document.documentElement.style.setProperty("--w", "1080px");
+  document.documentElement.style.setProperty("--h", "1920px");
+  document.body.classList.add("v9");
+}
+if (q.has("big")) {
+  const 줄 = q.get("big").split("|");
+  document.getElementById("big").innerHTML = 줄.join("<br>");
+  /* 줄이 늘면 글자를 줄인다 — 안 줄이면 한 줄이 통째로 흘러넘쳐 아래가 다 밀린다.
+     한 줄에 들어가는 글자 수는 «칸 폭 ÷ (글자크기 × 0.955)» 로 대충 잡힌다(자간 -0.045em). */
+}
+/* 부제는 «없을 수도» 있다. 세로 표지는 2초뿐이라 큰 글자 3줄만 읽히고 부제는 못 읽는다
+   (2026-08-12 사장님: 「커버가 2초 정도라서 서브카피까지 읽을 시간이 좀 없어」).
+   빈 값을 주면 자리까지 없앤다 — 안 그러면 빈 줄만큼 아래가 밀린다. */
+if (q.has("sub")) {
+  const v = q.get("sub").trim();
+  if (v) document.getElementById("sub").innerHTML = v.split("|").join("<br>");
+  else document.getElementById("sub").style.display = "none";
+}
+if (q.has("ep"))  document.getElementById("ep").textContent = q.get("ep");
+
+/* ?rows= 와 ?sheet= — 목록 조각을 그 회차 것으로 갈아 끼운다. 2026-08-17 에 넣었다.
+ *
+ * 넣기 전에는 세 줄이 «뷰티샵 예약» 값(PCPR1000 예약하기…)으로 박혀 있었다.
+ * 그래서 「장비 렌탈 161개 화면」이라고 적힌 썸네일에 예약 화면 ID 가 떠 있었고,
+ * 클로드 코드 명령을 다루는 카드에도 예약 목록이 붙었다.
+ * 이 목록은 손님이 «그 회차의 산출물» 로 읽는 자리라, 다르면 그냥 거짓말이 된다.
+ * (같은 까닭으로 영상틀_169.html 에도 같은 날 ?rows= 를 넣었다.)
+ *
+ *   ?sheet=02_IA_화면목록.xlsx
+ *   ?rows=BK0201,보증금·결제,ok|BK0401,결제 실패,q
+ *   줄은 | 로, 칸은 , 로 나눈다. 끝이 ok 면 「만듦」, 그 밖이면 점선 + 「?」.
+ * 세 줄이 알맞다. 네 줄부터는 세로판에서 아래 서명줄과 부딪힌다. */
+if (q.has("sheet")) document.querySelector(".sheet .cap").textContent = q.get("sheet");
+if (q.has("rows")) {
+  const 머리 = document.querySelector(".sheet .cap").outerHTML;
+  document.querySelector(".sheet").innerHTML = 머리 + q.get("rows").split("|").map((줄) => {
+    const [id, 이름, 상태] = 줄.split(",");
+    return 상태 === "ok"
+      ? `<div class="r"><span class="id">${id}</span><span>${이름}</span><span class="ok">만듦</span></div>`
+      : `<div class="r ghost"><span class="id">${id}</span><span>${이름}</span><span class="q">?</span></div>`;
+  }).join("");
+}
+
+const face = q.get("face");
+if (["cat"].includes(face)) {
+  const el = document.querySelector(".face." + face);
+  el.classList.add("on");
+  // ?pos=br|bl|tr|peek|big|head — 없으면 오른쪽 아래
+  const pos = ["br", "bl", "tr", "peek", "big", "head"].includes(q.get("pos")) ? q.get("pos") : "br";
+  el.classList.add(pos);
+  document.querySelector(".t").classList.add("hasface");
+  document.body.classList.add("hasface", "pos-" + pos);
+  // 얼굴만 쓸 때 위아래 맞추기 — ?facey=8% 처럼
+  if (q.has("facey"))    el.style.setProperty("--facey", q.get("facey"));
+  if (q.has("facezoom")) el.style.setProperty("--facezoom", q.get("facezoom"));
+
+  /* ?facehide=1 — 자리는 그대로 두고 «고양이 그림만» 감춘다. 2026-08-10 에 넣었다.
+   *
+   * 왜 필요한가 — 쇼츠는 커스텀 썸네일을 안 쓰고 «영상 속 한 장면»을 보여준다.
+   * 그래서 썸네일과 같은 그림을 «영상 첫 장면»으로 넣기로 했는데,
+   * 사장님이 「고양이를 살짝 움직여 달라」고 하셨다. 움직이려면 고양이가 따로 놀아야 한다.
+   *
+   * 그런데 face 를 아예 빼고 구우면 «목록 칸 폭»이 달라진다(.hasface 규칙이 안 걸린다).
+   * 그러면 표지와 썸네일이 다른 그림이 된다. 그래서 **자리 계산은 그대로 두고 그림만** 감춘다.
+   * 고양이는 굽는 쪽이 같은 좌표에 얹어 흔든다 — 좌표는 `_작업/README.md` 에 적어 뒀다. */
+  if (q.get("facehide") === "1") el.querySelector("img").style.visibility = "hidden";
+}
+</script>
+</body>
+</html>

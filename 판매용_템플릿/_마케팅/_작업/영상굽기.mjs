@@ -179,6 +179,18 @@ function 마스코트영상고르기(편이름) {
     writeFileSync(최근길, JSON.stringify({ 갱신: new Date().toISOString(), 편: 편이름, 최근: 새최근 }, null, 2) + "\n", "utf8");
   } catch { /* 못 적어도 굽는 것은 계속한다 */ }
 
+  /* ⭐ 편별로도 적어 둔다 — 인트로(커버)가 «그 편에 쓴 영상»과 짝을 맞추려면 필요하다.
+     _최근.json 은 마지막 편 것만 기억해서, 여러 편을 이어 구우면 커버가 엉뚱한 짝을 잡는다.
+     2026-08-20 에 실제로 그랬다(두 편 다 「온천」으로 잡혔다). */
+  try {
+    const 편별길 = `${마스코트영상방}/_편별.json`;
+    let 편별 = {};
+    try { 편별 = JSON.parse(readFileSync(편별길, "utf8")); } catch { /* 처음 */ }
+    편별[편이름] = 고른것;
+    writeFileSync(편별길, JSON.stringify(편별, null, 1) + String.fromCharCode(10), "utf8");
+
+  } catch { /* 못 적어도 굽는 것은 계속한다 */ }
+
   console.log(`   마스코트 영상: ${고른것}${안쓴것.length ? "" : "  (한 바퀴 돌아 다시 씀)"}`);
   return `${마스코트영상방}/${고른것}`;
 }
