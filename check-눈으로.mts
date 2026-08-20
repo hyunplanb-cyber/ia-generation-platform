@@ -159,9 +159,19 @@ const 재는글 = `
       const c = " " + (a.className || "") + " ";
       return /[ ](on|active|current|is-on|selected)[ ]/.test(c) || a.hasAttribute("aria-current");
     });
-    if (켜진것.length === 0)
-      적기("H5", 이름(메뉴칸) + " 에 «지금 여기» 표시가 없습니다 — 링크 " + 고리.length +
-        "개 가운데 켜진 것이 하나도 없습니다");
+    if (켜진것.length === 0) {
+      /* ⚠ 2026-08-21 사장님 결정 — 「공구 상세처럼 소속을 모르면 메뉴의 포커싱은 없어도 좋아」.
+         상세 화면(DE-01)은 메뉴에 제 갈래가 아예 없다. 켤 것이 없는데 «안 켰다»고 하면
+         고칠 수 없는 흠을 매주 다시 찍는 셈이다. 메뉴에 «제 갈래가 있을 때»만 흠으로 친다. */
+      const 지금 = (document.body.dataset.page || "").slice(0, 2);
+      const 갈래있나 = 지금 && 고리.some((a) => {
+        const 갈곳 = (a.getAttribute("href") || "").split("/").pop().split("#")[0].replace(/.html$/, "");
+        return 갈곳.slice(0, 2) === 지금;
+      });
+      if (갈래있나)
+        적기("H5", 이름(메뉴칸) + " 에 «지금 여기» 표시가 없습니다 — 링크 " + 고리.length +
+          "개 가운데 켜진 것이 하나도 없습니다");
+    }
     else if (켜진것.length > 1)
       적기("H5", 이름(메뉴칸) + " 에 «지금 여기» 가 " + 켜진것.length + "군데 켜져 있습니다");
   }
