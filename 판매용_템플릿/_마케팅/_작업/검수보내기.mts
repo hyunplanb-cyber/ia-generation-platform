@@ -41,6 +41,10 @@ const 덮어쓰기 = process.argv.includes("--덮어쓰기");
    사장님이 검수 화면에서 글을 다 쓰신 뒤, 내가 자막만 다시 써야 하는 자리가 있다.
    그때 통째로 덮어쓰면 사장님 글이 또 날아간다. 이 길로 가면 «칸»만 갈린다. */
 const 자막만 = process.argv.includes("--자막만");
+/* ⭐ 녹화본이 사라져 «본편을 다시 못 굽는» 편이 있다 (2026-08-20).
+   그때는 커버와 캡션만 고치고 본편은 그대로 간다 — 「묵은 것」 검사가 본편을 막으면 안 된다.
+   ⚠ 지킴이가 스스로 판단해 붙인다. 사람이 손으로 붙이는 깃발이 아니다. */
+const 본편그대로 = process.argv.includes("--본편그대로");
 if (!대본길 || !회차) {
   console.error('쓰는 법: npx tsx 검수보내기.mts <대본.json> <회차> [올릴글.md]');
   console.error('예)      … 대본_펫유치원.json "4주차_2026-08-31"');
@@ -149,7 +153,11 @@ const 대본들: 대본[] = JSON.parse(readFileSync(대본길, "utf8"));
 const 인트로길 = 올릴글길?.endsWith(".json") ? 올릴글길 : undefined;
 if (올릴글길 && !인트로길) console.log("⚠ 올릴글 md 는 이제 캡션에 넣지 않습니다 — 캡션은 대본의 「캡션」 칸에서 옵니다.");
 
-function 인트로설정(이름: string): { title?: string; cap?: string; 낼길?: string } | undefined {
+/* ⛔ 이 함수는 인트로설정 파일을 «스스로 찾아» 준다. 그런데 «어느 파일이었는지»를 안 돌려줘서,
+   명령줄에 인트로를 안 준 회차는 DB 의 introPath 가 빈 채로 들어갔다.
+   지킴이는 introPath 로 커버를 다시 굽는다 — 비어 있으면 커버를 영영 못 바꾼다.
+   2026-08-20 에 운영자화면 편이 그래서 커버가 안 바뀌었다. 찾은 길을 같이 돌려준다. */
+function 인트로설정(이름: string): { title?: string; cap?: string; 낼길?: string; 찾은길?: string } | undefined {
   const 후보 = 인트로길
     ? [인트로길]
     : readdirSync(dirname(resolve(대본길)))
@@ -159,7 +167,7 @@ function 인트로설정(이름: string): { title?: string; cap?: string; 낼길
     try {
       const 들 = JSON.parse(readFileSync(길, "utf8")) as { 이름?: string; title?: string; cap?: string; 낼길?: string }[];
       const 맞는 = 들.find((s) => s.이름 === 이름);
-      if (맞는) return 맞는;
+      if (맞는) return { ...맞는, 찾은길: 길 };
     } catch { /* 못 읽는 파일은 넘어간다 — 다른 것에서 찾으면 된다 */ }
   }
   return undefined;
@@ -207,7 +215,7 @@ for (const 편 of 대본들) {
     const 인트로 = 인트로설정(이름)?.낼길;
 
     const 묵음: string[] = [];
-    for (const [무엇, 길] of [["세로 본편", 영상], ["가로 본편", 가로]] as const) {
+    for (const [무엇, 길] of (본편그대로 ? [] : [["세로 본편", 영상], ["가로 본편", 가로]]) as readonly (readonly [string, string])[]) {
       if (!existsSync(길)) { 묵음.push(`${무엇}이 없습니다`); continue; }
       if (때(길) < 본편틀) 묵음.push(`${무엇}(${언제(때(길))})이 영상틀(${언제(본편틀)})보다 옛것입니다`);
     }
@@ -274,7 +282,8 @@ for (const 편 of 대본들) {
       videoHorizontal: join(구운방, `${이름}_169.mp4`),
       /* ⭐ 지킴이가 다시 구우려면 «어느 대본에서 왔는지»를 알아야 한다 (2026-08-18). */
       scriptPath: resolve(대본길),
-      introPath: 인트로길 ? resolve(인트로길) : "",
+      /* 명령줄에 안 줬어도 스스로 찾은 길을 적는다 — 지킴이가 이걸 보고 커버를 다시 굽는다. */
+      introPath: 인트로길 ? resolve(인트로길) : (설정?.찾은길 ? resolve(설정.찾은길) : ""),
       coverDataUri: 커버,
       ep: (편 as { ep?: string }).ep ?? "",
       music: (편 as { 음악?: string }).음악 ?? "",

@@ -108,6 +108,23 @@ function 썸네일찾기(이름표: string): string {
 }
 
 /* ── ① 제작중 — 검수기 글로 다시 굽고 되올린다 ───────────────────── */
+/** 대본이 가리키는 녹화본을 «있는 그대로» 모은다. 없는 것을 가려내려고 쓴다.
+ *  ⛔ 2026-08-20 에 `14. 펫유치원/펫유치원2.mp4` 가 사라졌는데, 대본 넷이 아직 그걸 가리켰다.
+ *     그대로 두면 영상굽기가 죽고 회차가 통째로 멈춘다. 미리 세어서 갈라 놓는다. */
+function 대본이쓰는녹화본(대본길: string): { 적힌것: string; 길: string }[] {
+  const 릴스 = join(여기, "..", "릴스영상");
+  const 본 = new Map<string, string>();
+  try {
+    const j = JSON.parse(readFileSync(대본길, "utf8"));
+    for (const 편 of (Array.isArray(j) ? j : [j])) {
+      for (const k of (편.칸들 ?? [])) {
+        for (const s of (k.shots ?? [])) if (s.clip) 본.set(s.clip, join(릴스, s.clip));
+      }
+    }
+  } catch { /* 대본을 못 읽으면 부를 쪽에서 이미 멈춘다 */ }
+  return [...본].map(([적힌것, 길]) => ({ 적힌것, 길 }));
+}
+
 async function 다시굽기(편: typeof snsContent.$inferSelect) {
   /* ⛔ 「그 밖에 고칠 것」이 적혀 있으면 다시 굽지 않는다 (2026-08-20 사장님).
 
@@ -133,14 +150,30 @@ async function 다시굽기(편: typeof snsContent.$inferSelect) {
   }
   const 인트로 = 편.introPath && existsSync(편.introPath) ? 편.introPath : "";
 
-  돌리기("검수기 글을 로컬로 가져오기", "npx", [
-    "tsx", join(여기, "글가져오기.mts"), 편.scriptPath, 인트로 || 편.scriptPath, 편.batch, 편.slug,
-  ]);
-  돌리기("자막 검사", "npx", [
-    "tsx", join(여기, "자막검사.mts"), 편.scriptPath, ...(인트로 ? [인트로] : []),
-  ]);
-  돌리기("영상 굽기", "node", [join(여기, "영상굽기.mjs"), 편.scriptPath]);
-  if (인트로) 돌리기("커버 붙이기", "node", [join(여기, "영상인트로.mjs"), 인트로]);
+  /* ⛔ 녹화본이 사라진 편이 있다 (2026-08-20 · `14. 펫유치원/펫유치원2.mp4`).
+     그대로 두면 영상굽기가 「녹화본이 없습니다」로 죽고 회차가 통째로 멈춘다.
+     ⭐ 그런데 «커버»는 아직 바꿀 수 있다 — 커버는 따로 굽고 «이미 구운 본편» 앞에 이어 붙일 뿐이다.
+        그러니 죽지 말고 «할 수 있는 것까지»는 하고, 무엇을 못 했는지 정확히 말한다. */
+  const 없는녹화본 = 대본이쓰는녹화본(편.scriptPath).filter((c) => !existsSync(c.길));
+  if (없는녹화본.length) {
+    말("  ⚠ 녹화본이 없어 «본편»은 다시 못 굽습니다:");
+    for (const c of 없는녹화본) 말(`     · ${c.적힌것}`);
+    말("     → 커버와 캡션만 반영합니다. 상단 띠와 자막은 그대로 갑니다.");
+    돌리기("검수기 글을 로컬로 가져오기", "npx", [
+      "tsx", join(여기, "글가져오기.mts"), 편.scriptPath, 인트로 || 편.scriptPath, 편.batch, 편.slug,
+    ]);
+    if (인트로) 돌리기("커버만 다시 굽기", "node", [join(여기, "영상인트로.mjs"), 인트로]);
+    else 말("  ⛔ 인트로설정이 없어 커버도 못 바꿉니다 — 손으로 한 번 봐 주세요.");
+  } else {
+    돌리기("검수기 글을 로컬로 가져오기", "npx", [
+      "tsx", join(여기, "글가져오기.mts"), 편.scriptPath, 인트로 || 편.scriptPath, 편.batch, 편.slug,
+    ]);
+    돌리기("자막 검사", "npx", [
+      "tsx", join(여기, "자막검사.mts"), 편.scriptPath, ...(인트로 ? [인트로] : []),
+    ]);
+    돌리기("영상 굽기", "node", [join(여기, "영상굽기.mjs"), 편.scriptPath]);
+    if (인트로) 돌리기("커버 붙이기", "node", [join(여기, "영상인트로.mjs"), 인트로]);
+  }
   /* ⛔ 순서가 중요하다 (2026-08-18에 실제로 막혔다).
      검수보내기는 «approved 인 편»을 건드리지 않는다 — 사장님 판단을 지우지 않으려는 장치다.
      그런데 다시굽기가 하는 일이 바로 «approved 된 것을 다시 굽는 것»이라,
@@ -151,9 +184,12 @@ async function 다시굽기(편: typeof snsContent.$inferSelect) {
   }
 
   돌리기("검수기에 되올리기", "npx", [
-    "tsx", join(여기, "검수보내기.mts"), 편.scriptPath, 편.batch, ...(인트로 ? [인트로] : []), "--자막만",
+    "tsx", join(여기, "검수보내기.mts"), 편.scriptPath, 편.batch, ...(인트로 ? [인트로] : []),
+    "--자막만", ...(없는녹화본.length ? ["--본편그대로"] : []),
   ]);
-  말("  ✅ 다시 구웠습니다 — 「검토대기」로 돌려 뒀습니다.");
+  말(없는녹화본.length
+    ? "  ✅ 커버와 캡션만 다시 했습니다 — 「검토대기」로 돌려 뒀습니다. (상단 띠·자막은 그대로입니다)"
+    : "  ✅ 다시 구웠습니다 — 「검토대기」로 돌려 뒀습니다.");
 }
 
 /* ── ② 등록 중 — 유튜브(비공개) + 드라이브 ───────────────────────── */
