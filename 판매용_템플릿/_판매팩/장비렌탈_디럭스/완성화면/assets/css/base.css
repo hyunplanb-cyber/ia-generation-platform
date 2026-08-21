@@ -823,3 +823,22 @@ html{scrollbar-gutter:stable}
    지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
 .ph > img[data-예시] ~ .lb{display:none}
 /* ── 예시 사진 끝 ── */
+
+/* D6 마무리 — 남은 넷 (2026-08-21)
+     ① .kv 는 «120px + 1fr» 인데 1fr 은 min-width:auto 라 «내용보다 못 줄어든다».
+        「결제액의 5% (첫 공구는 0%)」 같은 긴 글이 들어가면 칸이 안 줄고 넘친다.
+     ② 달력도 같다 — repeat(7,1fr) 이라 7칸이 내용만큼 버틴다.
+     ③ 「이어보기」처럼 줄 오른쪽에 붙는 버튼이 든 줄이 안 접힌다.
+   ⚠ 1fr 은 «최소 내용 폭»을 지킨다. 줄이려면 minmax(0,1fr) 이라고 적어야 한다 —
+     좁은 화면 넘침의 절반이 여기서 온다. */
+@media (max-width:560px){
+  .kv{grid-template-columns:minmax(0,1fr);gap:var(--s1) 0}
+  .kv dt{margin-top:var(--s2)}
+  .cal-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .cal-d{min-height:44px;padding:6px 0;font-size:13px}
+  .cal-d .p{font-size:9px}
+  /* 줄 오른쪽에 붙는 버튼이 든 줄은 접는다 */
+  .lrow,.crow,.item,.list-row,.ch-row,.card-ft,.hero-cta,.actions,.between{flex-wrap:wrap}
+  /* 1fr 격자는 폰에서 «줄어들 수 있게» */
+  .g2,.g3,.g4,.g5,.g6,.grid,.cards{grid-template-columns:minmax(0,1fr)}
+}
