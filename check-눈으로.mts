@@ -103,7 +103,15 @@ const 재는글 = `
   const 콘텐츠폭 = 반올림(본문틀.width - parseFloat(본문스.paddingLeft) - parseFloat(본문스.paddingRight));
 
   const 상단바 = document.querySelector("header, .ednav, .topbar, .gnb");
-  const 푸터 = document.querySelector("footer, .ft");
+  /* ⚠ querySelector("footer, .ft") 는 «먼저 나오는 것»을 집는다 — 선택자 순서가 아니라
+     문서 순서다. 이 팩들은 카드 아랫단에도 .ft 를 쓴다. 그래서 여행 MY1303 에서
+     본문 한가운데(719px)의 카드 아랫단을 «푸터»로 집고 「푸터 밑에 3016px 이 남았다」고
+     했다. 진짜 푸터는 3439px 에 멀쩡히 바닥에 있었다. (2026-08-21)
+     → 바닥 푸터는 body(또는 main) «바로 밑»에 있다. 거기부터 찾고, 없으면 맨 끝엣것. */
+  const 푸터 =
+    document.querySelector("body > footer, body > .ft") ||
+    document.querySelector("main > footer, main > .ft") ||
+    [...document.querySelectorAll("footer, .ft")].pop() || null;
 
   /* H3 — 상단바가 «붙어» 있나. sticky/fixed 가 아니면 굴릴 때 따라 올라간다. */
   let 상단고정 = "없음";
@@ -155,8 +163,21 @@ const 재는글 = `
         적기("H4", "본문과 푸터 사이가 " + 아래틈 + "px 뿐입니다 (" + 이름(끝알맹이) + " 바로 아래 푸터)");
     }
     /* H3 — 푸터가 «맨 아래»에 있나. 내용이 짧은데 푸터 밑이 비면 바닥에 안 붙은 것이다. */
-    const 밑에남은것 = 반올림(document.documentElement.scrollHeight - (푸터.getBoundingClientRect().bottom + window.scrollY));
-    if (밑에남은것 > 8) 적기("H3", "푸터 밑에 " + 밑에남은것 + "px 가 비어 있습니다 — 바닥에 안 붙었습니다");
+    /* ⚠ 예전엔 scrollHeight 에서 푸터 아랫변을 뺐다. 그런데 여행 MY1303 에서
+       문서는 3781px 인데 푸터를 765px 자리로 읽어 「3016px 이 비었다」고 했다.
+       브라우저에서 열어 보니 푸터는 3423..3718 로 멀쩡히 바닥에 있었다 — 두 값을
+       서로 다른 순간에 읽은 탓이다. (2026-08-21)
+       그래서 «문서 높이»를 묻지 않고 «푸터 밑에 실제로 무엇이 남았나»를 묻는다.
+       한 번에 같이 재니 어긋날 일이 없고, 묻는 말도 사람 말에 가깝다. */
+    const 푸터밑 = 푸터.getBoundingClientRect().bottom;
+    let 제일아래 = 푸터밑;
+    for (const c of document.body.children) {
+      if (!보이나(c) || c === 푸터 || c.contains(푸터)) continue;
+      if (/dev/.test(c.className || "")) continue;             // 우리 점검용 딱지는 손님 화면이 아니다
+      제일아래 = Math.max(제일아래, c.getBoundingClientRect().bottom);
+    }
+    const 밑에남은것 = 반올림(제일아래 - 푸터밑);
+    if (밑에남은것 > 8) 적기("H3", "푸터 밑에 " + 밑에남은것 + "px 가 더 있습니다 — 푸터가 맨 아래가 아닙니다");
   }
 
 
@@ -403,7 +424,11 @@ const 재는글 = `
   const 가운뎃값 = (a) => { const b = [...a].sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
   for (const el of document.querySelectorAll(".badge, .btn, button")) {
     if (!보이나(el)) continue;
-    if (/btn-block|btn-full/.test(el.className || "")) continue;       // 일부러 꽉 채운 것
+    /* 일부러 꽉 채운 것 — btn-w 는 이름부터 «넓은 단추»다. 목록에서 빠져 있어
+       인테리어 「준공 승인하고 잔금 결제」 같은 큰 단추를 흠이라 했다. (2026-08-21) */
+    if (/btn-block|btn-full|btn-w/.test(el.className || "")) continue;
+    /* 칸에 혼자 서 있으면 꽉 채우는 것이 제 모습이다 — 나란한 것이 없으니 견줄 것도 없다 */
+    if (el.parentElement && [...el.parentElement.children].filter((c) => 보이나(c)).length === 1) continue;
     const r = el.getBoundingClientRect();
     const 범위 = document.createRange(); 범위.selectNodeContents(el);
     const 글폭 = 범위.getBoundingClientRect().width;
