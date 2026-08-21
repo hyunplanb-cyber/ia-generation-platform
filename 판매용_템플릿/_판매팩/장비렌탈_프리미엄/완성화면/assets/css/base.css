@@ -863,3 +863,41 @@ html{scrollbar-gutter:stable}
       막대를 감추면 «넘길 수 있다는 것»을 알 길이 사라진다. */
 .rail{scrollbar-width:none;-ms-overflow-style:none}
 .rail::-webkit-scrollbar{display:none}
+
+
+/* ═══ 검수항목 D6 — 폰 폭에서 «가로로 밀리는 것» (2026-08-21) ═══
+
+   오래 「기계로는 못 잰다」고 적어 둔 자리였다. 헤드리스 크롬이 467px 밑으로 안 내려가서다.
+   폭 375 짜리 iframe 안에서 재게 하니 열네 팩 중 다섯에서 나왔다 — 4px 부터 78px 까지.
+
+   무엇이 밀었나 — 셋이었다
+     ① 머리띠 오른쪽 묶음(.gnb-util) — 크레딧·알림·버튼·프로필이 한 줄로 늘어서 261px
+     ② 감싸지 않은 표 — .table 은 min-width 520px 인데 그냥 놓여 있었다
+     ③ 고르는 칸(select) — width 150px 이 두 개 나란히 서면 넘친다
+
+   ⚠ 「좌우로 벌리는 줄에 긴 것이 들어오면 내려보낸다」 — 우리가 스펙팩에 적어 둔 규칙이다.
+     정작 우리 팩이 안 지키고 있었다. */
+@media (max-width:560px){
+  /* ① 머리띠 오른쪽은 접히게 두고, 자리를 많이 먹는 글자 버튼은 숨긴다 */
+  .gnb-util,.ednav-util,.gnb-in,.ednav-in{flex-wrap:wrap;min-width:0}
+  .gnb-util>.btn:not(.btn-pri):not(.btn-primary){display:none}
+
+  /* ② 감싸지 않은 표는 «제 상자 안에서만» 넘기게 한다 */
+  .table:not(.table-wrap .table):not(.table-scroll .table){display:block;overflow:auto hidden;max-width:100%}
+
+  /* ③ 고르는 칸·글 넣는 칸이 제 줄을 넘지 않게 */
+  select,input,textarea,.input,.sel{max-width:100%}
+
+  /* ④ 좌우로 벌리는 줄은 접는다 (스펙팩 「좁은 화면에서 넘치지 않게」와 같은 규칙) */
+  .row-b,.btns,.pager,.tabs,.filters,.chips{flex-wrap:wrap}
+}
+
+/* D6 덧붙임 — 첫 판에서 못 잡은 둘 (2026-08-21)
+     ① 옆 기둥(.edcols·.split-l)이 폰에서 안 접혀 200px 짜리 LNB 가 그대로 남았다
+     ② 줄(.row·.row-c)이 안 접혀 width:150px 짜리 고르는 칸 둘이 넘쳤다 */
+@media (max-width:560px){
+  .edcols,.split-l,.split-r,.split{grid-template-columns:minmax(0,1fr)}
+  .edrail,.side,.sticky{position:static;max-width:100%}
+  .row,.row-c,.wrap-row,.field-row{flex-wrap:wrap}
+  [style*="width:150px"],[style*="width: 150px"]{max-width:100%}
+}

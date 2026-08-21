@@ -151,7 +151,17 @@ const 재는글 = `
      이미 끝낸 것처럼 보였다」. 지금 서 있는 단계는 «아직 안 끝난» 것이다. */
   for (const 막대 of document.querySelectorAll(".steps, .hsteps, .stepper, .wizard, .progress-steps")) {
     if (!보이나(막대)) continue;
-    const 칸 = [...막대.children].filter(보이나);
+    /* ⚠ 사이에 낀 «화살표»(.sep · › · —)는 단계가 아니다.
+         2026-08-21 첫 판에서 그것까지 세는 바람에 멀쩡한 LMS 두 팩을 헛짚었다.
+         「done › on › 빈칸」이 정상인데 › 를 «안 끝난 칸»으로 봤다. */
+    const 칸 = [...막대.children].filter((c) => {
+      if (!보이나(c)) return false;
+      const cn = " " + (c.className || "") + " ";
+      if (/[ ](sep|divider|arrow|line|bar)[ ]/.test(cn)) return false;
+      const 글 = (c.textContent || "").trim();
+      if (글.length <= 1 && !/[0-9]/.test(글)) return false;      // › — · 같은 것
+      return true;
+    });
     if (칸.length < 3) continue;
     const 켜 = (el) => /(^| )(on|active|current)( |$)/.test(" " + (el.className || "") + " ");
     const 끝 = (el) => /(^| )(done|complete|finished|past)( |$)/.test(" " + (el.className || "") + " ");

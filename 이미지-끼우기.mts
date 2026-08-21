@@ -138,7 +138,25 @@ const 어디있나 = (파일: string) => 사진방들.find((d) => existsSync(joi
 function 사진고르기(): Map<string, string[]> {
   const 방 = join(이미지방, 업종);
   const 공용방 = join(이미지방, "공용");
-  const 있는것 = (d: string) => (existsSync(d) ? readdirSync(d).filter((f) => f.endsWith(".webp")) : []);
+  /* ⚠ «혼자 새까만» 사진은 빼고 고른다 (검수항목 F6 · 2026-08-21).
+       밝은 화면에 어두운 사진 한 장이 박히면 «구멍»처럼 보인다.
+       사진 331장을 canvas 로 재서 밝기 0.24 밑 13장을 _어두운사진.csv 에 적어 두었다.
+       ⛔ 사진을 지우지는 않는다 — 어두운 화면(히어로·짙은 띠)에는 쓸 자리가 있다.
+         여기서 «밝은 자리에 자동으로 끼우는» 것만 피한다. */
+  const 어두운것 = (() => {
+    const 표길 = join(이미지방, "_어두운사진.csv");
+    if (!existsSync(표길)) return new Set<string>();
+    const 쪼개기 = new RegExp("[" + String.fromCharCode(92) + String.fromCharCode(92) + "/]");
+    return new Set(readFileSync(표길, "utf8").split(String.fromCharCode(10)).slice(1)
+      .map((l) => {
+        const 앞 = (l.split(",")[0] ?? "").replace(/^"|"$/g, "");
+        return 앞.split(쪼개기).pop() ?? "";
+      })
+      .filter(Boolean));
+  })();
+  const 있는것 = (d: string) => (existsSync(d)
+    ? readdirSync(d).filter((f) => f.endsWith(".webp") && !어두운것.has(f))
+    : []);
   const 업종사진 = 있는것(방);
   const 공용사진 = 있는것(공용방);
   if (!업종사진.length && !공용사진.length) {
@@ -160,6 +178,10 @@ function 사진고르기(): Map<string, string[]> {
          「이미지 영역 (짐 사진 · 권장 1200×900)」이라고 «맞는 말»을 하는데,
          엉뚱한 사진은 «틀린 말»을 한다. 빈 것보다 틀린 것이 나쁘다. */
       if (파일 === "(비움)") { 비울역할.add(역할); continue; }
+      /* ⚠ «혼자 새까만» 사진은 배치표에 적혀 있어도 안 쓴다 (검수항목 F6 · 2026-08-21).
+         있는것() 만 걸렀더니 소용이 없었다 — 어느 사진을 쓸지는 «배치표»가 정하기 때문이다.
+         밝은 화면에 어두운 사진이 박히면 구멍처럼 보인다. 어두운 화면용으로 창고에는 남긴다. */
+      if (어두운것.has(파일)) continue;
       const 방이름 = 어디있나(파일);
       if (!방이름) { console.error(`배치.csv 가 부르는 사진을 못 찾았습니다: ${파일}`); process.exit(1); }
       const 어디 = `${방이름}/${파일}`;

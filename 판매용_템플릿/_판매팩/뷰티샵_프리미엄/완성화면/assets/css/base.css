@@ -835,27 +835,6 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .list{display:flex;flex-direction:column;gap:var(--stack-gap)}
 .list-row + .list-row{margin-top:var(--stack-gap)}
 .card + .card:not(.mt-sec):not([class*="mt-"]){margin-top:var(--stack-gap)}
-
-/* ── 예시 사진 ──────────────────────────────────────────────
-   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
-   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
-
-/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
-   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
-   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
-   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
-   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
-   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
-.ph{position:relative}
-.ph > img[data-예시]{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; display:block;
-}
-/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
-   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
-.ph > img[data-예시] ~ .lb{display:none}
-/* ── 예시 사진 끝 ── */
-
 /* ⛔ 2026-08-19 검수 촬영에서 잡은 것 — 세 가지를 한 번에 고친다.
    ① overflow-x 만 열면 세로축이 딸려 올라와 테두리 1px 때문에 세로 스크롤바가 생긴다.
    ② 푸터가 바닥에 안 붙어, 짧은 화면에서는 화면 가운데 떠 있었다.
@@ -931,3 +910,61 @@ html{scrollbar-gutter:stable}
       막대를 감추면 «넘길 수 있다는 것»을 알 길이 사라진다. */
 .rail{scrollbar-width:none;-ms-overflow-style:none}
 .rail::-webkit-scrollbar{display:none}
+
+
+/* ═══ 검수항목 D6 — 폰 폭에서 «가로로 밀리는 것» (2026-08-21) ═══
+
+   오래 「기계로는 못 잰다」고 적어 둔 자리였다. 헤드리스 크롬이 467px 밑으로 안 내려가서다.
+   폭 375 짜리 iframe 안에서 재게 하니 열네 팩 중 다섯에서 나왔다 — 4px 부터 78px 까지.
+
+   무엇이 밀었나 — 셋이었다
+     ① 머리띠 오른쪽 묶음(.gnb-util) — 크레딧·알림·버튼·프로필이 한 줄로 늘어서 261px
+     ② 감싸지 않은 표 — .table 은 min-width 520px 인데 그냥 놓여 있었다
+     ③ 고르는 칸(select) — width 150px 이 두 개 나란히 서면 넘친다
+
+   ⚠ 「좌우로 벌리는 줄에 긴 것이 들어오면 내려보낸다」 — 우리가 스펙팩에 적어 둔 규칙이다.
+     정작 우리 팩이 안 지키고 있었다. */
+@media (max-width:560px){
+  /* ① 머리띠 오른쪽은 접히게 두고, 자리를 많이 먹는 글자 버튼은 숨긴다 */
+  .gnb-util,.ednav-util,.gnb-in,.ednav-in{flex-wrap:wrap;min-width:0}
+  .gnb-util>.btn:not(.btn-pri):not(.btn-primary){display:none}
+
+  /* ② 감싸지 않은 표는 «제 상자 안에서만» 넘기게 한다 */
+  .table:not(.table-wrap .table):not(.table-scroll .table){display:block;overflow:auto hidden;max-width:100%}
+
+  /* ③ 고르는 칸·글 넣는 칸이 제 줄을 넘지 않게 */
+  select,input,textarea,.input,.sel{max-width:100%}
+
+  /* ④ 좌우로 벌리는 줄은 접는다 (스펙팩 「좁은 화면에서 넘치지 않게」와 같은 규칙) */
+  .row-b,.btns,.pager,.tabs,.filters,.chips{flex-wrap:wrap}
+}
+
+/* D6 덧붙임 — 첫 판에서 못 잡은 둘 (2026-08-21)
+     ① 옆 기둥(.edcols·.split-l)이 폰에서 안 접혀 200px 짜리 LNB 가 그대로 남았다
+     ② 줄(.row·.row-c)이 안 접혀 width:150px 짜리 고르는 칸 둘이 넘쳤다 */
+@media (max-width:560px){
+  .edcols,.split-l,.split-r,.split{grid-template-columns:minmax(0,1fr)}
+  .edrail,.side,.sticky{position:static;max-width:100%}
+  .row,.row-c,.wrap-row,.field-row{flex-wrap:wrap}
+  [style*="width:150px"],[style*="width: 150px"]{max-width:100%}
+}
+
+/* ── 예시 사진 ──────────────────────────────────────────────
+   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
+   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
+
+/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
+   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
+   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
+   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
+   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
+   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
+.ph{position:relative}
+.ph > img[data-예시]{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
+   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
+.ph > img[data-예시] ~ .lb{display:none}
+/* ── 예시 사진 끝 ── */
