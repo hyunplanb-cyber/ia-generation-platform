@@ -307,9 +307,22 @@ const 재는글 = `
       const 같은것 = (x.앞.className || "").trim().split(/ +/)[0] === (x.뒤.className || "").trim().split(/ +/)[0];
       if (같은것) continue;
       /* 제목 → 부제는 «붙어야» 맞다. 리듬보다 좁다고 잡으면 잘 만든 자리를 흠이라 한다. */
-      const 제목인가 = /^h[1-4]$/.test(x.앞.tagName.toLowerCase()) || /t-sec|t-card|t-page|lb/.test(x.앞.className || "");
+      /* 길잡이(빵부스러기)는 다음 덩어리와 «한 덩어리»다 — 붙어 있는 것이 맞다.
+         2026-08-21 에 「crumb 와 page-hd 사이 12px」을 흠이라 했는데 그게 제 모습이었다. */
+      /* «‹ 뒤로» 링크도 길잡이다 — 제목 바로 위에 얹히는 것이 제 모습이다 (2026-08-21) */
+      const 길잡이인가 = /crumb|breadcrumb|path|back/.test(x.앞.className || "") || x.앞.tagName.toLowerCase() === "nav";
+      if (!붙음 && 길잡이인가) continue;
+      /* 누군가 «이 값으로» 정해 둔 자리는 흠이 아니다.
+         LMS 의 .by{margin-top:2px}, 매칭 .pro-row .one{margin-top:2px} 처럼 2px 는
+         «이름 바로 밑에 한 줄 소개»를 붙이려고 손으로 적은 값이었다.
+         여백이 0 인 채로 붙은 것만 «어쩌다 붙은 것»이다. (2026-08-21) */
+      if (붙음 && (parseFloat(getComputedStyle(x.앞).marginBottom) || 0) +
+                  (parseFloat(getComputedStyle(x.뒤).marginTop) || 0) > 0) continue;
+      const 제목인가 = /^h[1-4]$/.test(x.앞.tagName.toLowerCase()) || /t-sec|t-card|t-page|lb/.test(x.앞.className || "");
       const 부제인가 = /t-sub|sub|desc|help|hint|caption/.test(x.뒤.className || "");
-      if (!붙음 && 제목인가 && 부제인가) continue;
+      /* 제목 바로 밑 부제는 0px 이어도 맞다 — 줄 높이가 알아서 띄운다.
+         처음엔 «좁다» 일 때만 넘겼는데 0px 짝이 그대로 걸려 잘 만든 자리를 흠이라 했다. */
+      if (제목인가 && 부제인가) continue;
       if (x.뒤 === 푸터) continue;                    // 푸터는 H4 가 맡는다 — 두 번 세지 않는다
       적기("H2", 이름(x.뒤) + " 와 바로 위 " + 이름(x.앞) + " 사이가 " + x.틈 + "px — " +
         (붙음 ? "맞붙었습니다" : "이 칸이 쓰는 " + 리듬 + "px 보다 훨씬 좁습니다"));
@@ -387,11 +400,23 @@ const 재는글 = `
     const 또래 = 같은부품.get((el.className || "").trim().split(/[ ]+/)[0] || el.tagName.toLowerCase()) || [];
     const 또래폭 = 가운뎃값(또래.map((x) => x.getBoundingClientRect().width));
     if (또래.length >= 2 && r.width < 또래폭 * 2.5) continue;           // 또래와 비슷하면 제 모습이다
+    /* ⚠ 2026-08-21 — 여기서 «align-items 를 안 줘서 stretch» 라고 단정했는데 그게 틀렸다.
+       뷰티샵 ST0102 의 «취소 / 방문 완료로 바꾸기» 는 flex:1 1 0% 가 적혀 있었다.
+       한 줄을 반씩 나눠 쓰라고 «일부러» 적어 둔 것이지 늘어난 것이 아니다.
+       그래서 (1) 스스로 자라라고 적힌 것은 넘기고 (2) 세로로 쌓은 더미는 꽉 채우는 것이
+       제 모습이니 터무니없이 넓을 때만 잡고 (3) 까닭은 «지어내지 말고 실제로 읽어» 적는다. */
+    const 부모 = el.parentElement; if (!부모) continue;
+    const ps = getComputedStyle(부모);
+    if (parseFloat(s.flexGrow) > 0) continue;                          // flex:1 — 나눠 쓰라고 적어 둔 것
+    const 세로더미 = ps.display.indexOf("flex") >= 0 && ps.flexDirection.indexOf("column") === 0;
+    if (세로더미 && r.width <= 480) continue;                           // 카드 안 세로 단추 더미는 제 모습
+    const 까닭 = ps.display.indexOf("flex") >= 0
+      ? 이름(부모) + " 가 flex(" + ps.flexDirection + ") 인데 align-items 가 " + ps.alignItems + " 입니다"
+      : 이름(부모) + " 는 " + ps.display + " 입니다";
     if (남는폭 > 140)
       적기(/badge/.test(el.className || "") ? "H12" : "H9",
         이름(el) + " «" + (el.textContent || "").trim().slice(0, 14) + "» 가 " + 반올림(r.width) +
-        "px 로 늘어났습니다 — 글은 " + 반올림(글폭) + "px 뿐입니다 (" + 이름(el.parentElement) +
-        " 가 flex 인데 align-items 를 안 줘서 stretch 된 자리입니다)");
+        "px 로 늘어났습니다 — 글은 " + 반올림(글폭) + "px 뿐입니다 (" + 까닭 + ")");
   }
 
   /* ───────── H12 · H13 — 배지 ───────── */

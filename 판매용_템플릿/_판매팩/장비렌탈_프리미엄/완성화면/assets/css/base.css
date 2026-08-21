@@ -920,3 +920,16 @@ html{scrollbar-gutter:stable}
   /* 1fr 격자는 폰에서 «줄어들 수 있게» */
   .g2,.g3,.g4,.g5,.g6,.grid,.cards{grid-template-columns:minmax(0,1fr)}
 }
+
+/* ═══ 검수항목 H2 — 섹션이 위에 맞붙는다 (2026-08-21) ═══
+   .sec 은 «아래 여백»만 갖고 있다(.sec{margin-bottom}). 그래서 .sec 앞에 다른 덩어리가
+   오면 위쪽 틈이 0 이 된다. 전에 «.card + .sec» 처럼 앞엣것을 하나씩 적어 두었는데,
+   .ph · .bar · .center · .btns · .result · 이름 없는 div … 끝이 없었다.
+   → 앞엣것을 세지 말고 «첫째가 아니면 위 여백을 준다»로 뒤집는다.
+   ⚠ .sec 끼리 이어질 때는 위아래가 겹쳐 두 배가 되므로 그때만 위를 뺀다. */
+/* ⚠ 팩이 두 세대라 «섹션 간격» 변수 이름이 다르다 — 새 팩은 --sec-gap, 옛 팩은 --sp-sec.
+      CSS 는 없는 변수를 만나면 «그 줄을 통째로 버린다». 처음에 --sec-gap 만 적었더니
+      옛 팩 5벌(매칭 둘 · 인테리어_디럭스 · 장비렌탈 둘)에서 소리 없이 안 먹었다.
+      그래서 var(새, var(옛, 기본값)) 으로 겹쳐 둔다. */
+.sec:not(:first-child){margin-top:var(--sec-gap, var(--sp-sec, 40px))}
+.sec + .sec{margin-top:0}
