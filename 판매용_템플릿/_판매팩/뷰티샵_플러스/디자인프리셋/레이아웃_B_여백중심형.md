@@ -114,6 +114,11 @@
 .card .thumb::after { content: ""; position: absolute; inset: 0;
   background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.45) 38%, rgba(0,0,0,0) 72%); }
 .card .body { position: absolute; left: 14px; right: 14px; bottom: 12px; padding: 0; color: #fff; z-index: 1; }
+/* ⭐ 사진이 아직 없을 때는 어둠막을 걷는다 — 옅은 자리표시자 위에 검정을 덮으면
+   자리표시자 글이 묻혀 «깨진 그림»처럼 보인다. 사진을 넣으면 이 줄만 지우면 된다. */
+.card .thumb.is-placeholder::after { display: none; }
+.card .thumb.is-placeholder + .body, .card .thumb.is-placeholder .body {
+  position: static; color: var(--text); padding: 12px 2px 0; }
 ```
 
 ### 카드 모양을 바꾸고 싶다면

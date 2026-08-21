@@ -787,13 +787,31 @@ export function buildSpecPackMarkdown(
     if (벌.length < 틈들.length * 0.6) continue;
     const 리듬 = 틈들.map((x) => x.v).sort((a, b) => a - b)[Math.floor(틈들.length / 2)];
     for (const x of 틈들) {
-      const 붙 = x.v <= 2, 좁 = 리듬 >= 20 && x.v < 리듬 * 0.45;
+      // 「리듬의 절반도 안 된다」만으로는 리듬이 클수록 헛짚는다. 섹션 사이가 80px 인 칸에
+      // 「안내 띠 → 탭 → 탭 내용」이 24·16px 로 붙은 «한 묶음»이 들어 있으면 그건 묶음이다.
+      // 눈에 붙어 보이는 것은 결국 절대값이 작을 때다.
+      const 붙 = x.v <= 2, 좁 = 리듬 >= 20 && x.v < 리듬 * 0.45 && x.v <= 12;
       if (!붙 && !좁) continue;
       // 같은 «종류»가 이어지는 줄은 붙는 게 맞다. 뒤에 붙은 여백 클래스(mb3·total)까지
       // 견주면 "card mb3" 와 "card mb6" 를 서로 다른 것으로 봐서 헛짚는다.
       if ((x.앞.className || "").trim().split(/ +/)[0] === (x.뒤.className || "").trim().split(/ +/)[0]) continue;
       if (x.뒤 === 푸터) continue;
-      if (!붙 && /^h[1-4]$/.test(x.앞.tagName.toLowerCase())) continue;  // 제목 밑 부제는 붙는 게 맞다
+      // 누군가 «이 값으로» 정해 둔 자리는 흠이 아니다. 2px 은 이름 밑에 한 줄 소개를
+      // 붙이려고 손으로 적은 값이지, 어쩌다 붙은 것이 아니다.
+      if (붙 && (parseFloat(getComputedStyle(x.앞).marginBottom) || 0) +
+                (parseFloat(getComputedStyle(x.뒤).marginTop) || 0) > 0) continue;
+      // 뒤엣것이 «윗줄»이나 제 안여백을 가졌으면 그것이 곧 틈이다 — 카드 아랫단이 그렇다.
+      if (붙) { const 뒤s = getComputedStyle(x.뒤);
+        if (parseFloat(뒤s.borderTopWidth) > 0 || (parseFloat(뒤s.paddingTop) || 0) >= 8) continue; }
+      // 길잡이(빵부스러기)·«‹ 뒤로»는 다음 덩어리와 한 덩어리다
+      if (!붙 && (/crumb|breadcrumb|path|back/.test(x.앞.className || "") ||
+                  x.앞.tagName.toLowerCase() === "nav")) continue;
+      // «이름표와 값»은 한 덩어리다 — 어느 쪽이 위든 붙는 것이 맞다.
+      // 제목→부제만 넘기면 「대표 시술 최저가 → 25,000원~」처럼 뒤집힌 짝을 흠이라 한다.
+      const 잔글 = (el) => /t-sub|sub|desc|help|hint|caption|label/.test(el.className || "");
+      const 큰글 = (el) => /^(h[1-4]|b|strong)$/.test(el.tagName.toLowerCase()) ||
+                          /t-sec|t-card|t-page|lb|price|nm|name|field/.test(el.className || "");
+      if ((잔글(x.앞) && 큰글(x.뒤)) || (큰글(x.앞) && 잔글(x.뒤))) continue;
       적기("간격", 이름(x.뒤) + " 와 위 " + 이름(x.앞) + " 사이 " + x.v + "px (이 칸 리듬은 " + 리듬 + "px)");
     }
   }
@@ -819,9 +837,22 @@ export function buildSpecPackMarkdown(
     const 또래 = 무리.get(열쇠(el)) || [];
     const 또래폭 = 또래.map((x) => x.getBoundingClientRect().width).sort((a, b) => a - b)[Math.floor(또래.length / 2)];
     if (또래.length >= 2 && r.width < 또래폭 * 2.5) continue;             // 다 같이 넓으면 일부러 그런 것
+    // 스스로 «자라라»고 적힌 것은 늘어난 것이 아니다 — flex:1 1 0% 는 한 줄을 반씩
+    // 나눠 쓰라는 뜻이다. 세로로 쌓은 단추 더미도 꽉 채우는 것이 제 모습이다.
+    if (parseFloat(s.flexGrow) > 0) continue;
+    const 부모 = el.parentElement; if (!부모) continue;
+    const ps2 = getComputedStyle(부모);
+    const 세로더미 = ps2.display.indexOf("flex") >= 0 && ps2.flexDirection.indexOf("column") === 0;
+    if (세로더미 && r.width <= 480) continue;
+    // 칸에 혼자 서 있으면 꽉 채우는 것이 제 모습이다 — 나란한 것이 없으니 견줄 것도 없다
+    if ([...부모.children].filter(보이나).length === 1) continue;
     const 남 = 반(r.width - 글폭 - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight));
+    // ⚠ 까닭을 «지어내지» 않는다. 부모가 실제로 어떻게 서 있는지 읽어서 적는다.
+    const 까닭 = ps2.display.indexOf("flex") >= 0
+      ? 이름(부모) + " 가 flex(" + ps2.flexDirection + ") 인데 align-items 가 " + ps2.alignItems + " 입니다"
+      : 이름(부모) + " 는 " + ps2.display + " 입니다";
     if (남 > 140) 적기("늘어남", 이름(el) + " 가 " + 반(r.width) + "px 인데 글은 " + 반(글폭) +
-      "px — 부모가 flex 세로칸이면 align-items 를 주세요");
+      "px — " + 까닭);
   }
 
   // ⑤ 좌우로 미는 칸에 «막대»가 드러났나
@@ -830,7 +861,12 @@ export function buildSpecPackMarkdown(
     const s = getComputedStyle(el);
     if (!/auto|scroll/.test(s.overflowX) || el.scrollWidth <= el.clientWidth + 2) continue;
     const 두께 = el.offsetHeight - el.clientHeight - parseFloat(s.borderTopWidth) - parseFloat(s.borderBottomWidth);
-    if (두께 > 2) 적기("막대", 이름(el) + " 에 가로 막대가 " + 반(두께) + "px 드러납니다");
+    if (두께 <= 2) continue;
+    // 넘기는 길은 하나여야 한다 — «화살표가 있는데 띠도 깔린 것»이 흠이다.
+    // ⚠ 화살표가 없으면 그 띠가 «넘길 수 있다»는 유일한 신호다. 표·간트가 그렇다.
+    const 둘레 = el.parentElement || el;
+    if (!둘레.querySelector(".car-nav, .nav, [aria-label=이전], [aria-label=다음], .prev, .next")) continue;
+    적기("막대", 이름(el) + " 에 가로 막대가 " + 반(두께) + "px 드러납니다 — 화살표로 넘기게 하세요");
   }
 
   // ⑥ 표가 제 칸을 넘쳤나

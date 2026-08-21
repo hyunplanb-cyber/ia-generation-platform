@@ -43,7 +43,11 @@ const TSX = "node_modules/tsx/dist/cli.mjs";
  * 재료(template-data-admin.ts)와 만들어 뒀던 37화면은 지우지 않는다 —
  * 관리자 화면 서비스를 열 때 참고한다. 깃 역사(1c8adbe)에 그대로 있다.
  * 다시 구울 일이 생기면 `npx tsx build-all.mts admin` 으로 이름을 대면 된다. */
-const 업종들 = ["lms", "beauty", "travel", "matching", "groupbuy", "rental"] as const;
+/* ⚠ 2026-08-21 — 여기에 «인테리어»가 빠져 있었다. 팩은 일곱인데 여섯만 적혀 있어서,
+   build-all 을 아무리 돌려도 인테리어 네 등급의 문서·스펙팩은 옛것 그대로였다.
+   그날 손님 스펙팩 안 검사 글을 고쳤는데 28칸 중 24칸에만 실려서 들통났다.
+   ⛔ 업종을 새로 만들면 «여기에도» 이름을 넣는다. 안 넣으면 아무 소리 없이 안 구워진다. */
+const 업종들 = ["lms", "beauty", "travel", "matching", "groupbuy", "rental", "interior"] as const;
 const 보류업종들 = ["admin"];
 const 고른업종 = process.argv[2];
 const 돌릴것 = 고른업종 ? [고른업종] : [...업종들];
