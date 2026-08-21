@@ -18,7 +18,26 @@
 
   /* 탭 — 같은 묶음 안에서만 활성 전환. data-go 가 있으면 해당 화면으로 이동 */
   on('.tab', 'click', function (e, t) {
-    if (t.dataset.go) { location.href = t.dataset.go; return; }
+    /* ⚠ 제 화면을 가리키는 data-go 는 «화면 안 탭»이다 — 다시 불러 봐야 같은 자리다.
+       여행 PR-02 의 「상품 소개·코스 일정·포함·불포함·취소규정·후기」 다섯이 모두 그랬다.
+       그런데 그 이름과 똑같은 자리(h2.t-sec)가 이미 그 화면에 있었다. 데려가 준다.
+       (2026-08-21 · 검수항목 H7 — 탭을 눌러도 아무 일이 없었다) */
+    var 여기 = location.pathname.split('/').pop();
+    if (t.dataset.go && t.dataset.go !== 여기) { location.href = t.dataset.go; return; }
+    if (t.dataset.go === 여기) {
+      var 다듬 = function (v) { return (v || '').replace(/[^가-힣a-zA-Z]/g, ''); };
+      var 찾는말 = 다듬(t.textContent), 고른것 = null, 가장 = 1;
+      document.querySelectorAll('h2, h3').forEach(function (h) {
+        var 이것 = 다듬(h.textContent), n = 0;
+        while (n < 찾는말.length && n < 이것.length && 찾는말[n] === 이것[n]) n++;
+        if (n > 가장) { 가장 = n; 고른것 = h; }
+      });
+      if (고른것) {
+        var 자리 = 고른것.closest('.sec, section') || 고른것;
+        자리.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      /* 간 곳이 없어도 «켜진 탭»은 옮겨 준다 — 눌린 티는 나야 한다 */
+    }
     var box = t.closest('.tabs, .tabs-pill');
     if (!box) return;
     box.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('on'); });

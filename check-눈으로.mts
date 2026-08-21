@@ -508,11 +508,27 @@ const 재는글 = `
   /* ───────── H8 — 나란한 썸네일 크기가 같은가 ───────── */
   for (const 부모 of document.querySelectorAll(".grid, .g2, .g3, .g4, .g5, .rail, .list, .cards")) {
     if (!보이나(부모)) continue;
-    const 썸 = [...부모.children].map((c) => c.querySelector(".ph, img")).filter((x) => x && 보이나(x));
+    /* 항목의 말이 «나란한 것끼리 같은가» 다 — 나란하지 않은 것을 견주면 헛짚는다.
+       상품 갤러리는 「큰 사진 하나 위에, 작은 것 넷을 한 줄로」다. 층이 다르니
+       607px 과 118px 이 나오는 것이 맞다. 예전엔 이것을 흠이라 했다. (2026-08-21)
+       그래서 (1) 사진을 여럿 품은 자식은 «묶음»이니 건너뛰고
+              (2) 남은 것도 «윗변이 같은 것끼리»만 줄로 묶어 견준다. */
+    const 썸 = [...부모.children]
+      .filter((c) => c.querySelectorAll(".ph, img").length <= 1)
+      .map((c) => c.querySelector(".ph, img")).filter((x) => x && 보이나(x));
     if (썸.length < 2) continue;
-    const 키 = 썸.map((t) => 반올림(t.getBoundingClientRect().height));
-    if (Math.max(...키) - Math.min(...키) > 8)
-      적기("H10", 이름(부모) + " 안 썸네일 키가 제각각입니다 — " + [...new Set(키)].join("·") + "px");
+    const 줄별 = new Map();
+    for (const t of 썸) {
+      const 윗변 = Math.round(t.getBoundingClientRect().top / 8);        // 8px 안쪽이면 같은 줄
+      if (!줄별.has(윗변)) 줄별.set(윗변, []);
+      줄별.get(윗변).push(t);
+    }
+    for (const [, 한줄] of 줄별) {
+      if (한줄.length < 2) continue;
+      const 키 = 한줄.map((t) => 반올림(t.getBoundingClientRect().height));
+      if (Math.max(...키) - Math.min(...키) > 8)
+        적기("H10", 이름(부모) + " 안 나란한 썸네일 키가 제각각입니다 — " + [...new Set(키)].join("·") + "px");
+    }
   }
 
   /* ───────── H5 — 눌렀을 때 흔들리나 ─────────
@@ -540,6 +556,23 @@ const 재는글 = `
     콘텐츠폭, 세로막대, 상단고정, 위틈, 아래틈,
     뒤로가기: !!document.querySelector(".back, [class*=back]"),
     장탭: [...document.querySelectorAll("[data-go]")].map((x) => x.getAttribute("data-go")).slice(0, 12),
+    탭들: [...document.querySelectorAll(".tabs [data-go], .tabs-pill [data-go]")].slice(0, 12).map((x) => ({
+      간곳: x.getAttribute("data-go"),
+      켜짐: (x.className || "").split(" ").indexOf("on") >= 0,
+      글: (x.textContent || "").trim().slice(0, 20),
+      /* app.js 는 제 화면을 가리키는 탭을 «이름이 같은 자리»로 데려간다.
+         그 자리가 실제로 있는지까지 봐야 «눌러도 아무 일 없는 탭»을 가릴 수 있다. */
+      자리있음: (() => {
+        const 다듬 = (v) => (v || "").replace(/[^가-힣a-zA-Z]/g, "");
+        const 찾는말 = 다듬(x.textContent);
+        for (const h of document.querySelectorAll("h2, h3")) {
+          const 이것 = 다듬(h.textContent); let n = 0;
+          while (n < 찾는말.length && n < 이것.length && 찾는말[n] === 이것[n]) n++;
+          if (n > 1) return true;
+        }
+        return false;
+      })(),
+    })),
     탭칸: !!document.querySelector(".tabs, .tabs-pill"),
     /* G3 — 화면이 스스로 「N/M단계」라고 말하는가 */
     /* G3 — 화면이 스스로 「N/M단계」라고 말하는가.
@@ -571,6 +604,7 @@ const 재는글 = `
 type 잰것 = {
   화면: string; 콘텐츠폭: number; 세로막대: number; 상단고정: string; 위틈: number | null; 아래틈: number | null;
   뒤로가기: boolean; 장탭: string[]; 탭칸: boolean; 흠: string[]; 단계말?: string[];
+  탭들?: { 간곳: string; 켜짐: boolean; 글: string; 자리있음: boolean }[];
   카드모음: { 글: string; 간곳: string }[];
 };
 
@@ -898,8 +932,8 @@ function 팩보기(팩: string) {
     if (!p.탭칸) continue;
     for (const 간곳 of new Set(p.장탭)) {
       if (!간곳 || 간곳 === p.화면) {
-        if (간곳 === p.화면) 흠들.push(`H7 · ${p.화면} — 탭 하나가 «제 화면»을 가리킵니다 (눌러도 그 자리)`);
-        continue;
+        continue;   // 제 화면을 가리키는 것은 «지금 탭»이라 제 모습이다 — 아래에서 따로 가린다
+
       }
       const 저쪽 = 장별.get(간곳);
       if (!저쪽) continue;                                   // 안 잰 장은 견줄 수 없다
@@ -908,6 +942,31 @@ function 팩보기(팩: string) {
       if (Math.abs(저쪽.콘텐츠폭 - p.콘텐츠폭) > 4)
         흠들.push(`H6 · ${p.화면} → ${간곳} — 탭으로 옮기는데 폭이 ${p.콘텐츠폭}→${저쪽.콘텐츠폭}px 로 흔들립니다`);
     }
+  }
+
+  /* ── H7 — 탭이 «엉뚱한 곳»을 가리키나 ──
+     LMS MY0201 에서 「알림 설정」 탭이 MY0101(내 정보)로 가고 있었다. 「내 정보」 탭과
+     간 곳이 똑같아서, 눌러 보면 이름과 다른 화면이 열린다.
+     ⚠ 지금 켜진 탭이 제 화면을 가리키는 것은 «제 모습»이다 — 그것까지 잡으면 안 된다.
+        2026-08-21 에 그것을 아홉 장에서 흠이라 했었다. */
+  for (const p of 잰장) {
+    const 탭들 = p.탭들 ?? [];
+    if (탭들.length < 2) continue;
+    /* 제 화면을 가리키는 탭은 «화면 안 탭»이다 — 이름이 같은 자리로 데려가면 제 몫을 한다.
+       데려갈 자리가 없을 때만 «눌러도 아무 일 없는 탭»이다. */
+    for (const t of 탭들)
+      if (t.간곳 === p.화면 && !t.켜짐 && !t.자리있음)
+        흠들.push(`H7 · ${p.화면} — 「${t.글}」 탭은 눌러도 아무 일이 없습니다 (제 화면을 가리키는데 그 이름의 자리도 없습니다)`);
+    /* 이름이 다른데 열리는 화면이 같은 것 — «화면 밖»으로 나가는 탭에서만 흠이다 */
+    const 곳별 = new Map<string, string[]>();
+    for (const t of 탭들) {
+      if (!t.간곳 || t.간곳 === p.화면) continue;
+      if (!곳별.has(t.간곳)) 곳별.set(t.간곳, []);
+      곳별.get(t.간곳)!.push(t.글);
+    }
+    for (const [곳, 글들] of 곳별)
+      if (글들.length > 1)
+        흠들.push(`H7 · ${p.화면} — 「${글들.join("」·「")}」 탭이 모두 ${곳} 로 갑니다 (이름은 다른데 열리는 화면이 같습니다)`);
   }
 
   /* ── 장마다 잡은 흠. 여러 장에 똑같이 난 것은 묶어서 한 줄로 말한다 ──
