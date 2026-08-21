@@ -360,7 +360,11 @@ const 재는글 = `
     const 리듬 = 줄세운틈[Math.floor(줄세운틈.length / 2)];
     for (const x of 잰것) {
       const 붙음 = x.틈 <= 2;
-      const 좁음 = 리듬 >= 20 && x.틈 < 리듬 * 0.45;
+      /* «리듬의 절반도 안 된다»만으로는 부족하다 — 리듬이 클수록 헛짚는다.
+         여행 CS0503 은 섹션 사이가 80px 인데, 그 안에 「안내 띠 → 탭 → 탭 내용」이
+         24px · 16px 로 촘촘히 붙은 «한 묶음»으로 들어 있다. 그건 좁은 게 아니라 묶음이다.
+         눈에 «붙어 보이는» 것은 결국 절대값이 작을 때다. (2026-08-21) */
+      const 좁음 = 리듬 >= 20 && x.틈 < 리듬 * 0.45 && x.틈 <= 12;
       if (!붙음 && !좁음) continue;
       /* 같은 생김새가 이어지는 것(목록 줄)은 붙는 것이 제 모습이다 */
       /* 뒤에 붙은 여백 클래스까지 견주면 "card mb3" 와 "card mb6" 를 다른 것으로 봐서 헛짚는다.
@@ -379,11 +383,23 @@ const 재는글 = `
          여백이 0 인 채로 붙은 것만 «어쩌다 붙은 것»이다. (2026-08-21) */
       if (붙음 && (parseFloat(getComputedStyle(x.앞).marginBottom) || 0) +
                   (parseFloat(getComputedStyle(x.뒤).marginTop) || 0) > 0) continue;
-      const 제목인가 = /^h[1-4]$/.test(x.앞.tagName.toLowerCase()) || /t-sec|t-card|t-page|lb/.test(x.앞.className || "");
-      const 부제인가 = /t-sub|sub|desc|help|hint|caption/.test(x.뒤.className || "");
-      /* 제목 바로 밑 부제는 0px 이어도 맞다 — 줄 높이가 알아서 띄운다.
-         처음엔 «좁다» 일 때만 넘겼는데 0px 짝이 그대로 걸려 잘 만든 자리를 흠이라 했다. */
-      if (제목인가 && 부제인가) continue;
+      /* 뒤엣것이 «윗줄»이나 제 안여백을 가졌으면 그것이 곧 틈이다 — 상자끼리는 0px 이어도
+         눈에는 갈라져 보인다. 장비렌탈 .card-ft 가 그랬다(윗줄 0.8px + 안여백 16px).
+         카드 아랫단·표 머리처럼 «선으로 나누는» 자리가 다 이렇게 생겼다. (2026-08-21) */
+      if (붙음) {
+        const 뒤스 = getComputedStyle(x.뒤);
+        if (parseFloat(뒤스.borderTopWidth) > 0 || (parseFloat(뒤스.paddingTop) || 0) >= 8) continue;
+      }
+      /* «이름표와 값»은 한 덩어리다 — 붙어 있는 것이 맞고, 줄 높이가 알아서 띄운다.
+         뷰티샵 SE0401 의 「대표 시술 최저가 → 25,000원~」이 그랬다. 제목→부제만 넘기고
+         있어서, 위아래가 뒤집힌 이 짝(이름표가 위, 값이 아래)은 흠이라 했다.
+         공동구매 「굵은 이름표 → 잔글 목록」, 매칭 「도움말 → 입력칸」도 같은 짝이다.
+         → 한쪽이 «잔글»이고 다른 쪽이 «제목·값·입력칸»이면 어느 쪽이 위든 넘긴다. (2026-08-21) */
+      const 잔글 = (el) => /t-sub|sub|desc|help|hint|caption|label/.test(el.className || "");
+      const 큰글 = (el) =>
+        /^(h[1-4]|b|strong)$/.test(el.tagName.toLowerCase()) ||
+        /t-sec|t-card|t-page|lb|price|nm|name|field/.test(el.className || "");
+      if ((잔글(x.앞) && 큰글(x.뒤)) || (큰글(x.앞) && 잔글(x.뒤))) continue;
       if (x.뒤 === 푸터) continue;                    // 푸터는 H4 가 맡는다 — 두 번 세지 않는다
       적기("H2", 이름(x.뒤) + " 와 바로 위 " + 이름(x.앞) + " 사이가 " + x.틈 + "px — " +
         (붙음 ? "맞붙었습니다" : "이 칸이 쓰는 " + 리듬 + "px 보다 훨씬 좁습니다"));
