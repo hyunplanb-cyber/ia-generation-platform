@@ -118,8 +118,22 @@ const 재는글 = `
   const 본문아이들 = [...본문.children].filter(보이나);
   const 첫덩이 = 본문아이들.find((c) => c !== 푸터 && !c.contains(푸터));
   if (상단바 && 첫덩이) {
-    위틈 = 반올림(첫덩이.getBoundingClientRect().top - 상단바.getBoundingClientRect().bottom);
-    if (위틈 < 16) 적기("H4", "GNB 와 본문 사이가 " + 위틈 + "px 뿐입니다 (" + 이름(첫덩이) + ")");
+    const hb = 상단바.getBoundingClientRect(), fb = 첫덩이.getBoundingClientRect();
+    /* ⚠ 상단바가 «옆»에 선 팩이 있다(매칭 프리미엄의 248px 사이드바). 그때 상단바의
+       아랫변은 화면 맨 아래라, 위에서 빼면 -728px 같은 헛소리가 나온다. 나란히 선
+       것끼리는 «위아래 틈»이라는 말 자체가 없다. (2026-08-21) */
+    const 나란한가 = fb.left >= hb.right - 2 || fb.right <= hb.left + 2;
+    const fs = getComputedStyle(첫덩이);
+    /* 바탕이나 테두리를 가진 덩어리는 그 윗변이 «보이는 끝»이다 — 상단바에 붙는 것이
+       통짜 띠(히어로)의 제 모습이니 건드리지 않는다. */
+    const 제바탕있나 = fs.backgroundColor !== "rgba(0, 0, 0, 0)" && fs.backgroundColor !== "transparent";
+    const 테두리있나 = parseFloat(fs.borderTopWidth) > 0;
+    /* 안쪽 여백도 «떠 있는 것»이다. 장비렌탈 .wrap 은 padding-top:28px 을 갖고 있어
+       상자끼리는 0px 이어도 글은 28px 아래에서 시작한다. 상자만 보면 40쪽을 헛짚는다. */
+    const 안여백 = parseFloat(fs.paddingTop) || 0;
+    위틈 = 반올림(fb.top + 안여백 - hb.bottom);
+    if (!나란한가 && !제바탕있나 && !테두리있나 && 위틈 < 16)
+      적기("H4", "GNB 와 본문 사이가 " + 위틈 + "px 뿐입니다 (" + 이름(첫덩이) + ")");
   }
   /* 푸터 «윗선»과 바로 위 «글이 든 덩어리» 사이. 여기가 0 이면 버튼에 선이 맞붙는다.
      ⚠ 앞 형제가 main 같은 «큰 그릇»이면 그 아래 여백이 틈 노릇을 한다 — 그릇의 상자 밑이 아니라
