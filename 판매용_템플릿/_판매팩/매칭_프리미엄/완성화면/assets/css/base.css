@@ -896,8 +896,18 @@ body > header.gnb:not(.pro) .gnb-util .btn { width: 100%; justify-content: cente
 /* 본문을 사이드바만큼 밀어 준다 — body 를 밀면 푸터·뒤로가기 바까지 한 번에 따라온다 */
 body:has(> header.gnb:not(.pro)) { padding-left: var(--side-w); }
 
-/* 사이드바가 자리를 먹으니 본문 폭도 그만큼 줄인다 */
+/* 사이드바가 자리를 먹으니 본문 폭도 그만큼 줄인다.
+   ⚠ 2026-08-21 — 여기에도 :not(.pro) 가 붙어 있어서, 사이드바 화면(1174px)에서
+      pro 화면(1422px)으로 옮기면 본문 폭이 248px 튀었다. 폭은 팩 안에서 하나여야 한다.
+      pro 화면에는 사이드바가 없지만 .wrap 은 가운데 정렬이라 폭만 맞추면 된다. */
 body:has(> header.gnb:not(.pro)) .wrap { max-width: calc(var(--wrap) - var(--side-w)); }
+/* pro 화면에는 사이드바가 없다. 그래서 글칸이 248px 만큼 넓어져, 사이드바 화면에서
+   옮겨 오면 본문이 훅 벌어졌다(1111 → 1144px, 처음엔 1174 → 1422px 이었다).
+   ⚠ 사이드바 화면의 글칸은 «남는 자리»에 눌려 정해진다(body 의 padding-left 때문에).
+      그래서 pro 쪽도 «정해진 값»이 아니라 «남는 자리에서 사이드바 몫을 뺀 것»으로
+      맞춰야 딱 떨어진다. var(--wrap) 에서 빼면 세로 막대 폭만큼 어긋난다. (2026-08-21) */
+body:has(> header.gnb.pro) .wrap,
+body:has(> header.gnb.pro) .wrap-wide { max-width: calc(100% - var(--side-w)); }
 
 /* ── 좁은 화면에서는 원래대로 위에 둔다 ──
    사이드바를 그대로 두면 손바닥만 한 화면에서 본문이 사라진다. */
@@ -1099,3 +1109,10 @@ html{scrollbar-gutter:stable}
       그래서 :first-child 를 붙여 같은 무게로 되돌려 놓고 본문을 늘린다. */
 body>header:first-child,body>.gnb:first-child,body>.ednav:first-child{flex:0 0 auto}
 body>main,body>.main,body>.app,body>.app-ed,body>.page-wrap{flex:1 0 auto;min-height:0}
+
+/* ═══ 검수항목 H13 — 좁은 칸에 든 표가 칸 밖으로 나간다 (2026-08-21) ═══
+   .table 에 min-width:520px 가 걸려 있다. 넓은 표가 짓눌리지 말라고 둔 것인데,
+   매칭 JB0201 의 「취소 시점 / 페널티」 두 칸짜리 표는 286px 짜리 옆칸에 들어가 있어
+   520 - 286 = 236px 이 밖으로 나가고 15px 회색 막대가 깔렸다.
+   → «520px 아니면 칸 너비, 둘 중 작은 쪽». 넓은 자리에서는 그대로 520px 이다. */
+.table{min-width:min(520px, 100%)}

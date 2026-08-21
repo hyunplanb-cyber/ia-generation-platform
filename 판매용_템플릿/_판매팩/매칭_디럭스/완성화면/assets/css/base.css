@@ -1000,3 +1000,10 @@ html{scrollbar-gutter:stable}
       그래서 :first-child 를 붙여 같은 무게로 되돌려 놓고 본문을 늘린다. */
 body>header:first-child,body>.gnb:first-child,body>.ednav:first-child{flex:0 0 auto}
 body>main,body>.main,body>.app,body>.app-ed,body>.page-wrap{flex:1 0 auto;min-height:0}
+
+/* ═══ 검수항목 H13 — 좁은 칸에 든 표가 칸 밖으로 나간다 (2026-08-21) ═══
+   .table 에 min-width:520px 가 걸려 있다. 넓은 표가 짓눌리지 말라고 둔 것인데,
+   매칭 JB0201 의 「취소 시점 / 페널티」 두 칸짜리 표는 286px 짜리 옆칸에 들어가 있어
+   520 - 286 = 236px 이 밖으로 나가고 15px 회색 막대가 깔렸다.
+   → «520px 아니면 칸 너비, 둘 중 작은 쪽». 넓은 자리에서는 그대로 520px 이다. */
+.table{min-width:min(520px, 100%)}

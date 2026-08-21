@@ -101,6 +101,21 @@ const 재는글 = `
   const 본문틀 = 본문.getBoundingClientRect();
   const 본문스 = getComputedStyle(본문);
   const 콘텐츠폭 = 반올림(본문틀.width - parseFloat(본문스.paddingLeft) - parseFloat(본문스.paddingRight));
+  /* «본문 칸»과 «글이 놓인 칸»은 다르다.
+     매칭 프리미엄에서 사이드바 화면은 body 에 padding-left:248px 이 걸려 main 이 1177px,
+     pro 화면은 main 이 1425px 였다. 그런데 두 화면 다 글이 놓인 칸(.wrap)은 1177px 로
+     같았다 — 눈에는 안 튄다. 그래서 둘을 다 재고, «둘 다» 다를 때만 흠으로 본다.
+     ⚠ 글칸만 보면 안 된다. 회원가입 완료·예약 완료처럼 «일부러 좁게» 만든 화면이
+        죄다 걸린다(735px·847px). 좁은 것은 디자인이고 넓은 것이 사고다. (2026-08-21) */
+  let 글칸폭 = 콘텐츠폭;
+  {
+    const 첫 = [...본문.children].find((c) => c.getBoundingClientRect().width > 0);
+    if (첫) {
+      const cs = getComputedStyle(첫);
+      if (cs.maxWidth !== "none")
+        글칸폭 = 반올림(첫.getBoundingClientRect().width - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
+    }
+  }
 
   const 상단바 = document.querySelector("header, .ednav, .topbar, .gnb");
   /* ⚠ querySelector("footer, .ft") 는 «먼저 나오는 것»을 집는다 — 선택자 순서가 아니라
@@ -138,8 +153,19 @@ const 재는글 = `
     const 테두리있나 = parseFloat(fs.borderTopWidth) > 0;
     /* 안쪽 여백도 «떠 있는 것»이다. 장비렌탈 .wrap 은 padding-top:28px 을 갖고 있어
        상자끼리는 0px 이어도 글은 28px 아래에서 시작한다. 상자만 보면 40쪽을 헛짚는다. */
-    const 안여백 = parseFloat(fs.paddingTop) || 0;
-    위틈 = 반올림(fb.top + 안여백 - hb.bottom);
+    /* ⚠ 안여백이 껍데기가 아니라 «자식»에 걸린 짜임도 있다 — 인테리어 .owner-shell 은
+       padding-top:0 인데 속의 .owner-side·.owner-main 이 28px 씩 갖고 있다.
+       그래서 «글이 실제로 시작하는 자리»를 찾아 내려간다(푸터 쪽 끝알맹이와 같은 수법). */
+    let 첫알맹이 = 첫덩이, 안여백 = parseFloat(fs.paddingTop) || 0;
+    for (let 깊이 = 0; 깊이 < 4; 깊이++) {
+      const 안 = [...첫알맹이.children].filter(보이나);
+      if (!안.length) break;
+      const 다음 = 안[0], ds = getComputedStyle(다음);
+      if (ds.position === "absolute" || ds.position === "fixed") break;
+      안여백 += parseFloat(ds.paddingTop) || 0;
+      첫알맹이 = 다음;
+    }
+    위틈 = 반올림(첫알맹이.getBoundingClientRect().top + 안여백 - hb.bottom);
     if (!나란한가 && !제바탕있나 && !테두리있나 && 위틈 < 16)
       적기("H4", "GNB 와 본문 사이가 " + 위틈 + "px 뿐입니다 (" + 이름(첫덩이) + ")");
   }
@@ -426,7 +452,11 @@ const 재는글 = `
     if (!보이나(el)) continue;
     /* 일부러 꽉 채운 것 — btn-w 는 이름부터 «넓은 단추»다. 목록에서 빠져 있어
        인테리어 「준공 승인하고 잔금 결제」 같은 큰 단추를 흠이라 했다. (2026-08-21) */
-    if (/btn-block|btn-full|btn-w/.test(el.className || "")) continue;
+    /* ⚠ 여기는 «템플릿 문자열 안»이다 — 낱말 끝(역슬래시 b)은 글을 만들 때 백스페이스로
+       먹혀 버린다. 눈에는 멀쩡해 보이는데 정규식이 영영 안 맞는다. 2026-08-21 에 여기서
+       두 번 당했다. 낱말 끝이 필요하면 «양옆에 빈칸을 붙여서» 찾는다. */
+    const 클래스 = " " + (el.className || "") + " ";
+    if (/btn-block|btn-full/.test(클래스) || 클래스.indexOf(" btn-w ") >= 0) continue;
     /* 칸에 혼자 서 있으면 꽉 채우는 것이 제 모습이다 — 나란한 것이 없으니 견줄 것도 없다 */
     if (el.parentElement && [...el.parentElement.children].filter((c) => 보이나(c)).length === 1) continue;
     const r = el.getBoundingClientRect();
@@ -495,8 +525,15 @@ const 재는글 = `
     if (!/auto|scroll/.test(s.overflowX)) continue;
     if (el.scrollWidth <= el.clientWidth + 2) continue;
     const 막대두께 = el.offsetHeight - el.clientHeight - parseFloat(s.borderTopWidth) - parseFloat(s.borderBottomWidth);
-    if (막대두께 > 2)
-      적기("H12", 이름(el) + " 에 가로 막대가 " + 반올림(막대두께) + "px 드러납니다 — 화살표로 넘겨야 합니다");
+    if (막대두께 <= 2) continue;
+    /* 항목의 말은 「막대 대신 «화살표»로 넘겨야 한다」 — 사장님이 짚으신 자리도
+       「카드 줄에 화살표가 있는데 6px 띠가 같이 깔렸다」였다. 넘길 길이 둘이라 헷갈리는 것이 흠이다.
+       ⚠ 화살표가 아예 없으면 그 띠가 «넘길 수 있다»는 유일한 신호다 — 지우면 길이 사라진다.
+          인테리어 CS-02 의 간트, 표(.table-wrap)가 그런 자리다. (2026-08-21) */
+    const 둘레 = el.parentElement || el;
+    const 화살표있나 = !!둘레.querySelector(".car-nav, .rail-hd .nav, [aria-label=이전], [aria-label=다음], .prev, .next");
+    if (!화살표있나) continue;
+    적기("H12", 이름(el) + " 에 가로 막대가 " + 반올림(막대두께) + "px 드러납니다 — 화살표로 넘겨야 합니다");
   }
 
   /* ───────── H11 — 표가 틀어졌나 ─────────
@@ -586,13 +623,18 @@ const 재는글 = `
   }
   if (잰폭.size > 1)
     적기("H6", "탭을 누를 때마다 본문 폭이 " + [...잰폭].join("→") + "px 로 흔들립니다");
-  else if (막대상태.size > 1)
+  else if (막대상태.size > 1 &&
+           getComputedStyle(document.documentElement).scrollbarGutter.indexOf("stable") < 0)
+    /* 막대가 생겼다 없어지는 것 자체는 흠이 아니다 — «그 바람에 폭이 밀리는 것»이 흠이다.
+       html{scrollbar-gutter:stable} 로 자리를 미리 비워 두면 폭은 그대로다.
+       그 처방을 이미 넣어 두고도 계속 흠이라 하고 있었다. (2026-08-21) */
     적기("H6", "탭에 따라 세로 막대가 생겼다 없어집니다 — 폭이 통째로 밀립니다 (scrollbar-gutter 로 자리를 잡아 두세요)");
 
   const 세로막대 = 반올림(window.innerWidth - document.documentElement.clientWidth);
 
   return JSON.stringify({
-    콘텐츠폭, 세로막대, 상단고정, 위틈, 아래틈,
+    콘텐츠폭, 글칸폭, 세로막대, 상단고정, 위틈, 아래틈,
+    본문짜임: (본문.className || "").trim(),
     뒤로가기: !!document.querySelector(".back, [class*=back]"),
     장탭: [...document.querySelectorAll("[data-go]")].map((x) => x.getAttribute("data-go")).slice(0, 12),
     탭들: [...document.querySelectorAll(".tabs [data-go], .tabs-pill [data-go]")].slice(0, 12).map((x) => ({
@@ -641,7 +683,7 @@ const 재는글 = `
 /* ── 여기부터는 Node 쪽 ── */
 
 type 잰것 = {
-  화면: string; 콘텐츠폭: number; 세로막대: number; 상단고정: string; 위틈: number | null; 아래틈: number | null;
+  화면: string; 콘텐츠폭: number; 글칸폭: number; 세로막대: number; 본문짜임?: string; 상단고정: string; 위틈: number | null; 아래틈: number | null;
   뒤로가기: boolean; 장탭: string[]; 탭칸: boolean; 흠: string[]; 단계말?: string[];
   탭들?: { 간곳: string; 켜짐: boolean; 글: string; 자리있음: boolean }[];
   카드모음: { 글: string; 간곳: string }[];
@@ -842,8 +884,20 @@ function 팩보기(팩: string) {
   const 폭세기 = new Map<number, number>();
   for (const p of 잰장) 폭세기.set(민폭(p), (폭세기.get(민폭(p)) ?? 0) + 1);
   const 흔한폭 = [...폭세기.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
-  for (const p of 잰장) {
-    if (Math.abs(민폭(p) - 흔한폭) > 4)
+  /* 글이 놓인 칸도 같이 본다 — 본문 칸만 다르고 글칸은 같으면 눈에는 안 튄다 */
+  /* 로그인·회원가입 완료처럼 «혼자 서는» 화면은 짜임 자체가 다르다.
+     LMS 는 그 자리에 main.solo 라고 이름까지 붙여 두었다(가운데 720px 카드 한 장).
+     다른 화면과 폭이 다른 것이 제 모습이니 견줌에서 뺀다. (2026-08-21) */
+  const 혼자서나 = (p: 잰것) => /\bsolo\b|\bauth\b|\bcenter\b/.test(p.본문짜임 ?? "");
+  const 견줄장 = 잰장.filter((p) => !혼자서나(p));
+  const 글칸세기 = new Map<number, number>();
+  for (const p of 견줄장) 글칸세기.set(p.글칸폭, (글칸세기.get(p.글칸폭) ?? 0) + 1);
+  const 흔한글칸 = [...글칸세기.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+  for (const p of 견줄장) {
+    /* 글칸은 «세로 막대 한 폭(15px)»까지는 봐 준다. 사이드바 화면의 글칸은 남는
+       자리에 눌려 1177px 이 되고 pro 화면은 제 한계 1192px 에 서는데, 그 차이가 딱
+       막대 한 폭이다. 사람 눈에는 안 띄는 크기다. (2026-08-21) */
+    if (Math.abs(민폭(p) - 흔한폭) > 4 && Math.abs(p.글칸폭 - 흔한글칸) > 16)
       흠들.push(`H1 · ${p.화면} — 콘텐츠 폭 ${민폭(p)}px (다른 화면은 ${흔한폭}px)`);
   }
   /* H5 — 폭은 같은데 «막대 유무»가 갈리면, 화면을 옮길 때마다 그 두께만큼 통째로 밀린다.
