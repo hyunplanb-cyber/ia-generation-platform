@@ -77,16 +77,53 @@ const 훑기 = (방: string, 깊이 = 0) => {
   }
 };
 훑기(".");
-const 부르는것 = 볼것.filter((길) => {
-  try {
-    const s = readFileSync(길, "utf8");
-    return /@anthropic-ai\/sdk|api\.anthropic\.com\/v1\/messages/.test(s);
-  } catch { return false; }
-});
+
+/* ⚠ «직접 import» 만 보면 부족하다 — 개발용 스크립트가 application/ 을 부르고
+     그것이 adapters/ 의 SDK 에 닿을 수 있다. 딸린 것을 타고 들어가서 본다. (2026-08-25)
+   ⛔ 윈도우에서는 existsSync("파일.ts/") 가 «true» 다. 슬래시를 붙여 파일·폴더를
+      가르려 하면 «모든 파일이 걸러져» 한 군데도 안 타고 들어가면서 「깨끗하다」고 한다.
+      처음에 그렇게 만들어 24개 전부를 «1개 파일만 보고» 통과시켰다.
+      반드시 statSync().isFile() 로 가른다. */
+const SDK = /@anthropic-ai\/sdk|api\.anthropic\.com\/v1\/messages/;
+const 파일인가 = (q: string) => { try { return statSync(q).isFile(); } catch { return false; } };
+const 글읽기 = (q: string) => { try { return readFileSync(q, "utf8"); } catch { return ""; } };
+
+/** import 문에서 «우리 파일» 경로만 뽑는다 (npm 꾸러미는 뺀다) */
+function 딸린것(길: string, 글: string): string[] {
+  const 나온것: string[] = [];
+  for (const m of 글.matchAll(/(?:from|import)\s+["']([^"']+)["']/g)) {
+    let p = m[1];
+    if (p.startsWith("@/")) p = p.slice(2);
+    else if (p.startsWith(".")) {
+      const 방 = 길.includes("/") ? 길.slice(0, 길.lastIndexOf("/")) : ".";
+      p = `${방}/${p}`.replace(/\/\.\//g, "/");
+      while (p.includes("/../")) p = p.replace(/[^/]+\/\.\.\//, "");
+    } else continue;
+    for (const 끝 of ["", ".ts", ".mts", ".mjs", ".tsx", "/index.ts"])
+      if (파일인가(p + 끝)) { 나온것.push(p + 끝); break; }
+  }
+  return 나온것;
+}
+
+let 탄파일 = 0;
+const 부르는것: { 길: string; 닿은곳: string }[] = [];
+for (const 뿌리 of 볼것) {
+  const 본것 = new Set([뿌리]);
+  const 줄 = [뿌리];
+  while (줄.length) {
+    const 이번 = 줄.shift()!;
+    const 글 = 글읽기(이번);
+    if (SDK.test(글)) { 부르는것.push({ 길: 뿌리, 닿은곳: 이번 }); break; }
+    for (const 다음 of 딸린것(이번, 글)) if (!본것.has(다음)) { 본것.add(다음); 줄.push(다음); }
+  }
+  탄파일 += 본것.size;
+}
 if (부르는것.length) {
-  for (const 길 of 부르는것)
-    짚기(`${길} — 앤트로픽 API 를 직접 부릅니다. 개발용이면 «구독»으로 옮기거나 지우세요.`);
-} else 좋음("개발용 스크립트 가운데 API 를 직접 부르는 것 없음");
+  for (const { 길, 닿은곳 } of 부르는것)
+    짚기(길 === 닿은곳
+      ? `${길} — 앤트로픽 API 를 직접 부릅니다. 개발용이면 «구독»으로 옮기거나 지우세요.`
+      : `${길} — ${닿은곳} 을 타고 API 에 닿습니다.`);
+} else 좋음(`개발용 스크립트 ${볼것.length}개 · 딸린 것까지 ${탄파일}개 파일을 타고 봤는데 API 를 부르는 것 없음`);
 
 /* ── 마무리 ───────────────────────────────────────────── */
 console.log(알림.join("\n"));

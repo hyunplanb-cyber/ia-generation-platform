@@ -601,3 +601,41 @@ export const snsContentRelations = relations(snsContent, ({ many }) => ({
 export const snsCutRelations = relations(snsCut, ({ one }) => ({
   content: one(snsContent, { fields: [snsCut.contentId], references: [snsContent.id] }),
 }));
+
+/* ═══ 생성 시도 기록 — 「눌렀는데 실패」와 「안 눌렀다」를 가른다 (2026-08-25) ═══
+   왜 만들었나. API 열쇠가 8/15 에 만료됐는데 9일 동안 아무도 몰랐다.
+   성공하면 menu·screen 줄이 생기지만 **실패하면 아무 흔적도 안 남는다.**
+   그래서 8/03 에 손님 넷이 왜 못 만들었는지 끝내 못 밝혔다 —
+   눌렀는데 막힌 것인지, 컨셉만 적고 그냥 나간 것인지 구분이 안 됐다.
+   ⚠ 크레딧 원장(credit_ledger)으로는 못 센다. 실패하면 차감을 «안 하기» 때문이다.
+      그건 손님에게 맞는 처사이고, 그래서 실패는 여기 따로 남긴다. */
+export const generationAttempt = pgTable(
+  "generation_attempt",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    projectId: uuid("project_id").references(() => project.id, { onDelete: "set null" }),
+    /** 무엇을 만들려 했나 — "ia" | "verify" | "preset" */
+    kind: text("kind").notNull(),
+    /** 크기 — "basic" | "detail". 값이 없으면 해당 없음. */
+    size: text("size"),
+    ok: boolean("ok").notNull(),
+    /** 실패한 까닭. 성공이면 null. 손님에게 보인 말이 아니라 «우리가 볼 까닭»이다. */
+    reason: text("reason"),
+    /** 성공했을 때 몇 개가 나왔나 — 나중에 「빈 껍데기 성공」을 가려낼 때 쓴다. */
+    menuCount: integer("menu_count"),
+    screenCount: integer("screen_count"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("generation_attempt_user_idx").on(table.userId),
+    index("generation_attempt_created_idx").on(table.createdAt),
+  ],
+);
+
+export const generationAttemptRelations = relations(generationAttempt, ({ one }) => ({
+  user: one(user, { fields: [generationAttempt.userId], references: [user.id] }),
+  project: one(project, { fields: [generationAttempt.projectId], references: [project.id] }),
+}));
