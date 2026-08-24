@@ -22,7 +22,27 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-const 팩방 = "판매용_템플릿/_판매팩";
+/* ⚠ 만드는 중인 팩(_만드는중)도 같이 본다.
+   2026-08-25 — 반려견 유치원 41장을 손으로 눌러 다섯 군데가 새는 걸 찾았는데,
+   검수기 열한 개가 전부 _판매팩 만 보고 있어서 «옮겨 놓기 전까지 아무 검수도 안 받는»
+   자리였다. 만드는 단계 안에서 검수가 돌아야 한다. */
+const 팩자리 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만드는중"];
+const 팩방 = 팩자리[0];
+/** 팩 이름이 두 자리 중 어디에 있는지 찾아 준다 */
+const 팩길 = (팩: string): string => 팩자리.map((r) => `${r}/${팩}`).find((p) => existsSync(p)) ?? `${팩방}/${팩}`;
+/** 두 자리를 합쳐 훑는다 — 같은 이름이 겹치면 _판매팩 이 이긴다 */
+const 팩훑기 = (거르개?: (e: { name: string }) => boolean): string[] => {
+  const 본것 = new Set(), 모음 = [];
+  for (const r of 팩자리) {
+    let 목록; try { 목록 = readdirSync(r, { withFileTypes: true }); } catch { continue; }
+    for (const e of 목록) {
+      if (!e.isDirectory() || 본것.has(e.name)) continue;
+      if (거르개 && !거르개(e)) continue;
+      본것.add(e.name); 모음.push(e.name);
+    }
+  }
+  return 모음;
+};
 const 고른팩 = process.argv[2];
 
 /** 이보다 길게 이어지면 평평하다고 본다. 위 주석의 셈에서 나온 값이다. */
@@ -36,16 +56,13 @@ const 참는길이 = 12;
  *   표(`table`)도 같은 까닭으로 애초에 안 본다. **길어야 할 것을 짧게 만들면 더 나쁘다.** */
 const 카드인가 = (c: string) => /\b(card|mcard|scard|item|tile|prod|goods)\b/.test(c) && !/\bacc-/.test(c);
 
-const 팩들 = readdirSync(팩방, { withFileTypes: true })
-  .filter((e) => e.isDirectory() && /_(디럭스|프리미엄)$/.test(e.name))
-  .map((e) => e.name)
-  .filter((n) => !고른팩 || n === 고른팩);
+const 팩들 = 팩훑기((e) => /_(디럭스|프리미엄)$/.test(e.name)).filter((n) => !고른팩 || n === 고른팩);
 
 let 틀린팩 = 0;
 console.log(`한 화면에 같은 꼴 카드가 ${참는길이}개 넘게 이어지나 (평평함)\n`);
 
 for (const 팩 of 팩들) {
-  const pages = join(팩방, 팩, "완성화면", "pages");
+  const pages = join(팩길(팩), "완성화면", "pages");
   if (!existsSync(pages)) continue;
   const 흠: string[] = [];
   let 가장긴것 = 0;

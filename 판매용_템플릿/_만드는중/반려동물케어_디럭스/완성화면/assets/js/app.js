@@ -381,6 +381,16 @@
       return !r.classList.contains('done') && !r.classList.contains('locked');
     }).length;
     칸.textContent = n;
+    /* ⚠ 「아직 안 온 아이」만 고치면 옆의 「등원 완료」가 붙박이로 남아 숫자가 안 맞는다.
+       2026-08-25 에 초코를 체크했는데 4→3 으로만 줄고 16 은 그대로였다. 둘을 같이 움직인다. */
+    var 완 = document.querySelector("[data-done-n]");
+    if (완) {
+      var 끝난줄 = 모두(".pc-check[data-row].done").length;
+      /* ⚠ 붙박이 16 은 명단에 이미 들어 있는 5마리를 «포함한» 수다.
+         그냥 더하면 겹쳐 셔 21 로 시작한다. 밑값을 빼 놓고 센다. */
+      if (완.dataset.base == null) 완.dataset.base = Number(완.textContent.trim()) - 끝난줄;
+      완.textContent = Number(완.dataset.base) + 끝난줄;
+    }
     var 잠김 = 모두('.pc-check.locked').length;
     var 말 = document.querySelector('[data-untick-msg]');
     if (말) 말.textContent = n === 0
@@ -396,6 +406,10 @@
       if (b) { b.disabled = false; b.classList.remove('is-off'); }
       var 줄 = t.closest('.pc-check');
       if (줄) 줄.classList.remove('locked');
+      /* ⚠ 단추만 풀고 「백신 확인이 필요해요」를 남겨 두면 «누를 수 있는데 안 된다고 적힌» 줄이 된다.
+         왜 열렸는지로 바꾸어 적는다. (2026-08-25) */
+      var 경고 = 줄 && 줄.querySelector('.act .t-sub.dan');
+      if (경고) { 경고.className = 't-sub'; 경고.textContent = '원장 승인으로 오늘만 열림'; }
       t.remove();
       미체크세기();
       toast(이름 + ' — 원장 승인으로 오늘 하루만 열었어요. 보호자에게 재접종 안내를 보냈습니다', '', 'ok');
@@ -492,7 +506,7 @@
     var 최소 = Number(목적.dataset.kgMin), 최대 = Number(목적.dataset.kgMax);
     /* 자동 배정과 다르게 옮기면 «왜»를 남긴다 */
     function 사유받기() {
-      적어받기('반 재배정 사유', 이름 + '을(를) ' + 목적.dataset.nm + '으로 옮깁니다.\n자동 배정과 다르니 짧게 이유를 적어 주세요.', '', function (사유) {
+      적어받기('반 재배정 사유', 조사(이름, '을', '를') + ' ' + 조사(목적.dataset.nm, '으로', '로') + ' 옮깁니다.\n자동 배정과 다르니 짧게 이유를 적어 주세요.', '', function (사유) {
         칸.appendChild(카드);
         카드.classList.add('moved');
         카드.classList.remove('picked');
@@ -505,7 +519,7 @@
     /* 큰 아이를 작은 아이 반으로 — 몸무게 차이가 크면 반드시 묻는다 */
     if (kg < 최소 || kg > 최대) {
       var 큰가 = kg > 최대;
-      물어보기('몸무게 차이 확인', 이름 + ' ' + kg + 'kg → ' + 목적.dataset.nm + '(' + 최소 + '~' + (최대 === 99 ? '' : 최대) + 'kg)\n'
+      물어보기('몸무게 차이 확인', 이름 + ' ' + kg + 'kg → ' + 목적.dataset.nm + '(' + (최대 === 99 ? 최소 + 'kg 이상' : 최소 + '~' + 최대 + 'kg') + ')\n'
         + (큰가 ? '큰 아이를 작은 아이들과 같이 두게 됩니다.' : '작은 아이를 큰 아이들과 같이 두게 됩니다.')
         + '\n그래도 옮길까요?', '옮기기', 사유받기);
       return;
@@ -549,7 +563,7 @@
     모두('.pc-dog.picked').forEach(function (x) { x.classList.remove('picked'); });
     t.classList.add('picked');
     고른카드 = t;
-    toast(t.dataset.nm + '을(를) 골랐어요 — 옮길 반을 누르세요 (끌어다 놓아도 됩니다)');
+    toast(조사(t.dataset.nm, '을', '를') + ' 골랐어요 — 옮길 반을 누르세요 (끌어다 놓아도 됩니다)');
   });
   on('.pc-drop', 'click', function (e, t) {
     if (e.target.closest('.pc-dog')) return;
@@ -593,6 +607,11 @@
     });
     모두('[data-empty-for="' + key + '"]').forEach(function (x) { x.hidden = 남.length > 0; });
     모두('[data-filter-cnt="' + key + '"]').forEach(function (x) { x.textContent = 남.length; });
+    /* 「10건 · 실패 2건」처럼 갈래를 따로 적어 둔 자리 — 걸러지면 같이 줄어야 한다.
+       안 그러면 0건으로 걸러 놓고도 «실패 2건»이라 적혀 있다. (2026-08-25) */
+    모두('[data-cnt-tag-for="' + key + '"]').forEach(function (x) {
+      x.textContent = 남.filter(function (it) { return 태그든가(it, x.dataset.cntTag); }).length;
+    });
     /* 쪽 단추 — 걸러진 뒤의 쪽수만큼만 남긴다 */
     모두('[data-page-for="' + key + '"]').forEach(function (b) {
       var n = Number(b.dataset.pageN);
@@ -1010,6 +1029,46 @@
     setTimeout(function () { carSync(box); }, 350);
   });
 
+  /* ============================================================
+     ★ 고르개가 «옆»을 바꾸는 자리 셋 — 고르기만 하고 끝나면 반쪽이다
+     2026-08-25. 41장을 손으로 눌러 보다 찾았다. 검수기(check-반응)는 한 칸만
+     넘겨 보므로 이런 자리를 못 가린다 — 사람이 다 돌려 봐야 나온다.
+     ============================================================ */
+
+  /* ① 「직접 적기」처럼 고르면 칸이 하나 더 나와야 하는 자리 (PL-03 급여 시간) */
+  document.addEventListener('change', function (e) {
+    var sel = e.target.closest && e.target.closest('[data-reveal-when]');
+    if (!sel) return;
+    var 칸 = document.getElementById(sel.dataset.revealBox);
+    if (!칸) return;
+    var 볼까 = sel.value === sel.dataset.revealWhen;
+    칸.hidden = !볼까;
+    if (볼까) { var i = 칸.querySelector('input, textarea'); if (i) i.focus(); }
+  });
+
+  /* ② 할부 — 몇 달로 나누면 «달마다 얼마»인지 그 자리에서 보여 준다 (RE-05) */
+  document.addEventListener('change', function (e) {
+    var sel = e.target.closest && e.target.closest('[data-inst-for]');
+    if (!sel) return;
+    var 칸 = document.querySelector('[data-inst-out]');
+    if (!칸) return;
+    var 총 = Number(sel.dataset.instFor) || 0;
+    var 달 = parseInt(sel.value, 10);
+    if (!달 || !총) { 칸.textContent = '한 번에 ' + 돈(총) + ' 나갑니다'; return; }
+    /* 나누어 떨어지지 않는 몫은 첫 달에 얹는다 — 카드사가 하는 방식이다 */
+    var 뒤 = Math.floor(총 / 달), 첫 = 총 - 뒤 * (달 - 1);
+    칸.textContent = 첫 === 뒤
+      ? '매달 ' + 돈(뒤) + ' × ' + 달 + '개월'
+      : '첫 달 ' + 돈(첫) + ' · 그 뒤 매달 ' + 돈(뒤) + ' × ' + (달 - 1) + '개월';
+  });
+
+  /* ③ 시작일 — 고른 날이 요약에 그대로 적혀야 한다 (RE-02) */
+  document.addEventListener('change', function (e) {
+    var sel = e.target.closest && e.target.closest('[data-start-sel]');
+    if (!sel) return;
+    모두('[data-start-out]').forEach(function (x) { x.textContent = sel.value; });
+  });
+
   /* ---------- 처음 한 번 ---------- */
   document.addEventListener('DOMContentLoaded', function () {
     모두('[data-agree-scope]').forEach(syncUnlockAll);
@@ -1023,6 +1082,10 @@
     미체크세기();
     사진세기();
     글자수();
+    /* 화면을 열자마자 맞는 값이 적혀 있어야 한다 — 손님이 아무것도 안 골라도 */
+    모두('[data-inst-for],[data-start-sel],[data-reveal-when]').forEach(function (s) {
+      s.dispatchEvent(new Event('change', { bubbles: true }));
+    });
     if (document.querySelector('[data-stay]')) 재원시계();
     var 칸 = document.querySelector('[data-instay]');
     if (칸 && !칸.textContent.trim()) 칸.textContent = 모두('.pc-check[data-row]:not(.done)').length;

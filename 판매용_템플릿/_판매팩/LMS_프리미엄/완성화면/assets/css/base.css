@@ -530,7 +530,10 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .acc-item:last-child{border-bottom:0}
 .acc-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:var(--gap-group);padding:var(--gap-title) 0;
   background:none;border:0;font-size:15px;font-weight:700;text-align:left;cursor:pointer}
-.acc-q .mk{color:var(--muted);font-size:14px;transition:transform var(--t-fold);flex:none}
+/* ⚠ 「＋」는 열릴 때 45° 돈다. 세로로 긴 글자 상자를 돌리면 «폭»이 √2배로 커져
+   단추 밖으로 삐져나온다 — 2026-08-25 에 12개 팩에서 4~6px 넘치는 걸 재서 봤다.
+   네모난 상자로 만들고, 돌았을 때 늘어나는 만큼(한쪽 약 0.21배) 안으로 들여 둔다. */
+.acc-q .mk{color:var(--muted);font-size:14px;transition:transform var(--t-fold);flex:none;width:1.4em;height:1.4em;line-height:1;display:grid;place-items:center;margin-right:.3em}
 .acc-item.on .acc-q{color:var(--pri-ink)}
 .acc-item.on .acc-q .mk{transform:rotate(45deg)}
 .acc-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--t-fold)}

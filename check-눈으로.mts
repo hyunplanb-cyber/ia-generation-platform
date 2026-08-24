@@ -57,7 +57,27 @@ const 크롬찌꺼기 = `${(process.env.TEMP || "/tmp").split(String.fromCharCod
 process.on("exit", () => { try { 지우기(크롬찌꺼기, { recursive: true, force: true }); } catch {} });
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
-const 팩방 = "판매용_템플릿/_판매팩";
+/* ⚠ 만드는 중인 팩(_만드는중)도 같이 본다.
+   2026-08-25 — 반려견 유치원 41장을 손으로 눌러 다섯 군데가 새는 걸 찾았는데,
+   검수기 열한 개가 전부 _판매팩 만 보고 있어서 «옮겨 놓기 전까지 아무 검수도 안 받는»
+   자리였다. 만드는 단계 안에서 검수가 돌아야 한다. */
+const 팩자리 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만드는중"];
+const 팩방 = 팩자리[0];
+/** 팩 이름이 두 자리 중 어디에 있는지 찾아 준다 */
+const 팩길 = (팩: string): string => 팩자리.map((r) => `${r}/${팩}`).find((p) => existsSync(p)) ?? `${팩방}/${팩}`;
+/** 두 자리를 합쳐 훑는다 — 같은 이름이 겹치면 _판매팩 이 이긴다 */
+const 팩훑기 = (거르개?: (e: { name: string }) => boolean): string[] => {
+  const 본것 = new Set(), 모음 = [];
+  for (const r of 팩자리) {
+    let 목록; try { 목록 = readdirSync(r, { withFileTypes: true }); } catch { continue; }
+    for (const e of 목록) {
+      if (!e.isDirectory() || 본것.has(e.name)) continue;
+      if (거르개 && !거르개(e)) continue;
+      본것.add(e.name); 모음.push(e.name);
+    }
+  }
+  return 모음;
+};
 const 전부보기 = process.argv.includes("--전부");
 const 고른팩 = process.argv.slice(2).find((x) => !x.startsWith("--"));
 const 볼장수 = 14;
@@ -854,7 +874,7 @@ function 대표고르기(pages: string): string[] {
 }
 
 function 팩보기(팩: string) {
-  const 완성화면 = join(팩방, 팩, "완성화면");
+  const 완성화면 = join(팩길(팩), "완성화면");
   const pages = join(완성화면, "pages");
   if (!existsSync(pages)) return null;
   const 볼것 = 대표고르기(pages);
@@ -956,7 +976,7 @@ function 팩보기(팩: string) {
   {
     const 업종 = 팩.split("_")[0];
     const 짝 = 팩.endsWith("디럭스") ? `${업종}_프리미엄` : 팩.endsWith("프리미엄") ? `${업종}_디럭스` : null;
-    const 짝쪽 = 짝 ? join(팩방, 짝, "완성화면", "pages") : null;
+    const 짝쪽 = 짝 ? join(팩길(짝), "완성화면", "pages") : null;
     if (짝쪽 && existsSync(짝쪽)) {
       /* 두 등급이 «같은 이름»으로 부르는 화면을 제목으로 맞춘다 */
       const 제목모으기 = (방: string) => {
@@ -969,7 +989,7 @@ function 팩보기(팩: string) {
         }
         return m;
       };
-      const 이쪽 = 제목모으기(join(팩방, 팩, "완성화면", "pages"));
+      const 이쪽 = 제목모으기(join(팩길(팩), "완성화면", "pages"));
       const 저쪽 = 제목모으기(짝쪽);
       const 단계말빼기 = (방: string, f: string) => {
         const s = readFileSync(join(방, f), "utf8");
@@ -979,7 +999,7 @@ function 팩보기(팩: string) {
       for (const [이름, 이파일] of 이쪽) {
         const 저파일 = 저쪽.get(이름);
         if (!저파일 || 어긋남 >= 3) continue;
-        const a = 단계말빼기(join(팩방, 팩, "완성화면", "pages"), 이파일);
+        const a = 단계말빼기(join(팩길(팩), "완성화면", "pages"), 이파일);
         const b = 단계말빼기(짝쪽, 저파일);
         if (!a.length || !b.length) continue;
         const A = a[0].split("/")[1], B = b[0].split("/")[1];
@@ -1100,9 +1120,7 @@ function 팩보기(팩: string) {
   return { 팩, 본장: 잰장.length, 못잰장, 흠들, 칸별 };
 }
 
-const 팩들 = readdirSync(팩방, { withFileTypes: true })
-  .filter((e) => e.isDirectory() && !e.name.startsWith("_") && (!고른팩 || e.name === 고른팩))
-  .map((e) => e.name);
+const 팩들 = 팩훑기((e) => !e.name.startsWith("_") && (!고른팩 || e.name === 고른팩));
 
 console.log("사람이 보듯 옮겨 다니며 잽니다 — H1~H15\n");
 let 나쁨 = 0;

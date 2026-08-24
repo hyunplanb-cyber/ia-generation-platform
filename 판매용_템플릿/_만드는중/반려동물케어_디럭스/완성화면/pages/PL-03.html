@@ -65,7 +65,10 @@
   <input class="in " type="text" placeholder="예: 관절 영양제"></label>
       <label class="field ">
   <span class="lb">급여 시간</span>
-  <select class="sel"><option>점심(12:30)</option><option selected>오후(14:00)</option><option>간식 시간(15:30)</option><option>직접 적기</option></select></label>
+  <select class="sel" data-reveal-when="직접 적기" data-reveal-box="fdTime"><option>점심(12:30)</option><option selected>오후(14:00)</option><option>간식 시간(15:30)</option><option>직접 적기</option></select></label>
+      <label class="field " id="fdTime" hidden>
+  <span class="lb">시간 직접 적기</span>
+  <input class="in " type="text" placeholder="예: 오전 10:30"></label>
     </div>
     <label class="field ">
   <span class="lb">먹이는 법</span>

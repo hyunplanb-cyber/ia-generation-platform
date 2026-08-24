@@ -51,7 +51,27 @@ process.on("exit", () => { try { 지우기(크롬찌꺼기, { recursive: true, f
 
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
-const 팩방 = "판매용_템플릿/_판매팩";
+/* ⚠ 만드는 중인 팩(_만드는중)도 같이 본다.
+   2026-08-25 — 반려견 유치원 41장을 손으로 눌러 다섯 군데가 새는 걸 찾았는데,
+   검수기 열한 개가 전부 _판매팩 만 보고 있어서 «옮겨 놓기 전까지 아무 검수도 안 받는»
+   자리였다. 만드는 단계 안에서 검수가 돌아야 한다. */
+const 팩자리 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만드는중"];
+const 팩방 = 팩자리[0];
+/** 팩 이름이 두 자리 중 어디에 있는지 찾아 준다 */
+const 팩길 = (팩: string): string => 팩자리.map((r) => `${r}/${팩}`).find((p) => existsSync(p)) ?? `${팩방}/${팩}`;
+/** 두 자리를 합쳐 훑는다 — 같은 이름이 겹치면 _판매팩 이 이긴다 */
+const 팩훑기 = (거르개?: (e: { name: string }) => boolean): string[] => {
+  const 본것 = new Set(), 모음 = [];
+  for (const r of 팩자리) {
+    let 목록; try { 목록 = readdirSync(r, { withFileTypes: true }); } catch { continue; }
+    for (const e of 목록) {
+      if (!e.isDirectory() || 본것.has(e.name)) continue;
+      if (거르개 && !거르개(e)) continue;
+      본것.add(e.name); 모음.push(e.name);
+    }
+  }
+  return 모음;
+};
 const 고른팩 = process.argv.slice(2).find((a) => !a.startsWith("--"));
 const 약속도 = process.argv.includes("--약속");
 
@@ -174,7 +194,7 @@ const 눌러보는글 = `
 type 결과 = { 화면: string; 눌러본수: number; 죽은수: number; 죽은것: string[]; 종류: Record<string, number>; 값만수: number };
 
 function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[] } | null {
-  const 완성화면 = join(팩방, 팩, "완성화면");
+  const 완성화면 = join(팩길(팩), "완성화면");
   const pages = join(완성화면, "pages");
   if (!existsSync(pages)) return null;
 
@@ -219,7 +239,7 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
 
 /** 스펙팩에 적어 둔 «약속(acts)» 을 같이 보여 준다 — 손님이 넣고 만들 때 그대로 따라간다. */
 function 약속보기(팩: string) {
-  const 스펙 = join(팩방, 팩, "완성화면", "스펙팩", "07_AI빌드_스펙팩.json");
+  const 스펙 = join(팩길(팩), "완성화면", "스펙팩", "07_AI빌드_스펙팩.json");
   if (!existsSync(스펙)) return null;
   const s = JSON.parse(readFileSync(스펙, "utf8"));
   const 전부 = s.screens.flatMap((x: any) => (x.acts || []).map((a: any[]) => ({ 화면: x.pageId, 무엇: a[0], 어떻게: a[1] })));
@@ -228,9 +248,7 @@ function 약속보기(팩: string) {
 
 const 팩들 = 고른팩
   ? [고른팩]
-  : readdirSync(팩방, { withFileTypes: true })
-      .filter((e) => e.isDirectory() && existsSync(join(팩방, e.name, "완성화면", "pages")))
-      .map((e) => e.name);
+  : 팩훑기((e) => existsSync(join(팩길(e.name), "완성화면", "pages")));
 
 console.log("눌러도 반응 없는 UI 가 있나 — 실제로 눌러서 잽니다\n");
 
