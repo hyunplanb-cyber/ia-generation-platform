@@ -196,7 +196,7 @@ const 눌러보는글 = `
 
 type 결과 = { 화면: string; 눌러본수: number; 죽은수: number; 죽은것: string[]; 종류: Record<string, number>; 값만수: number };
 
-function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[] } | null {
+function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]; 못잰장: string[] } | null {
   const 완성화면 = join(팩길(팩), "완성화면");
   const pages = join(완성화면, "pages");
   if (!existsSync(pages)) return null;
@@ -208,6 +208,7 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
 
   const 화면들 = readdirSync(pages).filter((f) => f.endsWith(".html")).sort();
   const 결과: 결과[] = [];
+  const 못잰장: string[] = [];   /* ⚠ 못 잰 장을 «통과»로 넘기지 않는다 — 세어서 보여 준다 */
 
   for (const f of 화면들) {
     const 길 = join(임시, "pages", f);
@@ -221,11 +222,14 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
 
     let 뽑힌: string;
     try {
+      /* ⛔ timeout 을 안 주면 크롬이 한 쪽에서 멈출 때 «회차 전체»가 영영 안 끝난다.
+         2026-08-18 에 여행_프리미엄이, 2026-08-25 에 여행_디럭스가 그렇게 한 시간을 서 있었다.
+         한 쪽에 2.5초짜리 일이니 60초면 넉넉하다 — 넘으면 그 쪽만 «못 잰 장»으로 두고 간다. */
       뽑힌 = execFileSync(CHROME, [
         "--headless=new", "--user-data-dir=" + 크롬찌꺼기,  "--disable-gpu", "--window-size=1440,1000",
         "--virtual-time-budget=2500", "--dump-dom", "file:///" + 길.replace(/\\/g, "/"),
-      ], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"] });
-    } catch { continue; }
+      ], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"], timeout: 60_000 });
+    } catch { 못잰장.push(f); continue; }
 
     const m = /<title>([\s\S]*?)<\/title>/.exec(뽑힌);
     if (!m) continue;
@@ -237,7 +241,7 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
   }
 
   rmSync(임시, { recursive: true, force: true });
-  return { 팩, 잰장: 결과.length, 결과 };
+  return { 팩, 잰장: 결과.length, 결과, 못잰장 };
 }
 
 /** 스펙팩에 적어 둔 «약속(acts)» 을 같이 보여 준다 — 손님이 넣고 만들 때 그대로 따라간다. */
@@ -267,6 +271,10 @@ for (const 팩 of 팩들) {
 
   const 총값만 = r.결과.reduce((n, x) => n + x.값만수, 0);
   console.log(`  ${팩} — ${r.잰장}장에서 ${총누름}개를 눌러 봤습니다`);
+  if (r.못잰장.length) {
+    WARN += r.못잰장.length;
+    console.log(`    △ 못 잰 장 ${r.못잰장.length}개 — 크롬이 60초 안에 안 끝났습니다: ${r.못잰장.slice(0, 5).join(" · ")}`);
+  }
   if (총값만 > 0) {
     WARN += 총값만;
     console.log(`    △ 고른 값만 바뀌고 옆이 그대로인 select ${총값만}개 — 거르라고 둔 것이면 반쪽입니다.`);

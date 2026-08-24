@@ -33,7 +33,10 @@ process.on("exit", () => { try { 지우기(크롬찌꺼기, { recursive: true, f
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const 팩방 = "판매용_템플릿/_판매팩";
-const W = `${process.env.TEMP.replace(/\\/g, "/")}/cc-hsteps`;
+/* ⛔ 이름을 못 박아 두면 «같은 시각에 도는 옆 루틴»과 이 자리를 서로 지우고 부어 넣는다.
+   2026-08-25 에 레이아웃검사가 그것으로 물었다(남의 팩을 우리 팩이라고 쟀다). 제 번호를 붙인다. */
+const W = `${process.env.TEMP.replace(/\\/g, "/")}/cc-hsteps-${process.pid}`;
+process.on("exit", () => { try { 지우기(W, { recursive: true, force: true }); } catch {} });
 
 const 팩들 = process.argv.slice(2).length
   ? process.argv.slice(2)

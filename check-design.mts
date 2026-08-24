@@ -478,7 +478,9 @@ if (!existsSync(CHROME)) {
   걸림("실측", "카드 격자가 있는 화면을 못 찾아 실측을 건너뛰었습니다");
 } else {
   /* 작업 폴더에 한글이 있으면 크롬이 조용히 아무것도 안 만든다. 임시 폴더에서 돈다. */
-  const 일터 = join(tmpdir(), "cc-design").replace(/\\/g, "/");
+  /* ⛔ 이름을 못 박아 두면 «같은 시각에 도는 옆 루틴»과 probe.html 을 서로 덮어쓴다.
+     spec-a·spec-b 는 같이 돈다 — 2026-08-25 에 레이아웃검사에서 실제로 물었다. 제 번호를 붙인다. */
+  const 일터 = join(tmpdir(), `cc-design-${process.pid}`).replace(/\\/g, "/");
   mkdirSync(일터, { recursive: true });
 
   for (const f of 잴화면) {
