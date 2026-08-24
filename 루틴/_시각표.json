@@ -14,6 +14,15 @@
       "승인해둔권한": 0
     },
     {
+      "taskId": "daily-service-health",
+      "cron": "30 9 * * *",
+      "언제": "30 9 * * * (09:30)",
+      "켜짐": true,
+      "무엇": "매일 09:30 — 손님이 AI팩을 만들 수 있는 상태인지 잰다. 열쇠가 죽었거나 생성 실패가 쌓이면 알린다.",
+      "작업폴더": "C:/Users/glim0/OneDrive/문서/Claude/Projects/02. 웹기획자",
+      "승인해둔권한": 0
+    },
+    {
       "taskId": "pack-qa-dispatch",
       "cron": "25 0 * * 2",
       "언제": "화요일 00:25",
@@ -74,7 +83,7 @@
       "켜짐": true,
       "무엇": "매주 월요일 11시 20분 — 판매팩 자동화 지시서의 다음 칸 하나를 만들고 검사기 4개를 돌려 보고",
       "작업폴더": "C:/Users/glim0/OneDrive/문서/Claude/Projects/02. 웹기획자",
-      "승인해둔권한": 2
+      "승인해둔권한": 3
     },
     {
       "taskId": "weekly-sns-content",

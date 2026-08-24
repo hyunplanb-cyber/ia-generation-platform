@@ -6,6 +6,7 @@ import { updateProject } from "@/application/update-project";
 import { generateIa } from "@/application/generate-ia";
 import { getCreditBalance, spendCredits } from "@/application/credit";
 import { CREDIT_COST } from "@/lib/credits";
+import { 시도남기기 } from "@/application/generation-attempt";
 import type { DeviceMode } from "@/domain/project/project";
 
 export interface GenerateState {
@@ -49,6 +50,15 @@ export async function saveBriefAndGenerateAction(
   }
 
   const result = await generateIa(projectId, detail);
+  /* 성공이든 실패든 «눌렀다»는 것을 남긴다 — 실패는 크레딧 원장에 안 남기 때문이다.
+     2026-08-15 에 열쇠가 만료됐는데 9일 동안 몰랐던 것이 이 기록이 없어서였다. */
+  await 시도남기기({
+    projectId,
+    kind: "ia",
+    size: detail ? "detail" : "basic",
+    ok: result.ok,
+    reason: result.ok ? null : result.reason,
+  });
   if (result.ok) {
     await spendCredits(cost, detail ? "AI팩 생성(상세)" : "AI팩 생성(기본)", { projectId });
     revalidatePath(`/dashboard/${projectId}/menus`);
