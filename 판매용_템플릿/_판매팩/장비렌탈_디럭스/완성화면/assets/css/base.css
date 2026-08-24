@@ -901,3 +901,29 @@ label.check + .row-b,
 .mt4 + .field,
 .banner + .split-r,
 .banner + .split{margin-top:var(--sp-block, var(--s4, 16px))}
+
+/* 인라인으로 못 박은 «칸 나눔»이 폰에서 안 접힌다 — 2026-08-25
+     화면 파일에 style="grid-template-columns:…" 를 손으로 적어 둔 자리가 있다.
+     인라인은 미디어쿼리보다 세서, 위에 적어 둔 «폰에서는 한 줄로» 규칙이 통째로 진다.
+       · HO-03 · PD-01 · PD-02  카드가 repeat(3) 으로 못 박혀 폰에서도 석 줄로 남는다.
+                                482px 에서 카드 한 장이 136px — 사진도 글도 못 읽는다.
+       · PD-05                  repeat(2) 로 못 박혀 폰에서 두 줄로 남는다.
+   ⚠ 달력은 «일곱 칸»이라는 뜻이 있으니 한 줄로 접지 않는다. 내용보다 줄어들게만 한다.
+   ⛔ 인라인을 이기는 길은 !important 뿐이다. 화면 파일의 인라인 값은 데스크톱에서
+      뜻이 있어(기본 넉 줄을 석 줄로) 지우지 않고, 좁을 때만 덮는다. */
+@media (max-width:760px){
+  .split[style*="grid-template-columns"],
+  .split-l[style*="grid-template-columns"],
+  .split-r[style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr)!important}
+}
+@media (max-width:560px){
+  .cards[style*="grid-template-columns"],
+  .g2[style*="grid-template-columns"],
+  .g3[style*="grid-template-columns"],
+  .g4[style*="grid-template-columns"],
+  .g5[style*="grid-template-columns"],
+  .g6[style*="grid-template-columns"],
+  .gal[style*="grid-template-columns"],
+  .grid[style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr)!important}
+  .cal-grid[style*="grid-template-columns"]{grid-template-columns:repeat(7,minmax(0,1fr))!important}
+}

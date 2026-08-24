@@ -67,6 +67,7 @@
   /* 칩 필터 */
   on('.chip', 'click', function (e, t) {
     if (t.dataset.go) { location.href = t.dataset.go; return; }
+    if (t.dataset.catf) return;   /* 평대 거르개가 따로 맡는다 — 여기서 뒤집으면 서로 싸운다 */
     if (t.classList.contains('is-off')) return;
     /* 「전체」가 든 묶음은 하나만 골라진다 — 「전체」와 「텐트」가 같이 켜지면 안 된다.
        고른 것에 ✕ 가 붙은 묶음(여러 개 고르는 것)은 그대로 둔다. */
@@ -854,4 +855,59 @@
     }
     if (켤것) { 켤것.classList.add('on'); 켤것.setAttribute('aria-current', 'page'); }
   }
+})();
+
+/* ── 평대 칩으로 시공사례 거르기 ────────────────────────────────────
+   ⛔ 2026-08-25 검수: CS-01 의 「30평대」 칩이 켜져 있고 왼쪽 패널의
+      「30평대」 네모도 체크돼 있는데, 사례 8개가 그대로 다 보였다.
+      18·24·26·28·42평이 「조건에 맞는 사례」에 섞여 있었고 셈도 8개라 적혀 있었다.
+      칩은 켜짐 표시만 바뀌고 목록에는 아무것도 안 걸려 있었다.
+
+   자료는 이미 화면에 있었다 — 카드마다 data-area(평수)가 적혀 있다.
+   그 십의 자리로 «평대»를 지어 칩과 짝지었다.
+   ⚠ 이 칩 줄은 «고른 조건»을 보여 주는 줄이다(기능정의의 「고른 조건 칩 줄과 전체 지우기」).
+      그래서 「전체」는 조건을 지우는 자리이고, 처음에는 30평대가 걸린 채로 선다.
+   ⚠ 셈글(「조건에 맞는 사례 N개」)도 같이 고친다 — 목록만 줄이고 숫자를 두면
+      화면 안에서 서로 다른 말을 하게 된다. */
+(function 평대거르기() {
+  var 목록 = document.querySelector('[data-catlist]');
+  if (!목록) return;
+  var 카드 = [].slice.call(목록.querySelectorAll('[data-cat]'));
+  var 칩 = [].slice.call(document.querySelectorAll('[data-catf]'));
+  if (!카드.length || !칩.length) return;
+  var 셈 = document.querySelector('[data-catcount]');
+
+  /* 하나도 안 남았을 때 띄울 안내 — 빈 채로 두면 고장으로 보인다 */
+  var 빈칸 = document.createElement('div');
+  빈칸.className = 'empty mt6';
+  빈칸.hidden = true;
+  빈칸.innerHTML =
+    '<div class="ico">🔍</div>' +
+    '<h3 class="t-sec">그 평대의 사례는 이 견본에 안 담겨 있어요</h3>' +
+    '<p class="msg">보여 드리는 화면에는 몇 가지만 담아 두었습니다. ' +
+    '「전체」를 누르시면 다시 보여 드려요.</p>';
+  목록.insertAdjacentElement('afterend', 빈칸);
+
+  function 그리기(고른) {
+    var 남은 = 0;
+    카드.forEach(function (c) {
+      var ok = 고른 === '*' || c.dataset.cat === 고른;
+      c.hidden = !ok;
+      if (ok) 남은++;
+    });
+    빈칸.hidden = 남은 > 0;
+    if (셈) 셈.textContent = String(남은);
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('[data-catf]') : null;
+    if (!t) return;
+    칩.forEach(function (x) { x.classList.remove('on'); });
+    t.classList.add('on');
+    그리기(t.dataset.catf);
+  });
+
+  var 처음 = 칩.filter(function (x) { return x.classList.contains('on'); })[0] || 칩[0];
+  처음.classList.add('on');
+  그리기(처음.dataset.catf);
 })();

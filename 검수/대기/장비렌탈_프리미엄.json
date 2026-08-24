@@ -1,0 +1,15 @@
+{
+  "팩": "장비렌탈_프리미엄",
+  "업종키": "rental",
+  "상품키": "rental-premium",
+  "루틴": "pack-qa-spec-b",
+  "올린때": "2026-08-24T17:30:57.169Z",
+  "고친것": [
+    "완성화면/assets/css/base.css — 인라인 repeat(3) 카드 폰에서 한 줄로(HO0301 · PD0101 · PD0201 · PD0501)",
+    "완성화면/assets/css/base.css — label.check + label.field · .f2 + label.field 가 0px 로 맞붙던 것에 틈 20px(RT0404 · BK0103 · HO0403)",
+    "완성화면/pages/HO0301.html · PD0101.html + assets/js/app.js — 장비 정렬 네 가지가 실제로 걸리게"
+  ],
+  "다시구울것": [
+    "zip"
+  ]
+}

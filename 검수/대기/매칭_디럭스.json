@@ -1,0 +1,17 @@
+{
+  "팩": "매칭_디럭스",
+  "업종키": "matching",
+  "상품키": "matching-deluxe",
+  "루틴": "pack-qa-spec-b",
+  "올린때": "2026-08-24T17:30:57.169Z",
+  "고친것": [
+    "완성화면/assets/css/base.css — 인라인 grid-template-columns 가 폰 미디어쿼리를 이겨 안 접히던 것을 좁은 폭에서 덮어쓰게 했다(CH-02 채팅 본문 111px→435px · RQ-02 본문 69px→353px)",
+    "완성화면/assets/css/base.css — .solo 를 minmax(0,1fr) 로 묶고 .otp 칸을 나눠 쓰게 해 AU-03 이 폰에서 22px 밀리던 것을 0 으로",
+    "완성화면/assets/css/base.css — .rate-in .v 88px 고정을 폰에서만 풀었다(별점 줄 넘침)",
+    "완성화면/pages/SE-04.html — 사진 크게보기의 「이 작업처럼 견적 요청」·「신고」가 span 이라 안 눌렸다. 링크와 button(data-toast)으로 바꿨다",
+    "완성화면/pages/QT-01.html + assets/js/app.js — 「낮은 가격순·평점 높은순·빠른 응답순·도착한 순」이 값만 바뀌고 차례는 그대로였다. 카드에 data-price·data-rate·data-resp·data-arr 를 적고 실제로 정렬하게 했다"
+  ],
+  "다시구울것": [
+    "zip"
+  ]
+}

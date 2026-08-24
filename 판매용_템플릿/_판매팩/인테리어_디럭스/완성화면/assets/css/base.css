@@ -964,4 +964,7 @@ label.check + .row-b,
 .result + .center,
 .mt4 + .field,
 .banner + .split-r,
+/* CT-02 — 「현금영수증 발급」 체크 줄(.stack) 바로 밑에 «확인 요약» 카드가 0px 로 맞붙었다.
+   .split-r 의 첫 칸이 빈 <div> 라 오른쪽 칸 카드가 윗줄에 그대로 닿는다. (2026-08-25) */
+.stack + .split-r,
 .banner + .split{margin-top:var(--sp-block, var(--s4, 16px))}

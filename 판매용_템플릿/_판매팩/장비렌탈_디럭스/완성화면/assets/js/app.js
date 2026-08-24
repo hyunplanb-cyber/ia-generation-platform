@@ -447,3 +447,34 @@
     if (켤것) { 켤것.classList.add('on'); 켤것.setAttribute('aria-current', 'page'); }
   }
 })();
+
+/* ── 장비 목록 정렬 — <select data-sort-cards="gear"> 와 <div data-sort-list="gear"> ──
+   ⛔ 2026-08-25 검수: HO-03 · PD-01 의 「추천순 / 대여료 낮은 순 / 별점 높은 순 /
+      많이 남은 순」이 고른 값만 바뀌고 카드 차례는 그대로였다.
+      기능정의에 「정렬(추천·낮은 대여료·별점·잔여 많은 순)」이라 적어 두고도
+      거는 장치가 없었다 — 이 팩 app.js 에는 정렬 코드가 한 줄도 없었다.
+
+   자료는 이미 카드에 적혀 있다 — 1일 대여료 · 별점 · 「N대 중 M대 남음」 · 후기 수.
+   그것을 카드마다 data-price · data-rate · data-left · data-many 로 못 박고 여기서 견준다.
+   ⚠ 「추천순」은 처음 놓인 차례가 곧 그 차례라 data-rec 에 0·1·2… 를 적어 두었다.
+   ⚠ 별점 · 남은 대수 · 많이 빌려간 순은 «큰 것부터»다 — option 에 data-desc 를 달았다.
+   ⚠ 「많이 빌려간 순」은 카드에 «누적 대여 횟수»가 없어 후기 수(★ 옆 괄호)로 견준다.
+      후기는 빌린 뒤에 쓰는 것이라 차례는 같은 방향이다. 진짜 대여 횟수를 카드에
+      적게 되면 data-many 를 그 값으로 바꾸면 된다.
+   ⚠ 갈래 거르개가 감춰 둔 카드(hidden)는 감춰진 채로 자리만 옮긴다 — 서로 안 싸운다. */
+document.addEventListener('change', function (e) {
+  var sel = e.target && e.target.closest ? e.target.closest('[data-sort-cards]') : null;
+  if (!sel) return;
+  var 상자 = document.querySelector('[data-sort-list="' + sel.dataset.sortCards + '"]');
+  if (!상자) return;
+  var 고른 = sel.options[sel.selectedIndex];
+  var 키 = sel.value || 'rec';
+  var 큰것부터 = !!(고른 && 고른.dataset && 고른.dataset.desc !== undefined);
+  Array.prototype.slice.call(상자.children)
+    .filter(function (c) { return c.dataset && c.dataset[키] !== undefined; })
+    .sort(function (a, b) {
+      var d = Number(a.dataset[키]) - Number(b.dataset[키]);
+      return 큰것부터 ? -d : d;
+    })
+    .forEach(function (c) { 상자.appendChild(c); });
+});
