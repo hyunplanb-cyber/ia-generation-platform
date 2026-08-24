@@ -30,10 +30,13 @@ const 팩자리 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만�
 const 팩방 = 팩자리[0];
 /** 팩 이름이 두 자리 중 어디에 있는지 찾아 준다 */
 const 팩길 = (팩: string): string => 팩자리.map((r) => `${r}/${팩}`).find((p) => existsSync(p)) ?? `${팩방}/${팩}`;
-/** 두 자리를 합쳐 훑는다 — 같은 이름이 겹치면 _판매팩 이 이긴다 */
+/** 훑는다 — 같은 이름이 겹치면 _판매팩 이 이긴다.
+    ⚠ 이름을 «집어서» 부를 때만 _만드는중 까지 본다. 만드는 단계 안에서 검수하려면
+      그래야 한다. 하지만 이름 없이 «전부» 훑을 때는 _판매팩 만 본다 —
+      만들다 만 팩을 주간 검수가 보면 FAIL 이 쏟아지고 포장이 막힌다(검수공통 4절). */
 const 팩훑기 = (거르개?: (e: { name: string }) => boolean): string[] => {
-  const 본것 = new Set(), 모음 = [];
-  for (const r of 팩자리) {
+  const 본것 = new Set<string>(), 모음: string[] = [];
+  for (const r of (고른팩 ? 팩자리 : [팩방])) {
     let 목록; try { 목록 = readdirSync(r, { withFileTypes: true }); } catch { continue; }
     for (const e of 목록) {
       if (!e.isDirectory() || 본것.has(e.name)) continue;
