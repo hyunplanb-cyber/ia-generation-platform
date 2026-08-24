@@ -51,6 +51,22 @@
     }
   });
 
+  /* 「…html#tab:값」으로 들어오면 그 탭을 눌러 준 채로 연다.
+     ⛔ 2026-08-25 검수: 자식 화면(MY0103 불발 탭)에서 「진행 중」과 「전체」가 둘 다 MY0101 로
+        가서, 이름이 다른데 열리는 것이 똑같았다. 값은 거르는 탭이면 data-v 를 쓴다.
+     ⚠ 「첫 실행」이 기본 탭을 다시 켜며 우리 것을 덮어쓰지 않도록 load 로 건다. */
+  function 해시탭열기() {
+    var raw = location.hash || '';
+    try { raw = decodeURIComponent(raw); } catch (err) { /* 망가진 해시면 그대로 본다 */ }
+    if (raw.indexOf('#tab:') !== 0) return;
+    var key = raw.slice(5);
+    if (!key) return;
+    var t = document.querySelector('.tab[data-v="' + key + '"], .tab[data-pane="' + key + '"]');
+    if (t && !t.classList.contains('on')) t.click();
+  }
+  if (document.readyState === 'complete') 해시탭열기();
+  else addEventListener('load', 해시탭열기);
+
   /* 아코디언 */
   on('.acc-q', 'click', function (e, t) {
     t.closest('.acc-item').classList.toggle('on');

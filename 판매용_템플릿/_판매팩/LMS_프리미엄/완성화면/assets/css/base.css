@@ -778,7 +778,14 @@ body>*:first-child{width:100%}
 .ft{margin-top:auto}
 /* 푸터를 품은 main 은 아래 여백을 푸터에 넘긴다 — 안 그러면 푸터 밑에 64px 이 남는다 */
 main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
-.split-r>*,.split-l>*,.app>*,.edcols>*{min-width:0}
+/* ⭐ 바로 위 줄이 main·.appmain·.edmain 을 «세로 flex»로 바꾼다(푸터를 바닥에 붙이려고).
+   그런데 세로 flex 의 자식은 min-width 가 auto 라 «제 속내용보다 좁아지지 못한다» —
+   폭 360 짜리 폰에서 .wrap-narrow 가 364px 로 버티며 화면이 통째로 옆으로 밀렸다.
+   같은 까닭으로 .split·.app·.edcols 에는 이미 min-width:0 을 걸어 두었으면서,
+   이 규칙이 «스스로 만든» 세로 flex 만 빠져 있었다. LMS 다섯 쪽에서 9~100px 밀렸다.
+   (2026-08-25 검수 · D6 · 폭 390 에서는 안 보이고 360 에서만 나온다) */
+.split-r>*,.split-l>*,.app>*,.edcols>*,
+.app-ed>main>*,.app-ed>.edmain>*,.app>main>*,.app>.appmain>*,.page-wrap>main>*{min-width:0;width:100%}
 
 /* [hidden] 은 브라우저 기본값이라 .lrow{display:flex} 같은 규칙에 진다.
    거르기가 목록을 못 줄이는 사고가 여기서 난다 — 반드시 이겨 두어야 한다. */

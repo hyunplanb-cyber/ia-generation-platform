@@ -44,6 +44,24 @@
   /* ---------- 화면 이동 ---------- */
   on('[data-go]', 'click', function (e, t) { location.href = t.dataset.go; });
 
+  /* 「…html#tab:값」으로 들어오면 그 탭을 눌러 준 채로 연다.
+     ⛔ 2026-08-25 검수: 자식 화면(CL0102 수강 완료 탭)에서 「전체」를 눌러 부모(CL0101)로
+        돌아가면 부모는 늘 첫 탭(수강 중)을 보여 주었다. 이름과 열리는 것이 달랐다.
+     값은 거르는 탭이면 data-v, 갈아 끼우는 탭이면 data-pane 을 쓴다. */
+  function 해시탭열기() {
+    var raw = location.hash || '';
+    try { raw = decodeURIComponent(raw); } catch (err) { /* 망가진 해시면 그대로 본다 */ }
+    if (raw.indexOf('#tab:') !== 0) return;
+    var key = raw.slice(5);
+    if (!key) return;
+    var t = document.querySelector('.tab[data-v="' + key + '"], .tab[data-pane="' + key + '"]');
+    if (t && !t.classList.contains('on')) t.click();
+  }
+  /* ⚠ DOMContentLoaded 로 걸면 안 된다. 아래 「첫 실행」이 data-finit 으로 «기본 탭»을
+     다시 켜면서 우리가 켠 탭을 덮어써, 탭 두 개가 같이 켜진 채로 남았다. load 로 건다. */
+  if (document.readyState === 'complete') 해시탭열기();
+  else addEventListener('load', 해시탭열기);
+
 
   /* 한 번 누르면 끝나는 단추 — 누른 뒤 글자를 바꾸고 다시 눌리지 않게 한다.
      ⛔ 2026-08-19 검수: 쿠폰 「받기」 를 몇 번이고 눌러도 「받았어요」 가 또 나왔다.
