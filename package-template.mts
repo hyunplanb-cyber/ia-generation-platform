@@ -121,6 +121,14 @@ const INDUSTRIES = [
        ⚠ siteBase·siteDeep 을 «일부러» 비운다. 완성화면을 팩 자기 폴더 안에 만들
          것이라 가리키면 원본과 대상이 같아져 copyFileSync 가 자기 자신을 덮어쓴다.
          비워 두면 「팩에 있던 것을 그대로 둡니다」로 흘러가고 화면 수도 팩에서 센다. */ },
+  { key: "petcare", label: "반려동물케어", title: "반려견 유치원 등원 예약·운영",
+    base: `${W}/반려동물케어_유치원예약`, deep: `${W}/반려동물케어_유치원예약_상세IA`,
+    /* A 회차(2026-08-24) — 디럭스(코럴 선셋 × 여백 중심형)까지만 만든다.
+       프리미엄(모던 네이비 × 대시보드형, 3뎁스)은 B 회차 몫이라 아직 화면이 없다.
+
+       ⚠ siteBase·siteDeep 을 «일부러» 비운다. 완성화면을 팩 자기 폴더 안에 만들
+         것이라 가리키면 원본과 대상이 같아져 copyFileSync 가 자기 자신을 덮어쓴다.
+         비워 두면 「팩에 있던 것을 그대로 둡니다」로 흘러가고 화면 수도 팩에서 센다. */ },
 ] as const satisfies readonly {
   key: string; label: string; title: string;
   base: string; deep: string; siteBase?: string; siteDeep?: string;

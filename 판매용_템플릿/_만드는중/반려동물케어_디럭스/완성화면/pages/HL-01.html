@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>백신 만료 대시보드 · 도그마루 반려견 유치원</title>
+<meta name="description" content="전체 재원 아이의 백신 유효기간 목록 · 만료 임박(30일 이내)·만료 상태 강조 · 만료 시 예약 자동 제한 안내 · 일괄 알림 발송(재접종 안내) · 접종 증명서 재업로드 요청 이력">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="HL-01">
+<header class="gnb">
+  <div class="gnb-in">
+    <div class="gnb-left"><a class="btn btn-ghost btn-sm" href="HO-02.html">요금·코스</a></div>
+    <a class="logo" href="HO-01.html"><span class="mark">🐾</span>도그마루 반려견 유치원</a>
+    <div class="gnb-right">
+      <a class="btn btn-ghost btn-sm" href="AT-01.html">등원 현황판</a>
+      <a class="btn btn-pri btn-sm" href="RE-01.html">예약하기</a>
+    </div>
+  </div>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="AT-01.html">등하원 관리</a><a href="NW-01.html">알림장 작성</a><a href="HL-01.html">건강·안전 관리</a><a href="MG-01.html">원 관리자</a></nav>
+</header>
+
+<main class="main"><div class="wrap"><div class="col col-wide"><div class="page-hd">
+  <div><h1 class="t-page">백신 만료 대시보드</h1><p class="t-sub">전체 원생 37마리 · 2026년 8월 24일 (월) 기준</p></div>
+  <div class="btns"><a class="btn btn-ghost" href="AT-01.html">오늘 현황판</a></div></div>
+
+<div class="g3">
+  <div class="stat ok">
+  <div class="lb"><span>✅</span>정상</div>
+  <div class="v"><span>32</span><span class="u">마리</span></div>
+  <div class="d">유효기간이 30일 넘게 남았어요</div></div>
+  <div class="stat warn">
+  <div class="lb"><span>⚠️</span>만료 임박</div>
+  <div class="v"><span>4</span><span class="u">마리</span></div>
+  <div class="d">30일 안에 만료됩니다</div></div>
+  <div class="stat dan">
+  <div class="lb"><span>🔴</span>만료</div>
+  <div class="v"><span>1</span><span class="u">마리</span></div>
+  <div class="d">예약과 등원이 제한됩니다</div></div>
+</div>
+
+<div class="mt6"><div class="banner banner-dan "><span class="ico">🚫</span><div class="grow"><b>루키 — 종합백신이 6일 전에 만료됐습니다.</b>
+  <div class="t-sub mt2">이 아이는 <b>등원 예약이 제한</b>되고, 등원 체크 버튼도 잠깁니다.
+  오늘 원에 왔다면 원장 승인으로만 하루 열 수 있어요. 보호자 차민준 님 · 010-7734-1180</div></div><a class="btn btn-pri btn-sm" href="AT-02.html">등원 체크 화면</a></div></div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">한 번에 안내 보내기</h3></div>
+  <div class="card-bd ">
+  <div class="row-b wrap-row">
+    <div><div class="t-card">만료 임박 4마리에게 재접종 안내를 보냅니다</div>
+      <div class="t-sub mt1">보리 · 만두 · 단추 · 코코</div></div>
+    <button class="btn btn-pri" type="button" data-notify="4건의 재접종 안내를 보냈어요 — 결과는 보호자 알림 관리에서 볼 수 있습니다" data-notify-once="4건을 보냈어요">만료 임박 4마리에게 재접종 안내 발송</button>
+  </div></div>
+  </div>
+
+<div class="filters mt8">
+  <select class="sel" data-sort-for="vac"><option selected value="D">만료 임박순</option><option value="Nm">이름순</option><option value="Cls">반순</option></select>
+  <div class="chips" data-filter-for="vac"><button class="chip on" type="button">전체</button><button class="chip" type="button">정상</button><button class="chip" type="button">임박</button><button class="chip" type="button">만료</button></div>
+  <span class="t-sub"><b data-filter-cnt="vac">24</b>마리</span>
+</div>
+
+<div data-filter-list="vac" data-per-page="10">
+<div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:64px"></th><th>이름</th><th>반</th><th>백신 종류</th><th class="c">남은 일수</th><th class="c">상태</th><th>보호자</th><th class="c"></th></tr></thead><tbody><tr class="bad" data-tag="만료" data-s-d="-6" data-s-nm="루키" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t4 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (루키 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (11).webp" alt=""></div></td><td class="nowrap"><b>루키</b><div class="sub">스피츠 · 6.8kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">만료됨</span></td><td class="c"><span class="badge b-dan">만료</span></td><td>차민준</td><td class="c"><button class="btn btn-sub btn-sm" type="button" data-notify="차민준 님께 루키의 재접종 안내를 보냈어요">재접종 안내 보내기</button></td></tr><tr data-tag="임박" data-s-d="11" data-s-nm="단추" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t4 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (단추 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (12).webp" alt=""></div></td><td class="nowrap"><b>단추</b><div class="sub">코카푸 · 7.3kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-11</span></td><td class="c"><span class="badge b-warn">임박</span></td><td>임채원</td><td class="c"><button class="btn btn-sub btn-sm" type="button" data-notify="임채원 님께 단추의 재접종 안내를 보냈어요">재접종 안내 보내기</button></td></tr><tr data-tag="임박" data-s-d="18" data-s-nm="보리" data-s-cls="소형반"><td class="nowrap"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (보리 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (13).webp" alt=""></div></td><td class="nowrap"><b>보리</b><div class="sub">말티즈 · 3.6kg</div></td><td>소형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-18</span></td><td class="c"><span class="badge b-warn">임박</span></td><td>김하늘</td><td class="c"><button class="btn btn-sub btn-sm" type="button" data-notify="김하늘 님께 보리의 재접종 안내를 보냈어요">재접종 안내 보내기</button></td></tr><tr data-tag="임박" data-s-d="26" data-s-nm="만두" data-s-cls="소형반"><td class="nowrap"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (만두 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (14).webp" alt=""></div></td><td class="nowrap"><b>만두</b><div class="sub">시츄 · 4.2kg</div></td><td>소형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-26</span></td><td class="c"><span class="badge b-warn">임박</span></td><td>정민수</td><td class="c"><button class="btn btn-sub btn-sm" type="button" data-notify="정민수 님께 만두의 재접종 안내를 보냈어요">재접종 안내 보내기</button></td></tr><tr data-tag="임박" data-s-d="29" data-s-nm="코코" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t3 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (코코 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (15).webp" alt=""></div></td><td class="nowrap"><b>코코</b><div class="sub">비숑프리제 · 5.1kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-29</span></td><td class="c"><span class="badge b-warn">임박</span></td><td>류하진</td><td class="c"><button class="btn btn-sub btn-sm" type="button" data-notify="류하진 님께 코코의 재접종 안내를 보냈어요">재접종 안내 보내기</button></td></tr><tr data-tag="정상" data-s-d="47" data-s-nm="하루" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t3 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (하루 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (16).webp" alt=""></div></td><td class="nowrap"><b>하루</b><div class="sub">슈나우저 · 7.9kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-47</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>유선호</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="57" data-s-nm="루비" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (루비 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (17).webp" alt=""></div></td><td class="nowrap"><b>루비</b><div class="sub">웰시코기 · 11.2kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-57</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>강민아</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="65" data-s-nm="태양" data-s-cls="대형반"><td class="nowrap"><div class="ph ph-fix t1 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (태양 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (18).webp" alt=""></div></td><td class="nowrap"><b>태양</b><div class="sub">보더콜리 · 18.5kg</div></td><td>대형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-65</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>문가영</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="78" data-s-nm="모카" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t2 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (모카 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (19).webp" alt=""></div></td><td class="nowrap"><b>모카</b><div class="sub">닥스훈트 · 6.2kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-78</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>황예린</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="91" data-s-nm="나비" data-s-cls="소형반"><td class="nowrap"><div class="ph ph-fix t2 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (나비 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (2).webp" alt=""></div></td><td class="nowrap"><b>나비</b><div class="sub">치와와 · 2.7kg</div></td><td>소형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-91</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>한소영</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="96" data-s-nm="뭉치" data-s-cls="소형반"><td class="nowrap"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (뭉치 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (3).webp" alt=""></div></td><td class="nowrap"><b>뭉치</b><div class="sub">포메라니안 · 3.8kg</div></td><td>소형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-96</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>고은별</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="112" data-s-nm="두부" data-s-cls="소형반"><td class="nowrap"><div class="ph ph-fix t3 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (두부 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (4).webp" alt=""></div></td><td class="nowrap"><b>두부</b><div class="sub">요크셔테리어 · 3.3kg</div></td><td>소형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-112</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>권나래</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="124" data-s-nm="바다" data-s-cls="대형반"><td class="nowrap"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (바다 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (5).webp" alt=""></div></td><td class="nowrap"><b>바다</b><div class="sub">골든리트리버 · 27.8kg</div></td><td>대형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-124</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>신동혁</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="133" data-s-nm="방울" data-s-cls="소형반"><td class="nowrap"><div class="ph ph-fix t2 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (방울 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (6).webp" alt=""></div></td><td class="nowrap"><b>방울</b><div class="sub">말티즈 · 3.4kg</div></td><td>소형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-133</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>백승우</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="143" data-s-nm="콩이" data-s-cls="소형반"><td class="nowrap"><div class="ph ph-fix t3 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (콩이 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (7).webp" alt=""></div></td><td class="nowrap"><b>콩이</b><div class="sub">포메라니안 · 3.1kg</div></td><td>소형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-143</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>박서준</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="154" data-s-nm="두유" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t2 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (두유 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (8).webp" alt=""></div></td><td class="nowrap"><b>두유</b><div class="sub">푸들 · 5.4kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-154</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>서지우</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="176" data-s-nm="까미" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t1 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (까미 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (9).webp" alt=""></div></td><td class="nowrap"><b>까미</b><div class="sub">시바견 · 9.1kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-176</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>윤지호</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="188" data-s-nm="몽이" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t1 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (몽이 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원.webp" alt=""></div></td><td class="nowrap"><b>몽이</b><div class="sub">푸들 · 5.9kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-188</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>남주희</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="200" data-s-nm="초코" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (초코 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (1).webp" alt=""></div></td><td class="nowrap"><b>초코</b><div class="sub">코커스패니얼 · 8.4kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-200</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>김하늘</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="201" data-s-nm="뭉이" data-s-cls="소형반"><td class="nowrap"><div class="ph ph-fix t1 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (뭉이 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (10).webp" alt=""></div></td><td class="nowrap"><b>뭉이</b><div class="sub">말티푸 · 4.1kg</div></td><td>소형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-201</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>노태석</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="233" data-s-nm="구름" data-s-cls="대형반"><td class="nowrap"><div class="ph ph-fix t4 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (구름 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 1.webp" alt=""></div></td><td class="nowrap"><b>구름</b><div class="sub">사모예드 · 21.4kg</div></td><td>대형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-233</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>조은수</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="268" data-s-nm="별이" data-s-cls="소형반"><td class="nowrap"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (별이 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 12.webp" alt=""></div></td><td class="nowrap"><b>별이</b><div class="sub">비숑프리제 · 4.8kg</div></td><td>소형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-268</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>이유진</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="289" data-s-nm="산이" data-s-cls="대형반"><td class="nowrap"><div class="ph ph-fix t4 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (산이 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 13.webp" alt=""></div></td><td class="nowrap"><b>산이</b><div class="sub">진돗개 · 16.9kg</div></td><td>대형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-289</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>배준영</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr><tr data-tag="정상" data-s-d="310" data-s-nm="해피" data-s-cls="중형반"><td class="nowrap"><div class="ph ph-fix t3 ph-dog ph-tiny" style="width:44px;height:44px" title="이미지 영역 (해피 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 14.webp" alt=""></div></td><td class="nowrap"><b>해피</b><div class="sub">비글 · 9.6kg</div></td><td>중형반</td><td>종합백신 · 광견병</td><td class="c nowrap"><span class="num">D-310</span></td><td class="c"><span class="badge b-ok">정상</span></td><td>오재현</td><td class="c"><a class="btn btn-ghost btn-sm" href="HL-02.html">기록 보기</a></td></tr></tbody></table></div>
+</div>
+<div hidden data-empty-for="vac"><div class="empty">
+  <div class="ico">💉</div><h3 class="t-sec">결과가 없습니다</h3>
+  <p class="msg">고르신 상태에 해당하는 아이가 없어요.</p><div class="btns"><a class="btn btn-pri" href="HL-01.html">전체 보기</a></div></div></div>
+
+<div class="btns mt8" style="justify-content:center" data-page-box="vac">
+  <button class="chip on" type="button" data-page-for="vac" data-page-n="1">1</button><button class="chip" type="button" data-page-for="vac" data-page-n="2">2</button><button class="chip" type="button" data-page-for="vac" data-page-n="3">3</button>
+  <span class="t-sub" style="align-self:center"><b data-page-all="vac">3</b>쪽 중 <b data-page-now="vac">1</b>쪽</span>
+</div>
+
+<section class="sec ">
+  <div class="sec-hd"><h2 class="t-sec">재업로드 요청 이력</h2></div>
+  
+  <div class="table-wrap table-scroll"><table class="table "><thead><tr><th>요청일</th><th>반려견</th><th>보호자</th><th>채널</th><th class="c">결과</th></tr></thead><tbody><tr><td class="nowrap"><span class="num">08-24 08:10</span></td><td><b>루키</b></td><td>차민준</td><td>카카오톡</td><td class="c"><span class="badge b-dan">실패</span></td></tr><tr><td class="nowrap"><span class="num">08-23 09:00</span></td><td><b>단추</b></td><td>임채원</td><td>카카오톡</td><td class="c"><span class="badge b-ok">읽음</span></td></tr><tr><td class="nowrap"><span class="num">08-20 09:00</span></td><td><b>보리</b></td><td>김하늘</td><td>카카오톡</td><td class="c"><span class="badge b-ok">전달됨</span></td></tr></tbody></table></div></section>
+
+<div class="btns mt8">
+  <a class="btn btn-ghost" href="HL-02.html">건강기록 상세</a>
+  <a class="btn btn-sub" href="HL-04.html">보호자 알림 발송</a>
+</div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="t-card mb2">🐾 도그마루 반려견 유치원</div>
+        <p class="t-sub">서울 마포구 월드컵북로 12길 34, 1층<br>02-336-0824 · hello@dogmaru.kr<br>평일 08:30 – 19:30 · 토 09:00 – 17:00 · 일요일·공휴일 휴무</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="HO-01.html">홈</a><a href="PL-01.html">반려견 등록</a><a href="RE-01.html">등원 예약</a><a href="MY-01.html">마이페이지</a><a href="CS-01.html">고객센터</a>
+        <a href="MG-05.html">원 운영진 로그인</a>
+      </nav>
+    </div>
+    <div class="ft-bot">
+      <span>© 2026 도그마루 반려견 유치원. 기획 검토용 프로토타입입니다.</span>
+      <span>카카오톡 채널 @도그마루유치원</span>
+    </div>
+  </div></footer>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">HL-01 · 백신 만료 대시보드</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>건강·안전 관리</dd>
+        <dt>기능정의</dt><dd>전체 재원 아이의 백신 유효기간 목록 · 만료 임박(30일 이내)·만료 상태 강조 · 만료 시 예약 자동 제한 안내 · 일괄 알림 발송(재접종 안내) · 접종 증명서 재업로드 요청 이력</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="HL-02.html">건강기록 상세 → 반려견별 건강기록 상세</a><a href="HL-04.html">보호자 알림 발송 → 보호자 알림 발송 관리</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

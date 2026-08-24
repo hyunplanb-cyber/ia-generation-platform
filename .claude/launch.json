@@ -279,6 +279,15 @@
         "C:/Users/glim0/Downloads/펫유치원_새로만들기/site/serve.js"
       ],
       "port": 5173
+    },
+    {
+      "name": "반려동물케어-디럭스",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "build/serve.mjs"
+      ],
+      "cwd": "판매용_템플릿/_만드는중/반려동물케어_디럭스/완성화면",
+      "port": 4201
     }
   ]
 }

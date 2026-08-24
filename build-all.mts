@@ -47,7 +47,7 @@ const TSX = "node_modules/tsx/dist/cli.mjs";
    build-all 을 아무리 돌려도 인테리어 네 등급의 문서·스펙팩은 옛것 그대로였다.
    그날 손님 스펙팩 안 검사 글을 고쳤는데 28칸 중 24칸에만 실려서 들통났다.
    ⛔ 업종을 새로 만들면 «여기에도» 이름을 넣는다. 안 넣으면 아무 소리 없이 안 구워진다. */
-const 업종들 = ["lms", "beauty", "travel", "matching", "groupbuy", "rental", "interior"] as const;
+const 업종들 = ["lms", "beauty", "travel", "matching", "groupbuy", "rental", "interior", "petcare"] as const;
 const 보류업종들 = ["admin"];
 const 고른업종 = process.argv[2];
 const 돌릴것 = 고른업종 ? [고른업종] : [...업종들];

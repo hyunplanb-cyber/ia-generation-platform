@@ -20,6 +20,7 @@ import { GROUPBUY } from "@/template-data-groupbuy";
 import { MATCHING } from "@/template-data-matching";
 import { RENTAL } from "@/template-data-rental";
 import { INTERIOR } from "@/template-data-interior";
+import { PETCARE } from "@/template-data-petcare";
 import { LMS_DEEP } from "@/template-data-lms-deep";
 import { BEAUTY_DEEP } from "@/template-data-beauty-deep";
 import { TRAVEL_DEEP } from "@/template-data-travel-deep";
@@ -27,6 +28,7 @@ import { GROUPBUY_DEEP } from "@/template-data-groupbuy-deep";
 import { MATCHING_DEEP } from "@/template-data-matching-deep";
 import { RENTAL_DEEP } from "@/template-data-rental-deep";
 import { INTERIOR_DEEP } from "@/template-data-interior-deep";
+import { PETCARE_DEEP } from "@/template-data-petcare-deep";
 import type { DeepInput } from "@/template-deep";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
 
@@ -790,6 +792,64 @@ export const PACKAGES: PackageDef[] = [
         "공정표 시스템 기획",
         "인테리어 업체 홈페이지 기능정의서",
         "하자보수 접수 화면 설계",
+      ],
+    },
+  },
+  {
+    id: "petcare",
+    title: "반려견 유치원 등원 예약·운영",
+    category: "booking",
+    industry: "반려동물케어",
+    tagline:
+      "반려견을 아침에 맡기고 저녁에 데려가는 유치원의 등원 예약·운영 사이트 AI팩. 등원·하원 체크, 알림장, 백신·건강 기록, 회차권 차감, 반 배정, 정기 등원 요일까지",
+    /* A 회차(2026-08-24) — 디럭스(코럴 선셋 × 여백 중심형) 41화면 완성.
+       프리미엄(모던 네이비 × 대시보드형, 3뎁스 172화면)은 B 회차 몫이라 아직 화면이 없다.
+       그래서 site.deep 은 아직 안 넘긴다 — 프리미엄 칸은 화면이 생긴 뒤에 켠다. */
+    plans: makePlans(
+      PETCARE,
+      PETCARE_DEEP,
+      { standard: null, plus: null, deluxe: null, premium: null },
+      { base: 41 },
+    ),
+    data: PETCARE,
+    deep: PETCARE_DEEP,
+    promptSamples: ["at2", "at4", "my5"],
+    presetStyles: ["coral", "mono", "navy"],
+    presetFits: [
+      "발랄하고 친근한 인상이 필요한 소형견 유치원, SNS로 알림장을 자랑하는 브랜드",
+      "절제된 신뢰감이 필요한 미니멀한 시설, 프리미엄 소수정예 펫유치원",
+      "체계적인 운영이 강점인 대형·프랜차이즈형 펫유치원, 안심 케어를 앞세우는 브랜드",
+    ],
+    layoutKeys: ["calm", "console"],
+    fileLabel: "반려동물케어",
+    integrations: [
+      { area: "로그인·회원가입", detail: "이메일 가입, 소셜 로그인, 보호자·원 운영진 두 권한 구분" },
+      { area: "결제·자동청구", detail: "회차권·1회권 결제와 정기 요일권 매월 자동 청구" },
+      { area: "사진·문서 업로드", detail: "반려견 사진, 백신 접종증명서, 알림장 사진, 사고 기록 사진" },
+      { area: "알림", detail: "등원·하원 확인, 알림장 발송, 백신 만료, 반 변경, 사고 발생 알림" },
+      { area: "실시간 인원 집계", detail: "반별 정원 대비 현재 인원, 등하원 체크와 회차권 차감 연동" },
+    ],
+    audience: [
+      "반려견 유치원·펫호텔의 등원 예약 사이트를 만들려는 분",
+      "물건이 아니라 «자리와 시간»을 파는 돌봄 서비스를 준비하는 창업자",
+      "쇼핑몰 솔루션으로는 안 되는 등하원·반 배정·알림장 구조를 설계해야 하는 분",
+    ],
+    painPoints: [
+      "쇼핑몰은 「무엇을 몇 개 파나」인데 유치원은 「누구를 언제부터 언제까지 맡나」라, 상품 모델부터 다르다",
+      "맡은 동안 일어난 일(먹었는지·놀았는지·다치지 않았는지)을 알림장으로 돌려줘야 하는데, 이 화면 자체가 쇼핑몰 솔루션에는 없다",
+      "회차권 차감이 결제가 아니라 «등원 체크»라는 다른 행동에서 일어난다",
+      "몸무게·성향으로 반을 나누고 큰 아이와 작은 아이를 갈라야 하는데, 이 배정 로직이 상품 옵션으로는 표현이 안 된다",
+    ],
+    seo: {
+      title: "반려견 유치원 등원 예약 플랫폼 화면설계서 · AI팩",
+      description:
+        "반려견 유치원 등원 예약·운영 사이트 AI팩(기획 산출물 한 벌)입니다. 등원·하원 체크, 알림장, 백신·건강 기록, 회차권 차감, 반 배정까지 화면 목록과 기능정의를 미리 확인하세요.",
+      keywords: [
+        "반려견 유치원 사이트 기획서",
+        "펫유치원 예약 시스템 설계",
+        "강아지 유치원 홈페이지 기능정의서",
+        "알림장 시스템 화면설계",
+        "반려동물 등하원 관리 기획",
       ],
     },
   },

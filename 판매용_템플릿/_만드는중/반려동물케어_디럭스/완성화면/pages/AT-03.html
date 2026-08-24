@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>하원 체크 · 도그마루 반려견 유치원</title>
+<meta name="description" content="재원 중인 아이 명단에서 하원 체크 버튼 · 하원 시각 자동 기록 · 인계 보호자 확인(등록된 보호자 본인 여부) · 대리 하원 시 별도 기록 · 오늘 총 재원 시간 자동 계산 · 하원 후 알림장 발송 상태로 자동 연결">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="AT-03" data-now="17:48">
+<header class="gnb">
+  <div class="gnb-in">
+    <div class="gnb-left"><a class="btn btn-ghost btn-sm" href="HO-02.html">요금·코스</a></div>
+    <a class="logo" href="HO-01.html"><span class="mark">🐾</span>도그마루 반려견 유치원</a>
+    <div class="gnb-right">
+      <a class="btn btn-ghost btn-sm" href="AT-01.html">등원 현황판</a>
+      <a class="btn btn-pri btn-sm" href="RE-01.html">예약하기</a>
+    </div>
+  </div>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="AT-01.html">등하원 관리</a><a href="NW-01.html">알림장 작성</a><a href="HL-01.html">건강·안전 관리</a><a href="MG-01.html">원 관리자</a></nav>
+</header>
+
+<main class="main"><div class="wrap"><div class="col col-wide"><a class="back" href="AT-01.html">‹ 오늘 등원 현황판</a><div class="page-hd">
+  <div><h1 class="t-page">하원 체크</h1><p class="t-sub">2026년 8월 24일 (월) · 인계 보호자를 확인하고 보내 주세요</p></div>
+  <div class="btns"><a class="btn btn-ghost" href="AT-01.html">오늘 현황판</a></div></div>
+
+<div class="g3">
+  <div class="stat ">
+  <div class="lb"><span>🏠</span>지금 재원 중</div>
+  <div class="v"><span><span data-instay>14</span></span><span class="u">마리</span></div>
+  <div class="d">아직 원에 있는 아이들</div></div>
+  <div class="stat ok">
+  <div class="lb"><span>👋</span>하원 완료</div>
+  <div class="v"><span>2</span><span class="u">마리</span></div>
+  <div class="d">오늘 집에 간 아이들</div></div>
+  <div class="stat warn">
+  <div class="lb"><span>📓</span>알림장 발송 대상</div>
+  <div class="v"><span><span data-note-target>2</span></span><span class="u">마리</span></div>
+  <div class="d">하원한 아이는 자동으로 올라갑니다</div></div>
+</div>
+
+<div class="banner banner-warn mt8"><span class="ico">🔐</span><div class="grow"><b>등록된 보호자가 맞는지 반드시 확인하고 보내 주세요.</b>
+  <div class="t-sub mt2">다른 분이 오셨으면 [대리 하원]을 고르고 오신 분의 이름과 관계를 적습니다.
+  대리 하원은 기록에 따로 남고, 보호자에게도 알림이 갑니다.</div></div></div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">재원 중인 아이</h3></div>
+  <div class="card-bd pad0"><div class="pc-check" data-row="d02">
+    <div class="who"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (보리 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (19).webp" alt=""></div>
+      <div class="grow"><div class="nm">보리 <span class="badge b-warn">백신 만료 D-18</span></div>
+        <div class="ds">말티즈 · 소형반 · 등원 09:04</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="09:04">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d02" type="button" data-checkout="d02" data-dog="보리" data-guardian="김하늘">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d03">
+    <div class="who"><div class="ph ph-fix t3 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (콩이 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (2).webp" alt=""></div>
+      <div class="grow"><div class="nm">콩이 </div>
+        <div class="ds">포메라니안 · 소형반 · 등원 08:52</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="08:52">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d03" type="button" data-checkout="d03" data-dog="콩이" data-guardian="박서준">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d04">
+    <div class="who"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (별이 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (3).webp" alt=""></div>
+      <div class="grow"><div class="nm">별이 </div>
+        <div class="ds">비숑프리제 · 소형반 · 등원 09:01</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="09:01">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d04" type="button" data-checkout="d04" data-dog="별이" data-guardian="이유진">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d05">
+    <div class="who"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (만두 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (4).webp" alt=""></div>
+      <div class="grow"><div class="nm">만두 <span class="badge b-warn">백신 만료 D-26</span></div>
+        <div class="ds">시츄 · 소형반 · 등원 09:12</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="09:12">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d05" type="button" data-checkout="d05" data-dog="만두" data-guardian="정민수">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d06">
+    <div class="who"><div class="ph ph-fix t2 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (나비 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (5).webp" alt=""></div>
+      <div class="grow"><div class="nm">나비 </div>
+        <div class="ds">치와와 · 소형반 · 등원 09:07</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="09:07">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d06" type="button" data-checkout="d06" data-dog="나비" data-guardian="한소영">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d07">
+    <div class="who"><div class="ph ph-fix t3 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (해피 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (6).webp" alt=""></div>
+      <div class="grow"><div class="nm">해피 </div>
+        <div class="ds">비글 · 중형반 · 등원 08:47</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="08:47">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d07" type="button" data-checkout="d07" data-dog="해피" data-guardian="오재현">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d08">
+    <div class="who"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (루비 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (7).webp" alt=""></div>
+      <div class="grow"><div class="nm">루비 </div>
+        <div class="ds">웰시코기 · 중형반 · 등원 09:03</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="09:03">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d08" type="button" data-checkout="d08" data-dog="루비" data-guardian="강민아">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d09">
+    <div class="who"><div class="ph ph-fix t1 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (까미 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (8).webp" alt=""></div>
+      <div class="grow"><div class="nm">까미 </div>
+        <div class="ds">시바견 · 중형반 · 등원 09:18</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="09:18">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d09" type="button" data-checkout="d09" data-dog="까미" data-guardian="윤지호">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d10">
+    <div class="who"><div class="ph ph-fix t4 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (단추 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (9).webp" alt=""></div>
+      <div class="grow"><div class="nm">단추 <span class="badge b-warn">백신 만료 D-11</span></div>
+        <div class="ds">코카푸 · 중형반 · 등원 08:58</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="08:58">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d10" type="button" data-checkout="d10" data-dog="단추" data-guardian="임채원">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d11">
+    <div class="who"><div class="ph ph-fix t4 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (구름 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원.webp" alt=""></div>
+      <div class="grow"><div class="nm">구름 </div>
+        <div class="ds">사모예드 · 대형반 · 등원 08:40</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="08:40">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d11" type="button" data-checkout="d11" data-dog="구름" data-guardian="조은수">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d12">
+    <div class="who"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (바다 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (1).webp" alt=""></div>
+      <div class="grow"><div class="nm">바다 </div>
+        <div class="ds">골든리트리버 · 대형반 · 등원 09:09</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="09:09">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d12" type="button" data-checkout="d12" data-dog="바다" data-guardian="신동혁">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d13">
+    <div class="who"><div class="ph ph-fix t1 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (태양 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (10).webp" alt=""></div>
+      <div class="grow"><div class="nm">태양 </div>
+        <div class="ds">보더콜리 · 대형반 · 등원 08:55</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="08:55">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d13" type="button" data-checkout="d13" data-dog="태양" data-guardian="문가영">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d14">
+    <div class="who"><div class="ph ph-fix t4 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (산이 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (11).webp" alt=""></div>
+      <div class="grow"><div class="nm">산이 </div>
+        <div class="ds">진돗개 · 대형반 · 등원 09:22</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="09:22">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d14" type="button" data-checkout="d14" data-dog="산이" data-guardian="배준영">하원 체크</button></div>
+  </div><div class="pc-check" data-row="d15">
+    <div class="who"><div class="ph ph-fix t2 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (두유 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (12).webp" alt=""></div>
+      <div class="grow"><div class="nm">두유 </div>
+        <div class="ds">푸들 · 중형반 · 등원 08:45</div></div></div>
+    <div class="act"><span class="pc-pass" data-stay="08:45">재원 <b data-stay-out>—</b></span>
+      <button class="btn btn-pri btn-sm" id="out-d15" type="button" data-checkout="d15" data-dog="두유" data-guardian="서지우">하원 체크</button></div>
+  </div></div>
+  </div>
+
+<section class="sec ">
+  <div class="sec-hd"><h2 class="t-sec">하원 완료</h2></div>
+  <p class="t-sub mb4">하원한 아이는 알림장 발송 대상 목록에 자동으로 올라갑니다.</p>
+  <div class="card ">
+  
+  <div class="card-bd pad0"><div class="pc-check done" data-row="d16">
+    <div class="who"><div class="ph ph-fix t2 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (모카 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (13).webp" alt=""></div>
+      <div class="grow"><div class="nm">모카 </div>
+        <div class="ds">닥스훈트 · 중형반 · 등원 08:50</div></div></div>
+    <div class="act"><span class="pc-slip"><span class="t">16:05 하원 완료</span><span class="badge b-acc">알림장 대상</span></span></div>
+  </div><div class="pc-check done" data-row="d17">
+    <div class="who"><div class="ph ph-fix t1 ph-dog ph-tiny" style="width:56px;height:56px" title="이미지 영역 (뭉이 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원 (14).webp" alt=""></div>
+      <div class="grow"><div class="nm">뭉이 </div>
+        <div class="ds">말티푸 · 소형반 · 등원 09:15</div></div></div>
+    <div class="act"><span class="pc-slip"><span class="t">15:50 하원 완료</span><span class="badge b-acc">알림장 대상</span></span></div>
+  </div></div>
+  </div></section>
+
+<div class="btns mt8">
+  <a class="btn btn-pri" href="NW-01.html">알림장 작성하러 가기</a>
+  <a class="btn btn-ghost" href="AT-01.html">오늘 현황판</a>
+</div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="t-card mb2">🐾 도그마루 반려견 유치원</div>
+        <p class="t-sub">서울 마포구 월드컵북로 12길 34, 1층<br>02-336-0824 · hello@dogmaru.kr<br>평일 08:30 – 19:30 · 토 09:00 – 17:00 · 일요일·공휴일 휴무</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="HO-01.html">홈</a><a href="PL-01.html">반려견 등록</a><a href="RE-01.html">등원 예약</a><a href="MY-01.html">마이페이지</a><a href="CS-01.html">고객센터</a>
+        <a href="MG-05.html">원 운영진 로그인</a>
+      </nav>
+    </div>
+    <div class="ft-bot">
+      <span>© 2026 도그마루 반려견 유치원. 기획 검토용 프로토타입입니다.</span>
+      <span>카카오톡 채널 @도그마루유치원</span>
+    </div>
+  </div></footer>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">AT-03 · 하원 체크</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>등하원 관리</dd>
+        <dt>기능정의</dt><dd>재원 중인 아이 명단에서 하원 체크 버튼 · 하원 시각 자동 기록 · 인계 보호자 확인(등록된 보호자 본인 여부) · 대리 하원 시 별도 기록 · 오늘 총 재원 시간 자동 계산 · 하원 후 알림장 발송 상태로 자동 연결</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="NW-01.html">알림장 작성 → 알림장 작성</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

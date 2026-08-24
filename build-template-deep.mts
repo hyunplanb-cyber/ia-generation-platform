@@ -29,6 +29,7 @@ import { ADMIN_DEEP } from "./template-data-admin-deep";
 import { LMS_DEEP } from "./template-data-lms-deep";
 import { BEAUTY_DEEP } from "./template-data-beauty-deep";
 import { TRAVEL_DEEP } from "./template-data-travel-deep";
+import { PETCARE_DEEP } from "./template-data-petcare-deep";
 
 // npx tsx build-template-deep.mts lms | beauty | travel | groupbuy | admin
 // lms·beauty·travel은 판매 상품 "프리미엄" 3종의 납품 파일이다(/packages 상세와 같은 데이터).
@@ -41,6 +42,7 @@ const TEMPLATES: Record<string, { data: DeepInput; out: string; title: string }>
   matching: { data: MATCHING_DEEP, out: "_작업/동네서비스_매칭플랫폼_상세IA", title: "동네 서비스 매칭 플랫폼 — 상세 IA" },
   groupbuy: { data: GROUPBUY_DEEP, out: "_작업/공동구매_공구플랫폼_상세IA", title: "공동구매(공구) 플랫폼 — 상세 IA" },
   admin: { data: ADMIN_DEEP, out: "_작업/비즈니스관리_관리자시스템_상세IA", title: "통합 비즈니스 관리자 시스템 — 상세 IA" },
+  petcare: { data: PETCARE_DEEP, out: "_작업/반려동물케어_유치원예약_상세IA", title: "반려견 유치원 등원 예약·운영 — 상세 IA" },
 };
 const key = (process.argv[2] ?? "groupbuy") as keyof typeof TEMPLATES;
 const picked = TEMPLATES[key];
