@@ -16,6 +16,20 @@
  *   ② generation_attempt 는 2026-08-25 부터만 쌓인다. 그 전 「눌렀는데 실패」는
  *      아무 데도 안 남아서 셀 길이 없다. 0 이라고 「실패가 없었다」가 아니다.
  *
+ *   ③-1 ⛔ 「프로젝트」는 «만든 것»이 아니다 — 2026-08-25 사장님 지적.
+ *
+ *      말이 겹쳐서 숫자를 잘못 읽게 된다. 이 파일에서 쓰는 말은 이렇게 갈라 둔다.
+ *
+ *        만들기 누름  「AI팩 만들기」를 누르면 그 자리에서 «빈» project 줄이 생긴다.
+ *                    컨셉도 안 적혀 있고 크레딧도 안 빠진다. 공짜다.
+ *        컨셉 적음    그 프로젝트에 손님이 글을 적었다. 아직 크레딧은 안 빠졌다.
+ *        생성 누름    «생성» 버튼을 눌렀다. generation_attempt 에 한 줄 남는다
+ *                    (성공이든 실패든). 2026-08-25 부터만 쌓인다.
+ *        생성됨      생성이 성공해서 menu·screen 줄이 생겼다. 이때 크레딧이 빠진다.
+ *
+ *      그래서 「프로젝트 5개」는 «다섯 번 만들었다»가 아니라
+ *      «만들기를 다섯 번 눌렀다»는 뜻이다. 화면에서는 깔때기로 보여 준다.
+ *
  *   ③ 다운로드는 두 숫자가 다르다. 「받아 간 횟수」는 크레딧 원장에서 세고(프로젝트를
  *      지워도 남는다), 「지금 열려 있는 것」은 잠금 표에서 센다. 프로젝트를 통째로
  *      지우면 잠금 행은 딸려 지워지고 원장만 남아서 원장 쪽이 더 크다. 둘 다 맞는 수다.
@@ -65,6 +79,14 @@ export interface OurNumbers {
   시도: { 전체: number; 성공: number; 실패: number };
   실패까닭: { 까닭: string; 건수: number }[];
   /** 손님 것만 센 수. 「전체」는 우리 것까지 포함한 수다. */
+  /** 손님이 어디까지 갔나 — 위에서 아래로 줄어든다. 말뜻은 파일 머리 ③-1 참고. */
+  깔때기: {
+    만들기누름: number;
+    컨셉적음: number;
+    메뉴초안적음: number;
+    생성누름: number;
+    생성됨: number;
+  };
   알맹이: {
     프로젝트: number;
     생성된프로젝트: number;
@@ -178,6 +200,21 @@ export async function readOurNumbers(): Promise<OurNumbers> {
            (select count(*) from screen) as 전체화면,
            (select count(*) from verify_run) as 전체검수`);
 
+  /* ⭐ 손님이 어디까지 갔나 — 「프로젝트 5개」가 「다섯 번 만들었다」로 읽히는 것을 막는다.
+     (2026-08-25 사장님 지적: 「생성을 안 눌렀는데 왜 카운팅되는건데」) */
+  const [깔때기] = await 물어(sql`
+    select (select count(*) from project p where p.deleted_at is null
+              and ${손님것("p.owner_id")}) as 만들기누름,
+           (select count(*) from project p where p.deleted_at is null
+              and ${손님것("p.owner_id")} and coalesce(p.concept,'') <> '') as 컨셉적음,
+           (select count(*) from project p where p.deleted_at is null
+              and ${손님것("p.owner_id")} and coalesce(p.concept,'') <> ''
+              and coalesce(p.menu_draft,'') <> '') as 메뉴초안적음,
+           (select count(*) from generation_attempt g
+              where ${손님것("g.user_id")}) as 생성누름,
+           (select count(distinct p.id) from project p join menu m on m.project_id = p.id
+              where p.deleted_at is null and ${손님것("p.owner_id")}) as 생성됨`);
+
   const [열린것] = await 물어(sql`
     select (select count(*) from download_unlock) as 산출물,
            (select count(*) from verify_download_unlock) as 검수시나리오,
@@ -254,6 +291,13 @@ export async function readOurNumbers(): Promise<OurNumbers> {
     만든것,
     시도: { 전체: 수(시도?.전체), 성공: 수(시도?.성공), 실패: 수(시도?.실패) },
     실패까닭,
+    깔때기: {
+      만들기누름: 수(깔때기?.만들기누름),
+      컨셉적음: 수(깔때기?.컨셉적음),
+      메뉴초안적음: 수(깔때기?.메뉴초안적음),
+      생성누름: 수(깔때기?.생성누름),
+      생성됨: 수(깔때기?.생성됨),
+    },
     알맹이: {
       프로젝트: 수(알맹이?.프로젝트),
       생성된프로젝트: 수(알맹이?.생성된프로젝트),
