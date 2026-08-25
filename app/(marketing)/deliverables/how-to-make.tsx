@@ -112,14 +112,13 @@ export function HowToMakeBody() {
           여기만 max-w-5xl(1024px)이었고 탭 띠·AI팩·사이트 검수는 모두 1440px 이라,
           탭을 「만드는 방법」으로 옮기는 순간 제목이 200px 쯤 안으로 쑥 들어갔다.
           ⚠ 셋이 늘 같이 움직인다 — 하나를 고치면 나머지 둘도 본다. */}
-      <div className="mx-auto max-w-[1440px] px-6 py-16">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl [word-break:keep-all]">
-          AI팩은 이렇게 만들어져요
-        </h2>
-        <p className="mt-3 max-w-2xl text-muted-foreground [word-break:keep-all]">
-          아래는 실제로 <b className="text-foreground">반려동물 유치원 사이트</b>를 만든 화면 그대로예요.
-          한 줄 적고 기다리면 끝입니다 — 전부 합쳐 <b className="text-foreground">10분 안팎</b>이에요.
-        </p>
+      <div className="mx-auto max-w-[1440px] px-6 pt-12 pb-16">
+        {/* ⛔ 여기 있던 절 제목(「AI팩은 이렇게 만들어져요」)과 소개문을 뺐다
+            (2026-08-25 사장님이 그 자리를 통째로 짚어 지우라고 하셨다).
+            바로 위 페이지 머리말이 이미 「만들기 전엔 AI팩, 오픈 전엔 검수 / 각 결과물이
+            무엇에 쓰이는지, 실제로 어떻게 생겼는지 샘플과 함께 소개해요」라고 말한다 —
+            같은 말을 두 번 하고 있었다.
+            ⚠ 다시 넣을 일이 있으면 옆 탭(AI팩)의 제목과 «같은 결»로 맞춘다. */}
 
         {/* 목록 — 왼쪽에 움직이는 화면, 오른쪽에 번호·제목·설명.
             ⛔ 줄 사이에 가는 선(border-t)을 뒀다가 뺐다 (2026-08-25 사장님 지시).
@@ -127,7 +126,7 @@ export function HowToMakeBody() {
                줄은 여백만으로 나눈다 — 그 편이 훨씬 조용하다.
             ⚠ 영상 칸은 400px 로 못 박는다. fr 로 두면 1440에서 807px 까지 커져
                한 줄이 500px 넘게 높아졌다. 넓이를 반으로 줄여 «크기는 사분의 일»이다. */}
-        <ol ref={목록} className="mt-12 flex flex-col gap-12 md:gap-14">
+        <ol ref={목록} className="flex flex-col gap-12 md:gap-14">
           {단계들.map((s) => (
             <li
               key={s.no}
