@@ -203,40 +203,78 @@ function TabButton({
   );
 }
 
-// AI팩 결과물 6종
+/* AI팩 결과물 여덟 — 벤토로 깐다. (2026-08-25 사장님 지시: start.litt.ly 처럼)
+ *
+ * ⛔ 그 전에는 «한 산출물 = 한 줄»이었다. 여덟 줄이 좌·우로 번갈아 서고 줄마다
+ *   배경색이 바뀌어, 1440 화면에서 스크롤 다섯 장이었다. 무엇이 몇 개인지 한눈에
+ *   안 들어왔다 — 목록인데 «목록으로 안 보이는» 것이 문제였다.
+ *
+ * 벤토의 짜임 (레퍼런스에서 그대로 가져온 것)
+ *   · 칸 = «연한 패널» 하나. 테두리도 그림자도 없다. 모서리만 크게 둥글다.
+ *   · 패널 «안»에 샘플이 흰 종이로 떠 있고, 캐릭터는 모서리에 걸쳐 잘린다.
+ *   · 제목·설명은 패널 «밖 아래»에 붙는다. 패널 안에 글을 넣지 않는다.
+ *
+ * ⚠ 패널 색은 여덟 칸 모두 «같다». 칸마다 다른 색을 주면 벤토가 아니라 색종이가 된다 —
+ *   색은 아이콘 조각과 샘플 안에서만 쓴다.
+ */
 function PlanningDeliverables() {
   return (
-    <div className="flex flex-col">
-      {DELIVERABLES.map((d, i) => {
-        const Icon = d.icon;
-        const reversed = i % 2 === 1;
-        /* 「04 FLOW」와 「05 개발 일정표」는 짝이다 — 화면이 어디로 가는지(FLOW)와
-           그걸 언제 만드는지(일정)를 같이 본다. 그래서 그 «사이»에 가로로 한 칸 둔다.
-           (2026-08-25 사장님 지시: 09번은 04와 05 사이에 가로 폭으로) */
-        const 사이띠 = i === 3;
-        return (
-          <div key={d.name} className="contents">
-          <section className={`border-b border-border ${reversed ? "bg-surface" : ""}`}>
-            <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-10 px-6 py-16 lg:grid-cols-2 lg:gap-16">
-              <div className={reversed ? "lg:order-2" : ""}>
-                <div className="flex items-center gap-3">
-                  <span className={`flex size-11 items-center justify-center rounded-xl ${d.tone}`}>
-                    <Icon className="size-5" />
-                  </span>
-                  <span className="font-mono text-sm text-muted-foreground">0{i + 1}</span>
-                </div>
-                <h2 className="mt-4 text-2xl font-bold text-foreground">{d.name}</h2>
-                {/* 설명 «오른쪽»에 캐릭터를 붙인다 (2026-08-25 사장님 지시로 다시 잡았다).
-                    ⛔ 처음엔 다운로드 칩 «밑»에 300px 로 놓았다. 그랬더니 글 칸이 훌쩍
-                       길어져, 옆의 샘플 화면이 가운데에 붕 뜨고 위아래가 휑했다.
-                       사장님: 「구도 생각하고 넣어줘」 — 맞는 말씀이었다.
-                    → 세로로 쌓지 않고 «옆»에 세운다. 글 칸이 안 길어지니 샘플과 키가 맞는다.
-                    ⚠ 오른쪽 칸은 이미 샘플 화면이 쓰고 있다. 거기에 캐릭터까지 넣으면
-                      둘이 싸운다 — 캐릭터는 어디까지나 글 칸 안에 머문다. */}
-                <div className="mt-3 flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-7">
-                  <div className="min-w-0 flex-1">
-                    <p className="leading-relaxed text-muted-foreground">{d.role}</p>
-                    <div className="mt-5 flex flex-wrap gap-2">
+    <section>
+      <div className="mx-auto max-w-[1440px] px-6 py-16">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl [word-break:keep-all]">
+          AI팩 한 벌에 이게 다 들어 있어요
+        </h2>
+        <p className="mt-3 max-w-2xl text-muted-foreground [word-break:keep-all]">
+          여덟 가지를 한 번에 만들어 드려요. 각각 무엇에 쓰는지, 실제로 어떻게 생겼는지 아래에서 보세요.
+        </p>
+
+        <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:gap-x-10 lg:gap-y-14">
+          {DELIVERABLES.map((d, i) => {
+            const Icon = d.icon;
+            /* 「04 FLOW」와 「05 개발 일정표」는 짝이다 — 화면이 어디로 가는지와
+               그걸 언제 만드는지를 같이 본다. 그래서 그 «사이»에 가로로 긴 칸을 하나 둔다.
+               두 칸 짜리라 벤토의 가락도 여기서 한 번 끊긴다. */
+            const 사이띠 = i === 3;
+            return (
+              <div key={d.name} className="contents">
+                <article className="flex flex-col">
+                  {/* 패널 — 샘플이 사는 자리.
+                      ⛔ 처음엔 캐릭터를 absolute 로 오른쪽 아래에 «겹쳐» 놓았다.
+                         샘플 표 위로 올라타 글자를 가렸다. 겹치는 멋보다 읽히는 게 먼저다.
+                      → 나란히 앉힌다. 대신 바닥 여백을 상쇄해(-mb-8) 캐릭터 발이 패널
+                        바닥에 딱 닿게 두면, 겹치지 않고도 «패널 안에 앉은» 느낌이 난다.
+                      ⚠ 1280px 아래에서는 캐릭터를 접는다. 2단이 되는 순간 한 칸이 400px 안팎인데
+                        캐릭터가 140px 을 가져가면 샘플이 짜부라진다 — 900px 에서 재 보니
+                        「메인 홈」이 「메 인 홈」으로 세로로 쪼개졌다. 샘플이 주인공이다. */}
+                  <div className="relative flex min-h-[248px] items-center justify-center gap-4 overflow-hidden rounded-3xl bg-primary-soft/45 px-5 py-8 sm:min-h-[280px] sm:px-8">
+                    <div className="min-w-0 flex-1">{d.mockup}</div>
+                    {d.char && (
+                      <div className="-mb-8 hidden w-[130px] shrink-0 self-end xl:block 2xl:w-[150px]">
+                        <Image
+                          src={d.char.src}
+                          alt={d.char.alt}
+                          width={d.char.w}
+                          height={d.char.h}
+                          sizes="140px"
+                          className="h-auto w-full object-contain"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 글 — 패널 «밖» 아래. 패널 안에 글을 넣으면 샘플과 싸운다. */}
+                  <div className="mt-5">
+                    <div className="flex items-center gap-3">
+                      <span className={`flex size-10 items-center justify-center rounded-xl ${d.tone}`}>
+                        <Icon className="size-5" />
+                      </span>
+                      <span className="font-mono text-sm text-muted-foreground">0{i + 1}</span>
+                    </div>
+                    <h3 className="mt-3 text-xl font-bold text-foreground [word-break:keep-all]">{d.name}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
+                      {d.role}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-2">
                       {d.formats.map((f) => (
                         <span
                           key={f}
@@ -247,53 +285,40 @@ function PlanningDeliverables() {
                       ))}
                     </div>
                   </div>
-                  {d.char && (
-                    <div className="w-[200px] shrink-0 max-sm:mx-auto sm:w-[190px] lg:w-[210px]">
-                      <Image
-                        src={d.char.src}
-                        alt={d.char.alt}
-                        width={d.char.w}
-                        height={d.char.h}
-                        sizes="210px"
-                        className="h-auto w-full object-contain"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className={reversed ? "lg:order-1" : ""}>{d.mockup}</div>
-            </div>
-          </section>
+                </article>
 
-          {사이띠 && (
-            <section className="border-b border-border">
-              <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-8 px-6 py-14 md:flex-row md:gap-14">
-                <div className="w-[260px] max-w-full shrink-0 md:w-[340px]">
-                  <Image
-                    src="/character/09_guide_flow_wbs.webp"
-                    alt="화면 이동 흐름도와 제작 일정을 나란히 놓고 함께 보는 카페인컬러 캐릭터"
-                    width={862}
-                    height={539}
-                    sizes="(max-width: 768px) 260px, 340px"
-                    className="h-auto w-full object-contain"
-                  />
-                </div>
-                <div className="[word-break:keep-all]">
-                  <h3 className="text-xl font-bold text-foreground sm:text-2xl">
-                    흐름과 일정은 <span className="text-primary">같이 봐야</span> 맞아요
-                  </h3>
-                  <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
-                    화면이 어디로 이어지는지(FLOW)와 그걸 언제 만드는지(개발 일정표)는 짝입니다. 흐름이
-                    바뀌면 만들 화면이 늘고, 화면이 늘면 일정이 밀려요. 두 파일을 함께 드리는 이유예요.
-                  </p>
-                </div>
+                {사이띠 && (
+                  <div className="md:col-span-2">
+                    <div className="flex flex-col items-center gap-6 overflow-hidden rounded-3xl bg-primary-soft/45 px-6 py-8 sm:px-10 md:flex-row md:gap-12">
+                      <div className="w-[220px] max-w-full shrink-0 md:w-[280px]">
+                        <Image
+                          src="/character/09_guide_flow_wbs.webp"
+                          alt="화면 이동 흐름도와 제작 일정을 나란히 놓고 함께 보는 카페인컬러 캐릭터"
+                          width={862}
+                          height={539}
+                          sizes="(max-width: 768px) 220px, 280px"
+                          className="h-auto w-full object-contain"
+                        />
+                      </div>
+                      <div className="[word-break:keep-all] max-md:text-center">
+                        <h3 className="text-xl font-bold text-foreground sm:text-2xl">
+                          흐름과 일정은 <span className="text-primary">같이 봐야</span> 맞아요
+                        </h3>
+                        <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+                          화면이 어디로 이어지는지(FLOW)와 그걸 언제 만드는지(개발 일정표)는 짝입니다.
+                          흐름이 바뀌면 만들 화면이 늘고, 화면이 늘면 일정이 밀려요. 두 파일을 함께
+                          드리는 이유예요.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            </section>
-          )}
-          </div>
-        );
-      })}
-    </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
 
