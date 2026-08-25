@@ -13,11 +13,11 @@
  *   ⚠ 원본이 «10배쯤 빨리 감긴» 녹화라 앞쪽 토막은 도로 늦춰야 읽힌다. 어디를 얼마나
  *     늦췄는지는 `_작업/영상토막내기.mjs` 에 적어 두었다 — 화면을 고치면 거기서 다시 뜬다.
  *     ⚠ 그 파일은 저장소에 안 들어간다(`_작업/` 이 .gitignore 다). 값만 여기 적어 둔다:
- *       step1 0.5s+0.9s ×5.5 · step2 1.4+1.7 ×3 · step3 3.0+2.1 ×2.4
- *       step4 9.4+4.2 ×1.2 · step5 29.5+7.0 ×1 · step6 38.0+7.0 ×1
- *       공통 — crop=2784:1740:0:0 → scale=1200:750 · h264 crf30 · 소리 없음
+ *       step1 0.5s+0.9s ×8 · step2 1.4+1.7 ×4.5 · step3 3.0+2.1 ×3.6
+ *       step4 9.4+4.2 ×1.8 · step5 29.5+7.0 ×1.5 · step6 38.0+7.0 ×1.5
+ *       공통 — crop=2784:1740:0:0 → scale=800:500 · h264 crf30 · 소리 없음
  *   ⚠ GIF 로는 안 만들었다. 같은 5초를 GIF 로 구우면 수 MB 인데 h264 는 100KB 안팎이다.
- *     여섯 토막 다 합쳐 1.9MB 다.
+ *     여섯 토막 + 표지 여섯 장 다 합쳐 1.2MB 다.
  */
 "use client";
 
@@ -121,20 +121,24 @@ export function HowToMakeBody() {
           한 줄 적고 기다리면 끝입니다 — 전부 합쳐 <b className="text-foreground">10분 안팎</b>이에요.
         </p>
 
-        {/* 목록 — 줄마다 «가는 선» 하나로 나뉜다. 카드도 상자도 두지 않는다.
-            왼쪽에 움직이는 화면, 오른쪽에 번호·제목·설명. */}
-        <ol ref={목록} className="mt-12 flex flex-col">
+        {/* 목록 — 왼쪽에 움직이는 화면, 오른쪽에 번호·제목·설명.
+            ⛔ 줄 사이에 가는 선(border-t)을 뒀다가 뺐다 (2026-08-25 사장님 지시).
+               선이 영상 «옆»으로 삐져나와 화면을 가로지르는 것처럼 보였다.
+               줄은 여백만으로 나눈다 — 그 편이 훨씬 조용하다.
+            ⚠ 영상 칸은 400px 로 못 박는다. fr 로 두면 1440에서 807px 까지 커져
+               한 줄이 500px 넘게 높아졌다. 넓이를 반으로 줄여 «크기는 사분의 일»이다. */}
+        <ol ref={목록} className="mt-12 flex flex-col gap-12 md:gap-14">
           {단계들.map((s) => (
             <li
               key={s.no}
-              className="grid grid-cols-1 items-center gap-6 border-t border-border py-8 md:grid-cols-[1.55fr_1fr] md:gap-12 md:py-10 lg:gap-16"
+              className="grid grid-cols-1 items-center gap-5 md:grid-cols-[340px_1fr] md:gap-10 lg:grid-cols-[400px_1fr] lg:gap-14"
             >
-              <div className="overflow-hidden rounded-2xl bg-surface">
+              <div className="overflow-hidden rounded-2xl bg-surface max-md:max-w-[400px]">
                 <video
                   src={`/guide-clips/${s.토막}.mp4`}
                   poster={`/guide-clips/${s.토막}.jpg`}
-                  width={1200}
-                  height={750}
+                  width={800}
+                  height={500}
                   className="block h-auto w-full"
                   muted
                   loop
@@ -155,7 +159,8 @@ export function HowToMakeBody() {
                 <h3 className="mt-3 text-xl font-bold text-foreground sm:text-2xl [word-break:keep-all]">
                   {s.제목}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
+                {/* 글 칸이 950px 까지 넓어져 한 줄이 너무 길다 — 글줄만 물린다. */}
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
                   {s.말}
                 </p>
               </div>
