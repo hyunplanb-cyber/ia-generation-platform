@@ -58,7 +58,7 @@ export default function PackagesPage() {
         </div>
       </section>
 
-      <div className="mx-auto flex max-w-[1440px] flex-col gap-10 px-6 pb-14 pt-7">
+      <div className="mx-auto flex max-w-[1440px] flex-col gap-10 px-6 pb-14 pt-7" data-나타남>
         {/* 갈래로 고르고, 말로 찾는다. 카드 그리기까지 Browse 가 맡는다.
             비어 있는 갈래는 서버에서 걸러 보낸다(listedCategories). */}
         <Browse cards={cards} categories={categories} />

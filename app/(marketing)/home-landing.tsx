@@ -68,7 +68,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
 
               {/* 첫 화면 그림은 «가장 먼저» 눈에 들어와야 해서 priority 를 준다.
                   이것만 lazy 로 두면 접속하자마자 오른쪽이 잠깐 비어 보인다. */}
-              <div className="hero-figure">
+              <div className="hero-figure" data-나타남>
                 <Image
                   src="/character/01_home_hero_blueprint_qa.webp"
                   alt="설계도를 들고 화면을 검수하는 카페인컬러 캐릭터"
@@ -80,7 +80,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               </div>
             </div>
 
-            <div className="hero-art">
+            <div className="hero-art" data-나타남 data-늦게="2">
               <div className="art-card">
                 <div className="art-head">02_IA_화면목록.xlsx · 화면 43개</div>
                 <div className="art-row">
@@ -168,7 +168,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               그림이 그 여섯 갈래를 그대로 보여 준다(2026-08-25).
               ⚠ 제목까지 «같은 칸»에 넣는다. 리드 글만 넣었더니 두 줄짜리 글이 400px
                  그림 키에 맞춰 가운데로 내려가, 제목 밑이 200px 넘게 휑했다. */}
-          <div className="plan-intro">
+          <div className="plan-intro" data-나타남>
             <div>
               <h2>
                 한 줄 컨셉이<br />
@@ -191,7 +191,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
-          <div className="plan-grid">
+          <div className="plan-grid" data-나타남 data-늦게="1">
             <div className="chip">
               <div className="ci">01 · XLSX</div>
               <div className="cn">메뉴 구조</div>
@@ -233,7 +233,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               같은 화살을 우리가 맞는다. 파는 것은 분량이 아니라 「빠짐없음」이다.
 
               경쟁사 이름도 쓰지 않는다 — 비교광고가 되면 우리가 감당할 수 없다. */}
-          <div className="thesis">
+          <div className="thesis" data-나타남>
             <div>
               <h3>
                 같은 컨셉 한 줄을 <span className="o">다른 AI 기획 도구</span>에도 넣어봤어요.
@@ -300,7 +300,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               처음엔 영상 왼쪽에 세웠는데 16:9 영상이 워낙 커서 그림이 곁다리로 보였다.
               위 「한 줄 컨셉」·아래 「대신 눌러봐 드려요」와 같은 짜임으로 맞춘다 —
               제목·리드는 왼쪽, 그림은 오른쪽, 알맹이는 그 밑에 폭을 다 쓴다. */}
-          <div className="proof-intro">
+          <div className="proof-intro" data-나타남>
             <div>
           <h2>
             AI팩을 주면<br />
@@ -324,7 +324,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
-          <div className="showcase">
+          <div className="showcase" data-나타남>
             <div className="sc-frame">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${SHOWCASE_VIDEO_ID}`}
@@ -343,7 +343,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           {/* 만든 뒤에 막히는 자리 — 결과물에 함께 들어가는 안내서.
               이 섹션의 어휘를 그대로 쓴다: 폭을 꽉 채우고, 카드 배경 + 종이선 테두리,
               모서리 6px, 위 여백 40px. 혼자 다른 모양이면 곁다리로 보인다(2026-08-10). */}
-          <div className="ship">
+          <div className="ship" data-나타남>
             <div className="ship-hd">
               <span className="ship-tag">함께 드려요</span>
               <h3>만들고 나서 막히는 자리도 적어 뒀어요</h3>
@@ -383,7 +383,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           {/* 어두운 절이라 검은 머리가 묻힐까 걱정했는데, 재 보니 오히려 크림색 소품
               (통과·실패·주의 창)이 도드라진다. 이 절이 말하는 것과 그림이 같다.
               ⚠ 위 「한 줄 컨셉」 절과 같은 까닭으로 제목을 같은 칸에 넣는다. */}
-          <div className="verify-intro">
+          <div className="verify-intro" data-나타남>
             <div>
               <h2>
                 진짜 다 되는지,<br />
@@ -406,7 +406,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
-          <div className="inputs">
+          <div className="inputs" data-나타남 data-늦게="1">
             <div className="inbox">
               <div className="in-n">01 · 카페인컬러 AI팩</div>
               <div className="in-t">가장 정확</div>
@@ -436,7 +436,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
-          <div className="verify-flow">
+          <div className="verify-flow" data-나타남 data-늦게="1">
             <div className="split">
               <div className="split-row pub">
                 <div className="ico">공개</div>

@@ -96,7 +96,7 @@ export default async function FreePage() {
 
       <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-14">
         {/* 들어 있는 파일 */}
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-4" data-나타남>
           <SectionTitle>무엇이 들어 있나요 — 문서 {FILES.length}종</SectionTitle>
           <div className="flex flex-col gap-3">
             {FILES.map(({ icon: Icon, name, ext, desc, hot }) => (
@@ -129,7 +129,7 @@ export default async function FreePage() {
         </section>
 
         {/* 예외 화면 — 차별점 */}
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-4" data-나타남>
           <SectionTitle>AI가 빠뜨리기 쉬운 화면 {exceptions.length}개도 들어 있어요</SectionTitle>
           <p className="leading-relaxed text-muted-foreground">
             &ldquo;만들어줘&rdquo; 한 줄로는 잘 나오지 않는, 실제로 꼭 필요한 화면들입니다.
@@ -147,7 +147,7 @@ export default async function FreePage() {
         </section>
 
         {/* 화면 목록 */}
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-4" data-나타남>
           <SectionTitle>
             화면 {screens.length}개 · 요건 {reqCount}개
           </SectionTitle>
@@ -173,7 +173,7 @@ export default async function FreePage() {
         </section>
 
         {/* 사용법 */}
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-4" data-나타남>
           <SectionTitle>어떻게 쓰나요</SectionTitle>
           <div className="rounded-xl border-2 border-primary bg-primary-soft/30 p-5">
             <p className="text-sm font-semibold text-muted-foreground">
@@ -189,7 +189,7 @@ export default async function FreePage() {
         {/* 실제로 만들어 보시면 이런 것도 드려요 —
             무료 샘플은 «문서 구경»에서 끝난다. 직접 만들어 파일을 받으시면
             거기서 한 걸음 더 나가는 것이 있다는 걸 여기서 알린다(2026-08-10). */}
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-4" data-나타남>
           <SectionTitle>직접 만들어 파일을 받으시면 이런 것도 드려요</SectionTitle>
           <div className="rounded-xl border border-border bg-surface p-5">
             <div className="flex items-start gap-3">
@@ -227,7 +227,7 @@ export default async function FreePage() {
 
         {/* 맺음 — 홈 하단과 같은 이야기로 닫는다.
             무료 샘플만 받고 나가는 사람에게도 우리가 무엇을 하는 곳인지는 남겨야 한다. */}
-        <section className="flex flex-col items-center gap-4 rounded-2xl bg-linear-to-br from-primary-soft/50 via-background to-muted/40 px-6 py-10 text-center">
+        <section data-나타남 className="flex flex-col items-center gap-4 rounded-2xl bg-linear-to-br from-primary-soft/50 via-background to-muted/40 px-6 py-10 text-center">
           <h2 className="text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl">
             {/* 홈과 같은 색 대비 — '만들고'는 주황(설계), '오픈할 준비'는 녹색(검수). */}
             바이브코딩으로 원하는 사이트 <span className="text-primary">만들고</span>,

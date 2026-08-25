@@ -174,6 +174,8 @@ export function HowToMakeBody() {
             return (
               <li
                 key={s.no}
+                data-나타남
+                data-늦게={String((i % 3) + 1)}
                 className={`flex flex-col rounded-3xl p-5 sm:p-6 ${s.바탕} ${
                   i % 3 === 1 ? "lg:mt-12" : ""
                 }`}
