@@ -1,0 +1,222 @@
+/* 우리 숫자 — 회원 · AI팩 생성 · 생성 시도 · 프리셋 · 검수 시나리오 · 다운로드.
+ *
+ * 세는 법을 «한 곳»에만 둔다. `/admin/stats` 화면과 `대시보드.mts` 가 **같은 이 파일**을
+ * 본다. 두 곳에서 따로 세면 반드시 갈리고, 갈리면 어느 쪽이 맞는지 아무도 모른다.
+ * `lib/sns-caption-rules.ts` 를 끌어낸 것과 같은 까닭이다.
+ *
+ * ⚠ 내보내는 이름은 «영문»이다. 한글 이름을 export 하면 tsx(esbuild)가 유니코드
+ *   escape 로 바꿔 놓아 `대시보드.mts` 쪽에서 「그런 export 가 없다」로 죽는다.
+ *   안쪽 이름과 주석은 한글 그대로 둔다. (sns-caption-rules.ts 와 같은 규칙)
+ *
+ * ⛔ 숫자를 잘못 읽기 쉬운 자리가 셋이다.
+ *
+ *   ① memo 가 «두 세대»다. 옛 기록은 「설계도 생성」, 새 기록은 「AI팩 생성」이다.
+ *      한쪽만 세면 절반이 사라진다 — 실제로 6건 중 5건이 옛 이름이다. 둘 다 센다.
+ *
+ *   ② generation_attempt 는 2026-08-25 부터만 쌓인다. 그 전 「눌렀는데 실패」는
+ *      아무 데도 안 남아서 셀 길이 없다. 0 이라고 「실패가 없었다」가 아니다.
+ *
+ *   ③ 다운로드는 두 숫자가 다르다. 「받아 간 횟수」는 크레딧 원장에서 세고(프로젝트를
+ *      지워도 남는다), 「지금 열려 있는 것」은 잠금 표에서 센다. 프로젝트를 통째로
+ *      지우면 잠금 행은 딸려 지워지고 원장만 남아서 원장 쪽이 더 크다. 둘 다 맞는 수다.
+ */
+import { sql } from "drizzle-orm";
+import { db } from "@/db/client";
+
+/* ── 우리 계정 — 손님 수에서 뺀다 ────────────────────────────────
+   ⚠ 여기에 없는 주소는 «손님»으로 센다. 우리 계정을 새로 만들면 반드시 여기 적는다.
+      안 적으면 손님이 한 명 늘어난 것처럼 보인다. */
+export const OUR_ACCOUNTS: Record<string, string> = {
+  "hyun.planb@gmail.com": "사장님",
+  "caffeinecolor.all@gmail.com": "회사 계정",
+  "review@caffeinecolor.com": "크몽 심사용",
+  "test@test.com": "시험 계정",
+};
+
+export interface Counted {
+  전체: number;
+  손님: number;
+  마지막: Date | null;
+}
+export interface OurNumbers {
+  잰때: Date;
+  회원: { 전체: number; 손님: number; 이레: number; 한달: number };
+  만든것: Record<string, Counted>;
+  시도: { 전체: number; 성공: number; 실패: number };
+  실패까닭: { 까닭: string; 건수: number }[];
+  알맹이: {
+    프로젝트: number;
+    생성된프로젝트: number;
+    메뉴: number;
+    화면: number;
+    검수돌린것: number;
+    검수사이트: number;
+    검수문서: number;
+    프리셋만든것: number;
+  };
+  열린것: { 산출물: number; 검수시나리오: number; 프리셋: number; 판매팩: number };
+  나날: { 날짜: string; 가입: number; 생성: number; 검수: number; 실패: number }[];
+  있었던일: { 때: Date; 메일: string; 일: string; 갈래: string; 우리: string | null }[];
+  계정들: { 메일: string; 우리: string | null; 가입때: Date; 프로젝트: number; 메뉴: number; 쓴크레딧: number }[];
+}
+
+/** 크레딧 원장을 무엇으로 가르나. ⛔ ①의 「두 세대」를 여기서 흡수한다. */
+export const SPEND_KINDS: Record<string, string> = {
+  "AI팩 생성": `(memo like '설계도 생성%' or memo like 'AI팩 생성%')`,
+  "디자인 프리셋 생성": `memo = '디자인 프리셋 생성'`,
+  "검수 시나리오 생성": `memo like '검수 시나리오 생성%'`,
+  "사이트·문서 검수": `(memo = '사이트 검수' or memo = '문서·설계도 검수')`,
+  다운로드: `memo like '%다운로드%'`,
+};
+
+type 줄 = Record<string, unknown>;
+const 물어 = async (q: unknown): Promise<줄[]> => {
+  const r = await db.execute(q as never);
+  return ((r as { rows?: 줄[] }).rows ?? (r as unknown as 줄[])) ?? [];
+};
+const 수 = (v: unknown) => Number(v ?? 0);
+const 때 = (v: unknown) => (v ? new Date(String(v)) : null);
+
+/** 손님만 고르는 조건 — 쿼리마다 같은 것을 쓴다. */
+function 우리메일목록() {
+  return Object.keys(OUR_ACCOUNTS)
+    .map((e) => `'${e.replace(/'/g, "''")}'`)
+    .join(", ");
+}
+
+export async function readOurNumbers(): Promise<OurNumbers> {
+  const 우리 = 우리메일목록();
+  const 손님만 = sql.raw(`id not in (select id from "user" where email in (${우리}))`);
+  const 손님것 = (칸: string) =>
+    sql.raw(`${칸} in (select id from "user" where email not in (${우리}))`);
+
+  const [회원] = await 물어(sql`
+    select count(*) as 전체,
+           count(*) filter (where ${손님만}) as 손님,
+           count(*) filter (where ${손님만} and created_at >= now() - interval '7 days')  as 이레,
+           count(*) filter (where ${손님만} and created_at >= now() - interval '30 days') as 한달
+    from "user"`);
+
+  const 만든것: Record<string, Counted> = {};
+  for (const [이름, 조건] of Object.entries(SPEND_KINDS)) {
+    const [r] = await 물어(sql`
+      select count(*) as 전체,
+             count(*) filter (where ${손님것("user_id")}) as 손님,
+             max(created_at) as 마지막
+      from credit_ledger where kind = 'spend' and ${sql.raw(조건)}`);
+    만든것[이름] = { 전체: 수(r?.전체), 손님: 수(r?.손님), 마지막: 때(r?.마지막) };
+  }
+
+  const [시도] = await 물어(sql`
+    select count(*) as 전체, count(*) filter (where ok) as 성공,
+           count(*) filter (where not ok) as 실패 from generation_attempt`);
+  const 실패까닭 = (
+    await 물어(sql`
+    select coalesce(reason,'(까닭 없음)') as 까닭, count(*) as n
+    from generation_attempt where not ok group by 1 order by n desc limit 5`)
+  ).map((r) => ({ 까닭: String(r.까닭), 건수: 수(r.n) }));
+
+  const [알맹이] = await 물어(sql`
+    select (select count(distinct p.id) from project p join menu m on m.project_id = p.id
+              where p.deleted_at is null) as 생성된프로젝트,
+           (select count(*) from project where deleted_at is null) as 프로젝트,
+           (select count(*) from menu) as 메뉴,
+           (select count(*) from screen) as 화면,
+           (select count(*) from verify_run) as 검수돌린것,
+           (select count(*) from verify_run where mode = 'site') as 검수사이트,
+           (select count(*) from verify_run where mode = 'document') as 검수문서,
+           (select count(*) from project where deleted_at is null and preset_config is not null) as 프리셋만든것`);
+
+  const [열린것] = await 물어(sql`
+    select (select count(*) from download_unlock) as 산출물,
+           (select count(*) from verify_download_unlock) as 검수시나리오,
+           (select count(*) from project where preset_downloaded_at is not null) as 프리셋,
+           (select count(*) from pack_order where status = 'paid') as 판매팩`);
+
+  const 나날 = (
+    await 물어(sql`
+    with 날 as (select generate_series((now() - interval '29 days')::date, now()::date, '1 day')::date as d)
+    select 날.d as 날짜,
+      (select count(*) from "user" u where u.created_at::date = 날.d and ${손님만}) as 가입,
+      (select count(*) from credit_ledger l where l.created_at::date = 날.d and l.kind='spend'
+         and (l.memo like '설계도 생성%' or l.memo like 'AI팩 생성%')) as 생성,
+      (select count(*) from verify_run v where v.created_at::date = 날.d) as 검수,
+      (select count(*) from generation_attempt g where g.created_at::date = 날.d and not g.ok) as 실패
+    from 날 order by 날.d`)
+  ).map((r) => ({
+    날짜: String(r.날짜).slice(0, 10),
+    가입: 수(r.가입),
+    생성: 수(r.생성),
+    검수: 수(r.검수),
+    실패: 수(r.실패),
+  }));
+
+  /* 숫자만 보면 «무슨 일이 있었나»를 모른다. 지금은 하루 몇 건이라 낱낱이 보는 편이 낫다. */
+  const 있었던일 = (
+    await 물어(sql`
+    select * from (
+      select u.created_at as 때, u.email, '가입했습니다' as 일, 'join' as 갈래 from "user" u
+      union all
+      select l.created_at, u.email, l.memo, 'spend'
+        from credit_ledger l join "user" u on u.id = l.user_id where l.kind = 'spend'
+      union all
+      select g.created_at, u.email, '생성 실패 — ' || coalesce(g.reason,'까닭 모름'), 'fail'
+        from generation_attempt g join "user" u on u.id = g.user_id where not g.ok
+    ) t order by 때 desc limit 25`)
+  ).map((r) => ({
+    때: 때(r.때) as Date,
+    메일: String(r.email ?? ""),
+    일: String(r.일),
+    갈래: String(r.갈래),
+    우리: OUR_ACCOUNTS[String(r.email ?? "")] ?? null,
+  }));
+
+  const 계정들 = (
+    await 물어(sql`
+    select u.email, u.created_at as 가입때,
+           (select count(*) from project p where p.owner_id = u.id and p.deleted_at is null) as 프로젝트,
+           (select count(*) from menu m join project p on p.id = m.project_id where p.owner_id = u.id) as 메뉴,
+           (select coalesce(sum(-l.amount),0) from credit_ledger l
+              where l.user_id = u.id and l.kind = 'spend') as 쓴크레딧
+    from "user" u order by u.created_at`)
+  ).map((r) => ({
+    메일: String(r.email),
+    우리: OUR_ACCOUNTS[String(r.email)] ?? null,
+    가입때: 때(r.가입때) as Date,
+    프로젝트: 수(r.프로젝트),
+    메뉴: 수(r.메뉴),
+    쓴크레딧: 수(r.쓴크레딧),
+  }));
+
+  return {
+    잰때: new Date(),
+    회원: { 전체: 수(회원?.전체), 손님: 수(회원?.손님), 이레: 수(회원?.이레), 한달: 수(회원?.한달) },
+    만든것,
+    시도: { 전체: 수(시도?.전체), 성공: 수(시도?.성공), 실패: 수(시도?.실패) },
+    실패까닭,
+    알맹이: {
+      프로젝트: 수(알맹이?.프로젝트),
+      생성된프로젝트: 수(알맹이?.생성된프로젝트),
+      메뉴: 수(알맹이?.메뉴),
+      화면: 수(알맹이?.화면),
+      검수돌린것: 수(알맹이?.검수돌린것),
+      검수사이트: 수(알맹이?.검수사이트),
+      검수문서: 수(알맹이?.검수문서),
+      프리셋만든것: 수(알맹이?.프리셋만든것),
+    },
+    열린것: {
+      산출물: 수(열린것?.산출물),
+      검수시나리오: 수(열린것?.검수시나리오),
+      프리셋: 수(열린것?.프리셋),
+      판매팩: 수(열린것?.판매팩),
+    },
+    나날,
+    있었던일,
+    계정들,
+  };
+}
+
+/** 손님 메일을 가린다 — 화면에도 파일에도 통째로 적지 않는다. */
+export function maskEmail(email: string): string {
+  return email.replace(/^(.{2}).*(@.*)$/, "$1***$2");
+}
