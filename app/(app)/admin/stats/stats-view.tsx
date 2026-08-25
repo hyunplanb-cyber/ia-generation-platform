@@ -91,6 +91,22 @@ export function StatsView({ n }: { n: OurNumbers }) {
         />
       </div>
 
+      {/* ── 생성이 왜 실패했나 — 있을 때만 ─────────────────
+          까닭이 안 보이면 「실패 3건」이라는 숫자만 남아 아무것도 못 한다.
+          key-dead 는 손님이 다시 눌러도 안 되는 것이라 그날 안에 손을 써야 한다. */}
+      {n.실패까닭.length > 0 ? (
+        <div className="mt-4 rounded-xl border border-rose-300 bg-rose-50 px-4 py-3 text-sm leading-relaxed text-rose-950 [word-break:keep-all]">
+          <b>⛔ 생성이 실패한 까닭</b>
+          <ul className="mt-2 space-y-1">
+            {n.실패까닭.map((r) => (
+              <li key={r.까닭}>
+                <b className="tabular-nums">{r.건수}건</b> — {r.까닭}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       {/* ── 숫자를 잘못 읽지 않게 ─────────────────────────── */}
       <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950 [word-break:keep-all]">
         <b>⚠ 숫자를 읽을 때</b>

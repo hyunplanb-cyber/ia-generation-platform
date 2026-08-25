@@ -29,6 +29,8 @@ const 좋음 = (말: string) => console.log(`  ✓ ${말}`);
 const 참고 = (말: string) => console.log(`  · ${말}`);
 
 /* ── ① 열쇠가 살아 있나 ────────────────────────────────── */
+/* 401 이었나 — 마무리에서 «이 컴퓨터만 옛것인지»를 가려 말하려고 들고 있는다. */
+let 죽음401 = false;
 console.log("\n═══ ① 열쇠가 살아 있나 (이 컴퓨터의 .env.local) ═══");
 const 열쇠 = (process.env.ANTHROPIC_API_KEY ?? "").trim();
 if (!열쇠) {
@@ -47,7 +49,7 @@ if (!열쇠) {
       const j = await r.json().catch(() => ({}));
       const 말 = (j as { error?: { message?: string } })?.error?.message ?? "(까닭 모름)";
       /* 401 은 «열쇠가 죽은 것», 400 잔액부족은 «돈이 없는 것» — 처방이 다르다 */
-      if (r.status === 401) 짚기(`열쇠가 거부됩니다 (401) — 만료·삭제됐습니다. 콘솔에서 새로 만드세요(만료 없음). · ${말}`);
+      if (r.status === 401) { 죽음401 = true; 짚기(`열쇠가 거부됩니다 (401) — 만료·삭제됐습니다. · ${말}`); }
       else if (/credit|balance/i.test(말)) 짚기(`잔액이 모자랍니다 — 자동충전을 확인하세요. · ${말}`);
       else 짚기(`API 가 ${r.status} 로 답합니다 · ${말}`);
     }
@@ -68,9 +70,12 @@ const [마지막] = await 물어(sql`
   select max(created_at) as 때, count(*) filter (where created_at >= now() - interval '7 days') as 이레치
   from "menu"`);
 const 때 = 마지막?.때 ? new Date(String(마지막.때)) : null;
+/* 마무리에서 «이 컴퓨터만 옛 열쇠인지»를 가리려고 며칠 전인지 들고 있는다. */
+let 최근성공며칠: number | null = null;
 if (!때) 짚기("성공한 생성이 하나도 없습니다");
 else {
   const 며칠 = Math.floor((Date.now() - 때.getTime()) / 86400000);
+  최근성공며칠 = 며칠;
   참고(`마지막 성공: ${때.toLocaleString("ko-KR")} (${며칠}일 전) · 최근 7일 메뉴 ${마지막.이레치}개`);
   /* ⚠ 손님이 안 온 것과 «막힌 것»은 다르다. 그래서 아래 실패 기록을 같이 본다. */
   if (며칠 >= 14) 참고(`${며칠}일째 성공이 없습니다 — 손님이 안 온 것인지 막힌 것인지 아래를 보세요`);
@@ -84,20 +89,56 @@ if (!있나?.있음) {
   const [센것] = await 물어(sql`
     select count(*) filter (where not ok and created_at >= now() - interval '3 days') as 최근실패,
            count(*) filter (where ok     and created_at >= now() - interval '3 days') as 최근성공,
+           count(*) as 통틀어,
            max(created_at) filter (where not ok) as 마지막실패
     from "generation_attempt"`);
-  참고(`최근 3일 — 성공 ${센것.최근성공} · 실패 ${센것.최근실패}`);
-  if (Number(센것.최근실패) > 0 && Number(센것.최근성공) === 0)
-    짚기(`최근 3일에 «실패만» ${센것.최근실패}건 있습니다 — 손님이 막혀 있습니다`);
-  else if (Number(센것.최근실패) >= 3)
-    짚기(`최근 3일에 실패가 ${센것.최근실패}건입니다 — 무엇이 막는지 보세요`);
-  else 좋음("최근 실패가 쌓이지 않았습니다");
+  const 최근실패 = Number(센것.최근실패);
+  const 최근성공 = Number(센것.최근성공);
+  참고(`최근 3일 — 성공 ${최근성공} · 실패 ${최근실패}`);
+
+  /* ⛔ key-dead 는 «손님이 다시 눌러도 안 되는» 실패다. 한 건이라도 나오면 바로 짚는다.
+     다른 실패는 몇 건 쌓여야 경보를 내지만 이건 하나로도 서비스가 멈춘 것이다.
+     (2026-08-25 — 그 전에는 401 이 failed 로 뭉뚱그려져 까닭을 가릴 수가 없었다) */
+  const [열쇠실패] = await 물어(sql`
+    select count(*) as n, max(created_at) as 마지막
+    from "generation_attempt"
+    where not ok and reason = 'key-dead' and created_at >= now() - interval '7 days'`);
+  if (Number(열쇠실패?.n) > 0)
+    짚기(
+      `⛔⛔ 최근 7일에 «열쇠가 죽어서» 못 만든 것이 ${열쇠실패.n}건입니다 ` +
+        `(마지막 ${new Date(String(열쇠실패.마지막)).toLocaleString("ko-KR")}) — 손님이 지금 막혀 있습니다.`,
+    );
+  if (최근실패 > 0 && 최근성공 === 0)
+    짚기(`최근 3일에 «실패만» ${최근실패}건 있습니다 — 손님이 막혀 있습니다`);
+  else if (최근실패 >= 3)
+    짚기(`최근 3일에 실패가 ${최근실패}건입니다 — 무엇이 막는지 보세요`);
+  /* ⚠ 「아무도 안 눌렀다」를 «초록»으로 말하면 안 된다 (2026-08-25).
+       실패 0 건은 「막힌 데 없다」는 뜻일 수도 있고 「잰 것이 아예 없다」는 뜻일
+       수도 있는데, 둘이 같은 ✓ 로 보이면 «손님이 안 온 것»과 «손님이 막힌 것»을
+       가르려고 이 표를 만든 뜻이 없어진다. 잰 것이 없으면 없다고 말한다. */
+  else if (최근실패 === 0 && 최근성공 === 0)
+    참고(Number(센것.통틀어) === 0
+      ? "아직 잰 것이 없습니다 — 표를 만든 뒤로 아무도 생성을 누르지 않았습니다"
+      : "아직 잰 것이 없습니다 — 최근 3일에 누른 손님이 없습니다(막힌 것과 다릅니다)");
+  else 좋음(`최근 실패가 쌓이지 않았습니다 (성공 ${최근성공}건이 났습니다)`);
 }
 
 /* ── 마무리 ───────────────────────────────────────────── */
 console.log("\n═══ 정리 ═══");
 if (탈) {
   console.log(`  ⛔ ${탈}군데가 막혀 있습니다.`);
+  /* ⛔ 401 인데 «손님 쪽은 최근에 됐다»면 십중팔구 이 컴퓨터 것만 옛 열쇠다.
+     그 말을 안 해 주면 매일 도는 검사가 매일 빨간불을 내고, 며칠이면 아무도 안 본다 —
+     그러면 진짜로 막힌 날을 놓친다. 8/15~8/24 가 그렇게 아흐레였다. (2026-08-25) */
+  if (죽음401 && 최근성공며칠 !== null && 최근성공며칠 <= 3) {
+    console.log("");
+    console.log(`  ⚠ 그런데 손님 쪽은 ${최근성공며칠}일 전에 성공했습니다.`);
+    console.log("     그러면 죽은 것은 «이 컴퓨터의 .env.local» 뿐이고 Vercel 것은 살아 있습니다.");
+    console.log("     ⛔ 그래도 그냥 두면 안 됩니다 — 이 검사는 .env.local 열쇠를 재기 때문에,");
+    console.log("        옛 열쇠를 두면 «매일 헛으로 빨간불»이 나고 진짜로 막힌 날을 놓치게 됩니다.");
+    console.log("        .env.local 의 ANTHROPIC_API_KEY 를 Vercel 과 같은 열쇠로 바꿔 주세요.");
+  }
+  console.log("");
   console.log("     열쇠가 죽었으면 — 콘솔에서 새로 만들고(만료: 없음) Vercel 과 .env.local 둘 다 바꿉니다.");
   console.log("     ⚠ Vercel 의 ANTHROPIC_API_KEY 는 «지우면 안 됩니다» — 그게 손님 몫입니다.\n");
   process.exit(1);

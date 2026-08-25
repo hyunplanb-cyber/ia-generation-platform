@@ -82,6 +82,23 @@ export interface OurNumbers {
   계정들: { 메일: string; 우리: string | null; 가입때: Date; 프로젝트: number; 메뉴: number; 쓴크레딧: number }[];
 }
 
+/** 생성이 실패한 까닭을 «읽을 수 있는 말»로. 화면에 코드가 그대로 보이면 안 읽힌다.
+ *  ⚠ 값은 application/generate-ia.ts 의 reason 과 짝이다. 거기 늘리면 여기도 늘린다. */
+export const FAIL_REASONS: Record<string, string> = {
+  "key-dead": "⛔ 열쇠가 죽었습니다 (401) — 손님이 다시 눌러도 안 됩니다",
+  "no-credit": "⛔ 우리 API 잔액이 바닥났습니다",
+  unavailable: "⛔ 열쇠가 아예 없습니다",
+  "too-large": "메뉴가 많아 한 번에 안 담겼습니다 (손님이 줄이면 됩니다)",
+  "already-has-menus": "이미 메뉴가 있는 프로젝트였습니다",
+  failed: "까닭 모를 실패 — 로그를 봐야 합니다",
+  "insufficient-credit": "손님 크레딧이 모자랐습니다",
+};
+/** 코드든 우리말이든 읽히게 — 모르는 코드는 그대로 보여 준다(지어내지 않는다). */
+export function failReasonText(code: string | null | undefined): string {
+  if (!code) return "까닭 모름";
+  return FAIL_REASONS[code] ?? code;
+}
+
 /** 크레딧 원장을 무엇으로 가르나. ⛔ ①의 「두 세대」를 여기서 흡수한다. */
 export const SPEND_KINDS: Record<string, string> = {
   "AI팩 생성": `(memo like '설계도 생성%' or memo like 'AI팩 생성%')`,
@@ -136,7 +153,7 @@ export async function readOurNumbers(): Promise<OurNumbers> {
     await 물어(sql`
     select coalesce(reason,'(까닭 없음)') as 까닭, count(*) as n
     from generation_attempt where not ok group by 1 order by n desc limit 5`)
-  ).map((r) => ({ 까닭: String(r.까닭), 건수: 수(r.n) }));
+  ).map((r) => ({ 까닭: failReasonText(String(r.까닭)), 건수: 수(r.n) }));
 
   /* ⭐ 2026-08-25 사장님 지시 — 여기도 «손님 것만» 센다.
      우리가 만든 것까지 섞으면 프로젝트 32·화면 674 처럼 커 보이지만 거의 다 우리 것이다.
@@ -201,14 +218,15 @@ export async function readOurNumbers(): Promise<OurNumbers> {
         from credit_ledger l join "user" u on u.id = l.user_id
        where l.kind = 'spend' and ${손님것("l.user_id")}
       union all
-      select g.created_at, u.email, '생성 실패 — ' || coalesce(g.reason,'까닭 모름'), 'fail'
+      select g.created_at, u.email, coalesce(g.reason,'?'), 'fail'
         from generation_attempt g join "user" u on u.id = g.user_id
        where not g.ok and ${손님것("g.user_id")}
     ) t order by 때 desc limit 25`)
   ).map((r) => ({
     때: 때(r.때) as Date,
     메일: String(r.email ?? ""),
-    일: String(r.일),
+    /* 실패는 코드(key-dead 같은 것)로 오므로 읽을 수 있는 말로 바꿔 준다 */
+    일: String(r.갈래) === "fail" ? "생성 실패 — " + failReasonText(String(r.일)) : String(r.일),
     갈래: String(r.갈래),
     우리: OUR_ACCOUNTS[String(r.email ?? "")] ?? null,
   }));

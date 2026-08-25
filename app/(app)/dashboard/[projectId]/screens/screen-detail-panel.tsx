@@ -165,8 +165,12 @@ function PromptSection({ screen, projectId }: { screen: Screen; projectId: strin
     return (
       <div className="flex flex-col gap-2">
         <h3 className="font-semibold text-foreground">AI 프롬프트</h3>
-        <p className="text-sm text-muted-foreground">
-          AI 프롬프트 기능을 아직 사용할 수 없어요. 관리자 설정이 필요해요.
+        {/* ⛔ 「관리자 설정이 필요해요」는 우리 사정이다 — 손님은 할 수 있는 게 없다.
+            손님이 알아야 할 것만 말한다: 손님 잘못이 아니고, 어디로 알리면 되는지.
+            (2026-08-25 · brief-form.tsx 의 우리쪽문제 문구와 같은 뜻) */}
+        <p className="text-sm text-muted-foreground [word-break:keep-all]">
+          지금은 저희 쪽 사정으로 AI 프롬프트를 만들어 드릴 수가 없어요. 잠시 뒤에 다시 열어 주세요.
+          오래 이러면 caffeinecolor.all@gmail.com 으로 알려 주시면 바로 봐 드릴게요.
         </p>
       </div>
     );
