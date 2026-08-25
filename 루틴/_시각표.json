@@ -20,7 +20,7 @@
       "켜짐": true,
       "무엇": "매일 09:30 — 손님이 AI팩을 만들 수 있는 상태인지 잰다. 열쇠가 죽었거나 생성 실패가 쌓이면 알린다.",
       "작업폴더": "C:/Users/glim0/OneDrive/문서/Claude/Projects/02. 웹기획자",
-      "승인해둔권한": 4
+      "승인해둔권한": 6
     },
     {
       "taskId": "pack-qa-dispatch",
