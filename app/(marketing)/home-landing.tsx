@@ -43,7 +43,10 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             <div className="hero-top">
               <div className="hero-copy">
                 <h1>
-                  만들기 전엔 <span className="o">설계도</span>,<br />
+                  {/* 쉼표가 아니라 마침표다 (2026-08-25 사장님 지시).
+                      두 줄은 «이어지는 한 문장»이 아니라 «따로 서는 두 마디»다 —
+                      만들기 전엔 이것, 오픈 전엔 저것. 쉼표로 이으면 뒷말을 기다리게 된다. */}
+                  만들기 전엔 <span className="o">설계도</span>.<br />
                   오픈 전엔 <span className="t">검수</span>.
                 </h1>
                 <div className="hero-rule" />
