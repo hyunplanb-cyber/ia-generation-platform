@@ -412,7 +412,10 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .acc-item:last-child{border-bottom:0}
 .acc-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:var(--gap-group);padding:var(--gap-title) 0;
   background:none;border:0;font-size:15px;font-weight:700;text-align:left;cursor:pointer}
-.acc-q .mk{color:var(--muted);font-size:14px;transition:transform var(--t-fold);flex:none}
+/* ⚠ 「＋」는 열릴 때 45° 돈다. 세로로 긴 글자 상자를 돌리면 «폭»이 √2배로 커져
+   단추 밖으로 삐져나온다 — 2026-08-25 에 12개 팩에서 4~6px 넘치는 걸 재서 봤다.
+   네모난 상자로 만들고, 돌았을 때 늘어나는 만큼(한쪽 약 0.21배) 안으로 들여 둔다. */
+.acc-q .mk{color:var(--muted);font-size:14px;transition:transform var(--t-fold);flex:none;width:1.4em;height:1.4em;line-height:1;display:grid;place-items:center;margin-right:.3em}
 .acc-item.on .acc-q{color:var(--pri-ink)}
 .acc-item.on .acc-q .mk{transform:rotate(45deg)}
 .acc-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--t-fold)}
@@ -638,7 +641,14 @@ body>*:first-child{width:100%}
 .ft{margin-top:auto}
 /* 푸터를 품은 main 은 아래 여백을 푸터에 넘긴다 — 안 그러면 푸터 밑에 64px 이 남는다 */
 main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
-.split-r>*,.split-l>*,.app>*,.edcols>*{min-width:0}
+/* ⭐ 바로 위 줄이 main·.appmain·.edmain 을 «세로 flex»로 바꾼다(푸터를 바닥에 붙이려고).
+   그런데 세로 flex 의 자식은 min-width 가 auto 라 «제 속내용보다 좁아지지 못한다» —
+   폭 360 짜리 폰에서 .wrap-narrow 가 364px 로 버티며 화면이 통째로 옆으로 밀렸다.
+   같은 까닭으로 .split·.app·.edcols 에는 이미 min-width:0 을 걸어 두었으면서,
+   이 규칙이 «스스로 만든» 세로 flex 만 빠져 있었다. LMS 다섯 쪽에서 9~100px 밀렸다.
+   (2026-08-25 검수 · D6 · 폭 390 에서는 안 보이고 360 에서만 나온다) */
+.split-r>*,.split-l>*,.app>*,.edcols>*,
+.app-ed>main>*,.app-ed>.edmain>*,.app>main>*,.app>.appmain>*,.page-wrap>main>*{min-width:0;width:100%}
 
 /* [hidden] 은 브라우저 기본값이라 .lrow{display:flex} 같은 규칙에 진다.
    거르기가 목록을 못 줄이는 사고가 여기서 난다 — 반드시 이겨 두어야 한다. */

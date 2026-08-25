@@ -46,7 +46,16 @@ process.on("exit", () => { try { 지우기(크롬찌꺼기, { recursive: true, f
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const 팩방 = "판매용_템플릿/_판매팩";
-const W = `${process.env.TEMP.replace(/\\/g, "/")}/cc-layout`;
+/* ⛔ 이 자리 이름을 «cc-layout» 으로 못 박아 두면 안 된다 — 2026-08-25 에 걸렸다.
+   spec-a 와 spec-b 는 «같은 시각»에 돈다. 둘이 이 한 자리를 서로 rmSync 로 지우고
+   제 팩을 부어 넣어서, 공동구매를 재라고 했는데 남의 팩(매칭) 화면이 들어 있었다.
+   쪽 이름이 달라 «없는 파일»로 멈춘 것이 다행이었다 —
+   이름이 겹치는 쪽(MY-01 처럼)은 «남의 팩을 우리 팩이라고» 조용히 재고 지나간다.
+   크롬 찌꺼기 자리와 똑같이 제 번호를 붙인다. */
+const W = `${process.env.TEMP.replace(/\\/g, "/")}/cc-layout-${process.pid}`;
+/* ⚠ 남의 cc-layout* 을 «치워 주지» 않는다. 옆에서 도는 루틴이 지금 쓰고 있는 자리일 수 있다.
+   내 것만 끝나면서 지운다. */
+process.on("exit", () => { try { 지우기(W, { recursive: true, force: true }); } catch {} });
 
 const 인자 = process.argv.slice(2);
 const 폭자리 = 인자.indexOf("--폭");

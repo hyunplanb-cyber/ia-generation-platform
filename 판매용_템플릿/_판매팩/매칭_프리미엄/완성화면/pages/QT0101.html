@@ -21,7 +21,7 @@
 <main class="main pb-stick "><div class="wrap">
   <div class="page-hd row-b wrap-row"><div>
   <h1 class="t-page">받은 견적</h1><p class="t-sub">견적 <b style="color:var(--text)">5개</b> · 마감까지 2일 남음</p></div><div class="row-c wrap-row">
-      <select class="input" style="width:auto"><option>낮은 가격순</option><option>평점 높은순</option><option>빠른 응답순</option><option>도착한 순</option></select>
+      <select class="input" style="width:auto" data-sort-cards="quotes"><option value="price">낮은 가격순</option><option value="rate" data-desc>평점 높은순</option><option value="resp">빠른 응답순</option><option value="arr">도착한 순</option></select>
     </div></div>
   <div class="card mb4"><div class="card-bd tight">
   <div class="row-b wrap-row">
@@ -40,7 +40,7 @@
   <div class="banner banner-info "><span class="ico">⚖️</span><div class="grow"><b>두 개 이상 고르면 나란히 비교할 수 있어요</b>
     <div class="t-sub mt1">왼쪽 네모를 눌러 고르시면 화면 아래에 비교 버튼이 나타납니다.</div></div></div>
 
-  <div class="pro-list mt4"><div class="pro-row">
+  <div class="pro-list mt4" data-sort-list="quotes"><div class="pro-row" data-arr="0" data-price="240000" data-rate="4.9" data-resp="12">
     <label class="check none" style="padding-top:2px"><input type="checkbox" data-pick checked></label>
     <div class="ph ph-fix t2 ph-sq ph-tiny" style="width:80px;height:80px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_이사_곰사슴.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -65,7 +65,7 @@
       </div>
       <button class="link quiet" type="button" data-toast="이 견적을 숨겼어요" data-toast-act="되돌리기">관심 없어요</button>
     </div>
-  </div><div class="pro-row">
+  </div><div class="pro-row" data-arr="1" data-price="265000" data-rate="4.7" data-resp="41">
     <label class="check none" style="padding-top:2px"><input type="checkbox" data-pick checked></label>
     <div class="ph ph-fix t4 ph-sq ph-tiny" style="width:80px;height:80px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_이사_곰사슴.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -90,7 +90,7 @@
       </div>
       <button class="link quiet" type="button" data-toast="이 견적을 숨겼어요" data-toast-act="되돌리기">관심 없어요</button>
     </div>
-  </div><div class="pro-row">
+  </div><div class="pro-row" data-arr="2" data-price="198000" data-rate="4.6" data-resp="29">
     <label class="check none" style="padding-top:2px"><input type="checkbox" data-pick checked></label>
     <div class="ph ph-fix t3 ph-sq ph-tiny" style="width:80px;height:80px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_가전수리_수달.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -115,7 +115,7 @@
       </div>
       <button class="link quiet" type="button" data-toast="이 견적을 숨겼어요" data-toast-act="되돌리기">관심 없어요</button>
     </div>
-  </div><div class="pro-row">
+  </div><div class="pro-row" data-arr="3" data-price="310000" data-rate="4.7" data-resp="52">
     <label class="check none" style="padding-top:2px"><input type="checkbox" data-pick></label>
     <div class="ph ph-fix t4 ph-sq ph-tiny" style="width:80px;height:80px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_청소_라쿤.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -140,7 +140,7 @@
       </div>
       <button class="link quiet" type="button" data-toast="이 견적을 숨겼어요" data-toast-act="되돌리기">관심 없어요</button>
     </div>
-  </div><div class="pro-row">
+  </div><div class="pro-row" data-arr="4" data-price="252000" data-rate="4.8" data-resp="24">
     <label class="check none" style="padding-top:2px"><input type="checkbox" data-pick></label>
     <div class="ph ph-fix t3 ph-sq ph-tiny" style="width:80px;height:80px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_청소_라쿤.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">

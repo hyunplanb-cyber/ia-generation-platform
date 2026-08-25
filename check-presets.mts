@@ -24,7 +24,7 @@ import {
   LAYOUTS, STRUCTURE_COLS, THUMBS, cardWidth,
   DESIGN_OPTIONS, colorsFor, CONTENT_BG, DARK_BG, contrast, TEXT_CONTRAST_MIN,
   accentTextOn, textOn, READING_WIDTH, BREAKPOINTS,
-  LARGE_TEXT_MIN, componentsFor,
+  LARGE_TEXT_MIN, componentsFor, type DesignKey,
 } from "./lib/design-presets";
 import { LMS } from "./template-data-lms";
 import { BEAUTY } from "./template-data-beauty";
@@ -314,6 +314,37 @@ for (const [업종, 컨셉] of 업종컨셉) {
     }
   } else {
     console.log(`· 색 ${DESIGN_OPTIONS.length}종 모두 실제로 구울 수 있습니다`);
+  }
+
+  /* ⛔ 2026-08-25: 여기는 «이름»만 견주고 «값»은 한 번도 안 견줬다.
+     그 틈으로 forest·coral 의 보조 글자색과 구분선이 뿌리와 갈려 있었다.
+     그중 forest 의 #5F7268 은 제 페이지 배경 위에서 대비가 4.46 — 손님이 받는
+     가이드가 「4.5 이상을 지키세요」라고 시키면서 스스로는 못 지키고 있었다.
+     efded07 이 「손으로 옮겨 적은 값이라 갈린다」고 적어 두고도 이름만 쟀다.
+     이름이 같으면 값도 같아야 한다. 겹치는 자리를 다 센다. */
+  const 표들 = [
+    ...블록.slice(0, 블록.indexOf("\n];")).matchAll(/key:\s*"(\w+)"[\s\S]*?c:\s*\{([\s\S]*?)\n {4}\}/g),
+  ];
+  const 빈칸없이 = (s: string) => s.replace(/\s+/g, "");
+  let 갈린자리 = 0;
+  for (const m of 표들) {
+    const 뿌리 = colorsFor(m[1] as DesignKey) as Record<string, string>;
+    const 손님: Record<string, string> = {};
+    for (const p of m[2].matchAll(/"([^"]+)":\s*"(#[0-9A-Fa-f]{3,8})"/g)) 손님[빈칸없이(p[1])] = p[2];
+    for (const [칸, 값] of Object.entries(뿌리)) {
+      const 저것 = 손님[빈칸없이(칸)];
+      // 손님 파일에만 있는 칸(primary-hover·success 등)은 뿌리에 짝이 없다 — 그건 넘긴다.
+      if (!저것 || 저것.toUpperCase() === 값.toUpperCase()) continue;
+      갈린자리 += 1;
+      console.log(
+        `✗ ${m[1]} 의 「${칸}」 이 두 곳에서 다릅니다 — ` +
+          `뿌리(lib/design-presets.ts) ${값} / 손님이 받는 파일(lib/preset-pack.ts) ${저것}`,
+      );
+    }
+  }
+  어긋남 += 갈린자리;
+  if (!갈린자리) {
+    console.log(`· 뿌리와 손님이 받는 프리셋의 색값이 ${DESIGN_OPTIONS.length}종 모두 같습니다`);
   }
 }
 

@@ -72,14 +72,14 @@
   </div></div>
   </div></div><div>
   <div class="row-b mb6 wrap-row">
-    <div class="chips"><button class="chip" type="button">전체</button><button class="chip on" type="button">30평대</button></div>
+    <div class="chips"><button class="chip" type="button" data-catf="*">전체</button><button class="chip on" type="button" data-catf="30평대">30평대</button></div>
     
     <select class="sel" data-sort-cards="cases">
       <option value="new">최신순</option><option value="price">금액 낮은순</option><option value="area">평수순</option></select>
   </div>
-  <div class="row-b mb6"><span class="t-sub">조건에 맞는 사례 8개</span></div>
+  <div class="row-b mb6"><span class="t-sub">조건에 맞는 사례 <span data-catcount>8</span>개</span></div>
 
-  <div class="cards" data-sort-list="cases"><a class="item" data-new="0" data-price="36000000" data-area="32" href="CS-02.html">
+  <div class="cards" data-sort-list="cases" data-catlist><a class="item" data-new="0" data-price="36000000" data-area="32" data-cat="30평대" href="CS-02.html">
     <div class="thumb"><div class="ph t4 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/인테리어 - 10.webp" alt=""><span class="lb">이미지 영역 (시공 사진 · <span class="sz">권장 800×600</span>)</span></div>
       
     </div>
@@ -87,7 +87,7 @@
       <div class="nm">32평 아파트 전체 리모델링</div>
       <div class="meta">32평 · 성동구 · 공사 24일</div>
       <div class="price"><span class="d">3,800만원대</span></div>
-    </div></a><a class="item" data-new="1" data-price="14500000" data-area="24" href="CS-02.html">
+    </div></a><a class="item" data-new="1" data-price="14500000" data-area="24" data-cat="20평대" href="CS-02.html">
     <div class="thumb"><div class="ph t5 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/인테리어 - 11.webp" alt=""><span class="lb">이미지 영역 (시공 사진 · <span class="sz">권장 800×600</span>)</span></div>
       
     </div>
@@ -95,7 +95,7 @@
       <div class="nm">24평 주방·거실 부분 시공</div>
       <div class="meta">24평 · 마포구 · 공사 12일</div>
       <div class="price"><span class="d">1,600만원대</span></div>
-    </div></a><a class="item" data-new="2" data-price="11000000" data-area="34" href="CS-02.html">
+    </div></a><a class="item" data-new="2" data-price="11000000" data-area="34" data-cat="30평대" href="CS-02.html">
     <div class="thumb"><div class="ph t1 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/인테리어 - 12.webp" alt=""><span class="lb">이미지 영역 (시공 사진 · <span class="sz">권장 800×600</span>)</span></div>
       
     </div>
@@ -103,7 +103,7 @@
       <div class="nm">욕실 2개 전체 교체</div>
       <div class="meta">34평 · 송파구 · 공사 9일</div>
       <div class="price"><span class="d">1,200만원대</span></div>
-    </div></a><a class="item" data-new="3" data-price="48000000" data-area="28" href="CS-02.html">
+    </div></a><a class="item" data-new="3" data-price="48000000" data-area="28" data-cat="20평대" href="CS-02.html">
     <div class="thumb"><div class="ph t2 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/인테리어 - 13.webp" alt=""><span class="lb">이미지 영역 (시공 사진 · <span class="sz">권장 800×600</span>)</span></div>
       
     </div>
@@ -111,7 +111,7 @@
       <div class="nm">카페 상업공간 신규 시공</div>
       <div class="meta">28평 · 용산구 · 공사 30일</div>
       <div class="price"><span class="d">5,200만원대</span></div>
-    </div></a><a class="item" data-new="4" data-price="17000000" data-area="18" href="CS-02.html">
+    </div></a><a class="item" data-new="4" data-price="17000000" data-area="18" data-cat="10평대" href="CS-02.html">
     <div class="thumb"><div class="ph t3 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/인테리어 - 14.webp" alt=""><span class="lb">이미지 영역 (시공 사진 · <span class="sz">권장 800×600</span>)</span></div>
       
     </div>
@@ -119,7 +119,7 @@
       <div class="nm">18평 원룸 전체 시공</div>
       <div class="meta">18평 · 광진구 · 공사 15일</div>
       <div class="price"><span class="d">1,900만원대</span></div>
-    </div></a><a class="item" data-new="5" data-price="5800000" data-area="32" href="CS-02.html">
+    </div></a><a class="item" data-new="5" data-price="5800000" data-area="32" data-cat="30평대" href="CS-02.html">
     <div class="thumb"><div class="ph t4 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/인테리어 - 15.webp" alt=""><span class="lb">이미지 영역 (시공 사진 · <span class="sz">권장 800×600</span>)</span></div>
       
     </div>
@@ -127,7 +127,7 @@
       <div class="nm">베란다 확장·단열 보강</div>
       <div class="meta">32평 · 강동구 · 공사 6일</div>
       <div class="price"><span class="d">650만원대</span></div>
-    </div></a><a class="item" data-new="6" data-price="45000000" data-area="42" href="CS-02.html">
+    </div></a><a class="item" data-new="6" data-price="45000000" data-area="42" data-cat="40평대" href="CS-02.html">
     <div class="thumb"><div class="ph t5 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/인테리어 - 16.webp" alt=""><span class="lb">이미지 영역 (시공 사진 · <span class="sz">권장 800×600</span>)</span></div>
       
     </div>
@@ -135,7 +135,7 @@
       <div class="nm">40평대 아파트 전체 시공</div>
       <div class="meta">42평 · 노원구 · 공사 28일</div>
       <div class="price"><span class="d">4,900만원대</span></div>
-    </div></a><a class="item" data-new="7" data-price="4200000" data-area="26" href="CS-02.html">
+    </div></a><a class="item" data-new="7" data-price="4200000" data-area="26" data-cat="20평대" href="CS-02.html">
     <div class="thumb"><div class="ph t1 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/인테리어 - 17.webp" alt=""><span class="lb">이미지 영역 (시공 사진 · <span class="sz">권장 800×600</span>)</span></div>
       
     </div>

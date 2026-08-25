@@ -51,7 +51,30 @@ process.on("exit", () => { try { 지우기(크롬찌꺼기, { recursive: true, f
 
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
-const 팩방 = "판매용_템플릿/_판매팩";
+/* ⚠ 만드는 중인 팩(_만드는중)도 같이 본다.
+   2026-08-25 — 반려견 유치원 41장을 손으로 눌러 다섯 군데가 새는 걸 찾았는데,
+   검수기 열한 개가 전부 _판매팩 만 보고 있어서 «옮겨 놓기 전까지 아무 검수도 안 받는»
+   자리였다. 만드는 단계 안에서 검수가 돌아야 한다. */
+const 팩자리 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만드는중"];
+const 팩방 = 팩자리[0];
+/** 팩 이름이 두 자리 중 어디에 있는지 찾아 준다 */
+const 팩길 = (팩: string): string => 팩자리.map((r) => `${r}/${팩}`).find((p) => existsSync(p)) ?? `${팩방}/${팩}`;
+/** 훑는다 — 같은 이름이 겹치면 _판매팩 이 이긴다.
+    ⚠ 이름을 «집어서» 부를 때만 _만드는중 까지 본다. 만드는 단계 안에서 검수하려면
+      그래야 한다. 하지만 이름 없이 «전부» 훑을 때는 _판매팩 만 본다 —
+      만들다 만 팩을 주간 검수가 보면 FAIL 이 쏟아지고 포장이 막힌다(검수공통 4절). */
+const 팩훑기 = (거르개?: (e: { name: string }) => boolean): string[] => {
+  const 본것 = new Set<string>(), 모음: string[] = [];
+  for (const r of (고른팩 ? 팩자리 : [팩방])) {
+    let 목록; try { 목록 = readdirSync(r, { withFileTypes: true }); } catch { continue; }
+    for (const e of 목록) {
+      if (!e.isDirectory() || 본것.has(e.name)) continue;
+      if (거르개 && !거르개(e)) continue;
+      본것.add(e.name); 모음.push(e.name);
+    }
+  }
+  return 모음;
+};
 const 고른팩 = process.argv.slice(2).find((a) => !a.startsWith("--"));
 const 약속도 = process.argv.includes("--약속");
 
@@ -108,6 +131,13 @@ const 눌러보는글 = `
   };
 
   for (const el of 후보) {
+    /* ⚠ 후보 목록은 «맨 처음» 스냅숏이다. 서로를 잠그는 형제 버튼(투표 👍/👎처럼
+       하나를 누르면 «둘 다» disabled 되는 짝)은, 스냅숏 시점엔 둘 다 눌러도 되는
+       것으로 잡혔다가, 먼저 처리된 형제가 이미 이 버튼을 꺼 버렸을 수 있다.
+       그때 누르면 «원래도 안 눌리는 것»을 누르는 셈이라 죽었다고 잘못 센다
+       (2026-08-24, 반려동물케어 CS-01의 「아니요」가 이렇게 헛짚혔다 — 「네」가
+       먼저 처리되며 둘 다 잠갔을 뿐 실제로는 멀쩡했다). 누르기 직전에 한 번 더 본다. */
+    if (el.disabled || (el.classList && el.classList.contains('is-off'))) continue;
     /* 손잡이가 setTimeout 으로 나중에 도는 것도 있다(마지막 그물이 그렇다).
        한 틱 기다렸다 재야 «늦게 답하는 것»을 죽었다고 잘못 세지 않는다. */
     /* 알림(토스트)을 붙이는 것은 그 자체가 반응이다 — 먼저 인정하고 넘어간다. */
@@ -166,8 +196,8 @@ const 눌러보는글 = `
 
 type 결과 = { 화면: string; 눌러본수: number; 죽은수: number; 죽은것: string[]; 종류: Record<string, number>; 값만수: number };
 
-function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[] } | null {
-  const 완성화면 = join(팩방, 팩, "완성화면");
+function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]; 못잰장: string[] } | null {
+  const 완성화면 = join(팩길(팩), "완성화면");
   const pages = join(완성화면, "pages");
   if (!existsSync(pages)) return null;
 
@@ -178,6 +208,7 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
 
   const 화면들 = readdirSync(pages).filter((f) => f.endsWith(".html")).sort();
   const 결과: 결과[] = [];
+  const 못잰장: string[] = [];   /* ⚠ 못 잰 장을 «통과»로 넘기지 않는다 — 세어서 보여 준다 */
 
   for (const f of 화면들) {
     const 길 = join(임시, "pages", f);
@@ -191,11 +222,14 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
 
     let 뽑힌: string;
     try {
+      /* ⛔ timeout 을 안 주면 크롬이 한 쪽에서 멈출 때 «회차 전체»가 영영 안 끝난다.
+         2026-08-18 에 여행_프리미엄이, 2026-08-25 에 여행_디럭스가 그렇게 한 시간을 서 있었다.
+         한 쪽에 2.5초짜리 일이니 60초면 넉넉하다 — 넘으면 그 쪽만 «못 잰 장»으로 두고 간다. */
       뽑힌 = execFileSync(CHROME, [
         "--headless=new", "--user-data-dir=" + 크롬찌꺼기,  "--disable-gpu", "--window-size=1440,1000",
         "--virtual-time-budget=2500", "--dump-dom", "file:///" + 길.replace(/\\/g, "/"),
-      ], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"] });
-    } catch { continue; }
+      ], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"], timeout: 60_000 });
+    } catch { 못잰장.push(f); continue; }
 
     const m = /<title>([\s\S]*?)<\/title>/.exec(뽑힌);
     if (!m) continue;
@@ -207,12 +241,12 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
   }
 
   rmSync(임시, { recursive: true, force: true });
-  return { 팩, 잰장: 결과.length, 결과 };
+  return { 팩, 잰장: 결과.length, 결과, 못잰장 };
 }
 
 /** 스펙팩에 적어 둔 «약속(acts)» 을 같이 보여 준다 — 손님이 넣고 만들 때 그대로 따라간다. */
 function 약속보기(팩: string) {
-  const 스펙 = join(팩방, 팩, "완성화면", "스펙팩", "07_AI빌드_스펙팩.json");
+  const 스펙 = join(팩길(팩), "완성화면", "스펙팩", "07_AI빌드_스펙팩.json");
   if (!existsSync(스펙)) return null;
   const s = JSON.parse(readFileSync(스펙, "utf8"));
   const 전부 = s.screens.flatMap((x: any) => (x.acts || []).map((a: any[]) => ({ 화면: x.pageId, 무엇: a[0], 어떻게: a[1] })));
@@ -221,9 +255,7 @@ function 약속보기(팩: string) {
 
 const 팩들 = 고른팩
   ? [고른팩]
-  : readdirSync(팩방, { withFileTypes: true })
-      .filter((e) => e.isDirectory() && existsSync(join(팩방, e.name, "완성화면", "pages")))
-      .map((e) => e.name);
+  : 팩훑기((e) => existsSync(join(팩길(e.name), "완성화면", "pages")));
 
 console.log("눌러도 반응 없는 UI 가 있나 — 실제로 눌러서 잽니다\n");
 
@@ -239,6 +271,10 @@ for (const 팩 of 팩들) {
 
   const 총값만 = r.결과.reduce((n, x) => n + x.값만수, 0);
   console.log(`  ${팩} — ${r.잰장}장에서 ${총누름}개를 눌러 봤습니다`);
+  if (r.못잰장.length) {
+    WARN += r.못잰장.length;
+    console.log(`    △ 못 잰 장 ${r.못잰장.length}개 — 크롬이 60초 안에 안 끝났습니다: ${r.못잰장.slice(0, 5).join(" · ")}`);
+  }
   if (총값만 > 0) {
     WARN += 총값만;
     console.log(`    △ 고른 값만 바뀌고 옆이 그대로인 select ${총값만}개 — 거르라고 둔 것이면 반쪽입니다.`);

@@ -270,8 +270,13 @@ const PRESETS: Preset[] = [
       "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#1C2B22",
-      "text-muted (보조)": "#5F7268",
-      "border (구분선)": "#DCE7DD",
+      /* ⛔ 손으로 옮겨 적은 값이 뿌리와 갈려 있었다(2026-08-25).
+         lib/design-presets.ts 의 PRESETS.forest 는 #5B6B60 · #DBE7DC 인데
+         여기만 #5F7268 · #DCE7DD 였다. #5F7268 은 제 페이지 배경(#F0EFEB) 위에서
+         대비가 4.46 — 이 파일이 손님에게 「4.5 이상을 지키세요」라고 시키면서
+         스스로는 못 지키고 있었다. 뿌리 값으로 되돌린다(4.91). */
+      "text-muted (보조)": "#5B6B60",
+      "border (구분선)": "#DBE7DC",
       success: "#15803D",
       warning: "#A16207",
       danger: "#B91C1C",
@@ -320,8 +325,9 @@ const PRESETS: Preset[] = [
       "background (페이지)": "#F0EFEB",
       "surface (카드)": "#FFFFFF",
       "text (본문)": "#33221E",
-      "text-muted (보조)": "#7A6560",
-      "border (구분선)": "#F2E2DD",
+      /* forest 와 같은 까닭으로 갈려 있었다 — 뿌리(PRESETS.coral)는 #6E5450 · #F6E0D8 다. */
+      "text-muted (보조)": "#6E5450",
+      "border (구분선)": "#F6E0D8",
       success: "#0F7A52",
       warning: "#B45309",
       danger: "#C0392B",
@@ -803,6 +809,11 @@ const wire = (kind: string, pri: string, bd: string) => {
 
 
 /** 비교 미리보기 HTML 한 장. */
+/* ⛔ 아래 .sub · .lab span · .lay-kv dt · .lay-fit 의 보조 글자색이 #6B6F76 이었다(2026-08-25).
+   제 배경(#EFEFF2) 위에서 대비가 4.40 — 13px·11.5px 작은 글자인데 4.5 에 못 미쳤다.
+   손님이 받는 미리보기 한 장이 스스로 이 팩의 규칙(「글자 대비 4.5 이상」)을 어기고 있었다.
+   이 파일이 이미 들고 있는 값(pastel 의 보조색 #5F636A)으로 맞춘다 → 5.26.
+   ⚠ 이 주석은 «여기»에 둔다. 아래 템플릿 문자열 안에 적으면 손님이 받는 HTML 에 그대로 실린다. */
 function buildPreviewHtml(chosen: Preset[], chosenLayouts: (typeof LAYOUTS)[number][]): string {
   return `<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <title>가이드 프리셋 · 레이아웃 프리셋</title><style>
@@ -810,10 +821,10 @@ function buildPreviewHtml(chosen: Preset[], chosenLayouts: (typeof LAYOUTS)[numb
 body{font-family:Pretendard,"Malgun Gothic",sans-serif;background:#EFEFF2;padding:40px;color:#1F2024}
 h1{font-size:26px;font-weight:800;margin-bottom:6px}
 .note{font-size:13px;color:#4A4A52;background:#fff;border:1px solid #DEDEE4;border-radius:10px;padding:12px 14px;margin:14px 0 20px}
-.sub{color:#6B6F76;font-size:15px;margin-bottom:26px}
+.sub{color:#5F636A;font-size:15px;margin-bottom:26px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1240px}
 .lab{margin-bottom:10px}.lab b{display:block;font-size:17px;font-weight:800}
-.lab span{display:block;font-size:13px;color:#6B6F76;margin-top:3px;line-height:1.5}
+.lab span{display:block;font-size:13px;color:#5F636A;margin-top:3px;line-height:1.5}
 .demo{border-radius:14px;padding:22px;min-height:330px;border:1px solid #E0E0E5}
 .dcard{padding:18px}
 .sec{font-size:17px;font-weight:800;margin:30px 0 12px}
@@ -832,9 +843,9 @@ h1{font-size:26px;font-weight:800;margin-bottom:6px}
 .wire .wcol{display:flex;flex-direction:column;gap:5px;flex:1}
 .wire .wcol i{flex:1}
 .lay-kv{display:grid;grid-template-columns:78px 1fr;gap:4px 10px;font-size:11.5px;line-height:1.5}
-.lay-kv dt{color:#6B6F76}
+.lay-kv dt{color:#5F636A}
 .lay-kv dd{color:#1F2024}
-.lay-fit{margin-top:8px;font-size:11.5px;color:#6B6F76}
+.lay-fit{margin-top:8px;font-size:11.5px;color:#5F636A}
 .dt{margin-bottom:4px}.dm{margin-bottom:14px}
 .drow{display:flex;gap:8px;margin-bottom:16px}
 .dbadge{font-size:11px;font-weight:700;padding:4px 10px}

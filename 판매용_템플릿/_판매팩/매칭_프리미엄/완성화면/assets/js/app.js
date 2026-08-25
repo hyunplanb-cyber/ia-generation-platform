@@ -520,3 +520,29 @@
     if (켤것) { 켤것.classList.add('on'); 켤것.setAttribute('aria-current', 'page'); }
   }
 })();
+
+/* ── 견적 목록 정렬 — <select data-sort-cards="키"> 와 <div data-sort-list="키"> ──
+   ⛔ 2026-08-25 검수: QT-01 의 「낮은 가격순·평점 높은순·빠른 응답순·도착한 순」이
+      고른 값만 바뀌고 카드 차례는 그대로였다. 기능정의에 「정렬(…)」이라고 적어 두고도
+      거는 장치가 아예 없었다(이 팩 app.js 에는 정렬 코드가 한 줄도 없었다).
+
+   자료는 이미 화면에 있었다 — 금액·평점·평균 응답 시간이 카드에 적혀 있다.
+   그것을 줄마다 data-price · data-rate · data-resp 로 못 박고 여기서 견준다.
+   ⚠ 「도착한 순」은 처음 놓인 차례가 곧 그 차례라, data-arr 에 0·1·2… 를 적어 두었다.
+   ⚠ 평점만 «큰 것부터»다 — 그 option 에 data-desc 를 달아 두었다. */
+document.addEventListener('change', function (e) {
+  var sel = e.target && e.target.closest ? e.target.closest('[data-sort-cards]') : null;
+  if (!sel) return;
+  var 상자 = document.querySelector('[data-sort-list="' + sel.dataset.sortCards + '"]');
+  if (!상자) return;
+  var 키 = sel.value || 'arr';
+  var 큰것부터 = !!(sel.options[sel.selectedIndex] || {}).dataset
+    && sel.options[sel.selectedIndex].dataset.desc !== undefined;
+  Array.prototype.slice.call(상자.children)
+    .filter(function (c) { return c.dataset && c.dataset[키] !== undefined; })
+    .sort(function (a, b) {
+      var d = Number(a.dataset[키]) - Number(b.dataset[키]);
+      return 큰것부터 ? -d : d;
+    })
+    .forEach(function (c) { 상자.appendChild(c); });
+});

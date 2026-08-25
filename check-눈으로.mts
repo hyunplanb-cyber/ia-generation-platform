@@ -57,7 +57,30 @@ const 크롬찌꺼기 = `${(process.env.TEMP || "/tmp").split(String.fromCharCod
 process.on("exit", () => { try { 지우기(크롬찌꺼기, { recursive: true, force: true }); } catch {} });
 
 const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
-const 팩방 = "판매용_템플릿/_판매팩";
+/* ⚠ 만드는 중인 팩(_만드는중)도 같이 본다.
+   2026-08-25 — 반려견 유치원 41장을 손으로 눌러 다섯 군데가 새는 걸 찾았는데,
+   검수기 열한 개가 전부 _판매팩 만 보고 있어서 «옮겨 놓기 전까지 아무 검수도 안 받는»
+   자리였다. 만드는 단계 안에서 검수가 돌아야 한다. */
+const 팩자리 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만드는중"];
+const 팩방 = 팩자리[0];
+/** 팩 이름이 두 자리 중 어디에 있는지 찾아 준다 */
+const 팩길 = (팩: string): string => 팩자리.map((r) => `${r}/${팩}`).find((p) => existsSync(p)) ?? `${팩방}/${팩}`;
+/** 훑는다 — 같은 이름이 겹치면 _판매팩 이 이긴다.
+    ⚠ 이름을 «집어서» 부를 때만 _만드는중 까지 본다. 만드는 단계 안에서 검수하려면
+      그래야 한다. 하지만 이름 없이 «전부» 훑을 때는 _판매팩 만 본다 —
+      만들다 만 팩을 주간 검수가 보면 FAIL 이 쏟아지고 포장이 막힌다(검수공통 4절). */
+const 팩훑기 = (거르개?: (e: { name: string }) => boolean): string[] => {
+  const 본것 = new Set<string>(), 모음: string[] = [];
+  for (const r of (고른팩 ? 팩자리 : [팩방])) {
+    let 목록; try { 목록 = readdirSync(r, { withFileTypes: true }); } catch { continue; }
+    for (const e of 목록) {
+      if (!e.isDirectory() || 본것.has(e.name)) continue;
+      if (거르개 && !거르개(e)) continue;
+      본것.add(e.name); 모음.push(e.name);
+    }
+  }
+  return 모음;
+};
 const 전부보기 = process.argv.includes("--전부");
 const 고른팩 = process.argv.slice(2).find((x) => !x.startsWith("--"));
 const 볼장수 = 14;
@@ -248,6 +271,13 @@ const 재는글 = `
     const r = 기둥.getBoundingClientRect();
     if (r.width < 300 || r.width > 480) continue;                 // 좁은 기둥만
     if (기둥.closest(".gnb, header, footer, .ft, aside")) continue;
+    /* ⭐ «옆 기둥»은 좁은 것이 제 모습이다 — 2026-08-25
+         좌우로 나눈 화면(.split-r · .split-l)의 곁칸은 300~360px 이 표준이고,
+         거기에 요약·안내 카드가 들어가는 것이 곧 그 칸의 쓸모다.
+         매칭 PR-03 의 「승인되면 이런 것이 열려요」(336px · 207자)를 흠이라 했는데,
+         열어 보니 .split-r 의 오른쪽 곁칸(.sticky) 이었다 — 갇힌 것이 아니라 곁칸이다.
+         G6 이 잡으려는 것은 «화면 한복판이 통째로 좁은 기둥»이지 곁칸이 아니다. */
+    if (기둥.closest(".side, .sticky, .rail, .edrail, .split-r > *:last-child, .split-l > *:first-child")) continue;
     /* 이 안에 «내용»이 얼마나 들었나 — 글자 수와 덩어리 수로 잰다 */
     const 글자 = (기둥.textContent || "").replace(/\s+/g, " ").trim().length;
     const 덩어리 = 기둥.querySelectorAll(".card, section, table, .g2, .g3, .g4, .list, .row").length;
@@ -371,6 +401,14 @@ const 재는글 = `
          여행 프리미엄 여덟 장에서 그렇게 잡혔다(2026-08-20). «첫 클래스»만 본다. */
       const 같은것 = (x.앞.className || "").trim().split(/ +/)[0] === (x.뒤.className || "").trim().split(/ +/)[0];
       if (같은것) continue;
+      /* 뒤엣것이 «앞엣것과 같은 것들을 품은 묶음»이면 어버이-자식이다 — 붙는 것이 맞다.
+         여행 MY-02·MY0201~0203 의 「전체 동의」 체크 밑에 padding-left:26px 로 들여쓴
+         하위 동의 넷이 그렇다. 들여쓰기가 이미 «딸린 것»이라고 말해 준다. (2026-08-25) */
+      const 앞이름 = (x.앞.className || "").trim().split(/ +/)[0];
+      let 품었나 = false;
+      /* ⚠ 이름에 이상한 글자가 있으면 querySelector 가 던진다 — 던지면 그냥 «안 품었다»로 본다. */
+      try { 품었나 = !!(앞이름 && x.뒤.querySelector("." + 앞이름)); } catch (err) { 품었나 = false; }
+      if (품었나) continue;
       /* 제목 → 부제는 «붙어야» 맞다. 리듬보다 좁다고 잡으면 잘 만든 자리를 흠이라 한다. */
       /* 길잡이(빵부스러기)는 다음 덩어리와 «한 덩어리»다 — 붙어 있는 것이 맞다.
          2026-08-21 에 「crumb 와 page-hd 사이 12px」을 흠이라 했는데 그게 제 모습이었다. */
@@ -400,7 +438,49 @@ const 재는글 = `
         /^(h[1-4]|b|strong)$/.test(el.tagName.toLowerCase()) ||
         /t-sec|t-card|t-page|lb|price|nm|name|field/.test(el.className || "");
       if ((잔글(x.앞) && 큰글(x.뒤)) || (큰글(x.앞) && 잔글(x.뒤))) continue;
+      /* «잔글»이 아래에 오면 그것은 위엣것에 딸린 풀이말이다 — 붙는 것이 그 말의 뜻이다.
+         전에는 위가 «제목»일 때만 넘겼는데, 공동구매 HM0203 의 「↑ 단계 도달」은
+         진행 막대 바로 밑에 붙는 풀이말이라 넘어가지 못했다. (2026-08-25) */
+      if (잔글(x.뒤)) continue;
+      /* «설명 한 줄 → 그 목록»도 한 덩어리다. 뷰티샵 ST0403 의 t-sub 밑 ul.col 이 그렇다. */
+      if (잔글(x.앞) && /^(ul|ol|dl)$/.test(x.뒤.tagName.toLowerCase())) continue;
       if (x.뒤 === 푸터) continue;                    // 푸터는 H4 가 맡는다 — 두 번 세지 않는다
+      /* ⭐ 마지막으로 «눈»을 본다. 상자끼리 0px 이어도 그 안의 글이 12px 넘게 떨어져 있으면
+         손님 눈에는 갈라져 보인다 — 안여백·빈 줄·가운데 맞춤이 이미 띄워 준 자리다.
+         2026-08-25 에 이 한 가지로 여섯 건 가운데 셋이 헛짚음이었다
+         (공동구매 SE0102 는 글틈 17px, HO0203 은 48px, 뷰티샵 ST0403 은 11px).
+         상자를 재고 눈을 안 보면 잘 만든 자리를 뜯게 된다. */
+      /* ⚠ 여기는 «재는글» 템플릿 문자열 안이다 — 브라우저가 그대로 삼킨다.
+         타입 표기(: Element)를 적으면 통째로 죽는다. 순수 자바스크립트로만 적는다. */
+      const 잉크틈 = (앞, 뒤) => {
+        const 잉크 = (e) => {
+          const r = document.createRange(); r.selectNodeContents(e);
+          const rs = [...r.getClientRects()].filter((q) => q.width > 2 && q.height > 2);
+          return rs.length ? rs : null;
+        };
+        const a = 잉크(앞), b = 잉크(뒤);
+        if (!a || !b) return null;
+        return Math.min(...b.map((q) => q.top)) - Math.max(...a.map((q) => q.bottom));
+      };
+      const 눈틈 = 잉크틈(x.앞, x.뒤);
+      if (눈틈 !== null && 눈틈 >= 12) continue;
+      /* ⭐ 손으로 «여백 클래스»를 붙여 둔 자리는 그 값이 곧 «뜻»이다 — 2026-08-25
+           mb2·mt3 같은 클래스는 만든 사람이 「여기는 8px」이라고 한 자 한 자 적어 넣은 것이다.
+           칸이 쓰는 리듬(28px)과 다르다고 흠이라 하면 «한 덩어리»인 짝을 죄다 뜯게 된다 —
+             · 매칭 PR-02  「72% 채웠어요 · 8/11」(row-b mb2) → 바로 밑 제 진행 막대
+             · 매칭 AU-03  「인증번호 6자리」(row-b mb2)   → 바로 밑 제 입력칸 여섯
+             · 매칭 RQ-01  「분야를 골라 주세요」(t-sec mb3) → 바로 밑 제 분야 단추들
+             · 매칭 LD-04  진행 막대 → 「이번 달 58 사용」(t-sub mt2)
+             · 매칭 LD-03·RQ-05  이름표(label.lb) → 바로 밑 제 입력칸
+           «이름표와 값은 한 덩어리»라고 위에서 넘긴 것과 같은 까닭이다.
+           팩이 스스로 --sp-title:12px 을 두고 「제목 밑은 12px」이라 정해 두었는데,
+           그것을 섹션 리듬(28px)과 견주니 제대로 만든 자리가 죄다 걸렸다.
+           2026-08-25 에 이 한 가지로 매칭 디럭스 아홉 건이 «전부» 헛짚음이었다.
+         ⚠ 여백 클래스가 «없이» 좁은 자리는 그대로 잡는다 — 그건 어쩌다 좁아진 것이다.
+         ⚠ 낱말 끝(역슬래시 b)은 쓰지 않는다 — 이 글은 통째로 템플릿 문자열이라
+           백스페이스 문자로 먹힌다. 양옆에 빈칸을 붙여 찾는다(검수공통 2절). */
+      const 손으로둔틈 = (el) => / (mb|mt)[0-9]+ /.test(" " + (el.className || "") + " ");
+      if (!붙음 && (손으로둔틈(x.앞) || 손으로둔틈(x.뒤))) continue;
       적기("H2", 이름(x.뒤) + " 와 바로 위 " + 이름(x.앞) + " 사이가 " + x.틈 + "px — " +
         (붙음 ? "맞붙었습니다" : "이 칸이 쓰는 " + 리듬 + "px 보다 훨씬 좁습니다"));
     }
@@ -425,7 +505,13 @@ const 재는글 = `
     /* ⚠ «크게 하라고 시킨» 버튼끼리 견주면 안 된다. btn-lg + btn-ghost 는 일부러 다르다.
        첫 판에서 이걸 안 가려 매칭 히어로 여덟 쌍이 다 흠으로 잡혔다 — 다 멀쩡했다.
        크기를 시킨 표시(btn-lg·btn-sm)가 «같은» 것끼리만 견준다. */
-    const 크기표 = (b) => (/btn-lg/.test(b.className) ? "큰" : /btn-sm/.test(b.className) ? "작은" : "보통");
+    /* ⚠ btn-link 는 «상자 없는 글자 단추»다 — 팩 아홉 벌이 다
+       background:none;border:0;padding:0;height:auto 로 적어 두었다. 밑줄 친 글 한 줄이라
+       키가 17px 인 것이 «맞다». 44px 짜리 채운 단추와 견주면 언제나 다르다 —
+       LMS 두 벌의 「회원 탈퇴」를 그렇게 헛짚었다 (2026-08-25). 따로 무리를 짓는다. */
+    const 크기표 = (b) =>
+      (" " + (b.className || "") + " ").indexOf(" btn-link ") >= 0 ? "글자"
+        : /btn-lg/.test(b.className) ? "큰" : /btn-sm/.test(b.className) ? "작은" : "보통";
     const 무리 = new Map();
     for (const b of 버튼) {
       const k = 크기표(b);
@@ -492,6 +578,14 @@ const 재는글 = `
        제 모습이니 터무니없이 넓을 때만 잡고 (3) 까닭은 «지어내지 말고 실제로 읽어» 적는다. */
     const 부모 = el.parentElement; if (!부모) continue;
     const ps = getComputedStyle(부모);
+    /* ⛔ 나란한 형제가 «다 같은 폭»이면 격자 칸이다 — 늘어난 것이 아니라 칸을 나눠 쓴 것이다.
+       여행 프리미엄 MY1003 의 「카카오톡 공유·링크 복사·이미지 저장·PDF 저장」 넷이
+       249px 로 똑같이 서 있는데, 글이 짧다는 이유로 넷 다 흠이 됐다 (2026-08-25). */
+    const 형제 = [...부모.children].filter((c) => 보이나(c));
+    if (형제.length >= 2) {
+      const 폭들 = 형제.map((c) => c.getBoundingClientRect().width);
+      if (Math.max(...폭들) - Math.min(...폭들) <= 4) continue;
+    }
     if (parseFloat(s.flexGrow) > 0) continue;                          // flex:1 — 나눠 쓰라고 적어 둔 것
     const 세로더미 = ps.display.indexOf("flex") >= 0 && ps.flexDirection.indexOf("column") === 0;
     if (세로더미 && r.width <= 480) continue;                           // 카드 안 세로 단추 더미는 제 모습
@@ -515,10 +609,25 @@ const 재는글 = `
     부모별.get(p).push(b);
   }
   for (const [p, 목록] of 부모별) {
-    if (목록.length < 2) continue;
-    const 키 = 목록.map((b) => 반올림(b.getBoundingClientRect().height));
-    if (Math.max(...키) - Math.min(...키) > 4)
-      적기("H14", 이름(p) + " 안 배지 키가 제각각입니다 — " + 키.join("·") + "px");
+    /* ⚠ «크게 하라고 시킨» 배지끼리 견주면 안 된다 — 단추에서 btn-lg 를 가려낸 것과 같은 까닭이다.
+       뷰티샵 SE0603 의 「원장」은 badge b-pri b-lg(32px), 옆의 「휴직 중」은 badge b-mut(26px).
+       손으로 「이건 크게」라고 적어 둔 것을 흠이라 했다 (2026-08-25). 크기 표시가 같은 것끼리만 본다. */
+    const 크기표 = (b) => {
+      const c = " " + (b.className || "") + " ";
+      return c.indexOf(" b-lg ") >= 0 ? "큰" : c.indexOf(" b-sm ") >= 0 ? "작은" : "보통";
+    };
+    const 무리 = new Map();
+    for (const b of 목록) {
+      const k = 크기표(b);
+      if (!무리.has(k)) 무리.set(k, []);
+      무리.get(k).push(b);
+    }
+    for (const [, 것들] of 무리) {
+      if (것들.length < 2) continue;
+      const 키 = 것들.map((b) => 반올림(b.getBoundingClientRect().height));
+      if (Math.max(...키) - Math.min(...키) > 4)
+        적기("H14", 이름(p) + " 안 배지 키가 제각각입니다 — " + 키.join("·") + "px");
+    }
   }
   /* H13 — 배지가 제 칸을 벗어났나. 겹쳐 얹는 배지(absolute)는 부모 밖으로 나가면 흠이다. */
   for (const b of 배지들) {
@@ -561,8 +670,13 @@ const 재는글 = `
     const 다른칸수 = [...new Set(칸수)];
     if (다른칸수.length > 1)
       적기("H13", "표의 줄마다 칸 수가 다릅니다 — " + 다른칸수.join("·") + "칸");
-    if (표.scrollWidth > 표.parentElement.clientWidth + 4)
-      적기("H13", "표가 제 칸보다 " + 반올림(표.scrollWidth - 표.parentElement.clientWidth) + "px 넓습니다");
+    /* ⛔ 감싼 상자가 «가로로 넘겨 주는» 것이면 흠이 아니다 — 우리가 시킨 그대로다.
+       스펙팩이 「표·그림은 제 상자 안에서만 넘기세요」라고 적어 두었고, .table-wrap.table-scroll 이
+       바로 그 상자다. 이 검사가 그것까지 흠이라 해서 뷰티샵 세 쪽을 헛짚었다 (2026-08-25). */
+    const 감싼상자 = 표.parentElement;
+    const 넘겨주나 = ((ox) => ox === "auto" || ox === "scroll")(getComputedStyle(감싼상자).overflowX);
+    if (!넘겨주나 && 표.scrollWidth > 감싼상자.clientWidth + 4)
+      적기("H13", "표가 제 칸보다 " + 반올림(표.scrollWidth - 감싼상자.clientWidth) + "px 넓습니다");
   }
   /* 격자로 만든 «표 흉내» — 줄마다 칸 수가 다르면 세로줄이 어긋난다 */
   for (const 격자 of document.querySelectorAll(".table, .price-tb, .grid-tb")) {
@@ -617,6 +731,12 @@ const 재는글 = `
     }
     for (const [, 한줄] of 줄별) {
       if (한줄.length < 2) continue;
+      /* ⛔ 비율을 «손으로 다르게 적어 둔» 자리는 흠이 아니다.
+         LMS 프리미엄 CU0202 는 제목이 아예 「썸네일」인 화면으로, 같은 그림을
+         ph-34(3:4) · ph-169(16:9) · ph-thumb 세 비율로 나란히 보여 주는 것이 그 화면의 일이다.
+         594·251·84px 이 나오는 것이 «맞다». 옷차림(클래스)이 같은 것끼리만 견준다. (2026-08-25) */
+      const 옷 = new Set(한줄.map((t) => (t.className || "").trim()));
+      if (옷.size > 1) continue;
       const 키 = 한줄.map((t) => 반올림(t.getBoundingClientRect().height));
       if (Math.max(...키) - Math.min(...키) > 8)
         적기("H10", 이름(부모) + " 안 나란한 썸네일 키가 제각각입니다 — " + [...new Set(키)].join("·") + "px");
@@ -651,6 +771,11 @@ const 재는글 = `
   return JSON.stringify({
     콘텐츠폭, 글칸폭, 세로막대, 상단고정, 위틈, 아래틈,
     본문짜임: (본문.className || "").trim(),
+    /* «혼자 서는 화면»인가 — 로그인·회원가입처럼 머리띠(GNB) 없이 가운데 상자 한 장만 있는 것.
+       LMS 는 main 에 solo 라고 적어 두었지만 매칭은 main 안쪽 div 에 적어 두었다.
+       main 의 클래스만 보면 매칭 프리미엄의 AU 아홉 장을 못 걸러낸다. (2026-08-25) */
+    혼자섬: !!document.querySelector(".solo, .solo-box, .auth, main.center") &&
+            !document.querySelector("header.gnb, .gnb, .ednav"),
     뒤로가기: !!document.querySelector(".back, [class*=back]"),
     장탭: [...document.querySelectorAll("[data-go]")].map((x) => x.getAttribute("data-go")).slice(0, 12),
     탭들: [...document.querySelectorAll(".tabs [data-go], .tabs-pill [data-go]")].slice(0, 12).map((x) => ({
@@ -699,7 +824,7 @@ const 재는글 = `
 /* ── 여기부터는 Node 쪽 ── */
 
 type 잰것 = {
-  화면: string; 콘텐츠폭: number; 글칸폭: number; 세로막대: number; 본문짜임?: string; 상단고정: string; 위틈: number | null; 아래틈: number | null;
+  화면: string; 콘텐츠폭: number; 글칸폭: number; 세로막대: number; 본문짜임?: string; 혼자섬?: boolean; 상단고정: string; 위틈: number | null; 아래틈: number | null;
   뒤로가기: boolean; 장탭: string[]; 탭칸: boolean; 흠: string[]; 단계말?: string[];
   탭들?: { 간곳: string; 켜짐: boolean; 글: string; 자리있음: boolean }[];
   카드모음: { 글: string; 간곳: string }[];
@@ -854,7 +979,7 @@ function 대표고르기(pages: string): string[] {
 }
 
 function 팩보기(팩: string) {
-  const 완성화면 = join(팩방, 팩, "완성화면");
+  const 완성화면 = join(팩길(팩), "완성화면");
   const pages = join(완성화면, "pages");
   if (!existsSync(pages)) return null;
   const 볼것 = 대표고르기(pages);
@@ -904,7 +1029,10 @@ function 팩보기(팩: string) {
   /* 로그인·회원가입 완료처럼 «혼자 서는» 화면은 짜임 자체가 다르다.
      LMS 는 그 자리에 main.solo 라고 이름까지 붙여 두었다(가운데 720px 카드 한 장).
      다른 화면과 폭이 다른 것이 제 모습이니 견줌에서 뺀다. (2026-08-21) */
-  const 혼자서나 = (p: 잰것) => /\bsolo\b|\bauth\b|\bcenter\b/.test(p.본문짜임 ?? "");
+  /* ⚠ main 의 클래스만 보면 «가운데 상자»를 main 안쪽 div 에 적어 둔 팩을 못 걸러낸다.
+     매칭 프리미엄은 로그인 화면 아홉 장이 머리띠(사이드바 248px) 없이 서는데,
+     그것을 「이 화면만 폭이 다르다」로 잡았다 — 로그인은 원래 사이드바가 없다. (2026-08-25) */
+  const 혼자서나 = (p: 잰것) => p.혼자섬 === true || /\bsolo\b|\bauth\b|\bcenter\b/.test(p.본문짜임 ?? "");
   const 견줄장 = 잰장.filter((p) => !혼자서나(p));
   const 글칸세기 = new Map<number, number>();
   for (const p of 견줄장) 글칸세기.set(p.글칸폭, (글칸세기.get(p.글칸폭) ?? 0) + 1);
@@ -956,7 +1084,7 @@ function 팩보기(팩: string) {
   {
     const 업종 = 팩.split("_")[0];
     const 짝 = 팩.endsWith("디럭스") ? `${업종}_프리미엄` : 팩.endsWith("프리미엄") ? `${업종}_디럭스` : null;
-    const 짝쪽 = 짝 ? join(팩방, 짝, "완성화면", "pages") : null;
+    const 짝쪽 = 짝 ? join(팩길(짝), "완성화면", "pages") : null;
     if (짝쪽 && existsSync(짝쪽)) {
       /* 두 등급이 «같은 이름»으로 부르는 화면을 제목으로 맞춘다 */
       const 제목모으기 = (방: string) => {
@@ -969,7 +1097,7 @@ function 팩보기(팩: string) {
         }
         return m;
       };
-      const 이쪽 = 제목모으기(join(팩방, 팩, "완성화면", "pages"));
+      const 이쪽 = 제목모으기(join(팩길(팩), "완성화면", "pages"));
       const 저쪽 = 제목모으기(짝쪽);
       const 단계말빼기 = (방: string, f: string) => {
         const s = readFileSync(join(방, f), "utf8");
@@ -979,7 +1107,7 @@ function 팩보기(팩: string) {
       for (const [이름, 이파일] of 이쪽) {
         const 저파일 = 저쪽.get(이름);
         if (!저파일 || 어긋남 >= 3) continue;
-        const a = 단계말빼기(join(팩방, 팩, "완성화면", "pages"), 이파일);
+        const a = 단계말빼기(join(팩길(팩), "완성화면", "pages"), 이파일);
         const b = 단계말빼기(짝쪽, 저파일);
         if (!a.length || !b.length) continue;
         const A = a[0].split("/")[1], B = b[0].split("/")[1];
@@ -1046,6 +1174,11 @@ function 팩보기(팩: string) {
       }
       const 저쪽 = 장별.get(간곳);
       if (!저쪽) continue;                                   // 안 잰 장은 견줄 수 없다
+      /* ⛔ 간 곳에 «탭 줄이 아예 없으면» 그것은 탭 형제가 아니라 다른 갈래의 화면이다.
+         목록에서 상세로 가는 길에 뒤로가기 줄이 붙는 것은 «맞는» 짜임이다 —
+         여행 VC-01 의 「만료」 탭이 바우처 만료 «상세»(VC-03)로 가는 자리가 그랬다.
+         탭 줄을 가진 형제끼리만 견준다. (2026-08-25) */
+      if (!저쪽.탭칸) continue;
       if (저쪽.뒤로가기 && !p.뒤로가기)
         흠들.push(`H7 · ${p.화면} → ${간곳} — 탭인데 «뒤로가기»가 생깁니다 (그만큼 화면이 아래로 밀립니다)`);
       if (Math.abs(저쪽.콘텐츠폭 - p.콘텐츠폭) > 4)
@@ -1100,9 +1233,7 @@ function 팩보기(팩: string) {
   return { 팩, 본장: 잰장.length, 못잰장, 흠들, 칸별 };
 }
 
-const 팩들 = readdirSync(팩방, { withFileTypes: true })
-  .filter((e) => e.isDirectory() && !e.name.startsWith("_") && (!고른팩 || e.name === 고른팩))
-  .map((e) => e.name);
+const 팩들 = 팩훑기((e) => !e.name.startsWith("_") && (!고른팩 || e.name === 고른팩));
 
 console.log("사람이 보듯 옮겨 다니며 잽니다 — H1~H15\n");
 let 나쁨 = 0;
@@ -1114,6 +1245,8 @@ for (const 팩 of 팩들) {
   console.log(`  ${r.흠들.length || r.못잰장 ? "✗" : "✓"} ${팩.padEnd(22)} ${r.본장}장 · ${요약}` +
     (r.못잰장 ? ` · ⚠ 못 잰 장 ${r.못잰장}` : ""));
   for (const h of r.흠들.slice(0, 침착 ? 12 : 999)) console.log(`       ${h}`);
-  if (r.흠들.length > 12) console.log(`       … 그 밖 ${r.흠들.length - 12}건`);
+  /* --다 로 다 뿌렸으면 «그 밖 N건»을 붙이지 않는다 — 2026-08-25
+     붙여 두었더니 다 보여 주고도 「그 밖 1건」이라 적혀, 숨은 흠이 있는 줄 알고 찾아다녔다. */
+  if (침착 && r.흠들.length > 12) console.log(`       … 그 밖 ${r.흠들.length - 12}건`);
 }
 console.log(나쁨 ? `\n못 넘긴 팩 ${나쁨}개.` : "\n다 반듯합니다.");

@@ -523,7 +523,10 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 .acc-item:last-child{border-bottom:0}
 .acc-q{width:100%;background:none;border:0;text-align:left;padding:var(--s4) 0;font-size:15px;font-weight:500;
   color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:var(--s4)}
-.acc-q .mk{color:var(--muted);flex:none;transition:transform .15s}
+/* ⚠ 「＋」는 열릴 때 45° 돈다. 세로로 긴 글자 상자를 돌리면 «폭»이 √2배로 커져
+   단추 밖으로 삐져나온다 — 2026-08-25 에 12개 팩에서 4~6px 넘치는 걸 재서 봤다.
+   네모난 상자로 만들고, 돌았을 때 늘어나는 만큼(한쪽 약 0.21배) 안으로 들여 둔다. */
+.acc-q .mk{color:var(--muted);flex:none;transition:transform .15s;width:1.4em;height:1.4em;line-height:1;display:grid;place-items:center;margin-right:.3em}
 .acc-a{display:none;padding:0 0 var(--s4);color:var(--muted);font-size:14px}
 .acc-item.on .acc-a{display:block}
 .acc-item.on .acc-q{color:var(--primary);font-weight:600}
@@ -1028,3 +1031,53 @@ label.check + .row-b,
 .mt4 + .field,
 .banner + .split-r,
 .banner + .split{margin-top:var(--sp-block, var(--s4, 16px))}
+
+/* 인라인으로 못 박은 «칸 나눔»이 폰에서 안 접힌다 — 2026-08-25
+     화면 파일에 style="grid-template-columns:…" 를 손으로 적어 둔 자리가 있다.
+     인라인은 미디어쿼리보다 세서, 위에 적어 둔 «폰에서는 한 줄로» 규칙이 통째로 진다.
+       · CH-02  옆기둥 300px 이 그대로 남아 본문이 111px 로 찌그러졌다.
+                말풍선 2160px 이 40px 짜리 틈에 갇혔다.
+       · RQ-02  본문이 69px — 달력 한 칸이 19px 이 됐다.
+   ⚠ 달력은 «일곱 칸»이라는 뜻이 있으니 한 줄로 접지 않는다. 내용보다 줄어들게만 한다.
+   ⛔ 인라인을 이기는 길은 !important 뿐이다. 화면 파일의 인라인 값은 데스크톱에서
+      뜻이 있어(옆기둥 300·260px) 지우지 않고, 좁을 때만 덮는다. */
+@media (max-width:860px){
+  .split[style*="grid-template-columns"],
+  .split-l[style*="grid-template-columns"],
+  .split-r[style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr)!important}
+}
+@media (max-width:560px){
+  .cards[style*="grid-template-columns"],
+  .g2[style*="grid-template-columns"],
+  .g3[style*="grid-template-columns"],
+  .g4[style*="grid-template-columns"],
+  .g5[style*="grid-template-columns"],
+  .g6[style*="grid-template-columns"],
+  .gal[style*="grid-template-columns"],
+  .grid[style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr)!important}
+  .cal-grid[style*="grid-template-columns"]{grid-template-columns:repeat(7,minmax(0,1fr))!important}
+}
+
+/* AU-03 — 인증번호 여섯 칸이 폰(375px)에서 22px 밀려났다. (2026-08-25)
+     칸 폭을 46px(폰 40px)로 못 박아 두어 여섯 칸 240px + 칸 사이 40px = 280px 이 된다.
+     그런데 이 칸이 앉는 .solo-box 는 좌우 안여백만 64px 이라, 360px 짜리 화면에서는
+     280 + 64 + 테두리 2 = 346px 이 되어 들어갈 자리가 없다.
+   ⛔ 더 좁은 폭으로 «다시 못 박으면» 더 작은 화면에서 또 밀린다.
+      아예 «남는 만큼 나눠 쓰게» 하고, 넓을 때만 46px 에서 멈추게 한다.
+      max-width 가 있어 데스크톱 생김새는 그대로다. */
+.otp{max-width:100%}
+.otp span{flex:1 1 0;min-width:0;max-width:46px}
+/* ⛔ .solo 는 place-items:center 만 준 grid 라 칸이 «max-content» 로 커진다 —
+     안엣것이 360px 짜리 화면보다 넓으면 칸째로 밀려 나간다(AU-03 이 그랬다).
+     D6 에서 배운 그대로다: 줄이려면 minmax(0,1fr) 이라고 «적어야» 한다.
+     가운데 맞춤은 place-items 가 그대로 해 준다. */
+.solo{grid-template-columns:minmax(0,1fr)}
+
+/* RV0102 — 별점 줄이 폰(375px)에서 27px 밀려났다. (2026-08-25)
+     한 줄이 「이름표 96px + 별 다섯 122px + 점수 88px」인데,
+     점수 칸(.v)이 «5점» 세 글자를 담자고 88px 을 flex:none 으로 붙들고 있었다.
+     360px 화면에서는 그 88px 이 그대로 밖으로 나간다.
+   ⛔ 좁은 폭에서만 놓아 준다 — 데스크톱은 오른쪽 줄맞춤이 살아야 표처럼 읽힌다. */
+@media (max-width:560px){
+  .rate-in .v{width:auto;min-width:34px}
+}

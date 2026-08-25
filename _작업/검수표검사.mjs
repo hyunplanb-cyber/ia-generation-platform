@@ -13,6 +13,18 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 export const 머리줄 = ["날짜", "루틴", "팩", "항목", "무엇", "근거파일", "고침여부"];
 export const 고침값 = ["고침", "해당없음", "마무리에넘김", "못고침"];
 
+/** 오늘 날짜를 «한국 시각»으로 준다.
+ *
+ * ⛔ toISOString() 을 그냥 쓰면 UTC 라 밤 0시~아침 9시 사이에 «어제»가 나온다.
+ * 2026-08-25 01:11(한국) 에 실제로 그랬다 — 루틴은 2026-08-25_*.csv 를 쓰는데
+ * 이 검사기와 대기점검은 2026-08-24 를 찾아 「잴 CSV 가 없다」·「고친 팩 0」이라 했다.
+ * 검수 루틴은 새벽에 도는 것이 보통이라, 하루 중 그 9시간이 곧 검수 시간이다.
+ * 대기점검이 그때 「✓ 모두 길 위에 있다」고 하면 2026-08-19 의 그 사고가 그대로 되풀이된다.
+ */
+export function 오늘() {
+  return new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
 /** 따옴표를 아는 CSV 쪼개기. 칸 안의 쉼표·따옴표를 지킨다. */
 export function 쪼개(줄) {
   const 칸 = [];
@@ -72,7 +84,7 @@ export function 재기(글, 이름 = "") {
 
 /* ── 바로 부르면 오늘 CSV 를 다 잰다 ── */
 if (process.argv[1] && process.argv[1].endsWith("검수표검사.mjs")) {
-  const 날짜 = process.argv[2] || new Date().toISOString().slice(0, 10);
+  const 날짜 = process.argv[2] || 오늘();
   const 파일 = existsSync("검수")
     ? readdirSync("검수").filter((x) => x.startsWith(날짜 + "_pack-qa-") && x.endsWith(".csv"))
     : [];

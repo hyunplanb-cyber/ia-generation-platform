@@ -14,9 +14,11 @@
  *   node _작업/대기점검.mjs [날짜]      날짜 없으면 오늘
  */
 import { readdirSync, readFileSync, existsSync } from "node:fs";
-import { 쪼개 } from "./검수표검사.mjs";   /* 따옴표 안의 쉼표까지 제대로 나눈다 */
+import { 쪼개, 오늘 } from "./검수표검사.mjs";   /* 따옴표 안의 쉼표까지 제대로 나눈다 */
 
-const 날짜 = process.argv[2] || new Date().toISOString().slice(0, 10);
+/* ⛔ 날짜는 «한국 시각»으로 잡는다. UTC 로 잡으면 밤 0시~아침 9시에 어제를 찾아
+ *   오늘 CSV 를 통째로 못 보고 「✓ 다 길 위에 있다」고 잘못 알린다 — 검수표검사.mjs 오늘() 참고 */
+const 날짜 = process.argv[2] || 오늘();
 const 팩이름 = /^[^_\s]+_(스탠다드|플러스|디럭스|프리미엄)$/;
 
 /* ── 오늘 CSV 에서 「고침」인 팩 ── */
