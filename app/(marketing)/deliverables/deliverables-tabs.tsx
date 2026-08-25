@@ -39,7 +39,8 @@ import { HowToMakeBody } from "./how-to-make";
 
 type Deliverable = {
   icon: LucideIcon;
-  tone: string;
+  /** 벤토 칸의 파스텔 바탕. 칸마다 다르다 — 위·옆으로 닮은 색이 안 붙게 골라 두었다. */
+  bg: string;
   name: string;
   role: string;
   formats: string[];
@@ -54,7 +55,7 @@ type Deliverable = {
 const DELIVERABLES: Deliverable[] = [
   {
     icon: Network,
-    tone: "bg-primary-soft text-primary-on-soft",
+    bg: "bg-primary-soft",
     name: "메뉴 구조",
     role: "사이트 전체 메뉴를 트리로 정리해 정보구조(IA)의 뼈대를 잡아요. 어떤 메뉴 아래 어떤 화면이 들어가는지 한눈에 확정할 수 있어, 기획의 출발점이 됩니다.",
     formats: ["PPT", "엑셀"],
@@ -68,7 +69,7 @@ const DELIVERABLES: Deliverable[] = [
   },
   {
     icon: LayoutList,
-    tone: "bg-pastel-mint text-pastel-mint-foreground",
+    bg: "bg-pastel-mint",
     name: "IA · 화면 목록",
     role: "메뉴별로 필요한 화면을 자동으로 뽑아 목록으로 정리해요. 화면ID·화면명·기능정의·버튼 이동·AI 생성 프롬프트까지 화면 단위로 담겨, ‘무엇을 만들지’가 확정돼요.",
     formats: ["엑셀"],
@@ -82,7 +83,7 @@ const DELIVERABLES: Deliverable[] = [
   },
   {
     icon: FileText,
-    tone: "bg-muted text-foreground",
+    bg: "bg-pastel-lavender",
     name: "기능정의서",
     role: "사이트에 필요한 요건을 업무 · 기능 · 구성 계층으로 분해하고, 종류(기능·콘텐츠·화면·정책)를 붙여 정리한 문서예요. 실무 문서 형식 그대로 내려받을 수 있어요.",
     formats: ["엑셀"],
@@ -96,7 +97,7 @@ const DELIVERABLES: Deliverable[] = [
   },
   {
     icon: Workflow,
-    tone: "bg-pastel-mint text-pastel-mint-foreground",
+    bg: "bg-pastel-yellow",
     name: "FLOW · 흐름도",
     role: "화면과 화면 사이의 이동을 다이어그램으로 그려요. 어느 화면의 어떤 버튼을 누르면 어디로 가는지, 사용자 동선을 한눈에 볼 수 있어요.",
     formats: ["HTML", "draw.io"],
@@ -104,7 +105,7 @@ const DELIVERABLES: Deliverable[] = [
   },
   {
     icon: CalendarRange,
-    tone: "bg-muted text-foreground",
+    bg: "bg-success-soft",
     name: "개발 일정표",
     role: "화면(작업)별 제작 일정을 정리해요. 전체 일정을 입력하면 화면 수에 맞춰 일정 초안을 자동으로 나눠주고, 손으로 조정한 화면은 그대로 유지돼요.",
     formats: ["엑셀"],
@@ -114,7 +115,7 @@ const DELIVERABLES: Deliverable[] = [
     /* 2026-08-14 사장님 지시로 넣었다. 팩에는 처음부터 들어 있었는데
        이 목록에만 빠져 있어서, 손님이 «비용을 들여 만드는 것»을 못 보고 있었다. */
     icon: Palette,
-    tone: "bg-primary-soft text-primary-on-soft",
+    bg: "bg-danger-soft",
     name: "디자인 프리셋 3벌",
     role: "색·글꼴·모서리·그림자를 한 벌로 못 박은 규칙이에요. 화면을 여러 번 나눠 만들면 AI가 매번 조금씩 다른 색을 쓰는데, 이 파일을 함께 넣으면 첫 화면부터 마지막 화면까지 같은 얼굴을 유지해요.",
     formats: ["마크다운", "JSON"],
@@ -122,7 +123,7 @@ const DELIVERABLES: Deliverable[] = [
   },
   {
     icon: LayoutTemplate,
-    tone: "bg-pastel-mint text-pastel-mint-foreground",
+    bg: "bg-warning-soft",
     name: "레이아웃 프리셋 2벌",
     role: "무엇을 어디에 놓을지 정한 화면 뼈대예요. 히어로·목록·상세·내비게이션의 자리를 정합니다. 색 3벌과 짝이 정해져 있지 않아서 여섯 가지로 섞어 쓸 수 있어요.",
     formats: ["마크다운", "JSON"],
@@ -130,7 +131,7 @@ const DELIVERABLES: Deliverable[] = [
   },
   {
     icon: Bot,
-    tone: "bg-primary-soft text-primary-on-soft",
+    bg: "bg-pastel-mint",
     name: "AI 빌드 지시서",
     role: "위 모든 걸 한 벌로 정리한 마크다운·JSON이에요. 이 파일을 Claude Code·Cowork 같은 AI 코딩 도구에 그대로 넘기면, 화면 구성·이동·화면별 지시가 확정된 상태로 사이트가 만들어져요.",
     formats: ["마크다운", "JSON"],
@@ -209,13 +210,17 @@ function TabButton({
  *   배경색이 바뀌어, 1440 화면에서 스크롤 다섯 장이었다. 무엇이 몇 개인지 한눈에
  *   안 들어왔다 — 목록인데 «목록으로 안 보이는» 것이 문제였다.
  *
- * 벤토의 짜임 (레퍼런스에서 그대로 가져온 것)
- *   · 칸 = «연한 패널» 하나. 테두리도 그림자도 없다. 모서리만 크게 둥글다.
- *   · 패널 «안»에 샘플이 흰 종이로 떠 있고, 캐릭터는 모서리에 걸쳐 잘린다.
- *   · 제목·설명은 패널 «밖 아래»에 붙는다. 패널 안에 글을 넣지 않는다.
+ * 벤토의 짜임 (2026-08-25 사장님이 두 번째로 짚어 주신 대로)
+ *   · 칸 = 파스텔 패널 «하나». 그 안에 글·샘플·캐릭터가 «다» 들어간다.
+ *     처음엔 글을 패널 밖 아래에 뒀는데, 그러면 한 칸이 둘로 갈려 보인다.
+ *   · 위에서부터 아이콘·번호 → 제목 → 설명 → 다운로드 칩 → 샘플(흰 종이)·캐릭터.
+ *   · 샘플은 «바닥에» 붙인다(flex-1 + items-end). 그래야 같은 줄 두 칸의 샘플이
+ *     같은 선에 서서 격자가 흐트러지지 않는다.
  *
- * ⚠ 패널 색은 여덟 칸 모두 «같다». 칸마다 다른 색을 주면 벤토가 아니라 색종이가 된다 —
- *   색은 아이콘 조각과 샘플 안에서만 쓴다.
+ * ⚠ 바탕은 칸마다 «다른» 파스텔이다 (사장님 지시). 위·옆으로 닮은 색이 안 붙게 골라 뒀다 —
+ *   모래·틸·카키·크림 / 연둣빛·분홍·따뜻한크림·틸.
+ * ⚠ 파스텔 위에서는 muted-foreground(#6B6F76)가 대비 4:1 이 안 나온다. 설명 글은
+ *   foreground/75 로 깔아 대비를 6 위로 올렸다 — 예쁜 것보다 읽히는 게 먼저다.
  */
 function PlanningDeliverables() {
   return (
@@ -237,59 +242,60 @@ function PlanningDeliverables() {
             const 사이띠 = i === 3;
             return (
               <div key={d.name} className="contents">
-                <article className="flex flex-col">
-                  {/* 패널 — 샘플이 사는 자리.
-                      ⛔ 처음엔 캐릭터를 absolute 로 오른쪽 아래에 «겹쳐» 놓았다.
-                         샘플 표 위로 올라타 글자를 가렸다. 겹치는 멋보다 읽히는 게 먼저다.
-                      → 나란히 앉힌다. 대신 바닥 여백을 상쇄해(-mb-8) 캐릭터 발이 패널
-                        바닥에 딱 닿게 두면, 겹치지 않고도 «패널 안에 앉은» 느낌이 난다.
-                      ⚠ 1280px 아래에서는 캐릭터를 접는다. 2단이 되는 순간 한 칸이 400px 안팎인데
-                        캐릭터가 140px 을 가져가면 샘플이 짜부라진다 — 900px 에서 재 보니
+                <article
+                  className={`flex h-full flex-col overflow-hidden rounded-3xl px-6 pt-7 pb-8 sm:px-8 sm:pt-9 sm:pb-10 ${d.bg}`}
+                >
+                  {/* 아이콘 조각은 «흰» 종이다. 파스텔 위에 파스텔 조각을 얹으면 묻힌다. */}
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-10 items-center justify-center rounded-xl bg-surface text-foreground">
+                      <Icon className="size-5" />
+                    </span>
+                    <span className="font-mono text-sm text-foreground/60">0{i + 1}</span>
+                  </div>
+                  <h3 className="mt-3 text-xl font-bold text-foreground [word-break:keep-all]">{d.name}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-foreground/75 [word-break:keep-all]">
+                    {d.role}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {d.formats.map((f) => (
+                      <span
+                        key={f}
+                        className="rounded-full bg-surface/80 px-3 py-1 text-xs font-medium text-foreground"
+                      >
+                        {f} 다운로드
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* 샘플 + 캐릭터 — 칸 «바닥»에 붙는다.
+                      ⛔ 캐릭터를 absolute 로 겹쳐 놓았더니 샘플 표 글자를 가렸다.
+                         겹치는 멋보다 읽히는 게 먼저다 → 나란히 앉히고, 바닥 여백만
+                         상쇄해(-mb-8/-mb-10) 발이 패널 바닥에 닿게 뒀다.
+                      ⚠ 1280px 아래에서는 캐릭터를 접는다. 2단이 되는 순간 한 칸이 400px
+                        안팎인데 캐릭터가 140px 을 가져가면 샘플이 짜부라진다 — 900px 에서
                         「메인 홈」이 「메 인 홈」으로 세로로 쪼개졌다. 샘플이 주인공이다. */}
-                  <div className="relative flex min-h-[248px] items-center justify-center gap-4 overflow-hidden rounded-3xl bg-primary-soft/45 px-5 py-8 sm:min-h-[280px] sm:px-8">
+                  <div className="mt-7 flex flex-1 items-end gap-4">
                     <div className="min-w-0 flex-1">{d.mockup}</div>
                     {d.char && (
-                      <div className="-mb-8 hidden w-[130px] shrink-0 self-end xl:block 2xl:w-[150px]">
+                      <div className="-mb-8 hidden w-[130px] shrink-0 xl:block sm:-mb-10 2xl:w-[150px]">
                         <Image
                           src={d.char.src}
                           alt={d.char.alt}
                           width={d.char.w}
                           height={d.char.h}
-                          sizes="140px"
+                          sizes="150px"
                           className="h-auto w-full object-contain"
                         />
                       </div>
                     )}
                   </div>
-
-                  {/* 글 — 패널 «밖» 아래. 패널 안에 글을 넣으면 샘플과 싸운다. */}
-                  <div className="mt-5">
-                    <div className="flex items-center gap-3">
-                      <span className={`flex size-10 items-center justify-center rounded-xl ${d.tone}`}>
-                        <Icon className="size-5" />
-                      </span>
-                      <span className="font-mono text-sm text-muted-foreground">0{i + 1}</span>
-                    </div>
-                    <h3 className="mt-3 text-xl font-bold text-foreground [word-break:keep-all]">{d.name}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
-                      {d.role}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {d.formats.map((f) => (
-                        <span
-                          key={f}
-                          className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground"
-                        >
-                          {f} 다운로드
-                        </span>
-                      ))}
-                    </div>
-                  </div>
                 </article>
 
                 {사이띠 && (
                   <div className="md:col-span-2">
-                    <div className="flex flex-col items-center gap-6 overflow-hidden rounded-3xl bg-primary-soft/45 px-6 py-8 sm:px-10 md:flex-row md:gap-12">
+                    {/* 여기만 회색이다 — 산출물이 아니라 «곁들이는 말»이라 파스텔 여덟과
+                        섞이면 아홉 번째 산출물처럼 보인다. */}
+                    <div className="flex flex-col items-center gap-6 overflow-hidden rounded-3xl bg-neutral-badge-soft px-6 py-8 sm:px-10 md:flex-row md:gap-12">
                       <div className="w-[220px] max-w-full shrink-0 md:w-[280px]">
                         <Image
                           src="/character/09_guide_flow_wbs.webp"
