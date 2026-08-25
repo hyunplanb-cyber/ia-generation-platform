@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutList, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { DeliverablesTabs } from "./deliverables-tabs";
 
@@ -11,20 +11,16 @@ export const metadata = {
 export default function DeliverablesPage() {
   return (
     <div className="flex flex-col">
-      {/* Hero */}
-      <section className="border-b border-border bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
-        <div className="mx-auto max-w-4xl px-6 py-20 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-on-soft">
-            <LayoutList className="size-3.5" /> IA팩 사용가이드
-          </span>
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            만들기 전엔 AI팩, 오픈 전엔 검수
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            각 결과물이 무엇에 쓰이는지, 실제로 어떻게 생겼는지 샘플과 함께 소개해요.
-          </p>
-        </div>
-      </section>
+      {/* ⛔ 여기 있던 머리말 절(뱃지 + 큰 제목 + 소개문)을 뺐다 — 2026-08-25 사장님이
+          그 자리를 짚어 지우라고 하셨다. 위 내비게이션에 이미 「IA팩 사용가이드」가
+          켜져 있어, 같은 말을 두 번 하고 페이지 첫 화면을 320px 잡아먹고 있었다.
+          이제 탭이 바로 나온다.
+
+          ⚠ 그래도 h1 은 남긴다 — «눈에만» 안 보인다(sr-only).
+            페이지에 제목이 하나도 없으면 검색엔진이 무슨 페이지인지 못 읽고,
+            화면낭독기를 쓰는 분은 어디에 왔는지 알 길이 없다.
+            보이는 것을 지우는 것과 «없애는» 것은 다르다. */}
+      <h1 className="sr-only">IA팩 사용가이드 — 만들기 전엔 AI팩, 오픈 전엔 검수</h1>
 
       {/* 탭: 만드는 방법 / AI팩 / 사이트 검수 */}
       <DeliverablesTabs />
