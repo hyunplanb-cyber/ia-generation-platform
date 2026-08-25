@@ -225,8 +225,13 @@ export function StatsView({ n }: { n: OurNumbers }) {
         </table>
       </div>
       <div className="mt-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950 [word-break:keep-all]">
-        우리 계정을 새로 만들면 <code className="rounded bg-amber-100 px-1">lib/our-numbers.ts</code> 의{" "}
-        <code className="rounded bg-amber-100 px-1">OUR_ACCOUNTS</code> 에 <b>반드시 적으세요.</b> 안 적으면 손님이 한 명 늘어난 것처럼 보입니다.
+        <b>토스(카드사) 심사용</b>은 심사관에게 넘기려고 만든 아이디·비밀번호 계정입니다. 우리는 소셜 로그인만 받는데
+        심사관은 다른 회사·다른 지역에서 접속해 2단계 인증에 막히거든요 — 그러면 「결제창이 확인되지 않는다」로 반려됩니다.{" "}
+        <b>심사가 끝나면 이 계정은 지웁니다.</b> (크몽은 결제를 크몽이 처리해서 심사 계정이 따로 없어요.)
+        <div className="mt-2">
+          우리 계정을 새로 만들면 <code className="rounded bg-amber-100 px-1">lib/our-numbers.ts</code> 의{" "}
+          <code className="rounded bg-amber-100 px-1">OUR_ACCOUNTS</code> 에 <b>반드시 적으세요.</b> 안 적으면 손님이 한 명 늘어난 것처럼 보입니다.
+        </div>
       </div>
 
       <p className="mt-10 border-t border-border pt-4 text-xs text-muted-foreground [word-break:keep-all]">
