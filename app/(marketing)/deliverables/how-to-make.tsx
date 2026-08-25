@@ -77,15 +77,27 @@ export function HowToMakeBody() {
           한 줄 적고 기다리면 끝입니다 — 전부 합쳐 <b className="text-foreground">10분 안팎</b>이에요.
         </p>
 
-        <ol className="mt-12 flex flex-col gap-14">
+        {/* 한 줄에 둘씩 · 석 줄 (2026-08-25 사장님 지시).
+            여섯 단계라 2×3 이 딱 떨어진다. 한 칸 안에서는 «그림 위 · 글 아래»다.
+            ⛔ 그 전에는 한 단계가 한 줄을 통째로 쓰는 좌우 배치였다. 글이 서너 줄인데
+               옆의 화면 캡처가 500px 넘게 높아, 글 칸 위아래가 200px 씩 비었다.
+               위아래로 쌓으면 그 빈자리가 아예 안 생기고, 절 전체가 절반으로 짧아진다.
+            ⚠ 칸을 stretch 로 두지 않는다 — 캡처 높이가 제각각이라 늘리면 그림이 눌린다.
+               줄마다 아래가 조금 어긋나는 편이 낫다. */}
+        <ol className="mt-12 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-10 md:gap-y-14 lg:gap-x-12">
           {단계들.map((s) => (
-            <li
-              key={s.no}
-              /* 옆 탭(AI팩)의 한 칸과 «같은 나눔»이다 — 반반, gap-10/16, 가운데 맞춤.
-                 탭을 옮겨도 글과 그림이 같은 자리에 서야 눈이 안 튄다. */
-              className="grid grid-cols-1 items-center gap-10 md:grid-cols-2 lg:gap-16"
-            >
-              <div>
+            <li key={s.no} className="flex flex-col">
+              <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+                <Image
+                  src={s.그림}
+                  alt={`${s.no} ${s.제목}`}
+                  width={1100}
+                  height={854}
+                  className="w-full"
+                  sizes="(max-width: 768px) 100vw, 660px"
+                />
+              </div>
+              <div className="mt-5">
                 <div className="flex items-center gap-2.5">
                   <span className="grid size-8 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                     {s.no}
@@ -97,21 +109,9 @@ export function HowToMakeBody() {
                   )}
                 </div>
                 <h3 className="mt-3 text-lg font-bold text-foreground [word-break:keep-all]">{s.제목}</h3>
-                {/* ⚠ 칸이 664px 로 넓어지면서 한 줄이 쉰 자를 넘었다 — 한글은 마흔 자 안팎이
-                    읽기 좋다. 칸은 넓게 두되 «글줄»만 물린다. */}
-                <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
                   {s.말}
                 </p>
-              </div>
-              <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
-                <Image
-                  src={s.그림}
-                  alt={`${s.no} ${s.제목}`}
-                  width={1100}
-                  height={854}
-                  className="w-full"
-                  sizes="(max-width: 768px) 100vw, 664px"
-                />
               </div>
             </li>
           ))}
