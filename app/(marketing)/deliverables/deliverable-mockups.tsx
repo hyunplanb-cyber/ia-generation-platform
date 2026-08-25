@@ -2,6 +2,9 @@
 import { ArrowRight, Check, X, Lock } from "lucide-react";
 import { DESIGN_OPTIONS, colorsFor, type DesignKey } from "@/lib/design-presets";
 
+/* 「브라우저 창」 흉내 — 점 세 개가 달린 상자. (사이트 검수 탭에서만 쓴다)
+   ⚠ AI팩 탭에서는 걷어 냈다 (2026-08-25 사장님 지시: 「상자로 넣어 둔거 다 빼고」).
+     거긴 벤토 칸 «안»에 들어가는데, 연한 패널 안에 또 창틀이 들어가면 테두리가 두 겹이 된다. */
 function Frame({ children }: { children: React.ReactNode }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-lg">
@@ -15,9 +18,18 @@ function Frame({ children }: { children: React.ReactNode }) {
   );
 }
 
+/* 벤토 칸 안에 뜨는 «흰 종이». 창틀도 점도 없다 — 알맹이만 보이게 한다. */
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="w-full overflow-hidden rounded-2xl bg-surface p-4 shadow-[0_10px_30px_-12px_rgba(31,32,36,0.18)] sm:p-5">
+      {children}
+    </div>
+  );
+}
+
 export function MenuTreeMockup() {
   return (
-    <Frame>
+    <Card>
       <div className="flex flex-col items-center gap-2 py-2 text-xs">
         <span className="rounded-md border border-border bg-muted px-4 py-1.5 font-bold">사이트 전체</span>
         <div className="h-3 w-px bg-border" />
@@ -43,7 +55,7 @@ export function MenuTreeMockup() {
           ))}
         </div>
       </div>
-    </Frame>
+    </Card>
   );
 }
 
@@ -54,7 +66,7 @@ export function ScreenListMockup() {
     { id: "PCPROD0210", name: "상품 상세", tone: "bg-primary-soft text-primary-on-soft", t: "기능" },
   ];
   return (
-    <Frame>
+    <Card>
       <div className="text-xs">
         <div className="grid grid-cols-[auto_1fr_auto] gap-x-3 border-b border-border pb-1.5 font-semibold text-muted-foreground">
           <span>화면ID</span>
@@ -69,7 +81,7 @@ export function ScreenListMockup() {
           </div>
         ))}
       </div>
-    </Frame>
+    </Card>
   );
 }
 
@@ -80,7 +92,7 @@ export function SpecMockup() {
     { id: "02-01-01", work: "회원", fn: "로그인", item: "약관 동의", tone: "bg-warning-soft text-warning", t: "정책" },
   ];
   return (
-    <Frame>
+    <Card>
       <div className="text-[11px]">
         <div className="grid grid-cols-[auto_auto_auto_1fr_auto] gap-x-2 border-b border-border pb-1.5 font-semibold text-muted-foreground">
           <span>ID</span>
@@ -99,14 +111,14 @@ export function SpecMockup() {
           </div>
         ))}
       </div>
-    </Frame>
+    </Card>
   );
 }
 
 export function FlowMockup() {
   const nodes = ["메인 홈", "상품 목록", "상품 상세", "장바구니"];
   return (
-    <Frame>
+    <Card>
       <div className="flex items-center justify-center gap-1.5 py-4 text-[11px]">
         {nodes.map((n, i) => (
           <div key={n} className="flex items-center gap-1.5">
@@ -121,7 +133,7 @@ export function FlowMockup() {
           </div>
         ))}
       </div>
-    </Frame>
+    </Card>
   );
 }
 
@@ -132,7 +144,7 @@ export function WbsMockup() {
     { name: "상품 상세", start: 5, len: 3 },
   ];
   return (
-    <Frame>
+    <Card>
       <div className="flex flex-col gap-2 text-[11px]">
         {rows.map((r) => (
           <div key={r.name} className="grid grid-cols-[70px_1fr] items-center gap-2">
@@ -146,7 +158,7 @@ export function WbsMockup() {
           </div>
         ))}
       </div>
-    </Frame>
+    </Card>
   );
 }
 
@@ -204,7 +216,7 @@ export function VerifyScenarioMockup() {
 
 export function SpecPackMockup() {
   return (
-    <Frame>
+    <Card>
       <pre className="overflow-x-auto rounded-lg bg-foreground/90 p-3 text-[10px] leading-relaxed text-background">
         <code>{`# 반려동물 쇼핑몰 — AI 빌드 스펙팩
 
@@ -215,7 +227,7 @@ export function SpecPackMockup() {
 - 생성 프롬프트:
   좌측 필터, 우측 3열 상품 그리드...`}</code>
       </pre>
-    </Frame>
+    </Card>
   );
 }
 
@@ -238,7 +250,7 @@ export function PresetColorMockup() {
     return { 이름: `${번호} ${o.title}`, 색: [o.primary, o.accent, 바탕, o.ink] };
   });
   return (
-    <Frame>
+    <Card>
       <div className="flex flex-col gap-3">
         {벌.map((b) => (
           <div key={b.이름} className="flex items-center gap-3">
@@ -259,7 +271,7 @@ export function PresetColorMockup() {
           색 · 글꼴 · 모서리 · 그림자까지 한 벌로 묶여 있어요
         </p>
       </div>
-    </Frame>
+    </Card>
   );
 }
 
@@ -270,7 +282,7 @@ export function PresetLayoutMockup() {
     { 이름: "B 여백 중심형", 줄: ["hero-slim", "row", "row"] },
   ];
   return (
-    <Frame>
+    <Card>
       <div className="grid grid-cols-2 gap-3">
         {뼈대.map((t) => (
           <div key={t.이름}>
@@ -289,6 +301,6 @@ export function PresetLayoutMockup() {
           </div>
         ))}
       </div>
-    </Frame>
+    </Card>
   );
 }
