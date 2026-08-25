@@ -1,6 +1,7 @@
 "use server";
 
 import { verifySite, verifyDocument, verifyText } from "@/application/verify-site";
+import { 시도남기기 } from "@/application/generation-attempt";
 import { requireSession } from "@/application/require-session";
 import { getCreditBalance, spendCredits } from "@/application/credit";
 import { creditsOpenForMe } from "@/application/billing-gate";
@@ -53,6 +54,15 @@ export async function runVerifyAction(
   const mode = String(formData.get("mode") ?? "url");
   const detail = String(formData.get("scale") ?? "basic") === "detail";
   const isUrl = mode === "url";
+  /* ⭐ [검수하기] 를 «눌렀다»는 것을 성공이든 실패든 남긴다 (2026-08-25 사장님 지시).
+     그 전에는 성공한 것만 verify_run 에 남아 «눌렀다가 막힌 것»을 셀 수가 없었다. */
+  const 갈래 = isUrl ? ("verify-site" as const) : ("verify-doc" as const);
+  const 남기기 = (ok: boolean, reason?: string) =>
+    시도남기기({ kind: 갈래, size: detail ? "detail" : "basic", ok, reason: reason ?? null });
+  const 실패 = async (보일말: string, 까닭: string): Promise<VerifyState> => {
+    await 남기기(false, 까닭);
+    return fail(보일말);
+  };
   // 값은 묶음(호출) 수에 비례한다 — 원가가 정확히 거기에 붙는다(verifyGenCost 주석 참고).
   // 여기서는 문서를 읽거나 크롤하기 전이라 실제 묶음 수를 아직 모른다.
   // 그래서 잔액은 '최대치'로 확인해 두고, 차감은 아래에서 실제 돈 묶음 수로 한다.
@@ -63,6 +73,7 @@ export async function runVerifyAction(
       : VERIFY_CHUNK.maxDocChunks;
   // 한도는 크레딧 하나로만 정한다(기능별 무료 횟수를 두지 않는다).
   if ((await getCreditBalance()) < verifyGenCost(maxChunks)) {
+    await 남기기(false, "insufficient-credit");
     return { report: null, error: insufficientCreditMessage(await creditsOpenForMe()), limitReached: true, runId: null };
   }
 
@@ -71,35 +82,37 @@ export async function runVerifyAction(
   if (mode === "spec") {
     const file = formData.get("spec");
     if (!(file instanceof File) || file.size === 0) {
-      return fail("검수할 설계도 파일(.md·.json·.txt)을 넣어주세요.");
+      return 실패("검수할 설계도 파일(.md·.json·.txt)을 넣어주세요.", "no-file");
     }
     if (file.size > MAX_DOC_BYTES) {
-      return fail("파일이 너무 커요. 8MB 이하로 넣어주세요.");
+      return 실패("파일이 너무 커요. 8MB 이하로 넣어주세요.", "too-big");
     }
     const result = await verifyText(file.name || "AI팩", await file.text(), detail);
-    if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
+    if (!result.ok) return 실패(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed, result.reason);
     report = result.report;
     doneChunks = result.chunks;
   } else if (mode === "document") {
     const file = formData.get("document");
     if (!(file instanceof File) || file.size === 0) {
-      return fail("검수할 문서(PDF·PPTX)를 넣어주세요.");
+      return 실패("검수할 문서(PDF·PPTX)를 넣어주세요.", "no-file");
     }
     if (file.size > MAX_DOC_BYTES) {
-      return fail("파일이 너무 커요. 8MB 이하로 넣어주세요.");
+      return 실패("파일이 너무 커요. 8MB 이하로 넣어주세요.", "too-big");
     }
     const result = await verifyDocument(file.name, await file.arrayBuffer(), detail);
-    if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
+    if (!result.ok) return 실패(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed, result.reason);
     report = result.report;
     doneChunks = result.chunks;
   } else {
     const url = String(formData.get("url") ?? "").trim();
-    if (!url) return fail("검사할 사이트 주소를 넣어주세요.");
+    if (!url) return 실패("검사할 사이트 주소를 넣어주세요.", "no-url");
     const result = await verifySite(url, detail);
-    if (!result.ok) return fail(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed);
+    if (!result.ok) return 실패(REASON_MESSAGE[result.reason] ?? REASON_MESSAGE.failed, result.reason);
     report = result.report;
     doneChunks = result.chunks;
   }
+
+  await 남기기(true);
 
   // 검수가 성공했을 때만, 실제로 돈 묶음 수만큼만 차감한다(실패하면 무과금).
   const cost = verifyGenCost(doneChunks);

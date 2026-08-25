@@ -79,14 +79,21 @@ export interface OurNumbers {
   시도: { 전체: number; 성공: number; 실패: number };
   실패까닭: { 까닭: string; 건수: number }[];
   /** 손님 것만 센 수. 「전체」는 우리 것까지 포함한 수다. */
-  /** 손님이 어디까지 갔나 — 위에서 아래로 줄어든다. 말뜻은 파일 머리 ③-1 참고. */
+  /** 손님이 어디까지 갔나. 말뜻은 파일 머리 ③-1 참고.
+   *  ⚠ 「컨셉 적음」·「메뉴 초안 적음」은 2026-08-25 사장님 지시로 뺐다 —
+   *     세어 봐야 할 일이 안 생기는 수였다. 누른 것과 된 것만 센다. */
   깔때기: {
     만들기누름: number;
-    컨셉적음: number;
-    메뉴초안적음: number;
     생성누름: number;
     생성됨: number;
+    생성불가: number;
+    /** 생성이 안 된 까닭 — 「오류」와 「눌러 보지도 않고 나감」을 가른다 */
+    불가사유: { 까닭: string; 건수: number }[];
   };
+  /** 손님이 적은 컨셉 — 무엇을 만들고 싶어 했는지가 여기 다 있다 */
+  컨셉들: { 때: Date; 메일: string; 컨셉: string; 생성됨: boolean }[];
+  /** 검수 세 갈래 — 누른 수와 된 수 */
+  검수: { 갈래: string; 누름: number; 됨: number }[];
   알맹이: {
     프로젝트: number;
     생성된프로젝트: number;
@@ -205,15 +212,56 @@ export async function readOurNumbers(): Promise<OurNumbers> {
   const [깔때기] = await 물어(sql`
     select (select count(*) from project p where p.deleted_at is null
               and ${손님것("p.owner_id")}) as 만들기누름,
-           (select count(*) from project p where p.deleted_at is null
-              and ${손님것("p.owner_id")} and coalesce(p.concept,'') <> '') as 컨셉적음,
-           (select count(*) from project p where p.deleted_at is null
-              and ${손님것("p.owner_id")} and coalesce(p.concept,'') <> ''
-              and coalesce(p.menu_draft,'') <> '') as 메뉴초안적음,
            (select count(*) from generation_attempt g
-              where ${손님것("g.user_id")}) as 생성누름,
+              where g.kind = 'ia' and ${손님것("g.user_id")}) as 생성누름,
            (select count(distinct p.id) from project p join menu m on m.project_id = p.id
-              where p.deleted_at is null and ${손님것("p.owner_id")}) as 생성됨`);
+              where p.deleted_at is null and ${손님것("p.owner_id")}) as 생성됨,
+           (select count(*) from generation_attempt g
+              where g.kind = 'ia' and not g.ok and ${손님것("g.user_id")}) as 오류`);
+
+  /* 「생성 불가」는 둘로 갈린다 — 눌렀는데 오류가 난 것과, 아예 안 누르고 나간 것.
+     둘은 처방이 다르다. 앞은 우리가 고쳐야 하고, 뒤는 화면이 뭔가 막고 있는 것이다. */
+  const 오류수 = 수(깔때기?.오류);
+  const 중도이탈 = Math.max(0, 수(깔때기?.만들기누름) - 수(깔때기?.생성누름));
+  const 불가사유: { 까닭: string; 건수: number }[] = [];
+  for (const r of await 물어(sql`
+    select coalesce(reason,'(까닭 없음)') as 까닭, count(*) as n
+    from generation_attempt where kind = 'ia' and not ok and ${손님것("user_id")}
+    group by 1 order by n desc`))
+    불가사유.push({ 까닭: failReasonText(String(r.까닭)), 건수: 수(r.n) });
+  if (중도이탈 > 0)
+    불가사유.push({ 까닭: "생성을 눌러 보지도 않고 나갔습니다 (화면에서 멈춘 것)", 건수: 중도이탈 });
+
+  /* 손님이 적은 컨셉 — 무엇을 만들고 싶어 했는지. 빈 것은 뺀다(껍데기라 볼 것이 없다). */
+  const 컨셉들 = (
+    await 물어(sql`
+    select p.created_at as 때, u.email, p.concept as 컨셉,
+           exists (select 1 from menu m where m.project_id = p.id) as 생성됨
+    from project p join "user" u on u.id = p.owner_id
+    where p.deleted_at is null and coalesce(p.concept,'') <> '' and ${손님것("p.owner_id")}
+    order by p.created_at desc limit 30`)
+  ).map((r) => ({
+    때: 때(r.때) as Date,
+    메일: String(r.email),
+    컨셉: String(r.컨셉),
+    생성됨: Boolean(r.생성됨),
+  }));
+
+  /* 검수 세 갈래 — «누른 수»는 시도 기록에서, «된 수»는 verify_run 에서.
+     ⚠ 시도 기록은 2026-08-25 부터다. 그 전 것은 된 수만 있다. */
+  const 검수 = [] as { 갈래: string; 누름: number; 됨: number }[];
+  for (const [이름, 갈래코드, 됨조건] of [
+    ["AI팩 검수", "verify-pack", "v.project_id is not null"],
+    ["사이트 검수", "verify-site", "v.mode = 'site'"],
+    ["문서 검수", "verify-doc", "v.mode = 'document' and v.project_id is null"],
+  ] as [string, string, string][]) {
+    const [r] = await 물어(sql`
+      select (select count(*) from generation_attempt g
+                where g.kind = ${갈래코드} and ${손님것("g.user_id")}) as 누름,
+             (select count(*) from verify_run v
+                where ${sql.raw(됨조건)} and ${손님것("v.user_id")}) as 됨`);
+    검수.push({ 갈래: 이름, 누름: 수(r?.누름), 됨: 수(r?.됨) });
+  }
 
   const [열린것] = await 물어(sql`
     select (select count(*) from download_unlock) as 산출물,
@@ -293,11 +341,13 @@ export async function readOurNumbers(): Promise<OurNumbers> {
     실패까닭,
     깔때기: {
       만들기누름: 수(깔때기?.만들기누름),
-      컨셉적음: 수(깔때기?.컨셉적음),
-      메뉴초안적음: 수(깔때기?.메뉴초안적음),
       생성누름: 수(깔때기?.생성누름),
       생성됨: 수(깔때기?.생성됨),
+      생성불가: 오류수 + 중도이탈,
+      불가사유,
     },
+    컨셉들,
+    검수,
     알맹이: {
       프로젝트: 수(알맹이?.프로젝트),
       생성된프로젝트: 수(알맹이?.생성된프로젝트),

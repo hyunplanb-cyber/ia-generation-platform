@@ -15,7 +15,14 @@ import { generationAttempt } from "@/db/schema";
  * ⚠ 이 기록이 실패해도 «생성 자체»는 막지 않는다. 기록은 곁다리다 —
  *    기록 때문에 손님이 못 만드는 일이 있으면 안 된다.
  */
-export type 시도갈래 = "ia" | "verify" | "preset";
+/* ⚠ 갈래를 늘리면 lib/our-numbers.ts 의 ATTEMPT_KINDS 도 같이 늘린다.
+     화면이 그 표로 이름을 붙이므로, 안 늘리면 코드가 그대로 보인다. */
+export type 시도갈래 =
+  | "ia" // AI팩 생성
+  | "preset" // 디자인 프리셋 생성
+  | "verify-pack" // AI팩 검수 (프로젝트 산출물로 검수 시나리오 만들기)
+  | "verify-site" // 사이트 검수 (주소를 넣어 검사)
+  | "verify-doc"; // 문서 검수 (설계도·PDF·PPTX 를 넣어 검사)
 export type 시도크기 = "basic" | "detail";
 
 export async function 시도남기기(입력: {
