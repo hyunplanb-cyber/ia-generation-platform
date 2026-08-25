@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
 import type { AiPackCard } from "@/lib/packages";
@@ -34,27 +35,49 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
       <section className="hero" id="top">
         <div className="wrap">
           <div className="hero-main">
-            <h1>
-              만들기 전엔 <span className="o">설계도</span>,<br />
-              오픈 전엔 <span className="t">검수</span>.
-            </h1>
-            <div className="hero-rule" />
-            <p className="sub">
-              바이브코딩으로 사이트 만드는 사람을 위한 두 가지.<br />
-              컨셉 한 줄이면 → 화면별 프롬프트와 AI 빌드 지시서 (Cursor·Claude Code에 바로).<br />
-              URL 한 줄이면 → 오픈 전 검수 결과서.
-            </p>
-            <div className="hero-ctas">
-              {/* /dashboard/new는 열리는 즉시 새 프로젝트를 만드는 라우트라,
-                  프리페치가 켜져 있으면 마우스만 올려도 프로젝트가 생긴다. */}
-              {/* 첫 화면에 "무료"가 없으면 값이 드는지 안 드는지 모르는 채로 누르게 된다.
-                  가입 시 35크레딧이 있어 만들고 미리보기까지는 값을 안 받는다 — 그 말을 여기서 한다. */}
-              <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
-                AI팩 만들기 <span aria-hidden="true">→</span>
-              </Link>
-              <Link className="btn btn-teal" href="/verify">
-                내 사이트 검수하기 <span aria-hidden="true">→</span>
-              </Link>
+            {/* 첫 화면 오른쪽이 통째로 비어 있었다 — 글이 왼쪽에 다 몰려 있고
+                1440 에서 640px 가량이 빈 종이였다(2026-08-25 사장님 지시로 캐릭터를 넣었다).
+                ⚠ h1 은 clamp(44px, 8.4vw, 96px)라 «칸이 좁아져도 안 줄어든다».
+                   좁은 화면에서 옆으로 세우면 제목이 칸 밖으로 삐져나간다 —
+                   그래서 1180px 아래로는 CTA «밑»으로 내려 보낸다. */}
+            <div className="hero-top">
+              <div className="hero-copy">
+                <h1>
+                  만들기 전엔 <span className="o">설계도</span>,<br />
+                  오픈 전엔 <span className="t">검수</span>.
+                </h1>
+                <div className="hero-rule" />
+                <p className="sub">
+                  바이브코딩으로 사이트 만드는 사람을 위한 두 가지.<br />
+                  컨셉 한 줄이면 → 화면별 프롬프트와 AI 빌드 지시서 (Cursor·Claude Code에 바로).<br />
+                  URL 한 줄이면 → 오픈 전 검수 결과서.
+                </p>
+                <div className="hero-ctas">
+                  {/* /dashboard/new는 열리는 즉시 새 프로젝트를 만드는 라우트라,
+                      프리페치가 켜져 있으면 마우스만 올려도 프로젝트가 생긴다. */}
+                  {/* 첫 화면에 "무료"가 없으면 값이 드는지 안 드는지 모르는 채로 누르게 된다.
+                      가입 시 35크레딧이 있어 만들고 미리보기까지는 값을 안 받는다 — 그 말을 여기서 한다. */}
+                  <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
+                    AI팩 만들기 <span aria-hidden="true">→</span>
+                  </Link>
+                  <Link className="btn btn-teal" href="/verify">
+                    내 사이트 검수하기 <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* 첫 화면 그림은 «가장 먼저» 눈에 들어와야 해서 priority 를 준다.
+                  이것만 lazy 로 두면 접속하자마자 오른쪽이 잠깐 비어 보인다. */}
+              <div className="hero-figure">
+                <Image
+                  src="/character/01_home_hero_blueprint_qa.webp"
+                  alt="설계도를 들고 화면을 검수하는 카페인컬러 캐릭터"
+                  width={1200}
+                  height={1161}
+                  priority
+                  sizes="(max-width: 1180px) 320px, 520px"
+                />
+              </div>
             </div>
 
             <div className="hero-art">
@@ -141,15 +164,32 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               AI팩 만들기
             </span>
           </div>
-          <h2>
-            한 줄 컨셉이<br />
-            바로 만들 재료가 됩니다.
-          </h2>
-          <p className="lead">
-            메뉴 구조·화면 목록·기능정의·흐름·일정까지 자동으로. 여기서 끝이 아니라{" "}
-            <b>화면별 프롬프트와 AI 빌드 지시서</b>까지 나와, Cursor·Claude Code에 그대로 넣으면 화면이
-            됩니다.
-          </p>
+          {/* 글만 있던 자리 — 「한 줄이 여섯 가지로 나온다」를 말로만 하고 있었다.
+              그림이 그 여섯 갈래를 그대로 보여 준다(2026-08-25).
+              ⚠ 제목까지 «같은 칸»에 넣는다. 리드 글만 넣었더니 두 줄짜리 글이 400px
+                 그림 키에 맞춰 가운데로 내려가, 제목 밑이 200px 넘게 휑했다. */}
+          <div className="plan-intro">
+            <div>
+              <h2>
+                한 줄 컨셉이<br />
+                바로 만들 재료가 됩니다.
+              </h2>
+              <p className="lead">
+                메뉴 구조·화면 목록·기능정의·흐름·일정까지 자동으로. 여기서 끝이 아니라{" "}
+                <b>화면별 프롬프트와 AI 빌드 지시서</b>까지 나와, Cursor·Claude Code에 그대로 넣으면
+                화면이 됩니다.
+              </p>
+            </div>
+            <div className="plan-figure">
+              <Image
+                src="/character/02_home_concept_to_aipack.webp"
+                alt="한 줄 컨셉을 메뉴·화면 목록·기능정의·흐름·일정으로 뽑아내는 카페인컬러 캐릭터"
+                width={1000}
+                height={1000}
+                sizes="(max-width: 999px) 300px, 400px"
+              />
+            </div>
+          </div>
 
           <div className="plan-grid">
             <div className="chip">
@@ -202,6 +242,19 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
                 돌아온 화면 목록에 이런 게 없었어요. 손님이 볼 화면은 그럴듯했는데, 정작 내가 매일
                 열어야 할 화면이 통째로 비어 있었습니다.
               </p>
+            </div>
+            {/* 「빠진 화면」을 그림으로 — 칸이 뚫린 화면들이 그 말 그대로다.
+                ⚠ 좁을 때는 display:none 이라 «칸 자체가 없어진다». 그래야 지금까지의
+                   두 칸(글 + ✕목록)이 한 자도 안 밀린다. 폭을 0으로 줄이는 식으로 하면
+                   gap 이 남아 두 칸 사이가 벌어진다. */}
+            <div className="thesis-figure">
+              <Image
+                src="/character/03_home_missing_screens.webp"
+                alt="화면 목록에서 군데군데 빠져 있는 칸을 가리키는 카페인컬러 캐릭터"
+                width={900}
+                height={600}
+                sizes="280px"
+              />
             </div>
             <div className="ex-list">
               <div className="ex-item">
@@ -261,6 +314,17 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           </p>
 
           <div className="showcase">
+            {/* 영상 왼쪽 — 「스펙팩 한 벌 → 화면 여러 장」을 그림이 먼저 말한다.
+                영상은 눌러야 보이지만 그림은 스치기만 해도 읽힌다. */}
+            <div className="sc-figure">
+              <Image
+                src="/character/04_home_spec_to_screens.webp"
+                alt="스펙팩 한 벌을 넣어 화면을 잔뜩 만들어 내는 카페인컬러 캐릭터"
+                width={1000}
+                height={1000}
+                sizes="(max-width: 1023px) 280px, 340px"
+              />
+            </div>
             <div className="sc-frame">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${SHOWCASE_VIDEO_ID}`}
@@ -316,14 +380,31 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               검수 시나리오
             </span>
           </div>
-          <h2>
-            진짜 다 되는지,<br />
-            <span className="o">대신 눌러봐 드려요.</span>
-          </h2>
-          <p className="lead">
-            기획으로 끝나는 도구는 여기까지 안 와요. URL이나 설계 문서를 넣으면 확인할 것을 시나리오로
-            짚어주고, 공개 화면은 검수 결과(Pass/Fail)까지 냅니다. 개발자가 아니어도 읽는 결과서로요.
-          </p>
+          {/* 어두운 절이라 검은 머리가 묻힐까 걱정했는데, 재 보니 오히려 크림색 소품
+              (통과·실패·주의 창)이 도드라진다. 이 절이 말하는 것과 그림이 같다.
+              ⚠ 위 「한 줄 컨셉」 절과 같은 까닭으로 제목을 같은 칸에 넣는다. */}
+          <div className="verify-intro">
+            <div>
+              <h2>
+                진짜 다 되는지,<br />
+                <span className="o">대신 눌러봐 드려요.</span>
+              </h2>
+              <p className="lead">
+                기획으로 끝나는 도구는 여기까지 안 와요. URL이나 설계 문서를 넣으면 확인할 것을
+                시나리오로 짚어주고, 공개 화면은 검수 결과(Pass/Fail)까지 냅니다. 개발자가 아니어도 읽는
+                결과서로요.
+              </p>
+            </div>
+            <div className="verify-figure">
+              <Image
+                src="/character/05_home_site_inspection.webp"
+                alt="공개 화면을 통과·실패·주의로 가려 검수하는 카페인컬러 캐릭터"
+                width={1000}
+                height={1000}
+                sizes="(max-width: 999px) 300px, 380px"
+              />
+            </div>
+          </div>
 
           <div className="inputs">
             <div className="inbox">
@@ -629,6 +710,33 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         .hero-main {
           padding-top: 34px;
         }
+        /* 글 + 캐릭터. 기본은 «세로로 쌓기»다 — 넓을 때만 옆으로 세운다.
+           ⚠ 1180px 이 경계인 까닭: h1 이 clamp(…, 8.4vw, 96px)라 칸이 좁아져도
+             글자가 안 줄어든다. 1180 아래에서 옆으로 세우면 「만들기 전엔 설계도,」가
+             제 칸을 넘어 그림 위로 올라탄다. 그 아래로는 CTA 밑에 놓는다. */
+        .hero-top {
+          display: grid;
+          gap: 8px;
+        }
+        .hero-figure {
+          display: flex;
+          justify-content: center;
+        }
+        .hero-figure :global(img) {
+          width: 320px;
+          height: auto;
+          object-fit: contain;
+        }
+        @media (min-width: 1181px) {
+          .hero-top {
+            grid-template-columns: minmax(0, 1fr) 520px;
+            gap: 40px;
+            align-items: center;
+          }
+          .hero-figure :global(img) {
+            width: 520px;
+          }
+        }
         .hero h1 {
           font-size: clamp(44px, 8.4vw, 96px);
           line-height: 0.98;
@@ -797,7 +905,37 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           margin-top: 16px;
         }
 
+        /* 캐릭터 그림 공통 — 투명 PNG(webp)라 카드 테두리를 두르지 않는다.
+           종이 여백 위에 그대로 두는 편이 소품이 살아난다. */
+        .cc :global(.plan-figure img),
+        .cc :global(.verify-figure img),
+        .cc :global(.sc-figure img),
+        .cc :global(.thesis-figure img) {
+          width: 100%;
+          height: auto;
+          object-fit: contain;
+        }
+
         /* PLANNING */
+        .plan-intro {
+          display: grid;
+          gap: 20px;
+        }
+        .plan-figure {
+          justify-self: center;
+          width: min(300px, 80%);
+        }
+        @media (min-width: 1000px) {
+          .plan-intro {
+            grid-template-columns: minmax(0, 1fr) 400px;
+            gap: 48px;
+            align-items: center;
+          }
+          .plan-figure {
+            justify-self: end;
+            width: 400px;
+          }
+        }
         .plan-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -840,6 +978,23 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         }
         .showcase {
           margin-top: 40px;
+          display: grid;
+          gap: 24px;
+        }
+        .sc-figure {
+          justify-self: center;
+          width: min(280px, 75%);
+        }
+        @media (min-width: 1024px) {
+          .showcase {
+            grid-template-columns: 340px minmax(0, 1fr);
+            gap: 36px;
+            align-items: center;
+          }
+          .sc-figure {
+            justify-self: start;
+            width: 340px;
+          }
         }
         .sc-frame {
           position: relative;
@@ -871,6 +1026,19 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         @media (max-width: 720px) {
           .thesis {
             grid-template-columns: 1fr;
+          }
+        }
+        /* 그림 칸은 «넓을 때만» 생긴다. display:none 이라 좁을 때는 칸 자체가 없어
+           지금까지의 두 칸(글 + ✕목록)이 한 자도 안 밀린다. */
+        .thesis-figure {
+          display: none;
+        }
+        @media (min-width: 1120px) {
+          .thesis {
+            grid-template-columns: 1fr 280px auto;
+          }
+          .thesis-figure {
+            display: block;
           }
         }
         .thesis h3 {
@@ -923,6 +1091,25 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           color: var(--orange);
         }
         /* VERIFY (dark) */
+        .verify-intro {
+          display: grid;
+          gap: 20px;
+        }
+        .verify-figure {
+          justify-self: center;
+          width: min(300px, 80%);
+        }
+        @media (min-width: 1000px) {
+          .verify-intro {
+            grid-template-columns: minmax(0, 1fr) 380px;
+            gap: 48px;
+            align-items: center;
+          }
+          .verify-figure {
+            justify-self: end;
+            width: 380px;
+          }
+        }
         .verify {
           background: var(--green);
           color: #efe9d9;

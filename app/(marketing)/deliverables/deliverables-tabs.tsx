@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Network,
@@ -43,6 +44,11 @@ type Deliverable = {
   role: string;
   formats: string[];
   mockup: React.ReactNode;
+  /* 캐릭터 그림 — 글 칸 아래에 놓는다 (2026-08-25 사장님 지시).
+     ⚠ 오른쪽 칸은 이미 «샘플 화면»이 차지하고 있다. 거기에 캐릭터까지 넣으면 둘이 싸운다.
+       글 칸은 대개 샘플보다 짧아 밑이 비는데, 그 자리가 그림이 설 자리다.
+     ⚠ 모든 항목에 넣지 않는다. 여덟 중 넷만이다 — 매 칸마다 있으면 눈이 쉴 데가 없다. */
+  char?: { src: string; alt: string };
 };
 
 const DELIVERABLES: Deliverable[] = [
@@ -53,6 +59,10 @@ const DELIVERABLES: Deliverable[] = [
     role: "사이트 전체 메뉴를 트리로 정리해 정보구조(IA)의 뼈대를 잡아요. 어떤 메뉴 아래 어떤 화면이 들어가는지 한눈에 확정할 수 있어, 기획의 출발점이 됩니다.",
     formats: ["PPT", "엑셀"],
     mockup: <MenuTreeMockup />,
+    char: {
+      src: "/character/06_guide_menu_structure.webp",
+      alt: "메뉴와 화면이 층층이 갈라지는 트리를 살펴보는 카페인컬러 캐릭터",
+    },
   },
   {
     icon: LayoutList,
@@ -61,6 +71,10 @@ const DELIVERABLES: Deliverable[] = [
     role: "메뉴별로 필요한 화면을 자동으로 뽑아 목록으로 정리해요. 화면ID·화면명·기능정의·버튼 이동·AI 생성 프롬프트까지 화면 단위로 담겨, ‘무엇을 만들지’가 확정돼요.",
     formats: ["엑셀"],
     mockup: <ScreenListMockup />,
+    char: {
+      src: "/character/07_guide_ia_screen_list.webp",
+      alt: "화면 하나하나를 기능·이동·프롬프트로 줄줄이 정리하는 카페인컬러 캐릭터",
+    },
   },
   {
     icon: FileText,
@@ -69,6 +83,10 @@ const DELIVERABLES: Deliverable[] = [
     role: "사이트에 필요한 요건을 업무 · 기능 · 구성 계층으로 분해하고, 종류(기능·콘텐츠·화면·정책)를 붙여 정리한 문서예요. 실무 문서 형식 그대로 내려받을 수 있어요.",
     formats: ["엑셀"],
     mockup: <SpecMockup />,
+    char: {
+      src: "/character/08_guide_function_definition.webp",
+      alt: "요건을 자로 재듯 갈래별로 나눠 적는 카페인컬러 캐릭터",
+    },
   },
   {
     icon: Workflow,
@@ -111,6 +129,10 @@ const DELIVERABLES: Deliverable[] = [
     role: "위 모든 걸 한 벌로 정리한 마크다운·JSON이에요. 이 파일을 Claude Code·Cowork 같은 AI 코딩 도구에 그대로 넘기면, 화면 구성·이동·화면별 지시가 확정된 상태로 사이트가 만들어져요.",
     formats: ["마크다운", "JSON"],
     mockup: <SpecPackMockup />,
+    char: {
+      src: "/character/10_guide_ai_build_spec.webp",
+      alt: "스펙 문서 한 벌을 AI 코딩 도구에 넣어 화면을 뽑아내는 카페인컬러 캐릭터",
+    },
   },
 ];
 
@@ -180,8 +202,13 @@ function PlanningDeliverables() {
       {DELIVERABLES.map((d, i) => {
         const Icon = d.icon;
         const reversed = i % 2 === 1;
+        /* 「04 FLOW」와 「05 개발 일정표」는 짝이다 — 화면이 어디로 가는지(FLOW)와
+           그걸 언제 만드는지(일정)를 같이 본다. 그래서 그 «사이»에 가로로 한 칸 둔다.
+           (2026-08-25 사장님 지시: 09번은 04와 05 사이에 가로 폭으로) */
+        const 사이띠 = i === 3;
         return (
-          <section key={d.name} className={`border-b border-border ${reversed ? "bg-surface" : ""}`}>
+          <div key={d.name} className="contents">
+          <section className={`border-b border-border ${reversed ? "bg-surface" : ""}`}>
             <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-10 px-6 py-16 lg:grid-cols-2 lg:gap-16">
               <div className={reversed ? "lg:order-2" : ""}>
                 <div className="flex items-center gap-3">
@@ -202,10 +229,49 @@ function PlanningDeliverables() {
                     </span>
                   ))}
                 </div>
+                {d.char && (
+                  <div className="mt-8 w-[240px] max-w-full sm:mt-10 sm:w-[300px]">
+                    <Image
+                      src={d.char.src}
+                      alt={d.char.alt}
+                      width={900}
+                      height={900}
+                      sizes="(max-width: 640px) 240px, 300px"
+                      className="h-auto w-full object-contain"
+                    />
+                  </div>
+                )}
               </div>
               <div className={reversed ? "lg:order-1" : ""}>{d.mockup}</div>
             </div>
           </section>
+
+          {사이띠 && (
+            <section className="border-b border-border">
+              <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-8 px-6 py-14 md:flex-row md:gap-14">
+                <div className="w-[260px] max-w-full shrink-0 md:w-[360px]">
+                  <Image
+                    src="/character/09_guide_flow_wbs.webp"
+                    alt="화면 이동 흐름도와 제작 일정을 나란히 놓고 함께 보는 카페인컬러 캐릭터"
+                    width={1120}
+                    height={896}
+                    sizes="(max-width: 768px) 260px, 360px"
+                    className="h-auto w-full object-contain"
+                  />
+                </div>
+                <div className="[word-break:keep-all]">
+                  <h3 className="text-xl font-bold text-foreground sm:text-2xl">
+                    흐름과 일정은 <span className="text-primary">같이 봐야</span> 맞아요
+                  </h3>
+                  <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+                    화면이 어디로 이어지는지(FLOW)와 그걸 언제 만드는지(개발 일정표)는 짝입니다. 흐름이
+                    바뀌면 만들 화면이 늘고, 화면이 늘면 일정이 밀려요. 두 파일을 함께 드리는 이유예요.
+                  </p>
+                </div>
+              </div>
+            </section>
+          )}
+          </div>
         );
       })}
     </div>
