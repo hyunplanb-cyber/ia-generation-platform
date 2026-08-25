@@ -23,7 +23,16 @@
 
 import { useEffect, useRef } from "react";
 
-type 단계 = { no: string; 제목: string; 말: string; 토막: string; 걸린시간: string };
+type 단계 = {
+  no: string;
+  제목: string;
+  말: string;
+  토막: string;
+  걸린시간: string;
+  /** 상자 왼쪽 위에 붙는 이름표 — 그 토막이 «앱의 어느 화면»인지 적는다.
+   *  지어낸 말이 아니라 녹화본 안 STEP 표시를 그대로 옮긴 것이다. */
+  창이름: string;
+};
 
 const 단계들: 단계[] = [
   {
@@ -31,6 +40,7 @@ const 단계들: 단계[] = [
     제목: "만들 사이트를 한 줄로 적어요",
     말: "「나는 펫 유치원을 운영하고 있어. 반려동물 유치원 사이트」처럼 한 줄이면 됩니다. 기획 용어를 몰라도 괜찮아요. PC·모바일 중 어디에 맞출지와 전체 일정만 함께 골라요.",
     토막: "step1",
+    창이름: "STEP 1 · 컨셉 입력",
     걸린시간: "1분",
   },
   {
@@ -38,6 +48,7 @@ const 단계들: 단계[] = [
     제목: "메뉴와 디자인을 고릅니다",
     말: "AI가 뽑아 준 메뉴를 보고 더하거나 뺍니다. 색·글꼴 3벌과 화면 뼈대 2벌 중에서 마음에 드는 걸 고르면, 뒤에 만들어지는 화면이 전부 그 얼굴로 나옵니다.",
     토막: "step2",
+    창이름: "STEP 2 · 메뉴·디자인 컨셉",
     걸린시간: "2분",
   },
   {
@@ -45,6 +56,7 @@ const 단계들: 단계[] = [
     제목: "기다립니다",
     말: "화면 목록과 화면마다 넣을 AI 프롬프트를 씁니다. 사이트 규모에 따라 다르지만 대개 몇 분입니다. 이 사이에 하실 일은 없어요.",
     토막: "step3",
+    창이름: "만드는 중",
     걸린시간: "3~5분",
   },
   {
@@ -52,6 +64,7 @@ const 단계들: 단계[] = [
     제목: "화면 목록이 나옵니다",
     말: "메뉴 아래 어떤 화면이 필요한지, 화면마다 무엇을 해야 하는지가 트리로 정리됩니다. 여기서 화면을 더하거나 지울 수 있어요. 「검색 결과 없음」 같은 빠지기 쉬운 화면까지 들어 있습니다.",
     토막: "step4",
+    창이름: "STEP 3 · 화면 목록",
     걸린시간: "",
   },
   {
@@ -59,6 +72,7 @@ const 단계들: 단계[] = [
     제목: "디자인·레이아웃 프리셋을 봅니다",
     말: "고른 색과 뼈대가 실제 화면에서 어떻게 보이는지 미리 확인합니다. 색 3벌 × 뼈대 2벌 = 여섯 가지로 섞어 쓸 수 있어요.",
     토막: "step5",
+    창이름: "STEP 3 · 디자인 프리셋",
     걸린시간: "",
   },
   {
@@ -66,6 +80,7 @@ const 단계들: 단계[] = [
     제목: "검수 시나리오까지 받습니다",
     말: "오픈 전에 무엇을 눌러 봐야 하는지를 화면마다 적어 줍니다. 「이건 되겠지」 하고 넘어가는 자리가 사고가 나는 자리예요.",
     토막: "step6",
+    창이름: "STEP 3 · 검수 시나리오",
     걸린시간: "",
   },
 ];
@@ -136,19 +151,37 @@ export function HowToMakeBody() {
                  선은 «단계와 단계 사이»를 나누는 것이지 절의 뚜껑이 아니다. */
               className="grid grid-cols-1 items-center gap-5 border-t border-border py-10 first:border-t-0 md:grid-cols-[340px_1fr] md:gap-10 md:py-12 lg:grid-cols-[400px_1fr] lg:gap-14"
             >
-              <div className="overflow-hidden rounded-2xl bg-surface max-md:max-w-[400px]">
-                <video
-                  src={`/guide-clips/${s.토막}.mp4`}
-                  poster={`/guide-clips/${s.토막}.jpg`}
-                  width={800}
-                  height={500}
-                  className="block h-auto w-full"
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  aria-label={`${s.no} ${s.제목}`}
-                />
+              {/* 어두운 상자에 담는다 (2026-08-25 사장님 지시, 레퍼런스와 같은 결).
+                  ⛔ 왜 — 녹화본의 바탕이 종이색(#FAFAFA)이라 페이지 바탕과 거의 같았다.
+                     테두리도 없으니 영상이 «어디서 시작해 어디서 끝나는지» 안 보였다.
+                     사장님: 「영상이 너무 안보이는 거 같아서」.
+                  이름표와 점 셋은 레퍼런스에서 가져왔다 — 그 토막이 앱의 어느 화면인지
+                  한 줄로 알려 주고, 「이건 실제 화면 녹화다」를 눈으로 말해 준다. */}
+              <div className="rounded-2xl bg-foreground p-3 sm:p-3.5 max-md:max-w-[400px]">
+                <div className="flex items-center justify-between px-1.5 pb-2.5 pt-0.5">
+                  <span className="truncate text-[11px] font-semibold tracking-wide text-background/70">
+                    {s.창이름}
+                  </span>
+                  <span className="flex shrink-0 gap-1" aria-hidden="true">
+                    <i className="size-1.5 rounded-full bg-pastel-mint/60" />
+                    <i className="size-1.5 rounded-full bg-pastel-mint/60" />
+                    <i className="size-1.5 rounded-full bg-pastel-mint/60" />
+                  </span>
+                </div>
+                <div className="overflow-hidden rounded-xl bg-surface">
+                  <video
+                    src={`/guide-clips/${s.토막}.mp4`}
+                    poster={`/guide-clips/${s.토막}.jpg`}
+                    width={800}
+                    height={500}
+                    className="block h-auto w-full"
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    aria-label={`${s.no} ${s.제목}`}
+                  />
+                </div>
               </div>
               <div>
                 <div className="flex items-center gap-2.5">
