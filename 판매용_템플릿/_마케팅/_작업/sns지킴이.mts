@@ -3,7 +3,8 @@
  *   npx tsx "판매용_템플릿/_마케팅/_작업/sns지킴이.mts"            한 바퀴만 돌고 끝난다
  *   npx tsx "판매용_템플릿/_마케팅/_작업/sns지킴이.mts" --지킴이     30초마다 계속 들여다본다
  *   … --시늉                                                       무엇을 할지만 찍고 아무것도 안 한다
- *   … --드라이브채우기                                              드라이브에 빠진 «사본»만 채우고 끝난다
+ *   … --드라이브채우기 [이름표…]                                    드라이브에 빠진 «사본»만 채우고 끝난다
+ *                                                                   이름표를 주면 그 편만 채운다
  *
  * 왜 만들었나
  *   사장님: 「검수기에서 검수하고 검수완료를 누른다. 이때 어디로 이동될 수 있을까?
@@ -40,6 +41,10 @@ const 드라이브 = "G:/내 드라이브/릴스/카페인컬러_주간콘텐츠
 const 지킴이 = process.argv.includes("--지킴이");
 const 시늉 = process.argv.includes("--시늉");
 const 드라이브채우기 = process.argv.includes("--드라이브채우기");
+/** 채울 편을 골라 받는다 (이름표). 안 주면 빠진 것을 다 본다.
+ *  ⚠ 골라 받는 길이 «있어야» 한다 — 제목이 갈린 편을 건드리지 않고 하나만 넣을 수 있어야
+ *    한다. 2026-08-25 에 4주차 펫유치원이 딱 그 짝이었다(이름이 옛 제목으로 굳어 있다). */
+const 고른것 = new Set(process.argv.slice(2).filter((a) => !a.startsWith("--")));
 const 쉬는초 = 30;
 
 /** 이번 편에서 «죽지는 않았지만 남겨야 하는» 경고. 올리기가 채우고 한바퀴가 적는다.
@@ -427,7 +432,14 @@ async function 빠진사본채우기() {
     말("   구글 드라이브 앱을 켜고 G: 가 붙은 뒤 다시 부르세요.");
     return;
   }
-  const 올린것 = await db.select().from(snsContent).where(eq(snsContent.status, "published"));
+  const 다올린것 = await db.select().from(snsContent).where(eq(snsContent.status, "published"));
+  const 올린것 = 고른것.size ? 다올린것.filter((편) => 고른것.has(편.slug)) : 다올린것;
+  if (고른것.size) {
+    말(`고른 편만 봅니다 — ${[...고른것].join(" · ")}`);
+    for (const 이름 of 고른것) {
+      if (!다올린것.some((편) => 편.slug === 이름)) 말(`  ⚠ 「${이름}」은 등록완료인 편에 없습니다 — 이름표를 확인하세요.`);
+    }
+  }
   let 채움 = 0, 이미 = 0, 못함 = 0;
   for (const 편 of 올린것) {
     const 바탕제목 = 이름씻기(편.coverTitle || 편.verticalTitle || "");
