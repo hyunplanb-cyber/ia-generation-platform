@@ -62,7 +62,7 @@ export default function ContactPage() {
           ))}
         </div>
 
-        <section className="flex flex-col gap-3 rounded-xl border border-border bg-muted/30 p-5">
+        <section data-나타남 className="flex flex-col gap-3 rounded-xl border border-border bg-muted/30 p-5">
           <h2 className="flex items-center gap-2 font-bold text-foreground">
             <Building2 className="size-4.5 text-primary" />
             사업자 정보

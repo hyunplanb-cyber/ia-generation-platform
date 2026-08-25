@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { businessInfoRows } from "@/lib/business";
 
 export default function MarketingLayout({
@@ -11,6 +12,9 @@ export default function MarketingLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
+      {/* 스크롤을 내리면 글·그림이 따라 올라온다. 화면은 «data-나타남» 표시만 달면 되고,
+          실제 일은 여기 하나가 다 한다. 서버 컴포넌트를 클라이언트로 바꾸지 않으려는 짜임이다. */}
+      <ScrollReveal />
       <SiteHeader />
 
       <main className="flex-1">{children}</main>

@@ -243,6 +243,8 @@ function PlanningDeliverables() {
             return (
               <div key={d.name} className="contents">
                 <article
+                  data-나타남
+                  data-늦게={String((i % 2) + 1)}
                   className={`flex h-full flex-col overflow-hidden rounded-3xl px-6 pt-7 pb-8 sm:px-8 sm:pt-9 sm:pb-10 ${d.bg}`}
                 >
                   {/* 아이콘 조각은 «흰» 종이다. 파스텔 위에 파스텔 조각을 얹으면 묻힌다. */}
@@ -292,7 +294,7 @@ function PlanningDeliverables() {
                 </article>
 
                 {사이띠 && (
-                  <div className="md:col-span-2">
+                  <div className="md:col-span-2" data-나타남>
                     {/* 여기만 회색이다 — 산출물이 아니라 «곁들이는 말»이라 파스텔 여덟과
                         섞이면 아홉 번째 산출물처럼 보인다. */}
                     <div className="flex flex-col items-center gap-6 overflow-hidden rounded-3xl bg-neutral-badge-soft px-6 py-8 sm:px-10 md:flex-row md:gap-12">
