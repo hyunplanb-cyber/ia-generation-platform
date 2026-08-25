@@ -13,11 +13,11 @@
  *   ⚠ 원본이 «10배쯤 빨리 감긴» 녹화라 앞쪽 토막은 도로 늦춰야 읽힌다. 어디를 얼마나
  *     늦췄는지는 `_작업/영상토막내기.mjs` 에 적어 두었다 — 화면을 고치면 거기서 다시 뜬다.
  *     ⚠ 그 파일은 저장소에 안 들어간다(`_작업/` 이 .gitignore 다). 값만 여기 적어 둔다:
- *       step1 0.5s+0.9s ×8 · step2 1.4+1.7 ×4.5 · step3 3.0+2.1 ×3.6
- *       step4 9.4+4.2 ×1.8 · step5 29.5+7.0 ×1.5 · step6 38.0+7.0 ×1.5
- *       공통 — crop=2784:1740:0:0 → scale=800:500 · h264 crf30 · 소리 없음
+ *       step1 0.5s+0.9s ×12 · step2 1.4+1.7 ×6.75 · step3 3.0+2.1 ×5.4
+ *       step4 9.4+4.2 ×2.7 · step5 29.5+7.0 ×2.25 · step6 38.0+7.0 ×2.25
+ *       공통 — crop=2768:1730:8:0 → scale=800:500 (왼쪽 8px 은 녹화 창 테두리라 버린다) · h264 crf30 · 소리 없음
  *   ⚠ GIF 로는 안 만들었다. 같은 5초를 GIF 로 구우면 수 MB 인데 h264 는 100KB 안팎이다.
- *     여섯 토막 + 표지 여섯 장 다 합쳐 1.2MB 다.
+ *     여섯 토막 + 표지 여섯 장 다 합쳐 1.3MB 다.
  */
 "use client";
 
@@ -121,16 +121,17 @@ export function HowToMakeBody() {
             ⚠ 다시 넣을 일이 있으면 옆 탭(AI팩)의 제목과 «같은 결»로 맞춘다. */}
 
         {/* 목록 — 왼쪽에 움직이는 화면, 오른쪽에 번호·제목·설명.
-            ⛔ 줄 사이에 가는 선(border-t)을 뒀다가 뺐다 (2026-08-25 사장님 지시).
-               선이 영상 «옆»으로 삐져나와 화면을 가로지르는 것처럼 보였다.
-               줄은 여백만으로 나눈다 — 그 편이 훨씬 조용하다.
+            단계마다 «가는 가로선» 하나로 나뉜다 (2026-08-25 사장님 지시, 레퍼런스와 같은 결).
+            ⚠ 사장님이 「영상 옆 라인」이라 하신 것은 이 가로선이 아니라 «녹화본 안»에
+              찍혀 있던 창 테두리였다. 원본 왼쪽 2px 이 어두웠던 것 — 8px 을 잘라 없앴다.
+              한 번 헛짚어 이 가로선을 지웠다가 다시 넣는다.
             ⚠ 영상 칸은 400px 로 못 박는다. fr 로 두면 1440에서 807px 까지 커져
-               한 줄이 500px 넘게 높아졌다. 넓이를 반으로 줄여 «크기는 사분의 일»이다. */}
-        <ol ref={목록} className="flex flex-col gap-12 md:gap-14">
+               한 줄이 500px 넘게 높아졌다. */}
+        <ol ref={목록} className="flex flex-col">
           {단계들.map((s) => (
             <li
               key={s.no}
-              className="grid grid-cols-1 items-center gap-5 md:grid-cols-[340px_1fr] md:gap-10 lg:grid-cols-[400px_1fr] lg:gap-14"
+              className="grid grid-cols-1 items-center gap-5 border-t border-border py-10 md:grid-cols-[340px_1fr] md:gap-10 md:py-12 lg:grid-cols-[400px_1fr] lg:gap-14"
             >
               <div className="overflow-hidden rounded-2xl bg-surface max-md:max-w-[400px]">
                 <video
