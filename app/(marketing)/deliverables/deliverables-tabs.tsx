@@ -244,7 +244,7 @@ function PlanningDeliverables() {
               <div key={d.name} className="contents">
                 <article
                   data-나타남
-                  data-늦게={String((i % 2) + 1)}
+                  data-들썩
                   className={`flex h-full flex-col overflow-hidden rounded-3xl px-6 pt-7 pb-8 sm:px-8 sm:pt-9 sm:pb-10 ${d.bg}`}
                 >
                   {/* 아이콘 조각은 «흰» 종이다. 파스텔 위에 파스텔 조각을 얹으면 묻힌다. */}

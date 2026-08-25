@@ -13,7 +13,9 @@
  * 쓰는 법 — 움직이게 하고 싶은 곳에 «표시만» 붙인다.
  *
  *   <section data-나타남>…</section>
- *   <li data-나타남 data-늦게="2">…</li>     ← 줄줄이 나올 때 조금씩 늦춘다 (1~5)
+ *   <li data-나타남 data-들썩>…</li>          ← 마우스를 올리면 살짝 떠오른다
+ *
+ * 줄줄이 늘어선 것은 «자동으로» 하나씩 어긋나 오른다 — 따로 표시할 것이 없다.
  *
  * ⭐ 왜 «컴포넌트로 감싸지» 않고 표시(data-속성)로 하나
  *   마케팅 화면은 거의 다 서버 컴포넌트다. 감싸는 방식이면 그 화면들이 죄다 클라이언트
@@ -58,18 +60,37 @@ export function ScrollReveal() {
     let 기다리는것: HTMLElement[] = [];
     let 예약 = 0;
 
+    /* 줄줄이 늘어선 것을 «하나씩 어긋나게» 띄우려고 걸어 둔 시계들. 떠날 때 거둔다. */
+    const 시계들: number[] = [];
+
     const 재기 = () => {
       예약 = 0;
       const 창키 = window.innerHeight || document.documentElement.clientHeight;
       /* 화면 아래끝에서 이만큼 못 미쳐도 미리 켠다 — 빨리 내려도 뒤늦게 뜨지 않게 */
       const 문턱 = 창키 * 0.88;
       const 남은: HTMLElement[] = [];
+      const 뜰것: HTMLElement[] = [];
       for (const el of 기다리는것) {
-        const 위 = el.getBoundingClientRect().top;
-        if (위 < 문턱) el.classList.add("떴다");
+        if (el.getBoundingClientRect().top < 문턱) 뜰것.push(el);
         else 남은.push(el);
       }
       기다리는것 = 남은;
+
+      /* ⛔ 늦추는 일을 CSS(transition-delay)로 하다 옮겨 왔다 (2026-08-25).
+         「마우스 올리면 떠오르기」를 넣으면서 transition 을 통째로 다시 적었는데,
+         그 한 줄(shorthand)이 delay 를 0 으로 되돌린다. 그러면 어긋나며 오르던 것이
+         한꺼번에 뜬다. CSS 로는 «늦춤은 나타날 때만, 떠오름은 곧바로»를 가르기 어렵다.
+         여기서 늦추면 그 둘이 안 얽힌다 — 떠오름은 언제나 곧바로다.
+         ⚠ 한 번에 여럿이 걸릴 때만 어긋난다. 다섯째부터는 더 안 늦춘다 —
+           0.5초 넘게 기다리게 하면 «느린 화면»이지 «멋»이 아니다. */
+      뜰것.forEach((el, i) => {
+        if (i === 0) {
+          el.classList.add("떴다");
+          return;
+        }
+        시계들.push(window.setTimeout(() => el.classList.add("떴다"), Math.min(i, 4) * 90));
+      });
+
       if (!기다리는것.length) 듣기끄기();
     };
     const 예약하기 = () => {
@@ -128,6 +149,7 @@ export function ScrollReveal() {
       지켜보기.disconnect();
       듣기끄기();
       if (예약) cancelAnimationFrame(예약);
+      for (const t of 시계들) clearTimeout(t);
       delete 뿌리.dataset.나타남켬;
     };
   }, []);
