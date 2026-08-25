@@ -126,6 +126,42 @@ export function StatsView({ n }: { n: OurNumbers }) {
         </ol>
       </div>
 
+      {/* ── 손님이 어디까지 갔나 ──────────────────────────────
+          ⛔ 「프로젝트 5개」가 「다섯 번 만들었다」로 읽히던 것을 막는다.
+             만들기를 누르면 빈 프로젝트가 «공짜로» 생긴다 — 그건 만든 게 아니다.
+             (2026-08-25 사장님 지적: 「생성을 안 눌렀는데 왜 카운팅되는건데」) */}
+      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">
+        손님이 어디까지 갔나
+      </h2>
+      <p className="mt-1 text-sm text-muted-foreground [word-break:keep-all]">
+        위에서 아래로 내려가면서 줄어듭니다. <b className="text-foreground">크레딧은 맨 아래 「생성됨」에서만 빠집니다.</b>
+      </p>
+      <div className="mt-3 space-y-1.5">
+        {[
+          { 이름: "① 「AI팩 만들기」를 눌렀다", 값: n.깔때기.만들기누름, 풀이: "빈 프로젝트가 생깁니다 · 공짜" },
+          { 이름: "② 컨셉을 적었다", 값: n.깔때기.컨셉적음, 풀이: "아직 크레딧은 안 빠집니다" },
+          { 이름: "③ 메뉴 초안까지 적었다", 값: n.깔때기.메뉴초안적음, 풀이: "생성 버튼 바로 앞" },
+          { 이름: "④ 「생성」을 눌렀다", 값: n.깔때기.생성누름, 풀이: "2026-08-25 부터 셉니다" },
+          { 이름: "⑤ 생성이 됐다", 값: n.깔때기.생성됨, 풀이: "메뉴·화면이 생기고 크레딧이 빠집니다", 끝: true },
+        ].map((칸) => {
+          const 폭 = n.깔때기.만들기누름 > 0 ? Math.max(4, (칸.값 / n.깔때기.만들기누름) * 100) : 4;
+          return (
+            <div key={칸.이름} className="flex items-center gap-3">
+              <div className="w-52 shrink-0 text-sm font-semibold text-foreground [word-break:keep-all]">{칸.이름}</div>
+              <div className="h-8 flex-1 rounded-lg bg-muted/40">
+                <div
+                  className={`flex h-8 items-center rounded-lg px-2.5 ${칸.끝 ? "bg-primary" : "bg-teal-600"} ${칸.값 === 0 ? "opacity-25" : ""}`}
+                  style={{ width: `${폭}%` }}
+                >
+                  <span className="text-sm font-extrabold tabular-nums text-white">{콤마(칸.값)}</span>
+                </div>
+              </div>
+              <div className="hidden w-56 shrink-0 text-xs text-muted-foreground sm:block [word-break:keep-all]">{칸.풀이}</div>
+            </div>
+          );
+        })}
+      </div>
+
       {/* ── 실제로 만들어진 알맹이 ────────────────────────── */}
       <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">
         손님이 만든 알맹이
@@ -135,10 +171,10 @@ export function StatsView({ n }: { n: OurNumbers }) {
       </p>
       <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
-          제목="프로젝트"
+          제목="만들기를 누른 횟수"
           값={콤마(n.알맹이.프로젝트)}
-          단위="개"
-          밑={<>그중 생성까지 간 것 {n.알맹이.생성된프로젝트}개<br />전체 {콤마(n.알맹이.전체.프로젝트)}개 (생성까지 {n.알맹이.전체.생성된프로젝트})</>}
+          단위="번"
+          밑={<>⚠ «만든 것»이 아닙니다 — 누르면 빈 프로젝트가 생깁니다<br />그중 생성까지 간 것 {n.알맹이.생성된프로젝트} · 전체 {콤마(n.알맹이.전체.프로젝트)}번</>}
         />
         <StatCard 제목="메뉴" 값={콤마(n.알맹이.메뉴)} 단위="개" 밑={<>AI 가 만든 메뉴 줄 수<br />전체 {콤마(n.알맹이.전체.메뉴)}개</>} />
         <StatCard 제목="화면" 값={콤마(n.알맹이.화면)} 단위="장" 밑={<>AI 가 만든 화면 줄 수<br />전체 {콤마(n.알맹이.전체.화면)}장</>} />
@@ -263,6 +299,40 @@ export function StatsView({ n }: { n: OurNumbers }) {
           우리 계정을 새로 만들면 <code className="rounded bg-amber-100 px-1">lib/our-numbers.ts</code> 의{" "}
           <code className="rounded bg-amber-100 px-1">OUR_ACCOUNTS</code> 에 <b>반드시 적으세요.</b> 안 적으면 손님이 한 명 늘어난 것처럼 보입니다.
         </div>
+      </div>
+
+      {/* ── 용어 ──────────────────────────────────────────
+          말이 겹치면 숫자를 잘못 읽는다. 여기 한 번 적어 두면 다시 안 헷갈린다. */}
+      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">이 화면의 말</h2>
+      <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-surface">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-muted/40 text-xs text-muted-foreground">
+              <th className="px-3 py-2 text-left font-bold">말</th>
+              <th className="px-3 py-2 text-left font-bold">무슨 뜻</th>
+              <th className="px-3 py-2 text-left font-bold">크레딧</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              ["만들기를 누름", "「AI팩 만들기」를 누르면 그 자리에서 «빈» 프로젝트가 하나 생깁니다. 컨셉도 아직 없습니다.", "안 빠짐"],
+              ["컨셉을 적음", "그 프로젝트에 손님이 글을 적었습니다. 저장해도 값은 안 듭니다.", "안 빠짐"],
+              ["생성을 누름", "「생성」 버튼을 눌렀습니다. 성공이든 실패든 기록이 한 줄 남습니다.", "성공했을 때만"],
+              ["생성됨", "AI 가 메뉴·화면을 만들어 냈습니다. 여기서 크레딧이 빠집니다.", "빠짐"],
+              ["AI팩", "손님이 받는 결과물 전체를 부르는 이름입니다 — 화면목록·기능정의서·프리셋·검수 시나리오까지.", "—"],
+            ].map(([말, 뜻, 크레딧]) => (
+              <tr key={말} className="border-t border-border">
+                <td className="whitespace-nowrap px-3 py-2 font-bold text-foreground">{말}</td>
+                <td className="px-3 py-2 text-muted-foreground [word-break:keep-all]">{뜻}</td>
+                <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{크레딧}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950 [word-break:keep-all]">
+        ⛔ 그래서 <b>「프로젝트 5개」는 «다섯 번 만들었다»가 아닙니다.</b> 「만들기를 다섯 번 눌렀다」는 뜻이에요.
+        실제로 만들어진 것은 맨 위 깔때기의 <b>맨 아래 칸</b>입니다.
       </div>
 
       <p className="mt-10 border-t border-border pt-4 text-xs text-muted-foreground [word-break:keep-all]">
