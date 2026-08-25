@@ -148,7 +148,27 @@ const 물어 = async (q: unknown): Promise<줄[]> => {
   return ((r as { rows?: 줄[] }).rows ?? (r as unknown as 줄[])) ?? [];
 };
 const 수 = (v: unknown) => Number(v ?? 0);
-const 때 = (v: unknown) => (v ? new Date(String(v)) : null);
+/* ⛔ 시각을 «9시간 틀리게» 읽던 자리 — 2026-08-25 사장님이 짚으셨다.
+ *   「난 그 시간에 컴퓨터 한 적이 없어.」 맞는 말이었다.
+ *
+ * db.execute(날글) 로 읽으면 timestamp 가 «시간대가 안 붙은 글»로 온다:
+ *     "2026-08-25 05:40:51.1"
+ *   그대로 new Date 하면 자바스크립트가 그것을 «이 컴퓨터 시각»으로 읽는다.
+ *   그런데 DB(Neon)는 UTC 로 넣는다 — 그래서 오후 2:40 이 오전 5:40 으로 보였다.
+ *
+ * ⚠ 드리즐 «타입 질의»(db.select)는 이 일을 알아서 한다 — Date 로 바꿔 준다.
+ *   틀린 것은 날글로 읽는 이 파일뿐이었다. 앱 화면은 성했다.
+ * ⚠ 이 병은 2026-08-09 에도 한 번 앓았다(lib/when.ts 머리 참고).
+ *   그때 「새 화면에서 Intl.DateTimeFormat 을 직접 쓰지 말 것」이라고 적어 뒀는데
+ *   내가 그걸 어겼다. 보여 줄 때는 반드시 lib/when 의 것을 쓴다. */
+const 때 = (v: unknown): Date | null => {
+  if (v == null) return null;
+  if (v instanceof Date) return v;
+  const s = String(v);
+  /* 시간대가 이미 붙어 있으면(+00 · Z) 그대로 믿는다 */
+  if (/[zZ]$|[+-]\d{2}:?\d{2}$/.test(s)) return new Date(s);
+  return new Date(s.replace(" ", "T") + "Z");
+};
 
 /** 손님만 고르는 조건 — 쿼리마다 같은 것을 쓴다. */
 function 우리메일목록() {

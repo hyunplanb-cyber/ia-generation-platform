@@ -54,6 +54,7 @@ export default async function SnsReviewListPage() {
                 id: c.id, batch: c.batch, slug: c.slug, status: c.status,
                 verticalTitle: c.verticalTitle, ep: c.ep, slotLabel: c.slotLabel,
                 checkResult: c.checkResult, youtubeVerticalId: c.youtubeVerticalId,
+                watcherError: c.watcherError,
               }}
               칸수={칸수.get(c.id) ?? 0}
             />
