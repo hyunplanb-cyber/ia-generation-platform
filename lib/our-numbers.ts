@@ -33,10 +33,22 @@ import { db } from "@/db/client";
       심사용**이다 — 심사관이 다른 회사·다른 지역에서 접속하는데 우리는 소셜 로그인만
       받아서, 2단계 인증에 막혀 「결제창이 확인되지 않는다」로 반려되는 것을 피하려고
       아이디·비밀번호 계정을 따로 만든 것이다(make-review-account.mts · 토스 FAQ 10번).
-      ⚠ 그 글에 「심사가 끝나면 이 계정을 지운다」고 적혀 있다. 지우고 나면 여기서도 뺀다. */
+      ⚠ 그 글에 「심사가 끝나면 이 계정을 지운다」고 적혀 있다. 지우고 나면 여기서도 뺀다.
+
+   ⛔ 2026-08-25 — 사장님 계정이 «넷»이라는 것을 그날에야 알았다. 그 전에는 둘만 빼고
+      세어서 **손님이 두 배로 부풀어 있었다.** 메일 주소만 보고는 못 가린다 —
+      chlgus123@naver.com 은 「최현」을 영타로 친 것이고, ntop9808@gmail.com 은
+      아무 실마리가 없다. 사장님께 여쭤서 확인한 것이다.
+      ⭐ 가릴 실마리는 **account 표의 provider_id 와 user.name** 이다. 새 계정이
+         손님인지 헷갈리면 그 둘을 보고, 그래도 모르면 **여쭌다. 짐작해서 세지 않는다.**
+
+         select u.email, u.name, a.provider_id
+           from "user" u left join account a on a.user_id = u.id order by u.created_at; */
 export const OUR_ACCOUNTS: Record<string, string> = {
   "hyun.planb@gmail.com": "사장님",
-  "caffeinecolor.all@gmail.com": "회사 계정",
+  "caffeinecolor.all@gmail.com": "사장님 · 회사 대표 메일",
+  "chlgus123@naver.com": "사장님 · 초기 시험(아이디·비밀번호)",
+  "ntop9808@gmail.com": "사장님 · 열쇠 고친 뒤 확인용",
   "review@caffeinecolor.com": "토스(카드사) 심사용",
   "test@test.com": "시험 계정",
 };
