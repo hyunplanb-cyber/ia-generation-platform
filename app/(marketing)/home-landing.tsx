@@ -80,7 +80,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               </div>
             </div>
 
-            <div className="hero-art" data-나타남 data-늦게="2">
+            <div className="hero-art" data-나타남>
               <div className="art-card">
                 <div className="art-head">02_IA_화면목록.xlsx · 화면 43개</div>
                 <div className="art-row">
@@ -191,7 +191,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
-          <div className="plan-grid" data-나타남 data-늦게="1">
+          <div className="plan-grid" data-나타남>
             <div className="chip">
               <div className="ci">01 · XLSX</div>
               <div className="cn">메뉴 구조</div>
@@ -406,7 +406,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
-          <div className="inputs" data-나타남 data-늦게="1">
+          <div className="inputs" data-나타남>
             <div className="inbox">
               <div className="in-n">01 · 카페인컬러 AI팩</div>
               <div className="in-t">가장 정확</div>
@@ -436,7 +436,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
             </div>
           </div>
 
-          <div className="verify-flow" data-나타남 data-늦게="1">
+          <div className="verify-flow" data-나타남>
             <div className="split">
               <div className="split-row pub">
                 <div className="ico">공개</div>

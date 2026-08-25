@@ -218,10 +218,34 @@ html[data-나타남켬="on"] [data-나타남].떴다 {
   will-change: auto;
 }
 
-/* 줄줄이 늘어선 것은 조금씩 늦춰 «차례로» 올라오게 한다. 한꺼번에 뜨면 덩어리로 보인다.
-   ⚠ 다섯까지만 둔다. 여섯째부터 다 같이 뜨는 편이 낫다 — 0.5초씩 밀리면 기다리게 된다. */
-html[data-나타남켬="on"] [data-늦게="1"] { transition-delay: 0.07s; }
-html[data-나타남켬="on"] [data-늦게="2"] { transition-delay: 0.14s; }
-html[data-나타남켬="on"] [data-늦게="3"] { transition-delay: 0.21s; }
-html[data-나타남켬="on"] [data-늦게="4"] { transition-delay: 0.28s; }
-html[data-나타남켬="on"] [data-늦게="5"] { transition-delay: 0.35s; }
+/* ⚠ 늦추는 일은 CSS 가 아니라 components/scroll-reveal.tsx 가 한다.
+   여기 transition-delay 로 두면 «마우스 올리면 떠오르기»의 transition 한 줄이
+   delay 를 0 으로 되돌려, 어긋나며 오르던 것이 한꺼번에 뜬다. */
+
+/* ── 마우스를 올리면 살짝 떠오른다 ────────────────────────────────────────
+   (2026-08-25 사장님 지시) 카드에 data-들썩 을 달면 걸린다.
+
+   ⚠ @media (hover: hover) 로 감싼다. 손가락으로 쓰는 기기에서는 «한 번 누르면 그 상태로
+     붙어» 있어서, 눌렀던 카드만 떠 있는 이상한 화면이 된다.
+   ⚠ 떠 있는 동안 바뀌는 것은 transform·box-shadow 둘뿐이다. 이 둘은 화면을 다시 재지
+     않고 그린다 — 여섯 칸이 동시에 움직여도 안 버벅인다.
+   ⚠ 아래 첫 덩어리(«떴다» 뒤의 transition)를 빼면 안 된다. 나타날 때 쓰는 0.7초가
+     그대로 남아 마우스를 올릴 때도 0.7초 동안 굼뜨게 뜬다. 다 나타난 뒤엔 0.35초로 바꾼다. */
+html[data-나타남켬="on"] [data-나타남][data-들썩].떴다 {
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s ease;
+}
+[data-들썩] {
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  html[data-나타남켬="on"] [data-나타남][data-들썩].떴다:hover,
+  [data-들썩]:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px -18px rgb(31 32 36 / 0.28);
+  }
+}
