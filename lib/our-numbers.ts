@@ -64,6 +64,7 @@ export interface OurNumbers {
   만든것: Record<string, Counted>;
   시도: { 전체: number; 성공: number; 실패: number };
   실패까닭: { 까닭: string; 건수: number }[];
+  /** 손님 것만 센 수. 「전체」는 우리 것까지 포함한 수다. */
   알맹이: {
     프로젝트: number;
     생성된프로젝트: number;
@@ -73,6 +74,7 @@ export interface OurNumbers {
     검수사이트: number;
     검수문서: number;
     프리셋만든것: number;
+    전체: { 프로젝트: number; 생성된프로젝트: number; 메뉴: number; 화면: number; 검수돌린것: number };
   };
   열린것: { 산출물: number; 검수시나리오: number; 프리셋: number; 판매팩: number };
   나날: { 날짜: string; 가입: number; 생성: number; 검수: number; 실패: number }[];
@@ -136,16 +138,28 @@ export async function readOurNumbers(): Promise<OurNumbers> {
     from generation_attempt where not ok group by 1 order by n desc limit 5`)
   ).map((r) => ({ 까닭: String(r.까닭), 건수: 수(r.n) }));
 
+  /* ⭐ 2026-08-25 사장님 지시 — 여기도 «손님 것만» 센다.
+     우리가 만든 것까지 섞으면 프로젝트 32·화면 674 처럼 커 보이지만 거의 다 우리 것이다.
+     그래도 「전체」를 나란히 남긴다 — 도구가 도는지 보려면 그 수도 있어야 한다. */
   const [알맹이] = await 물어(sql`
     select (select count(distinct p.id) from project p join menu m on m.project_id = p.id
-              where p.deleted_at is null) as 생성된프로젝트,
-           (select count(*) from project where deleted_at is null) as 프로젝트,
-           (select count(*) from menu) as 메뉴,
-           (select count(*) from screen) as 화면,
-           (select count(*) from verify_run) as 검수돌린것,
-           (select count(*) from verify_run where mode = 'site') as 검수사이트,
-           (select count(*) from verify_run where mode = 'document') as 검수문서,
-           (select count(*) from project where deleted_at is null and preset_config is not null) as 프리셋만든것`);
+              where p.deleted_at is null and ${손님것("p.owner_id")}) as 생성된프로젝트,
+           (select count(*) from project p where p.deleted_at is null and ${손님것("p.owner_id")}) as 프로젝트,
+           (select count(*) from menu m join project p on p.id = m.project_id
+              where ${손님것("p.owner_id")}) as 메뉴,
+           (select count(*) from screen s join project p on p.id = s.project_id
+              where ${손님것("p.owner_id")}) as 화면,
+           (select count(*) from verify_run v where ${손님것("v.user_id")}) as 검수돌린것,
+           (select count(*) from verify_run v where v.mode = 'site' and ${손님것("v.user_id")}) as 검수사이트,
+           (select count(*) from verify_run v where v.mode = 'document' and ${손님것("v.user_id")}) as 검수문서,
+           (select count(*) from project p where p.deleted_at is null and p.preset_config is not null
+              and ${손님것("p.owner_id")}) as 프리셋만든것,
+           (select count(distinct p.id) from project p join menu m on m.project_id = p.id
+              where p.deleted_at is null) as 전체생성된프로젝트,
+           (select count(*) from project where deleted_at is null) as 전체프로젝트,
+           (select count(*) from menu) as 전체메뉴,
+           (select count(*) from screen) as 전체화면,
+           (select count(*) from verify_run) as 전체검수`);
 
   const [열린것] = await 물어(sql`
     select (select count(*) from download_unlock) as 산출물,
@@ -159,9 +173,12 @@ export async function readOurNumbers(): Promise<OurNumbers> {
     select 날.d as 날짜,
       (select count(*) from "user" u where u.created_at::date = 날.d and ${손님만}) as 가입,
       (select count(*) from credit_ledger l where l.created_at::date = 날.d and l.kind='spend'
-         and (l.memo like '설계도 생성%' or l.memo like 'AI팩 생성%')) as 생성,
-      (select count(*) from verify_run v where v.created_at::date = 날.d) as 검수,
-      (select count(*) from generation_attempt g where g.created_at::date = 날.d and not g.ok) as 실패
+         and (l.memo like '설계도 생성%' or l.memo like 'AI팩 생성%')
+         and ${손님것("l.user_id")}) as 생성,
+      (select count(*) from verify_run v where v.created_at::date = 날.d
+         and ${손님것("v.user_id")}) as 검수,
+      (select count(*) from generation_attempt g where g.created_at::date = 날.d and not g.ok
+         and ${손님것("g.user_id")}) as 실패
     from 날 order by 날.d`)
   ).map((r) => ({
     날짜: String(r.날짜).slice(0, 10),
@@ -171,17 +188,22 @@ export async function readOurNumbers(): Promise<OurNumbers> {
     실패: 수(r.실패),
   }));
 
-  /* 숫자만 보면 «무슨 일이 있었나»를 모른다. 지금은 하루 몇 건이라 낱낱이 보는 편이 낫다. */
+  /* 숫자만 보면 «무슨 일이 있었나»를 모른다. 지금은 하루 몇 건이라 낱낱이 보는 편이 낫다.
+     ⭐ 2026-08-25 사장님 지시 — 여기도 손님 것만 본다. 우리가 시험한 줄이 섞이면
+        손님이 무엇을 했는지가 그 밑에 묻힌다. */
   const 있었던일 = (
     await 물어(sql`
     select * from (
       select u.created_at as 때, u.email, '가입했습니다' as 일, 'join' as 갈래 from "user" u
+       where ${손님것("u.id")}
       union all
       select l.created_at, u.email, l.memo, 'spend'
-        from credit_ledger l join "user" u on u.id = l.user_id where l.kind = 'spend'
+        from credit_ledger l join "user" u on u.id = l.user_id
+       where l.kind = 'spend' and ${손님것("l.user_id")}
       union all
       select g.created_at, u.email, '생성 실패 — ' || coalesce(g.reason,'까닭 모름'), 'fail'
-        from generation_attempt g join "user" u on u.id = g.user_id where not g.ok
+        from generation_attempt g join "user" u on u.id = g.user_id
+       where not g.ok and ${손님것("g.user_id")}
     ) t order by 때 desc limit 25`)
   ).map((r) => ({
     때: 때(r.때) as Date,
@@ -223,6 +245,13 @@ export async function readOurNumbers(): Promise<OurNumbers> {
       검수사이트: 수(알맹이?.검수사이트),
       검수문서: 수(알맹이?.검수문서),
       프리셋만든것: 수(알맹이?.프리셋만든것),
+      전체: {
+        프로젝트: 수(알맹이?.전체프로젝트),
+        생성된프로젝트: 수(알맹이?.전체생성된프로젝트),
+        메뉴: 수(알맹이?.전체메뉴),
+        화면: 수(알맹이?.전체화면),
+        검수돌린것: 수(알맹이?.전체검수),
+      },
     },
     열린것: {
       산출물: 수(열린것?.산출물),

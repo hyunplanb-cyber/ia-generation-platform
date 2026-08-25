@@ -111,16 +111,31 @@ export function StatsView({ n }: { n: OurNumbers }) {
       </div>
 
       {/* ── 실제로 만들어진 알맹이 ────────────────────────── */}
-      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">실제로 만들어진 알맹이</h2>
+      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">
+        손님이 만든 알맹이
+      </h2>
+      <p className="mt-1 text-sm text-muted-foreground [word-break:keep-all]">
+        큰 수는 <b className="text-foreground">손님 것만</b>입니다. 괄호 안은 우리 것까지 넣은 전체예요.
+      </p>
       <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard 제목="프로젝트" 값={콤마(n.알맹이.프로젝트)} 단위="개" 밑={<>그중 생성까지 간 것 {n.알맹이.생성된프로젝트}개<br />나머지는 컨셉만 적고 멈춘 것</>} />
-        <StatCard 제목="메뉴" 값={콤마(n.알맹이.메뉴)} 단위="개" 밑="AI 가 만든 메뉴 줄 수" />
-        <StatCard 제목="화면" 값={콤마(n.알맹이.화면)} 단위="장" 밑="AI 가 만든 화면 줄 수" />
-        <StatCard 제목="검수 돌린 것" 값={콤마(n.알맹이.검수돌린것)} 단위="번" 밑={<>사이트 {n.알맹이.검수사이트} · 문서 {n.알맹이.검수문서}</>} />
+        <StatCard
+          제목="프로젝트"
+          값={콤마(n.알맹이.프로젝트)}
+          단위="개"
+          밑={<>그중 생성까지 간 것 {n.알맹이.생성된프로젝트}개<br />전체 {콤마(n.알맹이.전체.프로젝트)}개 (생성까지 {n.알맹이.전체.생성된프로젝트})</>}
+        />
+        <StatCard 제목="메뉴" 값={콤마(n.알맹이.메뉴)} 단위="개" 밑={<>AI 가 만든 메뉴 줄 수<br />전체 {콤마(n.알맹이.전체.메뉴)}개</>} />
+        <StatCard 제목="화면" 값={콤마(n.알맹이.화면)} 단위="장" 밑={<>AI 가 만든 화면 줄 수<br />전체 {콤마(n.알맹이.전체.화면)}장</>} />
+        <StatCard
+          제목="검수 돌린 것"
+          값={콤마(n.알맹이.검수돌린것)}
+          단위="번"
+          밑={<>사이트 {n.알맹이.검수사이트} · 문서 {n.알맹이.검수문서}<br />전체 {콤마(n.알맹이.전체.검수돌린것)}번</>}
+        />
       </div>
 
       {/* ── 최근 30일 ─────────────────────────────────────── */}
-      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">최근 30일</h2>
+      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">최근 30일 — 손님 것만</h2>
       <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-surface p-4">
         <div className="flex h-32 min-w-[620px] items-end gap-[3px]">
           {n.나날.map((d) => {
@@ -157,9 +172,9 @@ export function StatsView({ n }: { n: OurNumbers }) {
       </div>
 
       {/* ── 요즘 있었던 일 ────────────────────────────────── */}
-      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">요즘 있었던 일</h2>
+      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">요즘 있었던 일 — 손님 것만</h2>
       <p className="mt-1 text-sm text-muted-foreground [word-break:keep-all]">
-        지금은 하루 몇 건이라 숫자보다 이쪽이 더 잘 읽힙니다.
+        지금은 하루 몇 건이라 숫자보다 이쪽이 더 잘 읽힙니다. <b className="text-foreground">우리가 시험한 줄은 뺐습니다.</b>
       </p>
       <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-surface">
         <table className="w-full text-sm">
