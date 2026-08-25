@@ -160,27 +160,56 @@ export function StatsView({ n }: { n: OurNumbers }) {
         })}
       </div>
 
-      {/* ── 생성 불가 — 왜 못 만들었나 ─────────────────────
-          「오류」와 「눌러 보지도 않고 나감」은 처방이 다르다.
-          앞은 우리가 고칠 것이고, 뒤는 화면이 뭔가 막고 있는 것이다. */}
-      <div className="mt-4 rounded-xl border border-border bg-surface p-5">
-        <div className="flex items-baseline gap-2">
-          <span className="text-xs font-bold text-muted-foreground">생성 불가</span>
-          <span className="text-2xl font-extrabold tabular-nums text-foreground">{콤마(n.깔때기.생성불가)}</span>
-          <span className="text-sm font-semibold text-muted-foreground">건</span>
+      {/* ── 생성 불가 — «눌렀는데» 안 된 것만 ────────────────
+          ⛔ 안 누른 것은 여기 안 넣는다 — 누른 것을 세는 자리다 (2026-08-25 사장님 지시).
+             오류와 이탈은 처방이 다르다. 앞은 우리가 고칠 것, 뒤는 우리가 오래 걸린 것. */}
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="rounded-xl border border-border bg-surface p-5">
+          <div className="text-xs font-bold text-muted-foreground">생성 불가 (오류)</div>
+          <div className="mt-1 flex items-baseline gap-1">
+            <span className="text-3xl font-extrabold tabular-nums text-foreground">
+              {콤마(n.깔때기.오류사유.reduce((a, b) => a + b.건수, 0))}
+            </span>
+            <span className="text-sm font-semibold text-muted-foreground">건</span>
+          </div>
+          {n.깔때기.오류사유.length === 0 ? (
+            <p className="mt-1 text-xs text-muted-foreground">눌렀다가 오류로 막힌 것은 없습니다.</p>
+          ) : (
+            <ul className="mt-2 space-y-1 text-sm text-muted-foreground [word-break:keep-all]">
+              {n.깔때기.오류사유.map((r) => (
+                <li key={r.코드}>
+                  <b className="tabular-nums text-rose-700">{r.건수}건</b> — {r.까닭}
+                  <code className="ml-1 rounded bg-muted/40 px-1 text-[11px]">{r.코드}</code>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        {n.깔때기.불가사유.length === 0 ? (
-          <p className="mt-1 text-sm text-muted-foreground">못 만든 것이 없습니다.</p>
-        ) : (
-          <ul className="mt-2 space-y-1 text-sm text-muted-foreground [word-break:keep-all]">
-            {n.깔때기.불가사유.map((r) => (
-              <li key={r.까닭}>
-                <b className="tabular-nums text-foreground">{r.건수}건</b> — {r.까닭}
-              </li>
-            ))}
-          </ul>
-        )}
+
+        <div className="rounded-xl border border-border bg-surface p-5">
+          <div className="text-xs font-bold text-muted-foreground">생성 중 이탈</div>
+          <div className="mt-1 flex items-baseline gap-1">
+            <span className="text-3xl font-extrabold tabular-nums text-foreground">{콤마(n.깔때기.이탈.건수)}</span>
+            <span className="text-sm font-semibold text-muted-foreground">건</span>
+          </div>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground [word-break:keep-all]">
+            {n.깔때기.이탈.건수 === 0 ? (
+              <>기다리다 나간 손님이 없습니다.</>
+            ) : (
+              <>
+                평균 <b className="text-foreground">{n.깔때기.이탈.평균초}초</b> 기다리다 나갔습니다
+                {n.깔때기.이탈.가장오래초 != null ? <> · 가장 오래 참은 분 {n.깔때기.이탈.가장오래초}초</> : null}
+              </>
+            )}
+            <br />
+            ⚠ 브라우저가 떠나면서 알려 주는 것이라 <b>«최소»</b>입니다. 강제 종료·전원 꺼짐은 못 셉니다.
+          </p>
+        </div>
       </div>
+      <p className="mt-2 text-xs text-muted-foreground [word-break:keep-all]">
+        ⛔ <b>「생성을 안 한 것」은 여기서 세지 않습니다</b> — 버튼을 누른 것만 세는 자리예요. 안 누른 것은 위 깔때기에서
+        ①과 ②의 차이로 보입니다.
+      </p>
 
       {/* ── 검수 세 갈래 ─────────────────────────────────── */}
       <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">검수</h2>

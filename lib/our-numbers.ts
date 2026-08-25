@@ -86,9 +86,13 @@ export interface OurNumbers {
     만들기누름: number;
     생성누름: number;
     생성됨: number;
+    /** ⛔ «눌렀는데» 못 만든 것만 센다 (2026-08-25 사장님 지시).
+     *  안 누른 것은 세지 않는다 — 누른 것을 세는 자리이므로. */
     생성불가: number;
-    /** 생성이 안 된 까닭 — 「오류」와 「눌러 보지도 않고 나감」을 가른다 */
-    불가사유: { 까닭: string; 건수: number }[];
+    /** 오류로 실패한 것 — 오류 코드와 함께 */
+    오류사유: { 까닭: string; 코드: string; 건수: number }[];
+    /** 생성 중 이탈 — 눌러 놓고 기다리다 화면을 떠난 것 */
+    이탈: { 건수: number; 평균초: number | null; 가장오래초: number | null };
   };
   /** 손님이 적은 컨셉 — 무엇을 만들고 싶어 했는지가 여기 다 있다 */
   컨셉들: { 때: Date; 메일: string; 컨셉: string; 생성됨: boolean }[];
@@ -121,6 +125,7 @@ export const FAIL_REASONS: Record<string, string> = {
   "already-has-menus": "이미 메뉴가 있는 프로젝트였습니다",
   failed: "까닭 모를 실패 — 로그를 봐야 합니다",
   "insufficient-credit": "손님 크레딧이 모자랐습니다",
+  "left-during": "생성 중에 화면을 떠났습니다 (오류가 아닙니다)",
 };
 /** 코드든 우리말이든 읽히게 — 모르는 코드는 그대로 보여 준다(지어내지 않는다). */
 export function failReasonText(code: string | null | undefined): string {
@@ -219,18 +224,33 @@ export async function readOurNumbers(): Promise<OurNumbers> {
            (select count(*) from generation_attempt g
               where g.kind = 'ia' and not g.ok and ${손님것("g.user_id")}) as 오류`);
 
-  /* 「생성 불가」는 둘로 갈린다 — 눌렀는데 오류가 난 것과, 아예 안 누르고 나간 것.
-     둘은 처방이 다르다. 앞은 우리가 고쳐야 하고, 뒤는 화면이 뭔가 막고 있는 것이다. */
-  const 오류수 = 수(깔때기?.오류);
-  const 중도이탈 = Math.max(0, 수(깔때기?.만들기누름) - 수(깔때기?.생성누름));
-  const 불가사유: { 까닭: string; 건수: number }[] = [];
+  /* ⛔ 「생성 불가」는 «눌렀는데» 안 된 것만이다 (2026-08-25 사장님 지시).
+   *
+   *   생성 불가(오류)  눌렀는데 오류가 났다        → 우리가 고칠 것. 코드를 같이 남긴다
+   *   생성 중 이탈     눌러 놓고 기다리다 떠났다    → 우리가 너무 오래 걸린 것
+   *   생성을 안 했다   버튼을 안 눌렀다            → 세지 않는다. 누른 것을 세는 자리다
+   *
+   * 「못한 것」과 「안 한 것」은 다르다. 섞으면 무엇을 고쳐야 하는지가 안 보인다. */
+  const 오류사유: { 까닭: string; 코드: string; 건수: number }[] = [];
   for (const r of await 물어(sql`
     select coalesce(reason,'(까닭 없음)') as 까닭, count(*) as n
-    from generation_attempt where kind = 'ia' and not ok and ${손님것("user_id")}
+    from generation_attempt
+    where kind = 'ia' and not ok and coalesce(reason,'') <> 'left-during'
+      and ${손님것("user_id")}
     group by 1 order by n desc`))
-    불가사유.push({ 까닭: failReasonText(String(r.까닭)), 건수: 수(r.n) });
-  if (중도이탈 > 0)
-    불가사유.push({ 까닭: "생성을 눌러 보지도 않고 나갔습니다 (화면에서 멈춘 것)", 건수: 중도이탈 });
+    오류사유.push({ 까닭: failReasonText(String(r.까닭)), 코드: String(r.까닭), 건수: 수(r.n) });
+
+  const [이탈줄] = await 물어(sql`
+    select count(*) as n, avg(waited_ms) as 평균, max(waited_ms) as 최대
+    from generation_attempt
+    where kind = 'ia' and not ok and reason = 'left-during' and ${손님것("user_id")}`);
+  const 초로 = (v: unknown) => (v == null ? null : Math.round(Number(v) / 100) / 10);
+  const 이탈 = {
+    건수: 수(이탈줄?.n),
+    평균초: 초로(이탈줄?.평균),
+    가장오래초: 초로(이탈줄?.최대),
+  };
+  const 오류수 = 오류사유.reduce((a, b) => a + b.건수, 0);
 
   /* 손님이 적은 컨셉 — 무엇을 만들고 싶어 했는지. 빈 것은 뺀다(껍데기라 볼 것이 없다). */
   const 컨셉들 = (
@@ -343,8 +363,9 @@ export async function readOurNumbers(): Promise<OurNumbers> {
       만들기누름: 수(깔때기?.만들기누름),
       생성누름: 수(깔때기?.생성누름),
       생성됨: 수(깔때기?.생성됨),
-      생성불가: 오류수 + 중도이탈,
-      불가사유,
+      생성불가: 오류수 + 이탈.건수,
+      오류사유,
+      이탈,
     },
     컨셉들,
     검수,

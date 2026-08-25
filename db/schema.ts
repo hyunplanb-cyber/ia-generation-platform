@@ -627,6 +627,17 @@ export const generationAttempt = pgTable(
     /** 성공했을 때 몇 개가 나왔나 — 나중에 「빈 껍데기 성공」을 가려낼 때 쓴다. */
     menuCount: integer("menu_count"),
     screenCount: integer("screen_count"),
+    /** 손님이 «생성 중에» 화면을 떠났을 때, 몇 초를 기다렸다 나갔나 (밀리초).
+     *
+     * 왜 필요한가 — 2026-08-25 사장님 지시.
+     *   「생성을 못한 것」과 「안 한 것」과 「기다리다 나간 것」은 다르다.
+     *   못한 것은 우리가 고치고, 안 한 것은 셀 것도 아니고,
+     *   기다리다 나간 것은 «얼마나 참아 줬는지»가 곧 우리가 줄여야 할 시간이다.
+     *
+     * ⚠ 서버는 손님이 나간 것을 모른다 — 서버 액션은 브라우저가 닫혀도 끝까지 돈다.
+     *   그래서 브라우저가 떠나면서 보내는 비콘(/api/generation-left)으로만 알 수 있다.
+     *   비콘이 못 갈 수도 있으니 이 수는 «최소»다. 이보다 적진 않다. */
+    waitedMs: integer("waited_ms"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [

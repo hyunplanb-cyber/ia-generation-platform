@@ -336,20 +336,51 @@ export function BriefForm({
         </aside>
       </div>
 
-      {pending && <GeneratingOverlay />}
+      {pending && <GeneratingOverlay projectId={project.id} size={scale} />}
     </div>
   );
 }
 
 // 생성 대기 화면. pending일 때만 화면에 붙으므로, 마운트되는 순간이 곧 시작 시점이다
 // (그래서 따로 초기화할 필요가 없다).
-function GeneratingOverlay() {
+function GeneratingOverlay({ projectId, size }: { projectId: string; size: Scale }) {
   const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => setElapsed((s) => s + 1), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  /* ⭐ 손님이 «기다리다 나간 것»을 알리는 유일한 길 (2026-08-25 사장님 지시).
+   *
+   * 서버 액션은 브라우저가 닫혀도 끝까지 돈다 — 서버 눈에는 그냥 «성공»으로 보인다.
+   * 떠나는 순간을 아는 것은 브라우저뿐이라, 떠나면서 비콘을 하나 보낸다.
+   *
+   * ⛔ visibilitychange 를 쓰지 않는다. 30~60초를 기다리는 동안 «탭을 잠깐 옮기는 것»은
+   *   아주 흔한 일이고 그건 나간 게 아니다. 그것까지 세면 이탈이 부풀어 못 쓴다.
+   *   pagehide 만 본다 — 탭을 닫거나 다른 데로 옮겨 간 것, 즉 «정말 떠난 것»이다.
+   *
+   * ⚠ 생성이 성공하면 redirect 로 «화면 안에서» 넘어가므로 pagehide 가 안 뜬다.
+   *   그리고 pending 이 끝나면 이 화면이 사라지면서 아래 정리가 돌아 귀를 뗀다.
+   *   그래서 성공한 것이 이탈로 잘못 세어질 일은 없다.
+   */
+  useEffect(() => {
+    const 시작 = Date.now();
+    let 보냈나 = false;
+    const 알리기 = () => {
+      if (보냈나) return;
+      보냈나 = true;
+      navigator.sendBeacon?.(
+        "/api/generation-left",
+        /* text/plain 으로 보낸다 — 그래야 미리 묻는 요청(preflight) 없이 그냥 간다 */
+        new Blob([JSON.stringify({ projectId, size, waitedMs: Date.now() - 시작 })], {
+          type: "text/plain",
+        }),
+      );
+    };
+    window.addEventListener("pagehide", 알리기);
+    return () => window.removeEventListener("pagehide", 알리기);
+  }, [projectId, size]);
 
   // 8초에 한 단계씩 넘어가고 마지막 문구에서 멈춘다. 실제 진행률이 아니라 안내다.
   const step = Math.min(Math.floor(elapsed / 8), PROGRESS_STEPS.length - 1);

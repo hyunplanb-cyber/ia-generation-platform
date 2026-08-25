@@ -33,6 +33,8 @@ export async function 시도남기기(입력: {
   reason?: string | null;
   menuCount?: number | null;
   screenCount?: number | null;
+  /** 「생성 중 이탈」일 때만 — 몇 밀리초를 기다렸다 나갔나 */
+  waitedMs?: number | null;
 }): Promise<void> {
   try {
     const session = await requireSession();
@@ -47,6 +49,7 @@ export async function 시도남기기(입력: {
       reason: 입력.reason ? String(입력.reason).slice(0, 300) : null,
       menuCount: 입력.menuCount ?? null,
       screenCount: 입력.screenCount ?? null,
+      waitedMs: 입력.waitedMs ?? null,
     });
   } catch {
     /* 남기지 못해도 넘어간다 — 위 ⚠ 참고 */
