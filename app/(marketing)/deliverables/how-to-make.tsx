@@ -32,9 +32,12 @@ type 단계 = {
   /** 상자 왼쪽 위에 붙는 이름표 — 그 토막이 «앱의 어느 화면»인지 적는다.
    *  지어낸 말이 아니라 녹화본 안 STEP 표시를 그대로 옮긴 것이다. */
   창이름: string;
-  /** 상자 바탕 — 단계마다 다른 파스텔이다 (2026-08-25 사장님 지시, AI팩 탭과 같은 결).
-   *  ⚠ 한 줄로 세로로 쌓이니 «바로 위아래»가 닮은 색이면 안 된다. 그 차례로 골라 뒀다. */
+  /** 카드 바탕. 넷은 파스텔, 둘은 «진한» 브랜드색이다 (2026-08-25 사장님: 「너무 재미가 없어」).
+   *  ⚠ 여섯이 다 파스텔이면 얌전하기만 하다. 둘을 눌러 줘야 눈이 걸린다.
+   *  ⚠ 3단 격자라 «옆»과 «아래»가 닮은 색이면 안 된다. 그 차례로 골라 뒀다. */
   바탕: string;
+  /** 진한 카드인가 — 그러면 글자를 뒤집는다. 안 뒤집으면 아예 안 보인다. */
+  진하냐?: boolean;
 };
 
 const 단계들: 단계[] = [
@@ -53,7 +56,8 @@ const 단계들: 단계[] = [
     말: "AI가 뽑아 준 메뉴를 보고 더하거나 뺍니다. 색·글꼴 3벌과 화면 뼈대 2벌 중에서 마음에 드는 걸 고르면, 뒤에 만들어지는 화면이 전부 그 얼굴로 나옵니다.",
     토막: "step2",
     창이름: "STEP 2 · 메뉴·디자인 컨셉",
-    바탕: "bg-pastel-mint",
+    바탕: "bg-primary",
+    진하냐: true,
     걸린시간: "2분",
   },
   {
@@ -80,7 +84,8 @@ const 단계들: 단계[] = [
     말: "고른 색과 뼈대가 실제 화면에서 어떻게 보이는지 미리 확인합니다. 색 3벌 × 뼈대 2벌 = 여섯 가지로 섞어 쓸 수 있어요.",
     토막: "step5",
     창이름: "STEP 3 · 디자인 프리셋",
-    바탕: "bg-danger-soft",
+    바탕: "bg-success",
+    진하냐: true,
     걸린시간: "",
   },
   {
@@ -144,78 +149,92 @@ export function HowToMakeBody() {
             같은 말을 두 번 하고 있었다.
             ⚠ 다시 넣을 일이 있으면 옆 탭(AI팩)의 제목과 «같은 결»로 맞춘다. */}
 
-        {/* 목록 — 왼쪽에 움직이는 화면, 오른쪽에 번호·제목·설명.
-            단계마다 «가는 가로선» 하나로 나뉜다 (2026-08-25 사장님 지시, 레퍼런스와 같은 결).
-            ⚠ 사장님이 「영상 옆 라인」이라 하신 것은 이 가로선이 아니라 «녹화본 안»에
-              찍혀 있던 창 테두리였다. 원본 왼쪽 2px 이 어두웠던 것 — 8px 을 잘라 없앴다.
-              한 번 헛짚어 이 가로선을 지웠다가 다시 넣는다.
-            ⚠ 영상 칸은 400px 로 못 박는다. fr 로 두면 1440에서 807px 까지 커져
-               한 줄이 500px 넘게 높아졌다. */}
-        <ol ref={목록} className="flex flex-col">
-          {단계들.map((s) => (
-            <li
-              key={s.no}
-              /* first:border-t-0 — 맨 윗줄 위에는 선을 안 긋는다 (2026-08-25 사장님 지시).
-                 바로 위에 탭 띠의 밑줄이 이미 있어서, 선이 두 줄로 겹쳐 보였다.
-                 선은 «단계와 단계 사이»를 나누는 것이지 절의 뚜껑이 아니다. */
-              className="grid grid-cols-1 items-center gap-5 border-t border-border py-10 first:border-t-0 md:grid-cols-[340px_1fr] md:gap-10 md:py-12 lg:grid-cols-[400px_1fr] lg:gap-14"
-            >
-              {/* 상자에 담는다 (2026-08-25 사장님 지시).
-                  ⛔ 왜 — 녹화본의 바탕이 종이색(#FAFAFA)이라 페이지 바탕과 거의 같았다.
-                     테두리도 없으니 영상이 «어디서 시작해 어디서 끝나는지» 안 보였다.
-                     사장님: 「영상이 너무 안보이는 거 같아서」.
-                  ⛔ 처음엔 레퍼런스대로 «까만» 상자로 했다가, 사장님이 AI팩 탭처럼
-                     파스텔로 바꿔 달라 하셔서 단계마다 다른 파스텔로 깔았다.
-                     한 페이지 안에서 두 탭이 서로 다른 결이면 옮겨 다닐 때 눈이 튄다.
-                  ⚠ 바탕을 밝게 바꾸면 «그 위의 글자와 점»도 같이 뒤집어야 한다.
-                     흰 글자를 그대로 두면 파스텔 위에서 아예 안 보인다.
-                  이름표와 점 셋은 레퍼런스에서 가져왔다 — 그 토막이 앱의 어느 화면인지
-                  한 줄로 알려 주고, 「이건 실제 화면 녹화다」를 눈으로 말해 준다. */}
-              <div className={`rounded-2xl p-3 sm:p-3.5 max-md:max-w-[400px] ${s.바탕}`}>
-                <div className="flex items-center justify-between px-1.5 pb-2.5 pt-0.5">
-                  <span className="truncate text-[11px] font-semibold tracking-wide text-foreground/60">
-                    {s.창이름}
-                  </span>
-                  <span className="flex shrink-0 gap-1" aria-hidden="true">
-                    <i className="size-1.5 rounded-full bg-foreground/25" />
-                    <i className="size-1.5 rounded-full bg-foreground/25" />
-                    <i className="size-1.5 rounded-full bg-foreground/25" />
-                  </span>
-                </div>
-                <div className="overflow-hidden rounded-xl bg-surface">
-                  <video
-                    src={`/guide-clips/${s.토막}.mp4`}
-                    poster={`/guide-clips/${s.토막}.jpg`}
-                    width={800}
-                    height={500}
-                    className="block h-auto w-full"
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    aria-label={`${s.no} ${s.제목}`}
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="flex items-center gap-2.5">
-                  <span className="font-mono text-sm font-semibold text-primary">{s.no}</span>
-                  {s.걸린시간 && (
-                    <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-primary-on-soft">
-                      {s.걸린시간}
+        {/* 카드 셋씩 두 줄 (2026-08-25 사장님: 「너무 좌측으로 쏠리고 사이트가 너무 재미가
+            없어」). 앞서는 «영상 왼쪽 + 글 오른쪽»이 한 줄을 통째로 썼는데, 영상을 400px
+            로 못 박아 두니 1440에서 오른쪽 950px 이 거의 빈 종이였다. 셋씩 깔면 그 자리가
+            없어진다.
+
+            한 칸의 짜임은 레퍼런스에서 가져왔다:
+              뱃지 → 그림판 → 제목 → 가는 선 → 설명 → 오른쪽 아래 동그라미
+
+            ⚠ 동그라미에 «화살표»는 안 넣었다. 레퍼런스는 눌러서 넘어가는 카드라 화살표가
+              맞지만, 여기 여섯은 «설명»이지 링크가 아니다. 눌러도 아무 데도 안 간다 —
+              누를 수 있는 것처럼 보이게 만들면 안 된다. 대신 단계 번호를 넣었다.
+            ⚠ 가운뎃줄(2·5번)만 조금 내려 세운다. 여섯이 자로 잰 듯 나란하면 얌전하기만
+              하다. 레퍼런스가 그렇게 어긋 세워 놓았다. */}
+        <ol ref={목록} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+          {단계들.map((s, i) => {
+            /* 진한 카드에서는 글자를 통째로 뒤집는다 — 낱낱이 고르면 하나를 빠뜨린다 */
+            const 글 = s.진하냐 ? "text-background" : "text-foreground";
+            const 옅은글 = s.진하냐 ? "text-background/75" : "text-foreground/70";
+            const 선 = s.진하냐 ? "bg-background/25" : "bg-foreground/12";
+            const 뱃지 = s.진하냐
+              ? "bg-background/15 text-background"
+              : "bg-surface text-foreground";
+            return (
+              <li
+                key={s.no}
+                className={`flex flex-col rounded-3xl p-5 sm:p-6 ${s.바탕} ${
+                  i % 3 === 1 ? "lg:mt-12" : ""
+                }`}
+              >
+                {/* 그림판 — 영상이 사는 자리. 흰 종이라 녹화본이 또렷하게 뜬다. */}
+                <div className="rounded-2xl bg-surface p-2.5 sm:p-3">
+                  <div className="flex items-center justify-between px-1 pb-2 pt-0.5">
+                    <span className="truncate text-[11px] font-semibold tracking-wide text-foreground/55">
+                      {s.창이름}
                     </span>
-                  )}
+                    <span className="flex shrink-0 gap-1" aria-hidden="true">
+                      <i className="size-1.5 rounded-full bg-foreground/20" />
+                      <i className="size-1.5 rounded-full bg-foreground/20" />
+                      <i className="size-1.5 rounded-full bg-foreground/20" />
+                    </span>
+                  </div>
+                  <div className="overflow-hidden rounded-xl bg-surface">
+                    <video
+                      src={`/guide-clips/${s.토막}.mp4`}
+                      poster={`/guide-clips/${s.토막}.jpg`}
+                      width={800}
+                      height={500}
+                      className="block h-auto w-full"
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                      aria-label={`${s.no} ${s.제목}`}
+                    />
+                  </div>
                 </div>
-                <h3 className="mt-3 text-xl font-bold text-foreground sm:text-2xl [word-break:keep-all]">
+
+                {s.걸린시간 && (
+                  <span
+                    className={`mt-6 self-start rounded-full px-2.5 py-0.5 text-xs font-semibold ${뱃지}`}
+                  >
+                    {s.걸린시간}
+                  </span>
+                )}
+                <h3
+                  className={`text-xl font-bold [word-break:keep-all] ${글} ${
+                    s.걸린시간 ? "mt-3" : "mt-6"
+                  }`}
+                >
                   {s.제목}
                 </h3>
-                {/* 글 칸이 950px 까지 넓어져 한 줄이 너무 길다 — 글줄만 물린다. */}
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
+                <div className={`mt-5 h-px w-full ${선}`} />
+                <p className={`mt-5 text-sm leading-relaxed [word-break:keep-all] ${옅은글}`}>
                   {s.말}
                 </p>
-              </div>
-            </li>
-          ))}
+                {/* mt-auto — 카드 키가 제각각이라도 번호는 바닥에 나란히 선다 */}
+                <div className="mt-auto flex justify-end pt-6">
+                  <span
+                    className={`grid size-11 place-items-center rounded-full font-mono text-sm font-bold ${뱃지}`}
+                  >
+                    {s.no}
+                  </span>
+                </div>
+              </li>
+            );
+          })}
         </ol>
       </div>
     </section>
