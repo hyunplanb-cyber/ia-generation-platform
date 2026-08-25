@@ -139,10 +139,8 @@ export function StatsView({ n }: { n: OurNumbers }) {
       <div className="mt-3 space-y-1.5">
         {[
           { 이름: "① 「AI팩 만들기」를 눌렀다", 값: n.깔때기.만들기누름, 풀이: "빈 프로젝트가 생깁니다 · 공짜" },
-          { 이름: "② 컨셉을 적었다", 값: n.깔때기.컨셉적음, 풀이: "아직 크레딧은 안 빠집니다" },
-          { 이름: "③ 메뉴 초안까지 적었다", 값: n.깔때기.메뉴초안적음, 풀이: "생성 버튼 바로 앞" },
-          { 이름: "④ 「생성」을 눌렀다", 값: n.깔때기.생성누름, 풀이: "2026-08-25 부터 셉니다" },
-          { 이름: "⑤ 생성이 됐다", 값: n.깔때기.생성됨, 풀이: "메뉴·화면이 생기고 크레딧이 빠집니다", 끝: true },
+          { 이름: "② 「생성」을 눌렀다", 값: n.깔때기.생성누름, 풀이: "2026-08-25 부터 셉니다" },
+          { 이름: "③ 생성 완료", 값: n.깔때기.생성됨, 풀이: "메뉴·화면이 생기고 크레딧이 빠집니다", 끝: true },
         ].map((칸) => {
           const 폭 = n.깔때기.만들기누름 > 0 ? Math.max(4, (칸.값 / n.깔때기.만들기누름) * 100) : 4;
           return (
@@ -161,6 +159,75 @@ export function StatsView({ n }: { n: OurNumbers }) {
           );
         })}
       </div>
+
+      {/* ── 생성 불가 — 왜 못 만들었나 ─────────────────────
+          「오류」와 「눌러 보지도 않고 나감」은 처방이 다르다.
+          앞은 우리가 고칠 것이고, 뒤는 화면이 뭔가 막고 있는 것이다. */}
+      <div className="mt-4 rounded-xl border border-border bg-surface p-5">
+        <div className="flex items-baseline gap-2">
+          <span className="text-xs font-bold text-muted-foreground">생성 불가</span>
+          <span className="text-2xl font-extrabold tabular-nums text-foreground">{콤마(n.깔때기.생성불가)}</span>
+          <span className="text-sm font-semibold text-muted-foreground">건</span>
+        </div>
+        {n.깔때기.불가사유.length === 0 ? (
+          <p className="mt-1 text-sm text-muted-foreground">못 만든 것이 없습니다.</p>
+        ) : (
+          <ul className="mt-2 space-y-1 text-sm text-muted-foreground [word-break:keep-all]">
+            {n.깔때기.불가사유.map((r) => (
+              <li key={r.까닭}>
+                <b className="tabular-nums text-foreground">{r.건수}건</b> — {r.까닭}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* ── 검수 세 갈래 ─────────────────────────────────── */}
+      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">검수</h2>
+      <p className="mt-1 text-sm text-muted-foreground [word-break:keep-all]">
+        <b className="text-foreground">누름</b>은 [검수하기]를 누른 횟수, <b className="text-foreground">됨</b>은 결과가 나온 횟수입니다.
+        ⚠ 누름은 2026-08-25 부터 셉니다 — 그 전 것은 「됨」만 있습니다.
+      </p>
+      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {n.검수.map((v) => (
+          <div key={v.갈래} className="rounded-xl border border-border bg-surface p-5">
+            <div className="text-xs font-bold text-muted-foreground">{v.갈래}</div>
+            <div className="mt-1 flex items-baseline gap-3">
+              <span className="text-3xl font-extrabold tabular-nums text-foreground">{콤마(v.됨)}</span>
+              <span className="text-sm font-semibold text-muted-foreground">됨</span>
+            </div>
+            <div className="mt-1 text-xs text-muted-foreground">[검수하기] 누름 {콤마(v.누름)}회</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── 손님이 적은 컨셉 ─────────────────────────────── */}
+      <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">손님이 적은 컨셉</h2>
+      <p className="mt-1 text-sm text-muted-foreground [word-break:keep-all]">
+        무엇을 만들고 싶어 하셨는지가 여기 다 있습니다. 빈 것은 뺐어요.
+      </p>
+      {n.컨셉들.length === 0 ? (
+        <p className="mt-3 rounded-xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted-foreground">
+          아직 컨셉을 적은 손님이 없습니다.
+        </p>
+      ) : (
+        <div className="mt-3 space-y-2">
+          {n.컨셉들.map((c, i) => (
+            <div key={i} className="rounded-xl border border-border bg-surface px-4 py-3">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <span className="tabular-nums">{짧게(c.때)}</span>
+                <span>{maskEmail(c.메일)}</span>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${c.생성됨 ? "bg-teal-100 text-teal-800" : "bg-slate-100 text-slate-600"}`}
+                >
+                  {c.생성됨 ? "생성됨" : "여기서 멈춤"}
+                </span>
+              </div>
+              <p className="mt-1.5 text-sm leading-relaxed text-foreground [word-break:keep-all]">{c.컨셉}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* ── 실제로 만들어진 알맹이 ────────────────────────── */}
       <h2 className="mt-10 border-t-2 border-foreground pt-5 text-lg font-bold text-foreground">

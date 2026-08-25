@@ -11,6 +11,7 @@ import { creditsOpenForMe } from "@/application/billing-gate";
 import { VERIFY_CHUNK, verifyGenCost, insufficientCreditMessage } from "@/lib/credits";
 import { buildSpecPackMarkdown } from "@/lib/export/spec-pack";
 import { drizzleVerifyRunRepository } from "@/adapters/repository/drizzle/verify-run-repository";
+import { 시도남기기 } from "@/application/generation-attempt";
 import type { VerificationReport } from "@/domain/verify/report";
 
 export interface ProjectVerifyState {
@@ -35,7 +36,23 @@ export async function generateScenariosAction(
   const detailMode = String(formData.get("mode") ?? "basic") === "detail";
   if (!projectId) return fail("프로젝트 정보를 찾지 못했어요. 새로고침 후 다시 시도해 주세요.");
 
-  let ownerId: string;
+  /* ⭐ [검수하기] 를 «눌렀다»는 것을 성공이든 실패든 남긴다 (2026-08-25 사장님 지시).
+     그 전에는 성공한 것만 verify_run 에 남아서, 손님이 눌렀다가 막힌 것을 셀 수가
+     없었다 — AI팩 생성에서 8/15~8/24 아흐레를 놓친 것과 같은 구멍이다. */
+  let ownerId = "";
+  const 실패 = async (보일말: string, 까닭: string): Promise<ProjectVerifyState> => {
+    if (ownerId) {
+      await 시도남기기({
+        projectId,
+        kind: "verify-pack",
+        size: detailMode ? "detail" : "basic",
+        ok: false,
+        reason: 까닭,
+      });
+    }
+    return fail(보일말);
+  };
+
   try {
     const session = await requireSession();
     ownerId = session.user.id;
@@ -51,7 +68,7 @@ export async function generateScenariosAction(
   ]);
   const screens = detail.screens.filter((s) => s.status === "active");
   if (screens.length === 0) {
-    return fail("먼저 산출물(화면 목록)을 생성해 주세요. 그 화면들 기준으로 시나리오를 만들어요.");
+    return 실패("먼저 산출물(화면 목록)을 생성해 주세요. 그 화면들 기준으로 시나리오를 만들어요.", "no-screens");
   }
   const label = detail.project.concept || "검수 시나리오";
 
@@ -62,6 +79,7 @@ export async function generateScenariosAction(
     : 1;
   // 한도는 크레딧 하나로만 정한다(기능별 무료 횟수를 두지 않는다).
   if ((await getCreditBalance()) < verifyGenCost(plannedChunks)) {
+    await 시도남기기({ projectId, kind: "verify-pack", size: detailMode ? "detail" : "basic", ok: false, reason: "insufficient-credit" });
     return { report: null, error: insufficientCreditMessage(await creditsOpenForMe()), limitReached: true, runId: null };
   }
 
@@ -84,7 +102,7 @@ export async function generateScenariosAction(
     const oks = results.filter(
       (r): r is { ok: true; report: VerificationReport; chunks: number } => r.ok,
     );
-    if (oks.length === 0) return fail("검수 시나리오를 만들지 못했어요. 잠시 후 다시 시도해 주세요.");
+    if (oks.length === 0) return 실패("검수 시나리오를 만들지 못했어요. 잠시 후 다시 시도해 주세요.", "failed");
     report = { ...oks[0].report, scenarios: oks.flatMap((r) => r.report.scenarios) };
     doneChunks = oks.length;
   } else {
@@ -92,7 +110,7 @@ export async function generateScenariosAction(
       label,
       buildSpecPackMarkdown(detail.project, menus, screens, detail.buttonActions),
     );
-    if (!result.ok) return fail("검수 시나리오를 만들지 못했어요. 잠시 후 다시 시도해 주세요.");
+    if (!result.ok) return 실패("검수 시나리오를 만들지 못했어요. 잠시 후 다시 시도해 주세요.", result.reason ?? "failed");
     report = result.report;
     doneChunks = result.chunks;
   }
@@ -115,6 +133,14 @@ export async function generateScenariosAction(
   } catch (error) {
     console.error("검수 시나리오 저장 실패", error);
   }
+
+  await 시도남기기({
+    projectId,
+    kind: "verify-pack",
+    size: detailMode ? "detail" : "basic",
+    ok: true,
+    screenCount: screens.length,
+  });
 
   revalidatePath(`/dashboard/${projectId}/verify`);
   return { report, error: null, limitReached: false, runId };
