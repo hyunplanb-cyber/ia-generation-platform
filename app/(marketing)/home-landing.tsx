@@ -72,8 +72,8 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
                 <Image
                   src="/character/01_home_hero_blueprint_qa.webp"
                   alt="설계도를 들고 화면을 검수하는 카페인컬러 캐릭터"
-                  width={1200}
-                  height={1161}
+                  width={925}
+                  height={885}
                   priority
                   sizes="(max-width: 1180px) 320px, 520px"
                 />
@@ -184,8 +184,8 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               <Image
                 src="/character/02_home_concept_to_aipack.webp"
                 alt="한 줄 컨셉을 메뉴·화면 목록·기능정의·흐름·일정으로 뽑아내는 카페인컬러 캐릭터"
-                width={1000}
-                height={1000}
+                width={899}
+                height={967}
                 sizes="(max-width: 999px) 300px, 400px"
               />
             </div>
@@ -243,19 +243,13 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
                 열어야 할 화면이 통째로 비어 있었습니다.
               </p>
             </div>
-            {/* 「빠진 화면」을 그림으로 — 칸이 뚫린 화면들이 그 말 그대로다.
-                ⚠ 좁을 때는 display:none 이라 «칸 자체가 없어진다». 그래야 지금까지의
-                   두 칸(글 + ✕목록)이 한 자도 안 밀린다. 폭을 0으로 줄이는 식으로 하면
-                   gap 이 남아 두 칸 사이가 벌어진다. */}
-            <div className="thesis-figure">
-              <Image
-                src="/character/03_home_missing_screens.webp"
-                alt="화면 목록에서 군데군데 빠져 있는 칸을 가리키는 카페인컬러 캐릭터"
-                width={900}
-                height={600}
-                sizes="280px"
-              />
-            </div>
+            {/* ⛔ 여기에 캐릭터(03_home_missing_screens)를 넣었다가 뺐다 — 2026-08-25.
+                사장님: 「이 이미지는 위치 별로인거 같아.」 맞는 말씀이었다. 까닭은 둘이다.
+                  ① 이 어두운 칸은 이미 «글 + ✕목록» 두 칸으로 꽉 찼다. 셋째 칸을 끼우니
+                     그림이 280px 로 눌려 캐릭터가 손톱만 해졌다.
+                  ② 그림이 말하는 것(칸이 뚫린 화면들)과 옆의 ✕목록이 «같은 말»이다.
+                     같은 말을 두 번 하면 둘 다 힘이 빠진다.
+                → 그림 파일은 public/character 에 그대로 둔다. 쓸 자리가 생기면 꺼내 쓴다. */}
             <div className="ex-list">
               <div className="ex-item">
                 <span className="x">✕</span> 팝업을 등록할 화면
@@ -302,29 +296,35 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               머리글을 sc-cap(19px)에서 h2 로 올렸다(2026-08-14). 절이 갈라지면서
               이 절의 제일 큰 글자가 19px 이 되어 버렸는데, 옆 절 제목이 58px 이라
               혼자 «잘린 조각»처럼 보였다. 문장은 그대로 옮겨 왔고 새로 짓지 않았다. */}
+          {/* 그림은 «카피 오른쪽», 영상은 원래대로 한 단 (2026-08-25 사장님 지시).
+              처음엔 영상 왼쪽에 세웠는데 16:9 영상이 워낙 커서 그림이 곁다리로 보였다.
+              위 「한 줄 컨셉」·아래 「대신 눌러봐 드려요」와 같은 짜임으로 맞춘다 —
+              제목·리드는 왼쪽, 그림은 오른쪽, 알맹이는 그 밑에 폭을 다 쓴다. */}
+          <div className="proof-intro">
+            <div>
           <h2>
             AI팩을 주면<br />
             <span className="o">이렇게 됩니다.</span>
           </h2>
           {/* 바로 위 절에서 「빠진 것」으로 말해 놓고 여기서 144개를 자랑하면 힘이 상쇄된다.
               숫자를 근거가 아니라 배경으로 밀어낸다 — 앞에 오는 것은 「빠뜨린 화면까지」다. */}
-          <p className="lead">
-            지시서 파일 하나를 Claude Code에 넣고 돌린 기록이에요. 위에 적은 빠지기 쉬운 화면까지
-            한 벌로 넣어 돌렸고, 약 40분 만에 화면 144개가 만들어졌습니다.
-          </p>
-
-          <div className="showcase">
-            {/* 영상 왼쪽 — 「스펙팩 한 벌 → 화면 여러 장」을 그림이 먼저 말한다.
-                영상은 눌러야 보이지만 그림은 스치기만 해도 읽힌다. */}
-            <div className="sc-figure">
+              <p className="lead">
+                지시서 파일 하나를 Claude Code에 넣고 돌린 기록이에요. 위에 적은 빠지기 쉬운 화면까지
+                한 벌로 넣어 돌렸고, 약 40분 만에 화면 144개가 만들어졌습니다.
+              </p>
+            </div>
+            <div className="proof-figure">
               <Image
                 src="/character/04_home_spec_to_screens.webp"
                 alt="스펙팩 한 벌을 넣어 화면을 잔뜩 만들어 내는 카페인컬러 캐릭터"
                 width={1000}
-                height={1000}
-                sizes="(max-width: 1023px) 280px, 340px"
+                height={914}
+                sizes="(max-width: 999px) 300px, 380px"
               />
             </div>
+          </div>
+
+          <div className="showcase">
             <div className="sc-frame">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${SHOWCASE_VIDEO_ID}`}
@@ -399,8 +399,8 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
               <Image
                 src="/character/05_home_site_inspection.webp"
                 alt="공개 화면을 통과·실패·주의로 가려 검수하는 카페인컬러 캐릭터"
-                width={1000}
-                height={1000}
+                width={783}
+                height={681}
                 sizes="(max-width: 999px) 300px, 380px"
               />
             </div>
@@ -909,8 +909,7 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
            종이 여백 위에 그대로 두는 편이 소품이 살아난다. */
         .cc :global(.plan-figure img),
         .cc :global(.verify-figure img),
-        .cc :global(.sc-figure img),
-        .cc :global(.thesis-figure img) {
+        .cc :global(.proof-figure img) {
           width: 100%;
           height: auto;
           object-fit: contain;
@@ -976,24 +975,27 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         .sec-proof h2 .o {
           color: var(--orange);
         }
+        /* 영상은 «한 단»이다 — 폭을 다 쓴다 (2026-08-25 사장님 지시로 되돌렸다) */
         .showcase {
           margin-top: 40px;
+        }
+        .proof-intro {
           display: grid;
-          gap: 24px;
+          gap: 20px;
         }
-        .sc-figure {
+        .proof-figure {
           justify-self: center;
-          width: min(280px, 75%);
+          width: min(300px, 80%);
         }
-        @media (min-width: 1024px) {
-          .showcase {
-            grid-template-columns: 340px minmax(0, 1fr);
-            gap: 36px;
+        @media (min-width: 1000px) {
+          .proof-intro {
+            grid-template-columns: minmax(0, 1fr) 380px;
+            gap: 48px;
             align-items: center;
           }
-          .sc-figure {
-            justify-self: start;
-            width: 340px;
+          .proof-figure {
+            justify-self: end;
+            width: 380px;
           }
         }
         .sc-frame {
@@ -1026,19 +1028,6 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
         @media (max-width: 720px) {
           .thesis {
             grid-template-columns: 1fr;
-          }
-        }
-        /* 그림 칸은 «넓을 때만» 생긴다. display:none 이라 좁을 때는 칸 자체가 없어
-           지금까지의 두 칸(글 + ✕목록)이 한 자도 안 밀린다. */
-        .thesis-figure {
-          display: none;
-        }
-        @media (min-width: 1120px) {
-          .thesis {
-            grid-template-columns: 1fr 280px auto;
-          }
-          .thesis-figure {
-            display: block;
           }
         }
         .thesis h3 {
