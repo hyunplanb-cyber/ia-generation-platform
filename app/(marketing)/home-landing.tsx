@@ -1,1015 +1,1196 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
-import type { AiPackCard } from "@/lib/packages";
+import type { HomeIndustry } from "@/lib/packages";
 
-// 한 업종이 4등급이라 2개씩 넘긴다. 3개씩이면 둘째 장에 한 개만 남아,
-// 특히 모바일에서 그 한 개가 첫 장 높이만큼 늘어나 보였다.
-const PER_PAGE = 2;
-const ROLL_MS = 5000;
+/* 카페인컬러 첫 화면 — 「카페인컬러 홈 리뉴얼 v2」 시안을 옮긴 것 (2026-08-26).
+ *
+ * ⚠ 위아래(머리·꼬리)는 여기 없다. 마케팅 레이아웃의 SiteHeader·footer 가 맡는다.
+ *   시안에도 머리·꼬리가 그려져 있지만 그건 «홈에서 어떻게 보이나»를 그린 것이고,
+ *   진짜 머리는 로그인 상태·크레딧 잔액·좁은 화면 메뉴를 안고 있어 홈만 보고 갈아치울 수 없다.
+ *   그것을 바꾸면 사용가이드·구매·검수 화면의 머리도 함께 바뀐다.
+ *
+ * ⚠ 색은 아래 .cc 안에만 산다. 시안의 종이색(#F1EEE8)은 사이트 기본색(#FAFAFA)보다
+ *   따뜻한데, 그것을 :root 로 올리면 대시보드·결제·로그인 화면까지 다 물든다.
+ *
+ * 움직임은 이미 있는 것을 쓴다 — data-나타남(스크롤 따라 올라오기)·data-들썩(마우스 올리면
+ * 떠오르기)은 components/scroll-reveal.tsx 와 globals.css 가 맡는다. 시안이 들고 온
+ * IntersectionObserver 는 안 옮겼다. 그것은 화면을 훌쩍 건너뛰면 안 울려 그 칸이 영영
+ * 숨는다 — 2026-08-25 에 실서버에서 잡아 이미 버린 방식이다.
+ */
 
+/* 첫 화면 밑을 흘러가는 띠 — AI팩과 검수가 내놓는 것들 */
+const 흐르는말 = [
+  "IA · 화면목록",
+  "기능정의서",
+  "화면별 프롬프트",
+  "AI 빌드 지시서",
+  "FLOW 흐름도",
+  "개발 일정표",
+  "검수 시나리오",
+  "PASS / FAIL 결과서",
+];
 
-// 카페인컬러 메인 — 승인된 레트로모던 시안(홈페이지_리디자인_시안/template.html)을
-// 실제 페이지로 이관한 것. 스타일은 styled-jsx로 이 컴포넌트에만 스코프된다
-// (일반 element 선택자 section/h2/a 등이 다른 페이지로 새지 않게).
-// 상단 네비·하단 푸터는 마케팅 레이아웃(SiteHeader/footer)이 담당하므로 여기선 본문만.
-export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
-  // 진열 중인 팩을 PER_PAGE개씩 굴린다(지금은 2업종×4등급=8장 → 4페이지).
-  // 마우스를 올리면 멈춰서 읽을 시간을 준다.
-  const pageCount = Math.max(1, Math.ceil(packs.length / PER_PAGE));
-  const [page, setPage] = useState(0);
-  const [paused, setPaused] = useState(false);
+/* 첫 화면 오른쪽 미리보기 — 실제 산출물에서 그대로 뽑은 네 줄씩 */
+const 화면목록미리 = [
+  { id: "PCPR1000", name: "상품 목록 · 데이터 있음", tag: "자동" },
+  { id: "PCPR1001", name: "상품 목록 · 비어 있음", tag: "예외" },
+  { id: "PCCA1001", name: "장바구니 · 비어 있음", tag: "예외" },
+  { id: "PCCH1002", name: "결제 · 실패", tag: "예외" },
+];
+const 검수미리 = [
+  { id: "AUTO-02", name: "모바일 대응", tag: "PASS", kind: "pass" },
+  { id: "AUTO-06", name: "이미지 깨짐", tag: "FAIL", kind: "fail" },
+  { id: "SCN-01", name: "로그인 · 재현 확인", tag: "직접", kind: "man" },
+  { id: "SCN-02", name: "결제 · 재현 확인", tag: "직접", kind: "man" },
+];
 
+const 산출물 = [
+  { no: "01", ext: "XLSX", title: "메뉴 구조", desc: "메뉴–화면 트리" },
+  { no: "02", ext: "XLSX", title: "화면 목록", desc: "화면 하나하나 + AI 프롬프트" },
+  { no: "03", ext: "XLSX", title: "기능정의서", desc: "화면마다 뭘 해야 하는지" },
+  { no: "04", ext: "HTML", title: "FLOW 흐름도", desc: "화면 이동 연결" },
+  { no: "05", ext: "XLSX", title: "개발 일정표", desc: "화면별 개발 일정" },
+  { no: "06", ext: "MD", title: "AI 빌드 지시서", desc: "넣고 한 마디면 끝" },
+];
+
+/* 다른 AI 기획 도구에 같은 한 줄을 넣어 봤을 때 «없던» 화면들.
+   ⚠ 그 도구의 이름은 적지 않는다 — 비교광고가 되면 우리가 감당할 수 없다. */
+const 빠진화면 = [
+  "고수의 후기 기능",
+  "고수가 볼 수 있는 홈 화면",
+  "견적서 관리 · 보내기",
+  "검색 · 결과 없음",
+  "저장함 · 비어 있음",
+];
+
+const 돌린기록 = [
+  { n: 144, label: "이렇게 나온 화면" },
+  { n: 40, label: "걸린 시간, 분" },
+  { n: 1, label: "넣은 파일은 하나" },
+];
+
+const 내놓는법 = [
+  { no: "01", text: "세상에 올리기 · 도메인 · 자물쇠(HTTPS)" },
+  { no: "02", text: "회원가입·로그인 · 데이터 저장" },
+  { no: "03", text: "결제 받기 — 심사 두 달 동안 할 일" },
+  { no: "04", text: "사진·영상 · AI 기능 붙이기" },
+  { no: "05", text: "잘못 올렸을 때 되돌리기" },
+  { no: "06", text: "오픈 전 마지막 점검표" },
+];
+
+const 넣는것 = [
+  {
+    no: "01 · 카페인컬러 AI팩",
+    badge: "가장 정확해요",
+    title: "여기서 만든 AI팩",
+    desc: "이 프로젝트로 만든 AI팩을 그대로 씁니다. 화면과 요건을 다 알고 있으니 짚어드리는 것도 촘촘해요.",
+    warn: "",
+  },
+  {
+    no: "02 · 사이트 주소",
+    badge: "결과까지 나와요",
+    title: "사이트 주소 한 줄",
+    desc: "지금 올려둔 사이트를 넣으면 공개 화면은 Pass·Fail 결과까지 함께 드려요.",
+    warn: "로그인·결제 화면은 저희가 대신 누를 수 없어, 확인 순서로 드립니다.",
+  },
+  {
+    no: "03 · 가지고 계신 문서",
+    badge: "문서에서 뽑아요",
+    title: "기획서 · 화면설계서",
+    desc: "화면설계서나 기획서를 PDF로 내보내 넣어주시면 확인할 것들을 뽑아드려요.",
+    warn: "문서에 적힌 게 많을수록 정확해요. 문서만으론 결과 대신 확인 순서까지.",
+  },
+];
+
+const 검수결과물 = [
+  { title: "검수 현황", desc: "통과·실패·주의를 한눈에" },
+  { title: "자동 검사 결과서", desc: "항목마다 화면인지 기능인지" },
+  { title: "확인 순서", desc: "공개·로그인·결제 눌러보는 순서" },
+  { title: "엑셀 결과서", desc: "표지부터 현황까지 한 벌로" },
+];
+
+export function HomeLanding({ packs }: { packs: HomeIndustry[] }) {
+  const [고른업종, 업종고르기] = useState(0);
+  const 뿌리 = useRef<HTMLDivElement>(null);
+  const 막대 = useRef<HTMLDivElement>(null);
+  const 얼룩 = useRef<HTMLDivElement>(null);
+
+  /* 얼마나 읽었나 — 맨 위 3px 띠. 딸려서 첫 화면 얼룩도 아주 조금 뒤처져 움직인다.
+     ⚠ 스크롤마다 재지 않고 한 프레임에 한 번만 잰다. 안 그러면 손가락 한 번에 수십 번 잰다. */
   useEffect(() => {
-    if (paused || pageCount < 2) return;
-    const t = setInterval(() => setPage((p) => (p + 1) % pageCount), ROLL_MS);
-    return () => clearInterval(t);
-  }, [paused, pageCount]);
+    let 예약 = 0;
+    const 재기 = () => {
+      예약 = 0;
+      const y = window.scrollY || 0;
+      const 끝 = document.documentElement.scrollHeight - window.innerHeight;
+      if (막대.current) 막대.current.style.width = (끝 > 0 ? (y / 끝) * 100 : 0) + "%";
+      if (얼룩.current) 얼룩.current.style.transform = `translate3d(0,${(y * 0.09).toFixed(1)}px,0)`;
+    };
+    const 예약하기 = () => {
+      if (!예약) 예약 = requestAnimationFrame(재기);
+    };
+    window.addEventListener("scroll", 예약하기, { passive: true });
+    window.addEventListener("resize", 예약하기, { passive: true });
+    재기();
+    return () => {
+      window.removeEventListener("scroll", 예약하기);
+      window.removeEventListener("resize", 예약하기);
+      if (예약) cancelAnimationFrame(예약);
+    };
+  }, []);
+
+  /* 숫자가 0에서 차오른다.
+     ⭐ 화면(HTML)에는 «다 찬 수»를 적어 둔다. 여기서 0부터 적으면 스크립트가 막히거나
+       그 칸을 훌쩍 건너뛴 분에게 「0」만 남는다 — 안 움직이는 것보다 나쁜, 틀린 숫자다. */
+  useEffect(() => {
+    const 줄이기 = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (줄이기?.matches) return;
+    if (typeof IntersectionObserver === "undefined") return;
+    const 칸 = 뿌리.current;
+    if (!칸) return;
+    const 그림들: number[] = [];
+    const 본다 = new IntersectionObserver(
+      (들) => {
+        for (const e of 들) {
+          if (!e.isIntersecting) continue;
+          const el = e.target as HTMLElement;
+          본다.unobserve(el);
+          const 끝 = Number(el.dataset.세기);
+          if (!끝) continue;
+          const 시작 = performance.now();
+          const 한번 = (지금: number) => {
+            const p = Math.min(1, (지금 - 시작) / 900);
+            el.textContent = String(Math.round(끝 * (1 - Math.pow(1 - p, 3))));
+            if (p < 1) 그림들.push(requestAnimationFrame(한번));
+          };
+          그림들.push(requestAnimationFrame(한번));
+        }
+      },
+      { threshold: 0.5 },
+    );
+    for (const el of Array.from(칸.querySelectorAll<HTMLElement>("[data-세기]"))) 본다.observe(el);
+    return () => {
+      본다.disconnect();
+      for (const t of 그림들) cancelAnimationFrame(t);
+    };
+  }, []);
+
+  const 업종 = packs[고른업종] ?? packs[0];
 
   return (
-    <div className="cc">
-      {/* HERO */}
-      <section className="hero" id="top">
-        <div className="wrap">
-          <div className="hero-main">
-            {/* 첫 화면 오른쪽이 통째로 비어 있었다 — 글이 왼쪽에 다 몰려 있고
-                1440 에서 640px 가량이 빈 종이였다(2026-08-25 사장님 지시로 캐릭터를 넣었다).
-                ⚠ h1 은 clamp(44px, 8.4vw, 96px)라 «칸이 좁아져도 안 줄어든다».
-                   좁은 화면에서 옆으로 세우면 제목이 칸 밖으로 삐져나간다 —
-                   그래서 1180px 아래로는 CTA «밑»으로 내려 보낸다. */}
-            <div className="hero-top">
-              <div className="hero-copy">
-                <h1>
-                  {/* 쉼표가 아니라 마침표다 (2026-08-25 사장님 지시).
-                      두 줄은 «이어지는 한 문장»이 아니라 «따로 서는 두 마디»다 —
-                      만들기 전엔 이것, 오픈 전엔 저것. 쉼표로 이으면 뒷말을 기다리게 된다. */}
-                  만들기 전엔 <span className="o">설계도</span>.<br />
-                  오픈 전엔 <span className="t">검수</span>.
-                </h1>
-                <div className="hero-rule" />
-                <p className="sub">
-                  바이브코딩으로 사이트 만드는 사람을 위한 두 가지.<br />
-                  컨셉 한 줄이면 → 화면별 프롬프트와 AI 빌드 지시서 (Cursor·Claude Code에 바로).<br />
-                  URL 한 줄이면 → 오픈 전 검수 결과서.
-                </p>
-                <div className="hero-ctas">
-                  {/* /dashboard/new는 열리는 즉시 새 프로젝트를 만드는 라우트라,
-                      프리페치가 켜져 있으면 마우스만 올려도 프로젝트가 생긴다. */}
-                  {/* 첫 화면에 "무료"가 없으면 값이 드는지 안 드는지 모르는 채로 누르게 된다.
-                      가입 시 35크레딧이 있어 만들고 미리보기까지는 값을 안 받는다 — 그 말을 여기서 한다. */}
-                  <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
-                    AI팩 만들기 <span aria-hidden="true">→</span>
-                  </Link>
-                  <Link className="btn btn-teal" href="/verify">
-                    내 사이트 검수하기 <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              </div>
+    <div className="cc" ref={뿌리}>
+      {/* 얼마나 읽었나 */}
+      <div className="prog" aria-hidden="true">
+        <div ref={막대} />
+      </div>
 
-              {/* 첫 화면 그림은 «가장 먼저» 눈에 들어와야 해서 priority 를 준다.
-                  이것만 lazy 로 두면 접속하자마자 오른쪽이 잠깐 비어 보인다. */}
-              <div className="hero-figure" data-나타남>
-                <Image
-                  src="/character/01_home_hero_blueprint_qa.webp"
-                  alt="설계도를 들고 화면을 검수하는 카페인컬러 캐릭터"
-                  width={925}
-                  height={885}
-                  priority
-                  sizes="(max-width: 1180px) 320px, 520px"
-                />
+      {/* ── 첫 화면 ─────────────────────────────────────────── */}
+      <section className="hero">
+        <div className="blob" ref={얼룩} aria-hidden="true" />
+        <div className="wrap">
+          <div className="pill" data-나타남>
+            <span className="dot" aria-hidden="true" />
+            만들기 전에 한 번, 오픈 전에 한 번
+          </div>
+
+          <h1 data-나타남>
+            만들기 전엔 <span className="o">설계도.</span>
+            <br />
+            오픈 전엔 <span className="t">검수.</span>
+          </h1>
+
+          <div className="hero-grid">
+            <div className="hero-copy" data-나타남>
+              <p>
+                바이브코딩으로 사이트 만드는 사람을 위한 두 가지.
+                <br />
+                <b>컨셉 한 줄</b>이면 → 화면별 프롬프트와 AI 빌드 지시서 (Cursor·Claude Code에 바로).
+                <br />
+                <b>URL 한 줄</b>이면 → 오픈 전 검수 결과서.
+              </p>
+              <div className="ctas">
+                {/* /dashboard/new 는 열리는 즉시 새 프로젝트를 만드는 자리라,
+                    프리페치가 켜져 있으면 마우스만 올려도 프로젝트가 생긴다. */}
+                <Link className="btn btn-ink" href="/dashboard/new" prefetch={false}>
+                  AI팩 만들기 <span aria-hidden="true">→</span>
+                </Link>
+                <Link className="btn btn-paper" href="/verify">
+                  내 사이트 검수하기 <span aria-hidden="true">→</span>
+                </Link>
               </div>
             </div>
 
-            <div className="hero-art" data-나타남>
-              <div className="art-card">
-                <div className="art-head">02_IA_화면목록.xlsx · 화면 43개</div>
-                <div className="art-row">
-                  <span className="pid">PCPR1000</span>
-                  <span>상품 목록 · 데이터 있음</span>
-                  <span className="art-tag">자동</span>
+            <div className="hero-cards" data-나타남>
+              <div className="mini">
+                <div className="mini-h">
+                  <span>02_IA_화면목록.xlsx</span>
+                  <span>43</span>
                 </div>
-                <div className="art-row">
-                  <span className="pid">PCPR1001</span>
-                  <span>상품 목록 · 비어 있음</span>
-                  <span className="art-tag ex">예외</span>
-                </div>
-                <div className="art-row">
-                  <span className="pid">PCCA1001</span>
-                  <span>장바구니 · 비어 있음</span>
-                  <span className="art-tag ex">예외</span>
-                </div>
-                <div className="art-row">
-                  <span className="pid">PCCH1002</span>
-                  <span>결제 · 실패</span>
-                  <span className="art-tag ex">예외</span>
-                </div>
+                {화면목록미리.map((r) => (
+                  <div className="mini-r" key={r.id}>
+                    <span className="mid o">{r.id}</span>
+                    <span className="mnm">{r.name}</span>
+                    <span className="mtg">{r.tag}</span>
+                  </div>
+                ))}
               </div>
-              <div className="art-card">
-                <div className="art-head">검수 결과 · 통과 9 · 실패 3</div>
-                <div className="art-row">
-                  <span className="pid">AUTO-02</span>
-                  <span>모바일 대응</span>
-                  <span className="art-tag pass">PASS</span>
+              <div className="mini">
+                <div className="mini-h">
+                  <span>검수 결과</span>
+                  <span>
+                    <span className="pass">9</span> / <span className="fail">3</span>
+                  </span>
                 </div>
-                <div className="art-row">
-                  <span className="pid">AUTO-06</span>
-                  <span>이미지 깨짐</span>
-                  <span className="art-tag fail">FAIL</span>
-                </div>
-                <div className="art-row">
-                  <span className="pid">SCN-01</span>
-                  <span>로그인 · 재현 확인</span>
-                  <span className="art-tag">직접</span>
-                </div>
-                <div className="art-row">
-                  <span className="pid">SCN-02</span>
-                  <span>결제 · 재현 확인</span>
-                  <span className="art-tag">직접</span>
-                </div>
+                {검수미리.map((r) => (
+                  <div className="mini-r" key={r.id}>
+                    <span className="mid">{r.id}</span>
+                    <span className="mnm">{r.name}</span>
+                    <span className={`mtg ${r.kind}`}>{r.tag}</span>
+                  </div>
+                ))}
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 흘러가는 띠 — 우리가 내놓는 것들의 이름표 */}
+        <div className="wrap">
+          <div className="marquee">
+            <div className="mq-track">
+              {[0, 1].map((n) => (
+                <div className="mq-set" key={n} aria-hidden={n === 1}>
+                  {흐르는말.map((w) => (
+                    <span className="mq-i" key={w}>
+                      {w}
+                      <span className="mq-x" aria-hidden="true">
+                        ✳
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* MOMENT BAND */}
-      <section className="band">
+      {/* ── 01 AI팩 만들기 ───────────────────────────────────── */}
+      <section className="sec" id="track-01">
         <div className="wrap">
-          <div className="moment">
-            <span className="num">01</span>
-            <div>
-              <div className="mt">만들기 전 — AI팩</div>
-              <div className="ms">어떤 화면이 나올지 알고 시작</div>
-            </div>
-          </div>
-          <div className="arrow" aria-hidden="true">
-            →
-          </div>
-          <div className="moment">
-            <span className="num">02</span>
-            <div>
-              <div className="mt">오픈 전 — 검수 시나리오</div>
-              <div className="ms">진짜 다 되는지 알고 오픈</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PLANNING */}
-      <section className="sec" id="planning">
-        <div className="wrap">
-          <div className="sec-eye">
-            <span className="idx">01</span>
-            <span className="mono" style={{ textTransform: "none" }}>
-              AI팩 만들기
-            </span>
-          </div>
-          {/* 글만 있던 자리 — 「한 줄이 여섯 가지로 나온다」를 말로만 하고 있었다.
-              그림이 그 여섯 갈래를 그대로 보여 준다(2026-08-25).
-              ⚠ 제목까지 «같은 칸»에 넣는다. 리드 글만 넣었더니 두 줄짜리 글이 400px
-                 그림 키에 맞춰 가운데로 내려가, 제목 밑이 200px 넘게 휑했다. */}
-          <div className="plan-intro" data-나타남>
-            <div>
+          <div className="lead-row" data-나타남>
+            <div className="lead-copy">
+              <span className="eye">01 AI팩 만들기</span>
               <h2>
-                한 줄 컨셉이<br />
-                바로 만들 재료가 됩니다.
+                한 줄 컨셉이
+                <br />
+                바로 만들 <span className="o">재료</span>가 됩니다.
               </h2>
-              <p className="lead">
+              <p>
                 메뉴 구조·화면 목록·기능정의·흐름·일정까지 자동으로. 여기서 끝이 아니라{" "}
                 <b>화면별 프롬프트와 AI 빌드 지시서</b>까지 나와, Cursor·Claude Code에 그대로 넣으면
                 화면이 됩니다.
               </p>
             </div>
-            <div className="plan-figure">
+            <div className="fig">
               <Image
                 src="/character/02_home_concept_to_aipack.webp"
                 alt="한 줄 컨셉을 메뉴·화면 목록·기능정의·흐름·일정으로 뽑아내는 카페인컬러 캐릭터"
                 width={899}
                 height={967}
-                sizes="(max-width: 999px) 300px, 400px"
+                priority
+                sizes="(max-width: 1080px) 300px, 420px"
               />
             </div>
           </div>
 
-          <div className="plan-grid" data-나타남>
-            <div className="chip">
-              <div className="ci">01 · XLSX</div>
-              <div className="cn">메뉴 구조</div>
-              <div className="cd">메뉴–화면 트리</div>
-            </div>
-            <div className="chip">
-              <div className="ci">02 · XLSX</div>
-              <div className="cn">화면 목록</div>
-              <div className="cd">화면 하나하나 + AI 프롬프트</div>
-            </div>
-            <div className="chip">
-              <div className="ci">03 · XLSX</div>
-              <div className="cn">기능정의서</div>
-              <div className="cd">화면마다 뭘 해야 하는지</div>
-            </div>
-            <div className="chip">
-              <div className="ci">04 · HTML</div>
-              <div className="cn">FLOW 흐름도</div>
-              <div className="cd">화면 이동 연결</div>
-            </div>
-            <div className="chip">
-              <div className="ci">05 · XLSX</div>
-              <div className="cn">개발 일정표</div>
-              <div className="cd">화면별 개발 일정</div>
-            </div>
-            <div className="chip">
-              <div className="ci">06 · MD</div>
-              <div className="cn">AI 빌드 지시서</div>
-              <div className="cd">넣고 한 마디면 끝</div>
-            </div>
-          </div>
+          <ol className="cards6">
+            {산출물.map((d) => (
+              <li className="card6" key={d.no} data-나타남 data-들썩>
+                <span className="tag">
+                  {d.no} · {d.ext}
+                </span>
+                <span className="c6t">{d.title}</span>
+                <span className="c6d">{d.desc}</span>
+              </li>
+            ))}
+          </ol>
 
-          {/* 「AI는 잘 되는 화면만 만든다」는 우리 주장이었는데, 이제 재 본 기록이 있다
-              (2026-08-08). 같은 컨셉 한 줄을 다른 AI 기획 도구에 넣었더니 화면 22개가
-              나왔고 그 안에 안 되는 길이 하나도 없었다.
-
-              여기에 우리 숫자(133개·61개)를 적지 않는 이유: 그 도구의 실사용 후기 중
-              가장 잦은 불만이 "AI가 과도하게 방대한 내용을 생성한다"였다. 양을 자랑하면
-              같은 화살을 우리가 맞는다. 파는 것은 분량이 아니라 「빠짐없음」이다.
-
-              경쟁사 이름도 쓰지 않는다 — 비교광고가 되면 우리가 감당할 수 없다. */}
-          <div className="thesis" data-나타남>
-            <div>
+          {/* 「AI는 잘 되는 화면만 만든다」는 우리 주장이었는데, 이제 재 본 기록이 있다.
+              ⚠ 그 도구의 이름은 쓰지 않는다. 비교광고가 되면 우리가 감당할 수 없다. */}
+          <div className="cmp">
+            <div className="cmp-copy" data-나타남>
+              <span className="eye">직접 비교했어요</span>
               <h3>
-                같은 컨셉 한 줄을 <span className="o">다른 AI 기획 도구</span>에도 넣어봤어요.
+                한 줄 프롬프트로
+                <br />
+                AI 도구에서 사이트를
+                <br />
+                만들어 봤어요.
               </h3>
               <p>
                 돌아온 화면 목록에 이런 게 없었어요. 손님이 볼 화면은 그럴듯했는데, 정작 내가 매일
                 열어야 할 화면이 통째로 비어 있었습니다.
               </p>
+              <p className="fine">
+                &lsquo;숨고 같은 사이트 만들어줘. 견적을 요청하고 서로 소통하고, 일정을 잡는 사이트
+                만들어줘.&rsquo;
+                <br />한 줄로 직접 비교했어요(2026년 8월). 그 도구가 낸 화면은 「요청자 화면」뿐이었고,
+                「고수 화면」은 없었습니다. 요청서를 보냈지만, 받는 사람은 고려되지 않았어요.
+              </p>
             </div>
-            {/* ⛔ 여기에 캐릭터(03_home_missing_screens)를 넣었다가 뺐다 — 2026-08-25.
-                사장님: 「이 이미지는 위치 별로인거 같아.」 맞는 말씀이었다. 까닭은 둘이다.
-                  ① 이 어두운 칸은 이미 «글 + ✕목록» 두 칸으로 꽉 찼다. 셋째 칸을 끼우니
-                     그림이 280px 로 눌려 캐릭터가 손톱만 해졌다.
-                  ② 그림이 말하는 것(칸이 뚫린 화면들)과 옆의 ✕목록이 «같은 말»이다.
-                     같은 말을 두 번 하면 둘 다 힘이 빠진다.
-                → 그림 파일은 public/character 에 그대로 둔다. 쓸 자리가 생기면 꺼내 쓴다. */}
-            <div className="ex-list">
-              <div className="ex-item">
-                <span className="x">✕</span> 팝업을 등록할 화면
-              </div>
-              <div className="ex-item">
-                <span className="x">✕</span> 예약을 승인할 화면
-              </div>
-              <div className="ex-item">
-                <span className="x">✕</span> 정산 화면
-              </div>
-              <div className="ex-item">
-                <span className="x">✕</span> 검색 · 결과 없음
-              </div>
-              <div className="ex-item">
-                <span className="x">✕</span> 저장함 · 비어 있음
-              </div>
+            <div className="miss">
+              {빠진화면.map((m) => (
+                <div className="miss-r" key={m} data-나타남>
+                  <span className="x" aria-hidden="true">
+                    ✕
+                  </span>
+                  <span className="mtx">{m}</span>
+                </div>
+              ))}
             </div>
-            <p className="thesis-note">
-              ＊ 팝업스토어 앱 컨셉 한 줄로 직접 비교했어요(2026년 8월). 그 도구가 낸 관리자
-              화면은 「콘텐츠 관리」 하나뿐이었고, 화면마다 AI에 넣을 프롬프트는 없었습니다.
-            </p>
           </div>
         </div>
       </section>
 
-      {/* PROOF — 「무엇이 들어 있나」에서 「실제로 돌려봤다」로 이야기가 바뀌는 자리.
-          왜 쪼갰나 (2026-08-14 사장님 지시): 위 절 하나가 2,261px, 1440 화면으로 세 장이었다.
-          중간에 쉼표가 없으니 스크롤만 흐르고 읽히지 않는다. 여기서 배경색을 바꾸고
-          눈표를 하나 더 세워 «장이 바뀐다»를 눈으로 알린다.
-
-          ⚠ 번호(01·02·03)는 일부러 안 붙였다. 위쪽 띠의 「01 만들기 전 / 02 오픈 전」과
-          아래 절 번호가 지금 딱 맞물려 있다. 여기에 번호를 끼우면 그 짝이 통째로 밀린다. */}
-      <section className="sec sec-proof" id="proof">
+      {/* ── 직접 돌려봤어요 (어두운 칸) ────────────────────────── */}
+      <section className="sec sec-tight">
         <div className="wrap">
-          <div className="sec-eye">
-            <span className="mono" style={{ textTransform: "none" }}>
-              직접 돌려봤어요
-            </span>
-          </div>
-
-          {/* 위의 주장("AI는 잘 되는 화면만 만든다")을 바로 받는 증거.
-              주장 → 증거 → 행동 순서가 되도록 CTA 바로 앞에 둔다.
-
-              머리글을 sc-cap(19px)에서 h2 로 올렸다(2026-08-14). 절이 갈라지면서
-              이 절의 제일 큰 글자가 19px 이 되어 버렸는데, 옆 절 제목이 58px 이라
-              혼자 «잘린 조각»처럼 보였다. 문장은 그대로 옮겨 왔고 새로 짓지 않았다. */}
-          {/* 그림은 «카피 오른쪽», 영상은 원래대로 한 단 (2026-08-25 사장님 지시).
-              처음엔 영상 왼쪽에 세웠는데 16:9 영상이 워낙 커서 그림이 곁다리로 보였다.
-              위 「한 줄 컨셉」·아래 「대신 눌러봐 드려요」와 같은 짜임으로 맞춘다 —
-              제목·리드는 왼쪽, 그림은 오른쪽, 알맹이는 그 밑에 폭을 다 쓴다. */}
-          <div className="proof-intro" data-나타남>
-            <div>
-          <h2>
-            AI팩을 주면<br />
-            <span className="o">이렇게 됩니다.</span>
-          </h2>
-          {/* 바로 위 절에서 「빠진 것」으로 말해 놓고 여기서 144개를 자랑하면 힘이 상쇄된다.
-              숫자를 근거가 아니라 배경으로 밀어낸다 — 앞에 오는 것은 「빠뜨린 화면까지」다. */}
-              <p className="lead">
-                지시서 파일 하나를 Claude Code에 넣고 돌린 기록이에요. 위에 적은 빠지기 쉬운 화면까지
-                한 벌로 넣어 돌렸고, 약 40분 만에 화면 144개가 만들어졌습니다.
-              </p>
+          <div className="dark">
+            <div className="dk-top">
+              <div className="dk-copy" data-나타남>
+                <span className="eye warm">직접 돌려봤어요</span>
+                <h2>
+                  AI팩을 AI 도구에 넣고
+                  <br />
+                  만들어 봤어요.
+                </h2>
+                <p>
+                  지시서 파일 하나를 Claude Code에 넣고 돌린 기록이에요.
+                  <br />
+                  위에 적은 빠지기 쉬운 화면까지 한 벌로 넣어 돌렸고, 약 40분 만에 화면 144개가
+                  만들어졌습니다.
+                </p>
+              </div>
+              <div className="stats">
+                {돌린기록.map((s) => (
+                  <div className="stat" key={s.label} data-나타남>
+                    <span className="sn" data-세기={s.n}>
+                      {s.n}
+                    </span>
+                    <span className="sl">{s.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="proof-figure">
-              <Image
-                src="/character/04_home_spec_to_screens.webp"
-                alt="스펙팩 한 벌을 넣어 화면을 잔뜩 만들어 내는 카페인컬러 캐릭터"
-                width={1000}
-                height={914}
-                sizes="(max-width: 999px) 300px, 380px"
-              />
-            </div>
-          </div>
 
-          <div className="showcase" data-나타남>
-            <div className="sc-frame">
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${SHOWCASE_VIDEO_ID}`}
-                title="AI팩(빌드 지시서)으로 화면 144개를 만드는 기록"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                loading="lazy"
-                allowFullScreen
-              />
+            <div className="vid" data-나타남>
+              <div className="vid-h">
+                <span>Claude Code에 넣고 돌린 화면, 그대로 녹화</span>
+                <span className="rec">● 실제 기록</span>
+              </div>
+              <div className="vid-f">
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${SHOWCASE_VIDEO_ID}`}
+                  title="AI팩(빌드 지시서)으로 화면 144개를 만드는 기록"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  loading="lazy"
+                  allowFullScreen
+                />
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* 만든 뒤에 막히는 자리 — 2026-08-10.
-              화면까지 만들어 드려도 「내 컴퓨터에서만 보인다」에서 멈추시는 분이 많다.
-              팔려고 넣는 것이 아니라 «도움이 되면 좋겠다»는 뜻으로 둔다. */}
-          {/* 만든 뒤에 막히는 자리 — 결과물에 함께 들어가는 안내서.
-              이 섹션의 어휘를 그대로 쓴다: 폭을 꽉 채우고, 카드 배경 + 종이선 테두리,
-              모서리 6px, 위 여백 40px. 혼자 다른 모양이면 곁다리로 보인다(2026-08-10). */}
-          <div className="ship" data-나타남>
-            <div className="ship-hd">
-              <span className="ship-tag">함께 드려요</span>
-              <h3>만들고 나서 막히는 자리도 적어 뒀어요</h3>
+      {/* ── 함께 드려요 — 내놓는 법 ───────────────────────────── */}
+      <section className="sec">
+        <div className="wrap">
+          <div className="ship">
+            <div className="ship-copy" data-나타남>
+              <span className="eye">함께 드려요</span>
+              <h3>
+                만들고 나서 배포하는 방법,
+                <br />
+                앱으로 만드는 방법을
+                <br />
+                적어 뒀어요.
+              </h3>
               <p>
-                화면은 다 만들었는데 <b>내 컴퓨터에서만 보이는</b> 데서 멈추시는 분이 많습니다.
-                저희도 거기서 한참 헤맸어요. 그때 알게 된 것을{" "}
-                <b>「만든 사이트를 세상에 내놓는 법」</b>으로 정리해 결과물에 함께 넣었습니다.
+                화면은 다 만들었는데 <b>내 컴퓨터에서만 보이는</b> 데서 멈추시는 분이 많습니다. 처음엔
+                저희도 어려웠어요. 그때 알게 된 것을 <b>「만든 사이트를 세상에 내놓는 법」</b>으로
+                정리해 결과물에 함께 넣었습니다.
               </p>
-            </div>
-            <ul className="ship-list">
-              <li>세상에 올리기 · 도메인 · 자물쇠(HTTPS)</li>
-              <li>회원가입·로그인 · 데이터 저장</li>
-              <li>결제 받기 — 심사 두 달 동안 할 일</li>
-              <li>사진·영상 · AI 기능 붙이기</li>
-              <li>잘못 올렸을 때 되돌리기</li>
-              <li>오픈 전 마지막 점검표</li>
-            </ul>
-          </div>
-
-          <div className="hero-ctas" style={{ marginTop: 36 }}>
-            <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
-              무료로 만들어보기 <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* VERIFY (dark) */}
-      <section className="verify" id="verify">
-        <div className="wrap">
-          <div className="sec-eye">
-            <span className="idx">02</span>
-            <span className="mono" style={{ textTransform: "none", color: "var(--teal)" }}>
-              검수 시나리오
-            </span>
-          </div>
-          {/* 어두운 절이라 검은 머리가 묻힐까 걱정했는데, 재 보니 오히려 크림색 소품
-              (통과·실패·주의 창)이 도드라진다. 이 절이 말하는 것과 그림이 같다.
-              ⚠ 위 「한 줄 컨셉」 절과 같은 까닭으로 제목을 같은 칸에 넣는다. */}
-          <div className="verify-intro" data-나타남>
-            <div>
-              <h2>
-                진짜 다 되는지,<br />
-                <span className="o">대신 눌러봐 드려요.</span>
-              </h2>
-              <p className="lead">
-                기획으로 끝나는 도구는 여기까지 안 와요. URL이나 설계 문서를 넣으면 확인할 것을
-                시나리오로 짚어주고, 공개 화면은 검수 결과(Pass/Fail)까지 냅니다. 개발자가 아니어도 읽는
-                결과서로요.
-              </p>
-            </div>
-            <div className="verify-figure">
-              <Image
-                src="/character/05_home_site_inspection.webp"
-                alt="공개 화면을 통과·실패·주의로 가려 검수하는 카페인컬러 캐릭터"
-                width={783}
-                height={681}
-                sizes="(max-width: 999px) 300px, 380px"
-              />
-            </div>
-          </div>
-
-          <div className="inputs" data-나타남>
-            <div className="inbox">
-              <div className="in-n">01 · 카페인컬러 AI팩</div>
-              <div className="in-t">가장 정확</div>
-              <div className="in-d">
-                이 프로젝트로 만든 AI팩을 그대로. 화면·요건을 100% 알아 시나리오가 촘촘해요.
-              </div>
-            </div>
-            <div className="inbox">
-              <div className="in-n">02 · 사이트 URL</div>
-              <div className="in-t">검수 결과까지</div>
-              <div className="in-d">
-                실제 사이트를 넣으면 공개 화면 Pass/Fail 결과가 함께 나와요.
-              </div>
-              <div className="in-note">
-                <span>⚠</span> 로그인·결제 화면은 자동 검수 대신 재현 시나리오로 드려요.
-              </div>
-            </div>
-            <div className="inbox">
-              <div className="in-n">03 · 외부 문서 (PPT·PDF)</div>
-              <div className="in-t">시나리오 추출</div>
-              <div className="in-d">
-                화면설계서·기획서를 PDF로 내보내 넣으면 검수 시나리오를 뽑아드려요.
-              </div>
-              <div className="in-note">
-                <span>⚠</span> 글이 적혀 있을수록 정확해요. 문서만으론 시나리오까지.
-              </div>
-            </div>
-          </div>
-
-          <div className="verify-flow" data-나타남>
-            <div className="split">
-              <div className="split-row pub">
-                <div className="ico">공개</div>
-                <div>
-                  <div className="sr-t">누구나 보는 화면</div>
-                  <div className="sr-d">우리가 검수까지 — Pass / Fail</div>
-                </div>
-              </div>
-              <div className="split-row sec">
-                <div className="ico">민감</div>
-                <div>
-                  <div className="sr-t">로그인 · 결제 화면</div>
-                  <div className="sr-d">확인 방법을 재현 시나리오로</div>
-                </div>
-              </div>
-            </div>
-            <div className="report">
-              {/* 예시 도메인은 남의 것도 우리 것도 아닌 가상의 주소를 쓴다.
-                  우리 주소를 쓰면 아래 실패 세 줄이 검수 예시가 아니라
-                  "이 사이트는 지금 이렇게 망가져 있다"로 읽힌다. */}
-              <div className="rh">
-                <span>검수 결과 · myshop.co.kr</span>
-                <span>공개 12화면</span>
-              </div>
-              <div className="rb">
-                <div className="rstat">
-                  <div className="s p">
-                    <div className="sl">Pass</div>
-                    <div className="sv">9</div>
-                  </div>
-                  <div className="s f">
-                    <div className="sl">Fail</div>
-                    <div className="sv">3</div>
-                  </div>
-                </div>
-                <div className="rfail" style={{ borderTop: "none" }}>
-                  ✕ 모바일에서 신청 버튼이 화면 밖으로 나감
-                </div>
-                <div className="rfail">✕ &lsquo;장바구니 비어 있음&rsquo; 화면 없음</div>
-                <div className="rfail">✕ 상품 목록 대표 이미지 깨짐</div>
-              </div>
-            </div>
-          </div>
-
-          {/* 검수 결과물 — 받는 것 */}
-          <div className="sec-eye" style={{ marginTop: 48 }}>
-            <span className="idx" style={{ color: "var(--teal)" }}>
-              ✓
-            </span>
-            <span className="mono" style={{ textTransform: "none", color: "var(--teal)" }}>
-              이런 결과물을 받아요
-            </span>
-          </div>
-          <div className="vout">
-            <div className="vchip">
-              <div className="vc-h">검수 현황</div>
-              <div className="vc-d">통과·실패·주의 한눈에</div>
-            </div>
-            <div className="vchip">
-              <div className="vc-h">자동 검사 결과서</div>
-              <div className="vc-d">항목마다 UI·기능 구분</div>
-            </div>
-            <div className="vchip">
-              <div className="vc-h">재현 시나리오</div>
-              <div className="vc-d">공개·로그인·결제 확인 순서</div>
-            </div>
-            <div className="vchip">
-              <div className="vc-h">엑셀 결과서</div>
-              <div className="vc-d">표지·현황·시나리오 한 벌</div>
-            </div>
-          </div>
-
-          <div className="hero-ctas" style={{ marginTop: 36 }}>
-            <Link className="btn btn-teal" href="/verify">
-              내 사이트 검수하기 <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* TEMPLATES */}
-      <section className="tpls" id="templates">
-        <div className="wrap">
-          <div className="sec-eye">
-            <span className="idx">03</span>
-            <span className="mono" style={{ textTransform: "none" }}>
-              AI팩 구매
-            </span>
-          </div>
-          <h2 style={{ textWrap: "normal" }}>
-            바로 사용하는<br />
-            업종별 AI팩
-          </h2>
-          <p className="lead">
-            직접 만들기 전에, 이미 완성된 업종별 결과물 한 벌부터. 화면·예외까지 다 들어 있어요.
-          </p>
-          <div
-            className="tpl-roll"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-          >
-            <div className="tpl-vp">
-              <div className="tpl-track" style={{ transform: `translateX(-${page * 100}%)` }}>
-                {Array.from({ length: pageCount }, (_, i) => (
-                  <div className="tpl-page" key={i} aria-hidden={i !== page}>
-                    {packs.slice(i * PER_PAGE, i * PER_PAGE + PER_PAGE).map((p) => (
-                      <Link className="tpl" href={p.href} key={p.href}>
-                        <div className="tg">{p.planName}</div>
-                        <div className="tt">{p.title}</div>
-                        <div className="td">{p.depthLabel}</div>
-                        {/* 무엇이 들어 있는지 — 목록 페이지와 같은 출처(planContents). */}
-                        <ul className="tl">
-                          {p.contents.map((c) => (
-                            <li key={c}>{c}</li>
-                          ))}
-                        </ul>
-                        <div className="tp">{p.price}</div>
-                      </Link>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="tpl-foot">
-              <div className="tpl-dots">
-                {Array.from({ length: pageCount }, (_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className={i === page ? "on" : ""}
-                    aria-label={`AI팩 ${i + 1}페이지 보기`}
-                    aria-current={i === page}
-                    onClick={() => setPage(i)}
-                  />
-                ))}
-              </div>
-              <Link className="btn btn-line" href="/packages">
-                AI팩 더보기 <span aria-hidden="true">→</span>
+              <Link className="btn btn-ink" href="/dashboard/new" prefetch={false}>
+                무료로 만들어보기 <span aria-hidden="true">→</span>
               </Link>
             </div>
+            <ol className="guide">
+              {내놓는법.map((g) => (
+                <li className="guide-r" key={g.no} data-나타남 data-들썩>
+                  <span className="gn">{g.no}</span>
+                  <span className="gt">{g.text}</span>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>
 
-      {/* MOAT */}
-      <section className="moat">
+      {/* ── 02 검수 ─────────────────────────────────────────── */}
+      <section className="sec sec-tight" id="track-02">
         <div className="wrap">
-          {/* 마무리 절에도 눈표를 하나 세운다(2026-08-14). 앞 절이 AI팩 카드 목록이라
-              바로 다음에 큰 질문이 튀어나오면 «아직 카드 얘기인가» 싶다.
-              번호는 안 붙인다 — 파는 이야기가 아니라 맺음말이다. */}
-          <div className="sec-eye moat-eye">
-            <span className="mono" style={{ textTransform: "none" }}>
-              마지막으로
-            </span>
+          <div className="band">
+            <div className="lead-row" data-나타남>
+              <div className="lead-copy">
+                <span className="eye">02 검수 시나리오</span>
+                <h2>
+                  사람처럼 눌러보며
+                  <br />
+                  진짜 다 되는지,
+                  <br />
+                  <span className="o">검수합니다.</span>
+                </h2>
+                <p>
+                  전문 에이전시에서는 반드시 거치는 단계예요. 하지만 바이브코딩은 이 부분을
+                  지나칩니다. URL이나 설계 문서를 넣으면 확인할 것을 시나리오로 짚어주고, 공개 화면은
+                  검수 결과(Pass/Fail)까지 냅니다.
+                </p>
+              </div>
+              <div className="fig">
+                <Image
+                  src="/character/05_home_site_inspection.webp"
+                  alt="공개 화면을 통과·실패·주의로 가려 검수하는 카페인컬러 캐릭터"
+                  width={783}
+                  height={681}
+                  sizes="(max-width: 1080px) 300px, 380px"
+                />
+              </div>
+            </div>
+
+            <div className="cards3">
+              {넣는것.map((i) => (
+                <div className="in" key={i.no} data-나타남 data-들썩>
+                  <div className="in-h">
+                    <span className="in-n">{i.no}</span>
+                    <span className="in-b">{i.badge}</span>
+                  </div>
+                  <span className="in-t">{i.title}</span>
+                  <span className="in-d">{i.desc}</span>
+                  {i.warn ? (
+                    <span className="in-w">
+                      <span aria-hidden="true">⚠</span> {i.warn}
+                    </span>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+
+            <div className="vgrid">
+              <div className="vleft">
+                <div className="vbox" data-나타남>
+                  <span className="vb-tag pass">공개 화면</span>
+                  <span className="vb-t">누구나 보는 화면</span>
+                  <span className="vb-d">사람처럼 눌러보고 Pass·Fail로 알려드려요</span>
+                </div>
+                <div className="vbox" data-나타남>
+                  <span className="vb-tag fail">민감한 화면</span>
+                  <span className="vb-t">로그인 · 결제 화면</span>
+                  <span className="vb-d">
+                    민감한 화면은 직접 확인하실 수 있도록 순서를 적어드려요
+                  </span>
+                </div>
+              </div>
+
+              {/* 예시 주소는 남의 것도 우리 것도 아닌 가상의 주소를 쓴다.
+                  우리 주소를 쓰면 아래 실패 세 줄이 「이 사이트가 지금 이렇게 망가져 있다」로 읽힌다. */}
+              <div className="report" data-나타남>
+                <div className="rp-h">
+                  <span>검수 결과 · myshop.co.kr</span>
+                  <span className="dim">공개 12화면</span>
+                </div>
+                <div className="rp-s">
+                  <div className="rs pass">
+                    <span className="rsn" data-세기="9">
+                      9
+                    </span>
+                    <span className="rsl">PASS</span>
+                  </div>
+                  <div className="rs fail">
+                    <span className="rsn" data-세기="3">
+                      3
+                    </span>
+                    <span className="rsl">FAIL</span>
+                  </div>
+                </div>
+                <div className="rp-f">
+                  <div className="rf">
+                    <span className="x" aria-hidden="true">
+                      ✕
+                    </span>
+                    모바일에서 신청 버튼이 화면 밖으로 나감
+                  </div>
+                  <div className="rf">
+                    <span className="x" aria-hidden="true">
+                      ✕
+                    </span>
+                    &lsquo;장바구니 비어 있음&rsquo; 화면 없음
+                  </div>
+                  <div className="rf">
+                    <span className="x" aria-hidden="true">
+                      ✕
+                    </span>
+                    상품 목록 대표 이미지 깨짐
+                  </div>
+                </div>
+                <div className="rp-c">이런 결과물을 받아요</div>
+                <div className="rp-o">
+                  {검수결과물.map((o) => (
+                    <div className="ro" key={o.title}>
+                      <span className="rot">{o.title}</span>
+                      <span className="rod">{o.desc}</span>
+                    </div>
+                  ))}
+                </div>
+                <Link className="btn btn-ink btn-wide" href="/verify">
+                  내 사이트 검수하기 <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+            </div>
           </div>
-          <h2>
-            바이브코딩으로 원하는 사이트 <span className="o">만들고</span>,<br />
-            <span className="t">오픈할 준비</span> 되셨나요?
-          </h2>
-          <p>
-            AI는 편리하고 빠르죠. 하지만 원하는 대로 나왔는지, 정말 오픈해도 되는지 하나씩 눌러보는
-            건 결국 우리 몫이에요. 내 서비스, 내 사이트잖아요 — 어떤 화면이 만들어질지 알고 만들고,
-            진짜 오픈해도 되는지 꼭 확인해보세요.
-          </p>
-          <div className="fc">
-            <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
-              AI팩 만들기 <span aria-hidden="true">→</span>
+        </div>
+      </section>
+
+      {/* ── 03 업종별 팩 ────────────────────────────────────── */}
+      <section className="sec" id="packs">
+        <div className="wrap">
+          <div className="packs-top">
+            <div className="lead-copy" data-나타남>
+              <span className="eye">03 업종별 팩 사기</span>
+              <h2>
+                바로 사용하는
+                <br />
+                업종별 AI팩
+              </h2>
+              <p>
+                직접 만들기 전에, 이미 완성된 업종별 결과물 한 벌부터. 화면·예외까지 다 들어있어요.
+              </p>
+            </div>
+            <Link className="btn btn-paper" href="/packages">
+              AI팩 더보기 <span aria-hidden="true">→</span>
             </Link>
-            <Link className="btn btn-teal" href="/verify">
-              내 사이트 검수하기 <span aria-hidden="true">→</span>
-            </Link>
+          </div>
+
+          <div className="tabs" role="tablist" aria-label="업종 고르기">
+            {packs.map((p, i) => (
+              <button
+                key={p.key}
+                type="button"
+                role="tab"
+                id={`tab-${p.key}`}
+                aria-selected={i === 고른업종}
+                aria-controls="plan-panel"
+                tabIndex={i === 고른업종 ? 0 : -1}
+                className={i === 고른업종 ? "tab on" : "tab"}
+                onClick={() => 업종고르기(i)}
+              >
+                {p.tab}
+              </button>
+            ))}
+          </div>
+
+          <div
+            className="plans"
+            id="plan-panel"
+            role="tabpanel"
+            aria-labelledby={`tab-${업종?.key ?? ""}`}
+          >
+            {(업종?.plans ?? []).map((p) => (
+              <Link className="plan" href={p.href} key={p.id} data-들썩>
+                <span className="pl-tier">{p.tier}</span>
+                <span className="pl-name">{업종.name}</span>
+                <span className="pl-scope">{p.scope}</span>
+                <span className="pl-price">
+                  {p.credits === null ? (
+                    "판매 준비 중"
+                  ) : (
+                    <>
+                      <b>{p.credits.toLocaleString()}</b> 크레딧
+                    </>
+                  )}
+                </span>
+                <span className="pl-items">
+                  {p.items.map((it) => (
+                    <span className="pl-i" key={it}>
+                      <span className="pl-dot" aria-hidden="true">
+                        ·
+                      </span>
+                      {it}
+                    </span>
+                  ))}
+                </span>
+                <span className="pl-go">구매하기 →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 마지막 ──────────────────────────────────────────── */}
+      <section className="sec sec-last">
+        <div className="wrap">
+          <div className="dark cta" data-나타남>
+            <h2>
+              바이브코딩으로
+              <br />
+              원하는 사이트 만들고
+              <br />
+              오픈할 준비 되셨나요?
+            </h2>
+            <div className="cta-r">
+              <p>
+                AI는 편리하고 빠르죠. 하지만 원하는 대로 나왔는지, 정말 오픈해도 되는지 하나씩
+                눌러보는 건 결국 우리 몫이에요. 내 서비스, 내 사이트잖아요 — 어떤 화면이 만들어질지
+                알고 만들고, 진짜 오픈해도 되는지 꼭 확인해보세요.
+              </p>
+              <div className="ctas">
+                <Link className="btn btn-o" href="/dashboard/new" prefetch={false}>
+                  AI팩 만들기 <span aria-hidden="true">→</span>
+                </Link>
+                <Link className="btn btn-ghost" href="/verify">
+                  내 사이트 검수하기 <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <style jsx>{`
         .cc {
-          --paper: #eae8de;
-          --paper-2: #f4f3ee;
-          --card: #fbf6e9;
-          --ink: #20261c;
-          --ink-soft: #4e4a3b;
-          --orange: #e4762c;
-          --orange-deep: #c25d17;
-          --teal: #1aa48f;
-          --teal-deep: #0e6f60;
-          --green: #16241d;
-          --green-2: #1e3228;
-          --green-line: #2e4437;
-          --tan: #9a8c68;
-          --paper-line: #d8d4c6;
-          --mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+          --paper: #f1eee8;
+          --ink: #191713;
+          --o: #d7481f;
+          --t1: #5c5545;
+          --t2: #77705f;
+          --t3: #a79c86;
+          --t4: #8c8474;
+          --band: #e7e2d8;
+          --band2: #eae5db;
+          --band3: #e9e4da;
+          --tint: #f4f1ea;
+          --tint2: #f7f5f1;
+          --tint3: #fbfaf7;
+          --pass: #1f6b48;
+          --fail: #c0392b;
+          --warm: #e8956f;
+          --num: #e4762c;
+
           background: var(--paper);
           color: var(--ink);
-          line-height: 1.6;
-          /* 한글은 낱말 «가운데»에서 끊지 않는다.
-             기본값(normal)이면 브라우저가 글자 사이 아무 데서나 줄을 바꾼다 —
-             폰에서 제목이 「만들기 전 / 엔 설계도」로 끊겨 있었다(2026-08-11).
-             overflow-wrap 은 안전망이다. 띄어쓰기 없는 긴 것(주소 같은 것)이
-             왔을 때 keep-all 만 있으면 화면 밖으로 삐져나간다. */
+          overflow-x: hidden;
+          text-wrap: pretty;
           word-break: keep-all;
-          overflow-wrap: break-word;
+          -webkit-font-smoothing: antialiased;
         }
-        .cc * {
-          box-sizing: border-box;
-        }
-        .cc :global(a) {
-          text-decoration: none;
-        }
-        /* 머리말·꼬리말과 «같은 자리»에 선다.
-           (marketing)/layout.tsx 가 max-w-[1440px] + px-6(24px) 이라 글이 서는 자리가
-           1392px 다. 여기만 1180/28 로 두었더니 1440 화면에서 로고는 왼쪽 24px 인데
-           본문은 122px 에서 시작했다 — 98px 어긋나 보였다(2026-08-11 사장님 지적).
-           ⚠ 두 값은 늘 같이 움직인다. layout.tsx 를 고치면 여기도 고친다. */
         .wrap {
-          max-width: 1440px;
+          max-width: 1240px;
           margin: 0 auto;
-          padding: 0 24px;
+          padding: 0 20px;
         }
-        .mono {
-          letter-spacing: 0.03em;
-          font-size: 12.5px;
+
+        /* 얼마나 읽었나 — 머리(z-30) 위에 얹는다 */
+        .prog {
+          position: fixed;
+          inset: 0 0 auto 0;
+          height: 3px;
+          z-index: 40;
+          pointer-events: none;
+        }
+        .prog > div {
+          height: 3px;
+          width: 0;
+          background: var(--o);
+          border-radius: 0 3px 3px 0;
+        }
+
+        /* ── 첫 화면 ── */
+        .hero {
+          position: relative;
+          padding: 88px 0 0;
+        }
+        .blob {
+          position: absolute;
+          inset: -14% -8% auto -8%;
+          height: 130%;
+          background-image:
+            radial-gradient(closest-side at 18% 22%, rgba(215, 72, 31, 0.16), transparent),
+            radial-gradient(closest-side at 84% 6%, rgba(233, 205, 150, 0.4), transparent);
+          filter: blur(10px);
+          pointer-events: none;
+        }
+        .hero > .wrap {
+          position: relative;
+        }
+        .pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 8px 16px 8px 10px;
+          background: rgba(255, 255, 255, 0.8);
+          border-radius: 100px;
+          font-size: 12px;
+          letter-spacing: 0.1em;
+          color: var(--t2);
+          white-space: nowrap;
+        }
+        .dot {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: var(--o);
+        }
+        .hero h1 {
+          margin: 26px 0 0;
+          font-size: clamp(40px, 8.6vw, 138px);
+          line-height: 0.98;
+          letter-spacing: -0.055em;
           font-weight: 600;
-          color: var(--tan);
         }
+        .hero h1 .o {
+          color: var(--o);
+        }
+        .hero h1 .t {
+          color: #a79c86;
+        }
+        .hero-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr);
+          gap: 44px;
+          align-items: end;
+          padding: 52px 0 56px;
+        }
+        .hero-copy p {
+          margin: 0;
+          font-size: 18px;
+          line-height: 1.72;
+          color: var(--t1);
+          max-width: 720px;
+        }
+        .hero-copy b {
+          color: var(--ink);
+          font-weight: 600;
+        }
+        .ctas {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-top: 22px;
+        }
+
+        /* 단추 — «:global 로 감싸는 까닭»
+           styled-jsx 는 이 파일이 «직접 쓴 태그»에만 제 반 이름을 붙인다. <Link> 는 우리
+           태그가 아니라 next/link 의 컴포넌트라 안 붙는다. 그냥 .btn 이라고 적으면 규칙이
+           통째로 헛돌아 단추가 맨몸 글자로 나온다 — 옮기던 날 실제로 그랬다.
+           .cc 로 이 화면 안에 가둬 두고 :global 로 감싸면 남의 화면으로 새지 않는다. */
         .cc :global(.btn) {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
-          font-weight: 700;
-          font-size: 16px;
-          padding: 14px 22px;
-          border-radius: 2px;
-          transition: transform 0.12s ease, background 0.12s ease;
-        }
-        .cc :global(.btn):active {
-          transform: translateY(1px);
-        }
-        .cc :global(.btn-o) {
-          background: var(--orange);
-          color: #fcf3e2;
-        }
-        .cc :global(.btn-o):hover {
-          background: var(--orange-deep);
-        }
-        .cc :global(.btn-teal) {
-          background: var(--teal);
-          color: #f1fbf8;
-        }
-        .cc :global(.btn-teal):hover {
-          background: var(--teal-deep);
-        }
-        .cc h1,
-        .cc h2,
-        .cc h3 {
-          font-weight: 700;
-          letter-spacing: -0.02em;
-          text-wrap: balance;
-          line-height: 1.04;
-        }
-        .cc section {
-          position: relative;
-        }
-
-        /* HERO */
-        .hero {
-          padding: 20px 0 30px;
-          overflow: hidden;
-        }
-        .hero-main {
-          padding-top: 34px;
-        }
-        /* 글 + 캐릭터. 기본은 «세로로 쌓기»다 — 넓을 때만 옆으로 세운다.
-           ⚠ 1180px 이 경계인 까닭: h1 이 clamp(…, 8.4vw, 96px)라 칸이 좁아져도
-             글자가 안 줄어든다. 1180 아래에서 옆으로 세우면 「만들기 전엔 설계도,」가
-             제 칸을 넘어 그림 위로 올라탄다. 그 아래로는 CTA 밑에 놓는다. */
-        .hero-top {
-          display: grid;
-          gap: 8px;
-        }
-        .hero-figure {
-          display: flex;
-          justify-content: center;
-        }
-        .hero-figure :global(img) {
-          width: 320px;
-          height: auto;
-          object-fit: contain;
-        }
-        @media (min-width: 1181px) {
-          .hero-top {
-            grid-template-columns: minmax(0, 1fr) 520px;
-            gap: 40px;
-            align-items: center;
-          }
-          .hero-figure :global(img) {
-            width: 520px;
-          }
-        }
-        .hero h1 {
-          font-size: clamp(44px, 8.4vw, 96px);
-          line-height: 0.98;
-          font-weight: 800;
-        }
-        .hero h1 .o {
-          color: var(--orange);
-        }
-        .hero h1 .t {
-          color: var(--teal-deep);
-        }
-        .hero-rule {
-          width: 56px;
-          height: 4px;
-          background: var(--ink);
-          margin: 26px 0 20px;
-        }
-        .hero p.sub {
-          font-size: clamp(15px, 1.9vw, 19px);
-          font-weight: 400;
-          color: var(--ink-soft);
-          max-width: 720px;
-        }
-        .hero-ctas {
-          display: flex;
           gap: 12px;
-          flex-wrap: wrap;
-          margin-top: 28px;
+          white-space: nowrap;
+          padding: 19px 32px;
+          font-size: 15px;
+          font-weight: 500;
+          border-radius: 100px;
+          transition:
+            background 0.28s,
+            color 0.28s,
+            transform 0.28s,
+            box-shadow 0.28s;
         }
-        .hero-art {
-          margin-top: 40px;
-          display: grid;
-          grid-template-columns: 1.15fr 0.85fr;
-          gap: 18px;
-          align-items: end;
-        }
-        @media (max-width: 760px) {
-          .hero-art {
-            grid-template-columns: 1fr;
-          }
-        }
-        .art-card {
-          background: var(--card);
-          border: 1px solid var(--paper-line);
-          border-radius: 6px;
-          overflow: hidden;
-        }
-        .art-head {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 10px 14px;
-          background: var(--paper-2);
-          border-bottom: 1px solid var(--paper-line);
-          font-size: 12px;
-          color: #8a7c58;
-          letter-spacing: 0.02em;
-        }
-        .art-row {
-          display: flex;
-          gap: 10px;
-          padding: 9px 14px;
-          font-size: 13.5px;
-          border-top: 1px solid #f0e7cf;
-        }
-        .art-row:first-of-type {
-          border-top: none;
-        }
-        .art-row .pid {
-          font-family: var(--mono);
-          color: var(--orange-deep);
-          font-size: 12.5px;
-        }
-        .art-tag {
-          margin-left: auto;
-          font-size: 11.5px;
-          font-weight: 600;
-          padding: 1px 8px;
-          border-radius: 2px;
-          background: #efe6ce;
-          color: #8a7c58;
-        }
-        .art-tag.ex {
-          background: #f7e0ce;
-          color: #b4551e;
-        }
-        .art-tag.pass {
-          background: #d7efe9;
-          color: #0e6f60;
-        }
-        .art-tag.fail {
-          background: #f7d9d2;
-          color: #b4241e;
-        }
-        /* MOMENT BAND */
-        .band {
+        .cc :global(.btn-ink) {
           background: var(--ink);
           color: var(--paper);
+          box-shadow: 0 12px 30px rgba(25, 23, 19, 0.18);
         }
-        .band .wrap {
+        .cc :global(.btn-paper) {
+          background: rgba(255, 255, 255, 0.9);
+          color: var(--ink);
+          box-shadow: 0 8px 22px rgba(25, 23, 19, 0.07);
+        }
+        .cc :global(.btn-o) {
+          background: var(--o);
+          color: #fff;
+        }
+        .cc :global(.btn-ghost) {
+          background: rgba(241, 238, 232, 0.1);
+          color: var(--paper);
+        }
+        .cc :global(.btn-wide) {
+          display: flex;
+          justify-content: center;
+          padding: 18px;
+          margin-top: 10px;
+        }
+        @media (hover: hover) and (pointer: fine) {
+          .cc :global(.btn-ink):hover {
+            background: var(--o);
+            transform: translateY(-2px);
+          }
+          .cc :global(.btn-paper):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(25, 23, 19, 0.12);
+          }
+          .cc :global(.btn-o):hover,
+          .cc :global(.btn-ghost):hover {
+            background: var(--paper);
+            color: var(--ink);
+            transform: translateY(-2px);
+          }
+        }
+
+        /* 첫 화면 미리보기 두 장 */
+        .hero-cards {
           display: grid;
-          grid-template-columns: 1fr auto 1fr;
-          gap: 24px;
-          align-items: center;
-          padding: 26px 28px;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
         }
-        .moment {
+        .mini {
+          background: #fff;
+          border-radius: 16px;
+          padding: 6px;
+          box-shadow: 0 14px 36px rgba(25, 23, 19, 0.08);
+          overflow: hidden;
+        }
+        .mini-h {
+          display: flex;
+          justify-content: space-between;
+          gap: 8px;
+          padding: 10px 12px;
+          font-size: 10px;
+          color: var(--t3);
+        }
+        .mini-h .pass {
+          color: var(--pass);
+        }
+        .mini-h .fail {
+          color: var(--fail);
+        }
+        .mini-r {
+          display: grid;
+          grid-template-columns: 62px minmax(0, 1fr) auto;
+          gap: 8px;
+          align-items: center;
+          padding: 10px 12px;
+          margin-bottom: 3px;
+          background: var(--tint2);
+          border-radius: 9px;
+          font-size: 11px;
+        }
+        .mid {
+          color: var(--t3);
+        }
+        .mid.o {
+          color: var(--o);
+        }
+        .mnm {
+          color: var(--t1);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .mtg {
+          font-size: 9px;
+          color: var(--t3);
+        }
+        .mtg.pass {
+          color: var(--pass);
+        }
+        .mtg.fail {
+          color: var(--fail);
+        }
+
+        /* 흘러가는 띠 */
+        .marquee {
+          overflow: hidden;
+          background: var(--band);
+          border-radius: 100px;
+          padding: 15px 0;
+        }
+        .mq-track {
+          display: flex;
+          width: max-content;
+          animation: cc-mq 30s linear infinite;
+        }
+        .mq-set {
+          display: flex;
+          gap: 34px;
+          padding-right: 34px;
+          font-size: 12px;
+          letter-spacing: 0.14em;
+          color: var(--t2);
+          white-space: nowrap;
+        }
+        .mq-i {
+          display: inline-flex;
+          gap: 34px;
+        }
+        .mq-x {
+          color: var(--o);
+        }
+        @keyframes cc-mq {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(-50%);
+          }
+        }
+        /* 「움직임을 줄여 주세요」로 맞춰 두신 분에게는 흐르지 않는다 */
+        @media (prefers-reduced-motion: reduce) {
+          .mq-track {
+            animation: none;
+          }
+        }
+
+        /* ── 절 공통 ── */
+        .sec {
+          padding: 110px 0;
+        }
+        .sec-tight {
+          padding: 0;
+        }
+        /* 시안은 꼬리까지 같은 종이색이라 아래 여백이 0이었다. 우리 꼬리는 «흰» 칸이라
+           그대로 두면 검은 카드가 흰 칸에 바로 부딪는다 — 종이를 한 뼘 남겨 준다. */
+        .sec-last {
+          padding: 110px 0 72px;
+        }
+        .eye {
+          display: block;
+          font-size: 11px;
+          letter-spacing: 0.2em;
+          color: var(--o);
+        }
+        .eye.warm {
+          color: var(--warm);
+        }
+        .lead-row {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
+          gap: 48px;
+          align-items: end;
+        }
+        .lead-copy h2 {
+          margin: 22px 0 0;
+          font-size: clamp(32px, 4.4vw, 68px);
+          line-height: 1.06;
+          letter-spacing: -0.045em;
+          font-weight: 600;
+        }
+        .lead-copy h2 .o {
+          color: var(--o);
+        }
+        .lead-copy p {
+          margin: 22px 0 0;
+          max-width: 560px;
+          font-size: 17px;
+          line-height: 1.75;
+          color: var(--t1);
+        }
+        .lead-copy b {
+          color: var(--ink);
+          font-weight: 600;
+        }
+        .fig {
+          justify-self: end;
+        }
+        .fig :global(img) {
+          display: block;
+          width: 100%;
+          max-width: 420px;
+          height: auto;
+        }
+
+        /* 산출물 여섯 칸 */
+        .cards6 {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 12px;
+          margin: 48px 0 0;
+          padding: 0;
+          list-style: none;
+        }
+        .card6 {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          padding: 30px 28px 34px;
+          background: #fff;
+          border-radius: 20px;
+          box-shadow: 0 10px 28px rgba(25, 23, 19, 0.06);
+        }
+        .tag {
+          align-self: flex-start;
+          padding: 5px 11px;
+          background: var(--tint);
+          border-radius: 100px;
+          font-size: 10px;
+          letter-spacing: 0.12em;
+          color: var(--t2);
+          white-space: nowrap;
+        }
+        .c6t {
+          font-size: 22px;
+          font-weight: 600;
+          letter-spacing: -0.025em;
+        }
+        .c6d {
+          font-size: 14px;
+          line-height: 1.6;
+          color: var(--t2);
+        }
+
+        /* 직접 비교했어요 */
+        .cmp {
+          display: grid;
+          grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+          gap: 52px;
+          align-items: center;
+          margin-top: 110px;
+        }
+        .cmp-copy h3 {
+          margin: 18px 0 0;
+          font-size: clamp(24px, 2.5vw, 38px);
+          line-height: 1.22;
+          letter-spacing: -0.035em;
+          font-weight: 600;
+        }
+        .cmp-copy p {
+          margin: 18px 0 0;
+          font-size: 16px;
+          line-height: 1.75;
+          color: var(--t1);
+        }
+        .cmp-copy .fine {
+          font-size: 14px;
+          color: var(--t3);
+        }
+        .miss {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .miss-r {
           display: flex;
           align-items: center;
           gap: 16px;
+          padding: 20px 26px;
+          background: var(--band3);
+          border-radius: 100px;
         }
-        .moment .num {
-          font-family: var(--mono);
-          font-size: 13px;
-          color: var(--orange);
-          letter-spacing: 0.1em;
+        .miss-r .x {
+          flex: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 26px;
+          height: 26px;
+          background: rgba(192, 57, 43, 0.14);
+          border-radius: 50%;
+          font-size: 12px;
+          color: var(--fail);
         }
-        .moment .mt {
-          font-size: 22px;
-          font-weight: 700;
-        }
-        .moment .ms {
-          font-size: 14px;
-          color: #c9c2ad;
-          font-weight: 400;
-        }
-        .band .arrow {
-          font-size: 26px;
-          color: var(--tan);
-        }
-        @media (max-width: 720px) {
-          .band .wrap {
-            grid-template-columns: 1fr;
-            gap: 14px;
-          }
-          .band .arrow {
-            display: none;
-          }
+        .mtx {
+          font-size: clamp(16px, 1.8vw, 24px);
+          font-weight: 500;
+          letter-spacing: -0.02em;
+          color: var(--t4);
+          text-decoration: line-through;
+          text-decoration-color: rgba(192, 57, 43, 0.4);
         }
 
-        /* SECTION shared */
-        .sec {
-          padding: 96px 0;
+        /* 어두운 칸 */
+        .dark {
+          background: var(--ink);
+          color: var(--paper);
+          border-radius: 30px;
+          padding: 88px 56px;
         }
-        .sec-eye {
+        .dk-top {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr);
+          gap: 56px;
+          align-items: end;
+        }
+        .dk-copy h2 {
+          margin: 22px 0 0;
+          font-size: clamp(30px, 4.2vw, 64px);
+          line-height: 1.06;
+          letter-spacing: -0.045em;
+          font-weight: 600;
+        }
+        .dk-copy p {
+          margin: 22px 0 0;
+          max-width: 560px;
+          font-size: 17px;
+          line-height: 1.75;
+          color: var(--t3);
+        }
+        .stats {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+        }
+        .stat {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          padding: 22px 20px;
+          background: rgba(241, 238, 232, 0.07);
+          border-radius: 18px;
+        }
+        .sn {
+          font-size: clamp(28px, 3vw, 46px);
+          line-height: 1;
+          color: var(--num);
+        }
+        .sl {
+          font-size: 12px;
+          line-height: 1.4;
+          color: var(--t4);
+        }
+        .vid {
+          margin-top: 52px;
+          background: rgba(241, 238, 232, 0.06);
+          border-radius: 22px;
+          padding: 10px;
+        }
+        .vid-h {
           display: flex;
           align-items: center;
+          justify-content: space-between;
           gap: 12px;
-          margin-bottom: 18px;
-        }
-        .sec-eye .idx {
-          font-family: var(--mono);
-          font-size: 13px;
-          color: var(--orange);
-        }
-        .sec h2 {
-          font-size: clamp(34px, 5vw, 58px);
-          line-height: 1.14;
-        }
-        .lead {
-          font-size: 19px;
-          font-weight: 400;
-          color: var(--ink-soft);
-          /* 세 섹션 리드가 각각 2줄·2줄·1줄로 떨어지는 폭 */
-          max-width: 760px;
-          margin-top: 16px;
-        }
-
-        /* 캐릭터 그림 공통 — 투명 PNG(webp)라 카드 테두리를 두르지 않는다.
-           종이 여백 위에 그대로 두는 편이 소품이 살아난다. */
-        .cc :global(.plan-figure img),
-        .cc :global(.verify-figure img),
-        .cc :global(.proof-figure img) {
-          width: 100%;
-          height: auto;
-          object-fit: contain;
-        }
-
-        /* PLANNING */
-        .plan-intro {
-          display: grid;
-          gap: 20px;
-        }
-        .plan-figure {
-          justify-self: center;
-          width: min(300px, 80%);
-        }
-        @media (min-width: 1000px) {
-          .plan-intro {
-            grid-template-columns: minmax(0, 1fr) 400px;
-            gap: 48px;
-            align-items: center;
-          }
-          .plan-figure {
-            justify-self: end;
-            width: 400px;
-          }
-        }
-        .plan-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 12px;
-          margin-top: 40px;
-        }
-        .chip {
-          background: var(--card);
-          border: 1px solid var(--paper-line);
-          border-radius: 6px;
-          padding: 16px 16px 18px;
-        }
-        .chip .ci {
-          font-family: var(--mono);
+          padding: 8px 12px 14px;
           font-size: 11px;
-          color: var(--tan);
-          margin-bottom: 10px;
+          letter-spacing: 0.1em;
+          color: var(--t4);
         }
-        .chip .cn {
-          font-size: 16.5px;
-          font-weight: 700;
+        .rec {
+          color: var(--o);
+          white-space: nowrap;
         }
-        .chip .cd {
-          font-size: 13px;
-          color: var(--ink-soft);
-          margin-top: 5px;
-          font-weight: 400;
-          line-height: 1.5;
-        }
-        /* 시연 영상 — 주장 바로 뒤에 붙는 증거 */
-        /* PROOF — planning 에서 갈라져 나온 절.
-           배경을 한 톤 밝게(paper → paper-2) 깔아 «여기서 장이 바뀐다»를 눈으로 알린다.
-           tpls 절도 같은 paper-2 인데, 그 사이에 짙은 초록 verify 절이 끼어 있어
-           두 밝은 절이 붙어 보이지 않는다. */
-        .sec-proof {
-          background: var(--paper-2);
-        }
-        .sec-proof h2 .o {
-          color: var(--orange);
-        }
-        /* 영상은 «한 단»이다 — 폭을 다 쓴다 (2026-08-25 사장님 지시로 되돌렸다) */
-        .showcase {
-          margin-top: 40px;
-        }
-        .proof-intro {
-          display: grid;
-          gap: 20px;
-        }
-        .proof-figure {
-          justify-self: center;
-          width: min(300px, 80%);
-        }
-        @media (min-width: 1000px) {
-          .proof-intro {
-            grid-template-columns: minmax(0, 1fr) 380px;
-            gap: 48px;
-            align-items: center;
-          }
-          .proof-figure {
-            justify-self: end;
-            width: 380px;
-          }
-        }
-        .sc-frame {
+        .vid-f {
           position: relative;
-          aspect-ratio: 16 / 9;
-          border: 1px solid var(--paper-line);
+          padding-top: 56.25%;
+          background: #0d0c0a;
           border-radius: 14px;
           overflow: hidden;
-          background: #000;
         }
-        .sc-frame iframe {
+        .vid-f iframe {
           position: absolute;
           inset: 0;
           width: 100%;
@@ -1017,543 +1198,476 @@ export function HomeLanding({ packs }: { packs: AiPackCard[] }) {
           border: 0;
         }
 
-        .thesis {
-          margin-top: 40px;
-          background: var(--ink);
-          color: var(--paper);
-          border-radius: 8px;
-          padding: 34px 32px;
-          display: grid;
-          grid-template-columns: 1fr auto;
-          gap: 26px;
-          align-items: center;
-        }
-        @media (max-width: 720px) {
-          .thesis {
-            grid-template-columns: 1fr;
-          }
-        }
-        .thesis h3 {
-          font-size: 26px;
-          line-height: 1.2;
-        }
-        .thesis h3 .o {
-          color: var(--orange);
-        }
-        .thesis p {
-          font-size: 15px;
-          color: #c9c2ad;
-          font-weight: 400;
-          margin-top: 10px;
-          max-width: 440px;
-        }
-        /* 각주는 두 칸을 가로질러 아래에 깔린다 — 그냥 두면 왼쪽 글 칸에 끼어
-           ✕ 목록과 나란히 서면서 문단이 두 동강 난다. */
-        /* .thesis p (글자 하나 + 클래스 하나)가 .thesis-note (클래스 하나)를 이겨서
-           max-width:440px 가 그대로 걸린다 — 앞에 .thesis 를 붙여 무게를 맞춘다.
-           (이 주석 안에 역따옴표를 쓰면 styled-jsx 템플릿이 거기서 닫혀 빌드가 깨진다.) */
-        .thesis .thesis-note {
-          grid-column: 1 / -1;
-          font-size: 13px;
-          line-height: 1.7;
-          color: #a49b83;
-          font-weight: 400;
-          margin-top: 4px;
-          max-width: none;
-        }
-        .ex-list {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          /* ✕ 가 셋에서 다섯으로 늘어 왼쪽 글보다 키가 커졌다 — 조금 넓혀
-             오른쪽 칸이 세로로만 긴 띠처럼 보이지 않게 한다. */
-          min-width: 260px;
-        }
-        .ex-item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          font-size: 14px;
-          color: #e7a985;
-          background: var(--green-2);
-          border-radius: 4px;
-          padding: 9px 12px;
-        }
-        .ex-item .x {
-          color: var(--orange);
-        }
-        /* VERIFY (dark) */
-        .verify-intro {
-          display: grid;
-          gap: 20px;
-        }
-        .verify-figure {
-          justify-self: center;
-          width: min(300px, 80%);
-        }
-        @media (min-width: 1000px) {
-          .verify-intro {
-            grid-template-columns: minmax(0, 1fr) 380px;
-            gap: 48px;
-            align-items: center;
-          }
-          .verify-figure {
-            justify-self: end;
-            width: 380px;
-          }
-        }
-        .verify {
-          background: var(--green);
-          color: #efe9d9;
-          padding: 100px 0;
-        }
-        .verify .sec-eye .idx {
-          color: var(--teal);
-        }
-        .verify h2 {
-          color: #f4eedd;
-          font-size: clamp(34px, 5vw, 58px);
-        }
-        .verify h2 .t {
-          color: var(--teal);
-        }
-        .verify h2 .o {
-          color: var(--orange);
-        }
-        .verify .lead {
-          color: #a7b8ad;
-        }
-        .inputs {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 14px;
-          margin-top: 44px;
-        }
-        .inbox {
-          background: var(--green-2);
-          border: 1px solid var(--green-line);
-          border-radius: 8px;
-          padding: 20px;
-        }
-        .inbox .in-n {
-          font-size: 12.5px;
-          font-weight: 600;
-          color: var(--teal);
-          letter-spacing: 0.03em;
-          margin-bottom: 12px;
-        }
-        .inbox .in-t {
-          font-size: 18px;
-          font-weight: 700;
-        }
-        .inbox .in-d {
-          font-size: 13.5px;
-          color: #9db3a6;
-          font-weight: 400;
-          margin-top: 8px;
-          line-height: 1.55;
-        }
-        .inbox .in-note {
-          font-size: 12px;
-          color: #e7a985;
-          margin-top: 12px;
-          display: flex;
-          gap: 6px;
-          align-items: flex-start;
-        }
-        .verify-flow {
+        /* 내놓는 법 */
+        .ship {
           display: grid;
           grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-          gap: 24px;
-          margin-top: 44px;
-          align-items: stretch;
+          gap: 56px;
+          align-items: start;
         }
-        @media (max-width: 820px) {
-          .verify-flow {
-            grid-template-columns: 1fr;
-          }
-        }
-        .split {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-        .split-row {
-          flex: 1;
-          display: flex;
-          gap: 12px;
-          align-items: center;
-          background: var(--green-2);
-          border: 1px solid var(--green-line);
-          border-radius: 8px;
-          padding: 16px 18px;
-        }
-        .split-row .ico {
-          width: 34px;
-          height: 34px;
-          border-radius: 6px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12.5px;
+        .ship-copy h3 {
+          margin: 20px 0 0;
+          font-size: clamp(26px, 3.1vw, 46px);
+          line-height: 1.14;
+          letter-spacing: -0.04em;
           font-weight: 600;
-          flex-shrink: 0;
         }
-        .split-row.pub .ico {
-          background: #123a2c;
-          color: var(--teal);
-        }
-        .split-row.sec .ico {
-          background: #3a2417;
-          color: var(--orange);
-        }
-        .split-row .sr-t {
+        .ship-copy p {
+          margin: 20px 0 24px;
+          max-width: 500px;
           font-size: 16px;
-          font-weight: 700;
+          line-height: 1.75;
+          color: var(--t1);
         }
-        .split-row .sr-d {
-          font-size: 13px;
-          color: #9db3a6;
-          font-weight: 400;
-          margin-top: 3px;
-        }
-        .report {
-          background: #12201a;
-          border: 1px solid var(--green-line);
-          border-radius: 10px;
-          overflow: hidden;
-        }
-        .report .rh {
-          padding: 12px 16px;
-          font-size: 12.5px;
-          color: #7fae99;
-          border-bottom: 1px solid var(--green-line);
-          display: flex;
-          justify-content: space-between;
-        }
-        .report .rb {
-          padding: 18px 16px;
-        }
-        .rstat {
-          display: flex;
-          gap: 12px;
-          margin-bottom: 16px;
-        }
-        .rstat .s {
-          flex: 1;
-          border-radius: 8px;
-          padding: 12px 14px;
-        }
-        .rstat .s.p {
-          background: #123a2a;
-        }
-        .rstat .s.f {
-          background: #3a2018;
-        }
-        .rstat .s .sl {
-          font-size: 12px;
-        }
-        .rstat .s.p .sl {
-          color: #57c79e;
-        }
-        .rstat .s.f .sl {
-          color: #f0997b;
-        }
-        .rstat .s .sv {
-          font-size: 30px;
-          font-weight: 700;
-          line-height: 1.1;
-        }
-        .rstat .s.p .sv {
-          color: #8fe3c6;
-        }
-        .rstat .s.f .sv {
-          color: #f5b49e;
-        }
-        .rfail {
-          font-size: 13px;
-          color: #e89b7e;
-          display: flex;
-          gap: 8px;
-          align-items: center;
-          padding: 6px 0;
-          border-top: 1px solid #1e3228;
-        }
-        .vout {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 12px;
-          margin-top: 18px;
-        }
-        .vchip {
-          background: var(--green-2);
-          border: 1px solid var(--green-line);
-          border-radius: 8px;
-          padding: 16px;
-        }
-        .vchip .vc-h {
-          font-size: 15px;
-          font-weight: 700;
-          color: #efe9d9;
-        }
-        .vchip .vc-d {
-          font-size: 12.5px;
-          font-weight: 400;
-          color: #9db3a6;
-          margin-top: 5px;
-        }
-        /* TEMPLATES */
-        .tpls {
-          padding: 90px 0;
-          background: var(--paper-2);
-        }
-        .tpls h2 {
-          font-size: clamp(34px, 5vw, 58px);
-        }
-        /* AI팩 — PER_PAGE개씩 넘기며 롤링 */
-        .tpl-roll {
-          margin-top: 38px;
-        }
-        .tpl-vp {
-          overflow: hidden;
-        }
-        .tpl-track {
-          display: flex;
-          transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
-        }
-        .tpl-page {
-          flex: 0 0 100%;
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 16px;
-          /* 장마다 카드 수가 다를 수 있다(등급이 홀수인 업종). 늘리지 말고 내용 높이로 둔다 —
-             트랙 높이는 가장 긴 장을 따라가서, 늘리면 짧은 장의 카드가 빈 채로 늘어난다. */
-          align-content: start;
-          align-items: start;
-          /* 트랙이 옆으로 밀릴 때 카드 그림자가 잘리지 않게 살짝 여유를 준다 */
-          padding: 4px;
-        }
-        @media (max-width: 860px) {
-          .tpl-page {
-            grid-template-columns: 1fr;
-          }
-        }
-        .tpl-foot {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 16px;
-          margin-top: 22px;
-          flex-wrap: wrap;
-        }
-        /* ⚠ 줄바꿈을 «반드시» 켜 둔다. 점은 업종 수만큼 늘어난다 —
-           팩이 늘면서 폰(375px)에서 한 줄이 414px 이 됐고, 페이지 전체에
-           가로 스크롤이 생겼다(2026-08-11). 점 하나 34px × 개수 라
-           업종이 더 늘면 또 넘친다. 줄바꿈이 그 걱정을 없앤다. */
-        .tpl-dots {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 8px;
-          max-width: 100%;
-        }
-        .tpl-dots button {
-          width: 26px;
-          height: 6px;
-          border: 0;
-          padding: 0;
-          border-radius: 999px;
-          background: var(--paper-line);
-          cursor: pointer;
-          transition: background 0.2s ease, width 0.2s ease;
-        }
-        .tpl-dots button.on {
-          width: 40px;
-          background: var(--orange);
-        }
-        .cc :global(.btn-line) {
-          background: transparent;
+        .ship-copy b {
           color: var(--ink);
-          border: 1.5px solid var(--ink);
+          font-weight: 600;
         }
-        .cc :global(.btn-line):hover {
-          background: var(--ink);
-          color: var(--paper);
-        }
-        .cc :global(.tpl) {
-          background: var(--card);
-          color: var(--ink);
-          border: 1px solid var(--paper-line);
-          border-radius: 8px;
-          padding: 24px;
+        .guide {
           display: flex;
           flex-direction: column;
-          gap: 6px;
-          transition: transform 0.12s ease, border-color 0.12s ease;
-        }
-        .cc :global(.tpl):hover {
-          transform: translateY(-2px);
-          border-color: var(--orange);
-        }
-        .cc :global(.tpl) .tt {
-          font-size: 20px;
-          font-weight: 700;
-        }
-        .cc :global(.tpl) .tg {
-          display: inline-block;
-          align-self: flex-start;
-          font-size: 11.5px;
-          font-weight: 700;
-          letter-spacing: 0.02em;
-          color: var(--orange-deep);
-          background: var(--paper-2, rgba(0, 0, 0, 0.04));
-          border-radius: 999px;
-          padding: 3px 10px;
-          margin-bottom: 8px;
-        }
-        /* 구성 목록 — 등급이 넷이라 무엇이 더 들어가는지가 고르는 근거가 된다.
-           한 줄에 하나씩 쌓으면 카드가 너무 길어져, 폭 안에서 흘러가며 접히게 둔다. */
-        .cc :global(.tpl) .tl {
-          margin: 10px 0 0;
-          padding: 10px 0 0;
-          border-top: 1px solid rgba(0, 0, 0, 0.08);
-          list-style: none;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 2px 0;
-          font-size: 12.5px;
-          line-height: 1.6;
-          color: var(--ink-soft);
-        }
-        .cc :global(.tpl) .tl li:not(:last-child)::after {
-          content: "·";
-          color: var(--tan);
-          margin: 0 7px;
-        }
-        .cc :global(.tpl) .td {
-          font-size: 14px;
-          color: var(--ink-soft);
-          font-weight: 400;
-          margin-top: 6px;
-          line-height: 1.55;
-        }
-        .cc :global(.tpl) .tp {
-          margin-top: 14px;
-          font-weight: 700;
-          font-size: 17px;
-          color: var(--orange-deep);
-        }
-
-        /* SHIP — 만들고 나서 막히는 자리 안내.
-           .thesis·.chip 과 같은 어휘를 쓴다: 폭을 꽉 채우고, 카드 배경 +
-           종이선 테두리 1px, 모서리 6px, 위 여백 40px.
-           파는 말이 아니라 «도와드리려고 적어 뒀다»는 결이라 색을 절제한다. */
-        .ship {
-          margin-top: 40px;
-          background: var(--card);
-          border: 1px solid var(--paper-line);
-          border-radius: 6px;
-          padding: 30px 32px;
-          display: grid;
-          grid-template-columns: 1fr 300px;
-          gap: 32px;
-          align-items: start;
-        }
-        .ship-tag {
-          display: inline-block;
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          color: var(--teal-deep);
-          background: rgba(14, 111, 96, 0.09);
-          border-radius: 4px;
-          padding: 4px 9px;
-        }
-        .ship-hd h3 {
-          margin: 12px 0 0;
-          font-size: 22px;
-          line-height: 1.3;
-          font-weight: 800;
-          /* 좁은 화면에서 「막히/는」처럼 어절 한가운데가 잘렸다.
-             한국어는 어절 단위로 끊어야 읽힌다(2026-08-10). */
-          word-break: keep-all;
-        }
-        .ship-hd p {
-          margin: 10px 0 0;
-          font-size: 15px;
-          line-height: 1.8;
-          color: var(--ink-soft);
-          max-width: 560px;
-          word-break: keep-all;
-        }
-        .ship-list {
+          gap: 8px;
           margin: 0;
           padding: 0;
           list-style: none;
+        }
+        .guide-r {
           display: grid;
-          gap: 8px;
+          grid-template-columns: 34px minmax(0, 1fr);
+          gap: 14px;
+          align-items: center;
+          padding: 20px 24px;
+          background: #fff;
+          border-radius: 16px;
+          box-shadow: 0 8px 22px rgba(25, 23, 19, 0.05);
         }
-        .ship-list li {
-          font-size: 14px;
+        .gn {
+          font-size: 11px;
+          color: var(--o);
+        }
+        .gt {
+          font-size: 17px;
           line-height: 1.5;
-          color: var(--ink-soft);
-          padding-left: 15px;
-          position: relative;
-          word-break: keep-all;
-        }
-        .ship-list li::before {
-          content: "";
-          position: absolute;
-          left: 0;
-          top: 8px;
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: var(--teal);
-        }
-        @media (max-width: 860px) {
-          .ship {
-            grid-template-columns: 1fr;
-            gap: 22px;
-            padding: 26px 22px;
-          }
         }
 
-        /* MOAT */
-        .moat {
-          padding: 100px 0;
-          text-align: center;
+        /* 02 검수 — 크림 칸 */
+        .band {
+          background: var(--band2);
+          border-radius: 30px;
+          padding: 84px 56px 76px;
         }
-        /* 이 절만 가운데 정렬이라 눈표도 가운데로 세운다. */
-        .moat-eye {
-          justify-content: center;
-        }
-        .moat h2 {
-          font-size: clamp(34px, 5vw, 58px);
-          max-width: none;
-          margin: 0 auto;
-        }
-        .moat h2 .o {
-          color: var(--orange);
-        }
-        .moat h2 .t {
-          color: var(--teal-deep);
-        }
-        .moat p {
-          font-size: 17px;
-          color: var(--ink-soft);
-          font-weight: 400;
-          /* 마무리 문단이 2줄로 떨어지는 폭 */
-          max-width: 780px;
-          margin: 22px auto 0;
-          line-height: 1.7;
-        }
-        .fc {
-          display: flex;
+        .cards3 {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: 12px;
-          justify-content: center;
+          margin-top: 44px;
+        }
+        .in {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          padding: 28px 26px 30px;
+          background: var(--tint3);
+          border-radius: 20px;
+        }
+        .in-h {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+        .in-n {
+          font-size: 10px;
+          letter-spacing: 0.1em;
+          color: var(--t3);
+        }
+        .in-b {
+          flex: none;
+          padding: 5px 10px;
+          background: var(--ink);
+          color: var(--paper);
+          border-radius: 100px;
+          font-size: 10px;
+          white-space: nowrap;
+        }
+        .in-t {
+          font-size: 21px;
+          font-weight: 600;
+          letter-spacing: -0.025em;
+        }
+        .in-d {
+          font-size: 14px;
+          line-height: 1.65;
+          color: var(--t1);
+        }
+        .in-w {
+          margin-top: auto;
+          padding: 10px 12px;
+          background: rgba(192, 57, 43, 0.08);
+          border-radius: 10px;
+          font-size: 12px;
+          line-height: 1.6;
+          color: var(--fail);
+        }
+        .vgrid {
+          display: grid;
+          grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+          gap: 44px;
+          align-items: start;
+          margin-top: 44px;
+        }
+        .vleft {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .vbox {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          padding: 26px;
+          background: var(--tint3);
+          border-radius: 20px;
+        }
+        .vb-tag {
+          align-self: flex-start;
+          padding: 5px 11px;
+          border-radius: 100px;
+          font-size: 10px;
+          letter-spacing: 0.12em;
+          white-space: nowrap;
+        }
+        .vb-tag.pass {
+          color: var(--pass);
+          background: rgba(31, 107, 72, 0.1);
+        }
+        .vb-tag.fail {
+          color: var(--fail);
+          background: rgba(192, 57, 43, 0.1);
+        }
+        .vb-t {
+          font-size: 21px;
+          font-weight: 600;
+          letter-spacing: -0.025em;
+        }
+        .vb-d {
+          font-size: 16px;
+          line-height: 1.6;
+          color: var(--t2);
+        }
+
+        /* 검수 결과서 */
+        .report {
+          background: #fff;
+          border-radius: 24px;
+          padding: 10px;
+          box-shadow: 0 18px 44px rgba(25, 23, 19, 0.1);
+        }
+        .rp-h {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          padding: 12px 16px 14px;
+          font-size: 11px;
+        }
+        .rp-h .dim {
+          color: var(--t3);
+        }
+        .rp-s {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .rs {
+          display: flex;
+          align-items: baseline;
+          gap: 12px;
+          padding: 20px 22px;
+          border-radius: 16px;
+        }
+        .rs.pass {
+          background: rgba(31, 107, 72, 0.09);
+          color: var(--pass);
+        }
+        .rs.fail {
+          background: rgba(192, 57, 43, 0.09);
+          color: var(--fail);
+        }
+        .rsn {
+          font-size: 42px;
+          line-height: 1;
+        }
+        .rsl {
+          font-size: 12px;
+          letter-spacing: 0.12em;
+        }
+        .rp-f {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          padding-top: 8px;
+        }
+        .rf {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 13px 16px;
+          background: var(--tint2);
+          border-radius: 12px;
+          font-size: 15px;
+          color: var(--t1);
+        }
+        .rf .x {
+          color: var(--fail);
+        }
+        .rp-c {
+          padding: 16px 16px 10px;
+          font-size: 10px;
+          letter-spacing: 0.16em;
+          color: var(--t3);
+        }
+        .rp-o {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 6px;
+        }
+        .ro {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          padding: 16px 18px;
+          background: var(--tint2);
+          border-radius: 14px;
+        }
+        .rot {
+          font-size: 15px;
+          font-weight: 600;
+        }
+        .rod {
+          font-size: 13px;
+          color: var(--t2);
+        }
+
+        /* 03 업종별 팩 */
+        .packs-top {
+          display: flex;
           flex-wrap: wrap;
-          margin-top: 30px;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 32px;
+        }
+        .tabs {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          padding: 38px 0 20px;
+        }
+        .tab {
+          font: inherit;
+          font-size: 14px;
+          font-weight: 500;
+          padding: 12px 20px;
+          border: 0;
+          border-radius: 100px;
+          cursor: pointer;
+          background: #fff;
+          color: var(--t1);
+          box-shadow: 0 6px 16px rgba(25, 23, 19, 0.05);
+          transition:
+            background 0.25s,
+            color 0.25s;
+        }
+        .tab.on {
+          background: var(--ink);
+          color: var(--paper);
+          box-shadow: 0 10px 22px rgba(25, 23, 19, 0.18);
+        }
+        .plans {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 12px;
+        }
+        .cc :global(.plan) {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          padding: 30px 26px 28px;
+          background: #fff;
+          border-radius: 22px;
+          box-shadow: 0 10px 28px rgba(25, 23, 19, 0.06);
+        }
+        .pl-tier {
+          align-self: flex-start;
+          padding: 5px 11px;
+          background: rgba(215, 72, 31, 0.09);
+          border-radius: 100px;
+          font-size: 10px;
+          letter-spacing: 0.14em;
+          color: var(--o);
+          white-space: nowrap;
+        }
+        .pl-name {
+          margin-top: -8px;
+          font-size: 23px;
+          font-weight: 600;
+          letter-spacing: -0.03em;
+          line-height: 1.25;
+        }
+        .pl-scope {
+          margin-top: -10px;
+          font-size: 13px;
+          line-height: 1.5;
+          color: var(--t2);
+        }
+        .pl-price {
+          display: flex;
+          align-items: baseline;
+          gap: 6px;
+          padding: 14px 16px;
+          background: var(--tint);
+          border-radius: 14px;
+          font-size: 12px;
+          color: var(--t2);
+        }
+        .pl-price b {
+          font-size: 32px;
+          line-height: 1;
+          font-weight: 600;
+          color: var(--ink);
+        }
+        .pl-items {
+          display: flex;
+          flex-direction: column;
+          gap: 7px;
+        }
+        .pl-i {
+          display: grid;
+          grid-template-columns: 12px minmax(0, 1fr);
+          gap: 8px;
+          font-size: 13px;
+          line-height: 1.5;
+          color: var(--t1);
+        }
+        .pl-dot {
+          color: var(--o);
+        }
+        .pl-go {
+          margin-top: auto;
+          padding-top: 18px;
+          font-size: 11px;
+          letter-spacing: 0.1em;
+        }
+
+        /* 마지막 */
+        .cta {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 0.88fr);
+          gap: 56px;
+          align-items: end;
+          padding: 96px 56px;
+        }
+        .cta h2 {
+          margin: 0;
+          font-size: clamp(30px, 4.4vw, 68px);
+          line-height: 1.05;
+          letter-spacing: -0.05em;
+          font-weight: 600;
+        }
+        .cta-r {
+          display: flex;
+          flex-direction: column;
+          gap: 26px;
+        }
+        .cta-r p {
+          margin: 0;
+          font-size: 17px;
+          line-height: 1.78;
+          color: var(--t3);
+        }
+        .cta .ctas {
+          margin-top: 0;
+        }
+
+        /* ── 좁은 화면 ─────────────────────────────────────── */
+        @media (max-width: 1080px) {
+          .hero-grid,
+          .lead-row,
+          .cmp,
+          .dk-top,
+          .ship,
+          .vgrid,
+          .cta {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 36px;
+          }
+          .fig {
+            justify-self: start;
+          }
+          .fig :global(img) {
+            max-width: 300px;
+          }
+          .cards6,
+          .cards3,
+          .plans {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+          .dark,
+          .band {
+            padding: 60px 32px;
+          }
+          .cta {
+            padding: 64px 32px;
+          }
+        }
+        @media (max-width: 720px) {
+          .hero {
+            padding-top: 56px;
+          }
+          .sec {
+            padding: 72px 0;
+          }
+          .sec-last {
+            padding: 72px 0 48px;
+          }
+          .cmp {
+            margin-top: 72px;
+          }
+          .hero-cards,
+          .cards6,
+          .cards3,
+          .plans,
+          .rp-o {
+            grid-template-columns: minmax(0, 1fr);
+          }
+          .stats {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 6px;
+          }
+          .stat {
+            padding: 16px 14px;
+          }
+          .cc :global(.btn) {
+            padding: 16px 24px;
+            font-size: 14px;
+          }
+          .dark,
+          .band {
+            padding: 44px 20px;
+            border-radius: 22px;
+          }
+          .cta {
+            padding: 48px 20px;
+          }
+          .miss-r {
+            padding: 16px 20px;
+          }
+          .guide-r {
+            padding: 16px 18px;
+          }
+          .gt {
+            font-size: 15px;
+          }
         }
       `}</style>
     </div>
