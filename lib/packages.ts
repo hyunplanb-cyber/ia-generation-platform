@@ -953,39 +953,79 @@ export const searchText = (pkg: PackageDef): string =>
     .join(" ")
     .toLowerCase();
 
-/**
- * 메인 랜딩이 쓰는 가벼운 카드 데이터.
- * 랜딩은 클라이언트 컴포넌트라 PackageDef를 통째로 넘기면 템플릿 데이터(화면 수백 개)가
- * 클라이언트 번들에 딸려 들어간다. 서버에서 필요한 값만 뽑아 넘긴다.
+/* ─── 홈 첫 화면의 「업종별 팩」 칸 ────────────────────────────────
+ *
+ * 홈은 업종 단추를 눌러 가며 네 등급을 나란히 보는 짜임이다(2026-08-26 리뉴얼 시안).
+ * 그래서 «상품 낱개»가 아니라 «업종으로 묶인» 모양이 필요하다.
+ *
+ * ⭐ 값·화면 수·내용물을 여기서 «다시 적지 않는다». 시안에는 44·270 같은 수가 손으로
+ *   베껴져 있었는데, 그건 시안을 그린 날의 사진일 뿐이라 팩이 자라면 곧 어긋난다.
+ *   세는 곳과 만드는 곳이 다르면 반드시 어긋난다는 것은 이 파일이 이미 겪었다
+ *   (2026-08-03 「확인 항목 368개」 사건 — countItems 주석 참고).
  */
-export interface AiPackCard {
+export interface HomePlan {
+  id: PlanId;
+  tier: string;
+  /** 어디까지 파고든 설계인가 — 한 줄 */
+  scope: string;
+  /** 값 — 크레딧 수.
+   *  ⚠ 값을 아직 «안 내걸기»로 해 둔 동안(lib/flags.ts 의 PACKAGE_PRICES_PUBLIC)은 null 이다.
+   *    홈만 값을 내걸고 구매 화면은 「판매 준비 중」이면 손님이 두 화면에서 다른 말을 듣는다. */
+  credits: number | null;
+  /** zip 에 실제로 들어가는 것 — 목록·상세와 같은 출처(planContents) */
+  items: string[];
   href: string;
-  /** 카드 상단 영문 라벨 */
-  code: string;
-  title: string;
-  planName: string;
-  screens: number;
-  /** 설계 깊이 한 줄 — 목록 카드와 같은 문구 */
-  depthLabel: string;
-  /** zip에 들어가는 것 — 목록 카드와 같은 출처(planContents) */
-  contents: string[];
-  price: string;
-  badge?: string;
 }
 
-export function aiPackCards(): AiPackCard[] {
-  return packageProducts().map(({ pkg, plan, href }) => ({
-    href,
-    code: pkg.id.toUpperCase(),
-    title: pkg.title,
-    planName: plan.name,
-    screens: plan.stats.screens,
-    depthLabel: plan.depthLabel,
-    contents: planContents(plan),
-    // 살 수 있는 길이 열리기 전까지는 값 대신 상태를 적는다(lib/flags.ts).
-    price: PACKAGE_PRICES_PUBLIC ? formatPackPrice(plan.priceKrw) : "판매 준비 중",
-    badge: plan.badge,
-  }));
+export interface HomeIndustry {
+  key: string;
+  /** 단추에 적는 짧은 말 */
+  tab: string;
+  /** 카드에 적는 온전한 이름 */
+  name: string;
+  plans: HomePlan[];
+}
+
+/**
+ * 단추에 적을 짧은 말.
+ *
+ * 팩 이름(`title`)은 「해외 투어·티켓 예약 플랫폼」처럼 길어 단추 일곱 개를 한 줄에
+ * 못 세운다. `industry`(「여행·예약」)는 짧지만 **우리 말**이다 — 손님은 「내 업종」이
+ * 아니라 **「내가 만들려는 것」**으로 찾는다(CATEGORIES 주석과 같은 까닭).
+ * 그래서 손님 말로 된 짧은 이름을 따로 둔다.
+ *
+ * ⚠ 여기 없는 팩이 들어와도 화면은 안 깨진다 — `industry` 로 떨어진다.
+ *   대신 그 칸만 우리 말이 되므로, 팩을 새로 진열하면 여기 한 줄도 같이 적는다.
+ */
+const HOME_TABS: Record<string, string> = {
+  lms: "온라인 강의",
+  beauty: "뷰티샵 예약",
+  travel: "투어·티켓",
+  groupbuy: "공동구매",
+  matching: "동네 매칭",
+  rental: "렌탈·대여",
+  interior: "인테리어 시공",
+  petcare: "반려견 유치원",
+};
+
+export function homePacks(): HomeIndustry[] {
+  const 묶음 = new Map<string, HomeIndustry>();
+  for (const { pkg, plan, href } of packageProducts()) {
+    let 칸 = 묶음.get(pkg.id);
+    if (!칸) {
+      칸 = { key: pkg.id, tab: HOME_TABS[pkg.id] ?? pkg.industry, name: pkg.title, plans: [] };
+      묶음.set(pkg.id, 칸);
+    }
+    칸.plans.push({
+      id: plan.id,
+      tier: plan.name,
+      scope: plan.depthLabel,
+      credits: PACKAGE_PRICES_PUBLIC ? packCredits(plan.priceKrw) : null,
+      items: planContents(plan),
+      href,
+    });
+  }
+  return [...묶음.values()];
 }
 
 export function getPackage(id: string): PackageDef | undefined {
