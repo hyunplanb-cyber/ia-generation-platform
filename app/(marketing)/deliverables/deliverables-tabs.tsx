@@ -44,11 +44,11 @@ type Deliverable = {
   role: string;
   formats: string[];
   mockup: React.ReactNode;
-  /* 캐릭터 그림 — 글 칸 아래에 놓는다 (2026-08-25 사장님 지시).
-     ⚠ 오른쪽 칸은 이미 «샘플 화면»이 차지하고 있다. 거기에 캐릭터까지 넣으면 둘이 싸운다.
-       글 칸은 대개 샘플보다 짧아 밑이 비는데, 그 자리가 그림이 설 자리다.
-     ⚠ 모든 항목에 넣지 않는다. 여덟 중 넷만이다 — 매 칸마다 있으면 눈이 쉴 데가 없다. */
-  char?: { src: string; alt: string };
+  /* 캐릭터 그림 — 설명 «오른쪽»에 나란히 세운다 (자세한 까닭은 아래 렌더 자리 주석에).
+     ⚠ 모든 항목에 넣지 않는다. 여덟 중 넷만이다 — 매 칸마다 있으면 눈이 쉴 데가 없다.
+     ⚠ w·h 는 «잘라 낸 뒤»의 실제 크기다. 그림을 다시 받으면 이 값도 다시 잰다 —
+       어긋나면 그림이 뜨기 전에 자리를 잘못 잡아 글이 한 번 튄다. */
+  char?: { src: string; alt: string; w: number; h: number };
 };
 
 const DELIVERABLES: Deliverable[] = [
@@ -61,6 +61,8 @@ const DELIVERABLES: Deliverable[] = [
     mockup: <MenuTreeMockup />,
     char: {
       src: "/character/06_guide_menu_structure.webp",
+      w: 891,
+      h: 644,
       alt: "메뉴와 화면이 층층이 갈라지는 트리를 살펴보는 카페인컬러 캐릭터",
     },
   },
@@ -73,6 +75,8 @@ const DELIVERABLES: Deliverable[] = [
     mockup: <ScreenListMockup />,
     char: {
       src: "/character/07_guide_ia_screen_list.webp",
+      w: 812,
+      h: 859,
       alt: "화면 하나하나를 기능·이동·프롬프트로 줄줄이 정리하는 카페인컬러 캐릭터",
     },
   },
@@ -85,6 +89,8 @@ const DELIVERABLES: Deliverable[] = [
     mockup: <SpecMockup />,
     char: {
       src: "/character/08_guide_function_definition.webp",
+      w: 733,
+      h: 692,
       alt: "요건을 자로 재듯 갈래별로 나눠 적는 카페인컬러 캐릭터",
     },
   },
@@ -131,6 +137,8 @@ const DELIVERABLES: Deliverable[] = [
     mockup: <SpecPackMockup />,
     char: {
       src: "/character/10_guide_ai_build_spec.webp",
+      w: 804,
+      h: 591,
       alt: "스펙 문서 한 벌을 AI 코딩 도구에 넣어 화면을 뽑아내는 카페인컬러 캐릭터",
     },
   },
@@ -218,29 +226,40 @@ function PlanningDeliverables() {
                   <span className="font-mono text-sm text-muted-foreground">0{i + 1}</span>
                 </div>
                 <h2 className="mt-4 text-2xl font-bold text-foreground">{d.name}</h2>
-                <p className="mt-3 leading-relaxed text-muted-foreground">{d.role}</p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {d.formats.map((f) => (
-                    <span
-                      key={f}
-                      className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground"
-                    >
-                      {f} 다운로드
-                    </span>
-                  ))}
-                </div>
-                {d.char && (
-                  <div className="mt-8 w-[240px] max-w-full sm:mt-10 sm:w-[300px]">
-                    <Image
-                      src={d.char.src}
-                      alt={d.char.alt}
-                      width={900}
-                      height={900}
-                      sizes="(max-width: 640px) 240px, 300px"
-                      className="h-auto w-full object-contain"
-                    />
+                {/* 설명 «오른쪽»에 캐릭터를 붙인다 (2026-08-25 사장님 지시로 다시 잡았다).
+                    ⛔ 처음엔 다운로드 칩 «밑»에 300px 로 놓았다. 그랬더니 글 칸이 훌쩍
+                       길어져, 옆의 샘플 화면이 가운데에 붕 뜨고 위아래가 휑했다.
+                       사장님: 「구도 생각하고 넣어줘」 — 맞는 말씀이었다.
+                    → 세로로 쌓지 않고 «옆»에 세운다. 글 칸이 안 길어지니 샘플과 키가 맞는다.
+                    ⚠ 오른쪽 칸은 이미 샘플 화면이 쓰고 있다. 거기에 캐릭터까지 넣으면
+                      둘이 싸운다 — 캐릭터는 어디까지나 글 칸 안에 머문다. */}
+                <div className="mt-3 flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-7">
+                  <div className="min-w-0 flex-1">
+                    <p className="leading-relaxed text-muted-foreground">{d.role}</p>
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {d.formats.map((f) => (
+                        <span
+                          key={f}
+                          className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground"
+                        >
+                          {f} 다운로드
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                )}
+                  {d.char && (
+                    <div className="w-[200px] shrink-0 max-sm:mx-auto sm:w-[190px] lg:w-[210px]">
+                      <Image
+                        src={d.char.src}
+                        alt={d.char.alt}
+                        width={d.char.w}
+                        height={d.char.h}
+                        sizes="210px"
+                        className="h-auto w-full object-contain"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
               <div className={reversed ? "lg:order-1" : ""}>{d.mockup}</div>
             </div>
@@ -249,13 +268,13 @@ function PlanningDeliverables() {
           {사이띠 && (
             <section className="border-b border-border">
               <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-8 px-6 py-14 md:flex-row md:gap-14">
-                <div className="w-[260px] max-w-full shrink-0 md:w-[360px]">
+                <div className="w-[260px] max-w-full shrink-0 md:w-[340px]">
                   <Image
                     src="/character/09_guide_flow_wbs.webp"
                     alt="화면 이동 흐름도와 제작 일정을 나란히 놓고 함께 보는 카페인컬러 캐릭터"
-                    width={1120}
-                    height={896}
-                    sizes="(max-width: 768px) 260px, 360px"
+                    width={862}
+                    height={539}
+                    sizes="(max-width: 768px) 260px, 340px"
                     className="h-auto w-full object-contain"
                   />
                 </div>
