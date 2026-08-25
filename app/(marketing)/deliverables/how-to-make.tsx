@@ -112,7 +112,7 @@ export function HowToMakeBody() {
           여기만 max-w-5xl(1024px)이었고 탭 띠·AI팩·사이트 검수는 모두 1440px 이라,
           탭을 「만드는 방법」으로 옮기는 순간 제목이 200px 쯤 안으로 쑥 들어갔다.
           ⚠ 셋이 늘 같이 움직인다 — 하나를 고치면 나머지 둘도 본다. */}
-      <div className="mx-auto max-w-[1440px] px-6 pt-12 pb-16">
+      <div className="mx-auto max-w-[1440px] px-6 pt-2 pb-16">
         {/* ⛔ 여기 있던 절 제목(「AI팩은 이렇게 만들어져요」)과 소개문을 뺐다
             (2026-08-25 사장님이 그 자리를 통째로 짚어 지우라고 하셨다).
             바로 위 페이지 머리말이 이미 「만들기 전엔 AI팩, 오픈 전엔 검수 / 각 결과물이
@@ -131,7 +131,10 @@ export function HowToMakeBody() {
           {단계들.map((s) => (
             <li
               key={s.no}
-              className="grid grid-cols-1 items-center gap-5 border-t border-border py-10 md:grid-cols-[340px_1fr] md:gap-10 md:py-12 lg:grid-cols-[400px_1fr] lg:gap-14"
+              /* first:border-t-0 — 맨 윗줄 위에는 선을 안 긋는다 (2026-08-25 사장님 지시).
+                 바로 위에 탭 띠의 밑줄이 이미 있어서, 선이 두 줄로 겹쳐 보였다.
+                 선은 «단계와 단계 사이»를 나누는 것이지 절의 뚜껑이 아니다. */
+              className="grid grid-cols-1 items-center gap-5 border-t border-border py-10 first:border-t-0 md:grid-cols-[340px_1fr] md:gap-10 md:py-12 lg:grid-cols-[400px_1fr] lg:gap-14"
             >
               <div className="overflow-hidden rounded-2xl bg-surface max-md:max-w-[400px]">
                 <video
