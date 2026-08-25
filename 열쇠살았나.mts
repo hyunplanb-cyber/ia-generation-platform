@@ -69,14 +69,22 @@ const 물어 = async (q: ReturnType<typeof sql>): Promise<줄[]> => {
 const [마지막] = await 물어(sql`
   select max(created_at) as 때, count(*) filter (where created_at >= now() - interval '7 days') as 이레치
   from "menu"`);
-const 때 = 마지막?.때 ? new Date(String(마지막.때)) : null;
+/* ⛔ 날글로 읽으면 timestamp 에 시간대가 안 붙어 온다 — UTC 라고 못 박아 읽는다.
+     안 그러면 9시간이 틀어진다 (2026-08-25 사장님이 짚으셨다). */
+const 서울 = { timeZone: "Asia/Seoul" } as const;
+const UTC로 = (v: unknown): Date | null => {
+  if (v == null) return null;
+  const s = String(v);
+  return /[zZ]$|[+-]\d{2}:?\d{2}$/.test(s) ? new Date(s) : new Date(s.replace(" ", "T") + "Z");
+};
+const 때 = UTC로(마지막?.때);
 /* 마무리에서 «이 컴퓨터만 옛 열쇠인지»를 가리려고 며칠 전인지 들고 있는다. */
 let 최근성공며칠: number | null = null;
 if (!때) 짚기("성공한 생성이 하나도 없습니다");
 else {
   const 며칠 = Math.floor((Date.now() - 때.getTime()) / 86400000);
   최근성공며칠 = 며칠;
-  참고(`마지막 성공: ${때.toLocaleString("ko-KR")} (${며칠}일 전) · 최근 7일 메뉴 ${마지막.이레치}개`);
+  참고(`마지막 성공: ${때.toLocaleString("ko-KR", 서울)} (${며칠}일 전) · 최근 7일 메뉴 ${마지막.이레치}개`);
   /* ⚠ 손님이 안 온 것과 «막힌 것»은 다르다. 그래서 아래 실패 기록을 같이 본다. */
   if (며칠 >= 14) 참고(`${며칠}일째 성공이 없습니다 — 손님이 안 온 것인지 막힌 것인지 아래를 보세요`);
 }
@@ -106,7 +114,7 @@ if (!있나?.있음) {
   if (Number(열쇠실패?.n) > 0)
     짚기(
       `⛔⛔ 최근 7일에 «열쇠가 죽어서» 못 만든 것이 ${열쇠실패.n}건입니다 ` +
-        `(마지막 ${new Date(String(열쇠실패.마지막)).toLocaleString("ko-KR")}) — 손님이 지금 막혀 있습니다.`,
+        `(마지막 ${UTC로(열쇠실패.마지막)?.toLocaleString("ko-KR", 서울) ?? "?"}) — 손님이 지금 막혀 있습니다.`,
     );
   if (최근실패 > 0 && 최근성공 === 0)
     짚기(`최근 3일에 «실패만» ${최근실패}건 있습니다 — 손님이 막혀 있습니다`);

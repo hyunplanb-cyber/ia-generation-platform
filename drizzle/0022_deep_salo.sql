@@ -1,0 +1,1 @@
+ALTER TABLE "sns_content" ADD COLUMN "watcher_error" text DEFAULT '' NOT NULL;

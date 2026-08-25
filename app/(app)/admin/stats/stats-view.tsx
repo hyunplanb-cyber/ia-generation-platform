@@ -7,10 +7,13 @@
  */
 import type { OurNumbers } from "@/lib/our-numbers";
 import { maskEmail, OUR_ACCOUNTS } from "@/lib/our-numbers";
+/* ⚠ 날짜·시각은 반드시 lib/when 을 쓴다. Intl.DateTimeFormat 을 직접 쓰면
+     서버(UTC)와 브라우저(KST)가 다른 글자를 만들어 9시간이 틀어진다 —
+     2026-08-09 에 한 번, 2026-08-25 에 또 한 번 그렇게 틀렸다. */
+import { 날짜, 날짜시각 } from "@/lib/when";
 
 const 콤마 = (n: number) => n.toLocaleString("ko-KR");
-const 짧게 = (d: Date | null) =>
-  d ? d.toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : null;
+const 짧게 = (d: Date | null) => (d ? 날짜시각(d) : null);
 
 function StatCard({ 제목, 값, 단위, 밑, 강조 }: { 제목: string; 값: string; 단위?: string; 밑: React.ReactNode; 강조?: boolean }) {
   return (
@@ -33,7 +36,7 @@ export function StatsView({ n }: { n: OurNumbers }) {
     <div className="mx-auto max-w-5xl px-6 py-10">
       <h1 className="text-2xl font-extrabold tracking-tight text-foreground">우리 숫자</h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
-        {n.잰때.toLocaleString("ko-KR")} 기준입니다. 새로고침하면 다시 셉니다.
+        {날짜시각(n.잰때)} 기준입니다. 새로고침하면 다시 셉니다.
         <b className="text-foreground"> 우리 계정 {Object.keys(OUR_ACCOUNTS).length}개는 빼고</b> 손님만 센 수를 크게 뒀어요.
       </p>
 
@@ -378,7 +381,7 @@ export function StatsView({ n }: { n: OurNumbers }) {
                     {u.우리 ? `우리 것 · ${u.우리}` : "손님"}
                   </span>
                 </td>
-                <td className="whitespace-nowrap px-3 py-2 text-right tabular-nums">{u.가입때.toLocaleDateString("ko-KR")}</td>
+                <td className="whitespace-nowrap px-3 py-2 text-right tabular-nums">{날짜(u.가입때)}</td>
                 <td className="px-3 py-2 text-right tabular-nums">{u.프로젝트}</td>
                 <td className="px-3 py-2 text-right tabular-nums">{u.메뉴}</td>
                 <td className="px-3 py-2 text-right tabular-nums">{콤마(u.쓴크레딧)}</td>

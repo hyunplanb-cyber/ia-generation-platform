@@ -27,12 +27,16 @@ const 콤마 = (n: number) => n.toLocaleString("ko-KR");
 const 굵게 = (s: string) => `\x1b[1m${s}\x1b[0m`;
 const 흐리게 = (s: string) => `\x1b[2m${s}\x1b[0m`;
 const 빨강 = (s: string) => `\x1b[31m${s}\x1b[0m`;
+/* ⚠ timeZone 을 못 박는다 — 안 적으면 «이 기계»의 시간대를 쓴다.
+     lib/when 을 못 쓰는 이유는 그쪽이 한글 이름을 내보내는데 tsx(esbuild)가
+     유니코드로 바꿔 놓아 .mts 에서 못 불러오기 때문이다(sns-caption-rules.ts 와 같은 함정). */
+const 서울 = { timeZone: "Asia/Seoul" } as const;
 const 짧게 = (d: Date | null) =>
-  d ? d.toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+  d ? d.toLocaleString("ko-KR", { ...서울, month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
 
 const n = await readOurNumbers();
 
-console.log(`\n${굵게("우리 숫자")} — ${n.잰때.toLocaleString("ko-KR")}`);
+console.log(`\n${굵게("우리 숫자")} — ${n.잰때.toLocaleString("ko-KR", 서울)}`);
 console.log(흐리게(`  화면으로 보기 → /admin/stats  (검수 판단·SNS 검수기와 같은 자리)\n`));
 
 console.log(`  회원                ${굵게(콤마(n.회원.손님))} 명   ${흐리게(`전체 ${n.회원.전체} · 최근 7일 +${n.회원.이레} · 30일 +${n.회원.한달}`)}`);

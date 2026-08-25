@@ -17,7 +17,7 @@ export function SnsListRow({
 }: {
   편: {
     id: string; batch: string; slug: string; status: string; verticalTitle: string;
-    ep: string; slotLabel: string; checkResult: string; youtubeVerticalId: string | null;
+    ep: string; slotLabel: string; checkResult: string; watcherError: string; youtubeVerticalId: string | null;
   };
   칸수: number;
 }) {
@@ -69,6 +69,16 @@ export function SnsListRow({
           {편.youtubeVerticalId && <span> · 유튜브 올림</span>}
         </p>
         <p className="mt-1 text-xs text-muted-foreground [word-break:keep-all]">{상태.풀이}</p>
+        {/* ⛔ 지킴이가 막혔으면 «남게» 보여 준다 (2026-08-25).
+            상태만 「등록 중」으로 두면 아무 일도 안 일어나는데 일어나는 중인 것처럼 보인다.
+            사장님이 그것 때문에 「멈춘 것 같다」고 하셨다. */}
+        {편.watcherError && (
+          <p className="mt-2 rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-xs leading-relaxed text-rose-900 [word-break:keep-all]">
+            <b>⛔ 지킴이가 여기서 막혔습니다 — 그래서 안 올라갑니다.</b>
+            <br />
+            {편.watcherError}
+          </p>
+        )}
       </Link>
 
       {/* 지우기 — 링크 위에 얹되 누르는 자리가 겹치지 않게 오른쪽 끝에 둔다 */}

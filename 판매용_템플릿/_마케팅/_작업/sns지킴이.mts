@@ -350,10 +350,27 @@ async function 한바퀴() {
     try {
       if (편.status === "approved") await 다시굽기(편);
       else await 올리기(편);
+      /* 잘됐으면 지난번 막힌 자국을 지운다 — 낡은 빨간불이 남아 있으면 안 된다 */
+      if (!시늉 && 편.watcherError) {
+        await db.update(snsContent).set({ watcherError: "" }).where(eq(snsContent.id, 편.id));
+      }
     } catch (e) {
       /* ⚠ 실패하면 상태를 그대로 둔다 — 다음 바퀴에 다시 해 본다.
          조용히 waiting 으로 돌려 버리면 «안 만들어진 것»이 검토대기로 보인다. */
-      말(`  ⛔ 실패했습니다 — 상태를 그대로 둡니다.\n${e instanceof Error ? e.message : String(e)}`);
+      const 까닭 = e instanceof Error ? e.message : String(e);
+      말(`  ⛔ 실패했습니다 — 상태를 그대로 둡니다.\n${까닭}`);
+      /* ⭐ 화면에 «남게» 적는다 (2026-08-25 사장님이 겪으셨다).
+         지킴이 알림은 그 화면을 열어 둔 그때만 스쳐 지나간다. 그래서 사장님은
+         「등록 중」만 보시고 «멈춘 줄» 아셨다 — 실은 유튜브 로그인이 만료된 것이었다.
+         까닭이 화면에 남아야 무엇을 해야 하는지 아신다. */
+      if (!시늉) {
+        const 지금 = new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
+        await db
+          .update(snsContent)
+          .set({ watcherError: `${지금} — ${까닭}`.slice(0, 900) })
+          .where(eq(snsContent.id, 편.id))
+          .catch(() => undefined);
+      }
     }
   }
   return true;
