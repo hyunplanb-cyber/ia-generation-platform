@@ -63,7 +63,12 @@ const 단계들: 단계[] = [
 export function HowToMakeBody() {
   return (
     <section>
-      <div className="mx-auto max-w-5xl px-6 py-16">
+      {/* ⚠ 이 칸은 «옆 탭들과 같은 폭»이라야 한다 (2026-08-25 사장님 지적).
+          여기만 max-w-5xl(1024px)이었고 탭 띠·AI팩·사이트 검수는 모두 1440px 이라,
+          탭을 「만드는 방법」으로 옮기는 순간 제목이 200px 쯤 안으로 쑥 들어갔다.
+          탭은 «같은 자리에서» 갈려야 옮겨 다닐 때 눈이 안 튄다.
+          ⚠ 셋이 늘 같이 움직인다 — 하나를 고치면 나머지 둘도 본다. */}
+      <div className="mx-auto max-w-[1440px] px-6 py-16">
         <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl [word-break:keep-all]">
           AI팩은 이렇게 만들어져요
         </h2>
@@ -74,7 +79,12 @@ export function HowToMakeBody() {
 
         <ol className="mt-12 flex flex-col gap-14">
           {단계들.map((s) => (
-            <li key={s.no} className="grid gap-6 md:grid-cols-[1fr_1.25fr] md:items-center">
+            <li
+              key={s.no}
+              /* 옆 탭(AI팩)의 한 칸과 «같은 나눔»이다 — 반반, gap-10/16, 가운데 맞춤.
+                 탭을 옮겨도 글과 그림이 같은 자리에 서야 눈이 안 튄다. */
+              className="grid grid-cols-1 items-center gap-10 md:grid-cols-2 lg:gap-16"
+            >
               <div>
                 <div className="flex items-center gap-2.5">
                   <span className="grid size-8 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
@@ -87,7 +97,11 @@ export function HowToMakeBody() {
                   )}
                 </div>
                 <h3 className="mt-3 text-lg font-bold text-foreground [word-break:keep-all]">{s.제목}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">{s.말}</p>
+                {/* ⚠ 칸이 664px 로 넓어지면서 한 줄이 쉰 자를 넘었다 — 한글은 마흔 자 안팎이
+                    읽기 좋다. 칸은 넓게 두되 «글줄»만 물린다. */}
+                <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground [word-break:keep-all]">
+                  {s.말}
+                </p>
               </div>
               <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
                 <Image
@@ -96,7 +110,7 @@ export function HowToMakeBody() {
                   width={1100}
                   height={854}
                   className="w-full"
-                  sizes="(max-width: 768px) 100vw, 620px"
+                  sizes="(max-width: 768px) 100vw, 664px"
                 />
               </div>
             </li>
