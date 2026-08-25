@@ -3,6 +3,7 @@
  *   npx tsx "판매용_템플릿/_마케팅/_작업/sns지킴이.mts"            한 바퀴만 돌고 끝난다
  *   npx tsx "판매용_템플릿/_마케팅/_작업/sns지킴이.mts" --지킴이     30초마다 계속 들여다본다
  *   … --시늉                                                       무엇을 할지만 찍고 아무것도 안 한다
+ *   … --드라이브채우기                                              드라이브에 빠진 «사본»만 채우고 끝난다
  *
  * 왜 만들었나
  *   사장님: 「검수기에서 검수하고 검수완료를 누른다. 이때 어디로 이동될 수 있을까?
@@ -38,9 +39,31 @@ const 드라이브 = "G:/내 드라이브/릴스/카페인컬러_주간콘텐츠
 
 const 지킴이 = process.argv.includes("--지킴이");
 const 시늉 = process.argv.includes("--시늉");
+const 드라이브채우기 = process.argv.includes("--드라이브채우기");
 const 쉬는초 = 30;
 
+/** 이번 편에서 «죽지는 않았지만 남겨야 하는» 경고. 올리기가 채우고 한바퀴가 적는다.
+ *
+ * ⛔ 2026-08-25: 유튜브에는 올라갔는데 G: 가 안 붙어 있어 드라이브 복사만 건너뛰었다.
+ *   그건 창에 한 줄 찍히고 끝났고, 상태는 published 로 넘어갔다. 그래서 아무 데도
+ *   안 남았다 — 사장님이 「구글 드라이브에는 안 올라온 거 같은데」 하고 손으로 찾아내셨다.
+ *   실패는 아니니 상태를 되돌리면 안 되지만, «빠졌다»는 사실은 남아야 한다. */
+let 남길경고: string | null = null;
+
 const 이제 = () => new Date().toLocaleTimeString("ko-KR", { hour12: false });
+
+/** 다 하고 나간다.
+ *
+ * ⛔ 2026-08-25: 바로 process.exit(0) 을 부르면 윈도우에서 죽었다 —
+ *     Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), src\win\async.c
+ *   그래서 **할 일이 없는 날마다 나간 값이 127** 이었다. 하는 일은 다 하고 「할 일이
+ *   없습니다」까지 찍고 나서 죽는 것이라, 창에서 볼 때는 멀쩡해 보였다.
+ *   그런데 작업 스케줄러와 루틴은 «나간 값»만 본다 — 매번 «실패»로 적히고 있었다.
+ *   뿌리는 자식 프로세스(유튜브있나)를 부르고 바로 나가는 것이다. 한 숨 쉬었다 나간다. */
+async function 나가기(값 = 0): Promise<never> {
+  await new Promise((r) => setTimeout(r, 200));
+  process.exit(값);
+}
 const 말 = (s: string) => console.log(`[${이제()}] ${s}`);
 
 /** 윈도우에서 `npx`·`npm` 은 실제로는 `.cmd` 파일이다.
@@ -284,7 +307,11 @@ async function 올리기(편: typeof snsContent.$inferSelect) {
       말(`  · 구글 드라이브 — ${낼방}`);
     } catch (e) {
       말(`  ⚠ 구글 드라이브에 못 넣었습니다 (${e instanceof Error ? e.message : String(e)})`);
-      말("    유튜브에는 올라갔습니다. 드라이브는 G: 가 붙은 뒤 손으로 복사하시면 됩니다.");
+      말("    유튜브에는 올라갔습니다. 드라이브는 G: 가 붙은 뒤 채우면 됩니다:");
+      말('      npx tsx "판매용_템플릿/_마케팅/_작업/sns지킴이.mts" --드라이브채우기');
+      /* ⭐ 화면에 남긴다 — 창에만 찍으면 그때 안 보신 분은 영영 모른다. */
+      남길경고 = "구글 드라이브에 사본이 안 들어갔습니다 — 유튜브에는 올라갔습니다. "
+        + "드라이브 앱을 켠 뒤 --드라이브채우기 로 채우면 됩니다.";
     }
   }
 
@@ -347,12 +374,20 @@ async function 한바퀴() {
   await 사라진것확인();
   if (!할것.length) return false;
   for (const 편 of 할것) {
+    남길경고 = null;
     try {
       if (편.status === "approved") await 다시굽기(편);
       else await 올리기(편);
-      /* 잘됐으면 지난번 막힌 자국을 지운다 — 낡은 빨간불이 남아 있으면 안 된다 */
-      if (!시늉 && 편.watcherError) {
-        await db.update(snsContent).set({ watcherError: "" }).where(eq(snsContent.id, 편.id));
+      /* 잘됐으면 지난번 막힌 자국을 지운다 — 낡은 빨간불이 남아 있으면 안 된다.
+         ⚠ 다만 «죽지는 않았지만 빠진 것»(드라이브 사본)은 지우지 말고 갈아 끼운다.
+            안 그러면 성공이 경고를 덮어 버려서 또 아무 데도 안 남는다. */
+      if (!시늉) {
+        const 새자국 = 남길경고
+          ? `${new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })} — ${남길경고}`.slice(0, 900)
+          : "";
+        if (새자국 !== (편.watcherError ?? "")) {
+          await db.update(snsContent).set({ watcherError: 새자국 }).where(eq(snsContent.id, 편.id));
+        }
       }
     } catch (e) {
       /* ⚠ 실패하면 상태를 그대로 둔다 — 다음 바퀴에 다시 해 본다.
@@ -376,6 +411,63 @@ async function 한바퀴() {
   return true;
 }
 
+/** 드라이브에 «사본»이 빠진 것을 채운다 — 사람이 일부러 부를 때만 돈다.
+ *
+ * ⚠ 왜 «저절로» 안 돌게 두었나.
+ *   드라이브의 파일 이름은 «그때의 제목»으로 굳는다. 나중에 검수기에서 제목을 고치면
+ *   이름이 어긋나고, 이름만 보고 채우면 같은 영상이 두 벌 쌓인다.
+ *   실제로 4주차 펫유치원이 그 짝이다 (2026-08-25 에 재 보고 알았다):
+ *     드라이브  「…146개 화면 «목록이 나왔어요»」
+ *     검수기    「…146개 화면 «이 만들어 졌어요»」
+ *   그래서 채우기 전에 그 폴더에 «이미 있는 것»을 다 찍어 보여 준다. 사람이 보고 정한다.
+ *   두 벌로 쌓는 것보다 한 번 눈으로 보는 편이 싸다. */
+async function 빠진사본채우기() {
+  if (!existsSync(드라이브)) {
+    말(`⛔ 구글 드라이브가 안 보입니다 — ${드라이브}`);
+    말("   구글 드라이브 앱을 켜고 G: 가 붙은 뒤 다시 부르세요.");
+    return;
+  }
+  const 올린것 = await db.select().from(snsContent).where(eq(snsContent.status, "published"));
+  let 채움 = 0, 이미 = 0, 못함 = 0;
+  for (const 편 of 올린것) {
+    const 바탕제목 = 이름씻기(편.coverTitle || 편.verticalTitle || "");
+    const 낼방 = join(드라이브, 편.batch);
+    const 할것: { 자리: string; 원본: string; 낼것: string }[] = [];
+    for (const [자리, 원본] of [["세로", 편.videoVertical], ["가로", 편.videoHorizontal]] as const) {
+      if (!원본) continue;
+      const 낼것 = join(낼방, `${자리}_${바탕제목}.mp4`);
+      if (existsSync(낼것)) { 이미++; continue; }
+      할것.push({ 자리, 원본, 낼것 });
+    }
+    if (!할것.length) continue;
+
+    말(`▶ ${편.batch} · ${편.slug}`);
+    const 있는것 = existsSync(낼방) ? readdirSync(낼방).filter((f) => f.toLowerCase().endsWith(".mp4")) : [];
+    말(`  · 그 폴더에 이미 있는 영상 ${있는것.length}개 — 이름이 갈렸는지 보세요`);
+    for (const f of 있는것) 말(`      ${f}`);
+    for (const x of 할것) {
+      if (!existsSync(x.원본)) { 말(`  ⚠ ${x.자리} — 원본이 없어 못 채웁니다 (${x.원본})`); 못함++; continue; }
+      if (시늉) { 말(`  · (시늉) 넣을 것 — ${basename(x.낼것)}`); continue; }
+      try {
+        mkdirSync(낼방, { recursive: true });
+        copyFileSync(x.원본, x.낼것);
+        말(`  ✓ 넣었습니다 — ${basename(x.낼것)}`);
+        채움++;
+      } catch (e) {
+        말(`  ⚠ 못 넣었습니다 — ${e instanceof Error ? e.message : String(e)}`);
+        못함++;
+      }
+    }
+  }
+  말(`끝났습니다 — 넣은 것 ${채움}개 · 이미 있던 것 ${이미}개 · 못 넣은 것 ${못함}개.`);
+}
+
+if (드라이브채우기) {
+  말(시늉 ? "드라이브에 «빠진 사본»만 찾아 찍습니다 (시늉)." : "드라이브에 «빠진 사본»을 채웁니다.");
+  await 빠진사본채우기();
+  await 나가기();
+}
+
 말(시늉 ? "시늉으로 돕니다 — 아무것도 안 고칩니다." : "검수기를 들여다봅니다.");
 if (지킴이) {
   말(`${쉬는초}초마다 봅니다. 멈추려면 Ctrl+C.`);
@@ -387,5 +479,5 @@ if (지킴이) {
 } else {
   const 했나 = await 한바퀴();
   if (!했나) 말("할 일이 없습니다 (제작중·등록 중이 없습니다).");
-  process.exit(0);
+  await 나가기();
 }
