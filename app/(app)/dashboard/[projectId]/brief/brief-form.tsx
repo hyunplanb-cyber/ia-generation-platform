@@ -22,11 +22,28 @@ import type { Project } from "@/domain/project/project";
 
 const initialState: GenerateState = { reason: null };
 
+/* ⛔ 손님에게는 «손님이 할 수 있는 것»만 말한다 (2026-08-25 점검).
+ *
+ * 그 전에는 우리 사정이 그대로 나가고 있었다.
+ *   unavailable → 「관리자 설정(ANTHROPIC_API_KEY)이 필요해요」  ← 우리 환경변수 이름
+ *   no-credit   → 「Anthropic 콘솔의 Plans & Billing에서 충전하면」 ← 손님은 그 콘솔이 없다
+ *   key-dead    → (없어서 failed 로 떨어져) 「잠시 후 다시 시도해 주세요」
+ *                 ← 2026-08-20 에 손님 한 분이 이 말을 두 번 보고 갔는데,
+ *                   「잠시 후」에도 나흘을 더 못 만들었다.
+ *
+ * 앞의 셋은 전부 «우리 쪽» 문제다. 손님이 다시 눌러도 안 된다.
+ * 그러니 같은 말로 묶어 ① 손님 잘못이 아니고 ② 크레딧은 안 빠졌고
+ * ③ 어디로 알리면 되는지를 말한다. 기록은 갈라 남긴다(generation_attempt.reason).
+ */
+const 우리쪽문제 =
+  "지금은 저희 쪽 사정으로 만들어 드릴 수가 없어요. 크레딧은 빠지지 않았으니 잠시 뒤에 다시 열어 주세요. " +
+  "오래 이러면 caffeinecolor.all@gmail.com 으로 알려 주시면 바로 봐 드릴게요.";
+
 const MESSAGES: Record<string, string> = {
-  unavailable: "AI 자동 생성 기능을 아직 사용할 수 없어요. 관리자 설정(ANTHROPIC_API_KEY)이 필요해요.",
+  unavailable: 우리쪽문제,
+  "key-dead": 우리쪽문제,
+  "no-credit": 우리쪽문제,
   "insufficient-credit": "크레딧이 부족해요. 충전한 뒤 다시 시도해 주세요.",
-  "no-credit":
-    "AI 사용 크레딧이 부족해요. Anthropic 콘솔의 Plans & Billing에서 크레딧을 충전하면 바로 사용할 수 있어요.",
   "already-has-menus": "이미 메뉴가 있어요. 자동 생성은 메뉴가 없는 새 프로젝트에서만 실행돼요.",
   "too-large": "메뉴가 많아 생성 결과가 한 번에 담기지 못했어요. 메뉴 구성을 조금 줄이거나 다시 시도해 주세요.",
   failed: "자동 생성에 실패했어요. 잠시 후 다시 시도해 주세요.",

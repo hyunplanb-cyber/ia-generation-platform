@@ -12,7 +12,13 @@ import { withProjectAuth } from "@/application/with-project-auth";
 
 export type GenerateIaResult =
   | { ok: true; menuCount: number; screenCount: number }
-  | { ok: false; reason: "unavailable" | "no-credit" | "already-has-menus" | "too-large" | "failed" };
+  | {
+      ok: false;
+      /* ⚠ 앞의 셋(unavailable · key-dead · no-credit)은 «우리 쪽» 문제다.
+         손님이 다시 눌러도 안 된다 — 화면에서 같은 말로 묶어 안내하되,
+         기록에는 갈라 남긴다(generation_attempt.reason). */
+      reason: "unavailable" | "key-dead" | "no-credit" | "already-has-menus" | "too-large" | "failed";
+    };
 
 // nameEn에서 프로젝트 내 고유한 2글자 메뉴코드를 만든다.
 // 앞 2글자가 겹치거나 예약어면 다른 글자 조합 → A~Z 조합 순으로 대체한다.
@@ -60,6 +66,22 @@ export async function generateIa(
     } catch (error) {
       if (error instanceof Error && error.message === "ANTHROPIC_API_KEY_MISSING") {
         return { ok: false, reason: "unavailable" };
+      }
+      /* ⛔ 열쇠가 죽은 것(401)을 «따로» 잡는다 — 2026-08-25.
+       *
+       * 그 전에는 이것이 맨 아래 `failed` 로 떨어져서 손님에게
+       * 「자동 생성에 실패했어요. 잠시 후 다시 시도해 주세요」라고 말하고 있었다.
+       * 2026-08-20 에 손님 한 분이 그 말을 두 번 보고 그냥 갔는데,
+       * 「잠시 후」에도 안 됐다 — 열쇠는 그 뒤로 나흘을 더 죽어 있었다.
+       * 우리 쪽도 generation_attempt 에 「failed」로만 남아 까닭을 못 가렸다.
+       *
+       * 401 은 손님이 아무리 다시 눌러도 안 되는 것이다. 그러니
+       *   ① 손님에게 「다시 해 보세요」라고 하지 않는다
+       *   ② 기록에 key-dead 로 남겨 우리가 그날 안에 안다
+       */
+      if (error instanceof Error && /\b401\b|authentication_error|invalid x-api-key|API key is invalid/i.test(error.message)) {
+        console.error("generateIa: 열쇠가 거부됐습니다(401)", error.message);
+        return { ok: false, reason: "key-dead" };
       }
       // 크레딧 부족 등 결제 관련 오류는 앱을 죽이지 않고 안내로 처리한다.
       if (error instanceof Error && error.message.includes("credit balance")) {
