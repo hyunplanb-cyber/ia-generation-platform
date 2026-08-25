@@ -45,11 +45,6 @@ type Deliverable = {
   role: string;
   formats: string[];
   mockup: React.ReactNode;
-  /* 캐릭터 그림 — 설명 «오른쪽»에 나란히 세운다 (자세한 까닭은 아래 렌더 자리 주석에).
-     ⚠ 모든 항목에 넣지 않는다. 여덟 중 넷만이다 — 매 칸마다 있으면 눈이 쉴 데가 없다.
-     ⚠ w·h 는 «잘라 낸 뒤»의 실제 크기다. 그림을 다시 받으면 이 값도 다시 잰다 —
-       어긋나면 그림이 뜨기 전에 자리를 잘못 잡아 글이 한 번 튄다. */
-  char?: { src: string; alt: string; w: number; h: number };
 };
 
 const DELIVERABLES: Deliverable[] = [
@@ -60,12 +55,6 @@ const DELIVERABLES: Deliverable[] = [
     role: "사이트 전체 메뉴를 트리로 정리해 정보구조(IA)의 뼈대를 잡아요. 어떤 메뉴 아래 어떤 화면이 들어가는지 한눈에 확정할 수 있어, 기획의 출발점이 됩니다.",
     formats: ["PPT", "엑셀"],
     mockup: <MenuTreeMockup />,
-    char: {
-      src: "/character/06_guide_menu_structure.webp",
-      w: 891,
-      h: 644,
-      alt: "메뉴와 화면이 층층이 갈라지는 트리를 살펴보는 카페인컬러 캐릭터",
-    },
   },
   {
     icon: LayoutList,
@@ -74,12 +63,6 @@ const DELIVERABLES: Deliverable[] = [
     role: "메뉴별로 필요한 화면을 자동으로 뽑아 목록으로 정리해요. 화면ID·화면명·기능정의·버튼 이동·AI 생성 프롬프트까지 화면 단위로 담겨, ‘무엇을 만들지’가 확정돼요.",
     formats: ["엑셀"],
     mockup: <ScreenListMockup />,
-    char: {
-      src: "/character/07_guide_ia_screen_list.webp",
-      w: 812,
-      h: 859,
-      alt: "화면 하나하나를 기능·이동·프롬프트로 줄줄이 정리하는 카페인컬러 캐릭터",
-    },
   },
   {
     icon: FileText,
@@ -88,12 +71,6 @@ const DELIVERABLES: Deliverable[] = [
     role: "사이트에 필요한 요건을 업무 · 기능 · 구성 계층으로 분해하고, 종류(기능·콘텐츠·화면·정책)를 붙여 정리한 문서예요. 실무 문서 형식 그대로 내려받을 수 있어요.",
     formats: ["엑셀"],
     mockup: <SpecMockup />,
-    char: {
-      src: "/character/08_guide_function_definition.webp",
-      w: 733,
-      h: 692,
-      alt: "요건을 자로 재듯 갈래별로 나눠 적는 카페인컬러 캐릭터",
-    },
   },
   {
     icon: Workflow,
@@ -136,12 +113,6 @@ const DELIVERABLES: Deliverable[] = [
     role: "위 모든 걸 한 벌로 정리한 마크다운·JSON이에요. 이 파일을 Claude Code·Cowork 같은 AI 코딩 도구에 그대로 넘기면, 화면 구성·이동·화면별 지시가 확정된 상태로 사이트가 만들어져요.",
     formats: ["마크다운", "JSON"],
     mockup: <SpecPackMockup />,
-    char: {
-      src: "/character/10_guide_ai_build_spec.webp",
-      w: 804,
-      h: 591,
-      alt: "스펙 문서 한 벌을 AI 코딩 도구에 넣어 화면을 뽑아내는 카페인컬러 캐릭터",
-    },
   },
 ];
 
@@ -269,27 +240,16 @@ function PlanningDeliverables() {
                     ))}
                   </div>
 
-                  {/* 샘플 + 캐릭터 — 칸 «바닥»에 붙는다.
-                      ⛔ 캐릭터를 absolute 로 겹쳐 놓았더니 샘플 표 글자를 가렸다.
-                         겹치는 멋보다 읽히는 게 먼저다 → 나란히 앉히고, 바닥 여백만
-                         상쇄해(-mb-8/-mb-10) 발이 패널 바닥에 닿게 뒀다.
-                      ⚠ 1280px 아래에서는 캐릭터를 접는다. 2단이 되는 순간 한 칸이 400px
-                        안팎인데 캐릭터가 140px 을 가져가면 샘플이 짜부라진다 — 900px 에서
-                        「메인 홈」이 「메 인 홈」으로 세로로 쪼개졌다. 샘플이 주인공이다. */}
-                  <div className="mt-7 flex flex-1 items-end gap-4">
+                  {/* 샘플 — 칸 «바닥»에 붙는다(flex-1 + items-end). 그래야 같은 줄 두 칸의
+                      샘플이 같은 선에 서서 격자가 안 흐트러진다.
+                      ⛔ 여기 캐릭터를 넷 넣었다가 뺐다 (2026-08-25 사장님: 「얘네들은 빼자
+                         이렇게 넣는건 굳이인거같아」). 맞는 말씀이었다 — 이 칸이 보여 줄 것은
+                         «실제 산출물이 어떻게 생겼나»인데, 캐릭터가 그 옆에서 자리를 나눠 먹고
+                         있었다. 넷만 있고 넷은 없어서 여덟 칸의 결도 갈렸다.
+                         (캐릭터를 «겹쳐» 놓았다가 글자를 가려서 나란히 앉히고, 좁은 화면에선
+                          샘플이 짜부라져 접고… 하는 손질도 다 이 자리 때문이었다.) */}
+                  <div className="mt-7 flex flex-1 items-end">
                     <div className="min-w-0 flex-1">{d.mockup}</div>
-                    {d.char && (
-                      <div className="-mb-8 hidden w-[130px] shrink-0 xl:block sm:-mb-10 2xl:w-[150px]">
-                        <Image
-                          src={d.char.src}
-                          alt={d.char.alt}
-                          width={d.char.w}
-                          height={d.char.h}
-                          sizes="150px"
-                          className="h-auto w-full object-contain"
-                        />
-                      </div>
-                    )}
                   </div>
                 </article>
 
