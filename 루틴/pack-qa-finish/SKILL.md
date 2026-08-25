@@ -285,15 +285,39 @@ git worktree remove ../_qa-main
 - 부딪히면(conflict) **멈추고** `git -C ../_qa-main cherry-pick --abort` · `git worktree remove` 한 뒤
   보고에 「부딪혀서 못 옮겼습니다 — 커밋 <번호>」라고 적는다. 억지로 풀지 마라
 
-## 4-5-2. ⭐ 민 뒤에 «실제로 바뀌었는지» 눈으로 본다
+## 4-5-2. ⭐ 민 뒤에 «정말 나갔는지» 확인한다
 
-민 것으로 끝이 아니다. 배포가 돌아야 손님에게 간다.
+민 것으로 끝이 아니다. 배포가 돌아야 손님에게 간다. **셋 다 본다.**
 
-- 배포가 끝날 때까지 기다렸다가 **실서버에서 팩 하나를 실제로 내려받아** zip 안의
-  `완성화면/assets/css/base.css` 가 이번에 고친 것인지 확인한다
-- 확인 못 했으면 **「올렸다」고 하지 마라.** 「밀었으나 배포 확인 못 함」이라고 적는다
+```bash
+# ① 깃허브에 정말 얹혔나 — 네가 민 번호와 같아야 한다
+git ls-remote origin main
+
+# ③ 홈페이지가 살아 있나
+curl -sS -o /dev/null -w "%{http_code}\n" -L https://caffeinecolor.com/
+```
+
+**② 배포가 돌았나** — Vercel 도구 `get_project` 를 쓴다
+(`projectId: ia-generation-platform` · `teamId: team_9iZM7GeF0NxsJ2meE7BEjcFY`).
+
+- `latestDeployment.readyState` 가 **`READY`** 여야 한다
+- `latestDeployment.createdAt` 이 **네가 민 뒤**여야 한다.
+  `BUILDING` 이면 몇 분 기다렸다 다시 본다. `ERROR` 면 **「배포가 깨졌습니다」로 보고**한다
+
+### ⛔ 밖에서 zip «안»까지는 못 본다 — 그러니 봤다고 하지 마라
+
+팩 다운로드(`/api/packages/<팩>/<등급>/download`)는 **로그인하고 산 사람만** 받는다.
+루틴은 로그인이 없다. 그러니 **실서버 zip 을 열어 확인할 길이 없다.**
+
+| 적어도 되는 말 | 적으면 안 되는 말 |
+|---|---|
+| 「밀었고 배포 READY 입니다 (커밋 `<번호>`)」 | 「실서버 zip 을 열어 확인했습니다」 |
+| 「깃허브 main 이 `<번호>` 입니다」 | 「손님이 새 zip 을 받는 것을 봤습니다」 |
+
+⚠ **모르는 것을 안다고 하지 않는다.** 확인 못 한 것은 「확인 못 함」이라고 적는다.
 
 ⚠ **막힌 것은 그대로 막혀 있다** — `npm publish` · `gh release` 는 네 일이 아니다.
+   `vercel` 명령도 쓰지 마라. **깃허브에 밀면 Vercel 이 저절로 배포한다.**
 
 # 5단계 — 구글 시트로 올린다
 
