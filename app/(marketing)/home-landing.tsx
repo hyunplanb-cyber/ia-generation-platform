@@ -623,12 +623,11 @@ export function HomeLanding({ packs }: { packs: HomeIndustry[] }) {
                     </>
                   )}
                 </span>
+                {/* 구성 목록은 홈·목록·상세가 «같은 출처(planContents)와 같은 모양»을 쓴다.
+                    한 줄에 하나씩 세우면 카드가 두 배로 길어져 넷을 견주기 어렵다. */}
                 <span className="pl-items">
                   {p.items.map((it) => (
                     <span className="pl-i" key={it}>
-                      <span className="pl-dot" aria-hidden="true">
-                        ·
-                      </span>
                       {it}
                     </span>
                   ))}
@@ -1558,21 +1557,23 @@ export function HomeLanding({ packs }: { packs: HomeIndustry[] }) {
           font-weight: 600;
           color: var(--ink);
         }
+        /* 줄줄이 이어 쓰고 사이에 가운뎃점을 넣는다 — 상세 화면의 구성 목록과 같은 모양.
+           ⚠ 점을 «항목 뒤»에 붙인다(::after). 앞에 붙이면 줄이 바뀔 때 점이 줄머리에 혼자
+             떨어져, 새 줄이 점으로 시작하는 이상한 모양이 된다. */
         .pl-items {
           display: flex;
-          flex-direction: column;
-          gap: 7px;
-        }
-        .pl-i {
-          display: grid;
-          grid-template-columns: 12px minmax(0, 1fr);
-          gap: 8px;
+          flex-wrap: wrap;
           font-size: 13px;
-          line-height: 1.5;
+          line-height: 1.7;
           color: var(--t1);
         }
-        .pl-dot {
-          color: var(--o);
+        .pl-i::after {
+          content: "·";
+          margin: 0 7px;
+          color: var(--t3);
+        }
+        .pl-i:last-child::after {
+          display: none;
         }
         .pl-go {
           margin-top: auto;

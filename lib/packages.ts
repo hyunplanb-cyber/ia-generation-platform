@@ -1008,6 +1008,19 @@ const HOME_TABS: Record<string, string> = {
   petcare: "반려견 유치원",
 };
 
+/**
+ * 홈 카드에 적을 «짧은» 이름 — 「— 」 뒤 꼬리말을 뗀다.
+ *
+ * 「기능정의서 270개 — 화면마다 뭘 해야 하는지」 → 「기능정의서 270개」
+ *
+ * 왜 홈에서만 떼나 (2026-08-26 사장님 지시)
+ *   홈 카드는 넷이 나란히 서서 한 칸이 230px 남짓이고, 그 안에서 여덟 줄이 «줄줄이»
+ *   가운뎃점으로 이어진다. 그 줄에 꼬리말이 끼면 —— 게다가 꼬리말 안에도 가운뎃점이
+ *   들어 있어(「배포·도메인·로그인·결제」) —— 어디까지가 한 항목인지 안 보인다.
+ *   목록·상세는 폭이 넉넉하니 꼬리말을 그대로 둔다. 출처는 여전히 planContents 하나다.
+ */
+const 짧게 = (줄: string) => 줄.split(" — ")[0];
+
 export function homePacks(): HomeIndustry[] {
   const 묶음 = new Map<string, HomeIndustry>();
   for (const { pkg, plan, href } of packageProducts()) {
@@ -1021,7 +1034,7 @@ export function homePacks(): HomeIndustry[] {
       tier: plan.name,
       scope: plan.depthLabel,
       credits: PACKAGE_PRICES_PUBLIC ? packCredits(plan.priceKrw) : null,
-      items: planContents(plan),
+      items: planContents(plan).map(짧게),
       href,
     });
   }
