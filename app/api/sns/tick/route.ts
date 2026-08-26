@@ -27,7 +27,7 @@ export const maxDuration = 300;
 let 도는중 = false;
 let 마지막: { 때: string; 글: string } | null = null;
 
-export async function POST() {
+export async function POST(req: Request) {
   const session = await getSession();
   if (!isOwner(session?.user.email)) return NextResponse.json({ ok: false, 왜: "주인만" }, { status: 404 });
 
@@ -37,6 +37,14 @@ export async function POST() {
   }
   if (도는중) return NextResponse.json({ ok: true, 도는중: true, 마지막 });
 
+  /* ⭐ 「드라이브 사본 채우기」도 여기로 부른다 (2026-08-26 사장님: 「드라이브 채우기가 어디 있지?」)
+     그동안 지킴이가 「--드라이브채우기 로 채우면 됩니다」라고 «명령어»를 적어 줬는데,
+     그 글을 읽는 곳은 검수 화면이라 거기서 할 수 있는 일이 없었다 — 막다른 안내였다.
+     같은 길로 깃발만 하나 더 넘긴다. 새 길을 파지 않는다. */
+  let 일 = "";
+  try { 일 = ((await req.json()) as { 일?: string })?.일 ?? ""; } catch { /* 몸이 없으면 그냥 한 바퀴 */ }
+  const 덧 = 일 === "드라이브채우기" ? ["--드라이브채우기"] : [];
+
   도는중 = true;
   const 뿌리 = process.cwd();
   const 지킴이 = resolve(뿌리, "판매용_템플릿/_마케팅/_작업/sns지킴이.mts");
@@ -44,7 +52,7 @@ export async function POST() {
     const 글 = await new Promise<string>((풀기, 깨기) => {
       /* npx 를 안 거친다 — 윈도우에서 .cmd 를 못 찾거나(ENOENT), 폴더 이름의 빈칸에서
          잘리거나(「02. 웹기획자」), Node 24 가 .cmd 실행을 막는다(EINVAL). 셋 다 겪었다. */
-      execFile(process.execPath, ["--import", "tsx", 지킴이], { cwd: 뿌리, maxBuffer: 1 << 26 },
+      execFile(process.execPath, ["--import", "tsx", 지킴이, ...덧], { cwd: 뿌리, maxBuffer: 1 << 26 },
         (오류, 나온글) => (오류 ? 깨기(오류) : 풀기(나온글)));
     });
     마지막 = { 때: new Date().toISOString(), 글: 글.trim().split("\n").slice(-6).join("\n") };
