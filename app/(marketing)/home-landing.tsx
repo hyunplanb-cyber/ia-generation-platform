@@ -511,6 +511,14 @@ export function HomeLanding({
                     민감한 화면은 직접 확인하실 수 있도록 순서를 적어드려요
                   </span>
                 </div>
+                {/* 단추는 결과서 상자 «안»에 있었다 — 결과서의 일부처럼 보여서,
+                    「이 결과서를 눌러라」인지 「내 사이트를 맡겨라」인지 흐렸다.
+                    왼쪽 칸 바닥으로 뺐다(2026-08-26 사장님 지시). 여기는 「무엇을 봐 드리나」를
+                    말하는 칸이라, 그 말끝에 「그럼 맡겨 보세요」가 오는 것이 자연스럽다.
+                    비어 있던 아래쪽도 이걸로 채워진다. */}
+                <Link className="btn btn-ink btn-wide" href="/verify">
+                  내 사이트 검수하기 <span aria-hidden="true">→</span>
+                </Link>
               </div>
 
               {/* 예시 주소는 남의 것도 우리 것도 아닌 가상의 주소를 쓴다.
@@ -563,9 +571,6 @@ export function HomeLanding({
                     </div>
                   ))}
                 </div>
-                <Link className="btn btn-ink btn-wide" href="/verify">
-                  내 사이트 검수하기 <span aria-hidden="true">→</span>
-                </Link>
               </div>
             </div>
           </div>
@@ -845,11 +850,14 @@ export function HomeLanding({
           background: rgba(241, 238, 232, 0.1);
           color: var(--paper);
         }
+        /* ⚠ margin-top: auto — 왼쪽 칸의 «바닥»에 붙는다. 그래야 두 칸이 같은 선에서
+             끝나 격자가 안 흐트러진다. 칸이 안 늘어나는 좁은 화면에서는 저절로
+             두 상자 바로 밑에 붙는다(늘 자리가 없으면 auto 는 0이다). */
         .cc :global(.btn-wide) {
           display: flex;
           justify-content: center;
           padding: 18px;
-          margin-top: 10px;
+          margin-top: auto;
         }
         /* ⛔ 문지기가 @media (hover: hover) 가 «아니다». 사장님 노트북이 터치스크린이라
            윈도우가 그것을 손가락 기기로 알려, 그 안에 넣은 것이 하나도 안 걸렸다.
@@ -1336,6 +1344,9 @@ export function HomeLanding({
           display: flex;
           flex-direction: column;
           gap: 10px;
+          /* ⚠ .vgrid 가 align-items: start 라 이 칸은 «내용만큼»만 높다. 늘려 둬야
+             밑에 붙인 단추가 옆 결과서 바닥과 같은 선에 선다. */
+          align-self: stretch;
         }
         .vbox {
           display: flex;
