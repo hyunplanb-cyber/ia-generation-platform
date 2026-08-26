@@ -489,6 +489,11 @@ async function 한바퀴() {
  *   그래서 채우기 전에 그 폴더에 «이미 있는 것»을 다 찍어 보여 준다. 사람이 보고 정한다.
  *   두 벌로 쌓는 것보다 한 번 눈으로 보는 편이 싸다. */
 async function 빠진사본채우기() {
+  /* ⛔ 채우고 나서 «빨간불»을 꺼야 한다 (2026-08-26).
+     드라이브 사본이 빠지면 watcher_error 에 「드라이브 앱을 켠 뒤 채우면 됩니다」가 남는다.
+     그런데 실제로 채운 뒤에 그것을 안 지우면, 다 해결됐는데도 화면에는 빨간 상자가
+     그대로 뜬다 — 낡은 빨간불은 «없는 것보다 나쁘다». 무엇이 진짜 막힌 건지 못 가린다. */
+  const 푼편 = new Set<string>();
   if (!existsSync(드라이브)) {
     말(`⛔ 구글 드라이브가 안 보입니다 — ${드라이브}`);
     말("   구글 드라이브 앱을 켜고 G: 가 붙은 뒤 다시 부르세요.");
@@ -513,7 +518,10 @@ async function 빠진사본채우기() {
       if (existsSync(낼것)) { 이미++; continue; }
       할것.push({ 자리, 원본, 낼것 });
     }
-    if (!할것.length) continue;
+    /* ⚠ 채울 게 «없다»는 것은 이미 둘 다 들어가 있다는 뜻이다 — 그때도 빨간불을 꺼야 한다.
+       처음엔 «넣었을 때»만 껐더니, 손으로 넣어 뒀거나 앞선 바퀴가 이미 넣은 편은
+       다 해결됐는데도 빨간 상자가 그대로 떴다. 낡은 빨간불은 없는 것보다 나쁘다. */
+    if (!할것.length) { 푼편.add(편.id); continue; }
 
     말(`▶ ${편.batch} · ${편.slug}`);
     const 있는것 = existsSync(낼방) ? readdirSync(낼방).filter((f) => f.toLowerCase().endsWith(".mp4")) : [];
@@ -527,13 +535,19 @@ async function 빠진사본채우기() {
         copyFileSync(x.원본, x.낼것);
         말(`  ✓ 넣었습니다 — ${basename(x.낼것)}`);
         채움++;
+        푼편.add(편.id);
       } catch (e) {
         말(`  ⚠ 못 넣었습니다 — ${e instanceof Error ? e.message : String(e)}`);
         못함++;
+        푼편.delete(편.id);   /* 하나라도 못 넣었으면 «해결됨»이 아니다 */
       }
     }
   }
   말(`끝났습니다 — 넣은 것 ${채움}개 · 이미 있던 것 ${이미}개 · 못 넣은 것 ${못함}개.`);
+  if (!시늉 && 푼편.size) {
+    for (const id of 푼편) await db.update(snsContent).set({ watcherError: "" }).where(eq(snsContent.id, id));
+    말(`  ✓ 빨간불을 껐습니다 — ${푼편.size}편.`);
+  }
 }
 
 /* ⚠ 여기서 건다 — 드라이브채우기도 파일을 만지므로 그 «앞»이어야 한다.
