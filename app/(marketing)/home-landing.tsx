@@ -264,23 +264,27 @@ export function HomeLanding({
           </div>
         </div>
 
-        {/* 흘러가는 띠 — 우리가 내놓는 것들의 이름표 */}
-        <div className="wrap">
-          <div className="marquee">
-            <div className="mq-track">
-              {[0, 1].map((n) => (
-                <div className="mq-set" key={n} aria-hidden={n === 1}>
-                  {흐르는말.map((w) => (
-                    <span className="mq-i" key={w}>
-                      {w}
-                      <span className="mq-x" aria-hidden="true">
-                        ✳
-                      </span>
+        {/* 흘러가는 띠 — 우리가 내놓는 것들의 이름표.
+            ⚠ 여기만 .wrap(가운데 1240px) 밖에 둔다. 화면 끝에서 끝까지 흘러야
+              «끊기지 않고 지나간다»는 느낌이 산다(2026-08-26 사장님 지시).
+            ⚠ 같은 벌을 «넷» 이어 붙인다. 애니메이션이 track 의 절반(=두 벌)만큼 밀고
+              처음으로 돌아가는데, 그 두 벌이 화면보다 좁으면 돌아가는 순간 뒤가 비어
+              빈 칸이 지나간다. 둘만 붙였을 땐 1240px 안에 갇혀 있어 안 드러났지만,
+              화면을 다 쓰면 넓은 모니터에서 바로 보인다. 넷이면 2,700px 까지 덮는다. */}
+        <div className="marquee">
+          <div className="mq-track">
+            {[0, 1, 2, 3].map((n) => (
+              <div className="mq-set" key={n} aria-hidden={n !== 0}>
+                {흐르는말.map((w) => (
+                  <span className="mq-i" key={w}>
+                    {w}
+                    <span className="mq-x" aria-hidden="true">
+                      ✳
                     </span>
-                  ))}
-                </div>
-              ))}
-            </div>
+                  </span>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -939,11 +943,12 @@ export function HomeLanding({
         }
 
         /* 흘러가는 띠 */
+        /* ⚠ 모서리를 뗐다. 가운데 1240px 안에 있을 땐 «알약»이라 끝이 둥근 게 맞았는데,
+             화면을 꽉 채우면 그 둥근 끝이 화면 밖으로 나가 잘린 자국처럼 보인다. */
         .marquee {
           overflow: hidden;
           background: var(--band);
-          border-radius: 100px;
-          padding: 15px 0;
+          padding: 16px 0;
         }
         .mq-track {
           display: flex;
