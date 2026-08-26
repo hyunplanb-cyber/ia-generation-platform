@@ -21,7 +21,7 @@ export function SnsListRow({
   };
   칸수: number;
 }) {
-  const 상태 = 상태보기(편.status);
+  const 상태 = 상태보기(편.status, 편.watcherError);
   const [물음, set물음] = useState(false);
   const [알림, set알림] = useState("");
   const [도는중, 시작] = useTransition();

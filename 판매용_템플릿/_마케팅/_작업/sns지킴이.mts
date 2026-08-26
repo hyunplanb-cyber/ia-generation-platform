@@ -55,6 +55,24 @@ const 쉬는초 = 30;
  *   실패는 아니니 상태를 되돌리면 안 되지만, «빠졌다»는 사실은 남아야 한다. */
 let 남길경고: string | null = null;
 
+/** 「막힘」 — 실패는 아니지만 «사람이 손봐야» 다음으로 못 가는 것.
+ *
+ * ⛔ 이것이 없어서 사고가 났다 (2026-08-26 사장님: 「계속 제작중이야」).
+ *   지킴이는 결과를 둘로만 나눴다 — 「됨」과 «던져진 실패». 그런데 실제로는 셋이다.
+ *   「막힘」은 예외를 안 던지고 그냥 return 했으므로 아래 한바퀴가 그것을 «됨»으로 보고,
+ *   성공 경로가 watcherError 를 «빈 칸으로 지웠다». 30초마다 지웠다.
+ *   그래서 화면에는 아무 자국도 안 남고 상태만 「제작중」으로 영영 남았다 —
+ *   보여 줄 자리(list-row 의 빨간 상자)는 이미 만들어져 있었는데 아무것도 도착하지 않았다.
+ *
+ * ⭐ 앞으로 «⛔ 찍고 그냥 return» 하지 않는다. 사람 손이 필요하면 반드시 이 함수를 거친다.
+ *   그래야 창을 안 열어 둔 사이에 생긴 막힘도 화면에 남는다.
+ */
+function 막힘(한줄: string, 덧붙임: string[] = []) {
+  말(`  ⛔ ${한줄}`);
+  for (const x of 덧붙임) 말(`     · ${x}`);
+  남길경고 = [한줄, ...덧붙임].join(" — ").slice(0, 900);
+}
+
 const 이제 = () => new Date().toLocaleTimeString("ko-KR", { hour12: false });
 
 /** 다 하고 나간다.
@@ -164,16 +182,14 @@ async function 다시굽기(편: typeof snsContent.$inferSelect) {
      상태는 「제작중」 그대로 둔다 — 손본 뒤에 지킴이가 다시 집으라고. */
   if (편.fixNote && 편.fixNote.trim()) {
     말(`▶ 제작중 — ${편.batch} · ${편.slug}`);
-    말("  ⛔ 「그 밖에 고칠 것」이 적혀 있어 다시 굽지 않았습니다:");
     const 줄들 = 편.fixNote.trim().split(String.fromCharCode(10)).map((x) => x.trim()).filter(Boolean);
-    for (const 한줄 of 줄들) 말(`     · ${한줄}`);
-    말("  → 굽는 쪽을 고친 뒤에 이 칸을 비우면 다시 돕니다.");
+    막힘("「그 밖에 고칠 것」이 적혀 있어 다시 굽지 않았습니다. 굽는 쪽을 고친 뒤 그 칸을 비우면 다시 돕니다.", 줄들);
     return;
   }
 
   말(`▶ 제작중 — ${편.batch} · ${편.slug}`);
   if (!편.scriptPath || !existsSync(편.scriptPath)) {
-    말(`  ⛔ 대본을 못 찾습니다: ${편.scriptPath || "(안 적혀 있음)"} — 손으로 한 번 보내 주세요.`);
+    막힘(`대본을 못 찾습니다: ${편.scriptPath || "(안 적혀 있음)"} — 손으로 한 번 보내 주세요.`);
     return;
   }
   const 인트로 = 편.introPath && existsSync(편.introPath) ? 편.introPath : "";
@@ -234,7 +250,7 @@ async function 올리기(편: typeof snsContent.$inferSelect) {
   }
   for (const [이름표, 길] of [["세로", 편.videoVertical], ["가로", 편.videoHorizontal]] as const) {
     if (!길 || !existsSync(길)) {
-      말(`  ⛔ ${이름표} 영상이 없습니다: ${길 || "(안 적혀 있음)"} — 먼저 다시 구워야 합니다.`);
+      막힘(`${이름표} 영상이 없습니다: ${길 || "(안 적혀 있음)"} — 먼저 다시 구워야 합니다.`);
       return;
     }
   }

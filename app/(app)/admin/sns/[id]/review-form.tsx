@@ -46,6 +46,8 @@ type 편모양 = {
   slotLabel: string;
   fixNote: string;
   checkResult: string;
+  /** 지킴이가 막힌 까닭. 있으면 상태 이름과 풀이가 「막힘」으로 바뀐다. */
+  watcherError: string;
   youtubeVerticalId: string | null;
   youtubeHorizontalId: string | null;
 };
@@ -245,11 +247,25 @@ export function SnsReviewForm({
         <span className="font-mono text-xs text-muted-foreground">{편.batch}</span>
         <span className="font-mono text-xs text-muted-foreground">· {편.slug}</span>
         {편.ep && <span className="text-xs font-semibold text-primary-on-soft">{편.ep}</span>}
-        <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${상태보기(상태).반}`}>
-          {상태보기(상태).글}
+        <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${상태보기(상태, 편.watcherError).반}`}>
+          {상태보기(상태, 편.watcherError).글}
         </span>
       </div>
-      <p className="mt-1 text-xs text-muted-foreground [word-break:keep-all]">{상태보기(상태).풀이}</p>
+      <p className="mt-1 text-xs text-muted-foreground [word-break:keep-all]">
+        {상태보기(상태, 편.watcherError).풀이}
+      </p>
+
+      {/* ⛔ 막힌 까닭을 «여기»에도 보여 준다 (2026-08-26).
+          목록에는 있었는데 이 화면에는 없었다. 그런데 사장님이 「왜 안 되지」 하고
+          들어오시는 곳은 목록이 아니라 «이 화면»이다 — 여기가 비어 있으면
+          까닭을 볼 길이 없다. */}
+      {편.watcherError && (
+        <p className="mt-3 rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-xs leading-relaxed text-rose-900 [word-break:keep-all]">
+          <b>⛔ 지킴이가 여기서 막혔습니다 — 그래서 다음으로 안 갑니다.</b>
+          <br />
+          {편.watcherError}
+        </p>
+      )}
 
       {/* ⛔ 표시 태그(<span class='o'>…)를 걷어내고 보여 준다 (2026-08-20).
           목록(list-row.tsx)은 걷어내는데 여기만 빠뜨려서, 제목이
