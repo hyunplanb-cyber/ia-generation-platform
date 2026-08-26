@@ -884,6 +884,12 @@ const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "
  * 한쪽만 바뀐다. 순서와 이름은 package-template.mts가 zip에 담는 파일과 맞춰 뒀다.
  */
 export function planContents(plan: PackagePlan): string[] {
+  // ⛔ 「— 화면마다 뭘 해야 하는지」 같은 꼬리말을 뗐다 (2026-08-26 사장님: 「모두 떼줘」).
+  //   이 목록은 홈·목록·상세 세 곳에서 «가운뎃점으로 줄줄이 이어» 그린다. 그 줄에 꼬리말이
+  //   끼면 어디까지가 한 항목인지 흐려진다 — 특히 「사이트 내놓는 법 안내서 — 배포·도메인·
+  //   로그인·결제」는 꼬리말 «안에도» 가운뎃점이 들어 있어 구분선과 뒤섞였다.
+  //   설명이 필요한 것은 상세 화면 본문이 따로 한다. 여기는 «무엇이 들었나»의 이름표다.
+  //
   // 손님 말로 부른다 — 「IA」·「WBS」·「프리셋」은 웹 기획 실무자만 아는 말이라,
   // 개발자가 아닌 손님에게는 빈칸이나 마찬가지다(2026-08-08).
   // 다만 「기능정의서」는 그대로 둔다: zip 안 파일 이름이 그렇고, 손님이 개발사에
@@ -891,12 +897,12 @@ export function planContents(plan: PackagePlan): string[] {
   const items = [
     "메뉴구조",
     `화면 목록 ${plan.stats.screens}개`,
-    `기능정의서 ${plan.stats.reqs}개 — 화면마다 뭘 해야 하는지`,
+    `기능정의서 ${plan.stats.reqs}개`,
     "개발 일정표",
     "FLOW 흐름도",
     "AI 빌드 지시서",
     "디자인 규칙 (색·글꼴 3종 · 화면 배치 2종)",
-    "사이트 내놓는 법 안내서 — 배포·도메인·로그인·결제",
+    "사이트 내놓는 법 안내서",
   ];
   if (plan.verify) items.push(`검수 시나리오 ${plan.verify.scenarios}개`);
   if (plan.siteScreens) items.push(`완성 화면 ${plan.siteScreens}개 (HTML)`);
@@ -1008,19 +1014,6 @@ const HOME_TABS: Record<string, string> = {
   petcare: "반려견 유치원",
 };
 
-/**
- * 홈 카드에 적을 «짧은» 이름 — 「— 」 뒤 꼬리말을 뗀다.
- *
- * 「기능정의서 270개 — 화면마다 뭘 해야 하는지」 → 「기능정의서 270개」
- *
- * 왜 홈에서만 떼나 (2026-08-26 사장님 지시)
- *   홈 카드는 넷이 나란히 서서 한 칸이 230px 남짓이고, 그 안에서 여덟 줄이 «줄줄이»
- *   가운뎃점으로 이어진다. 그 줄에 꼬리말이 끼면 —— 게다가 꼬리말 안에도 가운뎃점이
- *   들어 있어(「배포·도메인·로그인·결제」) —— 어디까지가 한 항목인지 안 보인다.
- *   목록·상세는 폭이 넉넉하니 꼬리말을 그대로 둔다. 출처는 여전히 planContents 하나다.
- */
-const 짧게 = (줄: string) => 줄.split(" — ")[0];
-
 export function homePacks(): HomeIndustry[] {
   const 묶음 = new Map<string, HomeIndustry>();
   for (const { pkg, plan, href } of packageProducts()) {
@@ -1034,7 +1027,7 @@ export function homePacks(): HomeIndustry[] {
       tier: plan.name,
       scope: plan.depthLabel,
       credits: PACKAGE_PRICES_PUBLIC ? packCredits(plan.priceKrw) : null,
-      items: planContents(plan).map(짧게),
+      items: planContents(plan),
       href,
     });
   }
