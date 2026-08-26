@@ -1,0 +1,1 @@
+ALTER TABLE "sns_content" ADD COLUMN "fix_note_done_at" timestamp;

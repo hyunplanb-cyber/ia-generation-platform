@@ -118,6 +118,13 @@ export async function saveContentAction(
         ok: false,
         왜: `${못찾은.join("·")}번 칸을 못 찾아 자막을 저장하지 못했습니다. 그 사이에 칸 수가 바뀐 것 같습니다 — 지금 쓰신 글을 복사해 두고 새로고침한 뒤 다시 넣어 주세요.`,
       };
+    /* ⚠ 주문서 글이 «바뀌었으면» 「손봤다」를 지운다. 새 부탁은 아직 아무도 안 손봤다.
+       안 지우면 옛 부탁을 손봤다는 표시가 새 부탁에 그대로 붙어 지킴이가 그냥 지나간다. */
+    const [옛것] = await db
+      .select({ fixNote: snsContent.fixNote })
+      .from(snsContent)
+      .where(eq(snsContent.id, contentId));
+    const 주문서바뀜 = (옛것?.fixNote ?? "") !== 값.fixNote;
     await db
       .update(snsContent)
       .set({
@@ -131,6 +138,7 @@ export async function saveContentAction(
         hashtags: 값.hashtags,
         slotLabel: 값.slotLabel,
         fixNote: 값.fixNote,
+        ...(주문서바뀜 ? { fixNoteDoneAt: null } : {}),
         updatedAt: new Date(),
       })
       .where(eq(snsContent.id, contentId));
@@ -142,6 +150,26 @@ export async function saveContentAction(
     return { ok: true, 검사 };
   } catch (e) {
     return { ok: false, 왜: e instanceof Error ? e.message : "저장하지 못했습니다." };
+  }
+}
+
+/** 「그 밖에 고칠 것」을 굽는 쪽에서 손봤다 — 지킴이를 다시 풀어 준다.
+ *
+ * ⭐ 적어 두신 글은 «그대로 남는다». 무엇을 부탁하셨는지가 기록이다.
+ *   지우지 않고도 다음으로 갈 수 있어야 한다 (2026-08-26 사장님 지적).
+ */
+export async function markFixNoteDoneAction(contentId: string): Promise<저장결과> {
+  try {
+    await 주인확인();
+    await db
+      .update(snsContent)
+      .set({ fixNoteDoneAt: new Date(), watcherError: "" })
+      .where(eq(snsContent.id, contentId));
+    revalidatePath(`/admin/sns/${contentId}`);
+    revalidatePath("/admin/sns");
+    return { ok: true, 검사: "" };
+  } catch (e) {
+    return { ok: false, 왜: e instanceof Error ? e.message : "풀지 못했습니다." };
   }
 }
 
