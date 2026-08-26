@@ -1,8 +1,14 @@
 [
-  { "이름": "영상10_같은지시서다른톤", "pose": "긴머리_조용함", "pos": "tr",
-    "title": "같은 지시서인데|<span class='o'>이렇게</span> 달라져요", "cap": "- 디자인 프리셋 편 -", "ep": "디자인 프리셋 편",
-    "sheet": "팩 넷을 나란히", "rows": "디자인 프리셋,4가지,ok|레이아웃,9가지,ok|고르는 데,몇 분,ok",
+  {
+    "이름": "영상10_같은지시서다른톤",
+    "pose": "긴머리_조용함",
+    "title": "같은 지시서인데|<span class='o'>이렇게</span> 달라져요",
+    "cap": "- 디자인 프리셋 편 -",
+    "ep": "디자인 프리셋 편",
+    "sheet": "팩 넷을 나란히",
+    "rows": "디자인 프리셋,4가지,ok|레이아웃,9가지,ok|고르는 데,몇 분,ok",
     "음악": "Ordinary Nights.mp3",
     "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상10_같은지시서다른톤_916.mp4",
-    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_같은지시서다른톤_916.mp4" }
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_같은지시서다른톤_916.mp4"
+  }
 ]

@@ -1,8 +1,14 @@
 [
-  { "이름": "영상14_기획서시간", "pose": "긴머리_노트북무릎", "pos": "tr",
-    "title": "기획서 <span class='o'>132줄</span>이|한 번에 나왔어요", "cap": "- 기획서 편 -", "ep": "기획서 편",
-    "sheet": "온라인 강의 팩", "rows": "화면 목록,132줄,ok|기능정의서,721줄,ok|WBS 일정,132줄,ok",
+  {
+    "이름": "영상14_기획서시간",
+    "pose": "긴머리_노트북무릎",
+    "title": "기획서 <span class='o'>132줄</span>이|한 번에 나왔어요",
+    "cap": "- 기획서 편 -",
+    "ep": "기획서 편",
+    "sheet": "온라인 강의 팩",
+    "rows": "화면 목록,132줄,ok|기능정의서,721줄,ok|WBS 일정,132줄,ok",
     "음악": "Ordinary Nights.mp3",
     "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상14_기획서시간_916.mp4",
-    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_기획서시간_916.mp4" }
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_기획서시간_916.mp4"
+  }
 ]
