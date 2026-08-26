@@ -24,8 +24,9 @@
  *   지금까지 제일 자주 난 사고다.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, copyFileSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync, rmSync } from "node:fs";
 import { join, dirname, resolve, basename } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { config } from "dotenv";
 import { eq, inArray } from "drizzle-orm";
@@ -84,10 +85,50 @@ const 이제 = () => new Date().toLocaleTimeString("ko-KR", { hour12: false });
  *   그런데 작업 스케줄러와 루틴은 «나간 값»만 본다 — 매번 «실패»로 적히고 있었다.
  *   뿌리는 자식 프로세스(유튜브있나)를 부르고 바로 나가는 것이다. 한 숨 쉬었다 나간다. */
 async function 나가기(값 = 0): Promise<never> {
+  자물쇠풀기();
   await new Promise((r) => setTimeout(r, 200));
   process.exit(값);
 }
 const 말 = (s: string) => console.log(`[${이제()}] ${s}`);
+
+/* ── 겹쳐 돌지 못하게 하는 자물쇠 ────────────────────────────────────────
+ *
+ * ⛔ 왜 필요한가 (2026-08-26 에 실제로 깨뜨렸다)
+ *   지킴이가 도는 길이 «둘»이다 — 검수 화면의 「지킴이 켜기」(/api/sns/tick 이 이 파일을
+ *   불러 준다)와, 사람이 터미널에서 직접 부르는 것. 그런데 겹침 막이는 tick 라우트 안의
+ *   모듈 변수 「도는중」 하나뿐이었다. 그건 «그 프로세스 안에서만» 통한다.
+ *
+ *   그래서 둘이 같이 돌면 같은 임시 폴더(cc-vid-w2 안의 편 폴더)를 같이 쓴다. 이렇게 났다:
+ *     · 뒤에 시작한 쪽이 그 폴더를 지우려다 EPERM (앞선 쪽 ffmpeg 이 파일을 붙잡고 있다)
+ *     · 반쯤 쓰인 mp4 를 읽어 「moov atom not found」
+ *   둘 다 «굽다가 죽는» 모양이라 까닭을 찾기 어렵다.
+ *
+ * ⭐ 그래서 프로세스 «밖»에 자물쇠를 둔다. 파일 하나면 된다 — 어느 길로 들어와도 보인다.
+ * ⚠ 죽은 자물쇠는 넘겨받는다. 굽다가 컴퓨터가 꺼지면 파일이 남는데 그것 때문에 영영
+ *   못 돌면 안 된다. 적힌 번호의 프로세스가 살아 있는지 보고 정한다. */
+const 자물쇠길 = join(tmpdir(), "sns지킴이.lock");
+
+function 자물쇠걸기(): boolean {
+  try {
+    const 적힌것 = Number(readFileSync(자물쇠길, "utf8").trim());
+    if (적힌것 && 적힌것 !== process.pid) {
+      try {
+        process.kill(적힌것, 0);          // 살아 있으면 안 던진다
+        말("⛔ 지킴이가 이미 돌고 있습니다 (프로세스 " + 적힌것 + "). 겹쳐 돌면 굽다가 깨집니다.");
+        말("   검수 화면의 「지킴이 켜기」가 켜져 있는지 보시고, 끝난 뒤에 다시 부르세요.");
+        return false;
+      } catch { /* 죽은 자물쇠다 — 넘겨받는다 */ }
+    }
+  } catch { /* 없으면 새로 건다 */ }
+  writeFileSync(자물쇠길, String(process.pid));
+  return true;
+}
+
+function 자물쇠풀기() {
+  try {
+    if (Number(readFileSync(자물쇠길, "utf8").trim()) === process.pid) rmSync(자물쇠길, { force: true });
+  } catch { /* 이미 없으면 그만 */ }
+}
 
 /** 윈도우에서 `npx`·`npm` 은 실제로는 `.cmd` 파일이다.
  *
@@ -494,6 +535,13 @@ async function 빠진사본채우기() {
   }
   말(`끝났습니다 — 넣은 것 ${채움}개 · 이미 있던 것 ${이미}개 · 못 넣은 것 ${못함}개.`);
 }
+
+/* ⚠ 여기서 건다 — 드라이브채우기도 파일을 만지므로 그 «앞»이어야 한다.
+   못 걸면 아무것도 안 하고 조용히 나간다. 실패가 아니라 「지금은 남이 쓰는 중」이다. */
+if (!자물쇠걸기()) process.exit(0);
+
+process.on("exit", 자물쇠풀기);
+process.on("SIGINT", () => { 자물쇠풀기(); process.exit(130); });
 
 if (드라이브채우기) {
   말(시늉 ? "드라이브에 «빠진 사본»만 찾아 찍습니다 (시늉)." : "드라이브에 «빠진 사본»을 채웁니다.");
