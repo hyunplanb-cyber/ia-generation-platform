@@ -53,6 +53,7 @@ export default async function SnsReviewDetailPage({
         slotLabel: 편.slotLabel,
         fixNote: 편.fixNote,
         checkResult: 편.checkResult,
+        watcherError: 편.watcherError,
         youtubeVerticalId: 편.youtubeVerticalId,
         youtubeHorizontalId: 편.youtubeHorizontalId,
       }}
