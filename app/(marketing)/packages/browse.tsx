@@ -180,7 +180,7 @@ export function Browse({
         // 치수·색은 app/globals.css 의 --pack-* 한 곳에서 온다.
         // ⚠ 이 화면에만 있는 것 둘은 남겼다 — 「완성 화면 있음」 표시(테두리)와 한 줄
         //   소개(note). 없애면 스물여덟 칸 중에서 고를 단서가 사라진다.
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {보일것.map((c) => (
             <Link
               key={c.key}
