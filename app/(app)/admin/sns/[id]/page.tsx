@@ -58,6 +58,9 @@ export default async function SnsReviewDetailPage({
         youtubeVerticalId: 편.youtubeVerticalId,
         youtubeHorizontalId: 편.youtubeHorizontalId,
       }}
+      /* 영상 파일은 «사장님 컴퓨터»에 있다. 배포된 곳에서는 못 읽으므로 아예 안 그린다.
+         VERCEL 은 Vercel 이 스스로 넣어 주는 값이다(api/sns/tick 도 이걸로 가른다). */
+      배포됨={!!process.env.VERCEL}
       칸들={칸들.map((c) => ({
         id: c.id,
         ord: c.ord,

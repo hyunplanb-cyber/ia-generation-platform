@@ -74,10 +74,13 @@ type 칸모양 = {
 
 export function SnsReviewForm({
   편,
+  배포됨,
   칸들: 처음칸들,
   요약,
 }: {
   편: 편모양;
+  /** 여기가 «배포된 곳»인가. 그러면 영상 파일이 없으므로 재생기를 안 그린다. */
+  배포됨: boolean;
   칸들: 칸모양[];
   요약: { 글자수: number; 초: string; 칸수: number; 칸초: number };
 }) {
@@ -331,19 +334,33 @@ export function SnsReviewForm({
             ))}
           </div>
         </div>
-        <div className="mt-4 flex justify-center rounded-lg bg-neutral-900 p-3">
-          <video
-            key={판}
-            src={`/admin/sns/${편.id}/video?판=${판}`}
-            controls
-            preload="metadata"
-            className={판 === "916" ? "max-h-[70vh] rounded" : "w-full max-w-3xl rounded"}
-          />
-        </div>
-        <p className="mt-3 text-xs text-muted-foreground [word-break:keep-all]">
-          안 나오면 <b className="text-foreground">localhost</b> 로 열어 보세요 — 영상 파일이 이 컴퓨터에
-          있어서 배포된 주소에서는 못 읽습니다. 칸별 그림과 자막은 어디서든 보입니다.
-        </p>
+        {/* ⛔ 배포된 곳에서는 «까만 판 + 안 눌리는 재생 단추»를 안 그린다 (2026-08-26).
+            영상 파일은 사장님 컴퓨터에 있어서 여기선 못 읽는다. 그런데 재생기를 그려 두면
+            눌러도 아무 일이 없고, 사장님은 「영상이 깨졌나」로 읽으신다 — 오늘 실제로 그랬다.
+            이 저장소가 스스로 적어 둔 원칙이다(watcher-switch.tsx):
+            「눌리는데 아무 일 없는 것이 제일 나쁘다」. */}
+        {배포됨 ? (
+          <div className="mt-4 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-6 text-center">
+            <p className="text-sm font-semibold text-foreground">
+              영상은 이 주소에서 못 봅니다 — 만든 컴퓨터에만 있어요.
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground [word-break:keep-all]">
+              그 컴퓨터에서 <b className="text-foreground">localhost:3000</b> 으로 이 화면을 열면 바로
+              돌려 볼 수 있습니다. <b className="text-foreground">칸별 그림과 자막은 여기서도 그대로
+              보이니</b> 글은 폰에서도 고치실 수 있어요.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-4 flex justify-center rounded-lg bg-neutral-900 p-3">
+            <video
+              key={판}
+              src={`/admin/sns/${편.id}/video?판=${판}`}
+              controls
+              preload="metadata"
+              className={판 === "916" ? "max-h-[70vh] rounded" : "w-full max-w-3xl rounded"}
+            />
+          </div>
+        )}
       </section>
 
       {/* ── ⭐ 커버와 상단 띠 — 글자만 고치면 어떻게 보이는지 모른다 ──────── */}
