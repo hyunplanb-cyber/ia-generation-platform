@@ -284,7 +284,7 @@ export default async function PackageDetailPage({
     <div className="bg-background">
       {/* 히어로 */}
       <section className="bg-linear-to-br from-primary-soft/40 via-background to-muted/40">
-        <div className="mx-auto max-w-[1440px] px-6 pb-12 pt-7">
+        <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-7">
           <Link
             href="/packages"
             className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-base font-semibold text-foreground shadow-sm transition-colors hover:bg-muted"
@@ -319,19 +319,21 @@ export default async function PackageDetailPage({
         </div>
       </section>
 
-      <div className="mx-auto flex max-w-[1440px] flex-col gap-16 px-6 py-14">
+      <div className="mx-auto flex max-w-[1240px] flex-col gap-16 px-6 py-14">
         {/* 플랜 비교 — 이 페이지의 핵심. 고르면 아래 내용 전체가 그 규모로 바뀐다. */}
         <section id="plans" className="flex scroll-mt-20 flex-col gap-5">
           <SectionTitle>어떤 규모로 만드시나요?</SectionTitle>
           {/* 넷이면 2×2로 둔다 — 등급이 원래 2×2(설계 깊이 × 완성 화면)라
               한 줄로 늘어놓으면 사다리처럼 보인다. 배치가 구조를 말해주게.
+              (2026-08-26) 넓은 화면에서는 홈과 같이 «한 줄에 넷»으로 편다 — 같은 넷을
+              홈에서는 한 줄로, 여기서는 2×2로 보여 주니 같은 것인지 헷갈렸다.
               좁은 화면에서는 그 배치가 어차피 안 되고 세로로 쌓으면 한없이 길어져서,
               한 장씩 옆으로 넘긴다. 스크롤 스냅이라 손가락으로 그냥 밀면 된다.
               바깥 여백만큼 좌우로 빼내 다음 장이 살짝 보이게 두면 넘길 수 있다는 게 읽힌다. */}
           <div
-            className={`-mx-6 flex snap-x snap-mandatory items-start gap-4 overflow-x-auto px-6 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:items-stretch sm:overflow-visible sm:px-0 sm:pb-0 ${
+            className={`-mx-6 flex snap-x snap-mandatory items-start gap-3 overflow-x-auto px-6 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:items-stretch sm:overflow-visible sm:px-0 sm:pb-0 ${
               pkg.plans.length >= 4
-                ? "sm:grid-cols-2"
+                ? "sm:grid-cols-2 lg:grid-cols-4"
                 : pkg.plans.length === 3
                   ? "lg:grid-cols-3"
                   : "md:grid-cols-2"

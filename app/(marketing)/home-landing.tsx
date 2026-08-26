@@ -708,10 +708,14 @@ export function HomeLanding({
           word-break: keep-all;
           -webkit-font-smoothing: antialiased;
         }
+        /* ⚠ 좌우 여백은 시안의 20px 이 아니라 사이트 기준인 24px 이다(px-6).
+           같은 팩 카드가 구매 목록·팩 상세에도 나오는데, 거기 여백이 24px 이라
+           20px 로 두면 카드 폭이 291 대 289 로 2px 어긋난다. 눈에는 안 보여도
+           「셋이 같아야 한다」는 약속이 숫자로 깨진다(2026-08-26). */
         .wrap {
           max-width: 1240px;
           margin: 0 auto;
-          padding: 0 20px;
+          padding: 0 24px;
         }
 
         /* 얼마나 읽었나 — 머리(z-30) 위에 얹는다 */
