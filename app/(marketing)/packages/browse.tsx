@@ -26,7 +26,8 @@ export interface BrowseCard {
   depthLabel: string;
   contents: string[];
   note: string;
-  price: string | null;
+  /** 값 — 크레딧 수. 값을 아직 안 내거는 동안은 null (홈과 같은 약속). */
+  credits: number | null;
   saleOpen: boolean;
   hasSite: boolean;
   href: string;
@@ -174,33 +175,50 @@ export function Browse({
           </div>
         </div>
       ) : (
+        // 카드 생김새는 홈의 팩 카드(home-landing.tsx 의 .plan)와 같다. 같은 상품이 세
+        // 화면에 나오는데 모양이 다르면 같은 것인지 헷갈린다(2026-08-26 사장님).
+        // 치수·색은 app/globals.css 의 --pack-* 한 곳에서 온다.
+        // ⚠ 이 화면에만 있는 것 둘은 남겼다 — 「완성 화면 있음」 표시(테두리)와 한 줄
+        //   소개(note). 없애면 스물여덟 칸 중에서 고를 단서가 사라진다.
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {보일것.map((c) => (
             <Link
               key={c.key}
               href={c.href}
-              className={`group flex flex-col rounded-2xl border bg-surface p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md ${
-                c.planId === "premium"
-                  ? "border-primary/40 hover:border-primary"
-                  : "border-border hover:border-primary/40"
+              data-들썩
+              className={`group flex flex-col gap-4 rounded-[22px] bg-surface px-[26px] pt-[30px] pb-7 shadow-[0_10px_28px_rgba(25,23,19,0.06)] ${
+                c.hasSite ? "ring-1 ring-primary/25" : ""
               }`}
             >
-              <div className="flex items-center gap-1.5">
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                    c.hasSite
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-primary-soft text-primary-on-soft"
-                  }`}
-                >
-                  {c.planName}
-                </span>
-              </div>
+              <span
+                className={`self-start whitespace-nowrap rounded-full px-[11px] py-[5px] text-[10px] tracking-[0.14em] ${
+                  c.hasSite ? "bg-primary text-primary-foreground" : "bg-pack-tier-bg text-pack-tier"
+                }`}
+              >
+                {c.planName}
+              </span>
+              <h2 className="-mt-2 text-[23px] font-semibold leading-[1.25] tracking-[-0.03em] text-pack-ink">
+                {c.title}
+              </h2>
+              <p className="-mt-2.5 text-[13px] leading-[1.5] text-pack-sub">{c.depthLabel}</p>
 
-              <h2 className="mt-3 text-lg font-bold leading-snug text-foreground">{c.title}</h2>
-              <p className="mt-1 text-sm font-semibold text-primary">{c.depthLabel}</p>
+              <p className="flex items-baseline gap-1.5 rounded-[14px] bg-pack-tint px-4 py-3.5 text-[12px] text-pack-sub">
+                {c.credits === null ? (
+                  "판매 준비 중"
+                ) : (
+                  <>
+                    <b className="text-[32px] font-semibold leading-none text-pack-ink">
+                      {c.credits.toLocaleString()}
+                    </b>{" "}
+                    크레딧
+                  </>
+                )}
+              </p>
+              {c.credits !== null && !c.saleOpen && (
+                <p className="-mt-2.5 text-[12px] font-medium text-warning">판매 준비 중</p>
+              )}
 
-              <ul className="mt-4 flex flex-wrap border-t border-border/60 pt-4 text-[13px] leading-[1.7] text-list-ink">
+              <ul className="flex flex-wrap text-[13px] leading-[1.7] text-list-ink">
                 {c.contents.map((x) => (
                   <li
                     key={x}
@@ -210,23 +228,12 @@ export function Browse({
                   </li>
                 ))}
               </ul>
-              <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{c.note}</p>
+              <p className="-mt-1 text-xs leading-relaxed text-muted-foreground">{c.note}</p>
 
-              <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-4">
-                {c.price ? (
-                  <p className="text-lg font-bold text-foreground">{c.price}</p>
-                ) : (
-                  <p className="text-sm font-semibold text-warning">판매 준비 중</p>
-                )}
-                <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                  자세히 보기
-                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </div>
-
-              {c.price && !c.saleOpen && (
-                <p className="mt-2 text-xs font-medium text-warning">판매 준비 중</p>
-              )}
+              <span className="mt-auto inline-flex items-center gap-1 pt-[18px] text-[11px] tracking-[0.1em] text-pack-ink">
+                자세히 보기
+                <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+              </span>
             </Link>
           ))}
         </div>

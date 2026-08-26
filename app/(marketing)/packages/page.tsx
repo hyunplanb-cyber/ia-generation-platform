@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
+import { ShoppingBag, Sparkles } from "lucide-react";
 import {
-  packageProducts, planContents, formatPackPrice, listedCategories, searchText,
+  packageProducts, planContents, packCredits, listedCategories, searchText,
 } from "@/lib/packages";
 import { PACKAGE_PRICES_PUBLIC, PACKAGE_SALE_OPEN } from "@/lib/flags";
 import { Browse, type BrowseCard } from "./browse";
@@ -27,7 +27,7 @@ export default function PackagesPage() {
     depthLabel: plan.depthLabel,
     contents: planContents(plan),
     note: plan.highlights[plan.highlights.length - 1],
-    price: PACKAGE_PRICES_PUBLIC ? formatPackPrice(plan.priceKrw) : null,
+    credits: PACKAGE_PRICES_PUBLIC ? packCredits(plan.priceKrw) : null,
     saleOpen: PACKAGE_SALE_OPEN,
     hasSite: !!plan.siteScreens,
     href,

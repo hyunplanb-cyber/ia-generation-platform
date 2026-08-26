@@ -1533,11 +1533,11 @@ export function HomeLanding({
         .pl-tier {
           align-self: flex-start;
           padding: 5px 11px;
-          background: rgba(215, 72, 31, 0.09);
+          background: var(--pack-tier-bg);
           border-radius: 100px;
           font-size: 10px;
           letter-spacing: 0.14em;
-          color: var(--o);
+          color: var(--pack-tier);
           white-space: nowrap;
         }
         .pl-name {
@@ -1558,7 +1558,7 @@ export function HomeLanding({
           align-items: baseline;
           gap: 6px;
           padding: 14px 16px;
-          background: var(--tint);
+          background: var(--pack-tint);
           border-radius: 14px;
           font-size: 12px;
           color: var(--t2);
