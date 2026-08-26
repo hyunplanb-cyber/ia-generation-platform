@@ -17,7 +17,13 @@
  */
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
-import { approveContentAction, finalizeContentAction, reopenContentAction, saveContentAction } from "../actions";
+import {
+  approveContentAction,
+  finalizeContentAction,
+  markFixNoteDoneAction,
+  reopenContentAction,
+  saveContentAction,
+} from "../actions";
 import { 상태보기 } from "@/lib/sns-status";
 
 /** 공백과 표시(span)를 뺀 글자 수 — 검사기와 같은 셈법이다. */
@@ -48,6 +54,8 @@ type 편모양 = {
   checkResult: string;
   /** 지킴이가 막힌 까닭. 있으면 상태 이름과 풀이가 「막힘」으로 바뀐다. */
   watcherError: string;
+  /** 「그 밖에 고칠 것」을 굽는 쪽에서 손봤나. 눌러 두면 글을 안 지워도 지킴이가 돈다. */
+  fixNoteDone: boolean;
   youtubeVerticalId: string | null;
   youtubeHorizontalId: string | null;
 };
@@ -104,6 +112,9 @@ export function SnsReviewForm({
   const [상태, set상태] = useState(편.status);
   const [알림, set알림] = useState("");
   const [도는중, 시작] = useTransition();
+  /* 「손봤습니다」 단추 — 저장·검토완료와 따로 돈다. 같은 시계를 쓰면 저장하는 동안
+     이 단추도 흐려져, 무엇 때문에 못 누르는지 알 수 없다. */
+  const [푸는중, 풀기] = useTransition();
   const [자동저장, set자동저장] = useState(true);
   const [판, set판] = useState<"916" | "169">("916");
   const [저장됨, set저장됨] = useState("");
@@ -468,7 +479,7 @@ export function SnsReviewForm({
           커버에 들어간 그림, 상단에 깔린 영상, 화면이 잘린 자리, 음악 같은 것들입니다.
         </p>
         <div className="mt-4">
-          <Field 라벨="무엇을 고쳐야 하나" 도움="여기에 적으면 지킴이가 다시 굽지 않고 저에게 넘깁니다 — 같은 재료로 다시 구우면 같은 것이 또 나오니까요">
+          <Field 라벨="무엇을 고쳐야 하나" 도움="여기에 적으면 지킴이가 다시 굽지 않고 저에게 넘깁니다 — 같은 재료로 다시 구우면 같은 것이 또 나오니까요. 적어 두신 글은 지우지 않으셔도 됩니다">
             <textarea
               className={`${입력} min-h-28 leading-relaxed`}
               placeholder={"보기)\n커버 마스코트가 제목을 가려요\n상단 영상이 다른 편 것 같아요\n12번 칸 화면이 오른쪽에서 잘렸어요"}
@@ -477,6 +488,46 @@ export function SnsReviewForm({
             />
           </Field>
         </div>
+
+        {/* ⭐ 푸는 단추 (2026-08-26 사장님: 「그 밖에 고칠 것이 있는데 왜 지워?
+            이것도 고쳐줘서 제작해 주는 거 아니야?」)
+            그동안 지킴이를 푸는 길이 «이 글을 지우는 것»뿐이었다. 무엇을 부탁하셨는지가
+            통째로 사라지고, 사장님이 «자기 말을 지워야» 다음으로 갈 수 있었다.
+            이제 적어 두신 글은 남고, 굽는 쪽을 손본 사람이 이 단추를 눌러 푼다.
+            ⚠ 글을 다시 고치시면 이 표시는 저절로 풀린다 — 새 부탁은 아직 아무도 안 손봤다. */}
+        {편.fixNote.trim() && (
+          <div className="mt-4 border-t border-amber-300/60 pt-4">
+            {편.fixNoteDone ? (
+              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                ✅ 굽는 쪽을 손봤다고 표시해 뒀습니다 — 지킴이가 다음 바퀴에 다시 굽습니다.
+                <span className="ml-1 font-normal text-muted-foreground">
+                  (위 글을 고치시면 이 표시는 풀립니다)
+                </span>
+              </p>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  disabled={푸는중}
+                  onClick={() =>
+                    풀기(async () => {
+                      const r = await markFixNoteDoneAction(편.id);
+                      if (!r.ok) set알림(r.왜);
+                    })
+                  }
+                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                >
+                  {푸는중 ? "푸는 중…" : "손봤습니다 — 다시 구워 주세요"}
+                </button>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground [word-break:keep-all]">
+                  굽는 쪽을 손본 뒤에 누르세요.{" "}
+                  <b className="text-foreground">적어 두신 글은 그대로 남습니다</b> — 무엇을
+                  부탁하셨는지가 기록이니까요.
+                </p>
+              </>
+            )}
+          </div>
+        )}
       </section>
       {/* ── 칸별 — 프레임과 자막을 나란히 ────────────────────── */}
       <h2 className="mt-10 font-bold text-foreground">

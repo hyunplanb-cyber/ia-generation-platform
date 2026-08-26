@@ -54,6 +54,7 @@ export default async function SnsReviewDetailPage({
         fixNote: 편.fixNote,
         checkResult: 편.checkResult,
         watcherError: 편.watcherError,
+        fixNoteDone: !!편.fixNoteDoneAt,
         youtubeVerticalId: 편.youtubeVerticalId,
         youtubeHorizontalId: 편.youtubeHorizontalId,
       }}
