@@ -791,12 +791,15 @@ export function HomeLanding({
         .hero h1 .t {
           color: #a79c86;
         }
+        /* ⚠ 아래 여백(112px)이 첫 화면과 흘러가는 띠 사이의 «유일한» 틈이다.
+             띠는 .wrap 밖에 있어서 자기 위쪽 여백을 갖지 않는다 — 여기를 줄이면
+             카드와 띠가 곧바로 붙는다(2026-08-26 사장님: 「두 개 사이 간격 넓혀줘」). */
         .hero-grid {
           display: grid;
           grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr);
           gap: 44px;
           align-items: end;
-          padding: 52px 0 56px;
+          padding: 52px 0 112px;
         }
         .hero-copy p {
           margin: 0;
@@ -1687,6 +1690,10 @@ export function HomeLanding({
         @media (max-width: 720px) {
           .hero {
             padding-top: 56px;
+          }
+          /* 폰에서는 112px 이 «빈 화면 한 장»이 된다. 절반으로 줄인다. */
+          .hero-grid {
+            padding-bottom: 60px;
           }
           .sec {
             padding: 72px 0;
