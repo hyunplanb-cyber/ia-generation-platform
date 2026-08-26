@@ -1,0 +1,28 @@
+[
+  {
+    "이름": "영상1",
+    "pose": "커피_마셔야겠다",
+    "pos": "br",
+    "title": "결제 실패 화면|놓치더니|화면 만들기도|<span class='o'>실패한 바이브코딩</span>",
+    "cap": "",
+    "ep": "장비 렌탈 사이트 편",
+    "sheet": "카페인컬러 AI팩 · 장비 렌탈",
+    "rows": "화면목록,161개,ok|검수 시나리오,944개,ok|결제 실패,BK0401,ok",
+    "음악": "Small Kind of Brave.mp3",
+    "영상": "C:\\Users\\glim0\\AppData\\Local\\Temp/cc-vid-w2/영상1_결제실패_916.mp4",
+    "낼길": "C:\\Users\\glim0\\AppData\\Local\\Temp/cc-vid-w2/인트로_영상1_916.mp4"
+  },
+  {
+    "이름": "영상2",
+    "pose": "애교",
+    "pos": "br",
+    "title": "8월 15일 예약|실패했더니|화면도 하얘지고|<span class='o'>내 머리도 하얘져</span>",
+    "cap": "",
+    "ep": "장비 렌탈 사이트 편",
+    "sheet": "카페인컬러 AI팩 · 장비 렌탈",
+    "rows": "화면목록,161개,ok|검수 시나리오,944개,ok|결과 없음,HO0401,ok",
+    "음악": "Ordinary Nights.mp3",
+    "영상": "C:\\Users\\glim0\\AppData\\Local\\Temp/cc-vid-w2/영상2_검색결과없음_916.mp4",
+    "낼길": "C:\\Users\\glim0\\AppData\\Local\\Temp/cc-vid-w2/인트로_영상2_916.mp4"
+  }
+]
