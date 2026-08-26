@@ -1,8 +1,14 @@
 [
-  { "이름": "영상8_안되는경우까지", "pose": "긴머리_골똘히", "pos": "tr",
-    "title": "<span class='o'>안 되는 경우</span>까지|화면이 나옵니다", "cap": "- 안 되는 길 편 -", "ep": "안 되는 길 편",
-    "sheet": "안 되는 길 화면", "rows": "여행 팩,144개,ok|매칭 팩,159개,ok|장비렌탈 팩,161개,ok",
+  {
+    "이름": "영상8_안되는경우까지",
+    "pose": "긴머리_골똘히",
+    "title": "<span class='o'>안 되는 경우</span>까지|화면이 나옵니다",
+    "cap": "- 안 되는 길 편 -",
+    "ep": "안 되는 길 편",
+    "sheet": "안 되는 길 화면",
+    "rows": "여행 팩,144개,ok|매칭 팩,159개,ok|장비렌탈 팩,161개,ok",
     "음악": "Ordinary Nights.mp3",
     "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상8_안되는경우까지_916.mp4",
-    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_안되는경우까지_916.mp4" }
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_안되는경우까지_916.mp4"
+  }
 ]
