@@ -7,7 +7,6 @@ import {
   ArrowRight,
   FileText,
   LayoutList,
-  Layers,
   MonitorPlay,
   Network,
   ShoppingBag,
@@ -23,7 +22,6 @@ import { ScreenStrip } from "./screen-strip";
 import {
   PACKAGES,
   getPackage,
-  formatPackPrice,
   packCredits,
   planContents,
   BUILD_SCOPE,
@@ -1105,14 +1103,18 @@ function PlanCard({
       id={`plan-${plan.id}`}
       // 좁은 화면에서는 한 장이 화면의 대부분을 차지하고 스냅으로 멈춘다.
       // 폭을 꽉 채우지 않는 건 다음 장 끝을 보여 넘길 수 있다는 걸 알리기 위해서다.
-      className={`flex w-[86%] shrink-0 snap-center scroll-mt-24 flex-col gap-4 rounded-2xl border p-6 transition-colors sm:w-auto sm:shrink ${
-        selected
-          ? "border-primary bg-primary-soft/20 ring-2 ring-primary/30"
-          : "border-border bg-surface"
+      // 껍데기는 홈의 팩 카드(home-landing.tsx 의 .plan)와 같다 — 모서리 22px,
+      // 안여백 26/30/28, 옅은 그림자. 치수·색은 app/globals.css 의 --pack-* 한 곳에서 온다.
+      // ⚠ 「지금 보고 있는 등급」 테두리는 남긴다. 넷 중 어느 것을 보고 있는지 알려 주는
+      //   장치라 멋이 아니라 길잡이다 — 없애면 아래 내용이 어느 등급 것인지 알 수 없다.
+      className={`flex w-[86%] shrink-0 snap-center scroll-mt-24 flex-col gap-4 rounded-[22px] px-[26px] pt-[30px] pb-7 shadow-[0_10px_28px_rgba(25,23,19,0.06)] transition-colors sm:w-auto sm:shrink ${
+        selected ? "bg-primary-soft/20 ring-2 ring-primary/40" : "bg-surface"
       }`}
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-lg font-bold text-foreground">{plan.name}</p>
+        <span className="whitespace-nowrap rounded-full bg-pack-tier-bg px-[11px] py-[5px] text-[10px] tracking-[0.14em] text-pack-tier">
+          {plan.name}
+        </span>
         <div className="flex items-center gap-1.5">
           {plan.badge && (
             <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
@@ -1127,15 +1129,19 @@ function PlanCard({
         </div>
       </div>
 
-      {PACKAGE_PRICES_PUBLIC ? (
-        <p className="text-3xl font-bold text-primary">{formatPackPrice(plan.priceKrw)}</p>
-      ) : (
-        <p className="text-xl font-bold text-warning">판매 준비 중</p>
-      )}
+      <p className="-mt-2.5 text-[13px] leading-[1.5] text-pack-sub">{plan.depthLabel}</p>
 
-      <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-        <Layers className="size-4" />
-        {plan.depthLabel}
+      <p className="flex items-baseline gap-1.5 rounded-[14px] bg-pack-tint px-4 py-3.5 text-[12px] text-pack-sub">
+        {PACKAGE_PRICES_PUBLIC ? (
+          <>
+            <b className="text-[32px] font-semibold leading-none text-pack-ink">
+              {packCredits(plan.priceKrw).toLocaleString()}
+            </b>{" "}
+            크레딧
+          </>
+        ) : (
+          "판매 준비 중"
+        )}
       </p>
 
       <dl className="grid grid-cols-2 gap-x-3 gap-y-2 border-y border-border/60 py-4 text-sm">
