@@ -41,7 +41,7 @@ const 저장소 = {
   },
 };
 
-export function WatcherSwitch() {
+export function WatcherSwitch({ 배포됨 }: { 배포됨: boolean }) {
   const router = useRouter();
   const 켬 = useSyncExternalStore(저장소.구독, 저장소.읽기, 저장소.서버에서);
   const [도는중, set도는중] = useState(false);
@@ -49,12 +49,16 @@ export function WatcherSwitch() {
   const [막힘, set막힘] = useState<string | null>(null);
   const 돌고있나 = useRef(false);
 
-  const 한바퀴 = useCallback(async () => {
+  const 한바퀴 = useCallback(async (일?: string) => {
     if (돌고있나.current) return;
     돌고있나.current = true;
     set도는중(true);
     try {
-      const r = await fetch("/api/sns/tick", { method: "POST" });
+      const r = await fetch("/api/sns/tick", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(일 ? { 일 } : {}),
+      });
       const 답 = await r.json();
       if (답.ok === false && 답.왜) {
         set막힘(답.왜);
@@ -84,32 +88,68 @@ export function WatcherSwitch() {
   }, [도는중]);
 
   useEffect(() => {
-    if (!켬) return;
+    if (!켬 || 배포됨) return;
     /* 첫 바퀴도 시계에 맡긴다 — 그리는 도중에 상태를 바꾸면 리액트가 말린다.
        0초 뒤라 사람 눈에는 「누르자마자」와 같다. */
     const 첫바퀴 = setTimeout(() => void 한바퀴(), 0);
     const 시계 = setInterval(() => void 한바퀴(), 쉬는초 * 1000);
     return () => { clearTimeout(첫바퀴); clearInterval(시계); };
-  }, [켬, 한바퀴]);
+  }, [켬, 배포됨, 한바퀴]);
 
   return (
     <div className="mt-4 rounded-xl border border-border bg-surface p-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => { set막힘(null); 저장소.쓰기(!켬); }}
-          className={`rounded-lg px-4 py-2 text-sm font-bold ${
-            켬 ? "bg-emerald-600 text-white" : "bg-primary text-on-primary"
-          }`}
-        >
-          {켬 ? "지킴이 켜짐 — 끄기" : "지킴이 켜기"}
-        </button>
-        <span className="text-xs text-muted-foreground">
-          {켬
-            ? `${쉬는초}초마다 봅니다. ${도는중 ? "지금 도는 중…" : "이 화면을 닫으면 멈춥니다."}`
-            : "켜 두는 동안에만 「제작중」과 「등록 중」을 집어 갑니다."}
-        </span>
-      </div>
+      {/* ⛔ 배포된 곳에서는 «켜지는 척»을 안 한다 (2026-08-26 사장님: 「켜면 바로 꺼지네」).
+          전에는 단추가 눌리고, 한 바퀴를 두드려 보고, 서버가 「여기선 안 됩니다」를 돌려주면
+          스스로 꺼졌다. 눌러 보기 전에는 알 수 없고, 꺼지는 모습은 «고장»으로 보인다.
+          지킴이는 녹화본·ffmpeg·유튜브 열쇠가 있는 «그 컴퓨터»에서만 돈다 — 옮길 수 없다.
+          그러니 여기서는 처음부터 잠그고 무엇을 하는 곳인지 적는다. */}
+      {배포됨 ? (
+        <div>
+          <button
+            type="button"
+            disabled
+            className="cursor-not-allowed rounded-lg bg-muted px-4 py-2 text-sm font-bold text-muted-foreground"
+          >
+            지킴이 — 여기선 못 켭니다
+          </button>
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground [word-break:keep-all]">
+            굽기·유튜브·드라이브는 <b className="text-foreground">영상을 만든 그 컴퓨터</b>에서만
+            됩니다(녹화본과 열쇠가 거기 있어요). 그 컴퓨터에서{" "}
+            <b className="text-foreground">localhost:3000/admin/sns</b> 를 열고 켜 주세요.
+            <br />
+            <b className="text-foreground">여기서는 글을 고치고 검토를 넘기시면 됩니다</b> —
+            자막·카피·캡션·해시태그와 칸별 그림은 폰에서도 그대로 보입니다.
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => { set막힘(null); 저장소.쓰기(!켬); }}
+            className={`rounded-lg px-4 py-2 text-sm font-bold ${
+              켬 ? "bg-emerald-600 text-white" : "bg-primary text-on-primary"
+            }`}
+          >
+            {켬 ? "지킴이 켜짐 — 끄기" : "지킴이 켜기"}
+          </button>
+          {/* ⭐ 드라이브 사본 채우기 (2026-08-26 사장님: 「드라이브 채우기가 어디 있지?」)
+              지킴이가 「--드라이브채우기 로 채우면 됩니다」라고 명령어를 적어 주는데,
+              그 글을 읽는 곳이 이 화면이라 여기서 할 수 있는 일이 없었다 — 막다른 안내였다. */}
+          <button
+            type="button"
+            disabled={도는중}
+            onClick={() => { set막힘(null); void 한바퀴("드라이브채우기"); }}
+            className="rounded-lg border border-border bg-surface px-3 py-2 text-xs font-bold text-foreground disabled:opacity-50"
+          >
+            드라이브 사본 채우기
+          </button>
+          <span className="text-xs text-muted-foreground">
+            {켬
+              ? `${쉬는초}초마다 봅니다. ${도는중 ? "지금 도는 중…" : "이 화면을 닫으면 멈춥니다."}`
+              : "켜 두는 동안에만 「제작중」과 「등록 중」을 집어 갑니다."}
+          </span>
+        </div>
+      )}
 
       {막힘 && (
         <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900">

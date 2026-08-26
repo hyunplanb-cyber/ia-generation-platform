@@ -22,7 +22,9 @@ export default async function SnsAdminLayout({ children }: { children: React.Rea
   return (
     <>
       <div className="mx-auto max-w-4xl px-6 pt-6">
-        <WatcherSwitch />
+        {/* 지킴이는 «그 컴퓨터»에서만 돈다(녹화본·ffmpeg·열쇠가 거기 있다).
+            배포된 곳에서는 «켜지는 척»을 하지 않는다 — 아래에서 단추를 잠그고 왜인지 적는다. */}
+        <WatcherSwitch 배포됨={!!process.env.VERCEL} />
       </div>
       {children}
     </>
