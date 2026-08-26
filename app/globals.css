@@ -58,6 +58,9 @@
   --color-danger-soft: var(--danger-soft);
   --color-neutral-badge: var(--neutral-badge);
   --color-neutral-badge-soft: var(--neutral-badge-soft);
+  /* 구성 목록(홈·구매 목록·팩 상세)이 셋 다 쓰는 색 — 아래 :root 설명 참고 */
+  --color-list-ink: var(--list-ink);
+  --color-list-dot: var(--list-dot);
   /* DESIGN.md 라운드 스케일 — shadcn 기본 calc() 대신 고정값 */
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -106,6 +109,18 @@
   --danger-soft: #FBE4E4;
   --neutral-badge: #4B4F56;
   --neutral-badge-soft: #EEEEF0;
+  /* ── 구성 목록의 색 ────────────────────────────────────────────────────
+     「메뉴구조 · 화면 목록 44개 · 기능정의서 270개 …」 하고 가운뎃점으로 줄줄이 잇는 목록.
+     홈·구매 목록(/packages)·팩 상세(/packages/[id]) 세 곳에 나온다.
+
+     ⚠ 세 곳이 «같아 보여야 한다»는 것이 요구사항이라(2026-08-26 사장님, 두 번 말씀하셨다)
+       색을 여기 한 곳에 둔다. 화면마다 적어 두면 하나만 고쳤을 때 조용히 어긋난다.
+     ⚠ 색은 홈(따뜻한 종이색 위)에 맞췄다. 구매·상세는 흰 종이라 처음엔 그 화면의
+       회색(muted-foreground)을 그대로 뒀는데, 사장님이 「동일하게」를 다시 짚으셨다.
+     ⚠ 점(list-dot)은 글자보다 옅다. 구분선이지 글이 아니라서 그렇다 —
+       읽는 것이 아니므로 대비를 글자만큼 줄 필요가 없다. */
+  --list-ink: #5C5545;
+  --list-dot: #A79C86;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);

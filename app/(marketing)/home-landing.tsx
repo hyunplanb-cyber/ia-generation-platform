@@ -1578,17 +1578,20 @@ export function HomeLanding({
           font-weight: 500;
           color: #8a5a00;
         }
+        /* ⚠ 색만은 이 화면 것(--t1/--t3)이 아니라 «사이트 공통»(--list-ink/--list-dot)을 쓴다.
+             같은 목록이 구매 목록·팩 상세에도 나오고, 셋이 같아 보여야 한다.
+             홈만 제 색을 들고 있으면 다음에 한 곳을 고칠 때 조용히 어긋난다. */
         .pl-items {
           display: flex;
           flex-wrap: wrap;
           font-size: 13px;
           line-height: 1.7;
-          color: var(--t1);
+          color: var(--list-ink);
         }
         .pl-i::after {
           content: "·";
           margin: 0 7px;
-          color: var(--t3);
+          color: var(--list-dot);
         }
         .pl-i:last-child::after {
           display: none;

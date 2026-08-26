@@ -1164,9 +1164,9 @@ function PlanCard({
             글자보다 옅되 «보이는» 자리에 둔다 — 홈도 글자 #5c5545 에 점 #a79c86 이다.
           ⚠ 글자색은 각 화면의 것을 쓴다. 홈은 따뜻한 종이색 위라 색이 다르다 —
             홈의 갈색을 이 흰 화면에 가져오면 혼자 누렇게 뜬다. 같은 것은 «자리»다. */}
-      <ul className="flex flex-wrap text-[13px] leading-[1.7] text-muted-foreground">
+      <ul className="flex flex-wrap text-[13px] leading-[1.7] text-list-ink">
         {planContents(plan).map((c) => (
-          <li key={c} className="after:mx-[7px] after:text-muted-foreground/60 after:content-['·'] last:after:hidden">
+          <li key={c} className="after:mx-[7px] after:text-list-dot after:content-['·'] last:after:hidden">
             {c}
           </li>
         ))}
