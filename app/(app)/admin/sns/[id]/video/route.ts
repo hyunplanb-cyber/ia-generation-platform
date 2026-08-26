@@ -78,11 +78,21 @@ export async function GET(
     "cache-control": "no-store",
   };
 
-  /* 브라우저가 «앞뒤로 끌어 보려면» Range 를 받아 줘야 한다. 없으면 통째로만 재생된다. */
+  /* 브라우저가 «앞뒤로 끌어 보려면» Range 를 받아 줘야 한다. 없으면 통째로만 재생된다.
+   *
+   * ⛔ 끝을 «안 적어 보낼 때» 파일을 통째로 보내면 안 된다 (2026-08-26 사장님: 「영상 안 나와」).
+   *   `<video preload="metadata">` 는 «앞부분만» 달라고 `Range: bytes=0-` 을 보낸다.
+   *   그런데 여기서 끝을 «파일 끝»으로 채워 7.3MB 를 통째로 밀어 넣고 있었다.
+   *   디스크는 그 파일을 24ms 에 읽는데 응답은 11초가 걸렸다 — 그 11초 동안 화면은
+   *   까만 채로 0:00 이다. 사장님 눈에는 «안 나오는 것»이다.
+   *   → 끝을 안 적어 보내면 한 토막(1MB)만 준다. 브라우저는 필요한 만큼 또 달라고 한다.
+   *     그게 Range 가 있는 까닭이다.
+   *   ⚠ 끝을 «적어» 보냈으면 그대로 지킨다. 그건 브라우저가 자리를 옮긴 것이다. */
+  const 한토막 = 1 << 20;
   if (범위) {
     const m = /bytes=(\d*)-(\d*)/.exec(범위);
     const 처음 = m?.[1] ? Number(m[1]) : 0;
-    const 끝 = m?.[2] ? Number(m[2]) : 크기 - 1;
+    const 끝 = m?.[2] ? Number(m[2]) : Math.min(처음 + 한토막 - 1, 크기 - 1);
     if (Number.isNaN(처음) || Number.isNaN(끝) || 처음 > 끝 || 끝 >= 크기) {
       return new Response(null, { status: 416, headers: { "content-range": `bytes */${크기}` } });
     }
