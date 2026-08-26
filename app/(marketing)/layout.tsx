@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { MouseWatch } from "@/components/mouse-watch";
 import { businessInfoRows } from "@/lib/business";
 
 export default function MarketingLayout({
@@ -15,6 +16,9 @@ export default function MarketingLayout({
       {/* 스크롤을 내리면 글·그림이 따라 올라온다. 화면은 «data-나타남» 표시만 달면 되고,
           실제 일은 여기 하나가 다 한다. 서버 컴포넌트를 클라이언트로 바꾸지 않으려는 짜임이다. */}
       <ScrollReveal />
+      {/* 「지금 마우스로 보고 계신가」를 표시해 둔다. 마우스 올렸을 때 반응하는 것들이
+          여기에 걸린다 — 미디어 쿼리로는 터치스크린 달린 노트북을 가려내지 못한다. */}
+      <MouseWatch />
       <SiteHeader />
 
       <main className="flex-1">{children}</main>

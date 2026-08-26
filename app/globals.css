@@ -225,8 +225,9 @@ html[data-나타남켬="on"] [data-나타남].떴다 {
 /* ── 마우스를 올리면 살짝 떠오른다 ────────────────────────────────────────
    (2026-08-25 사장님 지시) 카드에 data-들썩 을 달면 걸린다.
 
-   ⚠ @media (hover: hover) 로 감싼다. 손가락으로 쓰는 기기에서는 «한 번 누르면 그 상태로
-     붙어» 있어서, 눌렀던 카드만 떠 있는 이상한 화면이 된다.
+   ⚠ 「지금 마우스로 보고 있나」로 문을 지킨다(html[data-마우스]). 손가락으로 쓰는 기기에서는
+     «한 번 누르면 그 상태로 붙어» 있어서, 눌렀던 카드만 떠 있는 이상한 화면이 된다.
+     처음엔 @media (hover: hover) 로 감쌌는데 그것으로는 못 가른다 — 아래 ⛔ 참고.
    ⚠ 떠 있는 동안 바뀌는 것은 transform·box-shadow 둘뿐이다. 이 둘은 화면을 다시 재지
      않고 그린다 — 여섯 칸이 동시에 움직여도 안 버벅인다.
    ⚠ 아래 첫 덩어리(«떴다» 뒤의 transition)를 빼면 안 된다. 나타날 때 쓰는 0.7초가
@@ -242,10 +243,14 @@ html[data-나타남켬="on"] [data-나타남][data-들썩].떴다 {
     transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.35s ease;
 }
-@media (hover: hover) and (pointer: fine) {
-  html[data-나타남켬="on"] [data-나타남][data-들썩].떴다:hover,
-  [data-들썩]:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 40px -18px rgb(31 32 36 / 0.28);
-  }
+/* ⛔ 문지기를 @media (hover: hover) 에서 «마우스가 실제로 움직였나»로 바꿨다 (2026-08-26).
+   사장님 노트북이 터치스크린이라 윈도우가 그것을 통째로 「손가락 기기」로 알린다 —
+   hover 도 any-hover 도 false 다. 마우스를 꽂고 쓰셔도 그렇다. 그래서 이 규칙이
+   사장님 화면에서 하나도 안 걸리고 있었다(넣은 8/25 부터 내내).
+   막으려던 것(손가락으로 누른 카드가 «떠 있는 채로 붙는» 것)은 그대로 막힌다 —
+   components/mouse-watch.tsx 가 손가락이 닿는 순간 표시를 뗀다. */
+html[data-마우스="on"][data-나타남켬="on"] [data-나타남][data-들썩].떴다:hover,
+html[data-마우스="on"] [data-들썩]:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px -18px rgb(31 32 36 / 0.28);
 }

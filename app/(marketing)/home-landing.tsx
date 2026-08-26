@@ -836,21 +836,22 @@ export function HomeLanding({ packs }: { packs: HomeIndustry[] }) {
           padding: 18px;
           margin-top: 10px;
         }
-        @media (hover: hover) and (pointer: fine) {
-          .cc :global(.btn-ink):hover {
-            background: var(--o);
-            transform: translateY(-2px);
-          }
-          .cc :global(.btn-paper):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 30px rgba(25, 23, 19, 0.12);
-          }
-          .cc :global(.btn-o):hover,
-          .cc :global(.btn-ghost):hover {
-            background: var(--paper);
-            color: var(--ink);
-            transform: translateY(-2px);
-          }
+        /* ⛔ 문지기가 @media (hover: hover) 가 «아니다». 사장님 노트북이 터치스크린이라
+           윈도우가 그것을 손가락 기기로 알려, 그 안에 넣은 것이 하나도 안 걸렸다.
+           components/mouse-watch.tsx 가 마우스가 실제로 움직일 때만 표시를 붙인다. */
+        :global(html[data-마우스="on"]) .cc :global(.btn-ink):hover {
+          background: var(--o);
+          transform: translateY(-2px);
+        }
+        :global(html[data-마우스="on"]) .cc :global(.btn-paper):hover {
+          transform: translateY(-2px);
+          box-shadow: 0 14px 30px rgba(25, 23, 19, 0.12);
+        }
+        :global(html[data-마우스="on"]) .cc :global(.btn-o):hover,
+        :global(html[data-마우스="on"]) .cc :global(.btn-ghost):hover {
+          background: var(--paper);
+          color: var(--ink);
+          transform: translateY(-2px);
         }
 
         /* 첫 화면 미리보기 두 장 */
@@ -1496,6 +1497,27 @@ export function HomeLanding({ packs }: { packs: HomeIndustry[] }) {
           background: #fff;
           border-radius: 22px;
           box-shadow: 0 10px 28px rgba(25, 23, 19, 0.06);
+          /* ⚠ 셋을 «한 줄»에 다 적는다. transition 은 한 줄짜리(shorthand)라 따로 적으면
+             앞의 것을 지운다. 앞 둘(떠오름·그림자)은 globals.css 의 data-들썩 이 주던 것인데,
+             여기서 opacity 만 적으면 그 둘이 지워져 «안 떠오르는» 카드가 된다.
+             8/25 에 어긋나며 오르던 카드가 한꺼번에 뜬 것도 이 한 줄 때문이었다. */
+          transition:
+            transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+            box-shadow 0.35s ease,
+            opacity 0.3s ease;
+        }
+        /* 넷을 나란히 «견주는» 자리다. 하나에 마우스를 올리면 나머지가 물러선다 —
+           고르는 동안 눈이 한 칸에만 머문다.
+           ⚠ 손가락으로 쓰는 동안에는 안 건다. 거기선 «한 번 누른» 상태가 그대로 붙어,
+             건드린 카드 하나만 밝고 나머지 셋이 영영 흐린 화면이 된다.
+             막는 일은 mouse-watch.tsx 가 한다 — 손가락이 닿는 순간 표시를 뗀다.
+           ⚠ 물러서는 것은 opacity 하나뿐이다. 여기서 transform 을 건드리면 이 규칙이
+             data-들썩 의 «떠오름»보다 힘이 세서 그것을 눌러 버린다 — 밝아지되 안 떠오른다. */
+        :global(html[data-마우스="on"]) .plans:hover :global(.plan) {
+          opacity: 0.5;
+        }
+        :global(html[data-마우스="on"]) .plans:hover :global(.plan):hover {
+          opacity: 1;
         }
         .pl-tier {
           align-self: flex-start;
