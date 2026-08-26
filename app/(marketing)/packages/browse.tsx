@@ -200,11 +200,11 @@ export function Browse({
               <h2 className="mt-3 text-lg font-bold leading-snug text-foreground">{c.title}</h2>
               <p className="mt-1 text-sm font-semibold text-primary">{c.depthLabel}</p>
 
-              <ul className="mt-4 flex flex-wrap gap-y-0.5 border-t border-border/60 pt-4 text-[13px] leading-relaxed text-muted-foreground">
+              <ul className="mt-4 flex flex-wrap border-t border-border/60 pt-4 text-[13px] leading-[1.7] text-muted-foreground">
                 {c.contents.map((x) => (
                   <li
                     key={x}
-                    className="after:mx-[7px] after:text-border after:content-['·'] last:after:hidden"
+                    className="after:mx-[7px] after:text-muted-foreground/60 after:content-['·'] last:after:hidden"
                   >
                     {x}
                   </li>

@@ -113,7 +113,14 @@ const 검수결과물 = [
   { title: "엑셀 결과서", desc: "표지부터 현황까지 한 벌로" },
 ];
 
-export function HomeLanding({ packs }: { packs: HomeIndustry[] }) {
+export function HomeLanding({
+  packs,
+  saleOpen,
+}: {
+  packs: HomeIndustry[];
+  /** 우리 사이트에서 «지금 살 수 있나»(lib/flags.ts). 아니면 「자세히 보기」로 말을 낮춘다. */
+  saleOpen: boolean;
+}) {
   const [고른업종, 업종고르기] = useState(0);
   const 뿌리 = useRef<HTMLDivElement>(null);
   const 막대 = useRef<HTMLDivElement>(null);
@@ -623,6 +630,11 @@ export function HomeLanding({ packs }: { packs: HomeIndustry[] }) {
                     </>
                   )}
                 </span>
+                {/* 값은 내걸었지만 아직 못 사는 동안 — 구매 목록 화면과 같은 말을 쓴다.
+                    값 자리가 이미 「판매 준비 중」이면 여기선 안 적는다(같은 말 두 번). */}
+                {p.credits !== null && !saleOpen ? (
+                  <span className="pl-soon">판매 준비 중</span>
+                ) : null}
                 {/* 구성 목록은 홈·목록·상세가 «같은 출처(planContents)와 같은 모양»을 쓴다.
                     한 줄에 하나씩 세우면 카드가 두 배로 길어져 넷을 견주기 어렵다. */}
                 <span className="pl-items">
@@ -632,7 +644,7 @@ export function HomeLanding({ packs }: { packs: HomeIndustry[] }) {
                     </span>
                   ))}
                 </span>
-                <span className="pl-go">구매하기 →</span>
+                <span className="pl-go">{saleOpen ? "구매하기 →" : "자세히 보기 →"}</span>
               </Link>
             ))}
           </div>
@@ -1560,6 +1572,12 @@ export function HomeLanding({ packs }: { packs: HomeIndustry[] }) {
         /* 줄줄이 이어 쓰고 사이에 가운뎃점을 넣는다 — 상세 화면의 구성 목록과 같은 모양.
            ⚠ 점을 «항목 뒤»에 붙인다(::after). 앞에 붙이면 줄이 바뀔 때 점이 줄머리에 혼자
              떨어져, 새 줄이 점으로 시작하는 이상한 모양이 된다. */
+        .pl-soon {
+          margin-top: -10px;
+          font-size: 12px;
+          font-weight: 500;
+          color: #8a5a00;
+        }
         .pl-items {
           display: flex;
           flex-wrap: wrap;

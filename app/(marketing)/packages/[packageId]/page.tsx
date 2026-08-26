@@ -1155,10 +1155,18 @@ function PlanCard({
       </dl>
 
       {/* 구성 목록은 홈·목록·상세가 같은 출처(planContents)와 같은 모양을 쓴다.
-          세 곳이 다르게 보이면 같은 상품인지 헷갈린다. */}
-      <ul className="flex flex-wrap gap-y-0.5 text-[13px] leading-relaxed text-muted-foreground">
+          세 곳이 다르게 보이면 같은 상품인지 헷갈린다.
+
+          치수는 홈(app/(marketing)/home-landing.tsx 의 .pl-items)에 맞춘다 —
+          13px · 줄간격 1.7 · 점은 앞뒤 7px. 줄 사이 틈(gap-y)은 두지 않는다.
+          ⚠ 점 색을 text-border(#E7E7EA)로 뒀더니 종이 위에서 거의 안 보여, 줄줄이
+            이어진 느낌이 아니라 낱말이 그냥 흩어진 것처럼 읽혔다(2026-08-26 사장님 지적).
+            글자보다 옅되 «보이는» 자리에 둔다 — 홈도 글자 #5c5545 에 점 #a79c86 이다.
+          ⚠ 글자색은 각 화면의 것을 쓴다. 홈은 따뜻한 종이색 위라 색이 다르다 —
+            홈의 갈색을 이 흰 화면에 가져오면 혼자 누렇게 뜬다. 같은 것은 «자리»다. */}
+      <ul className="flex flex-wrap text-[13px] leading-[1.7] text-muted-foreground">
         {planContents(plan).map((c) => (
-          <li key={c} className="after:mx-[7px] after:text-border after:content-['·'] last:after:hidden">
+          <li key={c} className="after:mx-[7px] after:text-muted-foreground/60 after:content-['·'] last:after:hidden">
             {c}
           </li>
         ))}
