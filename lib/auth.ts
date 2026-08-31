@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth';
-import { REVIEW_MODE } from "@/lib/flags";
+import { REVIEW_MODE, REVIEW_LOGIN } from "@/lib/flags";
 import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import { db } from '@/db/client';
 
@@ -57,7 +57,10 @@ export const auth = betterAuth({
    *   심사가 끝나 REVIEW_MODE 를 끄면 이 문은 저절로 닫힌다 — 끄는 걸 잊을 일이 없다.
    *   그때 그 계정을 지우면 비밀번호를 보관하지 않는 원칙으로 완전히 돌아온다. */
   emailAndPassword: {
-    enabled: REVIEW_MODE,
+    /* REVIEW_LOGIN 은 «문만» 여는 스위치다 — 2026-08-31 에 갈랐다.
+       카드사 심사가 남았는데 REVIEW_MODE 를 끄면서 이 문이 같이 닫혔다.
+       도로 켜면 21칸이 품절처리로 되돌아가서, 문만 따로 연다. lib/flags.ts 참고 */
+    enabled: REVIEW_MODE || REVIEW_LOGIN,
     /* 가입은 열지 않는다 — 로그인만 열린다.
        열어 두면 심사 2주 동안 누구나 이메일·비밀번호로 계정을 만들 수 있고,
        그건 우리가 막으려던 「공짜 크레딧」 문을 옆으로 다시 여는 셈이다.
