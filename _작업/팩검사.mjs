@@ -14,19 +14,32 @@
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 
-const 뿌리 = "판매용_템플릿/_판매팩";
+/* ⛔ 2026-08-31: 이 검사기는 «다 된 것»(_판매팩)만 보고 있었다. 그래서 만드는 중인 팩
+   이름을 대면 «아무 말 없이 0건»으로 끝났다 — 통과한 것처럼 보이지만 실은 안 본 것이다.
+   만드는 중에 검사하라는 것이 지시문인데 검사기가 그 자리를 안 보고 있었다.
+   팩 이름을 대면 두 자리를 다 찾는다. 이름 없이 전부 돌 때는 «다 된 것»만 본다
+   (매주 화요일 검수가 만들다 만 팩에 걸려 FAIL 을 쏟지 않게 — 그것이 폴더를 가른 까닭이다). */
+const 뿌리들 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만드는중"];
 const 고른팩 = process.argv[2];
 
-const 팩들 = readdirSync(뿌리)
-  .filter((n) => {
-    const p = join(뿌리, n);
-    return statSync(p).isDirectory() && existsSync(join(p, "완성화면/pages"));
-  })
-  .filter((n) => (고른팩 ? n === 고른팩 : true));
+const 팩들 = (고른팩 ? 뿌리들 : 뿌리들.slice(0, 1))
+  .filter((r) => existsSync(r))
+  .flatMap((r) => readdirSync(r)
+    .filter((n) => {
+      const p = join(r, n);
+      return statSync(p).isDirectory() && existsSync(join(p, "완성화면/pages"));
+    })
+    .filter((n) => (고른팩 ? n === 고른팩 : true))
+    .map((n) => ({ 이름: n, 뿌리: r })));
+
+if (고른팩 && !팩들.length) {
+  console.error(`팩 「${고른팩}」을 못 찾았습니다. 찾아본 자리: ${뿌리들.join(" · ")}`);
+  process.exit(1);
+}
 
 const 결과 = [];
 
-for (const 팩 of 팩들) {
+for (const { 이름: 팩, 뿌리 } of 팩들) {
   const 완성 = join(뿌리, 팩, "완성화면");
   const 쪽방 = join(완성, "pages");
   const 쪽들 = readdirSync(쪽방).filter((n) => n.endsWith(".html"));

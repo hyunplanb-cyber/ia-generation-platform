@@ -278,6 +278,13 @@ const 재는글 = `
          열어 보니 .split-r 의 오른쪽 곁칸(.sticky) 이었다 — 갇힌 것이 아니라 곁칸이다.
          G6 이 잡으려는 것은 «화면 한복판이 통째로 좁은 기둥»이지 곁칸이 아니다. */
     if (기둥.closest(".side, .sticky, .rail, .edrail, .split-r > *:last-child, .split-l > *:first-child")) continue;
+    /* ⭐ «나란히 견주라고 둔 칸»도 좁은 것이 제 모습이다 — 2026-08-31
+         반려동물케어 디럭스 RE-01 의 「정기 등원 / 낱개 예약」 두 카드를 흠이라 했는데,
+         열어 보니 본문 폭 760px 을 둘로 나눈 .g2 의 두 칸(각 370px)이었다.
+         손님더러 «둘을 나란히 놓고 고르라»고 만든 자리라, 좁은 것이 곧 그 칸의 쓸모다.
+         갇힌 것이 아니다 — 위 곁칸(.sticky)과 같은 결의 헛짚음이라 같이 뺀다.
+         ⚠ 격자에 «들어 있는» 것만 뺀다. 격자 자신이 좁으면 그건 여전히 흠이다. */
+    if (기둥.parentElement?.closest(".g2, .g3, .g4, .g5, .g6, .cards, .f2, .f3")) continue;
     /* 이 안에 «내용»이 얼마나 들었나 — 글자 수와 덩어리 수로 잰다 */
     const 글자 = (기둥.textContent || "").replace(/\s+/g, " ").trim().length;
     const 덩어리 = 기둥.querySelectorAll(".card, section, table, .g2, .g3, .g4, .list, .row").length;

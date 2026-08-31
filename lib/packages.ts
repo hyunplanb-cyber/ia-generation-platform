@@ -807,14 +807,13 @@ export const PACKAGES: PackageDef[] = [
     industry: "반려동물케어",
     tagline:
       "반려견을 아침에 맡기고 저녁에 데려가는 유치원의 등원 예약·운영 사이트 AI팩. 등원·하원 체크, 알림장, 백신·건강 기록, 회차권 차감, 반 배정, 정기 등원 요일까지",
-    /* A 회차(2026-08-24) — 디럭스(코럴 선셋 × 여백 중심형) 41화면 완성.
-       프리미엄(모던 네이비 × 대시보드형, 3뎁스 172화면)은 B 회차 몫이라 아직 화면이 없다.
-       그래서 site.deep 은 아직 안 넘긴다 — 프리미엄 칸은 화면이 생긴 뒤에 켠다. */
+    /* A 회차(2026-08-24) 디럭스 41화면(코럴 선셋 × 여백 중심형),
+       B 회차(2026-08-31) 프리미엄 172화면(모던 네이비 × 대시보드형). 두 등급 다 화면이 섰다. */
     plans: makePlans(
       PETCARE,
       PETCARE_DEEP,
       { standard: null, plus: null, deluxe: null, premium: null },
-      { base: 41 },
+      { base: 41, deep: 172 },
     ),
     data: PETCARE,
     deep: PETCARE_DEEP,
@@ -880,7 +879,7 @@ export const PACKAGES: PackageDef[] = [
  *   지운 것 : template-data-ticket(-deep).ts · packs/ticket-*.zip 4벌 ·
  *            _작업/공연티켓_파트너관리자(_상세IA) · 빌더 넷의 ticket 자리
  */
-const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental", "interior"]);
+const LISTED_IDS = new Set(["travel", "beauty", "groupbuy", "lms", "matching", "rental", "interior", "petcare"]);
 
 /**
  * 이 등급 zip에 실제로 들어가는 것.
