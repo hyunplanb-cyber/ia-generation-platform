@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>백신 접종 기록 업로드 &gt; 유효기간 자동 계산 · 도그마루 반려견 유치원</title>
+<meta name="description" content="접종일 입력 시 종류별 유효기간 규칙으로 만료 예정일 자동 산출 · 계산 근거 툴팁">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="PL0202" data-cls="[[&quot;소형반&quot;,&quot;5kg 미만&quot;,0,5],[&quot;중형반&quot;,&quot;5 ~ 15kg&quot;,5,15],[&quot;대형반&quot;,&quot;15kg 이상&quot;,15,99]]">
+<div class="app">
+  <nav class="appside" aria-label="주 메뉴">
+    <a class="logo" href="HO0101.html"><span class="mark">🐾</span>도그마루 반려견 유치원</a>
+    <div class="appside-grp"><b>보호자</b><a class="" href="HO0101.html">홈<span class="n">18</span></a><a class="on" href="PL0101.html">반려견 등록<span class="n">19</span></a><a class="" href="RE0101.html">등원 예약<span class="n">24</span></a><a class="" href="MY0101.html">마이페이지<span class="n">21</span></a><a class="" href="CS0101.html">고객센터<span class="n">11</span></a></div>
+    <div class="appside-grp"><b>원 운영</b><a class="" href="AT0101.html">등하원 관리<span class="n">23</span></a><a class="" href="NW0101.html">알림장 작성<span class="n">19</span></a><a class="" href="HL0101.html">건강·안전 관리<span class="n">17</span></a><a class="" href="MG0101.html">원 관리자<span class="n">20</span></a></div>
+    <div class="appside-grp appside-sw"><a href="MG0501.html">원 운영진 로그인</a><a href="../index.html">전체 화면 목록</a></div>
+  </nav>
+  <div class="main">
+    <header class="topbar">
+  <div class="who">
+    <span class="av">보</span>
+    <span><b>김하늘 보호자님</b><span class="t-sub"> · 초코 · 보리</span></span>
+  </div>
+  <div class="acts">
+    <a class="btn btn-ghost btn-sm" href="MY0101.html">내 예약</a>
+    <a class="btn btn-pri btn-sm" href="RE0101.html">등원 예약</a>
+  </div>
+</header>
+    
+    <main><div class="wrap"><div class="col"><a class="back" href="PL0201.html">‹ 백신 접종 기록 업로드</a><div class="page-hd">
+  <div><h1 class="t-page">유효기간 자동 계산</h1><p class="t-sub">접종일만 고르시면 만료 예정일과 남은 날수를 저희가 계산합니다.</p></div>
+  </div>
+
+<div class="steps"><div class="st done">① 기본 정보</div><div class="st on">② 백신 기록</div><div class="st ">③ 건강·특이사항</div></div>
+
+<div class="card mt8">
+  <div class="card-hd"><h3 class="t-card">① 종합백신 (DHPPL)</h3></div>
+  <div class="card-bd ">
+  <p class="t-sub">아직 접종일을 고르지 않았습니다. 아래에서 날짜를 고르면 오른쪽에 유효기간이 바로 계산돼 나옵니다.</p>
+  <div class="mt4"><div class="upload-drop">접종증명서 사진 또는 PDF를 올려 주세요</div>
+  <div class="upload-thumbs"></div></div>
+  <div class="f2 mt6">
+    <label class="field ">
+  <span class="lb">접종일<span class="req">*</span></span>
+  <input class="in " type="date" data-vac-date="dhppl2"><span class="hint">증명서에 적힌 날짜를 그대로 골라 주세요</span></label>
+    <div class="field"><span class="lb">유효기간</span>
+      <div class="mt2" data-vac-out="dhppl2"><span class="t-sub">접종일을 고르면 저절로 계산됩니다 (접종일 + 1년)</span></div>
+    </div>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">② 광견병</h3></div>
+  <div class="card-bd ">
+  <p class="t-sub">이미 올려 주신 증명서가 있습니다. 접종일을 고치면 유효기간도 함께 다시 계산됩니다.</p>
+  <div class="mt4"><div class="upload-drop">다른 증명서로 바꾸시려면 눌러 주세요</div>
+  <div class="upload-thumbs"></div></div>
+  <div class="f2 mt6">
+    <label class="field ">
+  <span class="lb">접종일<span class="req">*</span></span>
+  <input class="in " type="date" value="2026-02-06" data-vac-date="rabies2"><span class="hint">우리동네 동물병원 발급</span></label>
+    <div class="field"><span class="lb">유효기간</span>
+      <div class="mt2" data-vac-out="rabies2"><span class="badge b-ok">정상</span> <span class="t-sub">유효기간 2027-02-06까지</span></div>
+    </div>
+  </div>
+  <p class="hint">2026-02-06 접종 + 1년 = 2027-02-06 · 오늘(8월 24일)부터 166일 남았습니다.</p></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">계산 근거</h3></div>
+  <div class="card-bd ">
+  <dl class="kv "><dt>기본 규칙</dt><dd>접종일 + 1년 = 만료 예정일</dd><dt>증명서에 유효기간이 적혀 있으면</dt><dd>그 날짜를 그대로 씁니다 (병원이 정한 기간이 규칙보다 앞섭니다)</dd><dt>남은 날수 기준</dt><dd>오늘 2026년 8월 24일 (월)</dd><dt>임박 표시</dt><dd>만료까지 30일 이하로 남았을 때</dd><dt>만료 표시</dt><dd>만료일이 지났을 때 — 등원 예약이 제한됩니다</dd></dl>
+  <p class="hint">그래서 같은 날 맞은 접종이라도 증명서에 따라 만료일이 다를 수 있습니다. 아래 이력에서 그 자리에 표시를 달아 두었어요.</p></div>
+  </div>
+
+<section class="sec ">
+  <div class="sec-hd"><h2 class="t-sec">초코의 접종 이력 4건</h2></div>
+  <p class="t-sub mb4">올려 주신 증명서에서 읽은 접종일과, 그것으로 정해진 유효기간입니다. 병원이 유효기간을 따로 적어 준 자리에는 표시를 달았습니다.</p>
+  <div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:120px">접종일</th><th>종류</th><th>유효기간</th><th style="width:160px">상태</th></tr></thead><tbody><tr><td>2026-02-06</td><td>종합백신 (DHPPL)</td><td>2027-02-06</td><td><span class="badge b-ok">정상 (166일 남음)</span></td></tr><tr><td>2026-02-06</td><td>광견병</td><td>2027-02-06</td><td><span class="badge b-ok">정상 (166일 남음)</span></td></tr><tr><td>2025-02-11</td><td>종합백신 (DHPPL)</td><td>2026-02-11</td><td><span class="badge b-mut">지난 기록</span></td></tr><tr><td>2025-02-11</td><td>켄넬코프</td><td>2026-02-11</td><td><span class="badge b-mut">지난 기록</span></td></tr></tbody></table></div></section>
+
+<div class="banner banner-info mt6"><span class="ico">💉</span><div class="grow">만료 30일 전에 카카오톡(@도그마루유치원)으로 미리 알려드립니다. 그때 재접종하고 새 증명서만 올려 주시면 돼요.</div></div></div></div></main>
+    <div class="stick"><div class="stick-in"><div><div class="t-sub">2단계 / 3단계 · 접종일을 고르면 유효기간이 바로 계산됩니다</div></div><div class="btns"><a class="btn btn-ghost" href="PL0201.html">업로드 화면으로</a>
+         <a class="btn btn-pri" href="PL0301.html">다음: 건강·성향 정보 입력</a></div></div></div>
+    <footer class="ft"><div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="t-card mb2">🐾 도그마루 반려견 유치원</div>
+        <p class="t-sub">서울 마포구 월드컵북로 12길 34, 1층<br>02-336-0824 · hello@dogmaru.kr<br>평일 08:30 – 19:30 · 토 09:00 – 17:00 · 일요일·공휴일 휴무</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="HO0101.html">홈</a><a href="PL0101.html">반려견 등록</a><a href="RE0101.html">등원 예약</a><a href="MY0101.html">마이페이지</a><a href="CS0101.html">고객센터</a>
+        <a href="MG0501.html">원 운영진 로그인</a>
+      </nav>
+    </div>
+    <div class="ft-bot">
+      <span>© 2026 도그마루 반려견 유치원. 기획 검토용 프로토타입입니다.</span>
+      <span>카카오톡 채널 @도그마루유치원</span>
+    </div>
+  </div></footer>
+  </div>
+</div>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">PL0202 · 백신 접종 기록 업로드 &gt; 유효기간 자동 계산</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>반려견 등록</dd>
+        <dt>기능정의</dt><dd>접종일 입력 시 종류별 유효기간 규칙으로 만료 예정일 자동 산출 · 계산 근거 툴팁</dd>
+        
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

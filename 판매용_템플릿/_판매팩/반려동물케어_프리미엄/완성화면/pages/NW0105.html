@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>알림장 작성 &gt; 복용약 급여 확인 · 도그마루 반려견 유치원</title>
+<meta name="description" content="그 아이 등록된 복용약 있으면 급여 여부 체크 항목 자동 노출">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="NW0105" data-cls="[[&quot;소형반&quot;,&quot;5kg 미만&quot;,0,5],[&quot;중형반&quot;,&quot;5 ~ 15kg&quot;,5,15],[&quot;대형반&quot;,&quot;15kg 이상&quot;,15,99]]">
+<div class="app">
+  <nav class="appside" aria-label="주 메뉴">
+    <a class="logo" href="HO0101.html"><span class="mark">🐾</span>도그마루 반려견 유치원</a>
+    <div class="appside-grp"><b>보호자</b><a class="" href="HO0101.html">홈<span class="n">18</span></a><a class="" href="PL0101.html">반려견 등록<span class="n">19</span></a><a class="" href="RE0101.html">등원 예약<span class="n">24</span></a><a class="" href="MY0101.html">마이페이지<span class="n">21</span></a><a class="" href="CS0101.html">고객센터<span class="n">11</span></a></div>
+    <div class="appside-grp"><b>원 운영</b><a class="" href="AT0101.html">등하원 관리<span class="n">23</span></a><a class="on" href="NW0101.html">알림장 작성<span class="n">19</span></a><a class="" href="HL0101.html">건강·안전 관리<span class="n">17</span></a><a class="" href="MG0101.html">원 관리자<span class="n">20</span></a></div>
+    <div class="appside-grp appside-sw"><a href="MG0501.html">원 운영진 로그인</a><a href="../index.html">전체 화면 목록</a></div>
+  </nav>
+  <div class="main">
+    <header class="topbar">
+  <div class="who">
+    <span class="av">원</span>
+    <span><b>김수현 원장님</b><span class="t-sub"> · 도그마루 반려견 유치원</span></span>
+  </div>
+  <div class="acts">
+    <a class="btn btn-ghost btn-sm" href="AT0101.html">오늘 현황판</a>
+    <a class="btn btn-pri btn-sm" href="NW0101.html">알림장 쓰기</a>
+  </div>
+</header>
+    
+    <main><div class="wrap"><div class="col"><a class="back" href="NW0101.html">‹ 알림장 작성</a><div class="page-hd">
+  <div><h1 class="t-page">복용약 급여 확인</h1><p class="t-sub">구름에게 등록된 약이 있어 급여 확인 칸이 저절로 열렸습니다</p></div>
+  <div class="btns"><a class="btn btn-ghost" href="NW0101.html">알림장 작성으로</a></div></div>
+
+<div class="banner banner-warn mt8"><span class="ico">💊</span><div class="grow"><b>구름은 원에서 먹여야 하는 약이 1가지 있습니다.</b>
+  <div class="t-sub mt2">보호자가 반려견 등록의 「건강·특이사항」에 적어 둔 것입니다. 약이 없는 아이에게는 이 칸이 아예 나오지 않습니다.</div></div><a class="btn btn-sub btn-sm" href="PL0303.html">등록 내용 보기</a></div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">오늘 급여 확인</h3></div>
+  <div class="card-bd ">
+  <dl class="kv left"><dt>약 이름</dt><dd><b>관절 영양제</b></dd><dt>급여 시간</dt><dd>점심(12:30)</dd><dt>먹이는 법</dt><dd>사료에 섞어서 반 알</dd><dt>적어 주신 분</dt><dd>보호자 조은수 님</dd></dl>
+  <div class="mt6 stack" data-pick-scope="med" style="gap:var(--sp-item)">
+    <label class="check">
+  <input type="checkbox">
+  <span>점심(12:30) <b>관절 영양제</b> — 먹였어요<span class="sub">체크해야 알림장을 저장할 수 있습니다</span></span></label>
+  </div>
+  <p class="hint">지금 <b data-pick-out="med">0</b>가지를 확인했습니다. 아직 체크하지 않아 아래 단추가 잠겨 있어요.</p>
+  <div class="mt6">
+    <label class="field ">
+  <span class="lb">먹이지 못했다면 까닭</span>
+  <select class="sel" data-reveal-when="먹이지 못했어요" data-reveal-box="medWhy"><option selected>먹였어요</option><option>먹이지 못했어요</option></select><span class="hint">「먹이지 못했어요」를 고르면 까닭 칸이 열립니다</span></label>
+    <label class="field " id="medWhy" hidden>
+  <span class="lb">무슨 일이 있었나요</span>
+  <textarea class="ta" placeholder="예: 사료를 남겨서 약을 함께 먹이지 못했습니다. 보호자께 전화로 알렸어요."></textarea></label>
+  </div>
+  <div class="btns mt6">
+    <button class="btn btn-pri is-off" id="medBtn" type="button" disabled data-pick-btn="med" data-toast="급여 확인을 알림장에 넣었어요 — 보호자 화면에도 그대로 나갑니다">급여 확인하고 알림장에 넣기</button>
+    <a class="btn btn-ghost" href="HL0401.html">보호자에게 먼저 여쭤보기</a>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">오늘 하루 급여 기록</h3></div>
+  <div class="card-bd "><div class="tl"><div class="tl-item done">
+  <div class="hh">08:40</div><div class="t">등원 · 보호자에게서 약 받음</div><div class="d">관절 영양제 반 알. 이름표를 붙여 약통에 넣었습니다.</div></div><div class="tl-item on">
+  <div class="hh">12:30</div><div class="t">점심 · 급여</div><div class="d">사료에 섞어서 먹입니다. 먹였으면 위 칸에 체크해 주세요.</div></div><div class="tl-item ">
+  <div class="hh">18:00</div><div class="t">하원 · 남은 약 돌려드림</div><div class="d">남은 약은 보호자께 그대로 돌려드립니다.</div></div></div></div>
+  </div>
+
+<div class="banner banner-info mt8"><span class="ico">📌</span><div class="grow"><b>약을 먹는 아이도 맡길 수 있습니다.</b>
+  <div class="t-sub mt2">보호자가 약 이름과 급여 시간을 적어 두면 보육교사가 그 시간에 챙기고, 먹인 사실을 알림장으로 돌려드립니다.</div></div></div>
+
+<div class="btns mt8">
+  <a class="btn btn-ghost" href="NW0101.html">알림장 작성으로 돌아가기</a>
+  <a class="btn btn-pri" href="NW0201.html">사진 첨부하러 가기</a>
+</div></div></div></main>
+    
+    <footer class="ft"><div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="t-card mb2">🐾 도그마루 반려견 유치원</div>
+        <p class="t-sub">서울 마포구 월드컵북로 12길 34, 1층<br>02-336-0824 · hello@dogmaru.kr<br>평일 08:30 – 19:30 · 토 09:00 – 17:00 · 일요일·공휴일 휴무</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="HO0101.html">홈</a><a href="PL0101.html">반려견 등록</a><a href="RE0101.html">등원 예약</a><a href="MY0101.html">마이페이지</a><a href="CS0101.html">고객센터</a>
+        <a href="MG0501.html">원 운영진 로그인</a>
+      </nav>
+    </div>
+    <div class="ft-bot">
+      <span>© 2026 도그마루 반려견 유치원. 기획 검토용 프로토타입입니다.</span>
+      <span>카카오톡 채널 @도그마루유치원</span>
+    </div>
+  </div></footer>
+  </div>
+</div>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">NW0105 · 알림장 작성 &gt; 복용약 급여 확인</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>알림장 작성</dd>
+        <dt>기능정의</dt><dd>그 아이 등록된 복용약 있으면 급여 여부 체크 항목 자동 노출</dd>
+        
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>반려견 등록 &gt; 필수 항목 누락 · 도그마루 반려견 유치원</title>
+<meta name="description" content="미입력 항목 붉게 표시 · 다음 버튼 비활성 · 첫 누락 항목으로 스크롤">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="PL0105" data-cls="[[&quot;소형반&quot;,&quot;5kg 미만&quot;,0,5],[&quot;중형반&quot;,&quot;5 ~ 15kg&quot;,5,15],[&quot;대형반&quot;,&quot;15kg 이상&quot;,15,99]]">
+<div class="app">
+  <nav class="appside" aria-label="주 메뉴">
+    <a class="logo" href="HO0101.html"><span class="mark">🐾</span>도그마루 반려견 유치원</a>
+    <div class="appside-grp"><b>보호자</b><a class="" href="HO0101.html">홈<span class="n">18</span></a><a class="on" href="PL0101.html">반려견 등록<span class="n">19</span></a><a class="" href="RE0101.html">등원 예약<span class="n">24</span></a><a class="" href="MY0101.html">마이페이지<span class="n">21</span></a><a class="" href="CS0101.html">고객센터<span class="n">11</span></a></div>
+    <div class="appside-grp"><b>원 운영</b><a class="" href="AT0101.html">등하원 관리<span class="n">23</span></a><a class="" href="NW0101.html">알림장 작성<span class="n">19</span></a><a class="" href="HL0101.html">건강·안전 관리<span class="n">17</span></a><a class="" href="MG0101.html">원 관리자<span class="n">20</span></a></div>
+    <div class="appside-grp appside-sw"><a href="MG0501.html">원 운영진 로그인</a><a href="../index.html">전체 화면 목록</a></div>
+  </nav>
+  <div class="main">
+    <header class="topbar">
+  <div class="who">
+    <span class="av">보</span>
+    <span><b>김하늘 보호자님</b><span class="t-sub"> · 초코 · 보리</span></span>
+  </div>
+  <div class="acts">
+    <a class="btn btn-ghost btn-sm" href="MY0101.html">내 예약</a>
+    <a class="btn btn-pri btn-sm" href="RE0101.html">등원 예약</a>
+  </div>
+</header>
+    
+    <main><div class="wrap"><div class="col"><a class="back" href="PL0101.html">‹ 반려견 등록</a><div class="page-hd">
+  <div><h1 class="t-page">필수 항목 누락</h1><p class="t-sub">필수 항목 3곳이 비어 있어 등록을 마칠 수 없습니다.</p></div>
+  </div>
+
+<div class="steps"><div class="st on">① 기본 정보</div><div class="st ">② 백신 기록</div><div class="st ">③ 건강·특이사항</div></div>
+
+<div class="banner banner-dan mt8"><span class="ico">⚠️</span><div class="grow"><b>필수 항목 3곳이 비어 있어요.</b>
+  <div class="t-sub mt2">이름 · 견종 · 몸무게 — 아래 붉은 칸을 채워 주세요.</div></div><a class="btn btn-dan btn-sm" href="#f-name">첫 누락 항목으로 이동</a></div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">기본 정보</h3></div>
+  <div class="card-bd ">
+  <label class="field " id="f-name">
+  <span class="lb">이름<span class="req">*</span></span>
+  <input class="in is-err" type="text" placeholder="초코"><span class="err">이름을 적어 주세요 — 아이를 부를 이름이 없으면 등하원 체크 화면에 띄울 수 없어요</span></label>
+  <div class="f2">
+    <label class="field " id="f-breed">
+  <span class="lb">견종<span class="req">*</span></span>
+  <input class="in is-err" type="text" placeholder="견종을 입력하면 자동으로 찾아드려요"><span class="err">견종을 적어 주세요 — 여름철 실외 활동을 줄여야 하는 아이인지 견종으로 먼저 봅니다</span></label>
+    <label class="field ">
+  <span class="lb">생년월일</span>
+  <input class="in " type="date"><span class="hint">필수는 아니에요. 모르시면 비워 두셔도 됩니다</span></label>
+  </div>
+  <div class="f2">
+    <label class="field ">
+  <span class="lb">성별<span class="req">*</span></span>
+  <div class="btns"><label class="check none"><input type="radio" name="sex5" checked><span>남아</span></label><label class="check none"><input type="radio" name="sex5"><span>여아</span></label></div><span class="hint">✓ 남아로 적혀 있어요</span></label>
+    <label class="field ">
+  <span class="lb">중성화</span>
+  <div class="btns"><label class="check none"><input type="radio" name="neut5" checked><span>했어요</span></label><label class="check none"><input type="radio" name="neut5"><span>안 했어요</span></label></div><span class="hint">✓ 했어요로 적혀 있어요</span></label>
+  </div></div>
+  </div>
+
+<div class="card mt6" id="f-kg">
+  <div class="card-hd"><h3 class="t-card">몸무게</h3></div>
+  <div class="card-bd ">
+  <div class="row wrap-row">
+    <div style="width:180px"><input class="in is-err" type="number" placeholder="8.4" data-weight step="0.1" min="0"></div>
+    <span class="t-sub">kg</span>
+    <div class="grow t-card" data-weight-out><span class="t-sub">몸무게를 적으면 예상 반을 알려드려요</span></div>
+  </div>
+  <span class="err">몸무게를 적어 주세요 — 몸무게가 없으면 반을 배정할 수 없습니다</span></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">빠진 곳 3가지</h3></div>
+  <div class="card-bd "><div data-agree-scope>
+  <p class="t-sub mb4">채운 칸을 하나씩 표시해 보세요. 3곳을 모두 표시하면 아래 「등록하기」가 열립니다.</p>
+  <label class="check">
+  <input type="checkbox" data-agree>
+  <span><b>이름</b>을 채웠어요<span class="sub">아이를 부를 이름이 없으면 등하원 체크 화면에 띄울 수 없어요</span></span></label><label class="check">
+  <input type="checkbox" data-agree>
+  <span><b>견종</b>을 채웠어요<span class="sub">여름철 실외 활동을 줄여야 하는 아이인지 견종으로 먼저 봅니다</span></span></label><label class="check">
+  <input type="checkbox" data-agree>
+  <span><b>몸무게</b>를 채웠어요<span class="sub">몸무게가 없으면 반을 배정할 수 없습니다</span></span></label>
+  <span data-unlock-all="plDone" hidden></span>
+</div></div>
+  </div>
+
+<div class="banner banner-info mt6"><span class="ico">ℹ️</span><div class="grow">* 표시가 붙지 않은 칸(생년월일·성향·목줄)은 비워 두셔도 등록이 됩니다. 나중에 프로필에서 채우실 수 있어요.</div></div></div></div></main>
+    <div class="stick"><div class="stick-in"><div><div class="t-sub dan">필수 3곳이 비어 있어 다음으로 넘어갈 수 없어요</div></div><div class="btns"><a class="btn btn-ghost" href="PL0101.html">등록 화면으로</a>
+         <button class="btn btn-pri is-off" id="plDone" type="button" disabled data-toast="필수 항목을 다 채웠어요 — 백신 기록 단계로 넘어갑니다">등록하기</button></div></div></div>
+    <footer class="ft"><div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="t-card mb2">🐾 도그마루 반려견 유치원</div>
+        <p class="t-sub">서울 마포구 월드컵북로 12길 34, 1층<br>02-336-0824 · hello@dogmaru.kr<br>평일 08:30 – 19:30 · 토 09:00 – 17:00 · 일요일·공휴일 휴무</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="HO0101.html">홈</a><a href="PL0101.html">반려견 등록</a><a href="RE0101.html">등원 예약</a><a href="MY0101.html">마이페이지</a><a href="CS0101.html">고객센터</a>
+        <a href="MG0501.html">원 운영진 로그인</a>
+      </nav>
+    </div>
+    <div class="ft-bot">
+      <span>© 2026 도그마루 반려견 유치원. 기획 검토용 프로토타입입니다.</span>
+      <span>카카오톡 채널 @도그마루유치원</span>
+    </div>
+  </div></footer>
+  </div>
+</div>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">PL0105 · 반려견 등록 &gt; 필수 항목 누락</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>반려견 등록</dd>
+        <dt>기능정의</dt><dd>미입력 항목 붉게 표시 · 다음 버튼 비활성 · 첫 누락 항목으로 스크롤</dd>
+        
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

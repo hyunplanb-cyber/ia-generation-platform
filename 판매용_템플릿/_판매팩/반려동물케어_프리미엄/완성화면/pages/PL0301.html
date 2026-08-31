@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>건강·특이사항 입력 · 도그마루 반려견 유치원</title>
+<meta name="description" content="알러지 정보(음식·환경) · 지병·수술 이력 · 복용 중인 약과 급여 시간 · 등원 중 발작·특이 행동 이력 · 담당 동물병원 연락처 · 보호자 비상 연락처 · 특이사항 자유 서술">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="PL0301" data-cls="[[&quot;소형반&quot;,&quot;5kg 미만&quot;,0,5],[&quot;중형반&quot;,&quot;5 ~ 15kg&quot;,5,15],[&quot;대형반&quot;,&quot;15kg 이상&quot;,15,99]]">
+<div class="app">
+  <nav class="appside" aria-label="주 메뉴">
+    <a class="logo" href="HO0101.html"><span class="mark">🐾</span>도그마루 반려견 유치원</a>
+    <div class="appside-grp"><b>보호자</b><a class="" href="HO0101.html">홈<span class="n">18</span></a><a class="on" href="PL0101.html">반려견 등록<span class="n">19</span></a><a class="" href="RE0101.html">등원 예약<span class="n">24</span></a><a class="" href="MY0101.html">마이페이지<span class="n">21</span></a><a class="" href="CS0101.html">고객센터<span class="n">11</span></a></div>
+    <div class="appside-grp"><b>원 운영</b><a class="" href="AT0101.html">등하원 관리<span class="n">23</span></a><a class="" href="NW0101.html">알림장 작성<span class="n">19</span></a><a class="" href="HL0101.html">건강·안전 관리<span class="n">17</span></a><a class="" href="MG0101.html">원 관리자<span class="n">20</span></a></div>
+    <div class="appside-grp appside-sw"><a href="MG0501.html">원 운영진 로그인</a><a href="../index.html">전체 화면 목록</a></div>
+  </nav>
+  <div class="main">
+    <header class="topbar">
+  <div class="who">
+    <span class="av">보</span>
+    <span><b>김하늘 보호자님</b><span class="t-sub"> · 초코 · 보리</span></span>
+  </div>
+  <div class="acts">
+    <a class="btn btn-ghost btn-sm" href="MY0101.html">내 예약</a>
+    <a class="btn btn-pri btn-sm" href="RE0101.html">등원 예약</a>
+  </div>
+</header>
+    
+    <main><div class="wrap"><div class="col"><a class="back" href="PL0101.html">‹ 반려견 등록</a><div class="page-hd">
+  <div><h1 class="t-page">건강·특이사항</h1><p class="t-sub">보육교사가 매일 아침 이 화면을 보고 하루를 시작합니다. 빠짐없이 적어 주세요.</p></div>
+  </div>
+
+<div class="steps"><div class="st done">① 기본 정보</div><div class="st done">② 백신 기록</div><div class="st on">③ 건강·특이사항</div></div>
+
+<div class="card mt8">
+  <div class="card-hd"><h3 class="t-card">알러지</h3></div>
+  <div class="card-bd ">
+  <div class="row-b">
+    <div><div class="t-card">알러지가 있나요?</div>
+      <div class="t-sub mt1">간식과 특식을 줄 때 반드시 확인합니다</div></div>
+    <button class="toggle on" type="button" aria-pressed="true" data-open="allergyBox"></button>
+  </div>
+  <div id="allergyBox" class="mt6">
+    <label class="field ">
+  <span class="lb">음식 알러지</span>
+  <input class="in " type="text" placeholder="예: 닭고기, 유제품"></label>
+    <label class="field ">
+  <span class="lb">환경 알러지</span>
+  <input class="in " type="text" placeholder="예: 잔디, 특정 세제"></label>
+    <div class="btns"><button class="btn btn-sub btn-sm" type="button" data-toast="알러지 항목 칸을 하나 더 열었어요">＋ 항목 추가</button></div>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">지병·수술 이력</h3></div>
+  <div class="card-bd "><textarea class="ta" placeholder="예: 2025년 슬개골 탈구 수술(양쪽). 지금은 뛰는 데 문제 없습니다."></textarea></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">복용 중인 약</h3></div>
+  <div class="card-bd ">
+  <div class="row-b">
+    <div><div class="t-card">원에서 먹여야 하는 약이 있나요?</div>
+      <div class="t-sub mt1">약과 급여 시간을 적어 주시면 보육교사가 그 시간에 챙깁니다</div></div>
+    <button class="toggle" type="button" aria-pressed="false" data-open="medBox"></button>
+  </div>
+  <div id="medBox" class="mt6" hidden>
+    <div class="f2">
+      <label class="field ">
+  <span class="lb">약 이름</span>
+  <input class="in " type="text" placeholder="예: 관절 영양제"></label>
+      <label class="field ">
+  <span class="lb">급여 시간</span>
+  <select class="sel" data-reveal-when="직접 적기" data-reveal-box="fdTime"><option>점심(12:30)</option><option selected>오후(14:00)</option><option>간식 시간(15:30)</option><option>직접 적기</option></select></label>
+    </div>
+    <label class="field " id="fdTime" hidden>
+  <span class="lb">시간 직접 적기</span>
+  <input class="in " type="text" placeholder="예: 오전 10:30"></label>
+    <label class="field ">
+  <span class="lb">먹이는 법</span>
+  <input class="in " type="text" placeholder="예: 사료에 섞어서 반 알"></label>
+    <div class="btns"><button class="btn btn-sub btn-sm" type="button" data-toast="약 칸을 하나 더 열었어요">＋ 약 추가</button></div>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">발작·특이 행동 이력</h3></div>
+  <div class="card-bd ">
+  <label class="field ">
+  <span class="lb">있었던 적이 있나요?</span>
+  <div class="btns"><label class="check none"><input type="radio" name="fit" checked><span>없어요</span></label><label class="check none"><input type="radio" name="fit"><span>있어요</span></label></div></label>
+  <label class="field ">
+  <span class="lb">있었다면 어떤 상황이었나요</span>
+  <textarea class="ta" placeholder="언제·어떤 상황에서·얼마나 지속됐는지 적어 주세요"></textarea><span class="hint">비슷한 상황을 미리 피할 수 있습니다</span></label></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">연락처</h3></div>
+  <div class="card-bd ">
+  <div class="f2">
+    <label class="field ">
+  <span class="lb">담당 동물병원</span>
+  <input class="in " type="text" placeholder="우리동네 동물병원"></label>
+    <label class="field ">
+  <span class="lb">병원 전화번호</span>
+  <input class="in " type="tel" placeholder="02-555-0198"></label>
+  </div>
+  <div class="f2">
+    <label class="field ">
+  <span class="lb">보호자 비상 연락처<span class="req">*</span></span>
+  <input class="in " type="tel" placeholder="010-0000-0000"><span class="hint">등록 번호가 안 될 때 겁니다 — 가족 번호가 좋아요</span></label>
+    <label class="field ">
+  <span class="lb">관계</span>
+  <input class="in " type="text" placeholder="예: 배우자"></label>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">그 외 보육교사가 알아야 할 것</h3></div>
+  <div class="card-bd ">
+  <textarea class="ta" placeholder="예: 우산 소리를 무서워해요. 비 오는 날 현관에서 조금 떨 수 있어요."></textarea>
+  <p class="hint">사소해 보이는 것도 좋습니다. 첫 주에 이 글을 가장 많이 봅니다.</p></div>
+  </div>
+
+<div class="banner banner-ok mt6"><span class="ico">✓</span><div class="grow"><b>여기까지 채우시면 등록이 끝납니다.</b><div class="t-sub mt2">등록한 정보는 마이페이지 › 반려견 프로필에서 언제든 고칠 수 있어요.</div></div></div><section class="leafnav">
+    <b>이 화면에서 갈라지는 상태 3가지</b>
+    <div class="row wrap-row mt3" style="gap:var(--sp-btn)">
+      <a class="btn btn-ghost btn-sm" href="PL0302.html">알러지 항목 추가</a><a class="btn btn-ghost btn-sm" href="PL0303.html">복용약 급여시간 펼침</a><a class="btn btn-ghost btn-sm" href="PL0304.html">저장 완료</a>
+    </div>
+    <p class="t-sub mt3">탭·상태·예외까지 펼친 3뎁스라, 한 화면이 실제로 겪는 갈래를 따로 그려 두었습니다.</p>
+  </section></div></div></main>
+    <div class="stick"><div class="stick-in"><div><div class="t-sub">3단계 / 3단계 · 마지막이에요</div></div><div class="btns"><a class="btn btn-ghost" href="PL0401.html">프로필 보기</a>
+           <a class="btn btn-pri" href="RE0101.html">등록 완료 → 예약하기</a></div></div></div>
+    <footer class="ft"><div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="t-card mb2">🐾 도그마루 반려견 유치원</div>
+        <p class="t-sub">서울 마포구 월드컵북로 12길 34, 1층<br>02-336-0824 · hello@dogmaru.kr<br>평일 08:30 – 19:30 · 토 09:00 – 17:00 · 일요일·공휴일 휴무</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="HO0101.html">홈</a><a href="PL0101.html">반려견 등록</a><a href="RE0101.html">등원 예약</a><a href="MY0101.html">마이페이지</a><a href="CS0101.html">고객센터</a>
+        <a href="MG0501.html">원 운영진 로그인</a>
+      </nav>
+    </div>
+    <div class="ft-bot">
+      <span>© 2026 도그마루 반려견 유치원. 기획 검토용 프로토타입입니다.</span>
+      <span>카카오톡 채널 @도그마루유치원</span>
+    </div>
+  </div></footer>
+  </div>
+</div>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">PL0301 · 건강·특이사항 입력</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>반려견 등록</dd>
+        <dt>기능정의</dt><dd>알러지 정보(음식·환경) · 지병·수술 이력 · 복용 중인 약과 급여 시간 · 등원 중 발작·특이 행동 이력 · 담당 동물병원 연락처 · 보호자 비상 연락처 · 특이사항 자유 서술</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="RE0101.html">등록 완료 → 예약하기 → 예약 방법 고르기</a><a href="PL0401.html">프로필 보기 → 반려견 프로필 상세</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

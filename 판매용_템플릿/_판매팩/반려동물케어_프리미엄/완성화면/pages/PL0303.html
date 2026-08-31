@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>건강·특이사항 입력 &gt; 복용약 급여시간 펼침 · 도그마루 반려견 유치원</title>
+<meta name="description" content="약 이름·용량·급여 시간 입력 · 여러 개 추가 · 보육교사 알림장 작성 화면에 연동 표시">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="PL0303" data-cls="[[&quot;소형반&quot;,&quot;5kg 미만&quot;,0,5],[&quot;중형반&quot;,&quot;5 ~ 15kg&quot;,5,15],[&quot;대형반&quot;,&quot;15kg 이상&quot;,15,99]]">
+<div class="app">
+  <nav class="appside" aria-label="주 메뉴">
+    <a class="logo" href="HO0101.html"><span class="mark">🐾</span>도그마루 반려견 유치원</a>
+    <div class="appside-grp"><b>보호자</b><a class="" href="HO0101.html">홈<span class="n">18</span></a><a class="on" href="PL0101.html">반려견 등록<span class="n">19</span></a><a class="" href="RE0101.html">등원 예약<span class="n">24</span></a><a class="" href="MY0101.html">마이페이지<span class="n">21</span></a><a class="" href="CS0101.html">고객센터<span class="n">11</span></a></div>
+    <div class="appside-grp"><b>원 운영</b><a class="" href="AT0101.html">등하원 관리<span class="n">23</span></a><a class="" href="NW0101.html">알림장 작성<span class="n">19</span></a><a class="" href="HL0101.html">건강·안전 관리<span class="n">17</span></a><a class="" href="MG0101.html">원 관리자<span class="n">20</span></a></div>
+    <div class="appside-grp appside-sw"><a href="MG0501.html">원 운영진 로그인</a><a href="../index.html">전체 화면 목록</a></div>
+  </nav>
+  <div class="main">
+    <header class="topbar">
+  <div class="who">
+    <span class="av">보</span>
+    <span><b>김하늘 보호자님</b><span class="t-sub"> · 초코 · 보리</span></span>
+  </div>
+  <div class="acts">
+    <a class="btn btn-ghost btn-sm" href="MY0101.html">내 예약</a>
+    <a class="btn btn-pri btn-sm" href="RE0101.html">등원 예약</a>
+  </div>
+</header>
+    
+    <main><div class="wrap"><div class="col"><a class="back" href="PL0301.html">‹ 건강·특이사항 입력</a><div class="page-hd">
+  <div><h1 class="t-page">복용약 급여시간 펼침</h1><p class="t-sub">약과 급여 시간을 적어 주시면 보육교사가 그 시간에 챙기고, 알림장에 먹였는지 적어 보냅니다.</p></div>
+  </div>
+
+<div class="steps"><div class="st done">① 기본 정보</div><div class="st done">② 백신 기록</div><div class="st on">③ 건강·특이사항</div></div>
+
+<div class="card mt8">
+  <div class="card-hd"><h3 class="t-card">복용 중인 약</h3></div>
+  <div class="card-bd ">
+  <div class="row-b">
+    <div><div class="t-card">원에서 먹여야 하는 약이 있나요?</div>
+      <div class="t-sub mt1">「있어요」로 두면 아래 칸이 펼쳐집니다</div></div>
+    <button class="toggle on" type="button" aria-pressed="true" data-open="medBox3"></button>
+  </div>
+
+  <div id="medBox3" class="mt6">
+    <div class="box "><div class="t-card mb4">첫 번째 약</div>
+      <div class="f2">
+        <label class="field ">
+  <span class="lb">약 이름<span class="req">*</span></span>
+  <input class="in " type="text" placeholder="예: 관절 영양제"></label>
+        <label class="field ">
+  <span class="lb">한 번에 얼마나</span>
+  <input class="in " type="text" placeholder="예: 반 알"><span class="hint">알·포·ml 무엇이든 적어 주신 대로 먹입니다</span></label>
+      </div>
+      <label class="field ">
+  <span class="lb">급여 시간<span class="req">*</span></span>
+  <select class="sel" data-reveal-when="직접 적기" data-reveal-box="fdTime3" data-start-sel><option>점심(12:30)</option><option selected>오후(14:00)</option><option>간식 시간(15:30)</option><option>직접 적기</option></select><span class="hint">「직접 적기」를 고르면 시간을 적는 칸이 나옵니다</span></label>
+      <label class="field " id="fdTime3" hidden>
+  <span class="lb">시간 직접 적기</span>
+  <input class="in " type="text" placeholder="예: 오전 10:30"></label>
+      <label class="field ">
+  <span class="lb">먹이는 법</span>
+  <input class="in " type="text" placeholder="예: 사료에 섞어서"><span class="hint">숨겨야 먹는 아이면 그것도 적어 주세요</span></label></div>
+
+    <div class="btns mt4">
+      <button class="btn btn-sub btn-sm" type="button" data-more-toggle="med2" data-more-label="＋ 약 추가">＋ 약 추가</button>
+    </div>
+
+    <div class="mt4" data-more-body="med2" hidden>
+      <div class="box "><div class="t-card mb4">두 번째 약</div>
+        <div class="f2">
+          <label class="field ">
+  <span class="lb">약 이름</span>
+  <input class="in " type="text" placeholder="예: 피부 연고"></label>
+          <label class="field ">
+  <span class="lb">한 번에 얼마나</span>
+  <input class="in " type="text" placeholder="예: 얇게 한 번"></label>
+        </div>
+        <label class="field ">
+  <span class="lb">급여 시간</span>
+  <select class="sel" data-reveal-when="직접 적기" data-reveal-box="fdTime4"><option>점심(12:30)</option><option>오후(14:00)</option><option selected>간식 시간(15:30)</option><option>직접 적기</option></select><span class="hint">「직접 적기」를 고르면 시간을 적는 칸이 나옵니다</span></label>
+        <label class="field " id="fdTime4" hidden>
+  <span class="lb">시간 직접 적기</span>
+  <input class="in " type="text" placeholder="예: 저녁 19:00"></label>
+        <label class="field ">
+  <span class="lb">먹이는 법</span>
+  <input class="in " type="text" placeholder="예: 등 쪽 붉은 자리에만"></label></div>
+    </div>
+  </div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">이렇게 적힙니다</h3></div>
+  <div class="card-bd ">
+  <div class="row wrap-row"><div class="ph ph-fix t5 ph-dog ph-tiny" style="width:40px;height:40px" title="이미지 영역 (초코 사진 · 권장 400×400)"><img data-예시 src="../assets/예시/펫유치원.webp" alt=""></div>
+    <div class="grow">
+      <div class="t-card">초코 · 매일 <b class="pri" data-start-out>오후(14:00)</b> 에 먹입니다</div>
+      <div class="t-sub mt1">위에서 급여 시간을 바꾸면 이 줄도 그 자리에서 따라 바뀝니다</div>
+    </div>
+  </div></div>
+  </div>
+
+<div class="banner banner-ok mt6"><span class="ico">📋</span><div class="grow"><b>보육교사의 알림장 작성 화면에 「약 먹였어요」 칸이 함께 뜹니다.</b>
+  <div class="t-sub mt2">그 칸에 표시가 없으면 알림장을 보낼 수 없게 해 두었습니다.
+  먹였는지 안 먹였는지가 저녁에 그대로 보호자에게 갑니다.</div></div><a class="btn btn-ghost btn-sm" href="NW0101.html">알림장 작성 화면 보기</a></div>
+
+<section class="sec ">
+  <div class="sec-hd"><h2 class="t-sec">하루 일과 중 어디쯤인가요</h2></div>
+  <p class="t-sub mb4">언제 먹여야 할지 정하기 어려우시면 아래를 참고해 주세요.</p>
+  <div class="g3">
+  <div class="box ">
+    <div class="t-card">점심(12:30)</div>
+    <p class="t-sub mt2">점심 사료를 먹인 뒤라 약을 숨겨 먹이기 좋습니다.</p></div><div class="box ">
+    <div class="t-card">오후(14:00)</div>
+    <p class="t-sub mt2">낮잠에서 깬 직후입니다. 조용해서 챙기기 쉬워요.</p></div><div class="box ">
+    <div class="t-card">간식 시간(15:30)</div>
+    <p class="t-sub mt2">간식과 함께 주면 잘 먹는 아이에게 맞습니다.</p></div>
+</div></section></div></div></main>
+    <div class="stick"><div class="stick-in"><div><div class="t-sub">3단계 / 3단계 · 약을 다 적으셨으면 저장해 주세요</div></div><div class="btns"><a class="btn btn-ghost" href="PL0301.html">건강·특이사항으로</a>
+         <a class="btn btn-pri" href="PL0304.html">저장</a></div></div></div>
+    <footer class="ft"><div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="t-card mb2">🐾 도그마루 반려견 유치원</div>
+        <p class="t-sub">서울 마포구 월드컵북로 12길 34, 1층<br>02-336-0824 · hello@dogmaru.kr<br>평일 08:30 – 19:30 · 토 09:00 – 17:00 · 일요일·공휴일 휴무</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="HO0101.html">홈</a><a href="PL0101.html">반려견 등록</a><a href="RE0101.html">등원 예약</a><a href="MY0101.html">마이페이지</a><a href="CS0101.html">고객센터</a>
+        <a href="MG0501.html">원 운영진 로그인</a>
+      </nav>
+    </div>
+    <div class="ft-bot">
+      <span>© 2026 도그마루 반려견 유치원. 기획 검토용 프로토타입입니다.</span>
+      <span>카카오톡 채널 @도그마루유치원</span>
+    </div>
+  </div></footer>
+  </div>
+</div>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">PL0303 · 건강·특이사항 입력 &gt; 복용약 급여시간 펼침</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>반려견 등록</dd>
+        <dt>기능정의</dt><dd>약 이름·용량·급여 시간 입력 · 여러 개 추가 · 보육교사 알림장 작성 화면에 연동 표시</dd>
+        
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

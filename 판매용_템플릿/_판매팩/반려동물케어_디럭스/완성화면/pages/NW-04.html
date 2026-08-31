@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>발송 이력 · 도그마루 반려견 유치원</title>
+<meta name="description" content="날짜별 발송 이력 목록 · 보호자 열람 여부(읽음·안읽음) · 발송 실패 이력과 재발송 · 반려견별 검색 · 알림장 내용 미리보기">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="NW-04" data-cls="[[&quot;소형반&quot;,&quot;5kg 미만&quot;,0,5],[&quot;중형반&quot;,&quot;5 ~ 15kg&quot;,5,15],[&quot;대형반&quot;,&quot;15kg 이상&quot;,15,99]]">
+<header class="gnb">
+  <div class="gnb-in">
+    <div class="gnb-left"><a class="btn btn-ghost btn-sm" href="HO-02.html">요금·코스</a></div>
+    <a class="logo" href="HO-01.html"><span class="mark">🐾</span>도그마루 반려견 유치원</a>
+    <div class="gnb-right">
+      <a class="btn btn-ghost btn-sm" href="AT-01.html">등원 현황판</a>
+      <a class="btn btn-pri btn-sm" href="RE-01.html">예약하기</a>
+    </div>
+  </div>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="AT-01.html">등하원 관리</a><a href="NW-01.html">알림장 작성</a><a href="HL-01.html">건강·안전 관리</a><a href="MG-01.html">원 관리자</a></nav>
+</header>
+
+<main class="main"><div class="wrap"><div class="col col-wide"><a class="back" href="NW-01.html">‹ 알림장 작성</a><div class="page-hd">
+  <div><h1 class="t-page">발송 이력</h1><p class="t-sub">보낸 알림장과 보호자가 읽었는지를 확인합니다</p></div>
+  <div class="btns"><a class="btn btn-ghost" href="NW-03.html">발송 관리</a></div></div>
+
+<div class="filters">
+  <select class="sel" data-filter-sel="hist" aria-label="기간"><option selected value="최근7일">최근 7일</option><option value="2026-08">2026년 8월</option><option value="2026-07">2026년 7월</option></select>
+  <input class="in search" type="text" placeholder="반려견 이름으로 찾기" data-search-for="hist">
+</div>
+
+<p class="t-sub mb4"><b data-filter-cnt="hist">10</b>건 · 실패 <b class="dan" data-cnt-tag-for="hist" data-cnt-tag="실패">2</b>건</p>
+
+<div data-filter-list="hist" data-per-page="6">
+<div class="table-wrap table-scroll"><table class="table "><thead><tr><th>발송 시각</th><th>반려견</th><th>보호자</th><th class="c">결과</th><th class="c">읽은 시각</th><th>미리보기</th><th class="c"></th></tr></thead><tbody><tr data-tag="읽음 최근7일 2026-08"><td class="nowrap"><span class="num">08-21 18:32</span></td><td class="nowrap"><b>초코</b></td><td>김하늘</td><td class="c"><span class="badge b-ok">읽음</span></td><td class="c nowrap"><span class="num ok">18:41</span></td><td class="nowrap"><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원 (7).webp" alt=""></div></td><td class="c"><button class="btn btn-ghost btn-sm" type="button" data-modal="mPreview">내용 보기</button></td></tr><tr data-tag="읽음 최근7일 2026-08"><td class="nowrap"><span class="num">08-21 18:32</span></td><td class="nowrap"><b>해피</b></td><td>오재현</td><td class="c"><span class="badge b-ok">읽음</span></td><td class="c nowrap"><span class="num ok">19:05</span></td><td class="nowrap"><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원 (8).webp" alt=""></div></td><td class="c"><button class="btn btn-ghost btn-sm" type="button" data-modal="mPreview">내용 보기</button></td></tr><tr data-tag="전달됨 최근7일 2026-08"><td class="nowrap"><span class="num">08-21 18:32</span></td><td class="nowrap"><b>루비</b></td><td>강민아</td><td class="c"><span class="badge b-ok">전달됨</span></td><td class="c nowrap"><span class="muted">—</span></td><td class="nowrap"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원 (9).webp" alt=""></div></td><td class="c"><button class="btn btn-ghost btn-sm" type="button" data-modal="mPreview">내용 보기</button></td></tr><tr class="bad" data-tag="실패 최근7일 2026-08"><td class="nowrap"><span class="num">08-21 18:32</span></td><td class="nowrap"><b>루키</b></td><td>차민준</td><td class="c"><span class="badge b-dan">실패</span></td><td class="c nowrap"><span class="muted">—</span></td><td class="nowrap"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원.webp" alt=""></div></td><td class="c"><button class="btn btn-dan btn-sm" type="button" data-resend="루키">재발송</button></td></tr><tr data-tag="읽음 최근7일 2026-08"><td class="nowrap"><span class="num">08-20 18:30</span></td><td class="nowrap"><b>초코</b></td><td>김하늘</td><td class="c"><span class="badge b-ok">읽음</span></td><td class="c nowrap"><span class="num ok">18:35</span></td><td class="nowrap"><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원 (1).webp" alt=""></div></td><td class="c"><button class="btn btn-ghost btn-sm" type="button" data-modal="mPreview">내용 보기</button></td></tr><tr data-tag="읽음 최근7일 2026-08"><td class="nowrap"><span class="num">08-20 18:30</span></td><td class="nowrap"><b>보리</b></td><td>김하늘</td><td class="c"><span class="badge b-ok">읽음</span></td><td class="c nowrap"><span class="num ok">18:35</span></td><td class="nowrap"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원 (10).webp" alt=""></div></td><td class="c"><button class="btn btn-ghost btn-sm" type="button" data-modal="mPreview">내용 보기</button></td></tr><tr data-tag="전달됨 최근7일 2026-08"><td class="nowrap"><span class="num">08-20 18:30</span></td><td class="nowrap"><b>구름</b></td><td>조은수</td><td class="c"><span class="badge b-ok">전달됨</span></td><td class="c nowrap"><span class="muted">—</span></td><td class="nowrap"><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원 (11).webp" alt=""></div></td><td class="c"><button class="btn btn-ghost btn-sm" type="button" data-modal="mPreview">내용 보기</button></td></tr><tr data-tag="읽음 최근7일 2026-08"><td class="nowrap"><span class="num">08-19 18:31</span></td><td class="nowrap"><b>초코</b></td><td>김하늘</td><td class="c"><span class="badge b-ok">읽음</span></td><td class="c nowrap"><span class="num ok">20:12</span></td><td class="nowrap"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원 (12).webp" alt=""></div></td><td class="c"><button class="btn btn-ghost btn-sm" type="button" data-modal="mPreview">내용 보기</button></td></tr><tr data-tag="읽음 최근7일 2026-08"><td class="nowrap"><span class="num">08-19 18:31</span></td><td class="nowrap"><b>단추</b></td><td>임채원</td><td class="c"><span class="badge b-ok">읽음</span></td><td class="c nowrap"><span class="num ok">18:44</span></td><td class="nowrap"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원 (13).webp" alt=""></div></td><td class="c"><button class="btn btn-ghost btn-sm" type="button" data-modal="mPreview">내용 보기</button></td></tr><tr class="bad" data-tag="실패 최근7일 2026-08"><td class="nowrap"><span class="num">08-19 18:31</span></td><td class="nowrap"><b>몽이</b></td><td>남주희</td><td class="c"><span class="badge b-dan">실패</span></td><td class="c nowrap"><span class="muted">—</span></td><td class="nowrap"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:56px;height:42px" title="이미지 영역 (알림장 대표 사진 · 권장 800×600)"><img data-예시 src="../assets/예시/펫유치원 (14).webp" alt=""></div></td><td class="c"><button class="btn btn-dan btn-sm" type="button" data-resend="몽이">재발송</button></td></tr></tbody></table></div>
+</div>
+<div hidden data-empty-for="hist"><div class="empty">
+  <div class="ico">🔍</div><h3 class="t-sec">검색 결과가 없습니다</h3>
+  <p class="msg">「<b data-search-word="hist">—</b>」이(가) 든 알림장을 못 찾았어요. 이름을 짧게 적어 보시거나 기간을 넓혀 보세요.</p><div class="btns"><a class="btn btn-pri" href="NW-04.html">전체 보기</a></div></div></div>
+
+<div class="btns mt8" style="justify-content:center" data-page-box="hist">
+  <button class="chip on" type="button" data-page-for="hist" data-page-n="1">1</button><button class="chip" type="button" data-page-for="hist" data-page-n="2">2</button>
+  <span class="t-sub" style="align-self:center"><b data-page-all="hist">2</b>쪽 중 <b data-page-now="hist">1</b>쪽</span>
+</div>
+
+<div class="banner banner-warn mt8"><span class="ico">📵</span><div class="grow"><b>발송 실패는 대부분 연락처가 바뀐 경우입니다.</b>
+  <div class="t-sub mt2">보호자께 새 번호를 여쭙고 반려견 프로필에서 고친 뒤 재발송해 주세요.</div></div><a class="btn btn-sub btn-sm" href="HL-04.html">보호자 알림 관리</a></div>
+
+<template id="mPreview"><div class="modal">
+  <div class="m-hd"><h3 class="t-card">보낸 알림장 미리보기</h3><button class="x" type="button" data-dismiss aria-label="닫기">✕</button></div>
+  <div class="m-bd">
+  <div class="t-sub">2026-08-21 (금) · 초코 · 담당 이도윤</div>
+  <div class="mt4"><div class="pc-gal"><div class="ph t1 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/펫유치원 (15).webp" alt=""><span class="lb">이미지 영역 (알림장 사진 · <span class="sz">권장 800×600</span>)</span></div><div class="ph t2 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/펫유치원 (16).webp" alt=""><span class="lb">이미지 영역 (알림장 사진 · <span class="sz">권장 800×600</span>)</span></div><div class="ph t3 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/펫유치원 (17).webp" alt=""><span class="lb">이미지 영역 (알림장 사진 · <span class="sz">권장 800×600</span>)</span></div><div class="ph t4 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/펫유치원 (18).webp" alt=""><span class="lb">이미지 영역 (알림장 사진 · <span class="sz">권장 800×600</span>)</span></div><div class="ph t5 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/펫유치원 (19).webp" alt=""><span class="lb">이미지 영역 (알림장 사진 · <span class="sz">권장 800×600</span>)</span></div><div class="ph t1 ph-card " style="aspect-ratio:800/600"><img data-예시 src="../assets/예시/펫유치원 (2).webp" alt=""><span class="lb">이미지 영역 (알림장 사진 · <span class="sz">권장 800×600</span>)</span></div></div></div>
+  <p class="mt4">아침엔 살짝 낯가림이 있었지만 낮잠 후엔 친구들과 잘 어울렸어요. 간식도 잘 먹었어요.</p>
+  <div class="mt4"><div class="banner banner-warn "><span class="ico">🔎</span><div class="grow"><b>확인해 주세요</b><div class="mt2">발톱이 살짝 갈라져 있어요. 집에서 한 번 확인해 주세요.</div></div></div></div></div><div class="m-ft"><button class="btn btn-ghost" type="button" data-dismiss>닫기</button></div></div></template>
+
+<div class="btns mt8"><a class="btn btn-pri" href="NW-01.html">알림장 작성</a></div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="t-card mb2">🐾 도그마루 반려견 유치원</div>
+        <p class="t-sub">서울 마포구 월드컵북로 12길 34, 1층<br>02-336-0824 · hello@dogmaru.kr<br>평일 08:30 – 19:30 · 토 09:00 – 17:00 · 일요일·공휴일 휴무</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="HO-01.html">홈</a><a href="PL-01.html">반려견 등록</a><a href="RE-01.html">등원 예약</a><a href="MY-01.html">마이페이지</a><a href="CS-01.html">고객센터</a>
+        <a href="MG-05.html">원 운영진 로그인</a>
+      </nav>
+    </div>
+    <div class="ft-bot">
+      <span>© 2026 도그마루 반려견 유치원. 기획 검토용 프로토타입입니다.</span>
+      <span>카카오톡 채널 @도그마루유치원</span>
+    </div>
+  </div></footer>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">NW-04 · 발송 이력</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>알림장 작성</dd>
+        <dt>기능정의</dt><dd>날짜별 발송 이력 목록 · 보호자 열람 여부(읽음·안읽음) · 발송 실패 이력과 재발송 · 반려견별 검색 · 알림장 내용 미리보기</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="NW-01.html">알림장 작성 → 알림장 작성</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>

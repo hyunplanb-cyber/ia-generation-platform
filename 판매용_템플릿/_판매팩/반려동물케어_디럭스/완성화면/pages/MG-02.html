@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>반 배정 규칙 설정 · 도그마루 반려견 유치원</title>
+<meta name="description" content="몸무게 구간 기준 수정(소형·중형·대형 경계값) · 사교성 평가 항목 관리 · 자동 배정 켜기·끄기(끄면 원장이 수동 배정) · 규칙 변경이 기존 재원생에게 미치는 영향 미리 보기">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="MG-02" data-cls="[[&quot;소형반&quot;,&quot;5kg 미만&quot;,0,5],[&quot;중형반&quot;,&quot;5 ~ 15kg&quot;,5,15],[&quot;대형반&quot;,&quot;15kg 이상&quot;,15,99]]">
+<header class="gnb">
+  <div class="gnb-in">
+    <div class="gnb-left"><a class="btn btn-ghost btn-sm" href="HO-02.html">요금·코스</a></div>
+    <a class="logo" href="HO-01.html"><span class="mark">🐾</span>도그마루 반려견 유치원</a>
+    <div class="gnb-right">
+      <a class="btn btn-ghost btn-sm" href="AT-01.html">등원 현황판</a>
+      <a class="btn btn-pri btn-sm" href="RE-01.html">예약하기</a>
+    </div>
+  </div>
+  <nav class="gnb-nav" aria-label="주 메뉴"><a href="AT-01.html">등하원 관리</a><a href="NW-01.html">알림장 작성</a><a href="HL-01.html">건강·안전 관리</a><a href="MG-01.html">원 관리자</a></nav>
+</header>
+
+<main class="main"><div class="wrap"><div class="col col-wide"><a class="back" href="MG-01.html">‹ 정원·요금 설정</a><div class="own-shell">
+    <nav class="own-side" aria-label="원 운영 메뉴"><a class="" href="MG-01.html">정원·요금 설정</a><a class="on" href="MG-02.html">반 배정 규칙</a><a class="" href="MG-03.html">정산·매출</a><a class="" href="MG-04.html">직원·계정 관리</a></nav>
+    <div class="own-main"><div class="page-hd">
+  <div><h1 class="t-page">반 배정 규칙 설정</h1><p class="t-sub">예약할 때 자동으로 도는 배정 규칙입니다</p></div>
+  </div>
+
+<div class="card mt8">
+  <div class="card-hd"><h3 class="t-card">몸무게 경계값</h3></div>
+  <div class="card-bd ">
+  <div class="g2">
+    <label class="field ">
+  <span class="lb">소형반 ~ 중형반 경계</span>
+  
+      <input class="in" type="range" min="2" max="10" step="0.5" value="5" data-boundary="소형">
+      <div class="t-card mt2">소형반은 <b class="pri" data-boundary-v="소형">5kg</b> 미만</div></label>
+    <label class="field ">
+  <span class="lb">중형반 ~ 대형반 경계</span>
+  
+      <input class="in" type="range" min="10" max="25" step="0.5" value="15" data-boundary="대형">
+      <div class="t-card mt2">대형반은 <b class="pri" data-boundary-v="대형">15kg</b> 이상</div></label>
+  </div>
+  <div class="box mt6" data-boundary-src='[{"nm":"초코","kg":8.4,"cls":"md"},{"nm":"보리","kg":3.6,"cls":"sm"},{"nm":"콩이","kg":3.1,"cls":"sm"},{"nm":"별이","kg":4.8,"cls":"sm"},{"nm":"만두","kg":4.2,"cls":"sm"},{"nm":"나비","kg":2.7,"cls":"sm"},{"nm":"해피","kg":9.6,"cls":"md"},{"nm":"루비","kg":11.2,"cls":"md"},{"nm":"까미","kg":9.1,"cls":"md"},{"nm":"단추","kg":7.3,"cls":"md"},{"nm":"구름","kg":21.4,"cls":"lg"},{"nm":"바다","kg":27.8,"cls":"lg"},{"nm":"태양","kg":18.5,"cls":"lg"},{"nm":"산이","kg":16.9,"cls":"lg"},{"nm":"두유","kg":5.4,"cls":"md"},{"nm":"모카","kg":6.2,"cls":"md"},{"nm":"뭉이","kg":4.1,"cls":"sm"},{"nm":"루키","kg":6.8,"cls":"md"},{"nm":"두부","kg":3.3,"cls":"sm"},{"nm":"하루","kg":7.9,"cls":"md"},{"nm":"몽이","kg":5.9,"cls":"md"},{"nm":"뭉치","kg":3.8,"cls":"sm"},{"nm":"코코","kg":5.1,"cls":"md"},{"nm":"방울","kg":3.4,"cls":"sm"}]'>
+    <div data-boundary-out><span class="t-sub">손잡이를 옮기면 지금 다니는 아이 중 몇 마리가 반이 달라지는지 알려드려요</span></div>
+  </div>
+  <p class="hint">규칙을 바꿔도 «지금 있는» 아이의 반이 저절로 바뀌지는 않습니다. 반 편성 보드에서 옮겨 주셔야 해요.</p></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">지금 구간</h3></div>
+  <div class="card-bd "><div class="g3">
+  <div class="box">
+    <div class="t-card">🐩 소형반</div>
+    <div class="t-sec pri mt2">5kg 미만</div>
+    <div class="t-sub mt2">지금 5마리 / 정원 8</div>
+  </div><div class="box">
+    <div class="t-card">🐕 중형반</div>
+    <div class="t-sec pri mt2">5 ~ 15kg</div>
+    <div class="t-sub mt2">지금 5마리 / 정원 8</div>
+  </div><div class="box">
+    <div class="t-card">🐕‍🦺 대형반</div>
+    <div class="t-sec pri mt2">15kg 이상</div>
+    <div class="t-sub mt2">지금 4마리 / 정원 6</div>
+  </div>
+</div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">사교성 평가 항목</h3></div>
+  <div class="card-bd ">
+  <p class="t-sub mb4">첫 등원 날 30분 적응 테스트에서 봅니다. 각 문항을 3단계(좋음·보통·주의)로 적어요.</p>
+  <div class="table-wrap table-scroll"><table class="table "><thead><tr><th>문항</th><th>무엇을 보나</th><th class="c">쓰나요</th><th class="c"></th></tr></thead><tbody><tr><td>다른 아이에게 먼저 다가가나</td><td>적극성 · 소그룹 배정 판단</td><td class="c"><button class="toggle on" type="button" aria-pressed="true" data-toast="「먼저 다가가나」 문항을 그대로 씁니다"></button></td><td class="c"><button class="btn btn-dan btn-sm" type="button" data-toast="문항을 지우려면 저장해야 합니다">지우기</button></td></tr><tr><td>낯선 소리에 짖나</td><td>짖음 정도 · 소그룹 전환 판단</td><td class="c"><button class="toggle on" type="button" aria-pressed="true" data-toast="「낯선 소리에 짖나」 문항을 그대로 씁니다"></button></td><td class="c"><button class="btn btn-dan btn-sm" type="button" data-toast="문항을 지우려면 저장해야 합니다">지우기</button></td></tr><tr><td>장난감을 두고 다투나</td><td>공격성 · 개별 관리 판단</td><td class="c"><button class="toggle on" type="button" aria-pressed="true" data-toast="「장난감 다툼」 문항을 그대로 씁니다"></button></td><td class="c"><button class="btn btn-dan btn-sm" type="button" data-toast="문항을 지우려면 저장해야 합니다">지우기</button></td></tr><tr><td>사람이 다가가면 어떤가</td><td>사람 반응 · 보육교사 배치 판단</td><td class="c"><button class="toggle on" type="button" aria-pressed="true" data-toast="「사람 반응」 문항을 그대로 씁니다"></button></td><td class="c"><button class="btn btn-dan btn-sm" type="button" data-toast="문항을 지우려면 저장해야 합니다">지우기</button></td></tr><tr><td>보호자와 떨어질 때 어떤가</td><td>분리 불안 · 첫 주 관찰 강도</td><td class="c"><button class="toggle" type="button" aria-pressed="false" data-toast="「분리 반응」 문항을 켰어요"></button></td><td class="c"><button class="btn btn-dan btn-sm" type="button" data-toast="문항을 지우려면 저장해야 합니다">지우기</button></td></tr></tbody></table></div>
+  <div class="btns mt6"><button class="btn btn-sub" type="button" data-toast="새 문항 칸을 열었어요">＋ 문항 추가</button></div></div>
+  </div>
+
+<div class="card mt6">
+  <div class="card-hd"><h3 class="t-card">자동 배정</h3></div>
+  <div class="card-bd ">
+  <div class="row-b wrap-row">
+    <div><div class="t-card">예약할 때 자동으로 반을 정합니다</div>
+      <div class="t-sub mt1">끄면 예약이 「반 미정」으로 들어오고, 원장이 반 편성 보드에서 손으로 배정합니다</div></div>
+    <button class="toggle on" type="button" aria-pressed="true" data-toast="자동 배정을 껐어요 — 이제 예약은 「반 미정」으로 들어오고 보드에서 직접 배정하셔야 합니다"></button>
+  </div></div>
+  </div>
+
+<div class="btns mt8">
+  <a class="btn btn-pri" href="AT-04.html">반 편성 보드</a>
+  <button class="btn btn-ghost" type="button" data-notify="반 배정 규칙을 저장했어요">저장</button>
+</div></div>
+  </div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="t-card mb2">🐾 도그마루 반려견 유치원</div>
+        <p class="t-sub">서울 마포구 월드컵북로 12길 34, 1층<br>02-336-0824 · hello@dogmaru.kr<br>평일 08:30 – 19:30 · 토 09:00 – 17:00 · 일요일·공휴일 휴무</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="HO-01.html">홈</a><a href="PL-01.html">반려견 등록</a><a href="RE-01.html">등원 예약</a><a href="MY-01.html">마이페이지</a><a href="CS-01.html">고객센터</a>
+        <a href="MG-05.html">원 운영진 로그인</a>
+      </nav>
+    </div>
+    <div class="ft-bot">
+      <span>© 2026 도그마루 반려견 유치원. 기획 검토용 프로토타입입니다.</span>
+      <span>카카오톡 채널 @도그마루유치원</span>
+    </div>
+  </div></footer>
+
+<div class="dev">
+    <div class="dev-bd">
+      <span class="pid">MG-02 · 반 배정 규칙 설정</span>
+      <dl style="margin:0">
+        <dt>메뉴</dt><dd>원 관리자</dd>
+        <dt>기능정의</dt><dd>몸무게 구간 기준 수정(소형·중형·대형 경계값) · 사교성 평가 항목 관리 · 자동 배정 켜기·끄기(끄면 원장이 수동 배정) · 규칙 변경이 기존 재원생에게 미치는 영향 미리 보기</dd>
+        <dt>연결 화면</dt><dd><span class="lks"><a href="AT-04.html">반 편성 보드 → 반 편성 보드</a></span></dd>
+        <dt>전체</dt><dd><span class="lks"><a href="../index.html">🗂 화면 목록으로</a></span></dd>
+      </dl>
+    </div>
+    <button class="dev-btn" type="button">화면 정보</button>
+  </div>
+<script src="../assets/js/app.js"></script>
+</body></html>
