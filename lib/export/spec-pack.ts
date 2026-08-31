@@ -282,6 +282,9 @@ export function buildSpecPackModel(
          «넘치면 안 된다»는 말이 없었다 — 실측에서 여덟 화면이 밀렸다(2026-08-18). */
       narrowOverflow: {
         testWidth: NARROW_OVERFLOW.testWidth,
+        /* ⭐ 390 만 내보내면 «세로 flex 밀림»을 못 재는 폭만 알려 주는 꼴이다 —
+           그 흠은 360 에서만 나온다. md 는 두 폭을 다 적는데 json 만 390 이었다(2026-09-01). */
+        alsoTestWidth: NARROW_OVERFLOW.alsoTestWidth,
         rule: NARROW_OVERFLOW.rule,
       },
       /* 손님이 자기 정보로 바꿀 값. 한 곳에 안 모으면 옛 상호가 남는다(2026-08-18). */

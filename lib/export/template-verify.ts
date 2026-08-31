@@ -11,6 +11,8 @@
 // 쓰는 규칙은 docs/검수시나리오_작성지침.md에 적어 뒀다. 고칠 때 같이 본다.
 
 import { splitFuncDef } from "@/lib/export/requirements";
+/* 폰 폭은 뿌리 한 곳에서만 정한다 — 아래 «좁은 화면» 칸이 쓴다. */
+import { NARROW_OVERFLOW } from "@/lib/design-presets";
 
 /* 왜 확인해야 하는지 — 화면목록·검수시나리오·README·완성화면 목록이 같은 말을 쓴다.
  *
@@ -316,9 +318,14 @@ const COMMON_CHECKS: { item: string; how: string; expect: string }[] = [
     expect: "태블릿 가로(1024px)와 세로(720px), 두 곳에서만 바뀐다. 그 사이에 지어낸 지점이 없다.",
   },
   {
+    /* ⛔ 여기만 혼자 375 를 말하고 있었다(2026-09-01 검수).
+       스펙팩 6장·07 json 은 NARROW_OVERFLOW 를 읽어 390 을 말하고,
+       2026-08-25 에 붙은 «세로 flex 자식의 min-width» 흠은 360 에서만 드러난다.
+       손님이 받는 세 문서가 서로 다른 폭을 시키면 손님은 아무 폭이나 잰다.
+       뿌리값(NARROW_OVERFLOW)에서 끌어다 쓴다 — 두 곳에 적으면 반드시 갈린다. */
     item: "좁은 화면(모바일)에서 가로 스크롤",
-    how: "브라우저 폭을 375px로 좁혀 화면을 훑는다.",
-    expect: "가로 스크롤이 생기지 않고, 내용이 화면 밖으로 나가지 않는다.",
+    how: `브라우저 폭을 ${NARROW_OVERFLOW.testWidth}px 로 좁혀 화면을 훑고, ${NARROW_OVERFLOW.alsoTestWidth}px 로 한 번 더 훑는다. ⚠ 세로 flex 로 바꾼 상자의 자식이 밀리는 것은 ${NARROW_OVERFLOW.testWidth}px 에서는 안 보이고 ${NARROW_OVERFLOW.alsoTestWidth}px 에서만 나온다.`,
+    expect: "두 폭 모두에서 가로 스크롤이 생기지 않고, 내용이 화면 밖으로 나가지 않는다.",
   },
   /* ⭐ 여기부터는 스펙팩 §7-0 의 «② 기계가 보는 검수»·§7-9-2 와 «짝»이다 (2026-08-25).
      위 열여덟은 전부 「열고 눌러 봐야」 아는 것이라, 스펙팩이 이번에 검수를 두 갈래로
