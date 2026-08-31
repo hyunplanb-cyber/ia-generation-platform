@@ -61,7 +61,7 @@ function SE01(ctx) {
       <p class="t-sub">강남구 · 평점 4.5 이상 · 신원 확인 — <b>184명</b></p>
     </div>
     <div class="row-c wrap-row">
-      <select class="input" style="width:auto"><option>추천순</option><option>평점 높은순</option><option>응답 빠른순</option><option>가격 낮은순</option></select>
+      <select class="input" style="width:auto" data-sort-cards="pros"><option value="rec">추천순</option><option value="rate" data-desc>평점 높은순</option><option value="resp">응답 빠른순</option><option value="price">가격 낮은순</option></select>
       ${U.btn('🗺 지도로 보기', { cls: 'btn-ghost', attr: ' data-toast="지도 화면은 프리미엄(3뎁스)에 들어 있어요"' })}
     </div>
   </div>
@@ -71,7 +71,7 @@ function SE01(ctx) {
     <button class="link quiet" type="button" data-toast="필터를 모두 해제했어요">모두 지우기</button>
   </div>
 
-  <div class="pro-list">${PROS.map((p) => U.proRow(p)).join('')}</div>
+  <div class="pro-list" data-sort-list="pros">${PROS.map((p, i) => U.proRow(p, { i })).join('')}</div>
 
   <div class="center mt-block">
     ${U.btn('고수 더 보기', { cls: 'btn-ghost btn-lg', attr: ' data-toast="다음 20명을 불러왔어요"' })}
@@ -290,8 +290,8 @@ function SE04(ctx) {
           <p style="margin-top:10px;max-width:44em">3층에서 12층으로 옮기는 작업이었습니다. 사다리차를 쓰고 유리 제품은 따로 포장했습니다. 오전 8시에 시작해 오후 4시에 마쳤습니다.</p>
         </div>
         <div class="btns">
-          <span class="btn btn-pri">이 작업처럼 견적 요청</span>
-          <span class="btn btn-ghost" style="background:transparent;border-color:rgba(255,255,255,.3);color:#fff">신고</span>
+          <a class="btn btn-pri" href="${U.link('RQ-01')}">이 작업처럼 견적 요청</a>
+          <button class="btn btn-ghost" type="button" data-toast="신고를 접수했어요" style="background:transparent;border-color:rgba(255,255,255,.3);color:#fff">신고</button>
         </div>
       </div>
       <div style="opacity:.6;margin-top:14px;font-size:12px">4 / 24 · 좌우 화살표로 넘겨 보세요</div>

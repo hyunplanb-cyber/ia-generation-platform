@@ -14,7 +14,7 @@ const 줄 = (g, o = {}) => `<div class="rowcard${o.bad ? ' bad' : ''}">
     ${o.bad ? `<div class="mt3">${U.banner('dan', '✕', '<b>담아 두신 사이에 다 나갔어요.</b> 8월 16일에 남은 게 없습니다.', { right: U.btn('날짜 바꾸기', { sm: true, href: 'CT-02' }) })}</div>` : ''}
     <div class="row mt3" style="gap:var(--sp-item)">
       ${U.stepper(o.qty || 1, { toast: '수량을 바꿨어요. 합계가 다시 계산됩니다' })}
-      ${U.btn('빼기', { sm: true, cls: 'btn-dan', attr: ` data-toast="${g.nm}을(를) 뺐어요"` })}
+      ${U.btn('빼기', { sm: true, cls: 'btn-dan', attr: ` data-toast="${g.nm}${U.조사붙이기(g.nm, '을', '를')} 뺐어요"` })}
     </div>
   </div>
   <div class="side">

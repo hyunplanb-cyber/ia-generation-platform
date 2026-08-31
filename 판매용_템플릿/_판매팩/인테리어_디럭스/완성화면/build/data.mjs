@@ -140,7 +140,7 @@ export const 진행률 = Math.round((오늘공사일 / 공사일수) * 100);
 
 /* ---------- 오늘 현장(pr2) ---------- */
 export const TODAY_SITE = {
-  date: '9월 22일 (월)', dayN: 14,
+  date: '9월 22일 (화)', dayN: 14,
   process: '타일 시공 2일차', team: '타일 2명, 설비 1명',
   needsDecision: '욕실 바닥 타일 색을 오늘까지 정해 주세요',
   managerNote: '욕실 방수 두 번째 치기 끝냈습니다. 내일 하루 말리고 모레 타일 들어갑니다',
@@ -151,10 +151,10 @@ export const TODAY_SITE = {
 
 /* ---------- 현장 사진 일지(pr3) ---------- */
 export const PHOTO_LOG = [
-  { date: '9월 22일 (월)', dayN: 14, process: '타일 시공', spaces: ['거실', '욕실'], n: 8, note: '욕실 벽 타일 1차 마감' },
-  { date: '9월 20일 (토)', dayN: 12, process: '목공 마감', spaces: ['거실', '주방'], n: 10, note: '아트월 목공틀 완료, 붙박이장 제작 중' },
-  { date: '9월 17일 (수)', dayN: 9, process: '설비·전기', spaces: ['주방', '욕실'], n: 6, note: '배관 교체 완료, 분전반 작업 중' },
-  { date: '9월 8일 (월)', dayN: 0, process: '철거', spaces: ['전체'], n: 12, note: '내부 철거 착공' },
+  { date: '9월 22일 (화)', dayN: 14, process: '타일 시공', spaces: ['거실', '욕실'], n: 8, note: '욕실 벽 타일 1차 마감' },
+  { date: '9월 20일 (일)', dayN: 12, process: '목공 마감', spaces: ['거실', '주방'], n: 10, note: '아트월 목공틀 완료, 붙박이장 제작 중' },
+  { date: '9월 17일 (목)', dayN: 9, process: '설비·전기', spaces: ['주방', '욕실'], n: 6, note: '배관 교체 완료, 분전반 작업 중' },
+  { date: '9월 8일 (화)', dayN: 0, process: '철거', spaces: ['전체'], n: 12, note: '내부 철거 착공' },
 ];
 
 /* ---------- 추가공사(pr4) ---------- */

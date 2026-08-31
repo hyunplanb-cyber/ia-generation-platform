@@ -95,9 +95,9 @@ ${U.card('이 띠는 이렇게 움직입니다', `<ul class="stack t-sub">
 P['HO0202'] = () => 잎({
   부모: 카테, 제목: '하위 종류로 좁혔을 때',
   설명: '칩을 누르면 목록이 걸러지고 개수가 바로 바뀝니다.',
-  본문: `${U.chips(['전체 24', '텐트 6', '타프 4', '침낭 5', '화로대 3', '의자 6'], 1)}
+  본문: `${U.chips(['전체 24', '텐트 6', '타프 4', '침낭 5', '화로대 3', '의자 6'], 1, { cat: true })}
 ${U.banner('info', '🔎', '<b>텐트</b>로 좁혔습니다 — 24개 중 <b>6개</b>. 칩을 다시 누르면 풀립니다.', { cls: 'mt6' })}
-<div class="cards mt6">${GEAR.filter((g) => g.cat === '텐트' || g.cat === '타프').map((g) => U.gearCard(g, { left: 남은수(g.id, 15) })).join('')}</div>`,
+<div class="cards mt6" data-catlist>${GEAR.filter((g) => g.cat === '텐트' || g.cat === '타프').map((g) => U.gearCard(g, { left: 남은수(g.id, 15), cat: true })).join('')}</div>`,
   다루는것: [
     ['칩을 누르면', '그 종류만 남고 결과 수가 즉시 바뀐다'],
     ['다시 누르면', '그 칩만 풀린다. 「전체」를 누르면 다 풀린다'],

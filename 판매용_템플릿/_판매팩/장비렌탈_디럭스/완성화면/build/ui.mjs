@@ -10,6 +10,19 @@ import { SITE, NAV, ST_CLS, GEAR, 남은수, 점검일, 할증요일 } from './d
 
 /* ---------- 유틸 ---------- */
 export const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+/* 받침을 보고 조사를 고른다 — 「텐트를」·「사진을」처럼 읽히게 한다.
+   assets/js/app.js 의 조사붙이기와 같은 규칙이되, «끝이 숫자»일 때를 읽는 소리로 가른다
+   (1=일 → 을, 2=이 → 를). 닫는 괄호는 건너뛴다 — 「(2개)」는 「개」로 본다.
+   ⚠ 이것이 없으면 손님 화면에 「을(를)」이 그대로 나간다(2026-08-19 검수). */
+export function 조사붙이기(말, 있, 없) {
+  let s = String(말 == null ? '' : 말).trim();
+  while (s && ')]}」』'.includes(s[s.length - 1])) s = s.slice(0, -1);
+  const c = s[s.length - 1];
+  if (!c) return 없;
+  if (c >= '0' && c <= '9') return '0136789'.includes(c) ? 있 : 없;
+  const code = c.charCodeAt(0) - 0xac00;
+  return code >= 0 && code <= 11171 && code % 28 !== 0 ? 있 : 없;
+}
 export const won = (n) => n.toLocaleString('ko-KR') + '원';
 export const num = (n) => n.toLocaleString('ko-KR');
 function hash(s) { let h = 0; for (let i = 0; i < String(s).length; i++) h = (h * 31 + String(s).charCodeAt(i)) | 0; return Math.abs(h); }
@@ -79,8 +92,24 @@ export const btn = (t, o = {}) => {
 };
 
 export const chip = (t, on = false, extra = '') => `<button class="chip${on ? ' on' : ''}" type="button"${extra}>${esc(t)}</button>`;
+/* 칩 이름에서 «거르개 값»을 뽑는다 — 「텐트 6」은 텐트, 「전체 …」는 * 다.
+   무리 이름이 카드의 종류와 다를 때는 { t: '촬영 장비', cat: '촬영' } 처럼 짝을 지어 준다. */
+export const 갈래키 = (t) => {
+  if (t && typeof t === 'object') return t.cat;
+  let s = String(t);
+  const i = s.lastIndexOf(' ');
+  if (i > 0) {
+    const 뒤 = s.slice(i + 1);
+    if (뒤.length && [...뒤].every((c) => c >= '0' && c <= '9')) s = s.slice(0, i);
+  }
+  return s === '전체' ? '*' : s;
+};
+/* o.cat 을 주면 칩마다 data-catf 가 붙어 «실제로 목록이 줄어든다».
+   ⚠ 없으면 켜짐 표시만 바뀌고 카드는 그대로다(검수공통 3단계 첫 줄). */
 export const chips = (list, onIdx = -1, o = {}) =>
-  `<div class="chips">${list.map((t, i) => chip(t, Array.isArray(onIdx) ? onIdx.includes(i) : i === onIdx, o.extra || '')).join('')}</div>`;
+  `<div class="chips">${list.map((t, i) => chip(typeof t === 'object' ? t.t : t,
+    Array.isArray(onIdx) ? onIdx.includes(i) : i === onIdx,
+    (o.cat ? ` data-catf="${esc(갈래키(t))}"` : '') + (o.extra || ''))).join('')}</div>`;
 
 export function tabs(list, onIdx = 0, o = {}) {
   const cls = o.pill ? 'tabs-pill' : 'tabs';
@@ -170,6 +199,13 @@ export const field = (label, input, o = {}) => `<label class="field">
   ${input}${o.hint ? `<span class="hint">${o.hint}</span>` : ''}${o.err ? `<span class="err">${o.err}</span>` : ''}</label>`;
 export const input = (o = {}) => `<input class="in ${o.cls || ''}" type="${o.type || 'text'}"${o.ph ? ` placeholder="${esc(o.ph)}"` : ''}${o.v ? ` value="${esc(o.v)}"` : ''}${o.off ? ' disabled' : ''}${o.attr || ''}>`;
 export const select = (list, onIdx = 0, o = {}) => `<select class="sel"${o.attr || ''}>${list.map((t, i) => `<option${i === onIdx ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select>`;
+
+/* 정렬 고르개 — <select data-sort-cards="…"> 와 <div data-sort-list="…"> 가 «한 벌»이다.
+   목록은 [값, 이름, 큰것부터?] 셋으로 준다. assets/js/app.js 가 이 값을 보고 카드를 다시 세운다.
+   ⚠ 그냥 select 로 두면 고른 값만 바뀌고 목록은 그대로다 — 2026-09-01 검수에서 되찾았다. */
+export const 정렬고르개 = (종류, 목록) =>
+  `<select class="sel" data-sort-cards="${종류}">${목록.map(([v, t, 큰것부터]) =>
+    `<option value="${v}"${큰것부터 ? ' data-desc' : ''}>${esc(t)}</option>`).join('')}</select>`;
 export const textarea = (o = {}) => `<textarea class="ta"${o.ph ? ` placeholder="${esc(o.ph)}"` : ''}>${o.v ? esc(o.v) : ''}</textarea>`;
 export const check = (label, o = {}) => `<label class="check${o.none ? ' none' : ''}">
   <input type="checkbox"${o.on ? ' checked' : ''}${o.attr || ''}>
@@ -186,7 +222,14 @@ export function gearCard(g, o = {}) {
   const 남배지 = 남 === 0
     ? badge('빌려줄 수 있는 게 없어요', 'left-n none')
     : badge(`${g.total}대 중 ${남}대 남음`, `left-n${남 <= 2 ? ' few' : ''}`);
-  return `<a class="item${남 === 0 ? ' off' : ''}" href="${link(o.href || 'PD-02')}">
+  /* o.i 를 주면 정렬에 쓰는 값이, o.cat 을 주면 거르기에 쓰는 값이 카드에 실린다.
+     이 값이 없으면 고르개를 눌러도 카드가 안 움직인다. */
+  const 정렬값 = o.i == null ? ''
+    : ` data-rec="${o.i}" data-price="${g.day}" data-rate="${g.r}" data-left="${남}" data-many="${g.rv}"`;
+  /* 촬영 쪽 넷(카메라·렌즈·짐벌·조명)은 화면에서 「촬영 장비」 한 무리로 거른다. */
+  const 갈래 = ['카메라', '렌즈', '짐벌', '조명'].includes(g.cat) ? '촬영' : g.cat;
+  const 갈래값 = o.cat ? ` data-cat="${esc(갈래)}"` : '';
+  return `<a class="item${남 === 0 ? ' off' : ''}"${정렬값}${갈래값} href="${link(o.href || 'PD-02')}">
     <div class="thumb">${phGear(g.id)}
       <div class="on-thumb">${남배지}</div>
       <button class="heart" type="button" aria-label="찜하기">♡</button>

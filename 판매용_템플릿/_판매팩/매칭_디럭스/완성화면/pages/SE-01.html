@@ -73,7 +73,7 @@
       <p class="t-sub">강남구 · 평점 4.5 이상 · 신원 확인 — <b>184명</b></p>
     </div>
     <div class="row-c wrap-row">
-      <select class="input" style="width:auto"><option>추천순</option><option>평점 높은순</option><option>응답 빠른순</option><option>가격 낮은순</option></select>
+      <select class="input" style="width:auto" data-sort-cards="pros"><option value="rec">추천순</option><option value="rate" data-desc>평점 높은순</option><option value="resp">응답 빠른순</option><option value="price">가격 낮은순</option></select>
       <button class="btn btn-ghost" type="button" data-toast="지도 화면은 프리미엄(3뎁스)에 들어 있어요">🗺 지도로 보기</button>
     </div>
   </div>
@@ -83,7 +83,7 @@
     <button class="link quiet" type="button" data-toast="필터를 모두 해제했어요">모두 지우기</button>
   </div>
 
-  <div class="pro-list"><a class="pro-row" href="SE-03.html">
+  <div class="pro-list" data-sort-list="pros"><a class="pro-row" data-rec="0" data-rate="4.9" data-resp="12" data-price="180000" href="SE-03.html">
     
     <div class="ph ph-fix t2 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_이사_곰사슴.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -97,7 +97,7 @@
       <span class="from"><span class="k">시작가</span><span class="v">180,000원</span></span>
       <span class="btn btn-pri btn-sm">견적 요청</span>
     </div>
-  </a><a class="pro-row" href="SE-03.html">
+  </a><a class="pro-row" data-rec="1" data-rate="4.8" data-resp="24" data-price="150000" href="SE-03.html">
     
     <div class="ph ph-fix t3 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_청소_라쿤.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -111,7 +111,7 @@
       <span class="from"><span class="k">시작가</span><span class="v">150,000원</span></span>
       <span class="btn btn-pri btn-sm">견적 요청</span>
     </div>
-  </a><a class="pro-row" href="SE-03.html">
+  </a><a class="pro-row" data-rec="2" data-rate="4.7" data-resp="41" data-price="220000" href="SE-03.html">
     
     <div class="ph ph-fix t4 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_이사_곰사슴.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -125,7 +125,7 @@
       <span class="from"><span class="k">시작가</span><span class="v">220,000원</span></span>
       <span class="btn btn-pri btn-sm">견적 요청</span>
     </div>
-  </a><a class="pro-row" href="SE-03.html">
+  </a><a class="pro-row" data-rec="3" data-rate="4.9" data-resp="35" data-price="1800000" href="SE-03.html">
     
     <div class="ph ph-fix t5 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_인테리어_비버.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -139,7 +139,7 @@
       <span class="from"><span class="k">시작가</span><span class="v">1,800,000원</span></span>
       <span class="btn btn-pri btn-sm">견적 요청</span>
     </div>
-  </a><a class="pro-row" href="SE-03.html">
+  </a><a class="pro-row" data-rec="4" data-rate="5" data-resp="8" data-price="60000" href="SE-03.html">
     
     <div class="ph ph-fix t1 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_과외_코끼리.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -153,7 +153,7 @@
       <span class="from"><span class="k">시작가</span><span class="v">60,000원</span></span>
       <span class="btn btn-pri btn-sm">견적 요청</span>
     </div>
-  </a><a class="pro-row" href="SE-03.html">
+  </a><a class="pro-row" data-rec="5" data-rate="4.8" data-resp="18" data-price="90000" href="SE-03.html">
     
     <div class="ph ph-fix t2 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_촬영_페넥.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -167,7 +167,7 @@
       <span class="from"><span class="k">시작가</span><span class="v">90,000원</span></span>
       <span class="btn btn-pri btn-sm">견적 요청</span>
     </div>
-  </a><a class="pro-row" href="SE-03.html">
+  </a><a class="pro-row" data-rec="6" data-rate="4.6" data-resp="29" data-price="70000" href="SE-03.html">
     
     <div class="ph ph-fix t3 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_가전수리_수달.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">
@@ -181,7 +181,7 @@
       <span class="from"><span class="k">시작가</span><span class="v">70,000원</span></span>
       <span class="btn btn-pri btn-sm">견적 요청</span>
     </div>
-  </a><a class="pro-row" href="SE-03.html">
+  </a><a class="pro-row" data-rec="7" data-rate="4.7" data-resp="52" data-price="110000" href="SE-03.html">
     
     <div class="ph ph-fix t4 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (고수 프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/매칭_청소_라쿤.webp" alt=""><span class="lb">400×400</span></div>
     <div class="mid">

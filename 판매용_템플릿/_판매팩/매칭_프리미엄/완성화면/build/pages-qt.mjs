@@ -25,15 +25,15 @@ function QT01(ctx) {
   const body = `
   ${U.pageHd('받은 견적', `견적 <b style="color:var(--text)">5개</b> · 마감까지 2일 남음`,
     `<div class="row-c wrap-row">
-      <select class="input" style="width:auto"><option>낮은 가격순</option><option>평점 높은순</option><option>빠른 응답순</option><option>도착한 순</option></select>
+      <select class="input" style="width:auto" data-sort-cards="quotes"><option value="price">낮은 가격순</option><option value="rate" data-desc>평점 높은순</option><option value="resp">빠른 응답순</option><option value="arr">도착한 순</option></select>
     </div>`)}
   ${reqLine()}
 
   ${U.banner('info', '⚖️', `<b>두 개 이상 고르면 나란히 비교할 수 있어요</b>
     <div class="t-sub mt1">왼쪽 네모를 눌러 고르시면 화면 아래에 비교 버튼이 나타납니다.</div>`)}
 
-  <div class="pro-list mt4">${QUOTES.map((q, i) => U.quoteRow(q, PRO(q.pro), {
-    pick: true, picked: i < 3,
+  <div class="pro-list mt4" data-sort-list="quotes">${QUOTES.map((q, i) => U.quoteRow(q, PRO(q.pro), {
+    pick: true, picked: i < 3, arr: i,
     best: q.id === cheapest.id ? '최저가' : (q.id === bestRate.id ? '최고 평점' : ''),
   })).join('')}</div>
 

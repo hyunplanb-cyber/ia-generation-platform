@@ -89,13 +89,13 @@ ${U.sec('찾아오시는 길', `${U.card('', `<div class="row wrap-row" style="g
 PAGES['HO-02'] = () => ({
   body: `${U.pageHd('캠핑 장비', '텐트부터 화로대까지, 쓸 날짜만 고르시면 됩니다.')}
 
-${U.chips(['전체', '텐트', '타프', '침낭', '화로대', '의자'], 0)}
+${U.chips(['전체', '텐트', '타프', '화로대', '의자'], 0, { cat: true })}
 
 ${U.banner('info', '📅', `지금 보고 계신 기간은 <b>${기간.라벨}</b>입니다. 이 기간에 빌릴 수 있는 것만 보여드려요.`, {
   cls: 'mt6', right: `<div class="row" style="gap:var(--sp-btn)">${U.check('이 기간에 되는 것만', { on: true, none: true })}${U.btn('기간 바꾸기', { sm: true, href: 'HO-03' })}</div>`,
 })}
 
-<div class="cards mt6">${GEAR.filter((g) => ['텐트', '타프', '화로대', '의자'].includes(g.cat)).map((g) => U.gearCard(g, { left: 남은수(g.id, 15) })).join('')}</div>
+<div class="cards mt6" data-catlist>${GEAR.filter((g) => ['텐트', '타프', '화로대', '의자'].includes(g.cat)).map((g) => U.gearCard(g, { left: 남은수(g.id, 15), cat: true })).join('')}</div>
 
 ${U.sec('처음 빌리신다면 — 인원수로 고르세요', U.table(
   ['몇 명이서', '맞는 텐트', '함께 빌리면 좋은 것'],
@@ -138,12 +138,12 @@ ${U.listPage(U.card('조건 좁히기', `
     ${U.btn('조건 지우기', { w: true, href: 'HO-03' })}
   </div>`), `
   <div class="row-b mb6 wrap-row">
-    ${U.chips(['전체', '텐트', '타프', '화로대', '의자', '카메라'], 0)}
-    ${U.select(['추천순', '대여료 낮은 순', '별점 높은 순', '많이 남은 순'], 0)}
+    ${U.chips(['전체', '텐트', '타프', '화로대', '의자', { t: '촬영 장비', cat: '촬영' }], 0, { cat: true })}
+    ${U.정렬고르개('gear', [['rec', '추천순'], ['price', '대여료 낮은 순'], ['rate', '별점 높은 순', true], ['left', '많이 남은 순', true]])}
   </div>
 
-  <div class="cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-    ${걸린것.filter((x) => x.left > 0).map((x) => U.gearCard(x.g, { left: x.left })).join('')}
+  <div class="cards" data-catlist style="grid-template-columns:repeat(3,minmax(0,1fr))" data-sort-list="gear">
+    ${걸린것.filter((x) => x.left > 0).map((x, i) => U.gearCard(x.g, { left: x.left, i, cat: true })).join('')}
   </div>
 
   ${U.sec('이 기간엔 다 나갔어요', `

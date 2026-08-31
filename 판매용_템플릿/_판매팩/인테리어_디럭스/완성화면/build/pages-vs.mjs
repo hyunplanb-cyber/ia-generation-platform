@@ -115,7 +115,7 @@ ${U.box(`<div class="t-card">9월 3일 (목) 오전 9시 · 성동구 ○○아�
 
 ${U.tabBox(
     [{ label: '날짜만 바꾸기', pane: 'change' }, { label: '예약 취소하기', pane: 'cancel' }],
-    `${U.pane('change', `${calGrid(8)}<div class="box mt4"><span class="t-sub">9월 3일 오전 9시 → </span><b data-cal-picked>9월 8일 (일)</b> <b data-slot-picked>오전 11시</b></div>${U.btn('이대로 바꾸기', { cls: 'btn-pri btn-w', href: 'VS-03' })}`, true)}
+    `${U.pane('change', `${calGrid(8)}<div class="box mt4"><span class="t-sub">9월 3일 오전 9시 → </span><b data-cal-picked>9월 8일 (화)</b> <b data-slot-picked>오전 11시</b></div>${U.btn('이대로 바꾸기', { cls: 'btn-pri btn-w', href: 'VS-03' })}`, true)}
      ${U.pane('cancel', `
        <div class="stack">${['일정이 안 맞아요', '공사를 미루기로 했어요', '다른 업체로 정했어요', '기타'].map((r, i) => U.check(r, { on: i === 0, none: true })).join('')}</div>
        <div class="field mt3">${U.textarea({ ph: '자유롭게 적어 주세요' })}</div>

@@ -305,7 +305,7 @@ PAGES['CS-02'] = () => ({
     ${U.card('사진을 붙여 주시면 훨씬 빨라요', `
       <p class="t-sub mb4">정산이나 파손 문의는 <b>사진이 있으면 하루가 줄어듭니다.</b> 최대 5장, 10MB까지.</p>
       <div class="g4">${['수령 사진', '반납 사진', '추가 1', '추가 2'].map((t) => `<div>${U.ph([t, 800, 600], { seed: t })}
-        <div class="btns mt2">${U.btn('붙이기', { sm: true, w: true, attr: ` data-toast="${t}을(를) 붙였어요"` })}</div></div>`).join('')}</div>`, { cls: 'mt6' })}
+        <div class="btns mt2">${U.btn('붙이기', { sm: true, w: true, attr: ` data-toast="${t}${U.조사붙이기(t, '을', '를')} 붙였어요"` })}</div></div>`).join('')}</div>`, { cls: 'mt6' })}
 
     ${U.card('답변을 어디로 받으실래요', `<div class="stack">
       ${U.check('문자로', { on: true, none: true })}

@@ -9,6 +9,15 @@ import { SITE, NAV, NAV_PRO, ST_CLS } from './data.mjs';
 
 /* ---------- 유틸 ---------- */
 export const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* 「20~30만원」에서 «윗값»을 뽑는다 — 예산 높은순으로 세울 때 쓴다. */
+export const 예산최대 = (s) => {
+  const 토막 = String(s).split('만원')[0].split('~');
+  const 끝 = 토막[토막.length - 1];
+  let n = '';
+  for (const c of 끝) if (c >= '0' && c <= '9') n += c;
+  return n || '0';
+};
 export const won = (n) => n.toLocaleString('ko-KR') + '원';
 export const num = (n) => n.toLocaleString('ko-KR');
 function hash(s) { let h = 0; for (let i = 0; i < String(s).length; i++) h = (h * 31 + String(s).charCodeAt(i)) | 0; return Math.abs(h); }
@@ -150,7 +159,11 @@ export function proRow(p, o = {}) {
     `<span><span class="k">응답</span> <b>${respText(p.respMin)}</b></span>`,
     `<span class="k">${esc(p.area)}</span>`,
   ].join('');
-  return `<${o.href === false ? 'div' : 'a'} class="pro-row"${o.href === false ? '' : ` href="${link(o.href || 'SE-03')}"`}>
+  /* o.i 를 주면 정렬에 쓰는 값이 줄에 실린다 — 없으면 고르개만 바뀌고 차례는 그대로다.
+     스펙팩 SE-01 기능정의: 「정렬(추천순/평점순/응답 빠른순/가격 낮은순)」 */
+  const 정렬값 = o.i == null ? ''
+    : ` data-rec="${o.i}" data-rate="${p.r}" data-resp="${p.respMin}" data-price="${p.from}"`;
+  return `<${o.href === false ? 'div' : 'a'} class="pro-row"${정렬값}${o.href === false ? '' : ` href="${link(o.href || 'SE-03')}"`}>
     ${o.pick ? `<label class="check none" style="padding-top:2px"><input type="checkbox" data-pick${o.picked ? ' checked' : ''}></label>` : ''}
     ${phPro(o.sm ? 68 : 92, p.id)}
     <div class="mid">
@@ -183,7 +196,9 @@ export function proCard(p, o = {}) {
 
 /** 견적 카드 — 왼쪽 고수 사진, 가운데 제안, 오른쪽 금액을 크게 */
 export function quoteRow(q, p, o = {}) {
-  return `<div class="pro-row">
+  /* 정렬 손잡이 — 「낮은 가격순·평점 높은순·빠른 응답순·도착한 순」이 실제로 줄을 다시 세운다.
+     ⚠ 이 넉 줄이 빠지면 고르기만 바뀌고 목록은 그대로다(2026-09-01 검수에서 되찾음). */
+  return `<div class="pro-row"${o.arr != null ? ` data-arr="${o.arr}" data-price="${q.price}" data-rate="${p.r}" data-resp="${p.respMin}"` : ''}>
     ${o.pick ? `<label class="check none" style="padding-top:2px"><input type="checkbox" data-pick${o.picked ? ' checked' : ''}></label>` : ''}
     ${phPro(80, p.id)}
     <div class="mid">
@@ -329,7 +344,7 @@ const footer = () => `<footer class="ft"><div class="ft-in">
     <div><h4>고객센터</h4>
       <div class="tel">${SITE.tel}</div>
       <p class="t-sub">${SITE.hours}</p>
-      <div class="btns mt3"><span class="btn btn-ghost btn-sm">💬 카카오톡 상담</span><span class="btn btn-ghost btn-sm">📱 앱 다운로드</span></div>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
       <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
     </div>
   </div>

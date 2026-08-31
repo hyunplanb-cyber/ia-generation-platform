@@ -39,9 +39,9 @@ ${U.card("", `
       <span class="muted">↗</span></a>`).join('')}
   </div>
 
-  <div class="row-b mt6 mb2"><span class="t-th">최근 검색</span>
-    ${U.btn('전체 지우기', { cls: 'btn-ghost btn-sm', attr: ' data-toast="최근 검색어를 모두 지웠어요"' })}</div>
-  ${U.chips(최근.map((k) => `${k} ✕`), -1, { extra: 'data-toast="이 검색어만 지웠어요"' })}
+  <div data-recent><div class="row-b mt6 mb2"><span class="t-th">최근 검색</span>
+    ${U.btn('전체 지우기', { cls: 'btn-ghost btn-sm', attr: ' data-toast="최근 검색어를 모두 지웠어요" data-recent-clear' })}</div>
+  ${U.chips(최근.map((k) => `${k} ✕`), -1, { extra: 'data-recent-x data-toast="이 검색어만 지웠어요"' })}</div>
 
   <p class="t-th mt6 mb2">많이 찾는 것</p>
   ${U.chips(HOT_WORDS, -1, { extra: `data-go="${U.link('SE-01')}"` })}`)}

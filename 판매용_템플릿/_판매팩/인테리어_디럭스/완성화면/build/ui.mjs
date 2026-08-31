@@ -69,8 +69,14 @@ export const btn = (t, o = {}) => {
 };
 
 export const chip = (t, on = false, extra = '') => `<button class="chip${on ? ' on' : ''}" type="button"${extra}>${esc(t)}</button>`;
+/* 칩 이름에서 «거르개 값»을 뽑는다 — 「전체」는 * 다.
+   o.cat 을 주면 칩마다 data-catf 가 붙어 «실제로 목록이 줄어든다».
+   ⚠ 없으면 켜짐 표시만 바뀌고 카드는 그대로다(검수공통 3단계 첫 줄). */
+export const 갈래키 = (t) => (t && typeof t === 'object' ? t.cat : (String(t) === '전체' ? '*' : String(t)));
 export const chips = (list, onIdx = -1, o = {}) =>
-  `<div class="chips">${list.map((t, i) => chip(t, Array.isArray(onIdx) ? onIdx.includes(i) : i === onIdx, o.extra || '')).join('')}</div>`;
+  `<div class="chips">${list.map((t, i) => chip(typeof t === 'object' ? t.t : t,
+    Array.isArray(onIdx) ? onIdx.includes(i) : i === onIdx,
+    (o.cat ? ` data-catf="${esc(갈래키(t))}"` : '') + (o.extra || ''))).join('')}</div>`;
 
 export function tabs(list, onIdx = 0, o = {}) {
   const cls = o.pill ? 'tabs-pill' : 'tabs';

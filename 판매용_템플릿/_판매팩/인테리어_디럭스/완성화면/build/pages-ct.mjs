@@ -37,7 +37,7 @@ ${U.sec('서명', U.sigPad(), { cls: 'mt8' })}
 <div class="mt8">${U.btn('계약하고 계약금 결제', { cls: 'btn-pri btn-w', id: 'btn-ct', off: true, href: 'CT-02', attr: ' data-unlock-all="btn-ct"' })}</div>
 </div>
 
-<div class="mt4">${U.btn('계약서 PDF 내려받기', { attr: ' data-toast="PDF를 내려받았어요"' })}</div>`,
+<div class="mt8">${U.btn('계약서 PDF 내려받기', { attr: ' data-toast="PDF를 내려받았어요"' })}</div>`,
 });
 
 PAGES['CT-02'] = () => {

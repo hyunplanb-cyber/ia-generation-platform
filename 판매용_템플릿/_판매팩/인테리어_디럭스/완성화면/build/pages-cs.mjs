@@ -18,16 +18,16 @@ ${U.listPage(U.card('조건 좁히기', `
     ${U.btn('조건 지우기', { w: true, href: 'CS-01' })}
   </div>`), `
   <div class="row-b mb6 wrap-row">
-    ${U.chips(['전체', '30평대'], 1)}
+    ${U.chips(['전체', '30평대'], 1, { cat: true })}
     ${/* ⚠ 정렬 고르개가 죽어 있었다(2026-08-18, 프리미엄 CS0101 과 같은 자리).
           스펙팩 acts: 「목록 차례가 최신순·금액낮은순·평수순으로 바뀐다」 */''}
     <select class="sel" data-sort-cards="cases">
       <option value="new">최신순</option><option value="price">금액 낮은순</option><option value="area">평수순</option></select>
   </div>
-  <div class="row-b mb6"><span class="t-sub">조건에 맞는 사례 ${CASES.length}개</span></div>
+  <div class="row-b mb6"><span class="t-sub">조건에 맞는 사례 <span data-catcount>${CASES.length}</span>개</span></div>
 
-  <div class="cards" data-sort-list="cases">${CASES.map((c, i) => U.caseCard(c).replace('<a class="item"',
-    `<a class="item" data-new="${i}" data-price="${c.priceMin}" data-area="${c.pyeong}"`)).join('')}</div>
+  ${/* 평수를 «10평대·20평대…»로 묶어 칩과 짝을 맞춘다 — 없으면 칩만 켜지고 목록은 그대로다. */''}<div class="cards" data-sort-list="cases" data-catlist>${CASES.map((c, i) => U.caseCard(c).replace('<a class="item"',
+    `<a class="item" data-new="${i}" data-price="${c.priceMin}" data-area="${c.pyeong}" data-cat="${Math.floor(c.pyeong / 10) * 10}평대"`)).join('')}</div>
 
   <div class="btns mt8" style="justify-content:center">
     ${/* ⚠ 「더 보기」가 알림만 띄우고 목록은 그대로였다. acts: 「아래에 사례 12개가

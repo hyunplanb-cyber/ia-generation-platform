@@ -24,11 +24,11 @@ PAGES['PD-01'] = () => ({
 ${U.listPage(필터(), `
   <div class="row-b mb6 wrap-row">
     ${U.check('이 기간에 되는 것만 보기', { on: true, none: true })}
-    ${U.select(['추천순', '대여료 낮은 순', '많이 빌려간 순', '별점 높은 순'], 0)}
+    ${U.정렬고르개('gear', [['rec', '추천순'], ['price', '대여료 낮은 순'], ['many', '많이 빌려간 순', true], ['rate', '별점 높은 순', true]])}
   </div>
 
-  <div class="cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-    ${GEAR.map((g) => U.gearCard(g, { left: 남은수(g.id, 15) })).join('')}
+  <div class="cards" style="grid-template-columns:repeat(3,minmax(0,1fr))" data-sort-list="gear">
+    ${GEAR.map((g, i) => U.gearCard(g, { left: 남은수(g.id, 15), i })).join('')}
   </div>
 
   ${U.banner('info', '💡', '카드에 적힌 <b>「5대 중 2대 남음」</b>은 <b>고르신 기간 기준</b>입니다. 날짜를 바꾸면 이 숫자도 바뀝니다.', { cls: 'mt8' })}

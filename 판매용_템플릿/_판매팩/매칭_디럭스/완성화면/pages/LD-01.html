@@ -41,10 +41,10 @@
       <select class="input" style="width:auto"><option>예산 전체</option><option>50만원 이상</option><option>100만원 이상</option></select>
       <select class="input" style="width:auto"><option>24km 이내</option><option>거리 제한 없음</option></select>
     </div>
-    <select class="input" style="width:auto"><option>최신순</option><option>마감 임박순</option><option>예산 높은순</option></select>
+    <select class="input" style="width:auto" data-sort-cards="leads"><option value="new">최신순</option><option value="slot">마감 임박순</option><option value="budget" data-desc>예산 높은순</option></select>
   </div>
 
-  <div class="list"><div class="list-row hot">
+  <div class="list" data-sort-list="leads"><div class="list-row hot" data-new="0" data-slot="2" data-budget="30">
     <div class="mid">
       <div class="row-c wrap-row">
         <b class="t-card">원룸·소형 이사</b>
@@ -62,7 +62,7 @@
       <a class="btn btn-pri btn-sm" href="LD-03.html">견적 보내기 (3크레딧)</a>
       <a class="btn btn-ghost btn-sm" href="LD-02.html">요청 상세</a>
       <button class="link quiet" type="button" data-toast="이 요청을 숨겼어요. 응답률에는 반영됩니다" data-toast-act="되돌리기">관심 없음</button>
-    </div></div><div class="list-row">
+    </div></div><div class="list-row" data-new="1" data-slot="3" data-budget="120">
     <div class="mid">
       <div class="row-c wrap-row">
         <b class="t-card">가정 이사(포장)</b>
@@ -80,7 +80,7 @@
       <a class="btn btn-pri btn-sm" href="LD-03.html">견적 보내기 (5크레딧)</a>
       <a class="btn btn-ghost btn-sm" href="LD-02.html">요청 상세</a>
       <button class="link quiet" type="button" data-toast="이 요청을 숨겼어요. 응답률에는 반영됩니다" data-toast-act="되돌리기">관심 없음</button>
-    </div></div><div class="list-row hot">
+    </div></div><div class="list-row hot" data-new="2" data-slot="1" data-budget="250">
     <div class="mid">
       <div class="row-c wrap-row">
         <b class="t-card">사무실 이사</b>
@@ -98,7 +98,7 @@
       <a class="btn btn-pri btn-sm" href="LD-03.html">견적 보내기 (5크레딧)</a>
       <a class="btn btn-ghost btn-sm" href="LD-02.html">요청 상세</a>
       <button class="link quiet" type="button" data-toast="이 요청을 숨겼어요. 응답률에는 반영됩니다" data-toast-act="되돌리기">관심 없음</button>
-    </div></div><div class="list-row">
+    </div></div><div class="list-row" data-new="3" data-slot="4" data-budget="20">
     <div class="mid">
       <div class="row-c wrap-row">
         <b class="t-card">원룸·소형 이사</b>
@@ -116,7 +116,7 @@
       <a class="btn btn-pri btn-sm" href="LD-03.html">견적 보내기 (3크레딧)</a>
       <a class="btn btn-ghost btn-sm" href="LD-02.html">요청 상세</a>
       <button class="link quiet" type="button" data-toast="이 요청을 숨겼어요. 응답률에는 반영됩니다" data-toast-act="되돌리기">관심 없음</button>
-    </div></div><div class="list-row">
+    </div></div><div class="list-row" data-new="4" data-slot="5" data-budget="80">
     <div class="mid">
       <div class="row-c wrap-row">
         <b class="t-card">보관 이사</b>
@@ -134,7 +134,7 @@
       <a class="btn btn-pri btn-sm" href="LD-03.html">견적 보내기 (5크레딧)</a>
       <a class="btn btn-ghost btn-sm" href="LD-02.html">요청 상세</a>
       <button class="link quiet" type="button" data-toast="이 요청을 숨겼어요. 응답률에는 반영됩니다" data-toast-act="되돌리기">관심 없음</button>
-    </div></div><div class="list-row">
+    </div></div><div class="list-row" data-new="5" data-slot="2" data-budget="10">
     <div class="mid">
       <div class="row-c wrap-row">
         <b class="t-card">용달·소량 운반</b>

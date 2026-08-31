@@ -24,10 +24,10 @@ function LD01(ctx) {
       <select class="input" style="width:auto"><option>예산 전체</option><option>50만원 이상</option><option>100만원 이상</option></select>
       <select class="input" style="width:auto"><option>24km 이내</option><option>거리 제한 없음</option></select>
     </div>
-    <select class="input" style="width:auto"><option>최신순</option><option>마감 임박순</option><option>예산 높은순</option></select>
+    <select class="input" style="width:auto" data-sort-cards="leads"><option value="new">최신순</option><option value="slot">마감 임박순</option><option value="budget" data-desc>예산 높은순</option></select>
   </div>
 
-  <div class="list">${LEADS.map((l) => `<div class="list-row${l.hot ? ' hot' : ''}">
+  <div class="list" data-sort-list="leads">${LEADS.map((l, i) => `<div class="list-row${l.hot ? ' hot' : ''}" data-new="${i}" data-slot="${l.slot}" data-budget="${U.예산최대(l.budget)}">
     <div class="mid">
       <div class="row-c wrap-row">
         <b class="t-card">${U.esc(l.svc)}</b>
@@ -291,7 +291,7 @@ function LD04(ctx) {
       ['2026-08-05', '견적 발송 · 가정 이사 (R-...0402)', '<span class="danger">-5</span>', '-50'],
       ['2026-08-04', '환불 · 요청 취소로 자리 반환', '<span class="success">+3</span>', '-45'],
     ],
-  ), { bdCls: 'flush', aside: '<a class="more" href="#">전체 내역 ›</a>' })}</div>`;
+  ), { bdCls: 'flush', aside: '<button class="more"  type="button" data-toast="전체 내역은 서버가 연결되면 열립니다">전체 내역 ›</button>' })}</div>`;
 
   const aside = `
   ${U.card('잔액', `
