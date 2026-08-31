@@ -3,6 +3,7 @@ import { CheckCircle2, Download, XCircle } from "lucide-react";
 import { confirmPackOrder } from "@/application/pack-order";
 import { PACKAGES, PLAN_NAMES, type PlanId } from "@/lib/packages";
 import { buttonVariants } from "@/components/ui/button";
+import { RefreshOnMount } from "@/components/refresh-on-mount";
 
 // 토스 승인 API 호출이 있어 여유를 둔다.
 export const maxDuration = 60;
@@ -37,6 +38,8 @@ export default async function PackSuccessPage({
     <div className="mx-auto flex max-w-md flex-col items-center gap-5 px-6 py-16 text-center">
       {href ? (
         <>
+          {/* 팩을 사면 크레딧이 빠진다 — 상단 잔액이 옛 값으로 남지 않게 다시 받는다 */}
+          <RefreshOnMount />
           <CheckCircle2 className="size-14 text-success" />
           <h1 className="text-xl font-bold text-foreground">구매가 완료됐어요</h1>
           <p className="text-sm text-muted-foreground">{label}</p>

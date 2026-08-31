@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { confirmCharge } from "@/application/charge";
+import { RefreshOnMount } from "@/components/refresh-on-mount";
 
 // 토스 승인 API 호출이 있어 여유를 둔다.
 export const maxDuration = 60;
@@ -33,6 +34,8 @@ export default async function ChargeSuccessPage({
     <div className="mx-auto flex max-w-md flex-col items-center gap-5 px-6 py-16 text-center">
       {ok ? (
         <>
+          {/* 담아 둔 옛 화면을 버린다 — 안 그러면 상단 잔액이 충전 전 숫자로 남는다 */}
+          <RefreshOnMount />
           <CheckCircle2 className="size-14 text-success" />
           <h1 className="text-xl font-bold text-foreground">충전이 완료됐어요</h1>
           <p className="text-sm text-muted-foreground">
