@@ -19,9 +19,29 @@
  * 보기
  *   npx tsx 출처채우기.mts 판매용_템플릿/_이미지/마스코트/장면 "우리가 만든 것 (AI 생성)"
  */
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { globSync } from "node:fs";
+
+/** 폴더를 훑어 이름이 같은 파일을 모두 찾는다.
+ *
+ * ⛔ `node:fs` 의 `globSync` 를 쓰지 않는다. 이 프로젝트의 타입에 그게 없어서
+ *   `next build` 의 타입검사가 여기서 멈춘다. 2026-08-28 에 그렇게 넣었다가
+ *   **실서버 배포가 3일 동안 멈췄고**, 8/31 에 결제를 붙이려다 발견했다.
+ *   빌드는 「컴파일 성공」까지 찍고 나서 타입검사에서 죽어, 로그를 끝까지 안 보면
+ *   성공한 줄로 읽힌다. 루트의 `.mts` 도 `tsconfig` 에 들어 있어 다 검사받는다.
+ */
+function 찾기(뿌리: string, 파일이름: string): string[] {
+  const 나온것: string[] = [];
+  const 훑기 = (곳: string) => {
+    for (const 것 of readdirSync(곳, { withFileTypes: true })) {
+      const 길 = join(곳, 것.name);
+      if (것.isDirectory()) 훑기(길);
+      else if (것.name === 파일이름) 나온것.push(길.split("\\").join("/"));
+    }
+  };
+  if (existsSync(뿌리)) 훑기(뿌리);
+  return 나온것;
+}
 
 const 머리 = "파일,어디서받았나,주소";
 
@@ -42,7 +62,7 @@ function 표쓰기(길: string, 것들: 줄[]) {
   writeFileSync(길, [머리, ...것들.map((r) => `${r.파일},${r.어디},${r.주소}`)].join("\n") + "\n");
 }
 
-const 표들 = globSync("판매용_템플릿/_이미지/**/출처.csv").sort();
+const 표들 = 찾기("판매용_템플릿/_이미지", "출처.csv").sort();
 
 /* ── 아무 것도 안 대면 «재기만» 한다 ─────────────────────────── */
 const [대상, 어디, 주소 = "", ...나머지] = process.argv.slice(2);
