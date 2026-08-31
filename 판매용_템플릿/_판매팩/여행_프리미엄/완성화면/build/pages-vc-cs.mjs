@@ -518,7 +518,7 @@ export function CS0401(ctx) {
         <div class="acc-a">${n.body}
           ${n.danger ? `<div class="btns mt3"><a class="btn btn-ghost btn-sm" href="${link('CS0402')}">현지 이슈 상세 보기</a></div>` : ''}</div></div>`).join('')}
     </div></div>
-    <div class="pager"><span class="on">1</span><a href="#">2</a><a href="#">3</a><a href="#">›</a></div>
+    <div class="pager"><span class="on">1</span><span class="off">2</span><span class="off">3</span><span class="off">›</span></div>
   </div></div>`;
 
   return { body, o: { state: detail ? '현지 이슈 상세 — 영향 범위와 내 예약 자동 매칭' : '' } };

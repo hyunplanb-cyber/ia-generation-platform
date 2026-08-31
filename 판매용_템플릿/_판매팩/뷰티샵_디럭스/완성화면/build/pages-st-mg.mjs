@@ -527,7 +527,7 @@ export const ST0602 = ST0601;
 export function MG0101(ctx) {
   const catSide = (o = {}) => `<aside class="side">
     <div class="gl">카테고리 <span class="t-sub">(끌어서 순서 변경)</span></div>
-    ${MENUS.map((g, i) => `<a href="#"${i === (o.cat || 0) ? ' class="on"' : ''}>⠿ ${g.cat} <span class="t-sub">${g.items.length}</span></a>`).join('')}
+    ${MENUS.map((g, i) => `<span ${i === (o.cat || 0) ? ' class="on"' : ''}>⠿ ${g.cat} <span class="t-sub">${g.items.length}</span></span>`).join('')}
     <div style="padding:8px">${btn('+ 카테고리 추가', { cls: 'btn-ghost btn-block btn-sm', attr: ' data-toast="새 카테고리를 만들어요"' })}</div></aside>`;
 
   const itemRow = (m, o = {}) => `<tr class="${o.cls || ''}">

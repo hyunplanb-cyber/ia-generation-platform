@@ -548,7 +548,7 @@ export function RV0201(ctx) {
         ${chips(['사진 리뷰만', '헤어', '컬러', '네일', '케어'])}
         <select class="select" style="width:auto"><option>최신순</option><option>평점순</option><option>도움순</option></select></div>
       ${card('', REVIEWS.map((r) => review(r, { report: true })).join(''))}
-      <div class="pager"><span>‹</span><span class="on">1</span><a href="#">2</a><a href="#">3</a><a href="#">4</a><span>›</span></div>`,
+      <div class="pager"><span>‹</span><span class="on">1</span><span class="off">2</span><span class="off">3</span><span class="off">4</span><span>›</span></div>`,
   };
 }
 export const RV0202 = RV0201, RV0203 = RV0201;

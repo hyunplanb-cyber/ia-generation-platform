@@ -224,7 +224,7 @@ function hm02(ctx, v) {
       )}
       <div class="row-b mt4 wrap-row">
         <label class="check" style="padding:0"><input type="checkbox"><span>전체 선택 (247명)</span></label>
-        <div class="pager" style="margin:0"><span class="on">1</span><a href="#">2</a><a href="#">3</a><span>…</span><a href="#">21</a></div>
+        <div class="pager" style="margin:0"><span class="on">1</span><span class="off">2</span><span class="off">3</span><span>…</span><span class="off">21</span></div>
       </div>`)}
 
       ${card('선택한 참여자에게', `<div class="row wrap-row" style="gap:8px">

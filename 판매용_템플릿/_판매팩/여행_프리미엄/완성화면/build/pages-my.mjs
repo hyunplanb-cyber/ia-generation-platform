@@ -39,9 +39,9 @@ export function MY0101(ctx) {
       <input class="input ${fail ? 'is-err' : ''}" type="password" value="••••••••">
       ${fail ? '<p class="err">비밀번호를 다시 확인해주세요. 대소문자를 구분합니다.</p>' : ''}</div>
     <div class="row-b mb4"><label class="check"><input type="checkbox" checked><span>자동 로그인</span></label>
-      <a class="pri strong" href="#" style="font-size:13px">비밀번호를 잊으셨나요?</a></div>
+      <button class="pri strong"  style="font-size:13px" type="button" data-toast="비밀번호 찾기는 서버가 연결되면 열립니다">비밀번호를 잊으셨나요?</button></div>
     <button class="btn btn-primary btn-block btn-lg" type="button" onclick="location.href='${link('MY0301')}'">로그인</button>
-    ${fail ? `<div class="btns mt3"><a class="btn btn-ghost btn-block" href="#">비밀번호 재설정 메일 받기</a></div>` : ''}
+    ${fail ? `<div class="btns mt3"><button class="btn btn-ghost btn-block"  type="button" data-toast="비밀번호 찾기는 서버가 연결되면 열립니다">비밀번호 재설정 메일 받기</button></div>` : ''}
 
     <div class="row-c mt6 mb4"><span class="grow" style="height:1px;background:var(--border)"></span>
       <span class="t-sub">또는</span><span class="grow" style="height:1px;background:var(--border)"></span></div>
@@ -77,7 +77,7 @@ export function MY0201(ctx) {
       <div class="mt2">이 이메일은 <b>카카오 계정</b>으로 가입되어 있어요. 카카오로 로그인하면 바로 이용할 수 있습니다.</div>
       <div class="btns mt3"><button class="btn btn-primary btn-sm" type="button" style="background:#FEE500;color:#191600" data-toast="카카오 로그인 창이 열려요">카카오로 로그인</button>
         <a class="btn btn-ghost btn-sm" href="${link('MY0101')}">로그인으로 이동</a>
-        <a class="btn btn-ghost btn-sm" href="#">비밀번호 찾기</a></div>`, { cls: 'mb4' }) : ''}
+        <button class="btn btn-ghost btn-sm"  type="button" data-toast="비밀번호 찾기는 서버가 연결되면 열립니다">비밀번호 찾기</button></div>`, { cls: 'mb4' }) : ''}
 
     <div class="field"><label class="label">이메일<span class="req">*</span></label>
       <input class="input ${dup ? 'is-err' : ''}" value="kim@example.com">
@@ -205,7 +205,7 @@ export function MY0301(ctx) {
     ${list.map(bcard).join('')}
 
     ${doneTab ? `<a class="btn btn-ghost btn-block mt4" href="${link('MY1101')}">내 후기 관리로 이동</a>` : ''}
-    <div class="pager"><span class="on">1</span><a href="#">2</a><a href="#">›</a></div>
+    <div class="pager"><span class="on">1</span><span class="off">2</span><span class="off">›</span></div>
   </div></div>`;
 
   return {

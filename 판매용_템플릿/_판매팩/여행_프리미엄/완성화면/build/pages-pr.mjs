@@ -48,7 +48,7 @@ export function PR0101(ctx) {
 
   ${soldout ? sec('비슷한 상품은 어때요?', `<div class="g4">${pcards([P('P02'), P('P06'), P('P10'), P('P12')], { noHeart: true })}</div>`, { desc: '마감된 상품과 일정·가격대가 비슷한 상품이에요.' }) : ''}
 
-  <div class="pager"><span>‹</span><span class="on">1</span><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">›</a></div>
+  <div class="pager"><span>‹</span><span class="on">1</span><span class="off">2</span><span class="off">3</span><span class="off">4</span><span class="off">5</span><span class="off">›</span></div>
   <p class="t-sub center mt4">모바일에서는 2열 그리드로 표시됩니다.</p>`;
 
   return {
@@ -271,7 +271,9 @@ export function PR0301(ctx) {
   ], ['총 결제 금액', won(total)])}
     <p class="t-sub mt2">현지 통화 기준 약 $${Math.round(total / 1380)}</p>
     <div class="btns mt4"><a class="btn btn-ghost btn-block" href="${link('CT0101')}">장바구니 담기</a></div>
-    <a class="btn btn-primary btn-block btn-lg mt2 ${over || blocked ? 'is-off' : ''}" href="${over || blocked ? '#' : link('BK0101')}">바로 예약하기</a>
+    ${over || blocked
+      ? `<span class="btn btn-primary btn-block btn-lg mt2 is-off"  aria-disabled="true">바로 예약하기</span>`
+      : `<a class="btn btn-primary btn-block btn-lg mt2 " href="${link('BK0101')}">바로 예약하기</a>`}
     ${over ? '<p class="err">잔여 좌석을 초과해 담을 수 없어요. 인원을 조정해주세요.</p>' : ''}
     ${blocked ? '<p class="err">예약할 수 없는 날짜예요. 다른 날짜를 선택해주세요.</p>' : ''}
     <p class="hint">무료 취소 — 출발 8일 전까지 100% 환불</p>`, { cls: 'sticky' });
@@ -541,7 +543,7 @@ export function PR0701(ctx) {
 
   ${picOnly ? `
     <p class="t-sub mb4">사진이 첨부된 후기 <b class="pri">${list.length}개</b> · 사진을 누르면 확대해서 볼 수 있어요.</p>
-    ${sec('', `<div class="g6">${list.flatMap((r) => Array.from({ length: r.pics }, (_, i) => `<a href="#" title="${esc(r.who)}">${ph(r.who + i, 'ph-11')}</a>`)).join('')}</div>`)}
+    ${sec('', `<div class="g6">${list.flatMap((r) => Array.from({ length: r.pics }, (_, i) => `<button type="button" class="gph" title="${esc(r.who)}" data-toast="사진 크게 보기는 서버가 연결되면 열립니다">${ph(r.who + i, 'ph-11')}</button>`)).join('')}</div>`)}
     <div class="card"><div class="card-bd">${list.map((r) => review(r)).join('')}</div></div>`
         : `<div class="card"><div class="card-bd">${list.map((r) => review(r, { trans: true })).join('')}</div></div>
     <button class="btn btn-ghost btn-block mt4" type="button" data-toast="후기를 더 불러왔어요">후기 더 보기 (2,835개 남음)</button>`}`}`;

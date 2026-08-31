@@ -224,7 +224,9 @@ export function BK0101(ctx) {
     ${card('결제 예정 금액', `${sumRows([
     ['성인 2명', won(136000)], ['아동 1명', won(48000)], ['유아 0명', '0원'],
   ], ['합계', won(184000)])}
-      <a class="btn btn-primary btn-block btn-lg mt4 ${nameErr || ageErr || agreeErr ? 'is-off' : ''}" href="${nameErr || ageErr || agreeErr ? '#' : link('BK0201')}">결제하기</a>
+      ${nameErr || ageErr || agreeErr
+        ? `<span class="btn btn-primary btn-block btn-lg mt4 is-off"  aria-disabled="true">결제하기</span>`
+        : `<a class="btn btn-primary btn-block btn-lg mt4 " href="${link('BK0201')}">결제하기</a>`}
       ${nameErr ? '<p class="err">여권 영문명을 수정해주세요.</p>' : ''}
       ${ageErr ? '<p class="err">인원 구성을 수정해주세요.</p>' : ''}
       ${agreeErr ? '<p class="err">필수 동의 항목을 체크해주세요.</p>' : ''}
