@@ -32,7 +32,9 @@ export function ReviewLogin({ next }: { next: string }) {
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3 border-t border-dashed border-border pt-4">
+    <form onSubmit={submit} /* 위에 소셜 버튼이 있을 때만 나누는 선을 긋는다 — 이 폼이 맨 위면 선이 홀로 뜬다.
+         구글 열쇠가 없는 자리(로컬)에서는 이 폼만 남는다. */
+      className="flex flex-col gap-3 border-t border-dashed border-border pt-4 first:border-t-0 first:pt-0">
       <p className="text-xs font-semibold text-muted-foreground">심사용 계정으로 로그인</p>
       <input
         type="email"
