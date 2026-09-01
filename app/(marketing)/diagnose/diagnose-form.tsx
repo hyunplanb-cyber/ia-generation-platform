@@ -206,8 +206,10 @@ export function DiagnoseForm() {
           <section className="flex flex-col gap-3">
             <h2 className="text-lg font-bold text-foreground">AI 수집 로봇</h2>
             <p className="text-sm leading-6 text-muted-foreground">
+              {/* 「사이트는」이라고 쓰지 마라. 여기 붙는 «빈 화면» 표시는 잰 그 한 장의 이야기다.
+                  같은 사이트라도 쪽마다 서버 렌더링 여부가 갈린다 — 아래 「사이트 훑어보기」가 그 증거다. */}
               {result.jsRendered
-                ? "이 사이트는 자바스크립트로 그려집니다. 그래서 robots.txt 가 열어 줘도 «내용까지» 보는 봇은 따로입니다."
+                ? "이 화면은 자바스크립트로 그려집니다. 그래서 robots.txt 가 열어 줘도 «이 화면의 내용까지» 보는 봇은 따로입니다."
                 : "robots.txt 에서 막고 있으면 그 AI 는 이 사이트를 아예 못 읽습니다."}
             </p>
             <div className="flex flex-wrap gap-2">
@@ -242,6 +244,65 @@ export function DiagnoseForm() {
               </p>
             )}
           </section>
+
+          {/* 사이트 훑어보기.
+              한 장만 보고 「이 사이트는 …」이라고 말하지 않기 위한 자리다.
+              홈은 대개 사진과 배너뿐이라 내용 점수가 낮게 나오는데, 그것을
+              「이 사이트에는 쓸 내용이 없다」로 읽으면 처방이 통째로 틀린다. */}
+          {result.site && result.site.pages.length > 0 && (
+            <section className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-lg font-bold text-foreground">사이트 훑어보기</h2>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  사이트맵에 적힌{" "}
+                  <strong className="text-foreground">
+                    {result.site.sitemapCount?.toLocaleString()}개
+                  </strong>{" "}
+                  주소 중 {result.site.pages.length}장을 골라 함께 열어 봤습니다. AI 로봇도
+                  사이트맵을 타고 이렇게 안쪽까지 읽습니다.
+                </p>
+              </div>
+
+              <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
+                {result.site.pages.map((p) => (
+                  <li key={p.url} className="flex items-center gap-3 px-4 py-3">
+                    <span
+                      className={`shrink-0 rounded-md px-2 py-0.5 text-xs font-medium ${
+                        p.jsRendered
+                          ? "bg-rose-50 text-rose-600"
+                          : "bg-emerald-50 text-emerald-700"
+                      }`}
+                    >
+                      {p.jsRendered ? "비어 있음" : "글 보임"}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-sm text-foreground" title={p.url}>
+                      {p.path}
+                    </span>
+                    <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                      {p.textLength.toLocaleString()}자
+                    </span>
+                    <span className="shrink-0 text-sm font-bold tabular-nums text-foreground">
+                      {p.total}점
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {result.site.best && !result.site.best.jsRendered && (
+                <p className="text-sm leading-6 text-muted-foreground">
+                  이 중 AI가 인용할 만한 재료가 가장 많은 쪽은{" "}
+                  <strong className="text-foreground">{result.site.best.path}</strong> 입니다(내용{" "}
+                  {result.site.best.content}점). 내용을 더 손보실 거라면 홈보다 이런 쪽을 먼저
+                  보시는 편이 이득이 큽니다.
+                </p>
+              )}
+
+              <p className="text-xs leading-5 text-muted-foreground/80">
+                ⚠ 위의 총점과 항목별 점수는 «입력하신 그 한 장»의 것입니다. 여기 목록은 사이트가
+                전체적으로 어떤지 보는 용도이지, 총점에 합산되지 않습니다.
+              </p>
+            </section>
+          )}
 
           {/* 항목 하나마다 «그 자리에서» 고치는 법까지 보여 준다.
               판정과 처방을 따로 두면 「내부 링크가 0개」를 읽고 다시 아래로 내려가

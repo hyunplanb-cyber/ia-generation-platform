@@ -23,15 +23,21 @@
 // ⛔ 이 파일은 AI를 부르지 않는다. 페이지 소스만 보고 규칙으로 잰다 — 종량제 잔액과 무관하다.
 
 import { safeFetch, normalize } from "./fetch";
+import type { FetchResult } from "./fetch";
 import * as K from "./checks";
 import { maxOf, CRITERIA } from "./criteria";
 import { fixFor, detectFramework } from "./fixes";
 import type { FixContext } from "./fixes";
 import { AXIS_WEIGHT, CRITERIA_VERSION } from "./types";
-import type { Axis, BotRow, DiagnoseItem, DiagnoseResult, Headline } from "./types";
+import type { Axis, BotRow, DiagnoseItem, DiagnoseResult, Headline, SitePage, SiteScan } from "./types";
 
-export type { Axis, BotRow, DiagnoseItem, DiagnoseResult, Headline } from "./types";
+export type { Axis, BotRow, DiagnoseItem, DiagnoseResult, Headline, SitePage, SiteScan } from "./types";
 export { AXIS_LABEL, AXIS_HELP, AXIS_WEIGHT, CRITERIA_VERSION } from "./types";
+
+/** 입력한 쪽을 포함해 최대 몇 장을 보나. 늘리면 손님이 그만큼 더 기다린다. */
+export const SITE_SAMPLE = 10;
+/** 한꺼번에 몇 장씩 가져오나. 남의 서버를 한 번에 열 번 두드리면 차단당한다. */
+const SITE_CONCURRENCY = 3;
 
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 const pct = (got: number, max: number) => (max ? Math.round((got / max) * 100) : 0);
@@ -43,15 +49,35 @@ function grade(total: number): DiagnoseResult["grade"] {
   return "D";
 }
 
-export async function diagnose(input: string): Promise<DiagnoseResult> {
+/** 이미 가져다 둔 것들. 사이트를 훑을 때 robots·sitemap 을 열 번 다시 받지 않으려고 넘긴다. */
+type Prefetched = {
+  page: FetchResult;
+  robots: { ok: boolean; body: string };
+  sitemap: { ok: boolean; body: string };
+};
+
+export async function diagnose(
+  input: string,
+  opts: {
+    /** 이미 가져온 것을 재활용한다. */
+    pre?: Prefetched;
+    /** 사이트맵을 타고 다른 쪽도 볼까. 훑기 안에서 다시 훑지 않도록 false 로 부른다. */
+    withSite?: boolean;
+  } = {},
+): Promise<DiagnoseResult> {
   const url = normalize(input);
   const origin = url.origin;
 
-  const [page, robots, sitemap] = await Promise.all([
-    safeFetch(url, { accept: "text/html" }),
-    safeFetch(origin + "/robots.txt").catch(() => ({ ok: false, body: "" })),
-    safeFetch(origin + "/sitemap.xml").catch(() => ({ ok: false, body: "" })),
-  ]);
+  const { page, robots, sitemap } =
+    opts.pre ??
+    (await (async () => {
+      const [p, r, s] = await Promise.all([
+        safeFetch(url, { accept: "text/html" }),
+        safeFetch(origin + "/robots.txt").catch(() => ({ ok: false, body: "" })),
+        safeFetch(origin + "/sitemap.xml").catch(() => ({ ok: false, body: "" })),
+      ]);
+      return { page: p, robots: r, sitemap: s } as Prefetched;
+    })());
 
   if (!page.ok || !page.body) {
     throw new Error("페이지를 가져오지 못했습니다 (응답 " + page.status + ")");
@@ -280,7 +306,7 @@ export async function diagnose(input: string): Promise<DiagnoseResult> {
     };
   }
 
-  return {
+  const result: DiagnoseResult = {
     url: page.url,
     checkedAt: new Date().toISOString(),
     version: CRITERIA_VERSION,
@@ -293,4 +319,203 @@ export async function diagnose(input: string): Promise<DiagnoseResult> {
     jsRendered: shape.jsOnly,
     kinds,
   };
+
+  // 사이트맵을 타고 다른 쪽도 함께 본다. 여기서 나온 사실이 위의 머리글을 뒤집기도 한다.
+  if (opts.withSite !== false) {
+    const site = await scanSite(url, page.url, robots, sitemap, shape.jsOnly, shape.textLength);
+    result.site = site;
+    if (site.headline) result.headline = site.headline;
+  }
+
+  return result;
+}
+
+// ══ 사이트 훑기 ═══════════════════════════════════════════
+//
+// 왜 필요한가 — 홈 화면 한 장은 그 사이트의 «내용»을 대표하지 못한다. 홈은 대개
+// 사진과 배너라 인용문도 통계도 없다. 그런데 우리는 그걸 「이 사이트는 인용할 재료가
+// 없다」로 읽어 버렸다. 사이트맵이 있으면 로봇은 그 목록을 타고 안쪽 쪽들을 읽는다.
+// 그러니 우리도 그렇게 봐야 같은 것을 재는 것이다.
+
+/** 사이트맵 XML 에서 주소만 뽑는다. 목록의 목록(sitemapindex)이면 첫 묶음을 따라간다. */
+async function sitemapLocs(body: string): Promise<string[]> {
+  const locs = [...body.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]);
+  if (!/<sitemapindex/i.test(body)) return locs;
+
+  // 목록의 목록이면 주소가 «또 다른 사이트맵»이다. 첫 묶음 하나만 따라간다 —
+  // 다 따라가면 큰 사이트에서 수십 번을 더 가져오게 된다.
+  const first = locs[0];
+  if (!first) return [];
+  try {
+    const child = await safeFetch(first);
+    if (!child.ok || !child.body) return [];
+    return [...child.body.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * 볼 쪽을 고른다.
+ *
+ * 앞에서부터 열 장을 집으면 안 된다 — 사이트맵은 대개 같은 종류가 뭉쳐 있어서
+ * 열 장이 전부 판박이가 된다(실제로 어느 사이트는 앞 열 장이 모두 `/qa/…` 였다).
+ * 그래서 ① 주소의 첫 칸별로 묶고 ② 묶음을 돌아가며 ③ 묶음 안에서는 고르게 벌려 집는다.
+ */
+function pickUrls(all: string[], entryHref: string, want: number): string[] {
+  const seen = new Set([entryHref, entryHref.replace(/\/$/, "")]);
+  const groups = new Map<string, string[]>();
+
+  for (const raw of all) {
+    if (seen.has(raw) || seen.has(raw.replace(/\/$/, ""))) continue;
+    let u: URL;
+    try {
+      u = new URL(raw);
+    } catch {
+      continue;
+    }
+    const key = u.pathname.split("/").filter(Boolean)[0] ?? "";
+    const list = groups.get(key) ?? [];
+    list.push(u.href);
+    groups.set(key, list);
+  }
+
+  const picked: string[] = [];
+  const keys = [...groups.keys()];
+  // 묶음 안에서 고르게 벌린 순서를 미리 만든다.
+  const spread = new Map<string, string[]>();
+  for (const k of keys) {
+    const list = groups.get(k)!;
+    const step = Math.max(1, Math.floor(list.length / want));
+    const out: string[] = [];
+    for (let i = 0; i < list.length && out.length < want; i += step) out.push(list[i]);
+    spread.set(k, out);
+  }
+  for (let round = 0; picked.length < want; round++) {
+    let added = false;
+    for (const k of keys) {
+      const list = spread.get(k)!;
+      if (round < list.length && picked.length < want) {
+        picked.push(list[round]);
+        added = true;
+      }
+    }
+    if (!added) break;
+  }
+  return picked;
+}
+
+/** 같은 쪽인지 본다. 사이트맵은 `www` 를 빼거나 끝의 `/` 를 흘리는 일이 잦다. */
+function samePage(a: string, b: string): boolean {
+  const key = (s: string) => {
+    try {
+      const u = new URL(s);
+      return u.host.replace(/^www\./, "") + u.pathname.replace(/\/$/, "");
+    } catch {
+      return s;
+    }
+  };
+  return key(a) === key(b);
+}
+
+async function scanSite(
+  entry: URL,
+  entryFinalUrl: string,
+  robots: { ok: boolean; body: string },
+  sitemap: { ok: boolean; body: string },
+  entryJsOnly: boolean,
+  entryTextLength: number,
+): Promise<SiteScan> {
+  const empty: SiteScan = { sitemapCount: null, pages: [], best: null, headline: null };
+  if (!sitemap.ok || !sitemap.body) return empty;
+
+  const locs = await sitemapLocs(sitemap.body);
+  if (!locs.length) return empty;
+
+  // 한 장쯤은 실패하거나 입력한 쪽과 같은 곳으로 넘어간다. 그만큼 여유를 두고 고른다.
+  const picked = pickUrls(locs, entry.href, SITE_SAMPLE + 1);
+  const want = SITE_SAMPLE - 1;
+  const pages: SitePage[] = [];
+
+  for (let i = 0; i < picked.length && pages.length < want; i += SITE_CONCURRENCY) {
+    const chunk = picked.slice(i, i + SITE_CONCURRENCY);
+    const got = await Promise.all(
+      chunk.map(async (href): Promise<SitePage | null> => {
+        try {
+          const p = await safeFetch(href, { accept: "text/html" });
+          if (!p.ok || !p.body) return null;
+          // 주소가 달라 보여도 결국 같은 쪽으로 넘어가는 일이 있다(www 유무·리다이렉트).
+          // 그때 입력한 쪽이 목록에 한 번 더 나오면 손님이 「왜 홈이 두 번이지」 한다.
+          if (samePage(p.url, entryFinalUrl)) return null;
+          const r = await diagnose(href, { pre: { page: p, robots, sitemap }, withSite: false });
+          const shape = K.renderShape(p.body);
+          return {
+            url: p.url,
+            path: new URL(p.url).pathname || "/",
+            total: r.total,
+            aeo: r.axes.aeo.score,
+            geo: r.axes.geo.score,
+            content: r.kinds.내용.score,
+            jsRendered: shape.jsOnly,
+            textLength: shape.textLength,
+          };
+        } catch {
+          return null; // 한 장이 실패해도 나머지는 계속 본다.
+        }
+      }),
+    );
+    for (const g of got) if (g && pages.length < want) pages.push(g);
+  }
+
+  const best = pages.length
+    ? pages.reduce((a, b) => (b.content > a.content ? b : a))
+    : null;
+
+  return {
+    sitemapCount: locs.length,
+    pages,
+    best,
+    headline: siteHeadline(pages, locs.length, entryJsOnly, entryTextLength),
+  };
+}
+
+/** 한 장만 봐서는 할 수 없는 말. 있을 때만 돌려준다. */
+function siteHeadline(
+  pages: SitePage[],
+  sitemapCount: number,
+  entryJsOnly: boolean,
+  entryTextLength: number,
+): Headline {
+  if (!pages.length) return null;
+  const solid = pages.filter((p) => !p.jsRendered);
+
+  // ① 이 화면만 비어 있고 안쪽은 멀쩡한 경우 — 가장 중요한 바로잡기다.
+  if (entryJsOnly && solid.length) {
+    const most = solid.reduce((a, b) => (b.textLength > a.textLength ? b : a));
+    return {
+      tone: "warn",
+      title: `비어 있는 건 이 화면이고, 사이트는 아닙니다`,
+      body:
+        `입력하신 쪽은 자바스크립트로 그려서 서버가 내주는 원본에 글이 ${entryTextLength}자뿐입니다. ` +
+        `그래서 위 점수가 낮게 나왔습니다. 그런데 사이트맵에 적힌 ${sitemapCount.toLocaleString()}개 주소 중 ` +
+        `${pages.length}장을 열어 보니 ${solid.length}장은 서버가 글을 그대로 내주고 있었습니다` +
+        `(가장 많은 쪽이 ${most.textLength.toLocaleString()}자). ` +
+        `AI 로봇은 사이트맵을 타고 그 쪽들을 읽습니다. ` +
+        `그러니 «서버 렌더링을 통째로 고쳐야 한다»는 뜻이 아닙니다 — 이 화면 한 장의 이야기입니다.`,
+    };
+  }
+
+  // ② 반대로 이 화면은 멀쩡한데 안쪽이 다 비어 있는 경우.
+  if (!entryJsOnly && solid.length === 0) {
+    return {
+      tone: "danger",
+      title: `이 화면 말고 안쪽 ${pages.length}장이 로봇에게 비어 있습니다`,
+      body:
+        `입력하신 쪽은 글이 보입니다. 그런데 사이트맵에서 골라 열어 본 ${pages.length}장은 ` +
+        `모두 자바스크립트로 그려서 서버 원본이 비어 있습니다. ` +
+        `내용이 실제로 담긴 쪽들이 AI에게 안 보이는 상태라, 이쪽을 먼저 고치는 편이 이득이 큽니다.`,
+    };
+  }
+
+  return null;
 }

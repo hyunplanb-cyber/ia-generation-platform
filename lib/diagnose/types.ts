@@ -65,6 +65,41 @@ export type Headline = {
   body: string;
 } | null;
 
+/** 사이트맵에서 골라 함께 훑어본 쪽 한 장. */
+export type SitePage = {
+  url: string;
+  /** 화면에 보여 줄 짧은 주소 — 앞의 도메인을 뺀 나머지. */
+  path: string;
+  total: number;
+  aeo: number;
+  geo: number;
+  /** 「내용」 갈래 점수. 어느 쪽이 AI에게 인용될 만한지는 이 값이 가른다. */
+  content: number;
+  jsRendered: boolean;
+  /** 서버가 내준 원본에 글이 몇 자였나. «비어 있다»는 말의 근거다. */
+  textLength: number;
+};
+
+/**
+ * 사이트 훑기 — 사이트맵에서 몇 장을 골라 함께 본 결과.
+ *
+ * ⛔ 이것이 있어야 하는 이유를 지우지 마라.
+ *    한 장만 재면 「이 화면이 비어 있다」를 「이 사이트가 비어 있다」로 잘못 말하게 된다.
+ *    2026-09-01 에 실제로 그 잘못을 저질렀다 — 홈만 자바스크립트로 그리고, 사이트맵에 적힌
+ *    779장은 서버가 글을 3,800자씩 그대로 내주는 사이트였는데 「무엇을 넣어도 로봇에게
+ *    안 갑니다」라고 처방했다. 손님이 멀쩡한 것을 뜯어고칠 뻔했다.
+ */
+export type SiteScan = {
+  /** 사이트맵에 적힌 주소 수. 사이트맵이 없으면 null. */
+  sitemapCount: number | null;
+  /** 실제로 열어 본 쪽들. */
+  pages: SitePage[];
+  /** 그중 «내용»이 가장 잘 보이는 쪽. AI가 이 사이트를 인용한다면 여기다. */
+  best: SitePage | null;
+  /** 사이트 관점에서 먼저 말해야 할 한 가지. 한 장만 봐서는 알 수 없는 것. */
+  headline: Headline;
+};
+
 export type DiagnoseResult = {
   url: string;
   checkedAt: string;
@@ -84,6 +119,11 @@ export type DiagnoseResult = {
    *   내용 — 그 쪽에 무엇을 썼는가. 홈 화면은 대개 낮게 나온다.
    */
   kinds: Record<"기술" | "내용", { got: number; max: number; score: number }>;
+  /**
+   * 사이트맵을 타고 다른 쪽들도 함께 본 결과. 사이트맵이 없거나 훑지 않았으면 없다.
+   * 위의 점수는 «입력한 그 한 장»의 것이고, 이것은 «사이트»의 것이다. 둘을 섞지 마라.
+   */
+  site?: SiteScan;
 };
 
 export const AXIS_LABEL: Record<Axis, string> = {
