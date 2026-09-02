@@ -1056,6 +1056,8 @@ body > main,body > .main{flex:1 0 auto;min-height:0}
 }
 .leafnav > b{font-size:var(--fs-sub);font-weight:var(--fw-th);color:var(--muted);letter-spacing:.04em}
 
+
+
 /* ── 예시 사진 ──────────────────────────────────────────────
    이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
    ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */

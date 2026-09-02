@@ -121,7 +121,7 @@ P['AT0103'] = (ctx) => {
 
   const body = `${leafHd(ctx, `${esc(TODAY.label)} ${지금} 기준 · 예약 시간이 지났는데 체크가 없는 아이를 맨 위로 올립니다`)}
 
-<div class="g3">
+<div class="g3 mt6">
   ${stat('미등원', TODAY_STAT.미등원, { ico: '⚠️', u: '마리', cls: 'dan', d: '9시 예약인데 아직 체크 안 됨' })}
   ${stat('가장 오래 기다린 아이', 걸린(Math.max(...미등원.map((d) => 분(지금) - 분(d.want)))), { ico: '⏱', d: `예약 ${esc(미등원[0].want)} · 지금 ${지금}` })}
   ${stat('오늘 예약', TODAY_STAT.예약, { ico: '📋', u: '마리', d: `등원 ${TODAY_STAT.등원} · 결석 ${TODAY_STAT.결석} · 지각 ${TODAY_STAT.지각}` })}
@@ -400,7 +400,7 @@ P['AT0205'] = (ctx) => {
 
   const body = `${leafHd(ctx, `예약 시간보다 15분 넘게 늦게 체크하면 「지각」 배지가 저절로 붙습니다 — 지금 ${지금}`)}
 
-<div class="g3">
+<div class="g3 mt6">
   ${stat('지금 시각', 지금, { ico: '🕐', d: `${esc(TODAY.label)} 아침` })}
   ${stat('지금 누르면 지각', 늦은아이.length, { ico: '🟡', u: '마리', cls: 'warn', d: `예약 시간이 ${지금} 기준 15분 넘게 지난 아이` })}
   ${stat('아직 지각 아님', 아직아이.length, { ico: '🟢', u: '마리', cls: 'ok', d: 아직아이.length ? `${아직아이.map((d) => `${esc(d.nm)} ${esc(d.want)} 예약`).join(' · ')}` : '해당 없음' })}
@@ -413,7 +413,7 @@ ${banner('warn', '⏰', `<b>지각은 사람이 고르는 것이 아니라 «시
 
 ${card('눌러서 견줘 보세요', 미체크.map((d) => checkRow(d, { mode: 'in' })).join(''), { bdCls: 'pad0' })}
 
-<div class="g3 mt2">
+<div class="g3 mt6">
   ${stat('아직 안 온 아이', `<span data-untick>${미체크.length}</span>`, { ico: '⏳', u: '마리', d: '<span data-untick-msg>등원 체크를 기다리고 있어요</span>' })}
   ${stat('등원 완료', TODAY_STAT.등원, { ico: '✅', u: '마리', cls: 'ok', numAttr: ' data-done-n', d: `오늘 예약 ${TODAY_STAT.예약}마리 중` })}
   ${stat('지각으로 세는 기준', 15, { ico: '📏', u: '분', d: '예약 시각과 체크 시각의 차이' })}
