@@ -63,6 +63,83 @@
     t.classList.toggle('on');
   });
 
+  /* ── ✕ 가 달린 칩은 «지우는» 칩이다 · 하나만 고르는 묶음은 «하나만» 켜진다
+   *    (2026-09-02 사장님과 크롬으로 눌러 보다가 나왔다)
+   *
+   * ⛔ 무엇이 잘못돼 있었나
+   *   ① 화면 설명이 「칩 개별 해제」·「최근 검색어 개별 삭제」라고 약속해 두고,
+   *      ✕ 를 눌러도 칩이 «켜졌다 꺼졌다» 할 뿐 사라지지 않았다.
+   *      열두 팩에 ✕ 칩이 359개인데 지우는 코드가 한 곳도 없었다.
+   *   ② 하나만 고르는 자리(시·도 · 구·군 · 출결 · 평수 구간)에서 여러 개가 같이 켜졌다.
+   *      칩 하나만 켜지게 하는 장치가 「전체」가 든 묶음에만 걸려 있었기 때문이다.
+   *   그러면서 칩은 「그 조건만 풀었어요」·「그 지역으로 바꿨어요」라고 «말은» 했다.
+   *
+   * ⚠ 눌러 보는 검수기(check-반응)는 이걸 못 잡는다 — 반응으로 치는 넷 중 하나가
+   *   «토스트가 뜬다» 라서, 말만 하는 칩도 통과한다. 사람이 보고서야 안다(검수항목 G11).
+   *
+   * ⭐ 무엇이 「하나만 고르는 묶음」인지는 «마크업이 말해 준다» — 내가 화면마다 짐작해
+   *   적지 않는다. 그래야 새 화면이 늘어도 저절로 맞는다. 보는 것은 둘이다 —
+   *     · 처음에 딱 하나가 on 이고
+   *     · ✕ 가 붙어 있다면 «그 켜진 칩에만» 붙어 있다 (✕ 는 고른 것을 푸는 표시다)
+   *   칩마다 ✕ 가 다 붙어 있으면(SE0102 의 걸린 조건들) 여러 개 고르는 자리다.
+   *
+   * ⚠ «잡는 단계»가 중요하다 — 아래 on('.chip') 은 document 에서 거품 단계로 듣는다.
+   *   여기서 capture(true) 로 먼저 잡지 않으면, 내가 켠 것을 그쪽 toggle 이 되꺼 버린다. */
+  (function 칩손질() {
+    function 엑스단것(칩) { return 칩.getElementsByClassName('x')[0] || null; }
+
+    document.querySelectorAll('.chips').forEach(function (묶음) {
+      var 칩들 = Array.prototype.slice.call(묶음.getElementsByClassName('chip'));
+      if (칩들.length < 2) return;
+      if (묶음.querySelector('.chip[data-go]')) return;     // 어디로 가는 묶음은 고르는 자리가 아니다
+      if (묶음.hasAttribute('data-band-pick')) return;      // 제 손잡이가 따로 있는 묶음
+      var 켜진것 = 칩들.filter(function (c) { return c.classList.contains('on'); });
+      if (켜진것.length !== 1) return;
+      /* ✕ 가 «안 켜진 칩»에도 붙어 있으면 여러 개 고르는 자리다 */
+      if (칩들.some(function (c) { return 엑스단것(c) && !c.classList.contains('on'); })) return;
+      묶음.setAttribute('data-one', '');
+    });
+
+    document.addEventListener('click', function (e) {
+      var 과녁 = e.target;
+      if (!과녁 || !과녁.closest) return;
+      /* ① ✕ — 그 칩만 지운다 */
+      var 엑스 = 과녁.closest('.chip .x');
+      if (엑스) {
+        var 칩 = 엑스.closest('.chip');
+        var 말 = 칩 && 칩.getAttribute('data-toast');
+        e.preventDefault();
+        e.stopPropagation();
+        if (칩) 칩.remove();
+        if (말) toast(말);
+        return;
+      }
+
+
+      /* ② 하나만 고르는 묶음 */
+      var 이칩 = 과녁.closest('.chip');
+      if (!이칩) return;
+      if (이칩.dataset.go) return;                          // 이동하는 칩은 건드리지 않는다
+      if (이칩.classList.contains('is-off')) return;
+      if (이칩.closest('[data-band-pick]')) return;         // 제 임자가 있다
+      var 그묶음 = 이칩.closest('.chips[data-one]');
+      if (!그묶음) return;
+      e.preventDefault();
+      e.stopPropagation();
+      /* ✕ 는 «지금 골라진 것»에 붙는 표시다. 고른 것이 바뀌면 같이 따라간다 —
+         안 옮기면 옛 칩에 ✕ 가 남아 「이게 골라진 것」처럼 보인다. */
+      var 옛엑스 = null;
+      Array.prototype.forEach.call(그묶음.getElementsByClassName('chip'), function (c) {
+        var x = 엑스단것(c);
+        if (x && c !== 이칩) 옛엑스 = x;
+        c.classList.toggle('on', c === 이칩);
+      });
+      if (옛엑스 && !엑스단것(이칩)) 이칩.appendChild(옛엑스);
+      var 말 = 이칩.getAttribute('data-toast');
+      if (말) toast(말);
+    }, true);
+  })();
+
   /* 찜하기 */
   on('.heart', 'click', function (e, t) {
     e.preventDefault();
@@ -288,25 +365,18 @@
   var 구역 = document.querySelector('[data-recent]');
   if (!구역) return;
 
-  function 남았나() {
-    var n = 구역.querySelectorAll('[data-recent-x]').length;
-    if (n === 0) 구역.hidden = true;
-  }
-
   document.addEventListener('click', function (e) {
     if (!e.target || !e.target.closest) return;
 
     var 전부 = e.target.closest('[data-recent-clear]');
     if (전부) {
-      구역.querySelectorAll('[data-recent-x]').forEach(function (c) { c.remove(); });
+      /* ⛔ 2026-09-02: 여기서 «낱개 ✕»가 달린 칩만 지우고 있었다. 이 팩의 최근
+         검색어(HO0402)는 ✕ 없이 칩만 늘어놓아서 한 개도 안 지워졌다 —
+         구역을 감추는 것으로 겨우 가려지고 있었다. 칩을 지운다.
+         낱개로 지우는 장치는 이 팩에 없으므로 그 코드도 같이 뺐다. */
+      구역.querySelectorAll('.chip').forEach(function (c) { c.remove(); });
       구역.hidden = true;
       return;
-    }
-
-    var 하나 = e.target.closest('[data-recent-x]');
-    if (하나 && 구역.contains(하나)) {
-      하나.remove();
-      남았나();
     }
   });
 })();

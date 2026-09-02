@@ -59,6 +59,10 @@
 
   /* 칩 필터 */
   on('.chip', 'click', function (e, t) {
+    /* ⛔ 2026-09-02: 평수 구간 칩(HO-01)은 «제 손잡이»가 따로 있다(아래 평수구간()).
+       둘 다 돌면 그쪽이 켠 것을 여기 toggle 이 곧바로 다시 끈다 — 눌러도 아무것도 안 켜진다.
+       눈으로 보다가 잡았다. 제 임자가 있는 묶음은 건드리지 않는다. */
+    if (t.closest('[data-band-pick]')) return;
     if (t.dataset.go) { location.href = t.dataset.go; return; }
     if (t.classList.contains('is-off')) return;
     /* 「전체」가 든 묶음은 하나만 골라진다 — 「전체」와 「텐트」가 같이 켜지면 안 된다.
@@ -66,7 +70,76 @@
     var 묶음 = t.closest('.chips');
     var 한개만 = 묶음 && Array.prototype.some.call(묶음.querySelectorAll('.chip'), function (c) {
       return /^전체(\s*보기)?$/.test((c.textContent || '').trim());
-    }) && !묶음.querySelector('.chip .x');
+    });
+
+  /* ── ✕ 가 달린 칩은 «지우는» 칩이다 · 하나만 고르는 묶음은 «하나만» 켜진다
+   *    (2026-09-02 사장님과 크롬으로 눌러 보다가 나왔다)
+   *
+   * ⛔ 무엇이 잘못돼 있었나
+   *   ① 화면 설명이 「칩 개별 해제」·「최근 검색어 개별 삭제」라고 약속해 두고,
+   *      ✕ 를 눌러도 칩이 «켜졌다 꺼졌다» 할 뿐 사라지지 않았다.
+   *      열두 팩에 ✕ 칩이 359개인데 지우는 코드가 한 곳도 없었다.
+   *   ② 하나만 고르는 자리(시·도 · 구·군 · 출결 · 평수 구간)에서 여러 개가 같이 켜졌다.
+   *      칩 하나만 켜지게 하는 장치가 「전체」가 든 묶음에만 걸려 있었기 때문이다.
+   *   그러면서 칩은 「그 조건만 풀었어요」·「그 지역으로 바꿨어요」라고 «말은» 했다.
+   *
+   * ⚠ 눌러 보는 검수기(check-반응)는 이걸 못 잡는다 — 반응으로 치는 넷 중 하나가
+   *   «토스트가 뜬다» 라서, 말만 하는 칩도 통과한다. 사람이 보고서야 안다(검수항목 G11).
+   *
+   * ⭐ 무엇이 「하나만 고르는 묶음」인지는 «마크업이 말해 준다» — 내가 화면마다 짐작해
+   *   적지 않는다. 그래야 새 화면이 늘어도 저절로 맞는다. 보는 것은 둘이다 —
+   *     · 처음에 딱 하나가 on 이고
+   *     · ✕ 가 붙어 있다면 «그 켜진 칩에만» 붙어 있다 (✕ 는 고른 것을 푸는 표시다)
+   *   칩마다 ✕ 가 다 붙어 있으면(SE0102 의 걸린 조건들) 여러 개 고르는 자리다.
+   *
+   * ⚠ «잡는 단계»가 중요하다 — 아래 on('.chip') 은 document 에서 거품 단계로 듣는다.
+   *   여기서 capture(true) 로 먼저 잡지 않으면, 내가 켠 것을 그쪽 toggle 이 되꺼 버린다. */
+  (function 칩손질() {
+    function 엑스단것(칩) { return 칩.getElementsByClassName('x')[0] || null; }
+
+    document.querySelectorAll('.chips').forEach(function (묶음) {
+      var 칩들 = Array.prototype.slice.call(묶음.getElementsByClassName('chip'));
+      if (칩들.length < 2) return;
+      if (묶음.querySelector('.chip[data-go]')) return;     // 어디로 가는 묶음은 고르는 자리가 아니다
+      if (묶음.hasAttribute('data-band-pick')) return;      // 제 손잡이가 따로 있는 묶음
+      var 켜진것 = 칩들.filter(function (c) { return c.classList.contains('on'); });
+      if (켜진것.length !== 1) return;
+      /* ✕ 가 «안 켜진 칩»에도 붙어 있으면 여러 개 고르는 자리다 */
+      if (칩들.some(function (c) { return 엑스단것(c) && !c.classList.contains('on'); })) return;
+      묶음.setAttribute('data-one', '');
+    });
+
+    document.addEventListener('click', function (e) {
+      var 과녁 = e.target;
+      if (!과녁 || !과녁.closest) return;
+
+      /* ② 하나만 고르는 묶음 */
+      var 이칩 = 과녁.closest('.chip');
+      if (!이칩) return;
+      if (이칩.dataset.go) return;                          // 이동하는 칩은 건드리지 않는다
+      if (이칩.classList.contains('is-off')) return;
+      if (이칩.closest('[data-band-pick]')) return;         // 제 임자가 있다
+      var 그묶음 = 이칩.closest('.chips[data-one]');
+      if (!그묶음) return;
+      e.preventDefault();
+      e.stopPropagation();
+      /* ✕ 는 «지금 골라진 것»에 붙는 표시다. 고른 것이 바뀌면 같이 따라간다 —
+         안 옮기면 옛 칩에 ✕ 가 남아 「이게 골라진 것」처럼 보인다. */
+      var 옛엑스 = null;
+      Array.prototype.forEach.call(그묶음.getElementsByClassName('chip'), function (c) {
+        var x = 엑스단것(c);
+        if (x && c !== 이칩) 옛엑스 = x;
+        c.classList.toggle('on', c === 이칩);
+      });
+      if (옛엑스 && !엑스단것(이칩)) 이칩.appendChild(옛엑스);
+      var 말 = 이칩.getAttribute('data-toast');
+      if (말) toast(말);
+    }, true);
+  })();
+    /* ⛔ 2026-09-02: 여기 «&& !묶음.querySelector('.chip .x')» 가 붙어 있었다.
+       ✕ 가 달린 칩(여러 개 고르는 묶음)을 면제하려던 것인데, 이 팩에는 그런 칩이
+       한 개도 없다 — 「전체」가 든 묶음 셋 다 하나만 고르는 자리다.
+       늘 참인 조건은 읽는 사람을 헷갈리게만 한다. 뺀다. */
     if (한개만) {
       묶음.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); });
       t.classList.add('on');
@@ -409,7 +482,12 @@
     });
     /* 막대도 «끝낸 만큼»만 채운다 — 4단계에 서 있으면 3칸(50%)이 찬 것이다.
        단계 띠의 칠해진 줄과 막대가 같은 자리에서 끝나야 안 헷갈린다. */
-    var fill = wz.querySelector('.progress .fill');
+    /* ⛔ 2026-09-02: 여기서 «.progress .fill» 만 찾고 있었다. 그런데 이 팩의 화면은
+       «.bar > i» 로 구워졌고 base.css 도 .bar i 만 칠한다 — 셋 중 둘이 어긋나 있었다.
+       그래서 단계는 넘어가는데 막대만 0% 에 붙박여 있었다(ES0101).
+       ⚠ 눌러 보는 검수기(check-반응)는 이걸 못 잡는다 — 단추가 «다른 것»은 다 바꾸니
+         「죽은 UI」가 아니다. 굽는 판마다 마크업이 갈리므로 둘 다 받는다. */
+    var fill = wz.querySelector('.bar > i, .progress .fill');
     if (fill) fill.style.width = Math.round((now - 1) / total * 100) + '%';
     var label = wz.querySelector('[data-step-label]');
     if (label) label.textContent = total + '단계 중 ' + now + '번째';
@@ -487,23 +565,123 @@
     });
   });
 
-  /* ---------- ★ ES-01 견적 3단계 — 고른 공간에 따라 미리보기 금액이 바뀐다.
-     아직 4·5단계(마감 등급·착공 시기)를 안 물은 시점이라, 확정 견적(ESTIMATE_BASE)보다
-     낮은 범위 안에서만 움직인다 — 공간을 다 골라도 확정액을 넘어서면 안 된다. ---------- */
-  on('[data-space-pick] input[type=checkbox]', 'change', function () {
+  /* ---------- ★ ES-01 오른쪽 «예상 금액» — 고른 것 넷을 다 본다. (2026-09-02)
+   *
+   * ⛔ 여기 있던 것은 «고른 공간 개수»만 셌다. 그래서 눈으로 보다가 이렇게 나왔다 —
+   *      평수     32평 → 45평        요약은 따라오는데
+   *      공사 범위 전체 시공 → 부분 시공  요약은 따라오는데
+   *      마감 등급 고급 → 프리미엄      요약은 따라오는데
+   *      예상 금액 24,000,000원 ~ 31,000,000원   ← 한 푼도 안 움직였다
+   *   바로 아래에 「고를 때마다 이 숫자가 바로 바뀌어요」라고 적어 두고서다.
+   *   화면이 제 입으로 한 약속을 스스로 어기는 것이라, 손님이 제일 먼저 알아챈다.
+   *
+   * ⚠ 눌러 보는 검수기(check-반응)는 이걸 못 잡는다 — 체크박스를 누르면 «다른 것»은
+   *   바뀌므로 「죽은 UI」가 아니다. 사람이 숫자를 보고서야 안다(검수항목 E2).
+   *
+   * 셈은 화면이 이미 쓰던 값에서 나왔다 — 기본값(32평·전체 시공·고급·공간 3개)에서
+   * 24,000,000 ~ 31,000,000 이 그대로 나오게 맞췄다. 그래야 견본 첫 화면이 안 바뀐다.
+   *
+   * ⚠ 옛 주석은 「확정 견적(ES0201)보다 낮은 범위에서만 움직인다」고 했는데, 그건
+   *   «마감 등급을 아직 안 물었을 때» 이야기다. 이제 등급까지 보므로 그 전제가 없다.
+   *   ES0201 은 32평 기준으로 굳어 있는 견본 한 장이라 조건이 다르면 달라도 맞다. ---------- */
+  var 바탕최소 = 24000000, 바탕최대 = 31000000;    // 32평 · 전체 시공 · 고급 · 공간 3개
+  var 범위배 = { "전체 시공": 1, "부분 시공": 0.62 };
+  var 등급배 = { "기본": 0.85, "고급": 1, "프리미엄": 1.22 };
+
+  function 고른값(이름) {
+    var el = document.querySelector('[data-field="' + 이름 + '"]:checked, select[data-field="' + 이름 + '"]');
+    return el ? el.value : "";
+  }
+
+  function 견적다시() {
+    var priceEl = document.querySelector('[data-space-price]');
+    if (!priceEl) return;
+    var 평 = Number((document.querySelector('[data-pyeong]') || {}).value) || 32;
+    var 공간 = document.querySelectorAll('[data-space-pick] input[type=checkbox]:checked').length;
+    var 배 = (평 / 32) *
+             (범위배[고른값("공사 범위")] || 1) *
+             (등급배[고른값("마감 등급")] || 1) *
+             (1 + (공간 - 3) * 0.06);
+    /* 공간을 하나도 안 고르면 «아직 못 잰다» — 0원이라고 말하지 않는다 */
+    if (!공간) { priceEl.textContent = "공간을 고르면 계산해요"; return; }
+    /* ⛔ 2026-09-02: 옛 코드는 «만원()» 을 불렀는데 이 파일에 그런 함수가 없다.
+       그래서 공간을 눌러도 «던지고 죽어» 숫자가 한 번도 안 움직였다 —
+       화면은 멀쩡히 떠 있고 콘솔만 조용히 붉었다. 이 팩의 돈 찍는 함수는 돈() 이다(341줄).
+       ⚠ 없는 함수를 부르는 것은 check-헛선택자 도 못 잡는다 — 그건 «선택자»만 본다. */
+    priceEl.textContent = 돈(Math.round(바탕최소 * 배 / 100000) * 100000) + " ~ " +
+                          돈(Math.round(바탕최대 * 배 / 100000) * 100000);
+  }
+
+  /* 고른 공간 이름 목록은 따로 — 금액과 함께 움직인다 */
+  function 공간목록다시() {
     var pick = document.querySelector('[data-space-pick]');
+    if (!pick) return;
     var checked = pick.querySelectorAll('input[type=checkbox]:checked');
     var names = Array.prototype.map.call(checked, function (c) { return c.dataset.space; });
     var listEl = document.querySelector('[data-space-list]');
-    if (listEl) listEl.textContent = names.length ? names.join(', ') : '아직 고르지 않음';
-    var priceEl = document.querySelector('[data-space-price]');
-    if (priceEl) {
-      var n = names.length;
-      var min = 19500000 + n * 1500000;
-      var max = 25600000 + n * 1800000;
-      priceEl.textContent = 만원(min) + ' ~ ' + 만원(max);
-    }
+    if (listEl) listEl.textContent = names.length ? names.join(", ") : "아직 고르지 않음";
+  }
+
+  /* 넷 중 무엇이 바뀌어도 다시 센다 — 하나라도 빠지면 그것만 안 움직이는 그 사고가 또 난다 */
+  document.addEventListener("change", function (e) {
+    if (!e.target || !e.target.closest) return;
+    if (!e.target.closest('[data-space-pick], [data-field]')) return;
+    공간목록다시();
+    견적다시();
   });
+  document.addEventListener("input", function (e) {
+    if (e.target && e.target.closest && e.target.closest('[data-pyeong]')) 견적다시();
+  });
+
+  /* ---------- ★ HO-01 평수 구간 칩 — 하나만 켜지고, 값이 따라오고, 견적으로 들고 간다.
+   *              (2026-09-02 사장님과 눈으로 훑다가 나왔다)
+   *
+   * ⛔ 셋이 한꺼번에 잘못돼 있었다:
+   *   ① 30평대와 40평대 이상이 «같이» 켜졌다 — 평수는 하나만 고르는 자리다.
+   *      칩 하나만 켜지게 하는 장치가 「전체」가 든 묶음에만 걸려 있었는데, 이 묶음엔 없다.
+   *   ② 40평대를 눌러도 아래 「30평대 … 3,200만원 ~ 4,600만원」이 그대로였다.
+   *   ③ 「1분 예상 견적」으로 넘어가도 평수가 안 넘어갔다 — 견적 화면은 늘
+   *      「홈에서 30평대를 고르고 오셨어요 · 32평」이었다. app.js 의 홈에서온평수() 는
+   *      ?pyeong=&band= 을 기다리는데 링크에 그것이 없었다.
+   *
+   * ⚠ 칩은 「그 평수 기준으로 다시 계산했어요」라고 «말만» 하고 있었다.
+   *   눌러 보는 검수기는 토스트가 뜨면 «반응»으로 세므로 이걸 못 잡는다.
+   *   말한 대로 실제로 다시 계산하게 만드는 것이 고침이다. ---------- */
+  (function 평수구간() {
+    var 묶음 = document.querySelector('[data-band-pick]');
+    if (!묶음) return;
+    var 이름칸 = document.querySelector('[data-band-name]');
+    var 값칸 = document.querySelector('[data-band-price-out]');
+
+    function 그리기(칩) {
+      묶음.querySelectorAll('.chip').forEach(function (c) { c.classList.toggle('on', c === 칩); });
+      if (이름칸) 이름칸.textContent = 칩.dataset.band || '';
+      if (값칸) 값칸.textContent = 칩.dataset.bandPrice || '';
+      /* 견적으로 가는 손잡이에 «고른 평수»를 실어 둔다 — 눌렀을 때 그대로 넘어간다 */
+      document.querySelectorAll('[data-band-go]').forEach(function (a) {
+        var 길 = (a.getAttribute('href') || '').split('?')[0];
+        a.setAttribute('href', 길 + '?pyeong=' + encodeURIComponent(칩.dataset.bandPyeong || '') +
+                               '&band=' + encodeURIComponent(칩.dataset.band || ''));
+      });
+      toast('그 평수 기준으로 다시 계산했어요');
+    }
+
+    묶음.addEventListener('click', function (e) {
+      var 칩 = e.target && e.target.closest ? e.target.closest('.chip') : null;
+      if (칩 && 묶음.contains(칩)) 그리기(칩);
+    });
+    /* 화면이 열릴 때도 한 번 — 마크업에 켜 둔 칩의 값이 손잡이에 실려 있어야 한다 */
+    var 켜진것 = 묶음.querySelector('.chip.on') || 묶음.querySelector('.chip');
+    if (켜진것) {
+      if (이름칸) 이름칸.textContent = 켜진것.dataset.band || 이름칸.textContent;
+      if (값칸) 값칸.textContent = 켜진것.dataset.bandPrice || 값칸.textContent;
+      document.querySelectorAll('[data-band-go]').forEach(function (a) {
+        var 길 = (a.getAttribute('href') || '').split('?')[0];
+        a.setAttribute('href', 길 + '?pyeong=' + encodeURIComponent(켜진것.dataset.bandPyeong || '') +
+                               '&band=' + encodeURIComponent(켜진것.dataset.band || ''));
+      });
+    }
+  })();
 
 
 })();
