@@ -9,7 +9,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { deleteContentAction } from "./actions";
-import { 상태보기 } from "@/lib/sns-status";
+import { 상태보기, 영상번호 } from "@/lib/sns-status";
 
 export function SnsListRow({
   편,
@@ -47,6 +47,11 @@ export function SnsListRow({
       >
         <div className="flex flex-wrap items-center gap-2">
           <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${상태.반}`}>{상태.글}</span>
+          {/* ⭐ 영상 번호 (2026-09-02 사장님: 「영상 번호 검수기 리스트에서도 확인할 수 있게」)
+              사장님과 제가 편을 부르는 이름이 이것이다. 번호가 없는 옛 편은 이름표를 그대로 둔다. */}
+          <span className="rounded-full bg-foreground px-2.5 py-0.5 font-mono text-xs font-bold text-surface">
+            {영상번호(편.slug) ? `영상 ${영상번호(편.slug)}` : 편.slug}
+          </span>
           <span className="font-mono text-xs text-muted-foreground">{편.batch}</span>
           {편.slotLabel && <span className="text-xs font-semibold text-primary-on-soft">{편.slotLabel}</span>}
           {막는것 > 0 && (
@@ -73,7 +78,7 @@ export function SnsListRow({
             상태만 「등록 중」으로 두면 아무 일도 안 일어나는데 일어나는 중인 것처럼 보인다.
             사장님이 그것 때문에 「멈춘 것 같다」고 하셨다. */}
         {편.watcherError && (
-          <p className="mt-2 rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-xs leading-relaxed text-rose-900 [word-break:keep-all]">
+          <p className="mt-2 rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 whitespace-pre-line text-xs leading-relaxed text-rose-900 [word-break:keep-all]">
             <b>⛔ 지킴이가 여기서 막혔습니다 — 그래서 안 올라갑니다.</b>
             <br />
             {편.watcherError}

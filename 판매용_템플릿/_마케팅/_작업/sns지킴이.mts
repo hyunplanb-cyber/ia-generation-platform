@@ -143,7 +143,41 @@ function 부를것(명령: string, 인자: string[]): [string, string[]] {
   return [명령, 인자];
 }
 
-/** 프로젝트 뿌리에서 명령을 돌린다. 실패하면 그대로 던진다 — 조용히 넘어가지 않는다. */
+/** 검사기가 뱉은 글에서 «사람이 읽을 토막»만 골라낸다.
+ *
+ * ⛔ 왜 있나 (2026-09-01 사장님: 「제작중에 막혔어」)
+ *   자막검사는 걸린 까닭을 stdout 에 찍고 1 로 나간다. 그런데 execFileSync 가 던지는
+ *   Error 의 message 는 «Command failed: C:\Program Files\nodejs\node.exe --import tsx …»
+ *   한 줄뿐이다. 까닭은 e.stdout 에 있는데 아무도 안 봤다.
+ *   그래서 검수 화면의 빨간 상자에는 윈도우 명령줄만 찍혔고, 사장님 자리에서는
+ *   「제작중인데 까닭을 모르겠다」와 똑같았다. 자리는 있는데 «내용»이 없던 것이다.
+ *
+ * ⚠ 통째로 넣지 않는다 — watcherError 는 900자에서 잘린다.
+ *   검사기들은 걸린 것을 ❌ 로 열고 그 아래에 「무엇 → 대신 · 까닭」을 들여 쓴다.
+ *   그 토막만 고르면 읽을 만해진다. 표가 없으면 마지막 몇 줄을 준다.
+ */
+function 걸린까닭(나온것: string): string {
+  const 줄 = 나온것.split(/\r?\n/).map((x) => x.replace(/\s+$/, ""));
+  const 고른것: string[] = [];
+  for (let i = 0; i < 줄.length; i += 1) {
+    if (!/[❌⛔]|까닭:|걸린 것|Error:/.test(줄[i])) continue;
+    고른것.push(줄[i].trim());
+    /* 바로 아래 «들여 쓴» 줄은 그 항목의 설명이다 — 같이 가져간다 */
+    for (let j = i + 1; j < 줄.length; j += 1) {
+      if (!줄[j].trim() || !/^\s/.test(줄[j])) break;
+      고른것.push(줄[j].trim());
+      i = j;
+    }
+  }
+  const 쓸것 = 고른것.length ? 고른것 : 줄.filter((x) => x.trim()).slice(-10);
+  const 낸것 = 쓸것.join("\n");
+  return 낸것.length > 700 ? 낸것.slice(0, 700) + " …(줄임)" : 낸것;
+}
+
+/** 프로젝트 뿌리에서 명령을 돌린다. 실패하면 그대로 던진다 — 조용히 넘어가지 않는다.
+ *
+ * ⭐ 던질 때 «검사기가 한 말»을 담는다. 한바퀴가 이 message 를 그대로 watcherError 에
+ *   적고, 그게 검수 화면의 빨간 상자에 뜬다. 담지 않으면 자리만 있고 까닭은 없다. */
 function 돌리기(설명: string, 명령: string, 인자: string[]) {
   말(`  · ${설명}`);
   if (시늉) return "(시늉)";
@@ -151,7 +185,25 @@ function 돌리기(설명: string, 명령: string, 인자: string[]) {
      작업 스케줄러가 부를 때는 셸이 없어 `spawnSync npx ENOENT` 로 죽는다.
      2026-08-18 에 스케줄러로 옮기다 실제로 걸렸다 — shell 을 붙여 셸이 찾게 한다. */
   const [실행, 값] = 부를것(명령, 인자);
-  return execFileSync(실행, 값, { cwd: 뿌리, encoding: "utf8", maxBuffer: 1 << 26 });
+  try {
+    return execFileSync(실행, 값, { cwd: 뿌리, encoding: "utf8", maxBuffer: 1 << 26 });
+  } catch (e) {
+    const 뱉은것 = (["stdout", "stderr"] as const)
+      .map((k) => {
+        const v = (e as Record<string, unknown>)[k];
+        return typeof v === "string" ? v : "";
+      })
+      .join("\n");
+    /* 창에도 그대로 흘려 준다 — 터미널에서 보는 사람은 전문을 봐야 한다 */
+    if (뱉은것.trim()) console.log(뱉은것.trimEnd());
+    const 까닭 = 걸린까닭(뱉은것);
+    const 값나감 = (e as { status?: number }).status;
+    throw new Error(
+      까닭
+        ? `${설명} — 여기서 걸렸습니다.\n${까닭}`
+        : `${설명} — ${값나감 ?? "?"} 로 끝났는데 아무 말도 안 남겼습니다. 창에서 한 번 돌려 봐 주세요.`,
+    );
+  }
 }
 
 /** 파일 이름에 못 쓰는 글자를 뺀다. */
@@ -433,6 +485,34 @@ async function 사라진것확인() {
   말("    ↳ 다시 올리려면 검수기에서 그 편을 «승인»으로 되돌려 주세요.");
 }
 
+/** 말투 파일(Output style)의 본보기를 사장님 글로 다시 쓴다.
+ *
+ * ⛔ 왜 여기서 도나 (2026-09-02 사장님: 「자막 내용 SNS 말투 파일 본보기로 넣어줘 —
+ *   이건 영상 자막 내가 수정 할 때마다 업데이트 되도록 해주고」)
+ *
+ *   전에는 주간 루틴(weekly-sns-content)에서만 돌았다. 그러면 사장님이 오늘 고치신 말투가
+ *   다음 주 영상을 만들 때까지 본보기에 안 들어간다 — 그 사이에 내가 쓰는 자막은
+ *   «지난주 말투»를 보고 쓴 것이 된다. 고치신 것이 바로 다음 편에 먹어야 뜻이 있다.
+ *
+ *   사장님이 자막을 고치고 「검토 완료」를 누르시면 이 지킴이가 집어 간다. 바로 그 자리다.
+ *
+ * ⚠ 여기서 죽으면 안 된다. 말투 파일은 «곁다리»고, 영상을 굽고 올리는 일이 본일이다.
+ *   그래서 던지지 않고 «남길경고»로 적는다 — 화면에 남지만 다음으로는 간다.
+ *   ⛔ 조용히 넘어가지는 않는다. 아무 데도 안 남기면 몇 주 뒤에 «묵은 본보기»를 보고
+ *      쓰면서도 모른다. 그것이 8/25·8/26 에 두 번 겪은 그 사고다. */
+async function 말투다시쓰기() {
+  if (시늉) { 말("  · (시늉) 말투 파일 다시 쓰기"); return; }
+  try {
+    const 나온것 = 돌리기("말투 파일 다시 쓰기", "npx", ["tsx", join(뿌리, "말투갱신.mts")]);
+    const 첫줄 = String(나온것).split(String.fromCharCode(10)).find((l) => l.includes("사장님 글"));
+    if (첫줄) 말(`    ${첫줄.trim()}`);
+  } catch (e) {
+    const 까닭 = e instanceof Error ? e.message : String(e);
+    말(`  ⚠ 말투 파일을 못 고쳤습니다 — 영상 일은 그대로 갑니다.`);
+    남길경고 = `말투 파일(Output style)을 못 고쳤습니다. 다음 영상이 옛 본보기를 보고 쓰입니다 — ${까닭}`.slice(0, 900);
+  }
+}
+
 async function 한바퀴() {
   const 할것 = await db.select().from(snsContent).where(inArray(snsContent.status, ["approved", "final"]));
   /* ⚠ 사라진 것 확인은 «올릴 게 없어도» 돈다.
@@ -475,6 +555,16 @@ async function 한바퀴() {
       }
     }
   }
+
+  /* ⭐ 사장님 글이 방금 DB 로 들어왔다 — 본보기를 지금 다시 쓴다 (2026-09-02).
+     한 편마다가 아니라 «바퀴 끝에 한 번»이다. 말투갱신은 편 하나가 아니라
+     올린 것 전부를 다시 세므로, 편마다 부르면 같은 일을 열 번 한다.
+     ⚠ 이 자리는 «할 일이 있었을 때»만 지난다(위에서 없으면 이미 돌아갔다).
+        그래서 30초마다 헛돌지 않는다. */
+  남길경고 = null;
+  await 말투다시쓰기();
+  if (남길경고) 말(`  ⚠ ${남길경고}`);
+
   return true;
 }
 

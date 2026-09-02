@@ -41,6 +41,23 @@ const 덮어쓰기 = process.argv.includes("--덮어쓰기");
    사장님이 검수 화면에서 글을 다 쓰신 뒤, 내가 자막만 다시 써야 하는 자리가 있다.
    그때 통째로 덮어쓰면 사장님 글이 또 날아간다. 이 길로 가면 «칸»만 갈린다. */
 const 자막만 = process.argv.includes("--자막만");
+/* ⭐ «캡션만» 갈아 끼운다 (2026-09-02 사장님: 「자막내용 확인해서 캡션 내용 수정해주고」)
+ *
+ *   사장님이 검수 화면에서 «자막»을 고치시면 캡션(유튜브·인스타 설명글)이 그 자막과
+ *   어긋난다 — 캡션은 내가 처음 쓴 옛 이야기 그대로 남는다. 영상22 가 그랬다:
+ *   자막은 「AI는 색이 정해져 있다」로 바뀌었는데 캡션은 「매번 다르다」였다. 정반대다.
+ *
+ *   그런데 고칠 길이 없었다 — --자막만 은 캡션을 «안» 건드리고,
+ *   아무 깃발도 안 붙이면 사장님이 쓰신 제목·커버까지 통째로 덮어쓴다.
+ *   그래서 «캡션 두 칸만» 가는 길을 둔다. 칸도 영상도 제목도 안 건드린다.
+ *
+ * ⚠ 영상이 안 구워져 있어도 된다 — 캡션은 영상에서 나오는 값이 아니다.
+ *   그래서 「구운 영상이 없다」와 「묵은 것」 검사를 건너뛴다. */
+const 캡션만 = process.argv.includes("--캡션만");
+if (캡션만 && 자막만) {
+  console.error("--자막만 과 --캡션만 은 같이 못 씁니다. 하나만 고르세요.");
+  process.exit(2);
+}
 /* ⭐ 녹화본이 사라져 «본편을 다시 못 굽는» 편이 있다 (2026-08-20).
    그때는 커버와 캡션만 고치고 본편은 그대로 간다 — 「묵은 것」 검사가 본편을 막으면 안 된다.
    ⚠ 지킴이가 스스로 판단해 붙인다. 사람이 손으로 붙이는 깃발이 아니다. */
@@ -48,6 +65,7 @@ const 본편그대로 = process.argv.includes("--본편그대로");
 if (!대본길 || !회차) {
   console.error('쓰는 법: npx tsx 검수보내기.mts <대본.json> <회차> [올릴글.md]');
   console.error('예)      … 대본_펫유치원.json "4주차_2026-08-31"');
+  console.error("깃발: --자막만(칸만) · --캡션만(캡션 두 칸만) · --덮어쓰기(통째로)");
   process.exit(2);
 }
 
@@ -202,7 +220,7 @@ for (const 편 of 대본들) {
   }
 
   const 영상 = join(구운방, `${이름}_916.mp4`);
-  if (!existsSync(영상)) {
+  if (!캡션만 && !existsSync(영상)) {
     console.error(`\n❌ 구운 세로 영상이 없습니다: ${영상}`);
     console.error("   먼저 영상굽기.mjs 를 돌리세요 — 실제로 나갈 프레임을 뽑아야 합니다.");
     process.exit(1);
@@ -216,7 +234,7 @@ for (const 편 of 대본들) {
      보기만 해서는 옛 틀인지 알 수 없다. 그래서 «시각»으로 잡는다.
 
      ⚠ 세 가지가 이 순서로 새것이어야 한다: 틀 → 본편(세로·가로) → 인트로. */
-  {
+  if (!캡션만) {
     const 때 = (길: string) => (existsSync(길) ? statSync(길).mtimeMs : 0);
     const 언제 = (t: number) => new Date(t).toLocaleString("ko-KR");
     /* 틀마다 «무엇을» 굽는지가 다르다. 아무 틀에나 대면 애먼 것을 묵었다고 한다. */
@@ -250,7 +268,7 @@ for (const 편 of 대본들) {
   try {
     /* ── 프레임 뽑기 — 칸 «가운데» 를 집는다(경계는 넘어가는 순간이라 흐리다) ── */
     const 프레임: string[] = [];
-    for (let i = 0; i < 칸들.length; i += 1) {
+    for (let i = 0; !캡션만 && i < 칸들.length; i += 1) {
       const 때 = (i + 0.5) * 칸초;
       const 낼길 = join(임시, `${i + 1}.webp`);
       execFileSync("ffmpeg", [
@@ -260,13 +278,15 @@ for (const 편 of 대본들) {
       프레임.push(`data:image/webp;base64,${readFileSync(낼길).toString("base64")}`);
     }
     const 총KB = Math.round(프레임.reduce((s, p) => s + p.length, 0) / 1024 * 0.75);
-    console.log(`   프레임 ${프레임.length}장 (합쳐 ${총KB}KB)`);
+    if (프레임.length) console.log(`   프레임 ${프레임.length}장 (합쳐 ${총KB}KB)`);
 
     /* ── 커버 한 장 — 구운 인트로의 «1초 지점». 0초는 페이드가 걸려 흐릴 수 있다. ── */
     const 설정 = 인트로설정(이름);
     let 커버 = "";
     const 인트로영상 = 설정?.낼길;
-    if (!설정) {
+    if (캡션만) {
+      /* 캡션만 갈 때는 커버를 안 뜬다 — 쓰지도 않고, 인트로가 없어도 막히면 안 된다. */
+    } else if (!설정) {
       console.log("   ⚠ 인트로설정을 못 찾아 커버를 못 넣었습니다 — 상단 띠 글만 갑니다.");
     } else if (!인트로영상 || !existsSync(인트로영상)) {
       console.log(`   ⚠ 구운 인트로가 없어 커버를 못 넣었습니다: ${인트로영상 ?? "(낼길 없음)"}`);
@@ -308,6 +328,22 @@ for (const 편 of 대본들) {
       updatedAt: new Date(),
     };
 
+
+    /* ⭐ 인스타 캡션 길이를 잰다 (2026-09-02 사장님 지시).
+     *   「인스타는 모두 포함하여 500000자 이하로 쓰도록 해줘」
+     *   「저건 고정이고 캡션 내용을 매번 추가하잖아. 추가하는 내용까지 모두 포함해서」
+     *
+     *   ⭐ 재는 것은 «손님이 보는 그대로» 다 — 편마다 다른 머리글(캡션머리) + 고정 덩어리
+     *     (캡션_공통.md) + 해시태그 줄까지 이어 붙인 뒤의 길이다. 조각을 따로 세지 않는다.
+     *   ⚠ 참고로 인스타그램이 실제로 받는 길이는 2,200자다. 지금 우리 것은 800자 안팎이라
+     *     둘 다 넉넉히 지난다. 막는 값은 사장님이 정하신 500,000자다. */
+    const 인스타한도 = 500000;
+    if (값.captionInstagram.length > 인스타한도) {
+      console.error(`\n❌ ${이름}: 인스타 캡션이 ${값.captionInstagram.length}자입니다 — ${인스타한도}자 이하여야 합니다.`);
+      console.error(`   머리글 ${((편 as { 캡션머리?: string }).캡션머리 ?? "").trim().length}자 + 고정 덩어리와 해시태그를 다 합친 길이입니다.`);
+      process.exit(1);
+    }
+
     const [있나] = await db
       .select({ id: snsContent.id, status: snsContent.status, updatedAt: snsContent.updatedAt })
       .from(snsContent)
@@ -316,10 +352,20 @@ for (const 편 of 대본들) {
     let contentId: string;
     if (있나) {
       /* ⚠ 사장님이 이미 검토 완료로 두신 것을 «검토 대기»로 되돌리지 않는다.
-         루틴이 다시 돌면서 사장님 판단을 지우면 그게 제일 나쁘다. */
-      if (있나.status === "approved" || 있나.status === "published") {
+         루틴이 다시 돌면서 사장님 판단을 지우면 그게 제일 나쁘다.
+
+         ⭐ 다만 --캡션만 은 지나간다 (2026-09-02 사장님 지시).
+           「어제 올린 4개에 반영해 주고」 — 그중 영상19 는 이미 올라간 뒤였다.
+           캡션만 가는 길은 상태도 영상도 칸도 안 건드린다. 사장님 판단을 지울 것이
+           하나도 없으므로 막을 까닭이 없다.
+         ⚠ 이미 유튜브에 올라간 편은 «DB 의 캡션»만 바뀐다. 유튜브 설명란은 그대로다 —
+           거기까지 고치려면 유튜브에서 직접 손봐야 한다. 끝에 그 목록을 찍어 준다. */
+      if (!캡션만 && (있나.status === "approved" || 있나.status === "published")) {
         console.log(`   이미 「${있나.status}」 입니다 — 건드리지 않고 넘어갑니다.`);
         continue;
+      }
+      if (캡션만 && 있나.status === "published") {
+        console.log(`   ⚠ 이미 유튜브에 올라간 편입니다 — 검수기 캡션만 갑니다. 유튜브 설명란은 직접 고쳐 주세요.`);
       }
 
       /* ⛔⛔ 사장님이 검수 화면에서 «고친 뒤»면 덮어쓰지 않는다 (2026-08-17 사고).
@@ -340,14 +386,22 @@ for (const 편 of 대본들) {
         .orderBy(desc(snsCut.createdAt))
         .limit(1);
       const 손댔나 = 마지막칸 ? 있나.updatedAt.getTime() > 마지막칸.때.getTime() + 5000 : false;
-      if (손댔나 && !덮어쓰기 && !자막만) {
+      if (손댔나 && !덮어쓰기 && !자막만 && !캡션만) {
         console.log(`   ⛔ 검수 화면에서 고치신 흔적이 있습니다 (${있나.updatedAt.toISOString()}).`);
         console.log("      덮어쓰면 사장님이 쓰신 제목·커버·캡션·자막이 다 사라집니다. 멈춥니다.");
         console.log("      정말 덮어쓸 것이면 맨 뒤에 --덮어쓰기 를 붙이세요.");
         continue;
       }
 
-      if (자막만) {
+      if (캡션만) {
+        /* 캡션 두 칸만 간다. 제목·커버 글·올릴때·칸은 사장님 것 그대로 둔다. */
+        await db
+          .update(snsContent)
+          .set({ captionYoutube: 값.captionYoutube, captionInstagram: 값.captionInstagram,
+                 hashtags: 값.hashtags, updatedAt: new Date() })
+          .where(eq(snsContent.id, 있나.id));
+        console.log("   --캡션만 : 캡션 두 칸만 갈았습니다. 제목·커버·자막·칸은 그대로입니다.");
+      } else if (자막만) {
         /* 커버 그림은 «영상 쪽» 값이라 같이 갱신한다. 글(coverTitle)은 안 건드린다. */
         /* ⚠ 커버 그림이 없으면 «지우지» 않는다. 빈 값으로 덮으면 있던 그림이 사라진다. */
         await db
@@ -362,10 +416,20 @@ for (const 편 of 대본들) {
         console.log("   전에 보낸 것을 덮어썼습니다.");
       }
       contentId = 있나.id;
+    } else if (캡션만) {
+      /* 캡션만은 «이미 있는 것»을 고치는 길이다. 없는 것을 여기서 새로 만들면
+         영상도 칸도 없는 껍데기가 검수 목록에 뜬다. */
+      console.error(`   ⛔ ${이름} 이 이 회차(${회차})에 없습니다 — --캡션만 은 이미 있는 것만 고칩니다.`);
+      process.exit(1);
     } else {
       const [새것] = await db.insert(snsContent).values(값).returning({ id: snsContent.id });
       contentId = 새것.id;
       console.log("   새로 넣었습니다.");
+    }
+
+    if (캡션만) {
+      console.log(`   → https://www.caffeinecolor.com/admin/sns (또는 로컬 /admin/sns)`);
+      continue;   /* try 안이라 아래 finally 는 그대로 돈다 — 임시 폴더는 치워진다 */
     }
 
     /* ⭐ 지우고 새로 넣지 않는다 — ord 를 열쇠로 «고쳐 넣는다».
