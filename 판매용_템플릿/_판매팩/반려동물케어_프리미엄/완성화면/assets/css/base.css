@@ -24,16 +24,16 @@
   --pri-text:#2B4A8B;             /* 흰 배경 위 작은 글자용 — 네이비는 흰 바탕 대비 8.56 이라
                                       --primary 를 그대로 글자로 쓸 수 있다(코럴과 다른 점). */
   --accent:#CC4900;
-  --accent-text:#A84B28;          /* 흰 배경 위 글자용 — 가이드 accent-text */
+  --accent-text:#984424;          /* 흰 배경 위 글자용 — 가이드 accent-text */
   --accent-text-dark:#FF7A30;     /* 어두운 바탕 글자용 — 가이드 accent-text-dark */
   --bg:#F0EFEB;
   --surface:#FFFFFF;
   --text:#16233F;
-  --muted:#5A6B8C;
+  --muted:#505F7C;
   --border:#DFE4EC;
-  --success:#0F7A52;
-  --warning:#926013;
-  --danger:#C0392B;
+  --success:#0C6342;
+  --warning:#764D0F;
+  --danger:#9A2E23;
   --on-primary:#FFFFFF;
   --on-accent:#FFFFFF;
 

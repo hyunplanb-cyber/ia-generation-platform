@@ -10,7 +10,7 @@
   --bg-soft:color-mix(in srgb, var(--primary) 5%, var(--surface));
   --sh-pop:0 12px 32px rgba(0,0,0,.18);
   /* colors — 가이드_03_소프트파스텔 */
-  --primary:#5B4FE5;
+  --primary:#4F43E3;
   --primary-hover:#4A3DD1;
   --accent:#FFD54A;
   --bg:#F0EFEB;   /* 클라우드 댄서 — 배경은 중립으로 두고 색은 주색이 낸다 */
@@ -473,7 +473,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .stepbar .s.on{color:var(--primary);font-weight:700}
 .stepbar .s.on .n{background:var(--primary);color:#fff}
 .stepbar .s.done .n{background:var(--pri-10);color:var(--primary)}
-.stepbar .sep{color:var(--border)}
+.stepbar .sep{color:var(--muted)}
 
 .timeline{position:relative;padding-left:var(--s6)}
 .timeline::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--border)}

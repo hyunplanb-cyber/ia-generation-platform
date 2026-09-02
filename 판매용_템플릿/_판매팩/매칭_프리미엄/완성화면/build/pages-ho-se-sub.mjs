@@ -76,7 +76,7 @@ ${U.card("", `
   ${U.chips(구, 0, { extra: 'data-toast="지역을 정했어요"' })}
 
   <div class="btns mt-block">
-    ${U.btn('서울 강남구로 보기', { cls: 'btn-pri btn-lg', href: 'SE-01' })}
+    ${U.btn('<span data-region-out>서울 강남구</span><span>로 보기</span>', { cls: 'btn-pri btn-lg', href: 'SE-01' })}
     ${U.btn('전국으로 보기', { cls: 'btn-ghost btn-lg', href: 'SE-01' })}
   </div>`)}
 

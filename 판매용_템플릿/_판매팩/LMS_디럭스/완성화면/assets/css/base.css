@@ -26,14 +26,14 @@
   --bg:#F0EFEB;
   --surface:#FFFFFF;
   --text:#33221E;
-  --muted:#7A6560;
+  --muted:#6F5C57;
   --border:#F2E2DD;
-  --success:#0F7A52;
-  --warning:#B45309;
+  --success:#0D6B48;
+  --warning:#A84E08;
   --danger:#C0392B;
   /* 원색은 흰 배경에서 글자 대비가 모자란다. 글자용 한 단계 어두운 색을 따로 둔다 */
-  --pri-ink:#BC402C;
-  --acc-ink:#8A5A00;
+  --pri-ink:#9B3524;
+  --acc-ink:#845600;
   --pri-10:rgba(224,42,14,.10);
   --pri-16:rgba(224,42,14,.16);
   --acc-12:rgba(164,104,3,.12);
@@ -333,7 +333,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 
 /* ---------- 이미지 자리 ---------- */
 /* 테마 색으로 칠하지 않는다. 옅은 파스텔 한 톤 + 1px 테두리 + 무엇·권장 크기 */
-.ph{background:#F2F4F7;border:1px solid #E3E8F0;border-radius:var(--r-card);color:#686F7D;font-size:13px;font-weight:500;
+.ph{background:#F2F4F7;border:1px solid #E3E8F0;border-radius:var(--r-card);color:#646B78;font-size:13px;font-weight:500;
   display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;overflow:hidden;position:relative;line-height:1.4}
 .ph-t1{background:#EEF2F7}.ph-t2{background:#F2EFF7}.ph-t3{background:#EDF4F1}.ph-t4{background:#F7F1EC}.ph-t5{background:#F2F4F7}
 .ph-43{aspect-ratio:4/3;width:100%}
@@ -431,7 +431,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .steps .s.on .n{background:var(--primary);color:#fff}
 .steps .s.done{color:var(--success)}
 .steps .s.done .n{background:rgba(15,122,82,.14);color:var(--success)}
-.steps .sep{color:var(--border);margin:0 4px}
+.steps .sep{color:var(--muted);margin:0 4px}
 
 /* ---------- 빈 화면 / 안내 ---------- */
 .empty{text-align:center;padding:64px var(--card-pad);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card)}

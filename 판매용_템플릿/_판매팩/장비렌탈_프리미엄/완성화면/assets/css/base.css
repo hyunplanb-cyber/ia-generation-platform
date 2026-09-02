@@ -30,14 +30,14 @@
   --muted:#6B5E4F;
   --border:#E4D9C4;             /* 연한 갈색 */
   --success:#197B35;
-  --warning:#926013;
-  --danger:#C0392B;
+  --warning:#69450E;
+  --danger:#9A2E23;
   /* ⚠ 오렌지 위에는 «먹 글자»다. 흰 글자를 얹으면 2.4 라 안 읽힌다. */
   --on-primary:#FFFFFF;
   --on-accent:#FFFFFF;
   /* 오렌지 원색 #DE6F26 은 종이색 위 2.85 라 «글자»로 못 쓴다.
      같은 계열의 진한 값으로 따로 둔다 — 5.99. 버튼 배경에는 원색을 그대로 쓴다. */
-  --pri-text:#9A3D08;
+  --pri-text:#843407;
 
   /* 옅게 까는 자리 — 배지는 10~15% 농도로 깔고 글자를 진하게 쓴다 */
   --pri-10:rgba(188,89,24,.12);
@@ -436,7 +436,9 @@ ul,ol{margin:0;padding:0;list-style:none}
 .cal-d.fix{background:repeating-linear-gradient(45deg,#F4F6F4,#F4F6F4 6px,#EDF0ED 6px,#EDF0ED 12px);cursor:not-allowed}
 /* 고른 기간 */
 .cal-d.sel{background:var(--primary);color:var(--on-primary)}
-.cal-d.sel .n{background:rgba(255,255,255,.24);color:#fff}
+.cal-d.sel .n{background:rgba(0,0,0,.34);color:#fff}
+/* ⚠ 색이 채워진 칸 안에서는 잔글씨도 흰색이라야 한다(디럭스와 같이). */
+.cal-d.sel .fee{color:#fff}
 .cal-d.mid{background:var(--pri-10)}
 .cal-d .fee{font-size:11px;color:var(--warning);font-weight:600}
 .cal-legend{display:flex;gap:var(--sp-block);flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:var(--sp-title)}

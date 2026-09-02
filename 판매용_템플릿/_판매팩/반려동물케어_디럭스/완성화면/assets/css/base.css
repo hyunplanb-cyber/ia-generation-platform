@@ -18,19 +18,19 @@
   /* ---------- 색 — 가이드_01_코럴선셋.json colors ---------- */
   --primary:#E02A0E;
   --primary-hover:#D9503B;
-  --pri-text:#B23A26;             /* 흰 배경 위 작은 글자용 — --primary 는 4.05 라 본문에 못 쓴다.
+  --pri-text:#9A3221;             /* 흰 배경 위 작은 글자용 — --primary 는 4.05 라 본문에 못 쓴다.
                                       값은 공동구매 팩의 같은 코럴 --pri-text 와 같다(같은 원색이면 같은 보정값). */
   --accent:#A46803;
-  --accent-text:#8A5A00;          /* 흰 배경 위 글자용 */
+  --accent-text:#855700;          /* 흰 배경 위 글자용 */
   --accent-text-dark:#F59E0B;     /* 어두운 바탕 글자용 */
   --bg:#F0EFEB;
   --surface:#FFFFFF;
   --text:#33221E;
-  --muted:#7A6560;
+  --muted:#6D5A56;
   --border:#F2E2DD;
-  --success:#0F7A52;
-  --warning:#B45309;
-  --danger:#C0392B;
+  --success:#0C6342;
+  --warning:#8B4007;
+  --danger:#9A2E23;
   --on-primary:#FFFFFF;
   --on-accent:#FFFFFF;
 

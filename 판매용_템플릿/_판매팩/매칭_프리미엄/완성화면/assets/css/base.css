@@ -23,11 +23,11 @@
   --bg:#F0EFEB;            /* 클라우드 댄서 — 콘텐츠 바탕은 중립으로 둔다 */
   --surface:#FFFFFF;
   --text:#111111;
-  --muted:#666666;
+  --muted:#5F5F5F;
   --border:#E5E5E5;
-  --success:#197B35;
+  --success:#166E2F;
   --warning:#916100;
-  --danger:#CF222E;
+  --danger:#B71E29;
 
   /* 색 «위에» 얹는 글자 — 가이드의 on-primary · on-accent.
      흰색이 기본이 아니다. 강조색 #D97757 위 흰 글자는 3.12 라 못 쓴다. */
@@ -36,9 +36,9 @@
 
   /* 밝은 바탕 위 "글자"로 쓸 색 — 원색 그대로는 대비가 모자란 것들 */
   --pri-text:#111111;      /* 먹색은 16.4:1 이라 그대로 쓴다 */
-  --acc-text:#A84B28;      /* 테라코타 #D97757 은 2.7:1 이라 글자로 못 쓴다 (가이드의 accent-text) */
+  --acc-text:#9A4525;      /* 테라코타 #D97757 은 2.7:1 이라 글자로 못 쓴다 (가이드의 accent-text) */
   --warn-text:#916100;     /* 경고색 그대로 — 4.66:1 로 글자에 쓸 수 있다 */
-  --star:#A84B28;
+  --star:#9A4525;
 
   --pri-10:rgba(17,17,17,.08);
   --pri-06:rgba(17,17,17,.05);
@@ -680,6 +680,8 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 .gal .it .cap{margin-top:var(--s2)}
 .gal .it .cap b{font-size:14px;font-weight:600;display:block}
 .lightbox{position:relative;background:#0E1626;border-radius:var(--r-card);padding:var(--s6);color:#fff}
+/* ⚠ 어두운 칸 안에서는 잔글씨를 «올린다» — 밝은 칸과 값이 달라야 한다(H9). */
+.lightbox .t-sub{color:#9AA7C0}
 .lightbox .nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;
   background:rgba(255,255,255,.16);border:0;color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center}
 .lightbox .nav.prev{left:12px}.lightbox .nav.next{right:12px}
@@ -1033,25 +1035,7 @@ html{scrollbar-gutter:stable}
   [style*="width:150px"],[style*="width: 150px"]{max-width:100%}
 }
 
-/* ── 예시 사진 ──────────────────────────────────────────────
-   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
-   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
 
-/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
-   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
-   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
-   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
-   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
-   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
-.ph{position:relative}
-.ph > img[data-예시]{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; display:block;
-}
-/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
-   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
-.ph > img[data-예시] ~ .lb{display:none}
-/* ── 예시 사진 끝 ── */
 
 /* D6 마무리 — 남은 넷 (2026-08-21)
      ① .kv 는 «120px + 1fr» 인데 1fr 은 min-width:auto 라 «내용보다 못 줄어든다».
@@ -1193,3 +1177,23 @@ label.check + .row-b,
 @media (max-width:560px){
   .rate-in .v{width:auto;min-width:34px}
 }
+
+/* ── 예시 사진 ──────────────────────────────────────────────
+   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
+   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
+
+/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
+   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
+   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
+   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
+   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
+   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
+.ph{position:relative}
+.ph > img[data-예시]{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
+   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
+.ph > img[data-예시] ~ .lb{display:none}
+/* ── 예시 사진 끝 ── */
