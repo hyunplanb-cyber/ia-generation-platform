@@ -650,6 +650,11 @@ export function buildSpecPackMarkdown(
   lines.push("| UX | ⑦ 뒤로가기가 적절한가(화면 안 탭에는 두지 않는다) ⑧ 배너·썸네일·버튼·탭이 정확히 반응하는가 |");
   lines.push("| UI | ⑨ 배경 위 글자색이 적절한가 ⑩ 썸네일 크기가 적당한가 ⑪ 버튼 크기·모양이 균일한가 ⑫ 좌우로 넘기는 곳에 가로 막대가 드러나지 않는가 ⑬ UI 가 틀어지지 않았는가 ⑭ 배지 크기·모양이 균일한가 ⑮ 배지 위치가 적절한가 |");
   lines.push("");
+  lines.push("⭐ **이 열다섯 가지는 저희가 파는 팩을 재는 잣대 그대로입니다.**");
+  lines.push("아래 **7-9** 의 글을 화면에 붙여 넣으면 그 가운데 **열 가지(②③④⑤⑨⑩⑪⑫⑬⑭)** 를 기계가 대신 재 줍니다.");
+  lines.push("**①⑥⑦** 은 화면 하나로는 알 수 없어, 7-9 가 값을 내주면 **쪽끼리 모아 견주시면** 됩니다.");
+  lines.push("남는 **⑧⑮** 는 눌러 보고 눈으로 봐야 알 수 있습니다.");
+  lines.push("");
   lines.push("**② 기계가 보는 검수 — 화면을 안 열어도 아는 것**");
   lines.push("");
   lines.push("- **글자 대비** — 본문 4.5 · 큰 글자 3.0 을 넘는가 (색을 고른 뒤 반드시 재세요)");
@@ -879,6 +884,95 @@ export function buildSpecPackMarkdown(
     if (넘침 > 4) 적기("표", "표가 제 칸보다 " + 넘침 + "px 넓습니다");
   }
 
+  // ⑦ 지금 보는 메뉴가 «켜져» 있나
+  //    표시하는 방법은 사이트마다 다릅니다. 그래서 «클래스 이름»으로 찾지 않고,
+  //    지금 쪽을 가리키는 링크가 옆 링크들과 «달라 보이는지»를 봅니다.
+  for (const 메뉴 of document.querySelectorAll("nav, header, [role=navigation]")) {
+    if (!보이나(메뉴)) continue;
+    const 고리 = [...메뉴.querySelectorAll("a[href]")].filter(보이나);
+    if (고리.length < 3) continue;
+    const 여기 = 고리.filter((a) => a.pathname === location.pathname);
+    if (!여기.length) continue;
+    const 다름 = (a) => {
+      if (a.getAttribute("aria-current")) return true;
+      const s = getComputedStyle(a);
+      return 고리.some((b) => {
+        if (b === a) return false;
+        const t = getComputedStyle(b);
+        return s.color !== t.color || s.fontWeight !== t.fontWeight ||
+               s.borderBottomWidth !== t.borderBottomWidth || s.backgroundColor !== t.backgroundColor;
+      });
+    };
+    const 켜진것 = 여기.filter(다름);
+    if (!켜진것.length) 적기("메뉴", 이름(메뉴) + " 에 «지금 여기» 표시가 없습니다 — 링크 " + 고리.length + "개가 다 같아 보입니다");
+    break;
+  }
+
+  // ⑧ 배경 위 글자가 읽히나 — 본문 4.5 · 큰 글자 3.0 (WCAG)
+  //    사진 위 글자는 잴 수 없어 건너뜁니다. 눈으로 보셔야 합니다.
+  //
+  // ⛔ 색 글자에서 숫자만 뽑아 쓰지 마세요. 요즘 브라우저는 「lab(91.9 -0.6 5.1 / .85)」 처럼
+  //    내주는 일이 잦은데, 숫자만 뽑으면 «밝은 회색»을 새까맣게 읽어 멀쩡한 화면이
+  //    죄다 흠으로 잡힙니다. 캔버스에 한 점 찍어 브라우저가 직접 풀게 합니다.
+  const 판 = document.createElement("canvas"); 판.width = 판.height = 1;
+  const 붓 = 판.getContext("2d", { willReadFrequently: true });
+  const 색값 = (s) => {
+    try { 붓.clearRect(0, 0, 1, 1); 붓.fillStyle = s; 붓.fillRect(0, 0, 1, 1);
+      const d = 붓.getImageData(0, 0, 1, 1).data;
+      return [d[0], d[1], d[2], d[3] / 255];
+    } catch (e) { return null; }
+  };
+  // 반투명한 것은 «아래 색 위에 얹어» 실제로 보이는 색을 만든다.
+  const 겹치기 = (위, 아래) => {
+    const a = 위[3] + 아래[3] * (1 - 위[3]);
+    if (!a) return [0, 0, 0, 0];
+    return [0, 1, 2].map((i) => (위[i] * 위[3] + 아래[i] * 아래[3] * (1 - 위[3])) / a).concat([a]);
+  };
+  const 광 = (c) => { const f = (v) => { v = v / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
+  const 바탕 = (el) => { let n = el, 쌓임 = null;
+    for (let i = 0; n && i < 14; i++, n = n.parentElement) {
+      const s = getComputedStyle(n);
+      if (s.backgroundImage !== "none") return null;   // 사진·그러데이션 위는 못 잰다
+      const c = 색값(s.backgroundColor);
+      if (!c || c[3] === 0) continue;
+      쌓임 = 쌓임 ? 겹치기(쌓임, c) : c;
+      if (쌓임[3] >= 0.99) return 쌓임.slice(0, 3);
+    }
+    return 쌓임 ? 겹치기(쌓임, [255, 255, 255, 1]).slice(0, 3) : [255, 255, 255]; };
+  let 대비셈 = 0;
+  for (const el of document.querySelectorAll("p, a, li, h1, h2, h3, h4, button, td, th, label, span, strong")) {
+    if (대비셈 >= 8 || !보이나(el)) continue;
+    const 글 = (el.textContent || "").trim();
+    if (!글 || 글.length > 120) continue;
+    if ([...el.children].some((c) => (c.textContent || "").trim())) continue;  // 글을 «직접» 가진 것만
+    const s = getComputedStyle(el);
+    const 글색 = 색값(s.color), 뒤 = 바탕(el);
+    if (!글색 || !뒤 || 글색[3] === 0) continue;
+    const 앞 = 글색[3] < 1 ? 겹치기(글색, 뒤.concat([1])) : 글색;   // 흐린 글자는 바탕에 얹어 잰다
+    const a = 광(앞), b = 광(뒤);
+    const 비 = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    const 크기 = parseFloat(s.fontSize), 굵기 = parseInt(s.fontWeight) || 400;
+    const 기준 = (크기 >= 24 || (크기 >= 18.66 && 굵기 >= 700)) ? 3 : 4.5;
+    if (비 < 기준) { 대비셈++;
+      적기("대비", 이름(el) + " «" + 글.slice(0, 14) + "» 대비 " + 비.toFixed(2) + " — " + 기준 + " 이상이어야 읽힙니다"); }
+  }
+
+  // ⑨ 나란히 놓인 사진 크기가 같은가 (윗변이 같은 것끼리만 견준다)
+  for (const 부모 of document.querySelectorAll("main *, body > *")) {
+    if (!보이나(부모)) continue;
+    const 사진 = [...부모.children]
+      .map((c) => (c.tagName === "IMG" ? c : c.querySelector ? c.querySelector("img") : null))
+      .filter((x) => x && 보이나(x));
+    if (사진.length < 3) continue;
+    const 틀 = 사진.map((i) => i.getBoundingClientRect());
+    if (new Set(틀.map((r) => 반(r.top))).size > 1) continue;
+    const 높 = 틀.map((r) => 반(r.height));
+    const 작 = Math.min.apply(null, 높), 큰 = Math.max.apply(null, 높);
+    if (작 > 0 && 큰 - 작 > Math.max(8, 작 * 0.15))
+      적기("사진", 이름(부모) + " 안에 나란한 사진 높이가 " + 작 + "~" + 큰 + "px 로 제각각입니다");
+  }
+
   return JSON.stringify({
     화면: location.pathname.split("/").pop() || "(첫 화면)",
     콘텐츠폭, 세로막대,
@@ -891,6 +985,13 @@ export function buildSpecPackMarkdown(
   lines.push("```");
   lines.push("");
   lines.push("**`흠` 에 담겨 나온 것은 그 화면에서 바로 고치세요.** 하나도 안 남을 때까지 다시 돌립니다.");
+  lines.push("");
+  lines.push("⚠ **한 화면만 돌리고 끝내지 마세요.** 위의 「사람처럼 보는 검수 열다섯 가지」 가운데");
+  lines.push("이 글이 대신 재 주는 것은 **열 가지**입니다 — 나머지는 눈으로 보셔야 합니다.");
+  lines.push("**만든 화면을 하나씩 열어 가며 쪽마다 돌리세요.** 한 장만 보면 「이 화면끼리 폭이 다르다」를 못 잡습니다.");
+  lines.push("");
+  lines.push("📱 **폰 폭에서 한 번 더 돌리세요.** 브라우저 개발자도구에서 폭을 **375px** 로 줄이고");
+  lines.push("같은 글을 다시 돌립니다. 넓은 화면에서 멀쩡하던 것이 여기서 무너지는 일이 가장 잦습니다.");
   lines.push("");
   lines.push("**화면 «하나»로는 알 수 없는 것 셋** — 여러 화면의 결과를 모아 견주세요.");
   lines.push("- **콘텐츠폭** 이 화면마다 다르면 옮길 때 글이 좌우로 밀립니다. 모든 화면이 한 값이어야 합니다.");
@@ -964,7 +1065,7 @@ for (const h of 흠) console.log("  " + h);
 if (!흠.length) console.log("  깨끗합니다");`);
   lines.push("```");
   lines.push("");
-  lines.push("**글자 대비는 브라우저에서 잽니다** — 7-9 의 글과 같은 자리에 붙여 넣으세요.");
+  lines.push("**글자 대비는 7-9 의 글이 ⑧번으로 잽니다** — 파일만 봐서는 실제로 칠해진 색을 알 수 없어서입니다.");
   lines.push("본문 글자는 **4.5**, 24px 이상이거나 굵은 18.66px 이상은 **3.0** 을 넘어야 합니다.");
   lines.push("");
   lines.push("### 7-10. 나온 오류는 «그 자리에서» 고칩니다");
