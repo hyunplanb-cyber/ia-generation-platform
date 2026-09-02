@@ -169,6 +169,13 @@
       "when": 1787724374314,
       "tag": "0023_illegal_gravity",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1788334606597,
+      "tag": "0024_light_jamie_braddock",
+      "breakpoints": true
     }
   ]
 }

@@ -9,6 +9,7 @@ import {
   uuid,
   date,
   integer,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -674,3 +675,35 @@ export const generationAttemptRelations = relations(generationAttempt, ({ one })
   user: one(user, { fields: [generationAttempt.userId], references: [user.id] }),
   project: one(project, { fields: [generationAttempt.projectId], references: [project.id] }),
 }));
+
+// ── AI 노출 진단(무료)이 쓰는 표 둘 ──────────────────────────────
+//
+// ⛔ 메모리에 세면 안 된다. 버셀 서버리스는 요청마다 다른 인스턴스일 수 있어서,
+//    한 대의 메모리에 센 횟수는 다음 요청이 못 본다. 실제로 올리면 횟수 제한이
+//    거의 안 걸리고, 담아 둔 것도 잘 안 맞는다(2026-09-01 에 적어 둔 경고).
+//
+// ⚠ Redis·KV 를 새로 붙이지 않는다. 그게 오히려 돈이다. 이미 쓰는 DB 에 둔다.
+
+/** 어느 곳에서 몇 번 눌렀나. 같은 곳에서 1분에 5번까지 받는다. */
+export const diagnoseHit = pgTable(
+  "diagnose_hit",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** x-forwarded-for 의 첫 칸. 못 알아내면 "unknown". */
+    ip: text("ip").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  // 「이 곳의 최근 1분」을 세는 것이 이 표의 유일한 쓰임이라 둘을 함께 건다.
+  (table) => [index("diagnose_hit_ip_created_idx").on(table.ip, table.createdAt)],
+);
+
+/** 같은 주소를 10분 안에 또 물으면 남의 서버를 다시 두드리지 않는다.
+ *
+ * ⚠ 담아 두는 것은 «남의 사이트를 대신 가져온 결과»다. 손님 것이 아니다.
+ *   그래서 누가 물었는지는 담지 않는다. */
+export const diagnoseCache = pgTable("diagnose_cache", {
+  /** 소문자로 내린 주소. 이것이 곧 열쇠다. */
+  urlKey: text("url_key").primaryKey(),
+  data: jsonb("data").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
