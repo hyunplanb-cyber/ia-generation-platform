@@ -8,19 +8,27 @@ function VS0101() {
 ${U.pageHd('방문 실측 예약', '실측은 40분에서 1시간 걸려요. 방문비는 받지 않습니다.')}
 <div class="split-r">
   <div>
-    ${U.card('날짜 고르기', U.calendar({ sel: 15, month: '2026년 9월' }))}
-    ${U.card('시간대', U.slots({}), { cls: 'mt4' })}
+    ${/* ⛔ 2026-09-02: 달력과 시간대는 «켜짐»이 제대로 도는데 고른 것을 아무 데도 안 알렸다.
+         요약에도 없고 다음 화면에도 안 갔다. 예약에서 가장 중요한 둘이다.
+         app.js 의 실측예약() 이 data-visit-pick 안의 누름을 읽어 요약과 손잡이를 채운다. */''}
+    ${U.card('날짜 고르기', `<div data-visit-pick="날짜" data-visit-month="9">${U.calendar({ sel: 15, month: '2026년 9월' })}</div>`)}
+    ${U.card('시간대', `<div data-visit-pick="시간">${U.slots({})}</div>`, { cls: 'mt4' })}
   </div>
   <div class="sticky">
     ${U.card('예약 요약', `
+      ${/* ④ 예약 요약에 «날짜와 시간»이 없었다. 주소·연락처는 있는데 그 둘만 없었다. */''}
+      <dl class="kv mb4"><dt>날짜</dt><dd data-visit-out="날짜">9월 15일 (화)</dd>
+        <dt>시간</dt><dd data-visit-out="시간">14:00</dd></dl>
       <div class="field"><label class="lb">주소</label><input class="input" placeholder="우편번호 찾기 + 상세주소"></div>
       <div class="field"><label class="lb">동·호수</label><input class="input" placeholder="101동 1203호"></div>
       <div class="field"><label class="lb">연락처</label><input class="input" placeholder="010-0000-0000"></div>
       <div class="field"><label class="lb">현장 상황</label>
         <div class="radios-h">${['거주 중', '비어 있음', '짐만 있음'].map((s, i) => `<label class="radio${i === 0 ? ' on' : ''}"><input type="radio" name="site-state">${s}</label>`).join('')}</div></div>
-      <div class="field"><label class="lb">연결할 견적</label><select class="input"><option>성동구 32평 전체시공 (EST-20260817-0042)</option></select></div>
+      ${/* ⑤ 견적에서 «부분 시공»을 골라 와도 여기서는 늘 「전체시공」이라고 말했다.
+           app.js 의 실측예약() 이 주소로 온 조건으로 이 글자를 고쳐 준다. */''}
+      <div class="field"><label class="lb">연결할 견적</label><select class="input" data-visit-est><option data-visit-est-first>${FLAGSHIP.addr.split(' ')[1]} ${FLAGSHIP.area}평 ${FLAGSHIP.scope} (EST-20260817-0042)</option></select></div>
       ${U.banner('mut', 'ℹ️', '실측은 40분에서 1시간 걸려요. 하루 전까지 연락 주시면 바꿔 드려요.')}
-      <div class="mt4">${U.btn('예약하기', { href: 'VS0201', cls: 'btn-primary btn-block btn-lg' })}</div>`)}
+      <div class="mt4">${U.btn('예약하기', { href: 'VS0201', cls: 'btn-primary btn-block btn-lg', attr: ' data-visit-go' })}</div>`)}
   </div>
 </div>`;
   return { body, o: {} };
@@ -32,11 +40,11 @@ function VS0201() {
 ${U.pageHd('이대로 예약할까요?')}
 
 ${U.sec('', U.table(['항목', '내용', ''], [
-    ['날짜·시간', '9월 15일 (화) 오후 2시', U.btn('고치기', { cls: 'btn-ghost btn-sm', href: 'VS0101' })],
+    ['날짜·시간', '<span data-visit-in="날짜">9월 15일 (화)</span> <span data-visit-in="시간">14:00</span>', U.btn('고치기', { cls: 'btn-ghost btn-sm', href: 'VS0101' })],
     ['주소', '서울 성동구 성수동1가 101동 1203호', U.btn('고치기', { cls: 'btn-ghost btn-sm', href: 'VS0101' })],
     ['연락처', '010-1234-5678', U.btn('고치기', { cls: 'btn-ghost btn-sm', href: 'VS0101' })],
     ['현장 상황', '거주 중', U.btn('고치기', { cls: 'btn-ghost btn-sm', href: 'VS0101' })],
-    ['연결한 견적', 'EST-20260817-0042', ''],
+    ['연결한 견적', '<span data-visit-in="견적">EST-20260817-0042</span>', ''],
   ]))}
 
 ${U.sec('방문하는 담당자', U.card('', `<div class="row-c">${U.ph('담당자', 'ph-ava', SITE.owner.name)}

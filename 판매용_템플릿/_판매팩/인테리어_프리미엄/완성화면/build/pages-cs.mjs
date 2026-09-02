@@ -45,6 +45,8 @@ ${U.pageHd('시공사례', `지금까지 412개 현장 · <span data-filter-coun
 /* ---------------- CS0201 시공사례 상세 ---------------- */
 function CS0201() {
   const c = CASES[0];
+  /* 방 이름은 한 곳에만 적는다 — 탭·판·사진 자리표가 다 여기서 나온다 */
+  const 방들 = [['거실', 'living'], ['주방', 'kitchen'], ['욕실', 'bath'], ['침실', 'room'], ['현관', 'entry']];
   const materialRows = MATERIALS.slice(0, 4).map((m) => [m.part, m.name, m.brand, m.grade]);
   const body = `
 ${U.ph('대표 사진 · 비포애프터', 'ph-banner', c.id + 'hero')}
@@ -52,10 +54,13 @@ ${U.pageHd(`${c.area}평 아파트 전체 시공`, `${U.esc(c.region)} · ${c.da
 
 ${U.sec('현장 소개', `<p class="t-body">신혼부부가 입주 전 리모델링한 32평 아파트입니다. 전 공간을 모던한 톤으로 통일해 달라는 요청과, 주방을 넓혀 아일랜드 식탁을 두고 싶다는 요청이 있었습니다.</p>`)}
 
+${/* ⛔ 2026-09-02: 탭과 판의 짝은 맞는데 「거실」을 눌러도 침대 사진이 떴다.
+      자리표 이름이 「비포·애프터」·「공간 사진」뿐이라 어느 방 자리인지 아무도 몰랐다 —
+      사진 끼우는 쪽도, 손님이 받는 사진바꾸기.csv 도 그랬다. 이름에 방을 넣는다. */''}
 ${U.sec('공간별 사진', U.tabBox(
-    U.tabs([{ label: '거실', pane: 'living' }, { label: '주방', pane: 'kitchen' }, { label: '욕실', pane: 'bath' }, { label: '침실', pane: 'room' }, { label: '현관', pane: 'entry' }], 0),
-    ['living', 'kitchen', 'bath', 'room', 'entry'].map((k, i) => U.pane(k,
-      `${U.ph('비포·애프터', 'ph-169', c.id + k)}<div class="g4 mt4">${Array.from({ length: 4 }, (_, j) => U.ph('공간 사진', 'ph-11', c.id + k + j)).join('')}</div>`,
+    U.tabs(방들.map(([이름, 판]) => ({ label: 이름, pane: 판 })), 0),
+    방들.map(([이름, 판], i) => U.pane(판,
+      `${U.ph(이름 + ' 비포·애프터', 'ph-169', c.id + 판)}<div class="g4 mt4">${Array.from({ length: 4 }, (_, j) => U.ph(이름 + ' 사진 ' + (j + 1), 'ph-11', c.id + 판 + j)).join('')}</div>`,
       i === 0)).join(''),
   ))}
 
