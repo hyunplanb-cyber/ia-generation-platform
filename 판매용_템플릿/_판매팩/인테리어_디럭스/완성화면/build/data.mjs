@@ -88,10 +88,46 @@ export const ESTIMATE_ITEMS = [
   { nm: '타일', qty: 1, unit: '식', amt: 5_300_000, days: 3 },
   { nm: '도배', qty: 1, unit: '식', amt: 2_400_000, days: 2 },
   { nm: '마루', qty: 1, unit: '식', amt: 3_600_000, days: 2 },
-  { nm: '도장', qty: 1, unit: '식', amt: 1_100_000, days: 1 },
+  /* ⛔ 2026-09-03: 항목 아홉의 합이 32,500,000 이라 ESTIMATE_BASE.min(32,400,000)과
+     100,000원 어긋나 있었다. ES-02 한 화면에 「총액 32,400,000」과 「합계 32,500,000」이
+     나란히 떠 있었다. 32,400,000 쪽은 못 건드린다 — CT-01 이 그 값에 +1,700,000 을
+     더해 계약총액 34,100,000 을 만들고, 목공 8,200,000 은 WOOD_DETAIL 이 붙들고 있다.
+     그래서 아무 데도 안 매인 도장 한 줄에서 100,000 을 뺐다. 아래 검사가 다시 어긋나면 멈춘다. */
+  { nm: '도장', qty: 1, unit: '식', amt: 1_000_000, days: 1 },
   { nm: '청소', qty: 1, unit: '식', amt: 400_000, days: 1 },
 ];
 export const 견적합계 = ESTIMATE_ITEMS.reduce((n, x) => n + x.amt, 0);
+
+/* 손으로 적은 숫자 둘은 반드시 갈라진다. 굽을 때마다 스스로 확인한다. */
+if (견적합계 !== ESTIMATE_BASE.min) {
+  throw new Error(`견적 항목 합계(${견적합계})가 ESTIMATE_BASE.min(${ESTIMATE_BASE.min})과 다릅니다 — ES-02 한 화면에 두 총액이 뜹니다`);
+}
+
+/* ── 값 잣대 — 이 팩의 «평당 얼마»는 여기서만 정한다 ─────────────────
+ *
+ * ⛔ 2026-09-03 — 한 팩 안에서 평당 단가를 두 기준으로 셈하고 있었다.
+ *      HO-02(욕실)  평당 28,000원      ← 2평 욕실이면 56,000원이다
+ *      HO-03(비용)  평당 1,050,000원   ← 32평이면 40,992,000원, 이 팩이 말하는 32,400,000 과 1.27배 어긋난다
+ *
+ * ⚠ 새 숫자를 지어내지 않았다. ESTIMATE_BASE(32평 · 전체 시공 · 고급)에서 나눈다.
+ *   등급배는 GRADES 가 이미 쓰던 mult 를 그대로 쓴다.
+ * ⚠ 욕실 평당가는 이 팩에 «근거가 없다» — 욕실 몇 평인지가 어디에도 없다.
+ *   그래서 HO-02 에서는 지어내지 않고 실제 현장 값을 그대로 보여 준다. */
+export const PRICING = {
+  평당고급: ESTIMATE_BASE.min / ESTIMATE_BASE.pyeong,   // 1,012,500원
+  기준등급: '고급',
+  평당(등급이름) {
+    const 밑 = GRADES.find((g) => g.nm === this.기준등급);
+    const 그것 = GRADES.find((g) => g.nm === 등급이름);
+    return this.평당고급 * ((그것 ? 그것.mult : 밑.mult) / 밑.mult);
+  },
+};
+{
+  const 셈 = Math.round(PRICING.평당('고급') * ESTIMATE_BASE.pyeong);
+  if (셈 !== ESTIMATE_BASE.min) {
+    throw new Error(`PRICING 이 ${셈} 인데 ESTIMATE_BASE.min 은 ${ESTIMATE_BASE.min} 입니다`);
+  }
+}
 
 /* ---------- 목공 공정 세부(es3) ---------- */
 export const WOOD_DETAIL = [
@@ -100,6 +136,15 @@ export const WOOD_DETAIL = [
   { nm: '몰딩·걸레받이', spec: 'PVC', qty: 1, unit: '식', price: 1_200_000, amt: 1_200_000 },
   { nm: '문틀·문짝 교체', spec: 'ABS도어', qty: 5, unit: '개', price: 470_000, amt: 2_350_000 },
 ];
+
+/* 목공 금액은 제 세부표가 붙들고 있다 — 한쪽만 고치면 화면 둘이 갈라진다. */
+{
+  const 목공 = ESTIMATE_ITEMS.find((x) => x.nm === '목공');
+  const 세부 = WOOD_DETAIL.reduce((n, x) => n + x.amt, 0);
+  if (목공 && 세부 !== 목공.amt) {
+    throw new Error(`WOOD_DETAIL 합(${세부})이 목공 항목(${목공.amt})과 다릅니다`);
+  }
+}
 
 /* ---------- 계약 조항(ct1) ---------- */
 export const CONTRACT_TERMS = [
