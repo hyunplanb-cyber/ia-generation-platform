@@ -51,7 +51,23 @@ console.log("\n═══ ② 설정 파일이 API 키를 끌어오나 ═══"
 for (const 길 of [`${집}/.claude/settings.json`, `${집}/.claude/settings.local.json`, ".claude/settings.local.json"]) {
   if (!existsSync(길)) continue;
   const s = readFileSync(길, "utf8");
-  const 걸린것 = ["apiKeyHelper", "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "awsAuthRefresh"].filter((k) => s.includes(k));
+  /* ⚠ 파일 전체를 «글자»로 훑으면 안 된다 (2026-09-02).
+     permissions.allow 에 승인해 둔 명령 글귀에 ANTHROPIC_API_KEY 가 적혀 있을 수 있다
+     — 예: .env.local 의 열쇠가 몇 자인지 세어 보는 awk 한 줄. 그건 무엇도 «켜지» 않는데
+     매번 ⛔ 로 끝났고, 그러면 진짜 샐 때 아무도 안 본다.
+     돈 가는 길을 실제로 바꾸는 자리는 셋뿐이다 — env 안의 열쇠 · apiKeyHelper · awsAuthRefresh. */
+  let 걸린것: string[];
+  try {
+    const j = JSON.parse(s) as Record<string, unknown>;
+    const 환경 = (j.env ?? {}) as Record<string, unknown>;
+    걸린것 = [
+      ...["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"].filter((k) => 환경[k] != null).map((k) => `env.${k}`),
+      ...["apiKeyHelper", "awsAuthRefresh"].filter((k) => j[k] != null),
+    ];
+  } catch {
+    /* 못 읽는 파일은 봐주지 않는다 — 옛 방식대로 글자로 훑는다. */
+    걸린것 = ["apiKeyHelper", "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "awsAuthRefresh"].filter((k) => s.includes(k));
+  }
   if (걸린것.length) 짚기(`${길} 에 ${걸린것.join(" · ")} 가 있습니다`);
   else 좋음(`${길} — 깨끗`);
 }
