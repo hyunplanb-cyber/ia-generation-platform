@@ -18,7 +18,7 @@ const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const 마케팅 = "C:/Users/glim0/OneDrive/문서/Claude/Projects/02. 웹기획자/판매용_템플릿/_마케팅";
 /* ⚠ 2026-08-13 에 그림을 «_이미지» 한 곳으로 모았다.
    전: _마케팅/릴스영상/_모델/고양이   후: _이미지/마스코트/낱장
-   영상에 겹치는 것은 «배경이 뚫린» 낱장이라야 한다. 배경 있는 장면은 마스코트/장면 에 있다. */
+   영상에 겹치는 것은 «배경이 뚫린» 낱장이라야 한다. 배경 있는 것은 마스코트/배경 에 있다. */
 const 고양이방 = `${마케팅}/../_이미지/마스코트/낱장`;
 const 낼방 = "G:/내 드라이브/릴스/카페인컬러_주간콘텐츠/1주차_2026-08-10";
 const W = process.env.TEMP.replace(/\\/g, "/") + "/cc-thumb-w1";
