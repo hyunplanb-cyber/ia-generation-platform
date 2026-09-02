@@ -9,14 +9,23 @@ ${U.sec('', `<div class="card box-pri"><div class="card-bd">
   ${U.ph('준공 사진 · 히어로', 'ph-banner', 'hero1')}
   <div class="mt6"><h1 class="t-page">우리 집은 얼마나 나올까요?</h1>
   <p class="t-sub mt2">평수와 마감 등급만 넣으면 1분 안에 예상 견적이 나옵니다.</p>
-  <div class="btns mt-block">${U.btn('1분 예상 견적', { href: 'ES0101', cls: 'btn-primary btn-lg' })}${U.btn('시공사례 보기', { href: 'CS0101', cls: 'btn-ghost btn-lg' })}</div>
+  <div class="btns mt-block">${U.btn('1분 예상 견적', { href: 'ES0101', cls: 'btn-primary btn-lg', attr: ' data-band-go' })}${U.btn('시공사례 보기', { href: 'CS0101', cls: 'btn-ghost btn-lg' })}</div>
   </div></div></div>`)}
 
-${U.sec('평수별 예상 비용', `
-  ${U.chips(['10평대', '20평대', '30평대', '40평대 이상'], 2, { extra: 'data-toast="그 평수 기준으로 다시 계산했어요"' })}
-  <div class="box mt4"><b>30평대 아파트 전체 시공</b> 평균 <b class="pri">3,200만원 ~ 4,600만원</b></div>`)}
+${/* 평수 칩 — app.js 의 평수구간() 이 data-band-* 를 읽어 아래 숫자를 다시 쓰고,
+      견적으로 가는 손잡이(data-band-go)에 고른 평수를 실어 준다. */''}
+${(() => {
+  const 구간 = [['10평대', 15, '1,500만원 ~ 2,200만원'], ['20평대', 25, '2,400만원 ~ 3,500만원'],
+               ['30평대', 32, '3,200만원 ~ 4,600만원'], ['40평대 이상', 45, '4,300만원 ~ 6,200만원']];
+  const 처음 = 2;
+  const 칩 = 구간.map(([이름, 평, 값], i) =>
+    `<button class="chip${i === 처음 ? ' on' : ''}" type="button" data-band="${이름}" data-band-pyeong="${평}" data-band-price="${값}" data-toast="그 평수 기준으로 다시 계산했어요">${이름}</button>`).join('');
+  return U.sec('평수별 예상 비용', `
+  <div class="chips" data-band-pick>${칩}</div>
+  <div class="box mt4"><b><span data-band-name>${구간[처음][0]}</span> 아파트 전체 시공</b> 평균 <b class="pri" data-band-price-out>${구간[처음][2]}</b></div>`);
+})()}
 
-${U.sec('무엇을 고치시겠어요?', `<div class="g3">${FIELDS.map((f) => `<a class="box center" href="${U.link('ES0101')}">
+${U.sec('무엇을 고치시겠어요?', `<div class="g3">${FIELDS.map((f) => `<a class="box center" href="${U.link('ES0101')}" data-band-go>
   <div style="font-size:28px">${f.ic}</div><div class="t-card mt2">${f.key}</div></a>`).join('')}</div>`, { more: 'CS0101', moreLabel: '시공사례 둘러보기' })}
 
 ${U.sec('최근 시공 사례', `<div class="g3">${CASES.slice(0, 3).map((c) => `<a class="ccard" href="${U.link('CS0201')}">

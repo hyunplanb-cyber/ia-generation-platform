@@ -27,7 +27,10 @@ ${U.statGrid([
     U.stat('밀린 공정', '0개', { cls: 's-ok' }),
   ])}
 
-${U.sec('공정 일정표', U.tabs([{ label: '주 보기' }, { label: '월 보기' }], 1, { pill: true }) +
+${/* ⛔ 눌러도 아무것도 안 바뀌었다 (2026-09-02). 공정 일정 자료가 «한 벌»뿐이라
+      거를 것도 다시 셈할 것도 없다. 없는 것을 고르게 두면 눌러도 아무 일이 없다 —
+      고르개를 빼고, 이 견본이 무엇을 담고 있는지 그대로 적는다(검수항목 7-3·7-7). */''}
+${U.sec('공정 일정표', `<p class="t-sub mb3">이 견본은 <b>공사 23일치 전체</b>를 한 눈에 보여 줍니다.</p>` +
     U.processBar(PROCESS_STATE, { todayPct: TODAY_PCT }) +
     `<div class="g3 mt4">${PROCESS_STATE.map((p) => `<div class="box">
       <div class="row-b"><b>${p.key}</b>${U.badge(p.status, p.status === '끝남' ? 'b-ok' : p.status === '하는 중' ? 'b-pri' : 'b-mut')}</div>
@@ -82,14 +85,17 @@ function PR0301() {
   const body = `
 ${U.pageHd('현장 사진 일지', '날짜별로 묶어 최신 것부터 보여줍니다')}
 
+${/* ⛔ 칩을 눌러도 목록이 안 줄었다 (2026-09-02). 공정은 날짜 묶음마다 있으니 거른다.
+      ⚠ 공간은 자료가 없다 — 사진마다 어느 방인지 적어 둔 것이 없다. 없는 것을 고르게
+      두면 눌러도 아무 일이 없다. 있는 공정만 남기고 공간은 뺐다(검수항목 7-3). */''}
 ${U.sec('', `<div class="row wrap-row" style="gap:24px">
-  <div><p class="t-th mb2">공정</p>${U.chips(['전체', '철거', '설비', '전기', '목공', '타일', '도배'], 0, {})}</div>
-  <div><p class="t-th mb2">공간</p>${U.chips(['전체', '거실', '주방', '욕실', '침실'], 0, {})}</div>
+  <div><p class="t-th mb2">공정</p>${U.chips(['전체', ...[...new Set(days.map((d) => d.process))]], 0, { extra: ' data-filter="사진공정"' }).replace('<button class="chip on"', '<button class="chip on" data-filter-all')}</div>
 </div>`)}
 
-${days.map((d) => `<div class="card mt4"><div class="card-hd"><h3 class="t-card">${d.date}</h3><span class="t-sub">${d.process} · ${d.team} · 사진 ${d.n}장</span></div>
+<div data-filter-in="사진공정">${days.map((d) => `<div class="card mt4" data-tag="${U.esc(d.process)}"><div class="card-hd"><h3 class="t-card">${d.date}</h3><span class="t-sub">${d.process} · ${d.team} · 사진 ${d.n}장</span></div>
   <div class="card-bd"><div class="g4">${Array.from({ length: d.n }, (_, i) => U.ph('현장 사진', 'ph-11', d.date + i)).join('')}</div>
   <p class="t-sub mt3">"${d.process} 진행 상황입니다. 예정대로 진행되고 있어요." — ${FLAGSHIP.manager}</p></div></div>`).join('')}
+<p class="t-sub mt3" data-filter-empty hidden>그 공정 사진이 아직 없어요.</p></div>
 
 ${U.sec('이 자리 변해 온 것', `<p class="t-sub mb3">같은 자리(주방)를 날짜별로 견줍니다</p>
   <div class="g4">${['8/28 철거 직후', '9/2 설비 완료', '9/15 전기 완료', '9/22 목공 진행 중'].map((t, i) => `<div>${U.ph(t, 'ph-11', 'compare' + i)}<p class="t-sub mt1 center">${t}</p></div>`).join('')}</div>`)}

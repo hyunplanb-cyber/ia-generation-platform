@@ -80,15 +80,23 @@ P['PR0206'] = (ctx) => {
 
 /* ---- 현장 사진 일지 갈래 ---- */
 P['PR0302'] = (ctx) => {
+  /* ⛔ 화면이 「고른 공정 사진만 남습니다」라고 적어 두고, 칩을 눌러도 여덟 장이
+     그대로였다 (2026-09-02). 사진마다 공정을 적고 공통 거르기 장치에 잇는다. */
+  const 공정들 = ['철거', '설비', '전기', '목공', '타일'];
+  const 사진 = Array.from({ length: 10 }, (_, i) => ({ 공정: 공정들[i % 공정들.length], i }));
   const body = U.pageHd('공정 필터 칩', '고른 공정 사진만 남습니다')
-    + U.chips(['철거', '설비', '전기', '목공', '타일'], [3, 4], {})
-    + `<div class="g4 mt4">${Array.from({ length: 8 }, (_, i) => U.ph('목공·타일 사진', 'ph-11', 'f' + i)).join('')}</div>`;
+    + U.chips(['전체', ...공정들], 0, { extra: ' data-filter="사진공정칩"' }).replace('<button class="chip on"', '<button class="chip on" data-filter-all')
+    + `<div class="g4 mt4" data-filter-in="사진공정칩">${사진.map((s) => `<div data-tag="${s.공정}">${U.ph(s.공정 + ' 사진', 'ph-11', 'f' + s.i)}</div>`).join('')}</div>`
+    + `<p class="t-sub mt3" data-filter-empty hidden>그 공정 사진이 아직 없어요.</p>`;
   return { body, o: {} };
 };
 P['PR0303'] = (ctx) => {
+  const 공간들 = ['거실', '주방', '욕실', '침실'];
+  const 공간사진 = Array.from({ length: 8 }, (_, i) => ({ 공간: 공간들[i % 공간들.length], i }));
   const body = U.pageHd('공간 필터 칩', '공정 필터와 조합해서 좁힐 수 있습니다')
-    + U.chips(['거실', '주방', '욕실', '침실'], 1, {})
-    + `<div class="g4 mt4">${Array.from({ length: 6 }, (_, i) => U.ph('주방 사진', 'ph-11', 'k' + i)).join('')}</div>`;
+    + U.chips(['전체', ...공간들], 0, { extra: ' data-filter="사진공간칩"' }).replace('<button class="chip on"', '<button class="chip on" data-filter-all')
+    + `<div class="g4 mt4" data-filter-in="사진공간칩">${공간사진.map((s) => `<div data-tag="${s.공간}">${U.ph(s.공간 + ' 사진', 'ph-11', 'k' + s.i)}</div>`).join('')}</div>`
+    + `<p class="t-sub mt3" data-filter-empty hidden>그 공간 사진이 아직 없어요.</p>`;
   return { body, o: {} };
 };
 P['PR0304'] = (ctx) => {
@@ -160,8 +168,10 @@ P['PR0407'] = (ctx) => {
 P['PR0502'] = (ctx) => {
   const spaces = [['거실', '6/6'], ['주방', '6/6'], ['욕실', '4/6'], ['침실', '6/6'], ['베란다', '5/6'], ['공용', '6/6']];
   const body = U.pageHd('공간 탭', '탭과 목록은 같은 상자 안에 있어 탭을 누르면 목록이 실제로 바뀝니다')
-    + U.tabs(spaces.map(([s]) => ({ label: s })), 2)
-    + `<div class="g3 mt4">${spaces.map(([s, n]) => `<div class="box center"><b>${s}</b><div class="t-sub mt1">${n} 확인</div></div>`).join('')}</div>`;
+    /* ⛔ 「탭을 누르면 목록이 실제로 바뀝니다」라고 적어 두고 여섯 칸을 늘 다 보여 줬다
+       (2026-09-02). spaces 에 자료가 있으니 판으로 갈아 끼운다. */
+    + U.tabBox(U.tabs(spaces.map(([s]) => ({ label: s, pane: s })), 2),
+        spaces.map(([s, n], i) => U.pane(s, `<div class="box center"><b>${s}</b><div class="t-sub mt1">${n} 확인</div></div>`, i === 2)));
   return { body, o: {} };
 };
 P['PR0503'] = (ctx) => {

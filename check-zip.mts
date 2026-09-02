@@ -24,6 +24,20 @@ import JSZip from "jszip";
 /* 파일 «속»을 열어 보는 검사는 직접팩 검수기와 나눠 쓴다 — 두 벌로 적으면 갈라진다.
    여기를 고치면 두 검사기가 같이 바뀐다(2026-08-11). */
 import { 파일보기, 프리셋짝보기, 화면목록안내보기, type 급 } from "./lib/검수-속보기.mjs";
+/* 손님이 받는 07·11 에 «지금 코드의» 검수 글이 들어갔나 — 아래 굽힌글맞나() 참고.
+ *
+ * ⚠ 이름을 곧이 적으면 안 된다 — `import { 화면검수글 } from …` 은 여기서 죽는다.
+ *   node 가 CJS 의 export 이름을 훑는 cjs-module-lexer 가 «한글 이름»을 못 읽어
+ *   「그런 export 없다」가 난다. lib/ 안끼리는 되는데 .mts 에서 부르면 안 된다.
+ *   그래서 통째로 가져와 이름을 «찾아» 쓴다. NFC/NFD 까지 맞춰 둔다. */
+import * as 검수글모음 from "./lib/export/화면검수-글";
+
+const 검수글 = (이름: string): string => {
+  const 속 = ((검수글모음 as Record<string, unknown>).default ?? 검수글모음) as Record<string, string>;
+  const 찾은것 = Object.keys(속).find((k) => k.normalize("NFC") === 이름.normalize("NFC"));
+  if (!찾은것) throw new Error(`화면검수-글 에 ${이름} 이 없습니다 (있는 것: ${Object.keys(속).join(", ")})`);
+  return 속[찾은것];
+};
 
 const 방 = "packs";
 const 고른것 = process.argv[2];
@@ -42,10 +56,62 @@ const 언제나 = [
   "01_메뉴구조.xlsx", "02_IA_화면목록.xlsx", "03_기능정의서.xlsx", "04_WBS.xlsx",
   "05_FLOW_흐름도.drawio", "05_FLOW_흐름도.html",
   "06_메뉴구조.pptx", "07_AI빌드_스펙팩.json", "07_AI빌드_스펙팩.md",
-  "09_사이트_내놓는_법.html", "10_앱으로_내놓는_법.html", "README.txt",
+  "09_사이트_내놓는_법.html", "10_앱으로_내놓는_법.html",
+  "11_내사이트_검수하는_법.html", "README.txt",
 ];
 /** 완성화면이 들어가는 등급에만 있는 것. */
 const 완성화면있으면 = ["08_검수시나리오.xlsx"];
+
+/* 손님이 받는 07·11 에 «지금 코드의» 검수 글이 들어갔나.
+ *
+ * ⛔ 2026-09-02 — 32칸 가운데 28칸이 «옛 검수 글»을 그대로 팔고 있었다.
+ *   그날 화면검수-글.ts 에서 헛짚음 셋을 고쳤는데(빵부스러기를 위 메뉴로 본 것 등)
+ *   구운 zip 은 옛 글이었다. 코드만 고치면 «구워진 문서»는 옛말을 그대로 판다.
+ *
+ *   왜 아무도 못 잡았나 — build-all 의 마지막 확인은 `--card-pad`(CSS)만 본다.
+ *   검수 글은 아예 안 본다. 그래서 「32칸 모두 새 규칙이 들어갔습니다」라고 하면서
+ *   28칸이 옛 글을 들고 있었다. 손으로 zip 을 열어 보다가 걸렸다.
+ *
+ * 어떻게 보나 — 검수 글을 «통째로» 견준다. 스펙팩도 안내서도 그 글을 한 글자도
+ *   안 고치고 담으므로(11 번만 < > & 를 바꿔 담는다) 그게 된다. 한 줄만 달라도 잡는다.
+ *
+ * ⚠ 처음에는 «긴 줄 셋»만 뽑아 봤다. 일부러 옛말을 심어 시험해 보니 하필 그 셋이
+ *   아니어서 「성합니다」가 나왔다. 표본으로 재면 이런 통과가 제일 위험하다.
+ *   여기에 문구를 따로 적어 두지 않는다 — 글이 바뀌면 잣대도 같이 바뀌어야 한다.
+ */
+async function 굽힌글맞나(
+  이름: string,
+  z: JSZip,
+  뿌리: string,
+  안: (p: string) => boolean,
+) {
+  const 열기 = async (p: string) =>
+    안(p) ? Buffer.from(await z.files[`${뿌리}/${p}`].async("uint8array")).toString("utf8") : null;
+
+  const 볼것: [string, string][] = [
+    ["07_AI빌드_스펙팩.md", 검수글("화면검수글")],
+    ["07_AI빌드_스펙팩.md", 검수글("파일검수글")],
+    ["07_AI빌드_스펙팩.md", 검수글("모두검수글")],
+    ["11_내사이트_검수하는_법.html", 검수글("화면검수글")],
+  ];
+  const 담긴것 = new Map<string, string | null>();
+  for (const [파일, 글] of 볼것) {
+    if (!담긴것.has(파일)) 담긴것.set(파일, await 열기(파일));
+    const 속 = 담긴것.get(파일);
+    if (속 == null) continue;   /* 파일이 없는 것은 위에서 이미 «없습니다»로 잡는다 */
+    /* 11 번 안내서는 <pre> 안에 넣느라 < > & 를 바꿔 담는다(검수안내서.ts 의 안전()).
+       그대로 견주면 => 하나 때문에 «옛것»이 된다. 같은 방식으로 바꿔서 본다. */
+    const 잴것 = 파일.endsWith(".html")
+      ? 글.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      : 글;
+    /* ⚠ 몇 줄만 뽑아 보지 않는다. 2026-09-02 에 그렇게 만들었다가, 일부러 옛말을 심어
+       봤더니 그 세 줄이 아니어서 «성합니다»가 나왔다. 스펙팩도 안내서도 이 글을
+       «통째로» 담으므로 통째로 견줄 수 있다. 한 글자만 달라도 잡는다. */
+    if (!속.includes(잴것)) {
+      못됨(이름, `${파일} 의 검수 글이 지금 코드와 다릅니다 — 다시 구우세요 (build-all.mts)`);
+    }
+  }
+}
 
 async function 팩보기(zip파일: string) {
   const 이름 = zip파일.replace(/\.zip$/, "");
@@ -66,6 +132,8 @@ async function 팩보기(zip파일: string) {
   const 완성화면있음 = 길들.some((p) => p.includes("/완성화면/"));
   const 있어야할것 = [...언제나, ...(완성화면있음 ? 완성화면있으면 : [])];
   for (const f of 있어야할것) if (!안(f)) 못됨(이름, `${f} 가 없습니다`);
+
+  await 굽힌글맞나(이름, z, 뿌리, 안);
 
   /* 파일마다 «열어» 본다. */
   for (const p of 길들) {

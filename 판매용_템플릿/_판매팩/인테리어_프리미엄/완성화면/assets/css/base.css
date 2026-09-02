@@ -25,16 +25,22 @@
   --bg:#F0EFEB;
   --surface:#FFFDF8;
   --text:#2A2320;
-  --muted:#6B5E4F;
+  /* 2026-09-02 — 207장을 재니 대비 71건 가운데 대부분이 이 색이었다.
+     테두리색 바탕(#E4D9C4) 위에서 딱 4.50 이라 조금만 겹쳐도 넘어갔다.
+     색기는 그대로 두고 밝기만 내린다. 흰카드 6.80 · 옅은바탕 6.01 · 테두리색 4.95 */
+  --muted:#64584A;
   --border:#E4D9C4;
-  --success:#197B35;
+  /* 2026-09-02 — 옅은 초록 틴트 위 「정상」·「✓」·「읽음」이 3.85~4.09 였다. */
+  --success:#166A2E;
   --warning:#926013;
-  --danger:#C0392B;
+  --danger:#AB3326; /* 옅은 붉은 틴트 위 「밀림」 4.10 → 4.91 */
   --on-primary:#FFFFFF;
   --on-accent:#FFFFFF;
   /* 원색은 흰 배경에서 글자 대비가 모자란다. 글자용 한 단계 진한 색을 따로 둔다 */
-  --pri-ink:#A84B28;
-  --acc-ink:#0E6F60;
+  /* 2026-09-02 — 옅은 바탕(10~12% 틴트) 위 배지·칩·잔글씨가 4.35 였다.
+     색기는 그대로 두고 밝기만 내린다. #EAE0D5 위 5.48 · #E6D2C1 위 4.88 */
+  --pri-ink:#904022;
+  --acc-ink:#0D685A; /* 옅은 바탕 4.45 → 4.90 */
   --pri-10:rgba(188,89,24,.10);
   --pri-16:rgba(188,89,24,.16);
   --acc-12:rgba(14,111,96,.12);
@@ -454,7 +460,10 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .steps .s.on .n,.stepbar .s.on .n{background:var(--primary);color:var(--on-primary)}
 .steps .s.done,.stepbar .s.done{color:var(--success)}
 .steps .s.done .n,.stepbar .s.done .n{background:rgba(25,123,53,.14);color:var(--success)}
-.steps .sep,.stepbar .sep{color:var(--border);margin:0 4px}
+/* ⛔ 테두리 색을 «글자»로 쓰면 안 된다 (2026-09-02).
+   --border 는 선을 그으라고 둔 옅은 색이라 글자로 쓰면 대비 1.22 다 —
+   길잡이의 「›」가 거의 안 보였다. 207장 가운데 6장이 그랬다. */
+.steps .sep,.stepbar .sep{color:var(--muted);margin:0 4px}
 .hsteps{display:flex;align-items:flex-start;gap:var(--s2);flex-wrap:wrap}
 .hsteps .st{flex:1;min-width:120px;font-size:13px;color:var(--muted);text-align:center}
 .hsteps .st .dot{width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin:0 auto 6px}
@@ -725,27 +734,6 @@ html{scrollbar-gutter:stable}
   .row,.row-c,.wrap-row,.field-row{flex-wrap:wrap}
   [style*="width:150px"],[style*="width: 150px"]{max-width:100%}
 }
-
-/* ── 예시 사진 ──────────────────────────────────────────────
-   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
-   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
-
-/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
-   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
-   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
-   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
-   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
-   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
-.ph{position:relative}
-.ph > img[data-예시]{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; display:block;
-}
-/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
-   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
-.ph > img[data-예시] ~ .lb{display:none}
-/* ── 예시 사진 끝 ── */
-
 /* D6 마무리 — 남은 넷 (2026-08-21)
      ① .kv 는 «120px + 1fr» 인데 1fr 은 min-width:auto 라 «내용보다 못 줄어든다».
         「결제액의 5% (첫 공구는 0%)」 같은 긴 글이 들어가면 칸이 안 줄고 넘친다.
@@ -826,3 +814,23 @@ label.check + .row-b,
 .mt4 + .field,
 .banner + .split-r,
 .banner + .split{margin-top:var(--sp-block, var(--s4, 16px))}
+
+/* ── 예시 사진 ──────────────────────────────────────────────
+   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
+   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
+
+/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
+   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
+   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
+   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
+   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
+   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
+.ph{position:relative}
+.ph > img[data-예시]{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
+   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
+.ph > img[data-예시] ~ .lb{display:none}
+/* ── 예시 사진 끝 ── */

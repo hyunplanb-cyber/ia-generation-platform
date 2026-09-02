@@ -1,5 +1,6 @@
 /* AS 하자보수 — 잎사귀 14장. 이 팩의 알맹이라 손으로 만든다. */
 import * as U from './ui.mjs';
+import { SYMPTOMS } from './pages-as.mjs';
 import { AS_CASES } from './data.mjs';
 
 const P = {};
@@ -7,9 +8,14 @@ export const PAGES = P;
 
 /* ---- 하자보수 접수 갈래 ---- */
 P['AS0102'] = (ctx) => {
+  /* ⛔ 화면이 「부위를 바꾸면 증상 목록이 즉시 바뀝니다」라고 적어 두고, 어느 탭을
+     눌러도 설비 증상(누수·배수 안 됨·온수 안 나옴)만 나왔다 (2026-09-02).
+     SYMPTOMS 는 AS0101 이 이미 쓰고 있다 — 같은 것을 판으로 붙인다. */
+  const 부위 = Object.keys(SYMPTOMS);
+  const 판 = 부위.map((p) => U.pane(p, `<div class="checks">${SYMPTOMS[p].map((s) => `<label class="check"><input type="checkbox">${s}</label>`).join('')}</div>`, p === '설비'));
   const body = U.pageHd('부위별 증상 목록 전환', '부위를 바꾸면 증상 목록이 즉시 바뀝니다(이전 선택은 초기화)')
-    + U.tabs(['도배', '바닥', '타일', '설비', '전기', '창호', '목공'].map((s) => ({ label: s })), 3)
-    + `<div class="checks mt4">${['누수', '배수 안 됨', '온수 안 나옴'].map((s) => `<label class="check"><input type="checkbox">${s}</label>`).join('')}</div>`;
+    + U.tabBox(U.tabs(부위.map((p) => ({ label: p, pane: p })), 부위.indexOf('설비')), 판)
+;
   return { body, o: {} };
 };
 P['AS0103'] = (ctx) => {
@@ -41,9 +47,24 @@ P['AS0106'] = (ctx) => {
 
 /* ---- 접수 내역 갈래 ---- */
 P['AS0202'] = (ctx) => {
+  /* ⛔ 화면이 「탭을 누르면 목록이 바뀝니다」라고 적어 두고, 표에는 AS_CASES[0] 한 줄만
+     넣고 있었다 (2026-09-02 현님과 크롬으로 눌러 보다 나왔다). 탭의 개수(전체 3)와도
+     안 맞았다. 셋을 다 넣고 app.js 의 거르기 장치에 이어 준다. */
+  const 상태배지 = { '접수됨': 'b-mut', '방문 예정': 'b-pri', '처리 중': 'b-warn', '완료': 'b-ok' };
   const body = U.pageHd('상태 탭', '탭과 목록은 같은 상자 안에 있어 탭을 누르면 목록이 바뀝니다')
-    + U.tabs([{ label: '전체', cnt: 3 }, { label: '접수됨', cnt: 0 }, { label: '방문 예정', cnt: 1 }, { label: '처리 중', cnt: 1 }, { label: '완료', cnt: 1 }], 2)
-    + U.table(['접수일', '부위', '증상', '상태'], [AS_CASES[0]].map((c) => [c.at, c.part, c.symptom, U.badge(c.status, 'b-pri')]));
+    + U.tabs([
+        { label: '전체', cnt: AS_CASES.length, filter: '하자상태', all: true },
+        { label: '접수됨', cnt: AS_CASES.filter((c) => c.status === '접수됨').length, filter: '하자상태' },
+        { label: '방문 예정', cnt: AS_CASES.filter((c) => c.status === '방문 예정').length, filter: '하자상태' },
+        { label: '처리 중', cnt: AS_CASES.filter((c) => c.status === '처리 중').length, filter: '하자상태' },
+        { label: '완료', cnt: AS_CASES.filter((c) => c.status === '완료').length, filter: '하자상태' },
+      ], 0)
+    + `<div data-filter-in="하자상태">`
+    + U.table(['접수일', '부위', '증상', '상태'], AS_CASES.map((c) => ({
+        attr: ` data-tag="${c.status}"`,
+        cells: [c.at, c.part, c.symptom, U.badge(c.status, 상태배지[c.status] || 'b-mut')],
+      })))
+    + `<p class="t-sub mt3" data-filter-empty hidden>그 상태인 접수 건이 없어요.</p></div>`;
   return { body, o: {} };
 };
 P['AS0203'] = (ctx) => {

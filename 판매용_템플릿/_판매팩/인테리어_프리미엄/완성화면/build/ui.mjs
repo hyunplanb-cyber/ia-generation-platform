@@ -67,6 +67,9 @@ export function tabs(items, onIdx = 0, o = {}) {
     if (typeof t === 'object') {
       if (t.go) a.push(`data-go="${link(t.go)}"`);
       if (t.pane) a.push(`data-pane="${t.pane}"`);
+      /* 거르기 — app.js 의 거르기 장치가 이 표를 읽는다 (2026-09-02). */
+      if (t.filter) a.push(`data-filter="${t.filter}"`);
+      if (t.all) a.push('data-filter-all');
     }
     return `<button class="tab${i === onIdx ? ' on' : ''}" type="button" ${a.join(' ')}>${label}${cnt}</button>`;
   }).join('');
@@ -87,7 +90,7 @@ export const card = (title, body, o = {}) => `<div class="card ${o.cls || ''}">
   ${o.ft ? `<div class="card-ft">${o.ft}</div>` : ''}</div>`;
 
 export const banner = (kind, ico, html, o = {}) =>
-  `<div class="banner banner-${kind} ${o.cls || ''}">${ico ? `<span class="ico">${ico}</span>` : ''}<div class="grow">${html}</div>${o.right || ''}</div>`;
+  `<div class="banner banner-${kind} ${o.cls || ''}"${o.attr || ''}>${ico ? `<span class="ico">${ico}</span>` : ''}<div class="grow">${html}</div>${o.right || ''}</div>`;
 
 export const empty = (ico, title, msg, btns = '') => `<div class="empty">
   <div class="ico">${ico}</div><h3 class="t-sec mt3">${title}</h3>
