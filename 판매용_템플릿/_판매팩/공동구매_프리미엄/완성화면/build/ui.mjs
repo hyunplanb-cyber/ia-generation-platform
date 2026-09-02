@@ -119,7 +119,7 @@ export const accordion = (items, openIdx = -1) => `<div class="card"><div class=
 
 export const stat = (n, l, o = {}) => `<div class="stat ${o.cls || ''}">${o.ic ? `<div class="ic">${o.ic}</div>` : ''}
   <div class="n">${n}</div><div class="l">${l}</div>${o.d ? `<div class="d">${o.d}</div>` : ''}</div>`;
-export const statRow = (list) => `<div class="g4 mb6">${list.map((s) => stat(s[0], s[1], s[2] || {})).join('')}</div>`;
+export const statRow = (list, o = {}) => `<div class="g4 mt4 mb6 ${o.cls || ''}">${list.map((s) => stat(s[0], s[1], s[2] || {})).join('')}</div>`;
 
 export const progress = (pct, acc) => `<div class="progress"><div class="fill ${acc ? 'acc' : ''}" style="width:${pct}%"></div></div>`;
 
