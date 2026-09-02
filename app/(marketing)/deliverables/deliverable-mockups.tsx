@@ -1,6 +1,7 @@
 // 산출물 소개 페이지용 — 각 산출물의 "샘플 화면" 미니 목업(정적, 레트로모던).
 import { ArrowRight, Check, X, Lock } from "lucide-react";
 import { DESIGN_OPTIONS, colorsFor, type DesignKey } from "@/lib/design-presets";
+import { 재는것들 } from "@/lib/export/검수안내서";
 
 /* 「브라우저 창」 흉내 — 점 세 개가 달린 상자. (사이트 검수 탭에서만 쓴다)
    ⚠ AI팩 탭에서는 걷어 냈다 (2026-08-25 사장님 지시: 「상자로 넣어 둔거 다 빼고」).
@@ -227,6 +228,25 @@ export function SpecPackMockup() {
 - 생성 프롬프트:
   좌측 필터, 우측 3열 상품 그리드...`}</code>
       </pre>
+    </Card>
+  );
+}
+
+/* 자동 검수 — 팩이 «스스로 재는» 열 가지.
+   ⚠ 값을 지어내지 않는다. lib/export/검수안내서.ts 의 재는것들 을 그대로 쓴다.
+     손님이 받는 11_내사이트_검수하는_법.html 과 «같은 목록»이라야 한다 —
+     홍보에 적은 것과 실제로 재는 것이 다르면 그게 제일 나쁘다. */
+export function SelfCheckMockup() {
+  return (
+    <Card>
+      <ul className="space-y-1.5">
+        {재는것들.map((x) => (
+          <li key={x.무엇} className="flex items-start gap-2 text-xs leading-relaxed">
+            <Check className="mt-0.5 size-3.5 shrink-0 text-success" />
+            <span className="[word-break:keep-all]">{x.무엇}</span>
+          </li>
+        ))}
+      </ul>
     </Card>
   );
 }
