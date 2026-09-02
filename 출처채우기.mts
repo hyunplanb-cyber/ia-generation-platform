@@ -17,7 +17,7 @@
  *   npx tsx 출처채우기.mts <표> "<어디서>" "" --덮어쓰기     ← 이미 적힌 것까지 갈아엎는다
  *
  * 보기
- *   npx tsx 출처채우기.mts 판매용_템플릿/_이미지/마스코트/장면 "우리가 만든 것 (AI 생성)"
+ *   npx tsx 출처채우기.mts 판매용_템플릿/_이미지/고양이/장면 "우리가 만든 것 (AI 생성)"
  */
 import { existsSync, readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
