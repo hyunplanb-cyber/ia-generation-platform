@@ -147,7 +147,8 @@
   --pack-ink: #191713;
   --pack-sub: #77705F;
   --pack-tint: #F4F1EA;
-  --pack-tier: #D7481F;
+  /* 2026-09-02 — 등급 이름이 옅은 붉은 칸(#FBEEEB) 위에서 3.83 이었다. */
+  --pack-tier: #C0401C; /* 4.64~5.26 */
   --pack-tier-bg: #FBEEEB;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
