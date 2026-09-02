@@ -459,6 +459,11 @@
   /* ---------- ★ ES-02 견적 결과 — 마감 등급 탭 · 「포함」 토글이 금액에 반영된다.
      data-base 는 「기본」(mult 1.0) 기준값이다 — 등급 탭을 누르면 base×mult 로
      다시 계산해서 각 칸·범위·공사 기간을 바꾸고, 합계는 켜진(포함) 줄만 더한다. ---------- */
+  /* 견적 금액은 «만원 자리»에서 끊는다 — 조건을 곱하면 1의 자리까지 나와서
+     24,369,049원 같은 숫자가 견적서에 찍힌다(2026-09-02). */
+  var 만원끊기 = function (n) { return Math.round(n / 10000) * 10000; };
+  var 십만끊기 = function (n) { return Math.round(n / 100000) * 100000; };
+
   function es02합계() {
     var totalEl = document.querySelector('[data-grade-total]');
     if (!totalEl) return;
@@ -470,20 +475,47 @@
       if (b.checked) sum += Number(b.dataset.amt);
     });
     totalEl.textContent = 돈(sum);
+    결제차례다시(sum);
   }
+
+  /* ⛔ 2026-09-02 — ES0201 의 「돈 내는 차례」가 «확정 계약금액»(34,100,000)을 나눠
+     적고 있었다. 바로 위 항목표 합계는 32,400,000 이다. 같은 화면에서 두 총액이 돌았다.
+     게다가 마감 등급을 바꾸면 합계는 움직이는데 이 표만 그대로였다.
+     이제 «지금 보이는 합계»를 비율대로 나눈다 — 만원 자리에서 끊고, 마지막 회차가
+     나머지를 받아 합이 반드시 합계와 같아진다. */
+  function 결제차례다시(합계) {
+    var 칸들 = document.querySelectorAll('[data-bill-pct]');
+    if (!칸들.length) return;
+    if (합계 == null) {
+      var t = document.querySelector('[data-grade-total]');
+      합계 = t ? Number((t.textContent || '').replace(/[^0-9]/g, '')) : 0;
+    }
+    if (!(합계 > 0)) return;
+    var 쌓임 = 0;
+    for (var i = 0; i < 칸들.length; i++) {
+      var 몫 = i === 칸들.length - 1
+        ? 합계 - 쌓임
+        : Math.round(합계 * Number(칸들[i].dataset.billPct) / 10000) * 10000;
+      쌓임 += 몫;
+      칸들[i].textContent = 돈(몫);
+    }
+    var 합칸 = document.querySelector('[data-bill-sum]');
+    if (합칸) 합칸.textContent = 돈(합계);
+  }
+  document.addEventListener('DOMContentLoaded', function () { 결제차례다시(); });
   on('[data-grade-pick] .tab', 'click', function (e, t) {
     var box = t.closest('[data-grade-pick]');
     box.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('on'); });
     t.classList.add('on');
     var mult = Number(t.dataset.mult);
     document.querySelectorAll('[data-base]').forEach(function (el) {
-      var amt = Math.round(Number(el.dataset.base) * mult);
+      var amt = 만원끊기(Number(el.dataset.base) * mult);
       el.dataset.amt = amt;
       if (!el.classList.contains('toggle')) el.textContent = 돈(amt);
     });
     var priceEl = document.querySelector('[data-grade-price]');
     if (priceEl) {
-      priceEl.textContent = 돈(Number(priceEl.dataset.minBase) * mult) + ' ~ ' + 돈(Number(priceEl.dataset.maxBase) * mult);
+      priceEl.textContent = 돈(십만끊기(Number(priceEl.dataset.minBase) * mult)) + ' ~ ' + 돈(십만끊기(Number(priceEl.dataset.maxBase) * mult));
     }
     var daysEl = document.querySelector('[data-grade-days]');
     /* 「(주말 제외)」는 프리미엄 화면에 이미 옆 칸으로 있다 — 여기서 또 붙이면 두 번 나온다 */
@@ -620,24 +652,58 @@
    * ⚠ 옛 주석은 「확정 견적(ES0201)보다 낮은 범위에서만 움직인다」고 했는데, 그건
    *   «마감 등급을 아직 안 물었을 때» 이야기다. 이제 등급까지 보므로 그 전제가 없다.
    *   ES0201 은 32평 기준으로 굳어 있는 견본 한 장이라 조건이 다르면 달라도 맞다. ---------- */
-  var 바탕최소 = 24000000, 바탕최대 = 31000000;    // 32평 · 전체 시공 · 고급 · 공간 3개
-  var 범위배 = { "전체 시공": 1, "부분 시공": 0.62 };
-  var 등급배 = { "기본": 0.85, "고급": 1, "프리미엄": 1.22 };
+  /* ⛔ 2026-09-02: 여기 숫자가 손으로 적혀 있었다. 그래서 data.mjs 의 잣대와 갈라져,
+     같은 32평 전체 시공을 마법사는 2,400만, 결과 화면은 3,240만이라고 말했다.
+     이제 화면이 실어 보낸 것을 읽는다 — 값을 고치려거든 data.mjs 의 PRICING 을 고쳐라. */
+  function 잣대(el) {
+    var d = (el && el.dataset) || {};
+    var 읽기 = function (s, 되) { try { return JSON.parse(s); } catch (e) { return 되; } };
+    return {
+      최소: Number(d.minBase) || 0,
+      최대: Number(d.maxBase) || 0,
+      기준평: Number(d.basePyeong) || 32,
+      기준공간: Number(d.baseSpaces) || 3,
+      공간폭: Number(d.spaceStep) || 0.06,
+      범위배: 읽기(d.scopeMult, {}),
+      등급배: 읽기(d.gradeMult, {}),
+      기준등급: d.baseGrade || '고급',
+    };
+  }
+  /* 고른 조건이 기준에서 몇 배인가. 마법사와 결과 화면이 «같은 셈»을 쓴다. */
+  function 조건배(잣, 조건) {
+    var 등 = 잣.등급배 || {};
+    var 밑 = 등[잣.기준등급] || 1;
+    var 공간 = Number(조건.공간);
+    if (!공간) 공간 = 잣.기준공간;
+    return (Number(조건.평 || 잣.기준평) / 잣.기준평) *
+           ((잣.범위배 || {})[조건.범위] || 1) *
+           ((등[조건.등급] || 밑) / 밑) *
+           (1 + (공간 - 잣.기준공간) * 잣.공간폭);
+  }
 
   function 고른값(이름) {
     var el = document.querySelector('[data-field="' + 이름 + '"]:checked, select[data-field="' + 이름 + '"]');
     return el ? el.value : "";
   }
 
+  function 지금조건() {
+    var 평칸 = document.querySelector('[data-pyeong]');
+    return {
+      평: Number(평칸 && 평칸.value) || 0,
+      범위: 고른값("공사 범위"),
+      등급: 고른값("마감 등급"),
+      공간: document.querySelectorAll('[data-space-pick] input[type=checkbox]:checked').length,
+    };
+  }
+
   function 견적다시() {
     var priceEl = document.querySelector('[data-space-price]');
     if (!priceEl) return;
-    var 평 = Number((document.querySelector('[data-pyeong]') || {}).value) || 32;
-    var 공간 = document.querySelectorAll('[data-space-pick] input[type=checkbox]:checked').length;
-    var 배 = (평 / 32) *
-             (범위배[고른값("공사 범위")] || 1) *
-             (등급배[고른값("마감 등급")] || 1) *
-             (1 + (공간 - 3) * 0.06);
+    var 잣 = 잣대(priceEl);
+    var 조건 = 지금조건();
+    var 공간 = 조건.공간;
+    var 배 = 조건배(잣, 조건);
+    var 바탕최소 = 잣.최소, 바탕최대 = 잣.최대;
     /* 공간을 하나도 안 고르면 «아직 못 잰다» — 0원이라고 말하지 않는다 */
     if (!공간) { priceEl.textContent = "공간을 고르면 계산해요"; return; }
     /* ⛔ 2026-09-02: 옛 코드는 «만원()» 을 불렀는데 이 파일에 그런 함수가 없다.
@@ -669,6 +735,169 @@
     if (e.target && e.target.closest && e.target.closest('[data-pyeong]')) 견적다시();
   });
 
+  /* 지금 주소에 달린 조건을 다음 화면까지 들고 간다.
+     ⛔ 견적에서 45평 · 부분 시공을 골라 실측 예약으로 넘어가면 「연결할 견적」이
+        도로 32평 전체시공이 됐다. 조건이 한 걸음마다 새어 나갔다(2026-09-02). */
+  on('[data-carry]', 'click', function (e, t) {
+    if (!location.search) return;
+    var 갈길 = (t.getAttribute('href') || '').split('?')[0];
+    if (갈길) t.setAttribute('href', 갈길 + location.search);
+  });
+  /* ---------- ★ VS-01 실측 예약 — 고른 날짜·시간이 어디에도 안 갔다 ------------
+   *
+   * ⛔ 2026-09-02 — 세 가지가 한 자리에서 나왔다.
+   *   ③ VS0101 에서 9월 24일 · 09:00 을 골랐는데 VS0201 은 「9월 15일 (화) 오후 2시」였다.
+   *   ④ 「예약 요약」에 주소·연락처는 있는데 «날짜와 시간»만 없었다. 예약에서 가장
+   *      중요한 둘이 요약에 안 보였다.
+   *   ⑤ 「연결할 견적」이 «전체시공»으로 글자로 박혀 있어, 부분 시공을 골라 와도
+   *      전체시공이라고 말했다.
+   *
+   * 달력·시간대의 «켜짐»은 이미 제대로 돌고 있었다. 고른 것을 아무 데도 안 알렸을 뿐이다.
+   * ---------------------------------------------------------------------------- */
+  var 요일이름 = ['일', '월', '화', '수', '목', '금', '토'];
+
+  function 고른방문() {
+    var 날칸 = document.querySelector('[data-visit-pick="날짜"]');
+    var 시칸 = document.querySelector('[data-visit-pick="시간"]');
+    var 난 = 날칸 && 날칸.querySelector('.cal-d.sel');
+    var 신 = 시칸 && 시칸.querySelector('.slot.on');
+    var 달 = Number((날칸 && 날칸.dataset.visitMonth) || 9);
+    var 일 = 난 ? Number((난.textContent.match(/\d+/) || [0])[0]) : 0;
+    var 날글 = '';
+    if (일) {
+      /* 2026년이라 달만 알면 요일이 나온다 — 요일을 손으로 적어 두면 날짜와 갈라진다 */
+      var d = new Date(2026, 달 - 1, 일);
+      날글 = 달 + '월 ' + 일 + '일 (' + 요일이름[d.getDay()] + ')';
+    }
+    var 시글 = 신 ? (신.querySelector('.dd') || 신).textContent.trim() : '';
+    return { 날짜: 날글, 시간: 시글 };
+  }
+
+  /* 고른 것을 «예약 요약»에 곧바로 비춘다 */
+  function 방문요약다시() {
+    var 것 = 고른방문();
+    document.querySelectorAll('[data-visit-out]').forEach(function (el) {
+      var 값 = 것[el.dataset.visitOut];
+      if (값) el.textContent = 값;
+    });
+  }
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('[data-visit-pick]')) {
+      setTimeout(방문요약다시, 0);   /* 켜짐을 옮기는 손잡이가 먼저 돌게 둔다 */
+    }
+  });
+
+  /* ⑤ 견적에서 온 조건이 있으면 「연결할 견적」이 그것을 말한다 */
+  function 연결한견적글() {
+    var 첫 = document.querySelector('[data-visit-est-first]');
+    if (!첫) return '';
+    var q = new URLSearchParams(location.search);
+    var 평 = q.get('pyeong'), 범위 = q.get('scope');
+    var 글 = 첫.textContent;
+    if (평) 글 = 글.replace(/\d+평/, 평 + '평');
+    if (범위) 글 = 글.replace(/(전체|부분)\s*시공/, 범위.replace(/\s+/g, ''));
+    첫.textContent = 글;
+    return 글;
+  }
+
+  /* 넘길 때 — 고른 것을 주소에 싣는다 */
+  on('[data-visit-go]', 'click', function (e, t) {
+    var 것 = 고른방문();
+    var 갈길 = (t.getAttribute('href') || 'VS0201.html').split('?')[0];
+    var 고른견적 = document.querySelector('[data-visit-est]');
+    t.setAttribute('href', 갈길 + '?d=' + encodeURIComponent(것.날짜) +
+      '&t=' + encodeURIComponent(것.시간) +
+      '&est=' + encodeURIComponent(고른견적 ? 고른견적.value || (고른견적.options[0] || {}).text || '' : ''));
+  });
+
+  /* 받을 때 — 주소로 온 것을 확인 화면에 박는다 */
+  function 방문받기() {
+    var 칸들 = document.querySelectorAll('[data-visit-in]');
+    if (!칸들.length) return;
+    var q = new URLSearchParams(location.search);
+    var 온것 = { 날짜: q.get('d') || '', 시간: q.get('t') || '', 견적: q.get('est') || '' };
+    칸들.forEach(function (el) {
+      var 값 = 온것[el.dataset.visitIn];
+      if (값) el.textContent = 값;   /* 안 온 것은 견본 그대로 둔다 */
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    연결한견적글();
+    방문요약다시();
+    방문받기();
+  });
+  /* ---------- ★ ES-01 → ES-02 «고른 것을 들고 간다» ----------------------------
+   *
+   * ⛔ 2026-09-02 — 6단계를 다 채웠는데 결과 화면이 딴소리를 했다.
+   *      고른 것: 32평 · 부분 시공 · 프리미엄 · 1,920만~2,490만
+   *      뜬 것:   32평 · 전체 시공 · 고급   · 3,240만~3,410만
+   *   홈 → 견적은 ?pyeong=&band= 으로 넘기면서, 견적 → 결과는 아무것도 안 넘겼다.
+   *   앞 화면이 「고를 때마다 이 숫자가 바로 바뀌어요」라고 약속해 놓고 결과에서 버렸다.
+   *
+   * ⚠ 결과 화면의 숫자를 다시 적지 않는다. 이미 있는 data-base(기본 등급 기준)에
+   *   «조건 배수»를 곱해 둘 뿐이다. 그러면 마감 등급 탭도 그대로 맞물려 돈다.
+   * ---------------------------------------------------------------------------- */
+  on('[data-est-go]', 'click', function (e, t) {
+    var 조건 = 지금조건();
+    if (!조건.평) return;
+    var 갈길 = (t.getAttribute('href') || 'ES0201.html').split('?')[0];
+    t.setAttribute('href', 갈길 + '?pyeong=' + encodeURIComponent(조건.평) +
+      '&scope=' + encodeURIComponent(조건.범위 || '') +
+      '&grade=' + encodeURIComponent(조건.등급 || '') +
+      '&spaces=' + encodeURIComponent(조건.공간 || ''));
+  });
+
+  /* 받는 쪽 — 주소로 온 조건대로 결과 화면을 다시 그린다. */
+  function 견적받기() {
+    var priceEl = document.querySelector('[data-grade-price]');
+    if (!priceEl) return;
+    var q = new URLSearchParams(location.search);
+    var 조건 = {
+      평: Number(q.get('pyeong')) || 0,
+      범위: q.get('scope') || '',
+      등급: q.get('grade') || '',
+      공간: Number(q.get('spaces')) || 0
+    };
+    /* 곧바로 들어온 손님에게는 견본 한 장 그대로 보여 준다 */
+    if (!조건.평 && !조건.범위 && !조건.등급) return;
+
+    var 잣 = 잣대(priceEl);
+    /* 등급은 아래 탭이 따로 곱한다 — 여기서 또 곱하면 두 번 곱해진다 */
+    잣.등급배 = {};
+    var 배 = 조건배(잣, { 평: 조건.평, 범위: 조건.범위, 공간: 조건.공간 });
+    if (!(배 > 0)) return;
+
+    /* 기준값 자체를 옮겨 둔다 — 그래야 등급 탭과 「포함」 체크가 그대로 맞물린다 */
+    document.querySelectorAll('[data-base]').forEach(function (el) {
+      el.dataset.base = 만원끊기(Number(el.dataset.base) * 배);
+      if (el.dataset.amt) el.dataset.amt = 만원끊기(Number(el.dataset.amt) * 배);
+      if (el.tagName !== 'INPUT' && !el.classList.contains('toggle')) {
+        el.textContent = 돈(Number(el.dataset.amt || el.dataset.base));
+      }
+    });
+    priceEl.dataset.minBase = Math.round(Number(priceEl.dataset.minBase) * 배);
+    priceEl.dataset.maxBase = Math.round(Number(priceEl.dataset.maxBase) * 배);
+
+    /* 조건 칩의 «말»도 고른 대로 */
+    var 칩 = document.querySelectorAll('[data-est-cond] [data-cond]');
+    if (칩.length >= 3) {
+      if (조건.평) 칩[0].textContent = 조건.평 + '평';
+      if (조건.범위) 칩[1].textContent = 조건.범위;
+      if (조건.등급) 칩[2].textContent = 조건.등급 + ' 마감';
+    }
+
+    /* 고른 등급 탭을 눌러 준다 — 총액·항목·날수가 한꺼번에 따라온다 */
+    var 탭들 = document.querySelectorAll('[data-grade-pick] .tab');
+    var 누를것 = null;
+    for (var i = 0; i < 탭들.length; i++) {
+      if (조건.등급 && 탭들[i].textContent.trim() === 조건.등급) { 누를것 = 탭들[i]; break; }
+      if (!누를것 && 탭들[i].classList.contains('on')) 누를것 = 탭들[i];
+    }
+    if (누를것) 누를것.click();
+    else { es02합계(); 결제차례다시(); }
+  }
+  document.addEventListener('DOMContentLoaded', 견적받기);
   /* ---------- ★ HO-01 평수 구간 칩 — 하나만 켜지고, 값이 따라오고, 견적으로 들고 간다.
    *              (2026-09-02 사장님과 눈으로 훑다가 나왔다)
    *

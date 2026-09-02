@@ -106,7 +106,8 @@
       <span class="row" style="gap:8px">
         <button class="btn btn-ghost btn-sm" type="button" data-toast="임시저장했어요">나중에 이어서 하기</button>
         <button class="btn btn-primary" type="button" data-step-next>다음</button>
-        <a class="btn btn-primary" href="ES0201.html" data-step-done hidden>견적 결과 보기</a>
+        
+        <a class="btn btn-primary" href="ES0201.html" data-step-done data-est-go hidden>견적 결과 보기</a>
       </span>
     </div>
   </div>
@@ -123,8 +124,15 @@
         <dt>거주 여부</dt><dd data-answer="거주 여부">거주 중</dd>
         <dt>희망 착공</dt><dd data-answer="희망 착공">9월</dd>
       </dl>
+      
       <div class="row-b mt4"><span class="t-sub">예상 금액</span>
-        <span class="t-card" data-space-price>24,000,000원 ~ 31,000,000원</span></div>
+        <span class="t-card" data-space-price
+          data-min-base="32400000" data-max-base="35600000"
+          data-base-pyeong="32" data-base-spaces="3"
+          data-scope-mult='{"전체 시공":1,"부분 시공":0.62}'
+          data-grade-mult='{"기본":1,"고급":1.22,"프리미엄":1.48}'
+          data-base-grade="고급" data-space-step="0.06"
+          >32,400,000원 ~ 35,600,000원</span></div>
       <p class="t-sub mt2">고를 때마다 이 숫자가 바로 바뀌어요</p></div>
   </div>
   </div>

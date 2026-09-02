@@ -53,7 +53,7 @@ ${U.sec('결제 수단', U.tabBox(
       <div class="field"><label class="lb">카드사</label><select class="input"><option>신한카드</option><option>삼성카드</option><option>국민카드</option></select></div>
       ${/* ⚠ 할부 개월을 골라도 옆이 그대로였다(2026-08-18, 디럭스 CT-02 와 같은 자리).
             acts: 「할부 개월 고르기 → 옆에 월 납입액이 계산되어 뜬다」 */''}
-      <div class="field"><label class="lb">할부 개월</label><select class="input" data-halbu data-amt="3410000"><option>일시불</option><option selected>6개월</option><option>3개월</option></select></div>
+      <div class="field"><label class="lb">할부 개월</label><select class="input" data-halbu data-amt="3410000"><option>일시불</option><option>3개월</option><option selected>6개월</option></select></div>
       <p class="t-sub" data-halbu-out>6개월 — 월 568,333원 · 6개월까지 무이자입니다.</p>`, true) +
     U.pane('transfer', `<p class="t-body">아래 계좌로 입금해 주세요.</p>${U.kv([['은행', '국민은행'], ['계좌번호', '123456-04-123456'], ['예금주', '(주)마루공방']])}`, false) +
     U.pane('noacc', `<p class="t-body">입금자명을 주문자명과 동일하게 넣어 주세요.</p>${U.kv([['은행', '국민은행'], ['계좌번호', '123456-04-123456']])}`, false),

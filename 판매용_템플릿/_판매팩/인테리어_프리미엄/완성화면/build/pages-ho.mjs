@@ -1,6 +1,14 @@
 /* HO 홈 — 부모 화면 3장 */
 import * as U from './ui.mjs';
-import { FIELDS, CASES, FAQ, REVIEWS, FLAGSHIP } from './data.mjs';
+import { FIELDS, CASES, FAQ, REVIEWS, FLAGSHIP, PRICING } from './data.mjs';
+
+/* 마감 등급 — 값이 아니라 «말»만 여기 있다. 값은 PRICING 이 정한다. */
+const GRADES = [
+  ['기본', '국산 표준 자재', 14, 1],
+  ['고급', '국산 프리미엄 자재', 19, 2],
+  ['프리미엄', '수입 자재·풀 옵션', 24, 3],
+];
+const 만원 = (원) => Math.round(원 / 10000).toLocaleString('ko-KR');
 
 /* ---------------- HO0101 홈 ---------------- */
 function HO0101() {
@@ -58,11 +66,11 @@ ${U.sec('', U.banner('pri', '📐', `<b>지금 상담을 남기면 오늘 안에
 
 /* ---------------- HO0201 시공 분야 홈 ---------------- */
 function HO0201() {
-  const grades = [
-    ['기본', '210만원/평', '국산 표준 자재', '14일', '1년'],
-    ['고급', '265만원/평', '국산 프리미엄 자재', '19일', '2년'],
-    ['프리미엄', '340만원/평', '수입 자재·풀 옵션', '24일', '3년'],
-  ];
+  /* ⛔ 2026-09-02: 평당가가 여기와 HO0301 두 곳에 손으로 적혀 있었고, 둘 다 팩의
+     다른 숫자와 어긋났다(210만원 × 32평 = 6억 7천). 이제 PRICING 에서 뽑는다 —
+     값을 고치려거든 data.mjs 를 고쳐라. 여기가 아니라. */
+  const grades = GRADES.map(([등급, 자재, 날, 보증]) =>
+    [등급, `${만원(PRICING.평당(등급))}만원/평`, 자재, `${날}일`, `${보증}년`]);
   const body = `
 ${U.sec('', `<div class="row-c">${U.ph('욕실 시공 대표', 'ph-thumb', 'field1')}<div>
   <h1 class="t-page" style="font-size:26px">욕실 시공</h1>
@@ -114,11 +122,11 @@ ${U.sec('', `<div class="card"><div class="card-bd">
 
 ${U.sec('공정별 비용 비중', `<div class="col">${rows.map(([k, v]) => `<div class="bar-row"><span style="width:110px" class="t-sub">${k}</span>${U.bar(v * 3.2)}<span class="pct">${v}%</span></div>`).join('')}</div>`)}
 
-${U.sec('마감 등급별 차이', U.accordion([
-    { q: '기본 — 평당 210만원', a: '국산 표준 자재. 걸리는 날수 14일, 보증 1년.' },
-    { q: '고급 — 평당 265만원', a: '국산 프리미엄 자재. 걸리는 날수 19일, 보증 2년.' },
-    { q: '프리미엄 — 평당 340만원', a: '수입 자재·풀 옵션. 걸리는 날수 24일, 보증 3년.' },
-  ]))}
+${U.sec('마감 등급별 차이', U.accordion(GRADES.map(([등급, 자재, 날, 보증]) => ({
+    q: `${등급} — 평당 ${만원(PRICING.평당(등급))}만원`,
+    a: `${자재}. 걸리는 날수 ${날}일, 보증 ${보증}년. `
+     + `${FLAGSHIP.area}평 전체 시공이면 ${U.won(Math.round(PRICING.평당(등급) * FLAGSHIP.area / 100000) * 100000)} 안팎입니다.`,
+  }))))}
 
 ${U.sec('이런 비용이 더 붙을 수 있어요', `<ul class="list-plain">${[
     '폐기물 처리비 — 평당 3만원 안팎',

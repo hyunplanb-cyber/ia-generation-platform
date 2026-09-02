@@ -1,6 +1,6 @@
 /* ES 견적 — 부모 화면 5장. 이 팩의 첫 번째 알맹이(계산되어 나오는 견적). */
 import * as U from './ui.mjs';
-import { FLAGSHIP, PROCESS, won } from './data.mjs';
+import { FLAGSHIP, PRICING, PROCESS, won } from './data.mjs';
 
 /* 공정별 항목표 — es2·es3·es5가 모두 같은 숫자를 쓴다.
    합계가 반드시 FLAGSHIP.totalFirst(처음 견적, 실측 전 평균값 기준)와 같아야 한다 —
@@ -12,12 +12,20 @@ if (ITEM_TOTAL !== FLAGSHIP.totalFirst) {
   throw new Error(`ES 항목표 합계(${ITEM_TOTAL})가 FLAGSHIP.totalFirst(${FLAGSHIP.totalFirst})와 다릅니다 — 화면과 표가 갈라집니다`);
 }
 
-/* 6단계 중 3번째(공간만 고른 상태)에서 보여줄 «중간» 미리보기.
-   ⚠ FLAGSHIP.totalFirst~total(32,400,000~34,100,000)을 그대로 쓰면 안 된다 —
-   그건 평수·마감등급까지 다 정한 «확정 견적»이다. 아직 3단계인데 최종 확정액이
-   먼저 보이면 "고를 때마다 바뀐다"는 말이 거짓이 된다(디럭스 ES-01의
-   2,400만~3,100만과 같은 자리 — 같은 값을 그대로 따른다). */
-const PARTIAL_PREVIEW = { low: 24_000_000, high: 31_000_000 };
+/* 마법사가 처음 보여줄 금액 — 32평 · 전체 시공 · 고급 · 공간 3개 기준.
+ *
+ * ⛔ 2026-09-02: 여기 2,400만~3,100만이 손으로 적혀 있었다. 평당 75만원이다.
+ *   같은 32평 전체 시공을 ES0201 과 HO0301 은 3,240만(평당 101만)이라고 말한다.
+ *   손님은 홈에서 「30평대 3,200~4,600만」을 보고 들어와서 2,400만을 보게 된다.
+ *
+ * ⚠ 옛 주석은 「확정 견적을 그대로 쓰면 «고를 때마다 바뀐다»가 거짓이 된다」고 했다.
+ *   그 걱정은 «숫자가 한 푼도 안 움직이던 때»의 것이다. 오늘 마법사가 평수·범위·
+ *   등급·공간 넷을 다 보고 다시 세게 되었으므로, 이제는 잣대가 «같아야» 참말이 된다.
+ *   잣대는 data.mjs 의 PRICING 하나뿐이다. */
+const 처음금액 = {
+  low: Math.round(PRICING.평당고급 * FLAGSHIP.area),
+  high: Math.round(PRICING.평당고급 * FLAGSHIP.area * PRICING.폭 / 100000) * 100000,
+};
 
 /* ---------------- ES0101 견적 조건 입력 - 단계별 ----------------
    ⚠ 예전에는 «3단계 한 장면»만 그려 두고 막대에 「6단계 중 3번째」라고만 적었다.
@@ -87,7 +95,10 @@ ${단계막대}
       <span class="row" style="gap:8px">
         ${U.btn('나중에 이어서 하기', { cls: 'btn-ghost btn-sm', attr: ' data-toast="임시저장했어요"' })}
         ${U.btn('다음', { cls: 'btn-primary', attr: ' data-step-next' })}
-        ${U.btn('견적 결과 보기', { href: 'ES0201', cls: 'btn-primary', attr: ' data-step-done hidden' })}
+        ${/* ⛔ 2026-09-02: 이 손잡이가 아무것도 안 들고 갔다. 6단계를 다 채웠는데
+             결과 화면은 늘 「32평 · 전체 시공 · 고급 · 3,240만~3,410만」이었다.
+             app.js 의 견적넘기기() 가 누를 때 고른 값을 주소에 실어 준다. */''}
+        ${U.btn('견적 결과 보기', { href: 'ES0201', cls: 'btn-primary', attr: ' data-step-done data-est-go hidden' })}
       </span>
     </div>
   </div>
@@ -102,8 +113,17 @@ ${단계막대}
         <dt>거주 여부</dt><dd data-answer="거주 여부">거주 중</dd>
         <dt>희망 착공</dt><dd data-answer="희망 착공">9월</dd>
       </dl>
+      ${/* 잣대를 화면에 실어 보낸다 — app.js 는 정적 파일이라 data.mjs 를 못 읽는다.
+           ES0201 이 data-min-base 를 쓰는 것과 같은 방식이다. 숫자를 app.js 에 또
+           적으면 반드시 갈라진다. */''}
       <div class="row-b mt4"><span class="t-sub">예상 금액</span>
-        <span class="t-card" data-space-price>${won(PARTIAL_PREVIEW.low)} ~ ${won(PARTIAL_PREVIEW.high)}</span></div>
+        <span class="t-card" data-space-price
+          data-min-base="${처음금액.low}" data-max-base="${처음금액.high}"
+          data-base-pyeong="${FLAGSHIP.area}" data-base-spaces="${PRICING.공간기준}"
+          data-scope-mult='${JSON.stringify(PRICING.범위배)}'
+          data-grade-mult='${JSON.stringify(PRICING.등급배)}'
+          data-base-grade="${PRICING.기준등급}" data-space-step="${PRICING.공간배}"
+          >${won(처음금액.low)} ~ ${won(처음금액.high)}</span></div>
       <p class="t-sub mt2">고를 때마다 이 숫자가 바로 바뀌어요</p>`)}
   </div>
 </div>
@@ -122,9 +142,12 @@ function ES0201() {
   });
   const body = `
 ${U.sec('', `<div class="card"><div class="card-bd">
-  <div class="t-page" style="font-size:30px" data-grade-price data-min-base="${Math.round(FLAGSHIP.totalFirst/1.22)}" data-max-base="${Math.round(FLAGSHIP.total/1.22)}">${won(FLAGSHIP.totalFirst)} ~ ${won(FLAGSHIP.total)}</div>
+  <div class="t-page" style="font-size:30px" data-grade-price data-base-pyeong="${FLAGSHIP.area}" data-base-spaces="${PRICING.공간기준}" data-space-step="${PRICING.공간배}" data-scope-mult='${JSON.stringify(PRICING.범위배)}' data-min-base="${Math.round(FLAGSHIP.totalFirst/1.22)}" data-max-base="${Math.round(FLAGSHIP.totalFirst * PRICING.폭 / 1.22)}">${won(FLAGSHIP.totalFirst)} ~ ${won(Math.round(FLAGSHIP.totalFirst * PRICING.폭 / 100000) * 100000)}</div>
   <p class="t-sub mt1">방문 실측 뒤에 확정됩니다. 지금 금액은 평균값 기준이에요.</p>
-  <div class="chips mt4">${U.chips(['32평', '전체 시공', '고급 마감', '9월 착공'], [0, 1, 2, 3], {})}${U.btn('조건 고치기', { cls: 'btn-ghost btn-sm', href: 'ES0101' })}</div>
+  ${/* 앞 화면에서 고른 것이 여기 박혀 있었다. app.js 의 견적받기() 가 주소로 온 값으로
+       이 넷을 갈아 끼운다. 안 온 것은 그대로 둔다 — 견본 한 장으로도 말이 되게. */''}
+  <div class="chips mt4" data-est-cond>${U.chips([`${FLAGSHIP.area}평`, FLAGSHIP.scope, `${FLAGSHIP.grade} 마감`, '9월 착공'], [0, 1, 2, 3],
+    { extra: ' data-cond' })}${U.btn('조건 고치기', { cls: 'btn-ghost btn-sm', href: 'ES0101' })}</div>
 </div></div>`)}
 
 ${/* ⚠ 탭이 색만 바뀌고 금액은 그대로였다(2026-08-18). 스펙팩 acts 는 「총액과 아래
@@ -137,13 +160,22 @@ ${U.sec('공정별 항목', U.table(['공정', '수량', '단가', '금액', '�
 
 ${U.sec('이건 포함되어 있지 않아요', `<ul class="list-plain">${['가구', '가전', '이사비', '입주청소'].map((t) => `<li>· ${t}</li>`).join('')}</ul>`)}
 
-${U.sec('돈 내는 차례', U.table(['회차', '비율', '금액'], FLAGSHIP.billing.map((b) => [b[0], `${Math.round(b[1] * 100)}%`, won(b[2])])))}
+${/* ⛔ 2026-09-02: 여기가 FLAGSHIP.billing 의 «확정 계약금액»(34,100,000)을 나눠 적고
+      있었다. 바로 위 항목표 합계는 32,400,000 이다 — 같은 화면에서 두 총액이 돈다.
+      게다가 마감 등급을 바꾸면 합계는 움직이는데 이 표는 안 움직였다.
+      ⚠ 여기는 «견적»이지 계약이 아니다. 계약금액을 나누는 것은 CT0101 의 몫이다.
+      이제 비율만 적어 두고 금액은 app.js 가 «지금 화면의 합계»로 셈한다. */''}
+${U.sec('돈 내는 차례', U.table(['회차', '비율', '금액'],
+  FLAGSHIP.billing.map((b) => [b[0], `${Math.round(b[1] * 100)}%`,
+    `<span data-bill-pct="${b[1]}">${won(Math.round(ITEM_TOTAL * b[1] / 10000) * 10000)}</span>`]),
+  { foot: ['합계', '100%', `<span data-bill-sum>${won(ITEM_TOTAL)}</span>`] }))}
+${U.banner('mut', 'ℹ', '실측 뒤 계약할 때 확정 금액으로 다시 나눕니다. 지금은 위 견적 합계를 나눈 것이에요.')}
 
 ${U.sec('예상 공사 기간', `<div class="row-c"><b style="font-size:18px" data-grade-days>${FLAGSHIP.days}일</b><span class="t-sub">(주말 제외)</span></div>${U.bar(60)}`)}
 
 <div class="card box-pri mt6"><div class="card-bd row-b wrap-row">
   <div>${U.btn('항목 상세 보기', { href: 'ES0301', cls: 'btn-ghost' })}</div>
-  <div class="btns">${U.btn('견적서 저장하기', { href: 'ES0401', cls: 'btn-soft' })}${U.btn('이 견적으로 실측 예약', { href: 'VS0101', cls: 'btn-primary btn-lg' })}</div>
+  <div class="btns">${U.btn('견적서 저장하기', { href: 'ES0401', cls: 'btn-soft' })}${U.btn('이 견적으로 실측 예약', { href: 'VS0101', attr: ' data-carry', cls: 'btn-primary btn-lg' })}</div>
 </div></div>`;
   return { body, o: {} };
 }
