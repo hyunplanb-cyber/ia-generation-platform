@@ -35,7 +35,9 @@ export default function MarketingLayout({
           <dl className="flex flex-wrap gap-x-4 gap-y-1 border-t border-border pt-6 text-xs">
             {businessInfoRows().map(([label, value]) => (
               <span key={label} className="flex gap-1.5">
-                <dt className="text-muted-foreground/70">{label}</dt>
+                {/* ⚠ /70 을 뺐다 (2026-09-02). 흐리게 하니 #979A9F 가 되어 흰 바탕에서 2.82 였다.
+                    사업자 정보는 «법으로 적게 되어 있는 글»이라 흐려서 안 보이면 적은 뜻이 없다. */}
+                <dt className="text-muted-foreground">{label}</dt>
                 <dd className="text-muted-foreground">
                   {label === "문의" ? (
                     <a href={`mailto:${value}`} className="hover:text-foreground hover:underline">
