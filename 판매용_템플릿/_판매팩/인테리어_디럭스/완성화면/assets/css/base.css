@@ -18,16 +18,17 @@
   --primary:#111111;
   --primary-hover:#000000;
   --accent:#C64F28;
-  --accent-text:#A84B28;        /* 흰 배경 위 글자용 */
+  --accent-text:#9E4726;        /* 흰 배경 위 글자용 · 틴트 위 4.13 → 4.53 (b-acc 「새요청」) */
   --accent-text-dark:#D97757;
   --bg:#F0EFEB;
   --surface:#FFFFFF;
   --text:#111111;
   --muted:#666666;
   --border:#E5E5E5;
-  --success:#197B35;
-  --warning:#916100;
-  --danger:#CF222E;
+  --success:#177332;      /* 틴트 위 4.08 → 4.51 (b-ok · ok-mark ✓ 12곳) */
+  --warning:#865900;      /* 틴트 위 4.00 → 4.53 (b-warn 「접수됨·발주함」) */
+  --danger:#A21B24;       /* 틴트 «두 겹» 위 3.28 → 4.72 (.rowcard.bad 안의 「밀림」)
+                             ⚠ 딱 4.50 을 겨냥했더니 브라우저에서 4.46 이 나왔다. 여유를 둔다. */
   --on-primary:#FFFFFF;
   --on-accent:#FFFFFF;
 
