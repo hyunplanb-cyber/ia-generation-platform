@@ -52,6 +52,42 @@
     }
   });
 
+  /* 거르기 — 탭·칩을 누르면 목록이 «실제로» 줄어든다. (2026-09-02)
+   *
+   * 왜 있나 — 현님과 크롬으로 207장을 눌러 보다 나왔다. 탭·칩을 누르면 on 클래스만
+   *   옮겨 붙고 목록은 그대로였다. 화면은 「탭을 누르면 목록이 바뀝니다」라고 적어
+   *   두고 있었다. ⛔ check-반응 은 on 이 옮겨 붙는 것을 «반응»으로 세어 통과시킨다
+   *   (검수항목 G11) — 사람이 목록을 세어 보고서야 안다.
+   *
+   * 쓰는 법 — 거르는 쪽에 data-filter="이름", 걸러질 쪽에 data-filter-in="이름",
+   *   그 안의 줄마다 data-tag="값". 「전체」는 data-filter-all 을 단다.
+   *   여러 값을 가진 줄은 data-tag="값1 값2" 처럼 띄어 쓴다.
+   *
+   * ⚠ 거른 뒤 «남은 것이 0» 이면 빈 화면만 남는다. 그때는 「조건에 맞는 것이 없어요」를
+   *   띄운다 — 아무것도 없는 화면은 고장으로 보인다(검수항목 7-3). */
+  function 거르기(누른것) {
+    var 이름 = 누른것.getAttribute('data-filter');
+    if (!이름) return;
+    var 담긴곳 = document.querySelector('[data-filter-in="' + 이름 + '"]');
+    if (!담긴곳) return;
+    var 값 = 누른것.hasAttribute('data-filter-all') ? null : (누른것.textContent || '').replace(/[0-9]+$/, '').trim();
+    var 줄들 =담긴곳.querySelectorAll('[data-tag]');
+    var 남은수 = 0;
+    for (var i = 0; i < 줄들.length; i++) {
+      var 태그 = (줄들[i].getAttribute('data-tag') || '').split(/\s+/);
+      var 보일까 = 값 === null || 태그.indexOf(값) >= 0;
+      줄들[i].hidden = !보일까;
+      if (보일까) 남은수++;
+    }
+    var 빈말 =담긴곳.querySelector('[data-filter-empty]');
+    if (빈말) 빈말.hidden = 남은수 > 0;
+    /* 「조건에 맞는 사례 8개」 같은 개수도 따라 써 준다 — 안 그러면 목록은 줄었는데
+       숫자는 그대로라 «둘이 다른 말»을 한다(검수항목 7-7). */
+    var 셈칸들 = document.querySelectorAll('[data-filter-count="' + 이름 + '"]');
+    for (var j = 0; j < 셈칸들.length; j++) 셈칸들[j].textContent = 셈칸들[j].textContent.replace(/\d+(?=개)/, 남은수);
+  }
+  on('[data-filter]', 'click', function (e, t) { 거르기(t); });
+
   /* 아코디언 */
   on('.acc-q', 'click', function (e, t) {
     t.closest('.acc-item').classList.toggle('on');
@@ -788,15 +824,6 @@
   });
 
   document.addEventListener('click', function (e) {
-    /* OW0401 공정 칩 → 자재 목록을 그 공정 것만 남긴다 */
-    var 칩 = e.target.closest && e.target.closest('[data-proc-chip]');
-    if (칩) {
-      var 골 = 칩.textContent.trim();
-      Array.prototype.forEach.call(document.querySelectorAll('.tbl-mat tr.mat-row'), function (tr) {
-        tr.hidden = !(골 === '전체' || tr.cells[0].textContent.trim().indexOf(골) >= 0);
-      });
-    }
-
     /* CT0301 착공일 달력 → 위 안내 문구의 날짜 */
     var 날 = e.target.closest && e.target.closest('[data-chakgong] .cal-d');
     if (날 && !날.classList.contains('off') && 날.textContent.trim()) {

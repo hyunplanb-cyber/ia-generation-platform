@@ -16,7 +16,10 @@ const UNPAID_TOTAL = FLAGSHIP.billing.filter((b) => b[4] !== '수금 완료').re
 function OW0101() {
   const body = `
 ${U.pageHd('현장 대시보드', '이번 달 기준')}
-${U.tabs([{ label: '이번 주' }, { label: '이번 달' }, { label: '전체' }], 1, { pill: true })}
+${/* ⛔ 눌러도 아무것도 안 바뀌었다 (2026-09-02). 기간별 지표 자료가 «한 벌»뿐이라
+      거를 것도 다시 셈할 것도 없다. 없는 것을 고르게 두면 눌러도 아무 일이 없다 —
+      고르개를 빼고, 이 견본이 무엇을 담고 있는지 그대로 적는다(검수항목 7-3·7-7). */''}
+<p class="t-sub mb6">이 견본의 숫자는 <b>이번 달 기준</b>이에요.</p>
 
 ${U.statGrid([
     U.stat('진행 중 현장', `${SITES.length}곳`, { cls: 's-acc' }),
@@ -52,12 +55,17 @@ function OW0201() {
   const body = `
 ${U.pageHd('견적 요청함', `요청 ${REQUESTS.length}건 · 계약 성사율 34%`)}
 
-${U.tabs([{ label: '새 요청', cnt: 1 }, { label: '확인 중', cnt: 1 }, { label: '실측 잡힘', cnt: 1 }, { label: '계약됨', cnt: 1 }, { label: '놓침', cnt: 1 }], 0)}
+${/* ⛔ 탭을 눌러도 다섯 줄이 그대로였다 (2026-09-02). 개수도 손으로 1 씩 적어 두어
+      REQUESTS 가 바뀌면 어긋난다. 세어서 적고, 공통 거르기 장치에 잇는다. */''}
+${U.tabs([{ label: '전체', cnt: REQUESTS.length, filter: '요청', all: true }].concat(
+  ['새 요청', '확인 중', '실측 잡힘', '계약됨', '놓침'].map((s) => (
+    { label: s, cnt: REQUESTS.filter((r) => r.status === s).length, filter: '요청' }))), 0)}
 
-${U.table(['들어온 시각', '평수', '분야', '자동 계산 금액', '연락처', '담당자', '상태'],
-    REQUESTS.map((r) => [r.at, `${r.area}평`, r.field, won(r.amount), r.phoneMasked,
+<div data-filter-in="요청">${U.table(['들어온 시각', '평수', '분야', '자동 계산 금액', '연락처', '담당자', '상태'],
+    REQUESTS.map((r) => ({ attr: ` data-tag="${r.status}"`, cells: [r.at, `${r.area}평`, r.field, won(r.amount), r.phoneMasked,
       `<select class="input" style="height:34px;padding:0 8px">${['미배정', '김하은', '이도목'].map((n) => `<option${n === '미배정' && r.status !== '새 요청' ? '' : ''}>${n}</option>`).join('')}</select>`,
-      U.badge(r.status, r.status === '새 요청' ? 'b-acc' : r.status === '계약됨' ? 'b-ok' : r.status === '놓침' ? 'b-danger' : 'b-pri')]))}
+      U.badge(r.status, r.status === '새 요청' ? 'b-acc' : r.status === '계약됨' ? 'b-ok' : r.status === '놓침' ? 'b-danger' : 'b-pri')] })))}
+<p class="t-sub mt3" data-filter-empty hidden>그 상태인 요청이 없어요.</p></div>
 
 ${U.sec('', U.card('놓친 요청 — RQ-0227', `<p class="t-sub">응답 시간 8시간 초과로 자동 마감됐습니다.</p>
   <div class="field mt3"><label class="lb">놓친 까닭</label><select class="input"><option>담당자 부재</option><option>예산 범위 밖</option><option>지역 밖</option></select></div>`))}
@@ -121,7 +129,7 @@ function OW0401() {
   /* ⚠ 발주 상태가 «누를 수 없는 배지»뿐이라 바꿀 자리가 없었고, 공정 칩도 눌리기만 하고
         목록은 그대로였다(2026-08-18, 디럭스 OW-04 와 같은 자리).
         acts: 「발주 상태 바꾸기 → 배지가 바뀌고 위 숫자가 줄어든다」·「공정 필터 → 그 공정 것만 남는다」 */
-  const rows = items.map(({ p, est, actual, statusIdx }) => ({ cls: 'mat-row', cells: [p.key, p.key + ' 자재 일체', '1식', won(est), won(actual), won(actual - est),
+  const rows = items.map(({ p, est, actual, statusIdx }) => ({ cls: 'mat-row', attr: ` data-tag="${p.key}"`, cells: [p.key, p.key + ' 자재 일체', '1식', won(est), won(actual), won(actual - est),
     `<span data-po-badge>${U.badge(STATUS[statusIdx], ['b-mut', 'b-pri', 'b-ok'][statusIdx])}</span>`
     + `<select class="input" data-po-st data-po-cls="b-mut,b-pri,b-ok" style="height:34px;padding:0 8px;margin-top:4px">${STATUS.map((s, i) => `<option${i === statusIdx ? ' selected' : ''}>${s}</option>`).join('')}</select>`] }));
   const notOrdered = items.filter((it) => it.statusIdx === 0).length;
@@ -139,9 +147,12 @@ ${U.statGrid([
     U.stat('납품 지연', '1건', { cls: 's-mut' }),
   ])}
 
-${U.sec('', U.chips(['전체', '철거', '설비', '전기', '목공', '타일', '도배'], 0, { extra: ' data-proc-chip' }))}
+${/* 2026-09-02 — data-proc-chip 이 달려 있는데 받는 코드가 없어 목록이 안 줄었다.
+      코드 주석에 2026-08-18 부터 적혀 있던 자리다. 공통 거르기 장치에 잇는다. */''}
+${U.sec('', U.chips(['전체', '철거', '설비', '전기', '목공', '타일', '도배'], 0, { extra: ' data-filter="자재공정"' }).replace('<button class="chip on"', '<button class="chip on" data-filter-all'))}
 
-${U.table(['공정', '품명', '수량', '견적 단가', '실제 단가', '차액', '발주 상태'], rows, { cls: 'tbl-mat' })}
+<div data-filter-in="자재공정">${U.table(['공정', '품명', '수량', '견적 단가', '실제 단가', '차액', '발주 상태'], rows, { cls: 'tbl-mat' })}
+<p class="t-sub mt3" data-filter-empty hidden>그 공정 자재가 없어요.</p></div>
 
 ${U.sec('', U.banner('warn', '🚚', '<b>납품 지연</b> — 타일(포세린 600×600)이 9/23 예정에서 9/25로 늦어졌어요.'))}
 
@@ -161,7 +172,11 @@ ${U.statGrid([
     U.stat('세금계산서 미발행', '1건', {}),
   ])}
 
-${U.sec('', U.chips(['전체 현장', FLAGSHIP.title, '한강로 카페 상가', '옥수동 욕실'], 1, {}))}
+${/* ⛔ 현장 칩을 눌러도 아래 표가 안 바뀌었다 (2026-09-02). 거르기를 붙이려 했는데
+      billing 자료가 FLAGSHIP «한 현장»에만 있다 — 거를 것이 없다. 없는 것을
+      있는 척하지 않고, 이 견본이 한 현장만 담고 있다는 것을 그대로 적는다
+      (검수항목 7-7). 다른 현장 자료가 생기면 그때 data-filter 를 붙인다. */''}
+${U.sec('', U.chips([FLAGSHIP.title], 0, {}) + `<p class="t-sub mt2">이 견본은 <b>${U.esc(FLAGSHIP.title)}</b> 한 현장의 청구·수금만 담고 있어요.</p>`)}
 
 ${U.table(['회차', '금액', '예정일', '상태', ''], FLAGSHIP.billing.map((b) => [b[0], won(b[2]), b[3], U.badge(b[4], b[4] === '수금 완료' ? 'b-ok' : 'b-mut'),
     b[4] === '수금 완료' ? '<label class="check"><input type="checkbox" checked disabled>입금 확인</label>' : `${U.btnSay('청구서 만들기', '청구서를 만들었어요. 상태가 「청구함」으로 바뀌었어요')}`]))}
@@ -177,18 +192,23 @@ function OW0601() {
   const body = `
 ${U.pageHd('일정 캘린더', '여러 현장의 일정을 한 달력에 겹쳐 봅니다')}
 
-${U.tabs([{ label: '주 보기' }, { label: '월 보기' }], 1, { pill: true })}
-${U.sec('', U.chips(['전체 팀', ...TEAMS.slice(0, 6)], 0, {}))}
+${/* ⛔ 눌러도 아무것도 안 바뀌었다 (2026-09-02). 달력 자료가 «한 벌»뿐이라
+      거를 것도 다시 셈할 것도 없다. 없는 것을 고르게 두면 눌러도 아무 일이 없다 —
+      고르개를 빼고, 이 견본이 무엇을 담고 있는지 그대로 적는다(검수항목 7-3·7-7). */''}
+<p class="t-sub mb6">이 견본은 <b>2026년 9월 한 달</b>을 보여 줍니다.</p>
+${U.sec('', U.chips(['전체 팀', ...TEAMS.slice(0, 6)], 0, { extra: ' data-filter="팀"' }).replace('<button class="chip on"', '<button class="chip on" data-filter-all'))}
 
 <div class="split-r">
   <div>${U.card('', U.calendar({ sel: 24, marks: [24], month: '2026년 9월' }))}</div>
   <div class="sticky">
     ${U.card('9월 24일 (목) 일정', `
       ${U.banner('danger', '⚠️', `<b>${U.esc(CONFLICT.team)} 겹침</b><div class="t-sub mt1">${CONFLICT.sites.join(' · ')} — 같은 날 배정됐어요.</div>`)}
-      <div class="col mt3">
-        <div class="box"><b>${U.esc(CONFLICT.sites[0])}</b><div class="t-sub">${U.esc(CONFLICT.team)} · 목공 마감 검수</div></div>
-        <div class="box"><b>${U.esc(CONFLICT.sites[1])}</b><div class="t-sub">${U.esc(CONFLICT.team)} · 타일 시공 시작</div></div>
-        <div class="box"><b>옥수동 욕실 리모델링</b><div class="t-sub">준공 검수 방문 예정</div></div>
+      ${/* 팀 칩을 누르면 그 팀 일정만 남는다 (2026-09-02). */''}
+      <div class="col mt3" data-filter-in="팀">
+        <div class="box" data-tag="${U.esc(CONFLICT.team)}"><b>${U.esc(CONFLICT.sites[0])}</b><div class="t-sub">${U.esc(CONFLICT.team)} · 목공 마감 검수</div></div>
+        <div class="box" data-tag="${U.esc(CONFLICT.team)}"><b>${U.esc(CONFLICT.sites[1])}</b><div class="t-sub">${U.esc(CONFLICT.team)} · 타일 시공 시작</div></div>
+        <div class="box" data-tag="청소팀"><b>옥수동 욕실 리모델링</b><div class="t-sub">청소팀 · 준공 검수 방문 예정</div></div>
+        <p class="t-sub" data-filter-empty hidden>그 팀은 이 날 일정이 없어요.</p>
       </div>
       <div class="mt4">${U.btn('일정 추가', { cls: 'btn-primary btn-block' })}</div>`)}
     ${U.card('공휴일·공사 금지일', U.kv([['추석 연휴', '9/14~9/16'], ['아파트 공사 금지', '일요일 전체']]), { cls: 'mt4' })}

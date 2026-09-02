@@ -2,7 +2,8 @@
 import * as U from './ui.mjs';
 import { AS_CASES, FLAGSHIP } from './data.mjs';
 
-const SYMPTOMS = {
+/* AS0102 도 같은 것을 쓴다 — 두 곳에 적으면 갈라진다 (2026-09-02). */
+export const SYMPTOMS = {
   '도배': ['벽지 들뜸', '이음새 벌어짐', '곰팡이·얼룩'],
   '바닥': ['마루 들뜸', '틈 벌어짐', '삐걱거림'],
   '타일': ['타일 들뜸', '줄눈 갈라짐', '깨짐'],
@@ -23,7 +24,7 @@ ${U.pageHd('하자보수 접수')}
 
 ${U.sec('어느 현장인가요', `<select class="input" style="max-width:400px"><option>${FLAGSHIP.title} (${FLAGSHIP.end} 준공)</option></select>`)}
 
-${U.sec('부위를 골라 주세요', U.tabBox(U.tabs(parts.map((p) => ({ label: p })), 3), panes))}
+${U.sec('부위를 골라 주세요', U.tabBox(U.tabs(parts.map((p) => ({ label: p, pane: p })), 3), panes))}
 
 ${U.sec('사진·영상 올리기', `<div class="drop"><div class="ico">📷</div><p class="t-body mt2">눌러서 사진이나 영상을 올려 주세요</p></div>
   <div class="g4 mt3">${Array.from({ length: 2 }, (_, i) => U.ph('올린 사진', 'ph-11', 'as-upload' + i)).join('')}</div>`)}
@@ -51,9 +52,14 @@ function AS0201() {
   const body = `
 ${U.pageHd('하자보수 접수 내역', '보증 기간 11개월 남음')}
 
-${U.tabs([{ label: '전체', cnt: 3 }, { label: '접수됨', cnt: 0 }, { label: '방문 예정', cnt: 1 }, { label: '처리 중', cnt: 1 }, { label: '완료', cnt: 1 }], 0)}
+${/* ⛔ 탭을 눌러도 세 줄이 그대로였고, 개수도 손으로 적어 두어 AS_CASES 가 바뀌면
+      어긋난다 (2026-09-02). 세어서 적고 공통 거르기 장치에 잇는다. */''}
+${U.tabs([{ label: '전체', cnt: AS_CASES.length, filter: '하자내역', all: true }].concat(
+  ['접수됨', '방문 예정', '처리 중', '완료'].map((s) => (
+    { label: s, cnt: AS_CASES.filter((c) => c.status === s).length, filter: '하자내역' }))), 0)}
 
-${U.table(['접수일', '부위', '증상', '상태', '예상 방문일'], AS_CASES.map((c) => [c.at, c.part, c.symptom, U.badge(c.status, c.status === '완료' ? 'b-ok' : c.status === '방문 예정' ? 'b-pri' : 'b-warn'), c.status === '완료' ? '—' : c.at]))}
+<div data-filter-in="하자내역">${U.table(['접수일', '부위', '증상', '상태', '예상 방문일'], AS_CASES.map((c) => ({ attr: ` data-tag="${c.status}"`, cells: [c.at, c.part, c.symptom, U.badge(c.status, c.status === '완료' ? 'b-ok' : c.status === '방문 예정' ? 'b-pri' : 'b-warn'), c.status === '완료' ? '—' : c.at] })))}
+<p class="t-sub mt3" data-filter-empty hidden>그 상태인 접수 건이 없어요.</p></div>
 
 ${U.sec('', U.banner('warn', '⏰', '<b>AS-0091</b>은 급함으로 접수됐어요. 내일까지 방문 예정입니다.'))}
 

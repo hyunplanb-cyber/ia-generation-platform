@@ -5,32 +5,38 @@ import { CASES, MATERIALS, FLAGSHIP } from './data.mjs';
 /* ---------------- CS0101 시공사례 목록 ---------------- */
 function CS0101() {
   const body = `
-${U.pageHd('시공사례', `지금까지 412개 현장 · 조건에 맞는 사례 ${CASES.length}개`)}
+${U.pageHd('시공사례', `지금까지 412개 현장 · <span data-filter-count="사례">조건에 맞는 사례 ${CASES.length}개</span>`)}
 
 <div class="split-l">
   <aside>
     ${U.card('필터', `
       <p class="t-th mb2">시공 분야</p>
-      ${U.chips(['아파트 전체', '주방', '욕실', '상업공간', '부분 시공', '베란다'], -1, {})}
+      ${/* ⛔ 칩을 눌러도 목록이 안 줄었다 (2026-09-02 현님과 크롬으로 눌러 보다 나왔다).
+            칩에 손잡이가 없어 on 만 옮겨 붙었다. app.js 의 거르기 장치에 이어 준다. */''}
+      ${U.chips(['아파트 전체', '주방', '욕실', '상업공간', '부분 시공', '베란다'], -1, { extra: ' data-filter="사례"' })}
       <p class="t-th mt6 mb2">스타일</p>
-      ${U.chips(['모던', '내추럴', '클래식', '인더스트리얼'], -1, {})}
+      ${U.chips(['모던', '내추럴', '클래식', '인더스트리얼'], -1, { extra: ' data-filter="사례"' })}
       <p class="t-th mt6 mb2">지역</p>
-      ${U.chips(['성동구', '용산구', '마포구', '광진구', '강동구'], -1, {})}`)}
+      ${U.chips(['성동구', '용산구', '마포구', '광진구', '강동구'], -1, { extra: ' data-filter="사례"' })}`)}
   </aside>
   <div>
-    <div class="row-b mb4"><span class="t-sub">조건에 맞는 사례 ${CASES.length}개</span>
+    <div class="row-b mb4"><span class="t-sub" data-filter-count="사례">조건에 맞는 사례 ${CASES.length}개</span>
       ${/* ⚠ 정렬 고르개가 죽어 있었다(2026-08-18). 스펙팩 acts 는 「목록 차례가
             최신순·금액낮은순·평수순으로 바뀐다」고 약속해 두었다. 카드마다 견줄 값을
             실어 두면 app.js 가 그 자리에서 다시 줄 세운다. */''}
       <select class="input" style="width:160px" data-sort-cards="cases">
         <option value="new">최신순</option><option value="price">금액 낮은순</option><option value="area">평수순</option></select></div>
-    <div class="g3" data-sort-list="cases">${CASES.map((c, i) => `<a class="ccard" href="${U.link('CS0201')}" data-new="${i}" data-price="${parseInt(String(c.priceLabel).replace(/[^0-9]/g, ''), 10)}" data-area="${c.area}">
+    <div class="g3" data-sort-list="cases" data-filter-in="사례">${CASES.map((c, i) => `<a class="ccard" href="${U.link('CS0201')}" data-tag="${U.esc(c.field)} ${U.esc(c.style)} ${U.esc(String(c.region).replace(/^서울 /, ''))}" data-new="${i}" data-price="${parseInt(String(c.priceLabel).replace(/[^0-9]/g, ''), 10)}" data-area="${c.area}">
       ${U.ph('비포·애프터', 'ph-43', c.id)}
       <div class="nm">${U.esc(c.title)}</div>
       <div class="meta">${c.area}평 · ${U.esc(c.region)} · ${c.days}일</div>
       <div class="badges">${U.badge(c.style, 'b-line')}${U.badge(c.field, 'b-pri')}</div>
       <div class="price"><span class="now">${c.priceLabel}</span></div></a>`).join('')}</div>
-    <div class="center mt6">${U.btn('더 보기 (사례 4개 더)', { cls: 'btn-ghost btn-lg' })}</div>
+    ${/* ⛔ 「더 보기 (사례 4개 더)」를 눌러도 아무 일이 없었다 (2026-09-02).
+          CASES 에는 8개뿐인데 4개가 더 있다고 약속하고 있었다. 없는 것을 약속하지
+          않는다 — 412개 가운데 8개만 보여 주는 견본이라는 것을 그대로 적는다
+          (검수항목 7-7 · 적어 둔 개수와 실제로 보이는 개수가 맞는지). */''}
+    <p class="t-sub center mt6">412개 현장 가운데 <b>8개</b>를 골라 보여 드리는 견본이에요.</p>
   </div>
 </div>`;
   return { body, o: {} };
