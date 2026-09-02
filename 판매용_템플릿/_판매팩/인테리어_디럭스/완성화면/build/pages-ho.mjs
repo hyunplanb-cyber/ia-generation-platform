@@ -1,6 +1,6 @@
 /* HO 홈 (3) */
 import * as U from './ui.mjs';
-import { SITE, FIELDS, CASES, PYEONG_COST, GRADES, COST_RATIO, REVIEWS, FAQ_HOME } from './data.mjs';
+import { SITE, FIELDS, CASES, PYEONG_COST, GRADES, COST_RATIO, REVIEWS, FAQ_HOME, PRICING } from './data.mjs';
 
 export const PAGES = {};
 
@@ -76,9 +76,16 @@ ${U.tabBox(
   )}
 
 ${U.sec('마감 등급별 비교', U.table(
-    ['등급', '평당 단가', '쓰는 자재', '걸리는 날수', '보증 기간'],
-    GRADES.map((g) => [g.nm, `<span class="num">${U.won(Math.round(28_000 * g.mult))}</span>`, g.key === 'base' ? '국산 표준' : g.key === 'high' ? '수입 타일·도기' : '수입 프리미엄 브랜드', `${g.days - 15}일`, g.warranty]),
+    /* ⛔ 2026-09-03: 여기 「평당 28,000원」이 적혀 있었다. 2평 욕실이면 56,000원이다.
+       ⚠ 이 팩에는 «욕실 평당가»의 근거가 없다 — 욕실이 몇 평인지가 어디에도 없다.
+       그래서 지어내지 않고 돈 열을 뺐다. */
+    ['등급', '쓰는 자재', '걸리는 날수', '보증 기간'],
+    GRADES.map((g) => [g.nm, g.key === 'base' ? '국산 표준' : g.key === 'high' ? '수입 타일·도기' : '수입 프리미엄 브랜드', `${g.days - 15}일`, g.warranty]),
   ), { cls: 'mt8' })}
+
+  ${U.sec('이 분야는 실제로 얼마였나', `<ul class="stack">${CASES.filter((c) => c.field === 'bath').map((c) =>
+    `<li>· <b>${U.esc(c.nm)}</b> — ${U.won(c.priceMin)} ~ ${U.won(c.priceMax)} · ${c.days}일 · ${U.esc(c.area)}</li>`).join('')}
+  </ul><p class="t-sub mt3">욕실은 몇 평인지보다 «몇 개를, 어디까지» 손대는지로 값이 갈립니다. 그래서 평당으로 적지 않았어요.</p>`, { cls: 'mt8' })}
 
 ${U.sec('이 분야 시공 사례', `<div class="cards">${CASES.filter((c) => c.field === 'bath').concat(CASES.slice(0, 2)).slice(0, 3).map((c) => U.caseCard(c)).join('')}</div>`, { cls: 'mt8' })}
 
@@ -121,7 +128,7 @@ ${U.sec('공정별 비용 비중', `${U.table(['공정', '비중', ''], COST_RAT
 
 ${U.sec('마감 등급별 차이', U.table(
     ['등급', '평당 단가(전체 시공 기준)', '보증 기간'],
-    GRADES.map((g) => [g.nm, `<span class="num">${U.won(Math.round(1_050_000 * g.mult))}</span>`, g.warranty]),
+    GRADES.map((g) => [g.nm, `<span class="num">${U.won(Math.round(PRICING.평당(g.nm) / 1000) * 1000)}</span>`, g.warranty]),
   ), { cls: 'mt8' })}
 
 ${U.sec('이런 비용이 더 붙을 수 있어요', `<ul class="stack">
