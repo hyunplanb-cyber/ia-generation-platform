@@ -1,0 +1,46 @@
+# 배포에 올리지 않을 것들.
+#
+# 이 파일이 있으면 Vercel 은 .gitignore 대신 «이 파일»을 본다.
+# 그래서 node_modules·.next 처럼 당연한 것들도 여기에 다시 적어야 한다.
+#
+# 2026-09-01 에 만들었다. CLI 로 미리보기 배포를 하려는데 프로젝트가 749MB(.next 만 474MB)라
+# 업로드가 끊겼다. 평소 배포는 GitHub 연동으로 돌아서 이 문제를 겪지 않는다.
+
+# 빌드가 다시 만드는 것
+node_modules
+.next
+tsconfig.tsbuildinfo
+
+# 파는 물건 원본 — 저장소에도 안 담는다
+판매용_템플릿
+_작업
+
+# 개발·검수용이라 서비스에 필요 없다
+샘플
+디자인참고
+디자인가이드
+_bmad
+_bmad-output
+docs
+검수
+루틴
+가격정책
+홈페이지_리디자인_시안
+[샘플] 반려동물 용품 온라인 쇼핑몰. 회원가입_로그인_산출물
+
+# 만들기·검수 스크립트 (서비스가 부르지 않는다)
+check-*.mts
+build-*.mts
+package-*.mts
+검수-*.mts
+팩재료-*.mts
+이미지-*.mts
+
+# ⛔ template-data-*.ts 를 빼지 마라. app/ 이 18개를 실제로 import 한다
+#    (무료 샘플 화면이 CREATOR 를, 팩 화면들이 나머지를 쓴다). 빼면 빌드가 깨진다.
+# ⛔ packs/ 도 빼지 마라. next.config.ts 의 outputFileTracingIncludes 가 다운로드 경로에 싣는다.
+
+# 비밀·개인 파일
+.env.local
+client_secret_*.json
+검수기록.csv
