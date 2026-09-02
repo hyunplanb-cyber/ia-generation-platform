@@ -708,7 +708,8 @@ export function HomeLanding({
           --pass: #1f6b48;
           --fail: #c0392b;
           --warm: #e8956f;
-          --num: #e4762c;
+          /* 2026-09-02 — 큰 숫자라 기준이 3.0 인데 2.90 이었다. --primary 와 같이 간다. */
+          --num: #bc5918;
 
           background: var(--paper);
           color: var(--ink);

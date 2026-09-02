@@ -86,7 +86,13 @@
   --popover: oklch(1 0 0);
   --popover-foreground: #1F2024;
   /* 레트로모던 브랜드 — 보라 대신 오렌지 포인트(홈페이지_리디자인_시안 기준) */
-  --primary: #E4762C;
+    /* ⭐ 2026-09-02 — #E4762C 에서 내렸다. 흰 글자 대비가 3.03 이라 WCAG 4.5 에 못 미쳤다.
+       손님에게 파는 잣대(11_내사이트_검수하는_법 · 스펙팩 7-9 ⑧)로 우리 홈페이지를 재니
+       「회원가입」 단추부터 걸렸다. 우리가 못 지키는 것을 팔 수는 없다.
+       ⛔ 값을 지어내지 않았다 — 2026-08-20 에 현님이 정하신 그 값이다.
+         「코랄 조금 더 진하게 가고 흰글자로 가자」. 색기는 그대로 두고 밝기만 내린다.
+         검수항목 H9 표의 «주색 레트로 #DE6F26 → #BC5918» 과 같은 짝이다. */
+    --primary: #BC5918; /* 흰 글자 4.58 */
   --primary-foreground: #FFFFFF;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: #1F2024;
@@ -97,10 +103,12 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: #E7E7EA;
   --input: #E7E7EA;
-  --ring: #E4762C;
+  --ring: #BC5918; /* primary 와 같이 간다 */
   /* DESIGN.md 브랜드 레이어 델타 — 파스텔 워시도 레트로(틸/골드/샌드)로 교체 */
   --primary-soft: #FBE7D3;
-  --primary-on-soft: #B4551E;
+    /* 옅은 바탕(#FBE7D3) 위에서 4.10 이라 함께 내렸다. 같은 꼴을 반만 고치면
+       고치지 않은 것보다 나쁘다 — 화면마다 다르게 보인다. */
+    --primary-on-soft: #A64E1C; /* #FBE7D3 위 4.69 */
   --pastel-mint: #D7EFE9;
   --pastel-mint-foreground: #0E6F60;
   --pastel-lavender: #E9E0C8;

@@ -2,7 +2,7 @@
 <mxCell id="0"/>
 <mxCell id="1" parent="0"/>
 <mxCell id="g0_n0" value="홈
-HO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+HO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g0_n1" value="매장 탐색
 SE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="610" y="255" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g0_n2" value="예약하기
@@ -70,7 +70,7 @@ SE-06" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2
 <mxCell id="0"/>
 <mxCell id="1" parent="0"/>
 <mxCell id="g2_n0" value="예약 1단계 - 시술 선택
-RE-01" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+RE-01" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g2_n1" value="예약 2단계 - 디자이너 선택
 RE-02" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="210" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g2_n2" value="예약 3단계 - 날짜·시간 선택
@@ -179,7 +179,7 @@ MG-05" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2
 <mxCell id="0"/>
 <mxCell id="1" parent="0"/>
 <mxCell id="g7_n0" value="내 정보
-AC-01" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+AC-01" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g7_n1" value="쿠폰·적립금
 AC-02" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g7_e0" value="쿠폰·적립금" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n0" target="g7_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
@@ -190,14 +190,14 @@ AC-02" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2
 <mxCell id="g8_n0" value="매장 홈
 PT-01" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g8_n1" value="입점 심사 중
-PT-03" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+PT-03" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g8_e0" value="매장 홈" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n1" target="g8_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
 </root></mxGraphModel></diagram>
 <diagram name="SA 정산"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
 <mxCell id="0"/>
 <mxCell id="1" parent="0"/>
 <mxCell id="g9_n0" value="매장 정산 내역
-SA-01" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+SA-01" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g9_n1" value="정산 내역 - 내역 없음
 SA-02" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g9_e0" value="내역 없음" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g9_n0" target="g9_n1"><mxGeometry relative="1" as="geometry"/></mxCell>

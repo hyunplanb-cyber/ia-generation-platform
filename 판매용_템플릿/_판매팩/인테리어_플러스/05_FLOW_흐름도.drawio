@@ -10,13 +10,13 @@ ES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3A
 <mxCell id="g0_n3" value="실측 예약
 VS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g0_n4" value="계약·결제
-CT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
+CT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g0_n5" value="공사 진행
 PR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="210" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g0_n6" value="하자보수
 AS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="300" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g0_n7" value="계정
-AU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="300" width="180" height="60" as="geometry"/></mxCell>
+AU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="300" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g0_e0" value="3개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n0" target="g0_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g0_e1" value="2개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n0" target="g0_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g0_e2" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n0" target="g0_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
@@ -77,7 +77,7 @@ CS0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E
 <mxCell id="0"/>
 <mxCell id="1" parent="0"/>
 <mxCell id="g3_n0" value="견적 조건 입력 - 단계별
-ES0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+ES0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g3_n1" value="견적 결과
 ES0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="165" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g3_n2" value="견적 항목 상세
@@ -186,7 +186,7 @@ OW0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E
 <mxCell id="g8_n5" value="일정 캘린더
 OW0601" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="300" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g8_n6" value="업체 정보·직원 관리
-OW0701" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="390" width="180" height="60" as="geometry"/></mxCell>
+OW0701" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="390" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g8_e0" value="견적 요청함" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n0" target="g8_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g8_e1" value="현장 상세" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n0" target="g8_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g8_e2" value="청구·수금" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n0" target="g8_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
