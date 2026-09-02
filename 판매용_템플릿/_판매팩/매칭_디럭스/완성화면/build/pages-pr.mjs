@@ -190,7 +190,7 @@ function PR02(ctx) {
     ['사업자등록증', true], ['휴대폰 확인', true], ['신분증', false], ['활동 지역', true],
     ['정산 계좌', false], ['약관 동의', true], ['프로필 사진', true]]
       .map(([t, ok]) => `<div class="row-c" style="font-size:13px">
-        <span style="color:${ok ? 'var(--success)' : 'var(--border)'};flex:none">${ok ? '✓' : '○'}</span>
+        <span style="color:${ok ? 'var(--success)' : 'var(--muted)'};flex:none">${ok ? '✓' : '○'}</span>
         <span class="${ok ? '' : 'muted'}">${t}</span></div>`).join('')}
     </div>
     <div class="btns col mt-block">
@@ -405,7 +405,7 @@ function PR05(ctx) {
         ${U.phWork('pf' + i, { tiny: true })}
         <span class="badge b-pri" style="position:absolute;top:6px;left:6px">${i + 1}</span>
         <button class="btn btn-quiet btn-xs" type="button" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.55);color:#fff" data-toast="사진을 지웠어요">✕</button>
-        <span style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.5);color:#fff;border-radius:6px;padding:2px 7px;font-size:11px">⠿ 끌어서 이동</span>
+        <span style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.62);color:#fff;border-radius:6px;padding:2px 7px;font-size:11px">⠿ 끌어서 이동</span>
       </div>
       <div class="cap mt2">
         <input class="input" value="${t}" style="height:34px;font-size:13px">

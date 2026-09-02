@@ -13,17 +13,17 @@
   --bg:#F0EFEB;            /* 클라우드 댄서 — 콘텐츠 바탕은 중립으로 둔다 */
   --surface:#FFFFFF;
   --text:#16233F;
-  --muted:#5A6B8C;
+  --muted:#51607D;
   --border:#DFE4EC;
-  --success:#0F7A52;
+  --success:#0E724D;
   --warning:#926013;
-  --danger:#C0392B;
+  --danger:#AA3326;
 
   /* 흰 배경 위 "글자"로 쓸 색 — 원색 그대로는 대비가 모자란 것들 */
   --pri-text:#2B4A8B;      /* 네이비는 8.5:1 이라 그대로 쓴다 */
-  --acc-text:#A8410A;      /* 주황 #FF7A30 은 2.6:1 이라 글자로 못 쓴다 */
+  --acc-text:#A13E0A;      /* 주황 #FF7A30 은 2.6:1 이라 글자로 못 쓴다 */
   --warn-text:#8A5A0F;     /* 노랑 계열 #B4761A 도 3.8:1 이라 글자로는 이걸 쓴다 */
-  --star:#A8410A;
+  --star:#A13E0A;
 
   --pri-10:rgba(43,74,139,.10);
   --pri-06:rgba(43,74,139,.06);
@@ -924,25 +924,7 @@ html{scrollbar-gutter:stable}
   [style*="width:150px"],[style*="width: 150px"]{max-width:100%}
 }
 
-/* ── 예시 사진 ──────────────────────────────────────────────
-   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
-   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
 
-/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
-   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
-   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
-   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
-   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
-   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
-.ph{position:relative}
-.ph > img[data-예시]{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; display:block;
-}
-/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
-   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
-.ph > img[data-예시] ~ .lb{display:none}
-/* ── 예시 사진 끝 ── */
 
 /* D6 마무리 — 남은 넷 (2026-08-21)
      ① .kv 는 «120px + 1fr» 인데 1fr 은 min-width:auto 라 «내용보다 못 줄어든다».
@@ -1081,3 +1063,23 @@ label.check + .row-b,
 @media (max-width:560px){
   .rate-in .v{width:auto;min-width:34px}
 }
+
+/* ── 예시 사진 ──────────────────────────────────────────────
+   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
+   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
+
+/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
+   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
+   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
+   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
+   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
+   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
+.ph{position:relative}
+.ph > img[data-예시]{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
+   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
+.ph > img[data-예시] ~ .lb{display:none}
+/* ── 예시 사진 끝 ── */

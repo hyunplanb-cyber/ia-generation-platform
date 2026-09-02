@@ -526,7 +526,7 @@ export function MY0801(ctx) {
       <div class="field"><label class="label">세부 평가</label>
         ${[['가이드', 5], ['일정 구성', 4], ['가격 대비 만족도', 5]].map(([k, v]) => `
           <div class="row-b" style="padding:8px 0"><span>${k}</span>
-            <span style="color:var(--accent);font-size:18px;letter-spacing:2px">${'★'.repeat(v)}${'☆'.repeat(5 - v)}</span></div>`).join('')}</div>
+            <span style="color:var(--acc-text);font-size:18px;letter-spacing:2px">${'★'.repeat(v)}${'☆'.repeat(5 - v)}</span></div>`).join('')}</div>
 
       <div class="field"><label class="label">어떤 점이 좋았나요?<span class="req">*</span></label>
         <textarea class="textarea ${short ? 'is-err' : ''}" placeholder="집합 장소, 가이드 설명, 코스 구성처럼 구체적인 이야기가 도움이 돼요">${short ? '좋았어요' : '우선입장이라 줄을 아예 안 섰어요. 한국어 가이드 설명이 알차서 그림 하나하나 기억에 남습니다. 아이와 함께 갔는데도 지루해하지 않았어요.'}</textarea>

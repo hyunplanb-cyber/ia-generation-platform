@@ -26,7 +26,7 @@
   --pri-06:rgba(224,42,14,.06);
   --acc-10:rgba(164,104,3,.12);
   --star:#896800;            /* 별점 — accent 는 흰 배경에서 2.1:1 라 안 보인다 */
-  --pri-text:#B23A26;        /* 흰 배경 위 글자용 — --primary 는 3.1:1 라 본문에 못 쓴다 */
+  --pri-text:#A13422;        /* 흰 배경 위 글자용 — --primary 는 3.1:1 라 본문에 못 쓴다 */
   --hl:#FDE4B0;              /* 형광펜 */
 
   /* radius */
@@ -198,7 +198,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 /* ---------- badge — 알약 ---------- */
 .badge{display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 10px;border-radius:var(--r-badge);font-size:12px;font-weight:700;background:#F7F2F0;color:var(--muted);border:1px solid transparent;white-space:nowrap}
 .b-pri{background:var(--pri-10);color:#9E2E1C}
-.b-acc{background:var(--acc-10);color:#8A5A05}
+.b-acc{background:var(--acc-10);color:#855705}
 .b-ok{background:rgba(15,122,82,.1);color:#0B5C3E}
 .b-warn{background:rgba(180,83,9,.12);color:#8A3F07}
 .b-danger{background:rgba(192,57,43,.1);color:#992D21}
@@ -211,7 +211,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .chips{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
 .chip{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 var(--s4);border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-weight:500;cursor:pointer}
 .chip:hover{border-color:var(--primary)}
-.chip.on{background:var(--pri-10);border-color:var(--primary);color:#C4402B;font-weight:700}
+.chip.on{background:var(--pri-10);border-color:var(--primary);color:#AB3826;font-weight:700}
 .chip .x{font-size:12px;font-weight:700}
 .chip.is-off{opacity:.4;cursor:not-allowed;text-decoration:line-through}
 .chip-sm{height:32px;padding:0 var(--s3);font-size:13px}
@@ -390,7 +390,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .catbar a.on{color:var(--pri-text);font-weight:700}
 .catbar .sep{width:1px;height:18px;background:var(--border);flex:none}
 
-.topbar{background:var(--acc-10);border-bottom:1px solid rgba(245,158,11,.3);color:#8A5A05;font-size:14px}
+.topbar{background:var(--acc-10);border-bottom:1px solid rgba(245,158,11,.3);color:#855705;font-size:14px}
 .topbar-in{max-width:var(--wrap);margin:0 auto;padding:10px var(--s6);display:flex;align-items:center;gap:var(--s3)}
 .topbar .x{margin-left:auto;background:none;border:0;color:inherit;cursor:pointer;font-size:14px}
 .topbar-danger{background:rgba(192,57,43,.07);border-bottom-color:rgba(192,57,43,.25);color:#8E2A20}
@@ -432,7 +432,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:80;
   background:#33221E;color:#fff;border-radius:var(--r-btn);padding:14px var(--s5);
   font-size:14px;display:flex;align-items:center;gap:var(--s4);box-shadow:var(--sh-float);max-width:calc(100% - 32px)}
-.toast .act{color:#FFB7A6;font-weight:700;cursor:pointer;white-space:nowrap}
+.toast .act{color:#FFEDE9;font-weight:700;cursor:pointer;white-space:nowrap}
 .toast-ok{background:#0F7A52}
 .dim{position:fixed;inset:0;background:rgba(51,34,30,.45);z-index:70;display:flex;align-items:center;justify-content:center;padding:var(--s4)}
 .modal{background:var(--surface);border-radius:var(--r-card);width:100%;max-width:460px;box-shadow:var(--sh-float);max-height:90vh;overflow:auto}
@@ -452,7 +452,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .banner-danger{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.24);color:#8E2A20}
 .banner-warn{background:rgba(180,83,9,.08);border:1px solid rgba(180,83,9,.26);color:#7A3D06}
 .banner-ok{background:rgba(15,122,82,.07);border:1px solid rgba(15,122,82,.24);color:#0B5C3E}
-.banner-acc{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#8A5A05}
+.banner-acc{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#855705}
 .banner-mut{background:#F7F2F0;border:1px solid var(--border);color:var(--muted)}
 .promo{border-radius:var(--r-card);overflow:hidden;position:relative;display:flex;align-items:flex-end;min-height:200px;
   background:linear-gradient(120deg,#C24632,#8A5A05);color:#fff;padding:var(--card-pad)}
@@ -474,7 +474,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .stepbar .s.on{color:var(--pri-text);font-weight:700}
 .stepbar .s.on .n{background:var(--primary);color:#fff}
 .stepbar .s.done .n{background:var(--pri-10);color:var(--pri-text)}
-.stepbar .sep{color:var(--border)}
+.stepbar .sep{color:var(--muted)}
 
 .timeline{position:relative;padding-left:var(--s6)}
 .timeline::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--border)}
@@ -524,7 +524,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .cal-d.off{color:#D8C8C3;cursor:not-allowed;text-decoration:line-through}
 .cal-d.off:hover{background:none}
 .cal-d.sel{background:var(--primary);color:#fff}
-.cal-d.sel .p{color:rgba(255,255,255,.85)}
+.cal-d.sel .p{color:#FFFFFF}
 .cal-d.mark{border-color:var(--accent)}
 .cal-d.full{background:rgba(192,57,43,.06)}
 
@@ -534,7 +534,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .slot .left{font-size:11px;font-weight:500;color:var(--muted)}
 .slot:hover{border-color:var(--primary)}
 .slot.on{background:var(--primary);border-color:var(--primary);color:#fff}
-.slot.on .left{color:rgba(255,255,255,.85)}
+.slot.on .left{color:#FFFFFF}
 .slot.full{color:#C9B8B3;text-decoration:line-through;cursor:not-allowed;background:#FAF5F3}
 /* ⛔ 「dim」이라는 이름을 «겹침 덮개»(position:fixed;inset:0)와 «못 고르는 시간칸» 둘이
    같이 쓰고 있었다. 덮개 규칙의 position·inset·z-index 는 .slot.dim 이 안 덮어써서,
@@ -634,7 +634,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .tgrid .blk.sm .c{display:none}
 .blk .c{font-weight:500;font-size:11px;opacity:.85}
 .blk-1{background:var(--pri-10);color:#B23A26;border-left:3px solid var(--primary)}
-.blk-2{background:rgba(245,158,11,.16);color:#8A5A05;border-left:3px solid var(--accent)}
+.blk-2{background:rgba(245,158,11,.16);color:#855705;border-left:3px solid var(--accent)}
 .blk-3{background:rgba(15,122,82,.12);color:#0B5C3E;border-left:3px solid var(--success)}
 .blk-4{background:rgba(122,101,96,.14);color:#5C4A45;border-left:3px solid var(--muted)}
 .blk.ghost{background:#FAF5F3;color:var(--muted);border-left:3px dashed var(--border);font-weight:500}
@@ -694,7 +694,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .spec .lk a{font-size:12px;color:var(--pri-text);font-weight:700;text-decoration:underline}
 
 .state-bar{background:var(--acc-10);border-bottom:1px solid rgba(245,158,11,.3)}
-.state-bar .in{max-width:var(--wrap);margin:0 auto;padding:10px var(--s6);font-size:13px;color:#8A5A05;display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
+.state-bar .in{max-width:var(--wrap);margin:0 auto;padding:10px var(--s6);font-size:13px;color:#855705;display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
 .state-bar .tag{background:var(--accent);color:#fff;border-radius:999px;font-size:11px;font-weight:800;padding:3px 9px;flex:none}
 
 /* 단독 화면(로그인·가입) */

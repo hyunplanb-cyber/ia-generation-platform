@@ -27,12 +27,12 @@
   --border:#F2E2DD;
   --success:#0F7A52;
   --warning:#B45309;
-  --danger:#C0392B;
+  --danger:#B23528;
 
   --pri-10:rgba(224,42,14,.1);
   --pri-06:rgba(224,42,14,.06);
   --acc-10:rgba(164,104,3,.18);
-  --pri-text:#B23A26;       /* 흰 배경 위 글자용 — --primary 는 3.1:1 라 본문에 못 쓴다 */
+  --pri-text:#A13422;       /* 흰 배경 위 글자용 — --primary 는 3.1:1 라 본문에 못 쓴다 */
   --star:#AD5009;           /* 별점 — accent(옅은 노랑)는 흰 배경에서 안 보인다 */
   --hl:#FDE4B0;              /* 형광펜 */
 
@@ -210,8 +210,8 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 
 /* ---------- badge — 알약 ---------- */
 .badge{display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 10px;border-radius:var(--r-badge);font-size:12px;font-weight:700;background:#F7F2F0;color:var(--muted);border:1px solid transparent;white-space:nowrap}
-.b-pri{background:var(--pri-10);color:#B23A26}
-.b-acc{background:var(--acc-10);color:#8A5A05}
+.b-pri{background:var(--pri-10);color:#AB3825}
+.b-acc{background:var(--acc-10);color:#774E04}
 .b-ok{background:rgba(15,122,82,.1);color:#0B5C3E}
 .b-warn{background:rgba(180,83,9,.12);color:#8A3F07}
 .b-danger{background:rgba(192,57,43,.1);color:#992D21}
@@ -225,7 +225,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .chip{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 var(--s4);border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-weight:500;cursor:pointer}
 .chip:hover{border-color:var(--primary)}
 .chip.on{background:var(--pri-10);border-color:var(--primary);color:#B23A26;font-weight:700}
-.chip .x{font-size:12px;font-weight:700}
+.chip .x{font-size:12px;font-weight:700;color:var(--text)}
 .chip.is-off{opacity:.4;cursor:not-allowed;text-decoration:line-through}
 .chip-sm{height:32px;padding:0 var(--s3);font-size:13px}
 
@@ -398,7 +398,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .catbar a.on{color:var(--pri-text);font-weight:700}
 .catbar .sep{width:1px;height:18px;background:var(--border);flex:none}
 
-.topbar{background:var(--acc-10);border-bottom:1px solid rgba(245,158,11,.55);color:#8A5A05;font-size:14px}
+.topbar{background:var(--acc-10);border-bottom:1px solid rgba(245,158,11,.55);color:#774E04;font-size:14px}
 .topbar-in{max-width:var(--wrap);margin:0 auto;padding:10px var(--s6);display:flex;align-items:center;gap:var(--s3)}
 .topbar .x{margin-left:auto;background:none;border:0;color:inherit;cursor:pointer;font-size:14px}
 .topbar-danger{background:rgba(192,57,43,.07);border-bottom-color:rgba(192,57,43,.25);color:#8E2A20}
@@ -460,7 +460,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .banner-danger{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.24);color:#8E2A20}
 .banner-warn{background:rgba(180,83,9,.08);border:1px solid rgba(180,83,9,.26);color:#7A3D06}
 .banner-ok{background:rgba(15,122,82,.07);border:1px solid rgba(15,122,82,.24);color:#0B5C3E}
-.banner-acc{background:rgba(245,158,11,.18);border:1px solid rgba(245,158,11,.55);color:#8A5A05}
+.banner-acc{background:rgba(245,158,11,.18);border:1px solid rgba(245,158,11,.55);color:#774E04}
 .banner-mut{background:#F7F2F0;border:1px solid var(--border);color:var(--muted)}
 .promo{border-radius:var(--r-card);overflow:hidden;position:relative;display:flex;align-items:flex-end;min-height:200px;
   background:linear-gradient(120deg,#C24632,#8A5A05);color:#fff;padding:var(--card-pad)}
@@ -490,7 +490,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .stepbar .s.on{color:var(--pri-text);font-weight:700}
 .stepbar .s.on .n{background:var(--primary);color:#fff}
 .stepbar .s.done .n{background:var(--pri-10);color:var(--pri-text)}
-.stepbar .sep{color:var(--border)}
+.stepbar .sep{color:var(--muted)}
 
 .timeline{position:relative;padding-left:var(--s6)}
 .timeline::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--border)}
@@ -660,7 +660,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .tgrid .blk.sm .c{display:none}
 .blk .c{font-weight:500;font-size:11px;opacity:.85}
 .blk-1{background:var(--pri-10);color:#B23A26;border-left:3px solid var(--primary)}
-.blk-2{background:rgba(245,158,11,.28);color:#8A5A05;border-left:3px solid var(--accent)}
+.blk-2{background:rgba(245,158,11,.28);color:#774E04;border-left:3px solid var(--accent)}
 .blk-3{background:rgba(15,122,82,.12);color:#0B5C3E;border-left:3px solid var(--success)}
 .blk-4{background:rgba(107,111,118,.14);color:#5C4A45;border-left:3px solid var(--muted)}
 .blk.ghost{background:#FAF5F3;color:var(--muted);border-left:3px dashed var(--border);font-weight:500}
@@ -738,7 +738,7 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .spec .lk a{font-size:12px;color:var(--pri-text);font-weight:700;text-decoration:underline}
 
 .state-bar{background:var(--acc-10);border-bottom:1px solid rgba(245,158,11,.55)}
-.state-bar .in{max-width:var(--wrap);margin:0 auto;padding:10px var(--s6);font-size:13px;color:#8A5A05;display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
+.state-bar .in{max-width:var(--wrap);margin:0 auto;padding:10px var(--s6);font-size:13px;color:#774E04;display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
 .state-bar .tag{background:var(--accent);color:#fff;border-radius:999px;font-size:11px;font-weight:800;padding:3px 9px;flex:none}
 
 /* 단독 화면(로그인·가입) */
@@ -879,6 +879,11 @@ h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
 .hero-bold .figs{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--hair);background:rgba(255,255,255,.16);
   border:1px solid rgba(255,255,255,.16);border-radius:var(--r-card);overflow:hidden;margin-top:var(--s8)}
 .hero-bold .fig{background:var(--ink);padding:20px 18px}
+/* ⚠ 어두운 히어로 안에서는 배지 글자를 «올린다». 밝은 칸과 값이 달라야 한다(H9). */
+.hero-bold .b-pri{color:#DB6855}
+/* 개발 표시줄도 어두운 바탕이다 — 그 안에서는 배지 글자를 올린다. */
+.dev .b-pri{color:#DB6855}
+.gnb.dark .b-pri{color:#E8836F}
 .hero-bold .fig .n{font-size:clamp(22px,2.6vw,34px);font-weight:800;letter-spacing:-.03em;color:#fff}
 .hero-bold .fig .l{font-size:13px;color:rgba(255,255,255,.66);margin-top:4px}
 .hero-bold .btns{margin-top:var(--s7)}

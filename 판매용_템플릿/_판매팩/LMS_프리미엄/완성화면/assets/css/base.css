@@ -36,17 +36,17 @@
   --bg:#F0EFEB;
   --surface:#FFFFFF;
   --text:#16233F;
-  --muted:#5A6B8C;
+  --muted:#50607D;
   --border:#DFE4EC;
-  --success:#0F7A52;
-  --warning:#B45309;
-  --danger:#C0392B;
+  --success:#0D6B48;
+  --warning:#A84E08;
+  --danger:#B63629;
 
   /* 원색은 밝은 바탕에서 글자 대비가 모자란다. 글자용을 따로 둔다.
      --pri-ink 는 네이비가 이미 종이색 위 7.9 라 주색을 그대로 쓴다.
      --acc-ink 는 오렌지가 2.26 뿐이라 가이드의 accent-text 를 쓴다. */
   --pri-ink:#2B4A8B;
-  --acc-ink:#A84B28;
+  --acc-ink:#994424;
 
   /* 색 «위에» 얹는 글자 — 가이드의 on-primary · on-accent.
      흰색이 기본이 아니다. 오렌지 위 흰 글자는 2.60 이라 못 쓴다. */
@@ -450,7 +450,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 
 /* ---------- 이미지 자리 ---------- */
 /* 테마 색으로 칠하지 않는다. 옅은 파스텔 한 톤 + 1px 테두리 + 무엇·권장 크기 */
-.ph{background:#F2F4F7;border:1px solid #E3E8F0;border-radius:var(--r-card);color:#686F7D;font-size:13px;font-weight:500;
+.ph{background:#F2F4F7;border:1px solid #E3E8F0;border-radius:var(--r-card);color:#5D636F;font-size:13px;font-weight:500;
   display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;overflow:hidden;position:relative;line-height:1.4}
 .ph-t1{background:#EEF2F7}.ph-t2{background:#F2EFF7}.ph-t3{background:#EDF4F1}.ph-t4{background:#F7F1EC}.ph-t5{background:#F2F4F7}
 .ph-43{aspect-ratio:4/3;width:100%}
@@ -549,7 +549,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .steps .s.on .n{background:var(--primary);color:var(--on-pri)}
 .steps .s.done{color:var(--success)}
 .steps .s.done .n{background:rgba(15,122,82,.14);color:var(--success)}
-.steps .sep{color:var(--border);margin:0 4px}
+.steps .sep{color:var(--muted);margin:0 4px}
 
 /* ---------- 빈 화면 / 안내 ---------- */
 .empty{text-align:center;padding:64px var(--card-pad);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card)}
@@ -574,6 +574,8 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:80;background:var(--text);color:#fff;
   border-radius:var(--r-btn);padding:12px 18px;display:flex;align-items:center;gap:var(--gap-title);font-size:14px;font-weight:500;
   box-shadow:0 8px 24px rgba(22,35,63,.24);max-width:calc(100vw - 48px);animation:toastin var(--t-change)}
+/* ⚠ 어두운 칸 안에서는 잔글씨를 «올린다»(H9). */
+.toast .t-sub{color:#9AA7C0}
 .toast .act{color:#FFC7B8;font-weight:700;cursor:pointer;white-space:nowrap}
 .toast-ok{background:#0F7A52}
 @keyframes toastin{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
