@@ -67,7 +67,8 @@ export function createMenuPptx(rootLabel: string, menus: PptMenu[]): pptxgen {
         y: MENU_Y,
         w: colW,
         h: BOX_H,
-        fill: { color: "E4762C" },
+        /* 2026-09-02 — 흰 글자 대비가 3.03 이라 내렸다. globals.css 의 --primary 와 같은 값. */
+        fill: { color: "BC5918" },
         color: "FFFFFF",
         align: "center",
         valign: "middle",

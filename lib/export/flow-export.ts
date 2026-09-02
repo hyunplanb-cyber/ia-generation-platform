@@ -137,8 +137,11 @@ export function buildFlowSvg(nodes: ExportNode[], edges: ExportEdge[]): string {
     .map((n) => {
       const p = pos.get(n.id)!;
       const isEntry = entry.has(n.id);
-      const fill = isEntry ? "#E4762C" : "#FFFFFF";
-      const stroke = isEntry ? "#E4762C" : "#E2D3AE";
+      /* ⭐ 2026-09-02 — #E4762C 에서 내렸다. 들머리 칸의 흰 이름이 3.03, 옅은
+         아이디 글자가 2.52 였다. 이건 «손님이 받는 파일»(05_FLOW_흐름도)이라
+         우리 화면보다 먼저 고쳐야 하는 자리다. app/globals.css 의 --primary 와 같은 값. */
+      const fill = isEntry ? "#BC5918" : "#FFFFFF";
+      const stroke = isEntry ? "#BC5918" : "#E2D3AE";
       const nameColor = isEntry ? "#FFFFFF" : "#1F2024";
       const idColor = isEntry ? "#FBE7D3" : "#6B6F76";
       return `<g>
@@ -183,7 +186,7 @@ export function buildFlowHtmlTabs(
     .map((g, i) => `<section class="pane p${i}">${buildFlowSvg(g.nodes, g.edges)}</section>`)
     .join("\n");
   const showRules = use
-    .map((_, i) => `#t${i}:checked ~ .canvas .p${i} { display: block; }\n#t${i}:checked ~ .tabs label[for="t${i}"] { background: #E4762C; color: #fff; border-color: #E4762C; }`)
+    .map((_, i) => `#t${i}:checked ~ .canvas .p${i} { display: block; }\n#t${i}:checked ~ .tabs label[for="t${i}"] { background: #BC5918; color: #fff; border-color: #BC5918; }`)
     .join("\n");
 
   return `<!doctype html>
@@ -252,7 +255,8 @@ function drawioCells(nodes: ExportNode[], edges: ExportEdge[], prefix: string): 
     const p = pos.get(n.id)!;
     const isEntry = entry.has(n.id);
     const style = isEntry
-      ? "rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;"
+      /* 위 SVG 와 같은 값이라야 한다 — 같은 흐름도를 두 꼴로 내주는 것이다. */
+      ? "rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;"
       : "rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;";
     const value = esc(`${n.pageName}\n${n.pageId}`);
     cells.push(

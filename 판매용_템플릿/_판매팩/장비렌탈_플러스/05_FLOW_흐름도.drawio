@@ -47,13 +47,13 @@ CS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3A
 <mxCell id="0"/>
 <mxCell id="1" parent="0"/>
 <mxCell id="g1_n0" value="홈
-HO0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+HO0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g1_n1" value="기간으로 찾기 - 결과
 HO0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="120" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g1_n2" value="결과 없음 - 그 기간에 빈 장비가 없음
 HO0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g1_n3" value="기획전·특가
-HO0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
+HO0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g1_e0" value="기간으로 찾기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g1_n0" target="g1_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g1_e1" value="결과 없음" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g1_n1" target="g1_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g1_e2" value="기간 다시 고르기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g1_n2" target="g1_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
@@ -68,7 +68,7 @@ PD0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E
 <mxCell id="g2_n2" value="날짜별 가용 재고 달력
 PD0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g2_n3" value="옵션·부속품 고르기
-PD0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
+PD0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g2_n4" value="대여 불가 - 그 날짜 마감
 PD0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="300" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g2_n5" value="세트 패키지
@@ -110,9 +110,9 @@ BK0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E
 <mxCell id="g4_n3" value="결제 실패
 BK0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g4_n4" value="대여 계약 동의·서명
-BK0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
+BK0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g4_n5" value="대여 기간 연장
-BK0601" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="300" width="180" height="60" as="geometry"/></mxCell>
+BK0601" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="300" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g4_e0" value="결제하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g4_n0" target="g4_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g4_e1" value="결제 완료" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g4_n1" target="g4_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g4_e2" value="결제 실패" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g4_n1" target="g4_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
@@ -126,7 +126,7 @@ BK0601" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E
 <mxCell id="0"/>
 <mxCell id="1" parent="0"/>
 <mxCell id="g5_n0" value="수령 확인
-RT0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+RT0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g5_n1" value="이용 중
 RT0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="210" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g5_n2" value="반납 안내
@@ -153,7 +153,7 @@ RT0601" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E
 <mxCell id="0"/>
 <mxCell id="1" parent="0"/>
 <mxCell id="g6_n0" value="점검 진행 중
-ST0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+ST0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g6_n1" value="정산 내역 - 연체·파손 청구
 ST0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="120" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g6_n2" value="보증금 환급
@@ -175,7 +175,7 @@ MY0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E
 <mxCell id="g7_n2" value="후기 쓰기
 MY0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g7_n3" value="알림·쿠폰
-MY0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4762C;strokeColor=#E4762C;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
+MY0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
 <mxCell id="g7_e0" value="대여 상세" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n0" target="g7_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g7_e1" value="후기 쓰기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n0" target="g7_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
 <mxCell id="g7_e2" value="등록 완료" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n2" target="g7_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
