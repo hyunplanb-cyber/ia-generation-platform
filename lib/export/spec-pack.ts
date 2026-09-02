@@ -1,5 +1,6 @@
 // AI 코딩 툴(Claude Code/Cowork)에 그대로 넘길 "빌드 스펙팩"을 만드는 순수 함수들.
 // 프로젝트 컨셉 + 메뉴 + 화면별(기능정의·버튼이동·생성프롬프트) + FLOW를 한 벌로 정리한다.
+import { 모두검수글, 파일검수글, 화면검수글 } from "./화면검수-글";
 import type { Menu } from "@/domain/menu/menu";
 import type { Screen } from "@/domain/screen/screen";
 import type { ButtonAction } from "@/domain/screen/button-action";
@@ -624,6 +625,35 @@ export function buildSpecPackMarkdown(
      146개를 차례로 만들다 보면 120번째에서 12번째 스펙을 다시 안 본다.
      사장님: 「생성한 AI팩의 경우 눌러보며 검수하기 단계가 없는거 같아」
      만드는 절차만 있고 «만든 뒤 확인하는 절차»가 없었다. 세는 절차로 적는다. */
+  /* ⭐ 6장 마지막 걸음 — «AI 가 스스로 돌리게» 시킨다 (2026-09-02 사장님 지시).
+     전에는 검수 글을 7-9 에만 두었다. 그런데 스펙팩은 화면 1장짜리도 1,194줄이고
+     7-9 는 68% 지점이다. 사장님: 「고객들은 나보다 더 모르는 분들이 많아. 절대
+     이해 못해. 스펙팩을 열어 보는 것만으로도 스트레스 받을 꺼야.」
+     AI 는 6장을 «만드는 순서»로 읽으므로, 마지막 걸음으로 적어 두면 손님이
+     아무것도 안 해도 AI 가 알아서 돌리고 고친다. */
+  lines.push("");
+  lines.push("### 6-끝. 다 만들었으면 «스스로 검수»하고 고친 뒤에 끝냈다고 하세요");
+  lines.push("> ⛔ **이 걸음을 건너뛰고 「다 만들었습니다」라고 하지 마세요.**");
+  lines.push("> 화면을 다 그렸어도 눌러서 안 움직이면 안 만든 것과 같습니다.");
+  lines.push("");
+  lines.push("**AI 에게 그대로 시키시면 됩니다** — 아래 세 걸음은 사람 손이 필요 없습니다.");
+  lines.push("");
+  lines.push("1. **파일부터** — 만든 폴더에서 `7-9-2` 의 글을 `검수.mjs` 로 저장하고 `node 검수.mjs .` 를 돌린다.");
+  lines.push("   끊어진 링크 · 없는 그림 · 빈 링크 · 외톨이 화면이 **0건**이 될 때까지 고친다.");
+  lines.push("2. **화면을** — `7-9` 의 글을 `화면검수-글.js` 로, `7-9-3` 의 글을 `화면검수.mjs` 로 저장하고");
+  lines.push("   `node 화면검수.mjs .` 를 돌린다. 화면이 몇 장이든 한 번에 잰다.");
+  lines.push("   간격 · 대비 · 넘침 · 늘어남이 **0건**이 될 때까지 고친다.");
+  lines.push("3. **눌러서** — 7장의 목록대로 직접 눌러 본다. 여기부터는 사람 눈이 필요하다.");
+  lines.push("");
+  lines.push("⚠ **1·2 는 고치고 «다시» 돌립니다.** 한 번 돌리고 목록만 보고하면 안 됩니다 —");
+  lines.push("고친 것이 다른 곳을 깨뜨렸는지는 다시 돌려야 압니다.");
+  lines.push("");
+  lines.push("⚠ 헤드리스 브라우저가 없다는 말이 나오면 그 글이 «무엇을 치면 되는지» 한 줄로 알려 줍니다.");
+  lines.push("깔기 어려우면 화면을 크롬으로 열고 **F12 → Console** 에 `7-9` 의 글을 붙여 넣으셔도 됩니다 —");
+  lines.push("재는 것은 똑같고, 대신 화면마다 한 번씩 붙이셔야 합니다.");
+  lines.push("");
+  lines.push("> 📄 이 검수는 **`11_내사이트_검수하는_법.html`** 에 그림과 함께 다시 적어 두었습니다.");
+  lines.push("> 스펙팩을 안 여셔도 그 파일 하나만 보시면 됩니다.");
   lines.push("");
   lines.push("## 7. 만들고 나서 — 눈으로 보고, 눌러 보고, 고치기");
   lines.push("> **여기까지 해야 다 만든 것입니다.** 화면을 다 그렸어도 눌러서 안 움직이면 안 만든 것과 같습니다.");
@@ -745,243 +775,7 @@ export function buildSpecPackMarkdown(
   lines.push("- 헤드리스 브라우저로 열어 결과를 document.title 에 담아 꺼내기");
   lines.push("");
   lines.push("```js");
-  lines.push(String.raw`(() => {
-  const 흠 = [], 적기 = (칸, 말) => { const k = "[" + 칸 + "] " + 말; if (!흠.includes(k)) 흠.push(k); };
-  const 보이나 = (el) => { const s = getComputedStyle(el);
-    if (s.display === "none" || s.visibility === "hidden") return false;
-    const r = el.getBoundingClientRect(); return r.width > 2 && r.height > 2; };
-  const 이름 = (el) => el.tagName.toLowerCase() +
-    (typeof el.className === "string" && el.className ? "." + el.className.trim().split(/ +/)[0] : "");
-  const 반 = (n) => Math.round(n);
-  const 본문 = document.querySelector("main") || document.body;
-  const bs = getComputedStyle(본문);
-  const 콘텐츠폭 = 반(본문.getBoundingClientRect().width - parseFloat(bs.paddingLeft) - parseFloat(bs.paddingRight));
-  const 세로막대 = 반(window.innerWidth - document.documentElement.clientWidth);
-  const 푸터 = document.querySelector("footer");
-
-  // ① GNB 가 위에 붙어 있나
-  const 상단바 = document.querySelector("header, nav");
-  if (상단바) { const p = getComputedStyle(상단바).position;
-    if (p !== "sticky" && p !== "fixed") 적기("고정", 이름(상단바) + " 가 position:" + p + " — 굴리면 따라 올라갑니다"); }
-
-  // ② 본문과 푸터 사이가 붙었나 (그릇이 아니라 «안 마지막 알맹이»까지 잰다)
-  if (푸터 && 푸터.previousElementSibling) {
-    let 끝 = 푸터.previousElementSibling;
-    if (보이나(끝) && !/sticky|fixed/.test(getComputedStyle(끝).position)) {
-      for (let i = 0; i < 6; i++) {
-        const 안 = [...끝.children].filter((c) => 보이나(c) && getComputedStyle(c).position === "static");
-        if (!안.length) break; 끝 = 안[안.length - 1];
-      }
-      const 틈 = 반(푸터.getBoundingClientRect().top - 끝.getBoundingClientRect().bottom);
-      if (틈 >= 0 && 틈 < 16) 적기("간격", "본문과 푸터 사이가 " + 틈 + "px — " + 이름(끝) + " 바로 아래 푸터");
-    }
-  }
-
-  // ③ 덩어리 사이 간격이 그 칸의 «리듬»을 벗어났나
-  for (const 부모 of [본문, ...본문.querySelectorAll("*")]) {
-    if (!보이나(부모) || 부모.closest("table, svg")) continue;
-    const ps = getComputedStyle(부모);
-    if (/flex|grid/.test(ps.display) && ps.flexDirection !== "column") continue;
-    const 아이 = [...부모.children].filter((c) => 보이나(c) && getComputedStyle(c).position !== "absolute");
-    if (아이.length < 3) continue;
-    const 틈들 = [];
-    for (let i = 1; i < 아이.length; i++) {
-      const a = 아이[i - 1].getBoundingClientRect(), b = 아이[i].getBoundingClientRect();
-      if (b.top < a.bottom - 2) continue;
-      틈들.push({ v: 반(b.top - a.bottom), 앞: 아이[i - 1], 뒤: 아이[i] });
-    }
-    if (틈들.length < 3) continue;
-    const 벌 = 틈들.filter((x) => x.v >= 8);
-    if (벌.length < 틈들.length * 0.6) continue;
-    const 리듬 = 틈들.map((x) => x.v).sort((a, b) => a - b)[Math.floor(틈들.length / 2)];
-    for (const x of 틈들) {
-      // 「리듬의 절반도 안 된다」만으로는 리듬이 클수록 헛짚는다. 섹션 사이가 80px 인 칸에
-      // 「안내 띠 → 탭 → 탭 내용」이 24·16px 로 붙은 «한 묶음»이 들어 있으면 그건 묶음이다.
-      // 눈에 붙어 보이는 것은 결국 절대값이 작을 때다.
-      const 붙 = x.v <= 2, 좁 = 리듬 >= 20 && x.v < 리듬 * 0.45 && x.v <= 12;
-      if (!붙 && !좁) continue;
-      // 같은 «종류»가 이어지는 줄은 붙는 게 맞다. 뒤에 붙은 여백 클래스(mb3·total)까지
-      // 견주면 "card mb3" 와 "card mb6" 를 서로 다른 것으로 봐서 헛짚는다.
-      if ((x.앞.className || "").trim().split(/ +/)[0] === (x.뒤.className || "").trim().split(/ +/)[0]) continue;
-      if (x.뒤 === 푸터) continue;
-      // 누군가 «이 값으로» 정해 둔 자리는 흠이 아니다. 2px 은 이름 밑에 한 줄 소개를
-      // 붙이려고 손으로 적은 값이지, 어쩌다 붙은 것이 아니다.
-      if (붙 && (parseFloat(getComputedStyle(x.앞).marginBottom) || 0) +
-                (parseFloat(getComputedStyle(x.뒤).marginTop) || 0) > 0) continue;
-      // 뒤엣것이 «윗줄»이나 제 안여백을 가졌으면 그것이 곧 틈이다 — 카드 아랫단이 그렇다.
-      if (붙) { const 뒤s = getComputedStyle(x.뒤);
-        if (parseFloat(뒤s.borderTopWidth) > 0 || (parseFloat(뒤s.paddingTop) || 0) >= 8) continue; }
-      // 길잡이(빵부스러기)·«‹ 뒤로»는 다음 덩어리와 한 덩어리다
-      if (!붙 && (/crumb|breadcrumb|path|back/.test(x.앞.className || "") ||
-                  x.앞.tagName.toLowerCase() === "nav")) continue;
-      // «이름표와 값»은 한 덩어리다 — 어느 쪽이 위든 붙는 것이 맞다.
-      // 제목→부제만 넘기면 「대표 시술 최저가 → 25,000원~」처럼 뒤집힌 짝을 흠이라 한다.
-      const 잔글 = (el) => /t-sub|sub|desc|help|hint|caption|label/.test(el.className || "");
-      const 큰글 = (el) => /^(h[1-4]|b|strong)$/.test(el.tagName.toLowerCase()) ||
-                          /t-sec|t-card|t-page|lb|price|nm|name|field/.test(el.className || "");
-      if ((잔글(x.앞) && 큰글(x.뒤)) || (큰글(x.앞) && 잔글(x.뒤))) continue;
-      적기("간격", 이름(x.뒤) + " 와 위 " + 이름(x.앞) + " 사이 " + x.v + "px (이 칸 리듬은 " + 리듬 + "px)");
-    }
-  }
-
-  // ④ 버튼·배지가 늘어났나 / 동그란 버튼이 타원이 됐나
-  const 부품 = [...document.querySelectorAll(".badge, .btn, button, [class*=badge], [class*=btn]")].filter((el) => {
-    if (!보이나(el)) return false;
-    // 버튼을 «담는 칸»(.btns 같은 것)은 부품이 아니다 — 넓은 게 맞다
-    if (el.querySelector(".badge, .btn, button")) return false;
-    // 일부러 칸을 꽉 채우라고 시킨 것
-    if (/block|full|wide/.test(el.className || "")) return false;
-    return true;
-  });
-  const 무리 = new Map();
-  const 열쇠 = (el) => (el.className || "").trim().split(/ +/)[0] || el.tagName;
-  for (const el of 부품) { const k = 열쇠(el); if (!무리.has(k)) 무리.set(k, []); 무리.get(k).push(el); }
-  for (const el of 부품) {
-    const s = getComputedStyle(el), r = el.getBoundingClientRect();
-    if (s.borderTopLeftRadius.includes("%") && parseFloat(s.borderTopLeftRadius) >= 40 && r.width / r.height > 1.5)
-      적기("버튼", 이름(el) + " 는 동그란 버튼인데 " + 반(r.width) + "x" + 반(r.height) + " 로 늘어나 타원이 됐습니다");
-    const rg = document.createRange(); rg.selectNodeContents(el);
-    const 글폭 = rg.getBoundingClientRect().width; if (!글폭) continue;
-    const 또래 = 무리.get(열쇠(el)) || [];
-    const 또래폭 = 또래.map((x) => x.getBoundingClientRect().width).sort((a, b) => a - b)[Math.floor(또래.length / 2)];
-    if (또래.length >= 2 && r.width < 또래폭 * 2.5) continue;             // 다 같이 넓으면 일부러 그런 것
-    // 스스로 «자라라»고 적힌 것은 늘어난 것이 아니다 — flex:1 1 0% 는 한 줄을 반씩
-    // 나눠 쓰라는 뜻이다. 세로로 쌓은 단추 더미도 꽉 채우는 것이 제 모습이다.
-    if (parseFloat(s.flexGrow) > 0) continue;
-    const 부모 = el.parentElement; if (!부모) continue;
-    const ps2 = getComputedStyle(부모);
-    const 세로더미 = ps2.display.indexOf("flex") >= 0 && ps2.flexDirection.indexOf("column") === 0;
-    if (세로더미 && r.width <= 480) continue;
-    // 칸에 혼자 서 있으면 꽉 채우는 것이 제 모습이다 — 나란한 것이 없으니 견줄 것도 없다
-    if ([...부모.children].filter(보이나).length === 1) continue;
-    const 남 = 반(r.width - 글폭 - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight));
-    // ⚠ 까닭을 «지어내지» 않는다. 부모가 실제로 어떻게 서 있는지 읽어서 적는다.
-    const 까닭 = ps2.display.indexOf("flex") >= 0
-      ? 이름(부모) + " 가 flex(" + ps2.flexDirection + ") 인데 align-items 가 " + ps2.alignItems + " 입니다"
-      : 이름(부모) + " 는 " + ps2.display + " 입니다";
-    if (남 > 140) 적기("늘어남", 이름(el) + " 가 " + 반(r.width) + "px 인데 글은 " + 반(글폭) +
-      "px — " + 까닭);
-  }
-
-  // ⑤ 좌우로 미는 칸에 «막대»가 드러났나
-  for (const el of document.querySelectorAll("*")) {
-    if (!보이나(el)) continue;
-    const s = getComputedStyle(el);
-    if (!/auto|scroll/.test(s.overflowX) || el.scrollWidth <= el.clientWidth + 2) continue;
-    const 두께 = el.offsetHeight - el.clientHeight - parseFloat(s.borderTopWidth) - parseFloat(s.borderBottomWidth);
-    if (두께 <= 2) continue;
-    // 넘기는 길은 하나여야 한다 — «화살표가 있는데 띠도 깔린 것»이 흠이다.
-    // ⚠ 화살표가 없으면 그 띠가 «넘길 수 있다»는 유일한 신호다. 표·간트가 그렇다.
-    const 둘레 = el.parentElement || el;
-    if (!둘레.querySelector(".car-nav, .nav, [aria-label=이전], [aria-label=다음], .prev, .next")) continue;
-    적기("막대", 이름(el) + " 에 가로 막대가 " + 반(두께) + "px 드러납니다 — 화살표로 넘기게 하세요");
-  }
-
-  // ⑥ 표가 제 칸을 넘쳤나
-  for (const t of document.querySelectorAll("table")) {
-    if (!보이나(t) || !t.parentElement) continue;
-    const 넘침 = 반(t.scrollWidth - t.parentElement.clientWidth);
-    if (넘침 > 4) 적기("표", "표가 제 칸보다 " + 넘침 + "px 넓습니다");
-  }
-
-  // ⑦ 지금 보는 메뉴가 «켜져» 있나
-  //    표시하는 방법은 사이트마다 다릅니다. 그래서 «클래스 이름»으로 찾지 않고,
-  //    지금 쪽을 가리키는 링크가 옆 링크들과 «달라 보이는지»를 봅니다.
-  for (const 메뉴 of document.querySelectorAll("nav, header, [role=navigation]")) {
-    if (!보이나(메뉴)) continue;
-    const 고리 = [...메뉴.querySelectorAll("a[href]")].filter(보이나);
-    if (고리.length < 3) continue;
-    const 여기 = 고리.filter((a) => a.pathname === location.pathname);
-    if (!여기.length) continue;
-    const 다름 = (a) => {
-      if (a.getAttribute("aria-current")) return true;
-      const s = getComputedStyle(a);
-      return 고리.some((b) => {
-        if (b === a) return false;
-        const t = getComputedStyle(b);
-        return s.color !== t.color || s.fontWeight !== t.fontWeight ||
-               s.borderBottomWidth !== t.borderBottomWidth || s.backgroundColor !== t.backgroundColor;
-      });
-    };
-    const 켜진것 = 여기.filter(다름);
-    if (!켜진것.length) 적기("메뉴", 이름(메뉴) + " 에 «지금 여기» 표시가 없습니다 — 링크 " + 고리.length + "개가 다 같아 보입니다");
-    break;
-  }
-
-  // ⑧ 배경 위 글자가 읽히나 — 본문 4.5 · 큰 글자 3.0 (WCAG)
-  //    사진 위 글자는 잴 수 없어 건너뜁니다. 눈으로 보셔야 합니다.
-  //
-  // ⛔ 색 글자에서 숫자만 뽑아 쓰지 마세요. 요즘 브라우저는 「lab(91.9 -0.6 5.1 / .85)」 처럼
-  //    내주는 일이 잦은데, 숫자만 뽑으면 «밝은 회색»을 새까맣게 읽어 멀쩡한 화면이
-  //    죄다 흠으로 잡힙니다. 캔버스에 한 점 찍어 브라우저가 직접 풀게 합니다.
-  const 판 = document.createElement("canvas"); 판.width = 판.height = 1;
-  const 붓 = 판.getContext("2d", { willReadFrequently: true });
-  const 색값 = (s) => {
-    try { 붓.clearRect(0, 0, 1, 1); 붓.fillStyle = s; 붓.fillRect(0, 0, 1, 1);
-      const d = 붓.getImageData(0, 0, 1, 1).data;
-      return [d[0], d[1], d[2], d[3] / 255];
-    } catch (e) { return null; }
-  };
-  // 반투명한 것은 «아래 색 위에 얹어» 실제로 보이는 색을 만든다.
-  const 겹치기 = (위, 아래) => {
-    const a = 위[3] + 아래[3] * (1 - 위[3]);
-    if (!a) return [0, 0, 0, 0];
-    return [0, 1, 2].map((i) => (위[i] * 위[3] + 아래[i] * 아래[3] * (1 - 위[3])) / a).concat([a]);
-  };
-  const 광 = (c) => { const f = (v) => { v = v / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
-    return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
-  const 바탕 = (el) => { let n = el, 쌓임 = null;
-    for (let i = 0; n && i < 14; i++, n = n.parentElement) {
-      const s = getComputedStyle(n);
-      if (s.backgroundImage !== "none") return null;   // 사진·그러데이션 위는 못 잰다
-      const c = 색값(s.backgroundColor);
-      if (!c || c[3] === 0) continue;
-      쌓임 = 쌓임 ? 겹치기(쌓임, c) : c;
-      if (쌓임[3] >= 0.99) return 쌓임.slice(0, 3);
-    }
-    return 쌓임 ? 겹치기(쌓임, [255, 255, 255, 1]).slice(0, 3) : [255, 255, 255]; };
-  let 대비셈 = 0;
-  for (const el of document.querySelectorAll("p, a, li, h1, h2, h3, h4, button, td, th, label, span, strong")) {
-    if (대비셈 >= 8 || !보이나(el)) continue;
-    const 글 = (el.textContent || "").trim();
-    if (!글 || 글.length > 120) continue;
-    if ([...el.children].some((c) => (c.textContent || "").trim())) continue;  // 글을 «직접» 가진 것만
-    const s = getComputedStyle(el);
-    const 글색 = 색값(s.color), 뒤 = 바탕(el);
-    if (!글색 || !뒤 || 글색[3] === 0) continue;
-    const 앞 = 글색[3] < 1 ? 겹치기(글색, 뒤.concat([1])) : 글색;   // 흐린 글자는 바탕에 얹어 잰다
-    const a = 광(앞), b = 광(뒤);
-    const 비 = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
-    const 크기 = parseFloat(s.fontSize), 굵기 = parseInt(s.fontWeight) || 400;
-    const 기준 = (크기 >= 24 || (크기 >= 18.66 && 굵기 >= 700)) ? 3 : 4.5;
-    if (비 < 기준) { 대비셈++;
-      적기("대비", 이름(el) + " «" + 글.slice(0, 14) + "» 대비 " + 비.toFixed(2) + " — " + 기준 + " 이상이어야 읽힙니다"); }
-  }
-
-  // ⑨ 나란히 놓인 사진 크기가 같은가 (윗변이 같은 것끼리만 견준다)
-  for (const 부모 of document.querySelectorAll("main *, body > *")) {
-    if (!보이나(부모)) continue;
-    const 사진 = [...부모.children]
-      .map((c) => (c.tagName === "IMG" ? c : c.querySelector ? c.querySelector("img") : null))
-      .filter((x) => x && 보이나(x));
-    if (사진.length < 3) continue;
-    const 틀 = 사진.map((i) => i.getBoundingClientRect());
-    if (new Set(틀.map((r) => 반(r.top))).size > 1) continue;
-    const 높 = 틀.map((r) => 반(r.height));
-    const 작 = Math.min.apply(null, 높), 큰 = Math.max.apply(null, 높);
-    if (작 > 0 && 큰 - 작 > Math.max(8, 작 * 0.15))
-      적기("사진", 이름(부모) + " 안에 나란한 사진 높이가 " + 작 + "~" + 큰 + "px 로 제각각입니다");
-  }
-
-  return JSON.stringify({
-    화면: location.pathname.split("/").pop() || "(첫 화면)",
-    콘텐츠폭, 세로막대,
-    뒤로가기: !!document.querySelector(".back, [class*=back]"),
-    탭이가는곳: [...document.querySelectorAll("[data-go], .tab[href], .tabs a")]
-      .map((x) => x.getAttribute("data-go") || x.getAttribute("href")).filter(Boolean),
-    흠,
-  }, null, 1);
-})()`);
+  lines.push(화면검수글);
   lines.push("```");
   lines.push("");
   lines.push("**`흠` 에 담겨 나온 것은 그 화면에서 바로 고치세요.** 하나도 안 남을 때까지 다시 돌립니다.");
@@ -1004,66 +798,30 @@ export function buildSpecPackMarkdown(
   lines.push("> 만든 폴더에서 한 번 돌리면 끊어진 링크·없는 그림·외톨이 화면이 한꺼번에 나옵니다.");
   lines.push("");
   lines.push("```js");
-  lines.push(String.raw`// node 로 돌리세요:  node 검수.mjs ./내사이트
-// ⚠ «사이트 뿌리»를 주세요. 하위 폴더까지 훑습니다 —
-//    pages/ 만 주면 한 층 위의 화면 목록(index.html)을 못 봐서
-//    거기서만 이어지는 화면이 죄다 «외톨이»로 잘못 잡힙니다.
-import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
-import { join, resolve, dirname, relative } from "node:path";
-
-const 뿌리 = process.argv[2] || ".";
-const 쪽들 = [];
-(function 훑기(방) {
-  for (const e of readdirSync(방, { withFileTypes: true })) {
-    if (e.name.startsWith(".") || e.name === "node_modules") continue;
-    const 길 = join(방, e.name);
-    if (e.isDirectory()) 훑기(길);
-    else if (e.name.endsWith(".html")) 쪽들.push(길);
-  }
-})(뿌리);
-
-const 흠 = [];
-const 이어진곳 = new Set();
-
-for (const 길 of 쪽들) {
-  const 쪽 = relative(뿌리, 길);
-  const s = readFileSync(길, "utf8");
-
-  // ① 끊어진 링크
-  for (const m of s.matchAll(/href="([^"]+)"/g)) {
-    const v = m[1];
-    if (!v || v.startsWith("#") || v.startsWith("http") || v.startsWith("mailto:")) continue;
-    const 갈곳 = resolve(dirname(길), v.split("#")[0].split("?")[0]);
-    이어진곳.add(갈곳);
-    if (v.endsWith(".html") && !existsSync(갈곳)) 흠.push("[끊어진 링크] " + 쪽 + " -> " + v);
-  }
-
-  // ② 없는 그림
-  for (const m of s.matchAll(/src="([^"]+)"/g)) {
-    const v = m[1];
-    if (!v || v.startsWith("http") || v.startsWith("data:")) continue;
-    if (!existsSync(resolve(dirname(길), v.split("?")[0]))) 흠.push("[없는 그림] " + 쪽 + " -> " + v);
-  }
-
-  // ③ 눌러도 아무 데도 안 가는 것
-  const 빈링크 = (s.match(/href="(#|javascript:void\(0\))"/g) || []).length;
-  if (빈링크) 흠.push("[빈 링크] " + 쪽 + " 에 " + 빈링크 + "개 — 갈 곳이 있으면 잇고, 없으면 «안 눌리게» 두세요");
-
-  // ④ 0바이트
-  if (statSync(길).size === 0) 흠.push("[빈 파일] " + 쪽);
-}
-
-// ⑤ 외톨이 화면 — 만들어 놓고 아무 데서도 안 이어지는 쪽
-for (const 길 of 쪽들) {
-  const 쪽 = relative(뿌리, 길);
-  if (/^(index|home)\./i.test(쪽)) continue;
-  if (!이어진곳.has(resolve(길))) 흠.push("[외톨이] " + 쪽 + " 은 어느 화면에서도 이어지지 않습니다");
-}
-
-console.log("화면 " + 쪽들.length + "장 · 흠 " + 흠.length + "건");
-for (const h of 흠) console.log("  " + h);
-if (!흠.length) console.log("  깨끗합니다");`);
+  lines.push(파일검수글);
   lines.push("```");
+  lines.push("");
+  /* ⭐ 7-9-3 — 화면이 100장이어도 «한 번에» 재는 글 (2026-09-02 사장님 지시).
+     사장님: 「화면마다 붙혀야돼? 100넘는걸?」 그전에는 7-9 가 「헤드리스 브라우저로
+     열어 꺼내기」라고 «한 줄만» 적어 두고 코드를 안 줬다. 그래서 아무도 못 했다.
+     우리는 check-눈으로 로 자동으로 돌리면서 손님에게는 손으로 하라고 주고 있었다. */
+  lines.push("### 7-9-3. 화면이 많을 때 — 한 번에 전부 재기");
+  lines.push("> 화면이 스무 장만 넘어도 콘솔에 스무 번 붙이는 것은 못 할 일입니다.");
+  lines.push("> 이 글이 **화면을 전부 열어서** 7-9 와 «똑같은 것»을 잽니다.");
+  lines.push("");
+  lines.push("**쓰는 법** — 두 파일을 같은 자리에 두고 한 줄만 치세요.");
+  lines.push("");
+  lines.push("```bash");
+  lines.push("# 7-9 의 글을 화면검수-글.js 로, 아래 글을 화면검수.mjs 로 저장한 뒤");
+  lines.push("node 화면검수.mjs ./내사이트");
+  lines.push("```");
+  lines.push("");
+  lines.push("```js");
+  lines.push(모두검수글);
+  lines.push("```");
+  lines.push("");
+  lines.push("결과는 화면에 찍히고 **`화면검수_결과.txt`** 에도 적힙니다. 흠이 있으면 1 로 끝나므로");
+  lines.push("`npm run` 이나 CI 에 걸어 두셔도 됩니다.");
   lines.push("");
   lines.push("**글자 대비는 7-9 의 글이 ⑧번으로 잽니다** — 파일만 봐서는 실제로 칠해진 색을 알 수 없어서입니다.");
   lines.push("본문 글자는 **4.5**, 24px 이상이거나 굵은 18.66px 이상은 **3.0** 을 넘어야 합니다.");

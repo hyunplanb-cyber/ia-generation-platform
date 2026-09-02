@@ -14,6 +14,8 @@
  *   빈 껍데기를 주면 「파일이 왜 이래」가 된다.
  */
 
+import { 검수안내서HTML } from "./export/검수안내서";
+
 const 사이트주소 = "https://www.caffeinecolor.com";
 
 type 안내 = {
@@ -22,6 +24,9 @@ type 안내 = {
   주소: string;
   한줄: string;
   담긴것: string[];
+  /** 안내장이 아니라 «본문»을 통째로 담아야 하는 것. 11번이 그렇다 —
+   *  손님이 붙여 넣을 «코드»가 있어야 하는데, 링크만 주면 또 한 걸음이 는다. */
+  본문?: () => string;
 };
 
 const 안내서들: 안내[] = [
@@ -51,10 +56,25 @@ const 안내서들: 안내[] = [
       "스토어 등록 절차와 걸리는 시간",
     ],
   },
+  {
+    파일: "11_내사이트_검수하는_법.html",
+    제목: "만든 사이트를 스스로 검수하는 법",
+    주소: `${사이트주소}/guide/verify-guide.html`,
+    한줄: "저희가 팩을 재는 잣대 그대로, 손님 화면도 재 보세요 — 붙여 넣기 한 번이면 됩니다",
+    담긴것: [
+      "F12 눌러 콘솔 여는 법부터",
+      "화면 한 장 재기 — 붙여 넣고 엔터",
+      "화면이 100장일 때 한 번에 재기",
+      "무엇을 재나 — 열 가지 목록",
+      "우리 팩으로 만든 것이 아니어도 됩니다",
+    ],
+    본문: 검수안내서HTML,
+  },
 ];
 
 /** 팩에 넣을 안내장 한 장. 인터넷이 없어도 무엇을 하는 글인지는 읽힌다. */
 function 안내장HTML(a: 안내): string {
+  if (a.본문) return a.본문();
   return `<!doctype html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">

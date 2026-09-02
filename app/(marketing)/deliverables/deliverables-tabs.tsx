@@ -22,6 +22,7 @@ import {
   Palette,
   LayoutTemplate,
   Wand2,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
@@ -31,6 +32,7 @@ import {
   SpecMockup,
   FlowMockup,
   WbsMockup,
+  SelfCheckMockup,
   SpecPackMockup,
   PresetColorMockup,
   PresetLayoutMockup,
@@ -113,6 +115,16 @@ const DELIVERABLES: Deliverable[] = [
     role: "위 모든 걸 한 벌로 정리한 마크다운·JSON이에요. 이 파일을 Claude Code·Cowork 같은 AI 코딩 도구에 그대로 넘기면, 화면 구성·이동·화면별 지시가 확정된 상태로 사이트가 만들어져요.",
     formats: ["마크다운", "JSON"],
     mockup: <SpecPackMockup />,
+  },
+  {
+    /* ⭐ 2026-09-02 사장님 지시 — 「우리 AI팩으로 만들면 자동 검수도 한다.
+       항목 리스트 보여주고 홍보하는 것으로 하자.」 */
+    icon: ShieldCheck,
+    bg: "bg-pastel-lavender",
+    name: "자동 검수",
+    role: "만들고 끝이 아니에요. 빌드 지시서 마지막에 «다 만들었으면 스스로 재고 고쳐라»가 적혀 있어, AI가 열 가지를 재고 고친 뒤에 끝냈다고 알려줘요. 직접 재 보고 싶으시면 안내서 한 장에 붙여넣기용 코드가 통째로 들어 있어요.",
+    formats: ["붙여넣기", "명령 한 줄"],
+    mockup: <SelfCheckMockup />,
   },
 ];
 
