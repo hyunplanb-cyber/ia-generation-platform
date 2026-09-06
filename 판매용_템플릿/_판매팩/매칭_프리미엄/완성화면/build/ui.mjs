@@ -18,6 +18,20 @@ export const 예산최대 = (s) => {
   for (const c of 끝) if (c >= '0' && c <= '9') n += c;
   return n || '0';
 };
+/* 받침을 보고 조사를 고른다 — 「한결이사를」·「1만원을」처럼 읽히게 한다.
+   assets/js/app.js 의 조사붙이기와 같은 규칙이되, «끝이 숫자»일 때를 읽는 소리로 가른다
+   (1=일 → 을, 2=이 → 를). 닫는 괄호는 건너뛴다 — 「(2개)」는 「개」로 본다.
+   ⚠ 이것이 없으면 손님 화면에 「깔끔한하루 을」이 그대로 나간다
+      (2026-09-07 검수 — 매칭_프리미엄에서 아홉 자리가 그랬다). */
+export function 조사붙이기(말, 있, 없) {
+  let s = String(말 == null ? '' : 말).trim();
+  while (s && ')]}」』'.includes(s[s.length - 1])) s = s.slice(0, -1);
+  const c = s[s.length - 1];
+  if (!c) return 없;
+  if (c >= '0' && c <= '9') return '0136789'.includes(c) ? 있 : 없;
+  const code = c.charCodeAt(0) - 0xac00;
+  return code >= 0 && code <= 11171 && code % 28 !== 0 ? 있 : 없;
+}
 export const won = (n) => n.toLocaleString('ko-KR') + '원';
 export const num = (n) => n.toLocaleString('ko-KR');
 function hash(s) { let h = 0; for (let i = 0; i < String(s).length; i++) h = (h * 31 + String(s).charCodeAt(i)) | 0; return Math.abs(h); }
