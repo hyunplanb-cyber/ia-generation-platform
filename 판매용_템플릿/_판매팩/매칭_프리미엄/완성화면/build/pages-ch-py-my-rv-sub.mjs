@@ -288,7 +288,7 @@ ${U.pageHd('할인 적용', '쿠폰과 포인트를 함께 쓰실 수 있습니�
 ${U.card('가지고 계신 쿠폰', `<div class="list">
   ${쿠폰.map(([나, 만료, 액, 쓸수, 왜]) => `<label class="row-item chk-row${쓸수 ? '' : ' is-off'}">
     <input type="radio" name="cp"${쓸수 && 액 === 56000 ? ' checked' : ''}${쓸수 ? '' : ' disabled'}
-      data-toast="${나} 를 적용했어요">
+      data-toast="${나}${U.조사붙이기(나, '을', '를')} 적용했어요">
     <span class="grow"><b>${나}</b>
       <span class="t-sub" style="display:block">${만료}${왜 ? ` · ${왜}` : ''}</span></span>
     ${쓸수 ? `<b class="acc nowrap">−${U.won(액)}</b>` : U.badge('사용 불가', 'b-mut')}
@@ -798,7 +798,7 @@ ${U.card('', `<p class="t-sub mb4">공개 후기에 적기는 어려운 이야�
   <textarea class="input" rows="5" placeholder="예) 통화가 잘 안 되는 편이라 조금 답답했습니다" aria-label="비공개 의견"></textarea>
 
   <div class="btns mt-block">
-    ${U.btn('후기 올리기', { cls: 'btn-pri btn-lg', attr: ' data-toast="후기를 올렸어요. 800 P 를 드렸습니다"' })}
+    ${U.btn('후기 올리기', { cls: 'btn-pri btn-lg', attr: ' data-toast="후기를 올렸어요. 800 P를 드렸습니다"' })}
     ${U.btn('건너뛰고 올리기', { cls: 'btn-ghost btn-lg', attr: ' data-toast="후기를 올렸어요"' })}
   </div>`)}
 

@@ -17,6 +17,120 @@
     });
   }
 
+
+  /* ── 수량 스텝퍼 ── 2026-09-07 pack-qa-spec-b · 검수항목 G11 ─────────────
+     ⛔ «−/＋» 를 눌러도 숫자가 한 칸도 안 움직였다. 그런데 화면은
+        「수량을 바꿨어요. 합계가 다시 계산됩니다」라고 말하고 있었다 — 아홉 화면이 그랬다.
+     ⛔ 뿌리는 «이름이 갈린 것»이다. 다른 팩(공동구매·뷰티샵·여행·LMS)의 손잡이는
+        '.stepper button' 만 잡는데 이 팩의 마크업은 <div class="step"> 이다.
+        게다가 이 팩 app.js 에는 그 손잡이가 아예 없었다. 그래서 조용히 아무 일도 안 났다.
+        (검수항목 G9 「헛선택자」와 같은 종류인데, 여기는 «선택자가 아예 없는» 쪽이다.)
+     ⚠ 방향은 data-step 이 없으므로 «화면에 적힌 것»으로 가른다 — aria-label(줄이기/늘리기)
+        과 글자(−/＋). 이름 목록을 늘리는 대신 화면이 말하는 것을 읽는다.
+     ⚠ 가장 적은 수는 1 이다. 0대를 빌릴 수는 없고, 빼는 일은 옆의 «빼기» 단추가 한다.
+     ⚠ 돈은 «화면에 이미 적힌 값»으로만 다시 센다 — 단가는 (줄 값 ÷ 처음 수량)으로
+        한 번만 재어 두고, 할인율은 그 줄에 적힌 「N%」를 읽는다. 지어내지 않는다.
+        그래서 그 짜임이 아닌 화면(달력·배상액 쪽)에서는 수량만 움직이고 조용히 물러난다. */
+  function 숫자만(el) { return Number(String(el.textContent).replace(/[^0-9]/g, '')) || 0; }
+  function 돈적기(el, n) { el.textContent = Math.round(n).toLocaleString('ko-KR') + '원'; }
+
+  /* 보증금도 수량을 따라간다 — 대여료만 따라가면 한 화면 안에서 셈이 갈린다
+     (검수공통 2절 「숫자 하나를 고치면 그 숫자로 계산되는 값을 전부 따라간다」). */
+  function 보증칸(뿌리) {
+    var 목 = [].slice.call(뿌리.querySelectorAll('*'));
+    for (var i = 0; i < 목.length; i++) {
+      if (!목[i].children.length && /보증금/.test(목[i].textContent) && /[0-9]/.test(목[i].textContent)) return 목[i];
+    }
+    return null;
+  }
+
+  function 줄값다시(줄) {
+    var 값칸 = 줄.querySelector('.side b.num, .side .num');
+    var 수칸 = 줄.querySelector('.step .v, .stepper .num');
+    if (!값칸 || !수칸) return false;
+    if (!줄.dataset.단가) {
+      var 처음 = Number(줄.dataset.처음수 || 수칸.dataset.처음 || 0);
+      if (!처음) return false;
+      줄.dataset.단가 = String(숫자만(값칸) / 처음);
+    }
+    돈적기(값칸, Number(줄.dataset.단가) * (숫자만(수칸) || 1));
+    var 보 = 보증칸(줄.querySelector('.side') || 줄);
+    if (보) {
+      if (!줄.dataset.단가보증) 줄.dataset.단가보증 = String(숫자만(보) / Number(줄.dataset.처음수 || 1));
+      보.textContent = '보증금 ' + Math.round(Number(줄.dataset.단가보증) * (숫자만(수칸) || 1)).toLocaleString('ko-KR') + '원';
+    }
+    return true;
+  }
+
+  function 합계다시(뿌리) {
+    var 총 = 뿌리.querySelector('.sum-row.total .num');
+    if (!총) return;
+    var 줄들 = [].slice.call(뿌리.querySelectorAll('.rowcard'));
+    var 산다 = 줄들.filter(function (r) {
+      if (r.classList.contains('bad')) return false;
+      var c = r.querySelector('input[type=checkbox]');
+      return !c || c.checked;
+    });
+    if (!산다.length) return;
+    var 합 = 0, 잼 = false;
+    산다.forEach(function (r) {
+      var v = r.querySelector('.side b.num, .side .num');
+      if (v) { 합 += 숫자만(v); 잼 = true; }
+    });
+    if (!잼) return;
+
+    var 나머지 = 0;
+    [].slice.call(뿌리.querySelectorAll('.sum-row')).forEach(function (행) {
+      if (행.classList.contains('total')) return;
+      var 이름 = (행.firstElementChild ? 행.firstElementChild.textContent : '');
+      var 값칸 = 행.querySelector('.num');
+      if (!값칸) return;
+      if (/대여료|상품 ?금액|주문 ?금액/.test(이름)) { 돈적기(값칸, 합); return; }
+      var 퍼센트 = 이름.match(/([0-9]+(?:[.][0-9]+)?)[ ]*%/);
+      if (퍼센트 && 행.classList.contains('minus')) {
+        var 깎 = Math.round(합 * Number(퍼센트[1]) / 100);
+        값칸.textContent = '-' + 깎.toLocaleString('ko-KR') + '원';
+        나머지 -= 깎; return;
+      }
+      /* 배송비·쿠폰처럼 수량과 무관한 줄은 «적힌 그대로» 더하고 뺀다 */
+      나머지 += (/^[ ]*-/.test(값칸.textContent) ? -1 : 1) * 숫자만(값칸);
+    });
+    var 보행 = null;
+    [].slice.call(뿌리.querySelectorAll('.sum-row')).forEach(function (행) {
+      if (!보행 && 행.firstElementChild && /보증금/.test(행.firstElementChild.textContent)) 보행 = 행;
+    });
+    if (보행) {
+      var 보합 = 0;
+      산다.forEach(function (r) { var b = 보증칸(r.querySelector('.side') || r); if (b) 보합 += 숫자만(b); });
+      var 보값 = 보행.querySelector('b, .num');
+      if (보값 && 보합) 보값.textContent = 보합.toLocaleString('ko-KR') + '원';
+    }
+    돈적기(총, 합 + 나머지);
+  }
+
+  on('.step button, .stepper button', 'click', function (e, t) {
+    var 상자 = t.closest('.step, .stepper');
+    var 수칸 = 상자.querySelector('.v, .num');
+    if (!수칸) return;
+    var 아래 =
+      t.dataset.step === '-' ? true :
+      t.dataset.step === '+' ? false :
+      /줄이|빼|감소|minus|down/i.test(t.getAttribute('aria-label') || '') ? true :
+      /늘리|더하|증가|plus|up/i.test(t.getAttribute('aria-label') || '') ? false :
+      /[−–—-]/.test((t.textContent || '').trim());
+    var 지금 = 숫자만(수칸) || 1;
+    var 다음 = Math.max(1, 지금 + (아래 ? -1 : 1));
+    if (다음 === 지금) return;
+    수칸.dataset.처음 = 수칸.dataset.처음 || String(지금);
+    수칸.textContent = String(다음);
+
+    var 줄 = t.closest('.rowcard');
+    if (줄) {
+      줄.dataset.처음수 = 줄.dataset.처음수 || String(지금);
+      if (줄값다시(줄)) 합계다시(document);
+    }
+  });
+
   /* 탭 — 같은 묶음 안에서만 활성 전환. data-go 가 있으면 해당 화면으로 이동 */
   on('.tab', 'click', function (e, t) {
     /* ⚠ 제 화면을 가리키는 data-go 는 «화면 안 탭»이다 — 다시 불러 봐야 같은 자리다.

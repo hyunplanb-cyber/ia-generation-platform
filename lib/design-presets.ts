@@ -250,7 +250,14 @@ export const DESIGN_OPTIONS: {
     title: "내추럴 그린",
     desc: "차분한 자연 · 친환경",
     concept: "차분한 그린 톤의 내추럴 디자인. 자연·건강·친환경 느낌, 넉넉한 여백.",
-    primary: "#15803D",
+    /* ⛔ #15803D 였다(2026-09-07 pack-qa-spec-b 가 되돌림). 이 테마의 페이지 배경
+       #F0EFEB 위에서 대비가 4.36 이고, 팩이 실제로 쓰는 배지 자리
+       (.badge.b-ok — background:--pri-10 위 color:--primary)에서는 4.39 다. 둘 다 4.5 미달.
+       2026-09-03 대비 쓸어내기가 장비렌탈_디럭스 완성화면의 --primary 를 #147A3A 로
+       내렸는데(흰 5.42 · 배경 위 4.71 · 배지 위 4.74) 이 뿌리와 손님 가이드는 옛 값에
+       남아 있었다 — 우리가 「4.5 이상」이라 시키면서 스스로 못 지키던 자리다.
+       preset-pack.ts 의 forest 칸에서 2026-08-25 에 났던 것과 같은 종류다. */
+    primary: "#147A3A",
     accent: "#508307",
     // 올리브(#65A30D)를 글자까지 낮춘 값은 저장소에 없었다. 있는 것 중 가장 가까운
     // #4D7C0F 는 4.34 로 모자란다. 그래서 이 테마가 이미 들고 있는 진한 초록을 쓴다.
@@ -343,7 +350,7 @@ export function accentTextOn(o: (typeof DESIGN_OPTIONS)[number], bg: string): st
  *   시키지 않은 것을 안 했다고 나무랄 수 없다.
  *
  * 흰색과 먹색 중 **재서** 고른다. 「밝은 색이면 검정」식의 눈대중은
- * 포레스트(#15803D 흰 5.02 / 검정 3.76)처럼 애매한 자리에서 틀린다. */
+ * 포레스트(#147A3A 흰 5.42 / 검정 3.48)처럼 애매한 자리에서 틀린다. */
 export const ON_LIGHT = "#111111";
 export const ON_DARK = "#FFFFFF";
 export function textOn(bg: string): string {
@@ -490,7 +497,7 @@ const PRESETS: Record<DesignKey, Preset> = {
     tagline: "차분한 그린. 자연·건강·친환경 서비스에 잘 맞는다.",
     font: "Pretendard (대체: Noto Sans KR). 넉넉한 줄간격으로 편안하게.",
     colors: {
-      "primary(주요 액션)": "#15803D",
+      "primary(주요 액션)": "#147A3A",
       "accent(강조·배지)": "#508307",
       "accent-text(강조 글자용)": "#166534",
       "accent-text-dark(어두운 바탕 글자용)": "#65A30D",
@@ -1296,7 +1303,7 @@ export const PRIMARY_SWATCHES_BY_STYLE: Record<DesignKey, string[]> = {
   mono: ["#111111", "#2B2B2B", "#454545", "#6B7280", "#0E6F60", "#BC5918"],
   pastel: ["#5B4FE5", "#7C6FF0", "#EC4899", "#A46803", "#14B8A6", "#0EA5E9"],
   retro: ["#BC5918", "#C2410C", "#0E6F60", "#B45309", "#A63D2A", "#1F6F5C"],
-  forest: ["#15803D", "#166534", "#0E7C66", "#508307", "#4D7C0F", "#0E7490"],
+  forest: ["#147A3A", "#166534", "#0E7C66", "#508307", "#4D7C0F", "#0E7490"],
   coral: ["#E02A0E", "#EF4444", "#FB7185", "#F97316", "#A46803", "#E11D48"],
 };
 

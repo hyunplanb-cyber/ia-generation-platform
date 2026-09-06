@@ -685,7 +685,7 @@ ${U.card('', `<div class="row-b wrap-row mb4">
       <span class="grow"><b>${p.nm}</b>
         <span class="t-sub" style="display:block">${U.rateLine(p.r, p.rv)}</span></span>
       <b class="price nowrap">${U.won([280000, 320000, 350000][i])}</b>
-      ${U.btn('빼기', { cls: 'btn-ghost btn-sm', attr: ` data-toast="${p.nm} 을 비교에서 뺐어요"` })}
+      ${U.btn('빼기', { cls: 'btn-ghost btn-sm', attr: ` data-toast="${p.nm}${U.조사붙이기(p.nm, '을', '를')} 비교에서 뺐어요"` })}
     </div>`).join('')}
   </div>
   <div class="btns mt6">
@@ -699,7 +699,7 @@ ${U.card('넣을 수 있는 견적', `<div class="list">
     <span class="grow"><b>${p.nm}</b>
       <span class="t-sub" style="display:block">${U.rateLine(p.r, p.rv)}</span></span>
     <b class="price nowrap">${U.won([390000, 420000][i])}</b>
-    ${U.btn('비교에 넣기', { cls: 'btn-ghost btn-sm', attr: ` data-toast="${p.nm} 을 비교에 넣었어요"` })}
+    ${U.btn('비교에 넣기', { cls: 'btn-ghost btn-sm', attr: ` data-toast="${p.nm}${U.조사붙이기(p.nm, '을', '를')} 비교에 넣었어요"` })}
   </div>`).join('')}
 </div>
 <p class="t-sub mt3">한 번에 <b>최대 4개</b>까지 비교하실 수 있습니다. 더 넣으면 표가 좁아져 읽기 어렵습니다.</p>`,
