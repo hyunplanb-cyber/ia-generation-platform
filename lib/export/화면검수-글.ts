@@ -125,8 +125,13 @@ export const 화면검수글 = String.raw`(() => {
       const 부품있나 = function (el) {
         return el.matches && (el.matches(부품) || !!el.querySelector(부품));
       };
+      /* ⚠ 「\s」 의 역슬래시를 빠뜨리지 마라 (2026-09-07). /s+/ 는 «빈칸»이 아니라
+         «영문 s 글자»를 찾는다. HTML 은 태그 사이에 줄바꿈과 들여쓰기가 그대로 들어
+         있으므로, 빈칸을 못 접으면 「전체 동의」 같은 두 줄짜리 이름표가 마흔 자를
+         넘겨 «짧은 글»이 아니게 되고, 바로 아래 부품과 한 덩어리라는 것을 못 알아본다.
+         이 파일은 String.raw 라 역슬래시가 그대로 살아 있다 — 빼면 안 된다. */
       const 짧은글 = function (el) {
-        const t = (el.textContent || "").replace(/s+/g, " ").trim();
+        const t = (el.textContent || "").replace(/\s+/g, " ").trim();
         return t.length > 0 && t.length <= 40;
       };
       if (부품있나(x.뒤) && (짧은글(x.앞) || 부품있나(x.앞))) continue;
