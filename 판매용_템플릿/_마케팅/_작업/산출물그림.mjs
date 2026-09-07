@@ -32,6 +32,17 @@ const 뜰것 = [
   { 파일: "02_IA_화면목록.xlsx", 시트: "화면목록", 이름: "IA·화면 목록", 낼이름: "화면목록", 줄: 26 },
   { 파일: "03_기능정의서.xlsx", 시트: null, 이름: "기능정의서", 낼이름: "기능정의서", 줄: 26 },
   { 파일: "04_WBS.xlsx", 시트: null, 이름: "WBS·일정", 낼이름: "WBS", 줄: 26 },
+  /* ⭐ 2026-09-07 — 갈래 ⑦(AI 빌드 스펙팩) 편을 만들려니 «생성 프롬프트»와 «버튼 → 이동화면»을
+     보여줄 그림이 없었다. 둘 다 같은 xlsx 의 «다른 칸»이라 파일을 새로 읽을 것이 없다.
+     칸은 «이름»으로 고른다 — 자리(index)로 고르면 팩마다 칸 차례가 달라 조용히 어긋난다. */
+  { 파일: "02_IA_화면목록.xlsx", 시트: "화면목록", 이름: "화면별 생성 프롬프트", 낼이름: "생성프롬프트1",
+    칸: ["화면ID", "화면명", "생성 프롬프트"], 자르기: 470, 줄: 5, 건너: 0 },
+  { 파일: "02_IA_화면목록.xlsx", 시트: "화면목록", 이름: "화면별 생성 프롬프트", 낼이름: "생성프롬프트2",
+    칸: ["화면ID", "화면명", "생성 프롬프트"], 자르기: 470, 줄: 5, 건너: 8 },
+  { 파일: "02_IA_화면목록.xlsx", 시트: "화면목록", 이름: "화면별 생성 프롬프트", 낼이름: "생성프롬프트3",
+    칸: ["화면ID", "화면명", "생성 프롬프트"], 자르기: 470, 줄: 5, 건너: 18 },
+  { 파일: "02_IA_화면목록.xlsx", 시트: "화면목록", 이름: "버튼 → 이동화면", 낼이름: "버튼이동",
+    칸: ["화면ID", "화면명", "버튼 → 이동화면"], 자르기: 260, 줄: 12 },
 ];
 
 const 벗기기 = (v) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -44,8 +55,21 @@ for (const d of 뜰것) {
   const 시트이름 = d.시트 && wb.SheetNames.includes(d.시트) ? d.시트 : wb.SheetNames[wb.SheetNames.length - 1];
   const 줄들 = XLSX.utils.sheet_to_json(wb.Sheets[시트이름], { header: 1 })
     .filter((r) => r.some((c) => String(c ?? "").trim()));
-  const 머리 = 줄들[0] ?? [];
-  const 몸 = 줄들.slice(1, 1 + d.줄);
+  const 머리전체 = 줄들[0] ?? [];
+  /* d.칸 이 있으면 «그 이름의 칸»만, 없으면 앞 여섯 칸.
+     없는 이름은 조용히 빠뜨리지 않고 멈춘다 — 빈 칸이 든 표가 나가는 것이 더 나쁘다. */
+  const 칸자리 = d.칸
+    ? d.칸.map((이름) => {
+        const i = 머리전체.findIndex((c) => String(c ?? "").trim() === 이름);
+        if (i < 0) throw new Error(`${d.파일} 에 「${이름}」 칸이 없습니다 — 머리: ${머리전체.join(" · ")}`);
+        return i;
+      })
+    : 머리전체.slice(0, 6).map((_, i) => i);
+  const 머리 = 칸자리.map((i) => 머리전체[i]);
+  /* 칸을 골랐으면 «마지막 칸이 빈 줄»은 뺀다 — 프롬프트가 없는 줄을 보여줘 봐야 빈 표다. */
+  const 몸 = 줄들.slice(1)
+    .filter((r) => !d.칸 || String(r[칸자리[칸자리.length - 1]] ?? "").trim())
+    .slice(d.건너 ?? 0, (d.건너 ?? 0) + d.줄);
   /* 팩 문서의 «진짜 줄 수»를 같이 적는다 — 지어낸 숫자를 안 쓰려고. */
   const 총줄 = 줄들.length - 1;
 
@@ -65,8 +89,8 @@ for (const d of 뜰것) {
     td:first-child{font-weight:600;white-space:nowrap;color:#BC5918}
   </style>
   <div class="hd"><b>${벗기기(d.이름)}</b><span>${벗기기(팩.split(/[\\/]/).pop())}</span><em>${총줄}줄</em></div>
-  <table><thead><tr>${머리.slice(0, 6).map((c) => `<th>${벗기기(c)}</th>`).join("")}</tr></thead>
-  <tbody>${몸.map((r) => `<tr>${머리.slice(0, 6).map((_, i) => `<td>${벗기기(r[i]).slice(0, 60)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  <table><thead><tr>${머리.map((c) => `<th>${벗기기(c)}</th>`).join("")}</tr></thead>
+  <tbody>${몸.map((r) => `<tr>${칸자리.map((i) => `<td>${벗기기(r[i]).slice(0, d.자르기 ?? 60)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 
   const 임시html = `${임시}/${d.낼이름}.html`;
   writeFileSync(임시html, html, "utf8");
