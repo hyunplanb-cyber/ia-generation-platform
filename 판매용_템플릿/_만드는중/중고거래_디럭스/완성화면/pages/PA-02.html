@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>결제 · 우리동네장터</title>
+<meta name="description" content="주문 요약(매물·물건 값·배송비·수수료 부담·총 결제액) · 받는 사람 정보와 배송지 고르기·새 주소 추가 · 배송 요청 사항 · 결제 수단 탭(카드·간편결제·계좌이체) · 수단별 입력 · 포인트·쿠폰 사용 · 필수 약관 체크 3개 · 결제 진행 중 표시와 중복 클릭 ">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="PA-02">
+<header class="gnb"><div class="gnb-in">
+    <a class="logo" href="HO-01.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnb-nav"><a href="HO-01.html">홈</a><a href="SE-02.html">매물 찾기</a><a href="SL-01.html">판매하기</a><a href="CH-01.html">채팅</a><a href="PA-05.html" class="on">거래</a><a href="MY-01.html">마이</a></nav>
+    <div class="gnb-util"><a href="SE-01.html" class="town">📍 역삼동</a>
+       <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+       <a class="btn btn-pri btn-sm" href="SL-01.html">판매글 쓰기</a><a class="gnb-ava" href="MY-01.html" title="내 정보"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 6.webp" alt=""></div></a></div>
+  </div></header>
+<div class="backbar"><div class="in">
+        <a class="back" href="PA-01.html">‹ 안전결제 시작·안내</a>
+        <span class="crumb">안전결제 <i>›</i> 결제</span>
+      </div></div>
+
+
+<main class="main  "><div class="wrap"><div class="split-r"><div>
+  <div class="stepbar"><span class="s on"><span class="n">1</span>받는 곳</span><span class="sep">›</span><span class="s "><span class="n">2</span>결제 수단</span><span class="sep">›</span><span class="s "><span class="n">3</span>동의</span><span class="sep">›</span><span class="s "><span class="n">4</span>결제</span></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">받는 사람</h3></div>
+  <div class="card-bd ">
+    <div class="row wrap-row" style="gap:12px">
+      <div class="fld" style="flex:1 1 200px"><label class="lb" for="nm">이름</label>
+        <input class="input" id="nm" type="text" value="김하늘"></div>
+      <div class="fld" style="flex:1 1 200px"><label class="lb" for="tl">연락처</label>
+        <input class="input" id="tl" type="tel" value="010-0000-0000"></div>
+    </div>
+    <div class="fld">
+      <span class="lb">배송지</span>
+      <div class="stack-sm">
+        <label class="radio on"><input type="radio" name="addr" checked>
+          <b>집</b> <span class="t-sub">서울 강남구 역삼로 000, 000호 (06234)</span></label>
+        <label class="radio"><input type="radio" name="addr">
+          <b>회사</b> <span class="t-sub">서울 강남구 테헤란로 152, 00층 (06236)</span></label>
+      </div>
+      <button class="link mt2" type="button" data-toast="새 주소를 적어 주세요">＋ 새 주소 추가</button>
+    </div>
+    <div class="fld"><label class="lb" for="rq">배송 요청</label>
+      <select class="input" id="rq"><option>문 앞에 놓아 주세요</option><option>경비실에 맡겨 주세요</option><option>직접 받을게요</option></select></div></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">결제 수단</h3></div>
+  <div class="card-bd ">
+    <div class="tabs"><button class="tab on" type="button">카드</button><button class="tab" type="button">간편결제</button><button class="tab" type="button">계좌이체</button></div>
+    <div class="mt3">
+      <div data-pane-body="pay0">
+        <div class="row wrap-row" style="gap:12px">
+          <div class="fld" style="flex:1 1 240px"><label class="lb" for="cd">카드 번호</label>
+            <input class="input" id="cd" type="text" inputmode="numeric" placeholder="0000 0000 0000 0000"></div>
+          <div class="fld" style="flex:1 1 120px"><label class="lb" for="ex">유효기간</label>
+            <input class="input" id="ex" type="text" placeholder="MM/YY"></div>
+        </div>
+        <div class="fld"><label class="lb" for="ip">할부</label>
+          <select class="input" id="ip" data-toast="할부 개월을 골랐어요"><option>일시불</option><option>2개월</option><option>3개월</option><option>6개월</option><option>12개월</option></select></div>
+      </div>
+    </div></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">포인트·쿠폰</h3></div>
+  <div class="card-bd ">
+    <div class="row-c" style="gap:8px">
+      <input class="input" type="text" inputmode="numeric" placeholder="쓸 포인트" style="flex:1">
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="가진 포인트 4,200P를 모두 담았어요">모두 사용</button>
+    </div>
+    <p class="t-sub mt2">가진 포인트 <b>4,200P</b></p>
+    <div class="fld mt3"><label class="lb" for="cp">쿠폰</label>
+      <select class="input" id="cp" data-toast="쿠폰을 적용했어요"><option>쓸 쿠폰 없음</option><option>첫 거래 3,000원 할인</option></select></div></div>
+  </div></div>
+
+  <div class="mt-block" data-agree-scope><div class="card ">
+  <div class="card-hd"><h3 class="t-card">약관 동의</h3></div>
+  <div class="card-bd ">
+    <label class="check strong mb3"><input type="checkbox" data-agree-all><span><b>아래 세 가지에 모두 동의합니다</b></span></label>
+    <label class="check"><input type="checkbox" data-agree data-unlock="paybtn">
+        <span class="grow"><span class="badge b-mut">필수</span> 안전결제 이용약관</span>
+        <button class="link quiet" type="button" data-toast="약관 전문을 열었어요">보기</button></label><label class="check"><input type="checkbox" data-agree data-unlock="paybtn">
+        <span class="grow"><span class="badge b-mut">필수</span> 개인정보 제3자 제공 — 판매자에게 배송지가 전달됩니다</span>
+        <button class="link quiet" type="button" data-toast="약관 전문을 열었어요">보기</button></label><label class="check"><input type="checkbox" data-agree data-unlock="paybtn">
+        <span class="grow"><span class="badge b-mut">필수</span> 전자금융거래 이용약관</span>
+        <button class="link quiet" type="button" data-toast="약관 전문을 열었어요">보기</button></label>
+    <p class="t-sub mt3">셋을 다 체크해야 결제할 수 있어요.</p></div>
+  </div></div>
+  </div><div class="sticky">
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">주문 요약</h3></div>
+  <div class="card-bd ">
+    <div class="row-c" style="gap:12px"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:56px;height:56px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 14.webp" alt=""><span class="lb">1000×1000</span></div>
+      <div><b>에어팟 프로 2세대</b><p class="t-sub mt1"><span class="badge b-mut">거의 새것</span></p></div></div>
+    <div class="mt4"><div class="sum-row "><span class="muted">물건 값</span><span>178,000원</span></div><div class="sum-row "><span class="muted">배송비</span><span>3,000원</span></div><div class="sum-row "><span class="muted">수수료</span><span><span class="muted">판매자가 냅니다</span></span></div>
+  <div class="sum-row total"><span>내가 낼 돈</span><span class="price">181,000원</span></div></div>
+    <div class="mt4"><button class="btn btn-pri btn-block btn-lg" id="paybtn" type="button" disabled data-go="PA-05.html">결제하기</button></div>
+    <p class="t-sub mt2 center">약관에 동의하면 열립니다</p></div>
+  </div>
+
+  <div class="mt-block"><div class="banner banner-info "><span class="ico">🛡</span><div class="grow"><b>결제한 돈은 판매자에게 바로 가지 않아요</b>
+    <div class="t-sub mt1">우리동네장터가 맡아 두었다가, 물건을 받고 「받았어요」를 누르면 그때 넘어갑니다.</div></div></div></div>
+
+  <div class="mt-block"><div class="banner banner-warn "><span class="ico">⚠</span><div class="grow"><b>결제가 안 될 때</b>
+    <div class="t-sub mt1">한도 초과·카드 정보 오류면 다른 수단으로 다시 해 보세요.
+    결제가 끝날 때까지 <b>창을 닫지 마세요.</b></div></div></div></div>
+  </div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE-02.html">매물 찾기</a></li><li><a href="SE-01.html">내 동네 설정</a></li>
+      <li><a href="MY-03.html">찜한 물건</a></li><li><a href="MY-02.html">구매 내역</a></li>
+      <li><a href="PA-01.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL-01.html">판매글 쓰기</a></li><li><a href="SL-05.html">내 판매글</a></li>
+      <li><a href="SL-03.html">시세 보기</a></li><li><a href="BS-01.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">PA-02</div><div class="nm">결제</div>
+    <div class="fd">주문 요약(매물·물건 값·배송비·수수료 부담·총 결제액) · 받는 사람 정보와 배송지 고르기·새 주소 추가 · 배송 요청 사항 · 결제 수단 탭(카드·간편결제·계좌이체) · 수단별 입력 · 포인트·쿠폰 사용 · 필수 약관 체크 3개 · 결제 진행 중 표시와 중복 클릭 막기 · 결제 실패 안내와 다른 수단 · 판매자 확인 대기 시간 안내</div>
+    <div class="lk"><a href="PA-05.html">거래 진행 상태 보기 ›</a><a href="PA-01.html">안전결제 안내로 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">PA-02 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

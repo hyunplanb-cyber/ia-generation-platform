@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>판매글 작성 · 우리동네장터</title>
+<meta name="description" content="사진 등록 영역(최대 10장·대표 지정) · 제목 · 카테고리 선택(대·소분류) · 분류별 추가 항목 · 물건 상태 라디오 5단계 · 사용 기간 · 가격 입력과 「나눔」 선택 · 가격 제안 받기 토글과 최저 금액 · 상세 설명 · 직거래 가능 지역 선택(등록한 동네 중">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="SL-01">
+<header class="gnb"><div class="gnb-in">
+    <a class="logo" href="HO-01.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnb-nav"><a href="HO-01.html">홈</a><a href="SE-02.html">매물 찾기</a><a href="SL-01.html" class="on">판매하기</a><a href="CH-01.html">채팅</a><a href="PA-05.html">거래</a><a href="MY-01.html">마이</a></nav>
+    <div class="gnb-util"><a href="SE-01.html" class="town">📍 역삼동</a>
+       <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+       <a class="btn btn-pri btn-sm" href="SL-01.html">판매글 쓰기</a><a class="gnb-ava" href="MY-01.html" title="내 정보"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 19.webp" alt=""></div></a></div>
+  </div></header>
+
+
+
+<main class="main pb-stick "><div class="wrap"><div class="wrap-read">
+  <div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">판매글 쓰기</h1><p class="t-sub">사진과 상태를 적어 주시면 이웃이 바로 볼 수 있어요</p></div></div>
+
+  <div class="stepbar"><span class="s on"><span class="n">1</span>사진</span><span class="sep">›</span><span class="s "><span class="n">2</span>무엇을</span><span class="sep">›</span><span class="s "><span class="n">3</span>얼마에</span><span class="sep">›</span><span class="s "><span class="n">4</span>어떻게 거래</span></div>
+
+  <section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">① 사진</h2></div>
+  
+  <div class="card ">
+  
+  <div class="card-bd ">
+    <div class="photo-grid">
+      <button class="photo-add" type="button" data-toast="사진을 골라 주세요 (최대 10장)">
+        <span style="font-size:22px">＋</span><span>사진 추가</span></button>
+      <div class="photo-cell">
+        <span class="rep"><span class="badge b-pri">대표</span></span>
+        <button class="del" type="button" data-toast="사진을 지웠어요" data-toast-act="되돌리기" aria-label="사진 지우기">✕</button>
+        <div class="ph ph-fix t4 ph-sq ph-tiny" style="width:140px;height:140px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 7.webp" alt=""><span class="lb">1000×1000</span></div>
+      </div><div class="photo-cell">
+        
+        <button class="del" type="button" data-toast="사진을 지웠어요" data-toast-act="되돌리기" aria-label="사진 지우기">✕</button>
+        <div class="ph ph-fix t5 ph-sq ph-tiny" style="width:140px;height:140px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 8.webp" alt=""><span class="lb">1000×1000</span></div>
+      </div><div class="photo-cell">
+        
+        <button class="del" type="button" data-toast="사진을 지웠어요" data-toast-act="되돌리기" aria-label="사진 지우기">✕</button>
+        <div class="ph ph-fix t1 ph-sq ph-tiny" style="width:140px;height:140px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 9.webp" alt=""><span class="lb">1000×1000</span></div>
+      </div>
+    </div>
+    <p class="t-sub mt3">사진은 최대 10장까지 올릴 수 있고, <b>첫 장이 목록에 보여요.</b></p>
+    <div class="btns mt3"><a class="btn btn-ghost" href="SL-02.html">사진 정리하기</a></div></div>
+  </div></section>
+
+  <section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">② 무엇을 파나요</h2></div>
+  
+  <div class="card ">
+  
+  <div class="card-bd ">
+    <div class="fld">
+      <label class="lb" for="tt">제목</label>
+      <input class="input" id="tt" type="text" placeholder="어떤 물건인가요?" value="다이슨 무선청소기 V11 팝니다">
+      <p class="t-sub mt1 right">17 / 40</p>
+    </div>
+
+    <div class="fld">
+      <span class="lb">카테고리</span>
+      <div class="row wrap-row" style="gap:8px">
+        <select class="input" style="flex:1 1 200px" data-sel-show="cat"><option>디지털기기</option><option selected>생활가전</option><option>가구·인테리어</option><option>의류</option><option>유아용품</option><option>도서</option><option>스포츠</option><option>취미</option><option>반려동물용품</option><option>식물</option><option>티켓·교환권</option><option>기타</option></select>
+        <select class="input" style="flex:1 1 200px"><option>냉장고</option><option>세탁기</option><option selected>청소기</option><option>에어컨</option><option>주방가전</option></select>
+      </div>
+      <p class="t-sub mt2">분류를 고르면 그 분류에서만 쓰는 항목이 아래에 나타나요.</p>
+    </div>
+
+    <div class="fld sub-fld" data-sel-case="cat" data-sel-when="생활가전">
+      <span class="lb">생활가전에서 더 묻는 것</span>
+      <div class="row wrap-row" style="gap:8px">
+        <select class="input" style="flex:1 1 160px"><option>제조사</option><option selected>다이슨</option><option>LG</option><option>삼성</option></select>
+        <input class="input" style="flex:1 1 160px" type="text" placeholder="모델명" value="V11">
+        <select class="input" style="flex:1 1 160px"><option>보증기간 남음</option><option selected>없음</option><option>6개월 미만</option></select>
+      </div>
+    </div>
+
+    <div class="fld sub-fld" data-sel-case="cat" data-sel-when="디지털기기" hidden>
+      <span class="lb">디지털기기에서 더 묻는 것</span>
+      <div class="row wrap-row" style="gap:8px">
+        <select class="input" style="flex:1 1 160px"><option>제조사</option><option>애플</option><option>삼성</option></select>
+        <select class="input" style="flex:1 1 160px"><option>용량</option><option>64GB</option><option>128GB</option><option>256GB</option></select>
+        <select class="input" style="flex:1 1 160px"><option>통신사</option><option>자급제</option><option>SKT</option><option>KT</option><option>LG U+</option></select>
+      </div>
+    </div>
+
+    <div class="fld sub-fld" data-sel-case="cat" data-sel-when="의류" hidden>
+      <span class="lb">의류에서 더 묻는 것</span>
+      <div class="row wrap-row" style="gap:8px">
+        <select class="input" style="flex:1 1 160px"><option>사이즈</option><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+        <select class="input" style="flex:1 1 160px"><option>성별</option><option>남성</option><option>여성</option><option>공용</option></select>
+      </div>
+    </div>
+
+    <div class="fld">
+      <span class="lb">물건 상태</span>
+      <div class="stack-sm">
+        <label class="radio">
+          <input type="radio" name="cond">
+          <b>새것</b> <span class="t-sub">뜯지 않았거나 한 번도 안 썼어요</span></label><label class="radio on">
+          <input type="radio" name="cond" checked>
+          <b>거의 새것</b> <span class="t-sub">몇 번 썼지만 흠이 없어요</span></label><label class="radio">
+          <input type="radio" name="cond">
+          <b>사용감 있음</b> <span class="t-sub">쓴 자국이 보여요</span></label><label class="radio">
+          <input type="radio" name="cond">
+          <b>고장</b> <span class="t-sub">제대로 동작하지 않아요</span></label><label class="radio">
+          <input type="radio" name="cond">
+          <b>부품용</b> <span class="t-sub">부품을 빼 쓰는 용도예요</span></label>
+      </div>
+      <div class="banner banner-info mt3"><span class="ico">✍</span><div class="grow"><b>「거의 새것」은 이렇게 적으면 좋아요</b>
+        <div class="t-sub mt1">언제 샀고 몇 번 썼는지 적어 주세요</div></div></div>
+    </div>
+
+    <div class="fld">
+      <label class="lb" for="us">쓴 기간</label>
+      <select class="input" id="us"><option>고르기</option><option selected>6개월</option><option>1년</option><option>2년 이상</option></select>
+    </div>
+
+    <div class="fld">
+      <label class="lb" for="ds">설명</label>
+      <textarea class="input" id="ds" rows="6" placeholder="산 시기, 쓴 정도, 흠집이 있는 곳, 박스와 구성품이 있는지 적어 주세요">작년 5월에 사서 6개월쯤 썼습니다. 헤드 3종 다 있고 박스도 그대로 있어요. 흡입력 이상 없고 배터리도 새것과 비슷합니다. 이사 가면서 새 청소기를 들여 내놓습니다.</textarea>
+      <p class="t-sub mt1 right">94 / 2000</p>
+      <div class="box mt3"><b class="t-card">이런 걸 적어 주세요</b>
+        <ul class="dots t-sub mt2">
+          <li>언제 샀고 얼마나 썼는지</li>
+          <li>흠집이 있다면 어디에 있는지</li>
+          <li>박스·설명서·구성품이 다 있는지</li>
+          <li>왜 파는지 — 한 줄이면 충분해요</li>
+        </ul></div>
+    </div></div>
+  </div></section>
+
+  <section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">③ 얼마에 파나요</h2></div>
+  
+  <div class="card ">
+  
+  <div class="card-bd ">
+    <div class="fld">
+      <label class="lb" for="pr">가격</label>
+      <div class="row-c" style="gap:8px">
+        <input class="input" id="pr" type="text" inputmode="numeric" value="320,000" style="flex:1">
+        <span class="nowrap">원</span>
+      </div>
+      <label class="check mt2"><input type="checkbox" data-toast="나눔으로 바꿨어요 · 가격이 0원이 됩니다"><span>나눔(0원)으로 드릴게요</span></label>
+    </div>
+
+    <div class="fld">
+      <label class="check"><input type="checkbox" checked data-toast="제안 받을 최저 금액을 정해 주세요"><span><b>가격 제안 받을게요</b></span></label>
+      <div class="row-c mt2" style="gap:8px">
+        <input class="input" type="text" inputmode="numeric" value="280,000" style="flex:1" placeholder="제안 받을 최저 금액">
+        <span class="nowrap">원부터</span>
+      </div>
+      <p class="t-sub mt1">이 금액보다 낮은 제안은 아예 오지 않아요.</p>
+    </div>
+
+    <div class="banner banner-info "><span class="ico">📊</span><div class="grow"><b>비슷한 물건은 얼마에 팔렸을까요?</b>
+      <div class="t-sub mt1">최근 3개월 거래 128건을 보여드려요.</div></div><a class="btn btn-ghost btn-sm" href="SL-03.html">시세 보기</a></div></div>
+  </div></section>
+
+  <section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">④ 어떻게 거래하나요</h2></div>
+  
+  <div class="card ">
+  
+  <div class="card-bd ">
+    <div class="fld">
+      <span class="lb">거래 방식</span>
+      <label class="check"><input type="checkbox" checked
+        data-toast="직거래 거래를 껐어요"><span>직거래</span></label><label class="check"><input type="checkbox" checked
+        data-toast="택배 거래를 껐어요"><span>택배</span></label><label class="check"><input type="checkbox" checked
+        data-toast="안전결제 거래를 껐어요"><span>안전결제</span></label>
+      <div class="sub-fld mt3">
+        <label class="lb" for="sh">배송비</label>
+        <div class="row-c" style="gap:8px">
+          <input class="input" id="sh" type="text" inputmode="numeric" value="3,000" style="flex:1">
+          <span class="nowrap">원</span>
+        </div>
+      </div>
+      <div class="banner banner-info mt3"><span class="ico">🛡</span><div class="grow"><b>안전결제를 켜면</b>
+        <div class="t-sub mt1">사는 분이 돈을 보내도 바로 받지 못하고, 물건을 받았다고 눌러야 정산됩니다.
+        수수료 3.5%가 정산할 때 빠집니다 — 320,000원이면 11,200원입니다.</div></div></div>
+    </div>
+
+    <div class="fld">
+      <span class="lb">직거래 가능 지역</span>
+      <div class="chips"><button class="chip on" type="button" >역삼동 <span class="x">✕</span></button></div>
+      <p class="t-sub mt2">등록하고 인증한 동네에서만 고를 수 있어요.
+        <a class="link" href="SE-01.html">동네 설정하기</a></p>
+    </div></div>
+  </div></section>
+
+  <div class="banner banner-warn "><span class="ico">🚫</span><div class="grow"><b>이런 물건은 올릴 수 없어요</b>
+    <div class="t-sub mt1">주류·담배 · 의약품·건강기능식품 · 반려동물(생물) · 모조품·이미테이션 · 상품권·기프티콘 대량</div>
+    <label class="check mt3"><input type="checkbox" data-unlock="postbtn">
+      <span>이 물건은 금지 품목이 아니고, 적은 내용이 사실입니다</span></label></div><a class="btn btn-ghost btn-sm" href="HO-03.html">금지 품목 보기</a></div>
+  </div></div></main>
+<div class="stick"><div class="stick-in"><div><span class="t-sub">맨 아래 「금지 품목이 아닙니다」를 확인하면 등록할 수 있어요</span></div><div class="btns"><button class="btn btn-ghost" type="button" data-toast="쓰던 글을 저장했어요">임시 저장</button><button class="btn btn-ghost" type="button" data-toast="목록에서 어떻게 보이는지 보여드릴게요">미리보기</button><button class="btn btn-pri" id="postbtn" type="button" disabled data-go="SL-04.html">등록하기</button></div></div></div>
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE-02.html">매물 찾기</a></li><li><a href="SE-01.html">내 동네 설정</a></li>
+      <li><a href="MY-03.html">찜한 물건</a></li><li><a href="MY-02.html">구매 내역</a></li>
+      <li><a href="PA-01.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL-01.html">판매글 쓰기</a></li><li><a href="SL-05.html">내 판매글</a></li>
+      <li><a href="SL-03.html">시세 보기</a></li><li><a href="BS-01.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">SL-01</div><div class="nm">판매글 작성</div>
+    <div class="fd">사진 등록 영역(최대 10장·대표 지정) · 제목 · 카테고리 선택(대·소분류) · 분류별 추가 항목 · 물건 상태 라디오 5단계 · 사용 기간 · 가격 입력과 「나눔」 선택 · 가격 제안 받기 토글과 최저 금액 · 상세 설명 · 직거래 가능 지역 선택(등록한 동네 중에서) · 거래 방식 체크(직거래·택배·안전결제)와 배송비 · 금지 품목 안내 · 임시 저장 · 미리보기 · 등록 버튼과 필수 항목 검사</div>
+    <div class="lk"><a href="SL-02.html">사진 정리하기 ›</a><a href="SL-03.html">얼마에 팔까 보기 ›</a><a href="SL-04.html">등록하기 ›</a><a href="HO-03.html">금지 품목 보기 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">SL-01 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

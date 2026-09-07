@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>구매 내역 · 우리동네장터</title>
+<meta name="description" content="상태 탭(진행중·거래완료·취소)과 건수 · 거래 방식 필터(직거래·안전결제) · 기간 고르기 · 목록(날짜·매물·판매자·금액·방식 배지·상태) · 안전결제 건은 단계 표시 작게 · 후기 쓰기 버튼과 이미 쓴 것 표시 · 영수증 보기 · 같은 판매자 다시 보기 · 재구매">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="MY-02">
+<header class="gnb"><div class="gnb-in">
+    <a class="logo" href="HO-01.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnb-nav"><a href="HO-01.html">홈</a><a href="SE-02.html">매물 찾기</a><a href="SL-01.html">판매하기</a><a href="CH-01.html">채팅</a><a href="PA-05.html">거래</a><a href="MY-01.html" class="on">마이</a></nav>
+    <div class="gnb-util"><a href="SE-01.html" class="town">📍 역삼동</a>
+       <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+       <a class="btn btn-pri btn-sm" href="SL-01.html">판매글 쓰기</a><a class="gnb-ava" href="MY-01.html" title="내 정보"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 8.webp" alt=""></div></a></div>
+  </div></header>
+
+
+
+<main class="main  "><div class="wrap"><div class="split"><aside class="side"><div class="gl">내 활동</div><a href="MY-01.html">내 프로필</a><a href="MY-02.html" class="on">구매 내역</a><a href="SL-05.html">내 판매글</a><a href="PA-05.html">거래</a><a href="MY-03.html">찜한 물건</a><a href="MY-05.html">받은 후기</a><a href="BS-03.html">끌올·광고</a><a href="MY-06.html">알림 설정</a></aside><div>
+  <div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">구매 내역</h1><p class="t-sub">모두 5건</p></div></div>
+
+  <div class="tabs"><button class="tab on" type="button" data-pane="bu0">진행중<span class="cnt">1</span></button><button class="tab" type="button" data-pane="bu1">거래완료<span class="cnt">3</span></button><button class="tab" type="button" data-pane="bu2">취소<span class="cnt">1</span></button></div>
+
+  <div class="row-c wrap-row mt4 mb3">
+    <div class="chips"><button class="chip on" type="button" >전체 <span class="x">✕</span></button><button class="chip" type="button" >직거래</button><button class="chip" type="button" >안전결제</button></div>
+    <select class="input" style="width:auto;margin-left:auto" data-toast="기간을 바꿔 다시 셌어요">
+      <option>최근 3개월</option><option>최근 6개월</option><option>전체 기간</option></select>
+  </div>
+
+  <div>
+    <div data-pane-body="bu0"><div class="stack"><div class="item-row" data-way="안전결제" data-st="진행중">
+      <span class="thumb"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:72px;height:72px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 2.webp" alt=""><span class="lb">1000×1000</span></div></span>
+      <span class="mid">
+        <b class="nm">에어팟 프로 2세대</b>
+        <span class="met"><span class="k">9/5 14:20</span><span class="k">판매자 민트초코</span>
+          <span class="badge b-ok">안전결제</span><span class="badge b-pri">진행중</span></span>
+        <span class="price">178,000원</span>
+        <span class="mini-escrow"><div class="escrow">
+  <div class="es done">
+    <span class="dot">✓</span>
+    <span class="lb">결제</span>
+    <span class="when"></span>
+  </div>
+  <div class="es on">
+    <span class="dot">2</span>
+    <span class="lb">발송</span>
+    <span class="when"></span>
+  </div>
+  <div class="es todo">
+    <span class="dot">3</span>
+    <span class="lb">수령 확인</span>
+    <span class="when"></span>
+  </div>
+  <div class="es todo">
+    <span class="dot">4</span>
+    <span class="lb">정산</span>
+    <span class="when"></span>
+  </div></div></span>
+      </span>
+      <span class="act">
+        <a class="btn btn-ghost btn-sm" href="PA-05.html">거래 상태 보기</a>
+        <button class="btn btn-quiet btn-xs" type="button" data-modal="rc2">영수증</button>
+      </span>
+    </div></div></div>
+    <div data-pane-body="bu1" hidden><div class="stack"><div class="item-row" data-way="직거래" data-st="거래완료">
+      <span class="thumb"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:72px;height:72px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 6.webp" alt=""><span class="lb">1000×1000</span></div></span>
+      <span class="mid">
+        <b class="nm">아이 자전거 16인치 (보조바퀴 포함)</b>
+        <span class="met"><span class="k">8/18</span><span class="k">판매자 바람개비</span>
+          <span class="badge b-mut">직거래</span><span class="badge b-mut">거래완료</span></span>
+        <span class="price">48,000원</span>
+        
+      </span>
+      <span class="act">
+        <span class="badge b-mut">후기 씀</span>
+        <button class="btn btn-quiet btn-xs" type="button" data-modal="rc2">영수증</button>
+      </span>
+    </div><div class="item-row" data-way="직거래" data-st="거래완료">
+      <span class="thumb"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:72px;height:72px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 7.webp" alt=""><span class="lb">1000×1000</span></div></span>
+      <span class="mid">
+        <b class="nm">커피 그라인더 (수동)</b>
+        <span class="met"><span class="k">8/11</span><span class="k">판매자 해질녘</span>
+          <span class="badge b-mut">직거래</span><span class="badge b-mut">거래완료</span></span>
+        <span class="price">22,000원</span>
+        
+      </span>
+      <span class="act">
+        <a class="btn btn-pri btn-sm" href="MY-04.html">후기 쓰기</a>
+        <button class="btn btn-quiet btn-xs" type="button" data-modal="rc2">영수증</button>
+      </span>
+    </div><div class="item-row" data-way="안전결제" data-st="거래완료">
+      <span class="thumb"><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:72px;height:72px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 8.webp" alt=""><span class="lb">1000×1000</span></div></span>
+      <span class="mid">
+        <b class="nm">수험서 세트 (2026년판)</b>
+        <span class="met"><span class="k">7/29</span><span class="k">판매자 바람개비</span>
+          <span class="badge b-ok">안전결제</span><span class="badge b-mut">거래완료</span></span>
+        <span class="price">30,000원</span>
+        
+      </span>
+      <span class="act">
+        <span class="badge b-mut">후기 씀</span>
+        <button class="btn btn-quiet btn-xs" type="button" data-modal="rc2">영수증</button>
+      </span>
+    </div></div></div>
+    <div data-pane-body="bu2" hidden><div class="stack"><div class="item-row" data-way="안전결제" data-st="취소">
+      <span class="thumb"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:72px;height:72px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 9.webp" alt=""><span class="lb">1000×1000</span></div></span>
+      <span class="mid">
+        <b class="nm">캠핑 의자 2개 세트</b>
+        <span class="met"><span class="k">8/20 19:44</span><span class="k">판매자 바람개비</span>
+          <span class="badge b-ok">안전결제</span><span class="badge b-mut">취소</span></span>
+        <span class="price">35,000원</span>
+        
+      </span>
+      <span class="act">
+        <a class="btn btn-ghost btn-sm" href="PA-05.html">거래 상태 보기</a>
+        <button class="btn btn-quiet btn-xs" type="button" data-modal="rc2">영수증</button>
+      </span>
+    </div></div></div>
+  </div>
+
+  <div class="mt-block"><div class="banner banner-info "><span class="ico">✍</span><div class="grow"><b>아직 후기를 안 쓴 거래가 1건 있어요</b>
+    <div class="t-sub mt1">후기는 서로 남깁니다. 내가 써야 상대의 후기도 공개돼요.</div></div><a class="btn btn-pri btn-sm" href="MY-04.html">지금 쓰기</a></div></div>
+
+  <template id="rc2"><div class="modal">
+  <div class="modal-hd"><h3 class="t-card">영수증</h3><button class="btn btn-quiet btn-sm" type="button" data-dismiss>✕</button></div>
+  <div class="modal-bd"><dl class="kv "><dt>거래번호</dt><dd>T-90412</dd><dt>물건</dt><dd>에어팟 프로 2세대</dd><dt>물건 값</dt><dd>178,000원</dd><dt>배송비</dt><dd>3,000원</dd><dt>결제 수단</dt><dd>카드 (일시불)</dd><dt>모두</dt><dd><b>181,000원</b></dd></dl></div>
+  <div class="modal-ft"><button class="btn btn-ghost" type="button" data-dismiss>닫기</button></div></div></template>
+  </div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE-02.html">매물 찾기</a></li><li><a href="SE-01.html">내 동네 설정</a></li>
+      <li><a href="MY-03.html">찜한 물건</a></li><li><a href="MY-02.html">구매 내역</a></li>
+      <li><a href="PA-01.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL-01.html">판매글 쓰기</a></li><li><a href="SL-05.html">내 판매글</a></li>
+      <li><a href="SL-03.html">시세 보기</a></li><li><a href="BS-01.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">MY-02</div><div class="nm">구매 내역</div>
+    <div class="fd">상태 탭(진행중·거래완료·취소)과 건수 · 거래 방식 필터(직거래·안전결제) · 기간 고르기 · 목록(날짜·매물·판매자·금액·방식 배지·상태) · 안전결제 건은 단계 표시 작게 · 후기 쓰기 버튼과 이미 쓴 것 표시 · 영수증 보기 · 같은 판매자 다시 보기 · 재구매·비슷한 물건 추천 · 비었을 때 안내</div>
+    <div class="lk"><a href="MY-04.html">후기 쓰기 ›</a><a href="PA-05.html">거래 진행 상태 보기 ›</a><a href="SE-02.html">매물 보러 가기 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">MY-02 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

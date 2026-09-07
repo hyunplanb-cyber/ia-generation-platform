@@ -40,7 +40,9 @@ const 넣을곳 = join(완성화면, "assets", "예시");
 
 /* 팩 이름과 사진 폴더 이름이 늘 같지는 않다. 공동구매가 파는 것은 「제품」이라
    사진도 제품으로 모았다 — 업종마다 폴더를 따로 두느니 성격이 같으면 나눠 쓴다. */
-const 사진폴더별명: Record<string, string> = { 공동구매: "제품" };
+/* 팩 이름과 사진 폴더 이름이 다를 수 있다. 중고거래도 «제품» 사진을 쓴다 —
+   쓰던 물건을 사고파는 곳이라 물건 사진이 그대로 맞는다(2026-09-07). */
+const 사진폴더별명: Record<string, string> = { 공동구매: "제품", 중고거래: "제품" };
 const 팩업종 = 팩.split("_")[0];
 const 업종 = 사진폴더별명[팩업종] ?? 팩업종;
 
@@ -287,7 +289,7 @@ for (const f of readdirSync(pages).filter((x) => x.endsWith(".html"))) {
   /* 자리표 여는 태그 바로 뒤에 <img> 를 꽂는다. 라벨(span.lb)은 그대로 두고
      CSS 로 감춘다 — 빼면 도로 보인다. */
   const 후 = 전.replace(
-    /(<div class="ph[^"]*"[^>]*>)([\s\S]*?)(<\/div>)/g,
+    /(<div class="ph(?=[ "])[^"]*"[^>]*>)([\s\S]*?)(<\/div>)/g,
     (통째: string, 여는: string, 속: string, 닫는: string, 자리: number) => {
       /* ⚠ 역할이 어디 적혀 있나 — 두 군데다.
          큰 자리표는 라벨에 「이미지 영역 (매장 대표 · 권장 1200×900)」이라고 다 적혀 있는데,
@@ -390,7 +392,7 @@ const 있던글 = CSS떼기(readFileSync(css, "utf8"));
 for (const f of readdirSync(pages).filter((x) => x.endsWith(".html"))) {
   const 화면ID = f.replace(/\.html$/, "");
   const 글월 = readFileSync(join(pages, f), "utf8");
-  for (const [, 여는, 속] of 글월.matchAll(/(<div class="ph[^"]*"[^>]*>)([\s\S]*?)<\/div>/g)) {
+  for (const [, 여는, 속] of 글월.matchAll(/(<div class="ph(?=[ "])[^"]*"[^>]*>)([\s\S]*?)<\/div>/g)) {
     const 사진 = /<img data-예시 src="\.\.\/assets\/예시\/([^"]+)"/.exec(속)?.[1];
     if (!사진) continue;
     const 제목 = /title="([^"]*)"/.exec(여는)?.[1] ?? "";

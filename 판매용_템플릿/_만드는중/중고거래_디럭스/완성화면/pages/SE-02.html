@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>매물 목록 · 우리동네장터</title>
+<meta name="description" content="왼쪽 필터 패널(카테고리·가격 범위·물건 상태·거래 방식·동네 범위·거래완료 숨기기) · 오른쪽 가로 행 목록 · 정렬 드롭다운(거리순·최신순·낮은 가격순·인기순) · 상단 적용된 필터 칩과 전체 해제 · 결과 건수 · 끌올된 글 상단 노출과 배지 · 상태 배지(판매중">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="SE-02">
+<header class="gnb"><div class="gnb-in">
+    <a class="logo" href="HO-01.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnb-nav"><a href="HO-01.html">홈</a><a href="SE-02.html" class="on">매물 찾기</a><a href="SL-01.html">판매하기</a><a href="CH-01.html">채팅</a><a href="PA-05.html">거래</a><a href="MY-01.html">마이</a></nav>
+    <div class="gnb-util"><a href="SE-01.html" class="town">📍 역삼동</a>
+       <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+       <a class="btn btn-pri btn-sm" href="SL-01.html">판매글 쓰기</a><a class="gnb-ava" href="MY-01.html" title="내 정보"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 13.webp" alt=""></div></a></div>
+  </div></header>
+<div class="backbar"><div class="in">
+        <a class="back" href="SE-01.html">‹ 내 동네 설정</a>
+        <span class="crumb">매물 찾기 <i>›</i> 매물 목록</span>
+      </div></div>
+
+
+<main class="main  "><div class="wrap"><div class="split"><aside class="side side-filter">
+  <div class="row-b mb3"><b>필터</b><button class="link quiet" type="button" data-reset>전체 해제</button></div>
+  <div class="fl">
+    <div class="fl-hd">카테고리</div>
+    <div class="fl-bd"><label><input type="checkbox" data-filter="items" data-f-key="cat" data-f-val="디지털기기">
+        <span class="grow">디지털기기</span><span class="t-sub">1,204</span></label><label><input type="checkbox" data-filter="items" data-f-key="cat" data-f-val="생활가전">
+        <span class="grow">생활가전</span><span class="t-sub">862</span></label><label><input type="checkbox" data-filter="items" data-f-key="cat" data-f-val="가구·인테리어">
+        <span class="grow">가구·인테리어</span><span class="t-sub">731</span></label><label><input type="checkbox" data-filter="items" data-f-key="cat" data-f-val="의류">
+        <span class="grow">의류</span><span class="t-sub">1,533</span></label><label><input type="checkbox" data-filter="items" data-f-key="cat" data-f-val="유아용품">
+        <span class="grow">유아용품</span><span class="t-sub">418</span></label><label><input type="checkbox" data-filter="items" data-f-key="cat" data-f-val="도서">
+        <span class="grow">도서</span><span class="t-sub">594</span></label><button class="link mt2" type="button" data-toast="분류를 더 펼쳤어요">＋ 더 보기</button></div></div><div class="fl">
+    <div class="fl-hd">가격</div>
+    <div class="fl-bd"><div class="rng">
+        <input class="input" type="number" placeholder="최저" data-filter="items" data-f-key="price" data-f-op="min">
+        <span class="t-sub">~</span>
+        <input class="input" type="number" placeholder="최고" data-filter="items" data-f-key="price" data-f-op="max">
+      </div>
+      <p class="t-sub mt2">원 단위로 적어 주세요</p></div></div><div class="fl">
+    <div class="fl-hd">물건 상태</div>
+    <div class="fl-bd"><label><input type="checkbox" data-filter="items" data-f-key="cond" data-f-val="새것">
+        <span>새것</span></label><label><input type="checkbox" data-filter="items" data-f-key="cond" data-f-val="거의 새것">
+        <span>거의 새것</span></label><label><input type="checkbox" data-filter="items" data-f-key="cond" data-f-val="사용감 있음">
+        <span>사용감 있음</span></label><label><input type="checkbox" data-filter="items" data-f-key="cond" data-f-val="고장">
+        <span>고장</span></label><label><input type="checkbox" data-filter="items" data-f-key="cond" data-f-val="부품용">
+        <span>부품용</span></label></div></div><div class="fl">
+    <div class="fl-hd">거래 방식</div>
+    <div class="fl-bd"><label><input type="checkbox" data-filter="items" data-f-key="ways" data-f-val="직거래">
+        <span>직거래</span></label><label><input type="checkbox" data-filter="items" data-f-key="ways" data-f-val="택배">
+        <span>택배</span></label><label><input type="checkbox" data-filter="items" data-f-key="ways" data-f-val="안전결제">
+        <span>안전결제</span></label></div></div><div class="fl">
+    <div class="fl-hd">동네 범위</div>
+    <div class="fl-bd"><label><input type="radio" name="rng" checked
+        data-toast="내 동네 범위로 바꿨어요"><span class="grow">내 동네</span><span class="t-sub">1,284</span></label><label><input type="radio" name="rng"
+        data-toast="가까운 동네 범위로 바꿨어요"><span class="grow">가까운 동네</span><span class="t-sub">3,420</span></label><label><input type="radio" name="rng"
+        data-toast="조금 먼 동네 범위로 바꿨어요"><span class="grow">조금 먼 동네</span><span class="t-sub">7,188</span></label></div></div><div class="fl">
+    <div class="fl-hd">그 밖에</div>
+    <div class="fl-bd"><label><input type="checkbox" checked data-filter="items" data-f-key="st" data-f-not="거래완료">
+        <span>거래완료 숨기기</span></label></div></div>
+  <div class="mt4"><button class="btn btn-ghost btn-block btn-sm" type="button" data-filter-reset="items">전체 해제</button></div>
+</aside><div>
+  <div class="page-hd row-b wrap-row">
+    <div>
+      <h1 class="t-page">역삼동 매물</h1>
+      <p class="t-sub"><b data-filter-count="items">16</b>개 / 모두 <span data-filter-total="items">16</span>개</p>
+    </div>
+    <div class="row-c wrap-row">
+      <select class="input" style="width:auto" data-sort-cards="items">
+        <option value="dist">거리순</option>
+        <option value="min">최신순</option>
+        <option value="price">낮은 가격순</option>
+        <option value="wish" data-desc>인기순</option>
+      </select>
+      <a class="btn btn-ghost" href="MY-06.html">🔔 이 조건으로 알림 받기</a>
+    </div>
+  </div>
+
+  <div class="row-c wrap-row mb4" data-filter-applied="items" hidden>
+    <span class="t-sub nowrap">걸린 조건</span>
+    <span class="chips" data-filter-applied-in></span>
+  </div>
+
+  <div class="stack" data-sort-list="items" data-filter-list="items">
+    <a class="item-row" data-i="0" data-price="320000" data-dist="0.4" data-min="12" data-wish="8" data-st="판매중" data-cat="생활가전" data-cond="거의 새것" data-ways="직거래,택배,안전결제" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 1.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><span class="badge b-acc" title="유료로 목록 위에 올린 글입니다">끌올</span><b class="nm">다이슨 무선청소기 V11 팝니다</b></span>
+      <span class="met"><span class="k">역삼동</span><span class="k">12분 전</span><span class="k">0.4km</span></span>
+      <span class="price">320,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">택배</span><span class="badge b-ok">안전결제</span><span class="badge b-mut">거의 새것</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="8">♡<span class="n">8</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>3</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="1" data-price="389000" data-dist="1.2" data-min="46" data-wish="21" data-st="판매중" data-cat="디지털기기" data-cond="거의 새것" data-ways="직거래,안전결제" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 2.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">아이패드 10세대 64G 와이파이</b></span>
+      <span class="met"><span class="k">논현동</span><span class="k">46분 전</span><span class="k">1.2km</span></span>
+      <span class="price">389,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-ok">안전결제</span><span class="badge b-mut">거의 새것</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="21">♡<span class="n">21</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>7</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="2" data-price="65000" data-dist="0.8" data-min="92" data-wish="4" data-st="예약중" data-cat="가구·인테리어" data-cond="사용감 있음" data-ways="직거래" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 6.webp" alt=""><span class="lb">1000×1000</span></div><span class="veil" data-t="예약중"></span></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">원목 책상 1200x600 (직거래만)</b></span>
+      <span class="met"><span class="k">역삼동</span><span class="k">1시간 전</span><span class="k">0.8km</span></span>
+      <span class="price">65,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="4">♡<span class="n">4</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>2</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="3" data-price="90000" data-dist="2.1" data-min="180" data-wish="11" data-st="판매중" data-cat="유아용품" data-cond="사용감 있음" data-ways="직거래,택배" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 7.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">유아 카시트 (신생아~4세)</b></span>
+      <span class="met"><span class="k">삼성동</span><span class="k">3시간 전</span><span class="k">2.1km</span></span>
+      <span class="price">90,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">택배</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="11">♡<span class="n">11</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>4</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="4" data-price="285000" data-dist="3.4" data-min="240" data-wish="33" data-st="판매중" data-cat="취미" data-cond="거의 새것" data-ways="택배,안전결제" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 8.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><span class="badge b-acc" title="유료로 목록 위에 올린 글입니다">끌올</span><b class="nm">닌텐도 스위치 OLED + 게임 2개</b></span>
+      <span class="met"><span class="k">대치동</span><span class="k">4시간 전</span><span class="k">3.4km</span></span>
+      <span class="price">285,000원</span>
+      <span class="ways"><span class="badge b-mut">택배</span><span class="badge b-ok">안전결제</span><span class="badge b-mut">거의 새것</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="33">♡<span class="n">33</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>12</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="5" data-price="35000" data-dist="0.6" data-min="300" data-wish="6" data-st="판매중" data-cat="스포츠" data-cond="사용감 있음" data-ways="직거래,택배" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 9.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">캠핑 의자 2개 세트</b></span>
+      <span class="met"><span class="k">역삼동</span><span class="k">5시간 전</span><span class="k">0.6km</span></span>
+      <span class="price">35,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">택배</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="6">♡<span class="n">6</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>1</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="6" data-price="145000" data-dist="1.4" data-min="420" data-wish="9" data-st="판매중" data-cat="디지털기기" data-cond="사용감 있음" data-ways="직거래,안전결제" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 11.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">삼성 27인치 모니터 QHD</b></span>
+      <span class="met"><span class="k">논현동</span><span class="k">7시간 전</span><span class="k">1.4km</span></span>
+      <span class="price">145,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-ok">안전결제</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="9">♡<span class="n">9</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>3</b></span>
+      
+    </span>
+  </a><a class="item-row done" data-i="7" data-price="48000" data-dist="0.3" data-min="1400" data-wish="3" data-st="거래완료" data-cat="스포츠" data-cond="사용감 있음" data-ways="직거래" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 12.webp" alt=""><span class="lb">1000×1000</span></div><span class="veil" data-t="거래완료"></span></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">아이 자전거 16인치 (보조바퀴 포함)</b></span>
+      <span class="met"><span class="k">역삼동</span><span class="k">23시간 전</span><span class="k">0.3km</span></span>
+      <span class="price off">48,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="3">♡<span class="n">3</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>0</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="8" data-price="178000" data-dist="2.3" data-min="1600" data-wish="27" data-st="판매중" data-cat="디지털기기" data-cond="거의 새것" data-ways="택배,안전결제" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 13.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">에어팟 프로 2세대</b></span>
+      <span class="met"><span class="k">삼성동</span><span class="k">1일 전</span><span class="k">2.3km</span></span>
+      <span class="price">178,000원</span>
+      <span class="ways"><span class="badge b-mut">택배</span><span class="badge b-ok">안전결제</span><span class="badge b-mut">거의 새것</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="27">♡<span class="n">27</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>9</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="9" data-price="40000" data-dist="3.1" data-min="2200" data-wish="5" data-st="판매중" data-cat="가구·인테리어" data-cond="사용감 있음" data-ways="직거래" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 14.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">책장 5단 화이트</b></span>
+      <span class="met"><span class="k">대치동</span><span class="k">1일 전</span><span class="k">3.1km</span></span>
+      <span class="price">40,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="5">♡<span class="n">5</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>2</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="10" data-price="55000" data-dist="0.9" data-min="2600" data-wish="14" data-st="판매중" data-cat="의류" data-cond="거의 새것" data-ways="택배,안전결제" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 15.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">겨울 패딩 (여성 M)</b></span>
+      <span class="met"><span class="k">역삼동</span><span class="k">1일 전</span><span class="k">0.9km</span></span>
+      <span class="price">55,000원</span>
+      <span class="ways"><span class="badge b-mut">택배</span><span class="badge b-ok">안전결제</span><span class="badge b-mut">거의 새것</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="14">♡<span class="n">14</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>5</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="11" data-price="22000" data-dist="1.1" data-min="3200" data-wish="2" data-st="판매중" data-cat="기타" data-cond="사용감 있음" data-ways="직거래,택배" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 16.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">커피 그라인더 (수동)</b></span>
+      <span class="met"><span class="k">논현동</span><span class="k">2일 전</span><span class="k">1.1km</span></span>
+      <span class="price">22,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">택배</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="2">♡<span class="n">2</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>1</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="12" data-price="70000" data-dist="2" data-min="4100" data-wish="7" data-st="판매중" data-cat="유아용품" data-cond="사용감 있음" data-ways="직거래" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 17.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">유아 책상·의자 세트</b></span>
+      <span class="met"><span class="k">삼성동</span><span class="k">2일 전</span><span class="k">2km</span></span>
+      <span class="price">70,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="7">♡<span class="n">7</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>2</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="13" data-price="62000" data-dist="0.5" data-min="5000" data-wish="12" data-st="판매중" data-cat="디지털기기" data-cond="거의 새것" data-ways="직거래,택배,안전결제" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 18.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">기계식 키보드 (적축)</b></span>
+      <span class="met"><span class="k">역삼동</span><span class="k">3일 전</span><span class="k">0.5km</span></span>
+      <span class="price">62,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">택배</span><span class="badge b-ok">안전결제</span><span class="badge b-mut">거의 새것</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="12">♡<span class="n">12</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>4</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="14" data-price="28000" data-dist="3.2" data-min="6200" data-wish="4" data-st="판매중" data-cat="반려동물용품" data-cond="사용감 있음" data-ways="직거래,택배" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 3.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">반려견 이동장 (중형)</b></span>
+      <span class="met"><span class="k">대치동</span><span class="k">4일 전</span><span class="k">3.2km</span></span>
+      <span class="price">28,000원</span>
+      <span class="ways"><span class="badge b-mut">직거래</span><span class="badge b-mut">택배</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="4">♡<span class="n">4</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>1</b></span>
+      
+    </span>
+  </a><a class="item-row" data-i="15" data-price="30000" data-dist="1.3" data-min="7400" data-wish="3" data-st="판매중" data-cat="도서" data-cond="사용감 있음" data-ways="택배" href="SE-04.html">
+    
+    <span class="thumb"><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:92px;height:92px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 4.webp" alt=""><span class="lb">1000×1000</span></div></span>
+    <span class="mid">
+      <span class="row-c wrap-row"><b class="nm">수험서 세트 (2026년판)</b></span>
+      <span class="met"><span class="k">논현동</span><span class="k">5일 전</span><span class="k">1.3km</span></span>
+      <span class="price">30,000원</span>
+      <span class="ways"><span class="badge b-mut">택배</span><span class="badge b-mut">사용감 있음</span></span>
+    </span>
+    <span class="act">
+      <button class="heart" type="button" aria-label="찜하기" data-wish="3">♡<span class="n">3</span></button>
+      <span class="talk"><span class="k">채팅</span> <b>2</b></span>
+      
+    </span>
+  </a>
+  </div>
+
+  <div data-filter-empty="items" hidden>
+    <div class="empty">
+  <div class="ico">🔍</div><h3 class="t-sec">조건에 맞는 매물이 없어요</h3>
+  <p class="msg">조건을 하나씩 풀어 보시거나 동네 범위를 넓혀 보세요.</p><div class="btns"><button class="btn btn-pri" type="button" data-filter-reset="items">조건 전체 해제</button><a class="btn btn-ghost" href="SE-05.html">결과 없음 화면 보기</a></div></div>
+  </div>
+
+  <div class="center mt-block">
+    <button class="btn btn-ghost btn-lg" type="button" data-toast="다음 20개를 불러왔어요">더 보기</button>
+  </div>
+  <div class="pager mt4">
+    <button class="pg" type="button" disabled aria-label="이전">‹</button>
+    <button class="pg on" type="button">1</button>
+    <button class="pg" type="button" data-toast="2쪽을 불러왔어요">2</button>
+    <button class="pg" type="button" data-toast="3쪽을 불러왔어요">3</button>
+    <button class="pg" type="button" data-toast="다음 쪽을 불러왔어요" aria-label="다음">›</button>
+  </div>
+  </div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE-02.html">매물 찾기</a></li><li><a href="SE-01.html">내 동네 설정</a></li>
+      <li><a href="MY-03.html">찜한 물건</a></li><li><a href="MY-02.html">구매 내역</a></li>
+      <li><a href="PA-01.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL-01.html">판매글 쓰기</a></li><li><a href="SL-05.html">내 판매글</a></li>
+      <li><a href="SL-03.html">시세 보기</a></li><li><a href="BS-01.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">SE-02</div><div class="nm">매물 목록</div>
+    <div class="fd">왼쪽 필터 패널(카테고리·가격 범위·물건 상태·거래 방식·동네 범위·거래완료 숨기기) · 오른쪽 가로 행 목록 · 정렬 드롭다운(거리순·최신순·낮은 가격순·인기순) · 상단 적용된 필터 칩과 전체 해제 · 결과 건수 · 끌올된 글 상단 노출과 배지 · 상태 배지(판매중·예약중·거래완료) · 더 보기 방식 페이지 넘김 · 관심 키워드 알림 걸기 버튼</div>
+    <div class="lk"><a href="SE-04.html">매물 자세히 보기 ›</a><a href="SE-03.html">검색으로 ›</a><a href="MY-06.html">알림 조건 저장 ›</a><a href="SE-05.html">결과 없을 때 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">SE-02 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

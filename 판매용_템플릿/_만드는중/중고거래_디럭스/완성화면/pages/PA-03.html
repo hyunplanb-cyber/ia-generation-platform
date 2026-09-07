@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>발송 등록 (판매자) · 우리동네장터</title>
+<meta name="description" content="이 거래 요약과 사는 쪽 배송지 · 발송 기한 남은 시간 · 택배사 고르기와 운송장 번호 입력 · 자릿수·형식 검사 · 직접 전달로 바꾸기 · 포장 안내와 사진 첨부(선택) · 등록하면 사는 쪽에 알림이 간다는 안내 · 기한을 넘기면 자동 취소된다는 경고 · 발송 취소">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="PA-03">
+<header class="gnb"><div class="gnb-in">
+    <a class="logo" href="HO-01.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnb-nav"><a href="HO-01.html">홈</a><a href="SE-02.html">매물 찾기</a><a href="SL-01.html">판매하기</a><a href="CH-01.html">채팅</a><a href="PA-05.html" class="on">거래</a><a href="MY-01.html">마이</a></nav>
+    <div class="gnb-util"><a href="SE-01.html" class="town">📍 역삼동</a>
+       <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+       <a class="btn btn-pri btn-sm" href="SL-01.html">판매글 쓰기</a><a class="gnb-ava" href="MY-01.html" title="내 정보"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 7.webp" alt=""></div></a></div>
+  </div></header>
+<div class="backbar"><div class="in">
+        <a class="back" href="PA-01.html">‹ 안전결제 시작·안내</a>
+        <span class="crumb">안전결제 <i>›</i> 발송 등록 (판매자)</span>
+      </div></div>
+
+
+<main class="main  "><div class="wrap"><div class="split-r"><div>
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">이 거래</h3></div>
+  <div class="card-bd "><div class="row-b wrap-row">
+    <div class="row-c" style="gap:12px"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:56px;height:56px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 15.webp" alt=""><span class="lb">1000×1000</span></div>
+      <div><b>에어팟 프로 2세대</b><p class="t-sub mt1">민트초코님이 삽니다 · 178,000원 결제됨</p></div></div>
+    <span class="badge b-ok">결제 완료</span>
+  </div>
+  <div class="mt4"><dl class="kv "><dt>받는 사람</dt><dd>민트초코 (010-****-0000)</dd><dt>받는 주소</dt><dd>서울 강남구 역삼로 000, 0**호</dd><dt>배송 요청</dt><dd>문 앞에 놓아 주세요</dd></dl></div></div>
+  </div>
+
+  <div class="mt-block"><div class="card ">
+  
+  <div class="card-bd "><div class="deadline">
+    <div class="t-sub">발송까지</div>
+    <div class="big">2일 6시간</div>
+    <p class="t-sub mt2">기한을 넘기면 <b>자동으로 취소되고 구매자에게 전액 환불</b>됩니다.
+    못 보내게 되셨으면 아래에서 미리 알려 주세요.</p>
+  </div></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">운송장 등록</h3></div>
+  <div class="card-bd ">
+    <div class="fld"><label class="lb" for="cr">택배사</label>
+      <select class="input" id="cr" data-sel-text="carrier">
+        <option>고르기</option><option selected>CJ대한통운</option><option>한진택배</option><option>롯데택배</option><option>우체국택배</option></select></div>
+    <div class="fld"><label class="lb" for="tr">운송장 번호</label>
+      <input class="input" id="tr" type="text" inputmode="numeric" placeholder="12자리 숫자">
+      <p class="t-sub mt1" data-sel-out="carrier" data-sel-map='{"고르기":"택배사를 먼저 골라 주세요.","CJ대한통운":"CJ대한통운은 <b>12자리 숫자</b>예요.","한진택배":"한진택배는 <b>10자리 또는 12자리 숫자</b>예요.","롯데택배":"롯데택배는 <b>12자리 숫자</b>예요.","우체국택배":"우체국택배는 <b>13자리</b>이고 영문이 섞일 수 있어요."}'>CJ대한통운은 <b>12자리 숫자</b>예요.</p></div>
+    <button class="link mt2" type="button" data-toast="직접 전달로 바꿨어요 · 구매자가 받았다고 확인하면 정산됩니다">
+      직접 만나서 전달했어요</button></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">포장 사진 (안 넣어도 돼요)</h3></div>
+  <div class="card-bd ">
+    <div class="photo-grid">
+      <button class="photo-add" type="button" data-toast="포장 사진을 골라 주세요">
+        <span style="font-size:22px">＋</span><span>사진 추가</span></button>
+    </div>
+    <p class="t-sub mt3">나중에 「물건이 다르다」는 말이 나왔을 때 도움이 됩니다.</p></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card"><div class="card-bd" style="padding-top:4px;padding-bottom:4px">
+  <div class="acc-item">
+    <button class="acc-q" type="button">포장할 때 조심할 것<span class="mk">＋</span></button>
+    <div class="acc-a"><ul class="dots"><li>깨지는 물건은 완충재로 감싸고 「취급주의」를 붙여 주세요</li><li>액체·배터리는 택배사마다 규정이 다릅니다 — 미리 확인하세요</li><li>구성품을 빠뜨리면 반품 사유가 됩니다</li></ul></div></div></div></div></div>
+  </div><div class="sticky">
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">지금 어디까지</h3></div>
+  <div class="card-bd "><div class="escrow">
+  <div class="es done">
+    <span class="dot">✓</span>
+    <span class="lb">결제</span>
+    <span class="when">9/5 14:20</span>
+  </div>
+  <div class="es on">
+    <span class="dot">2</span>
+    <span class="lb">발송</span>
+    <span class="when"></span>
+  </div>
+  <div class="es todo">
+    <span class="dot">3</span>
+    <span class="lb">수령 확인</span>
+    <span class="when"></span>
+  </div>
+  <div class="es todo">
+    <span class="dot">4</span>
+    <span class="lb">정산</span>
+    <span class="when"></span>
+  </div></div>
+    <div class="turn"><span class="ico">⏳</span><b>내가 보낼 차례예요</b><span class="left">2일 6시간 남음</span></div></div>
+  </div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">정산 예정</h3></div>
+  <div class="card-bd "><div class="sum-row "><span class="muted">물건 값</span><span>178,000원</span></div><div class="sum-row "><span class="muted">수수료 3.5%</span><span>− 6,230원</span></div>
+  <div class="sum-row total"><span>판매자가 받는 돈</span><span class="price">171,770원</span></div><p class="t-sub mt3">구매자가 「받았어요」를 누른 뒤 영업일 5일 안에 들어갑니다.</p></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  
+  <div class="card-bd ">
+    <a class="btn btn-pri btn-block btn-lg" href="PA-05.html">발송 등록하기</a>
+    <p class="t-sub mt2 center">택배사와 운송장을 채우면 열립니다</p>
+    <div class="mt3"><a class="btn btn-ghost btn-block" href="CH-02.html">채팅으로</a></div>
+    <div class="mt4 center"><button class="link quiet" type="button" data-modal="cancel">
+      못 보내게 됐어요 — 거래 취소 요청</button></div></div>
+  </div></div>
+
+  <template id="cancel"><div class="modal">
+  <div class="modal-hd"><h3 class="t-card">거래를 취소할까요?</h3><button class="btn btn-quiet btn-sm" type="button" data-dismiss>✕</button></div>
+  <div class="modal-bd">
+    <p class="t-sub mb3">구매자에게 사유가 그대로 전달되고 전액 환불됩니다.</p>
+    <div class="stack-sm">
+      <label class="radio on"><input type="radio" name="cx" checked>물건을 이미 다른 분께 팔았어요</label><label class="radio"><input type="radio" name="cx">물건에 문제가 생겼어요</label><label class="radio"><input type="radio" name="cx">개인 사정이 생겼어요</label><label class="radio"><input type="radio" name="cx">그 밖에</label>
+    </div>
+    <div class="banner banner-warn mt3"><span class="ico">⚠</span><div class="grow"><b>취소가 잦으면 판매가 제한될 수 있어요</b></div></div></div>
+  <div class="modal-ft"><button class="btn btn-ghost" type="button" data-dismiss>그냥 둘게요</button><button class="btn btn-pri" type="button" data-dismiss data-toast="취소를 요청했어요 · 구매자에게 알렸습니다">취소 요청</button></div></div></template>
+  </div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE-02.html">매물 찾기</a></li><li><a href="SE-01.html">내 동네 설정</a></li>
+      <li><a href="MY-03.html">찜한 물건</a></li><li><a href="MY-02.html">구매 내역</a></li>
+      <li><a href="PA-01.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL-01.html">판매글 쓰기</a></li><li><a href="SL-05.html">내 판매글</a></li>
+      <li><a href="SL-03.html">시세 보기</a></li><li><a href="BS-01.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">PA-03</div><div class="nm">발송 등록 (판매자)</div>
+    <div class="fd">이 거래 요약과 사는 쪽 배송지 · 발송 기한 남은 시간 · 택배사 고르기와 운송장 번호 입력 · 자릿수·형식 검사 · 직접 전달로 바꾸기 · 포장 안내와 사진 첨부(선택) · 등록하면 사는 쪽에 알림이 간다는 안내 · 기한을 넘기면 자동 취소된다는 경고 · 발송 취소 요청 · 등록 완료 표시</div>
+    <div class="lk"><a href="PA-05.html">거래 진행 상태 보기 ›</a><a href="CH-02.html">채팅으로 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">PA-03 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

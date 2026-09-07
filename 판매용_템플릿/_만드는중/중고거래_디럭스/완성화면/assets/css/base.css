@@ -1,0 +1,1515 @@
+@charset "utf-8";
+/* ============================================================
+   회원끼리 사고파는 중고거래 장터 — 디자인 시스템 · 디럭스(2뎁스)
+   가이드 : 가이드_01_코럴선셋.json
+   레이아웃 : 레이아웃_A_목록중심형.json
+   카드 모양은 "가로 행(row)" — 매물을 훑어보고 견주는 것이 이 장터의 첫 동작이다.
+
+   프리미엄(레트로 페이퍼 + 대시보드형)과 «일부러» 다르게 잡는다.
+   같은 스펙팩이라도 프리셋을 갈아 끼우면 화면이 이렇게 달라진다는 것을
+   두 등급 나란히 보여 주는 것이 이 팩의 값이다.
+
+   목록중심형이 지키는 것 (레이아웃_A 의 slots 그대로)
+     · **히어로를 두지 않는다** — 제목 + 필터 칩 줄로 바로 시작
+     · 목록 화면에서만 좌측 필터 사이드바
+     · 목록은 가로 행 — 썸네일 왼쪽, 정보 오른쪽, 액션 끝
+     · 상세는 **상단 요약 바 + 탭으로 나눈 본문**
+
+   ⚠ 색값은 가이드_01_코럴선셋.json 에서 그대로 가져온다. 눈대중으로 고치지 않는다.
+     코럴 원색 #E02A0E 는 종이색 위 4.00 이라 «배경·배지·큰 글자»에만 쓰고,
+     본문 글자에는 --text(#33221E) 를 쓴다.
+   ============================================================ */
+
+/* 프리셋이 정한 글꼴 — Paperlogy, 못 받으면 Pretendard */
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-5Medium.woff2') format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('../fonts/Paperlogy-8ExtraBold.woff2') format('woff2');font-weight:800;font-display:swap}
+
+:root{
+  /* ---------- 색 — 가이드_01_코럴선셋 (스펙팩 JSON 그대로) ---------- */
+  --primary:#E02A0E;
+  --primary-hover:#D9503B;
+  --accent:#A46803;
+  --bg:#F0EFEB;            /* 클라우드 댄서 — 콘텐츠 바탕은 중립으로 둔다 */
+  --surface:#FFFFFF;
+  --text:#33221E;
+  --muted:#6E5450;
+  --border:#F6E0D8;
+  --success:#0F7A52;
+  --warning:#B45309;
+  --danger:#C0392B;
+
+  /* 색 «위에» 얹는 글자 — 가이드의 on-primary · on-accent.
+     코럴 위 흰 글자는 3.14 로 «큰 글자 기준(3.0)»만 넘는다.
+     그래서 주색 버튼 글자는 아래에서 19px 굵게로 키운다(2026-08-18 사장님 결정). */
+  --on-pri:#FFFFFF;
+  --on-acc:#FFFFFF;
+
+  /* 밝은 바탕 위 "글자"로 쓸 색 — 원색 그대로는 대비가 모자란 것들 */
+  --pri-text:#33221E;      /* 코럴 #E02A0E 는 종이색 위 4.00 이라 본문 글자로 못 쓴다 */
+  --acc-text:#8A5A00;      /* 가이드의 accent-text */
+  --warn-text:#B45309;
+  --star:#A46803;
+
+  --pri-10:rgba(224,42,14,.10);
+  --pri-06:rgba(224,42,14,.06);
+  --acc-12:rgba(164,104,3,.14);
+  --bg-soft:#FAF6F4;       /* 표 헤더·연한 채움 */
+  --hl:#FBE3DC;            /* 형광펜 — 코럴을 옅게 */
+
+  /* ---------- 모서리 — 가이드_01 의 radius 그대로 ---------- */
+  --r-card:16px;
+  --r-btn:12px;
+  --r-input:12px;
+  --r-badge:999px;
+
+  /* ---------- 간격 눈금 — 밀도에서 뽑는다 (넉넉하게) ----------
+     가이드 프리셋의 spacingScale 과 이름이 1:1 로 붙어 있다.
+     밀도를 "컴팩트"로 바꾸려면 body 에 class="compact" 하나만 붙이면 된다. */
+  --sp-wrap:24px;          /* 화면 좌우 여백 */
+  --sp-sec:40px;           /* 섹션과 섹션 사이 */
+  --sp-card:24px;          /* 카드 안쪽 여백 */
+  --sp-cards:20px;
+  --card-gap:16px;  /* 콘텐츠 그룹 간 좌우 */         /* 카드와 카드 사이 */
+  --sp-title:16px;         /* 제목과 그 아래 내용 */
+  --sp-item:12px;          /* 묶음 안 요소끼리 */
+  --sp-block:28px;         /* 덩어리와 그 아래 버튼 */
+  --sp-btn:8px;            /* 버튼끼리 */
+  --sp-row:48px;           /* 표 한 줄 높이 */
+
+  /* 4px 배수 — 위 눈금으로 설명되지 않는 자잘한 자리에만 */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px; --s12:48px;
+
+  /* ---------- 그림자 — 카드에만 ---------- */
+  --sh-card:0 1px 3px rgba(51,34,30,.08);
+  --sh-float:0 8px 24px rgba(51,34,30,.14);
+  --sh-pop:0 12px 32px rgba(51,34,30,.20);
+
+  /* ---------- 이미지 자리 (스펙팩 imagePlaceholder) ---------- */
+  --ph-1:#F5EFEC; --ph-2:#F3EEE9; --ph-3:#EFF2EE; --ph-4:#F7F1EC; --ph-5:#F2EFEC;
+  /* 자리 안내 글자는 옅은 파스텔 위에 얹히니 프리셋 값(#8B94A6, 2.7:1)보다 진하게 쓴다 */
+  --ph-border:#E8DED8; --ph-text:#6E5450;
+
+  --wrap:1440px;   /* 콘텐츠 영역 — 헤더·본문·푸터가 모두 이 폭을 쓴다 */
+  --read:760px;            /* 레이아웃 A — 상세 본문 한 단의 최대 폭 */
+  /* 줄 간격 눈금 — 밀도 "넉넉하게" 기준. 덩어리 간격과 따로 관리한다.
+     큰 제목에 밑줄·형광펜을 얹은 자리는 여기서 한 단계 더 벌린다. */
+  --lh-display:1.25;
+  --lh-title:1.35;
+  --lh-body:1.7;
+  --lh-dense:1.45;
+  --sp-btn-stack:10px;
+
+  --row-item-gap:8px;  /* 목록 행 안 줄 사이 — 컴팩트 밀도의 "묶음 안 요소끼리" */
+
+  --stack-gap:8px;  /* 항목과 항목 사이 (세로) — 목록처럼 위아래로 이어 붙일 때 */
+
+}
+
+body.compact{
+  --sp-wrap:16px; --sp-sec:28px; --sp-card:16px; --sp-cards:14px;
+  --sp-title:12px; --sp-item:8px; --sp-block:20px; --sp-btn:6px; --sp-row:40px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Paperlogy","Pretendard","Pretendard Variable","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.62;
+  word-break:keep-all;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+ul,ol{margin:0;padding:0;list-style:none}
+p{margin:0}
+h1,h2,h3,h4{margin:0;line-height:var(--lh-title)}
+
+/* ---------- 글자 위계 ---------- */
+.t-page{font-size:36px;font-weight:800;letter-spacing:-.025em;line-height:var(--lh-display)}
+.t-sec{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.t-card{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.t-body{font-size:15px;font-weight:500}
+.t-sub{font-size:14px;color:var(--muted);line-height:1.6}
+.t-th{font-size:13px;font-weight:700}
+.muted{color:var(--muted)}
+.strong{font-weight:700}
+.center{text-align:center}
+.btns.center{justify-content:center}   /* .btns 는 flex 라 text-align 이 안 먹는다 */
+.right{text-align:right}
+.nowrap{white-space:nowrap}
+.danger{color:var(--danger)}
+.success{color:var(--success)}
+.warning{color:var(--warn-text)}
+.pri{color:var(--pri-text)}
+.acc{color:var(--acc-text)}
+.hl{background:linear-gradient(transparent 56%,var(--hl) 56%);font-weight:700}
+.big{font-size:28px;font-weight:700;letter-spacing:-.02em}
+.price{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.price-lg{font-size:28px;font-weight:700;letter-spacing:-.025em}
+.strike{text-decoration:line-through;color:var(--muted);font-size:13px}
+
+/* ---------- 뼈대 ---------- */
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--sp-wrap)}
+.wrap-read{max-width:var(--read);margin:0 auto;padding:0 var(--sp-wrap)}
+.wrap-wide{max-width:var(--wrap);margin:0 auto;padding:0 var(--sp-wrap)}
+.main{padding:var(--s8) 0 var(--s12)}
+.main.pb-stick{padding-bottom:120px}
+.sec{margin-bottom:var(--sp-sec)}
+.sec:last-child{margin-bottom:0}
+.sec-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s4);margin-bottom:var(--sp-title)}
+.sec-hd .more{font-size:14px;color:var(--pri-text);font-weight:600}
+.page-hd{margin-bottom:var(--sp-block)}
+.page-hd .t-sub{margin-top:var(--s1)}
+
+.row{display:flex;gap:var(--s4)}
+.row-c{display:flex;align-items:center;gap:var(--s2)}
+.row-b{display:flex;align-items:center;justify-content:space-between;gap:var(--s4)}
+.wrap-row{flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:var(--sp-item)}
+.grow{flex:1;min-width:0}
+.none{flex:none;max-width:100%}
+.g2,.g3,.g4,.g5,.g6{display:grid;gap:var(--card-gap)}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.g6{grid-template-columns:repeat(6,minmax(0,1fr))}
+
+/* 좌우 분할 — 레이아웃 A 의 이름값. 왼쪽 사이드/필터, 오른쪽 본문 */
+.split{display:grid;grid-template-columns:248px minmax(0,1fr);gap:var(--s8);align-items:start}
+.split>*{min-width:0}
+/* 본문 + 따라다니는 오른쪽 패널 */
+.split-r{display:grid;grid-template-columns:minmax(0,1fr) 336px;gap:var(--s8);align-items:start}
+.split-r>*{min-width:0}
+.sticky{position:sticky;top:var(--s5)}
+
+.mt1{margin-top:var(--s1)}.mt2{margin-top:var(--s2)}.mt3{margin-top:var(--s3)}
+.mt4{margin-top:var(--s4)}.mt5{margin-top:var(--s5)}.mt6{margin-top:var(--s6)}
+.mt8{margin-top:var(--s8)}.mt10{margin-top:var(--s10)}
+.mb1{margin-bottom:var(--s1)}.mb2{margin-bottom:var(--s2)}.mb3{margin-bottom:var(--s3)}
+.mb4{margin-bottom:var(--s4)}.mb5{margin-bottom:var(--s5)}.mb6{margin-bottom:var(--s6)}
+.mb8{margin-bottom:var(--s8)}
+.mt-title{margin-top:var(--sp-title)}
+.mt-block{margin-top:var(--sp-block)}
+.mt-item{margin-top:var(--sp-item)}
+
+/* ---------- GNB — 레이아웃 A: 상단 가로 한 줄, 로고 왼쪽·액션 오른쪽 끝 ----------
+   다른 팩과 달리 흰 바탕이다. "믿고 맡긴다"는 인상이 어두운 띠보다 밝은 쪽에 붙는다. */
+.gnb{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:40}
+.gnb-in{max-width:var(--wrap);margin:0 auto;padding:0 var(--sp-wrap);height:68px;display:flex;align-items:center;gap:var(--s8)}
+.logo{display:flex;align-items:center;gap:var(--s2);font-size:18px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+.logo .mark{width:30px;height:30px;border-radius:9px;background:var(--primary);color:var(--on-pri);display:grid;place-items:center;font-size:15px;font-weight:700}
+.gnb-nav{display:flex;align-items:center;gap:var(--s6);font-size:15px;font-weight:500;flex:1;min-width:0;overflow:hidden}
+.gnb-nav a{color:var(--muted);white-space:nowrap;padding:6px 0;border-bottom:2px solid transparent}
+.gnb-nav a:hover{color:var(--text)}
+.gnb-nav a.on{color:var(--primary);font-weight:600;border-bottom-color:var(--primary)}
+.gnb-util{display:flex;align-items:center;gap:var(--s3);white-space:nowrap}
+/* :not(.btn) — 이걸 빼면 이 규칙이 .btn-pri 보다 셈이 세서 버튼 글자색을 덮어쓴다.
+   그러면 남색 버튼에 남색 글자가 얹혀 안 보인다. */
+.gnb-util a:not(.btn){font-size:14px;color:var(--muted)}
+.gnb.pro{background:#F7F9FC}
+.gnb .bell{position:relative;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;font-size:15px;cursor:pointer}
+.gnb .bell .dot{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--danger);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+
+/* ---------- 뒤로가기 줄 ---------- */
+.backbar{background:var(--surface);border-bottom:1px solid var(--border)}
+.backbar .in{max-width:var(--wrap);margin:0 auto;padding:10px var(--sp-wrap);display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+.backbar .back{font-size:14px;font-weight:600;color:var(--primary)}
+.backbar .crumb{font-size:13px;color:var(--muted)}
+.backbar .crumb i{font-style:normal;margin:0 4px;color:var(--muted)}
+
+/* ---------- 상태 띠 ---------- */
+.state-bar{background:var(--pri-10);border-bottom:1px solid var(--border)}
+.state-bar .in{max-width:var(--wrap);margin:0 auto;padding:9px var(--sp-wrap);display:flex;align-items:center;gap:var(--s3);font-size:13px;flex-wrap:wrap}
+.state-bar .tag{background:var(--primary);color:var(--on-pri);border-radius:var(--r-badge);padding:1px 7px;font-size:11px;font-weight:700}
+
+/* ---------- 히어로 — 레이아웃 A: 좌우 2단 ----------
+   왼쪽에 큰 제목과 설명, 오른쪽에 폼(요청서 시작 카드). 어두운 배경을 쓰지 않는다. */
+.hero-split{background:linear-gradient(180deg,#FFFFFF 0%,var(--bg) 100%);border-bottom:1px solid var(--border);padding:var(--s12) 0}
+.hero-split .in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:var(--s12);align-items:center}
+.hero-split .in>*{min-width:0}
+.hero-split .kicker{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--pri-text);background:var(--pri-10);border-radius:999px;padding:5px 12px;margin-bottom:var(--s4)}
+.hero-split h1{font-size:44px;font-weight:700;letter-spacing:-.035em;line-height:var(--lh-display)}
+.hero-split .sub{margin-top:var(--sp-title);font-size:17px;color:var(--muted);max-width:34em}
+.hero-split .figs{display:flex;gap:var(--s8);margin-top:var(--sp-block);flex-wrap:wrap}
+.hero-split .fig .n{font-size:26px;font-weight:700;letter-spacing:-.02em}
+.hero-split .fig .l{font-size:13px;color:var(--muted)}
+.hero-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh-float);padding:var(--s8)}
+.hero-card h2{font-size:19px;font-weight:700;margin-bottom:var(--sp-title)}
+
+/* 검색바 — grid 로 나누면 버튼이 통째로 늘어난다. flex 로 두고 버튼은 제 폭만. */
+.searchbar{display:flex;align-items:center;gap:var(--s2);background:var(--surface);border:2px solid var(--primary);border-radius:var(--r-btn);padding:6px 6px 6px 16px}
+.searchbar .ic{font-size:18px;color:var(--muted);flex:none}
+.searchbar input{flex:1;min-width:0;border:0;outline:0;font-size:16px;font-family:inherit;color:var(--text);background:transparent;height:40px}
+.searchbar .btn{flex:none}
+.searchbar.lg{padding:8px 8px 8px 18px}
+.searchbar.lg input{height:48px;font-size:17px}
+.searchbar.sm{border-width:1px;border-color:var(--border);padding:4px 4px 4px 12px}
+.searchbar.sm input{height:34px;font-size:14px}
+
+/* ---------- 버튼 ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 18px;
+  border-radius:var(--r-btn);border:1px solid transparent;background:var(--surface);color:var(--text);
+  font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s}
+.btn-pri{background:var(--primary);color:var(--on-pri)}
+.btn-pri:hover{background:var(--primary-hover)}
+.btn-acc{background:var(--accent);color:#fff}
+.btn-acc:hover{filter:brightness(.95)}
+.btn-ghost{border-color:var(--border);color:var(--text)}
+.btn-ghost:hover{background:var(--bg-soft)}
+.btn-line{border-color:var(--primary);color:var(--primary);background:transparent}
+.btn-line:hover{background:var(--pri-10)}
+.btn-quiet{color:var(--muted);background:transparent}
+.btn-quiet:hover{color:var(--text)}
+.btn-danger{border-color:var(--danger);color:var(--danger);background:transparent}
+.btn-lg{height:52px;padding:0 28px;font-size:16px}
+.btn-sm{height:32px;padding:0 12px;font-size:13px}
+.btn-xs{height:26px;padding:0 9px;font-size:12px;font-weight:500}
+.btn-block{width:100%}
+.btn:disabled,.btn.is-off{opacity:.45;cursor:not-allowed}
+.btns{display:flex;gap:var(--sp-btn);flex-wrap:wrap}
+/* 버튼 사이 간격은 감싸는 상자에 기대지 않는다.
+   .btns 로 감싸야만 간격이 생기면, 감싸는 걸 잊는 순간 0이 되어 버튼끼리 달라붙는다.
+   버튼 자신에게 규칙을 걸어 두면 어디에 놓든 붙지 않는다(2026-08-06). */
+.btn-block + .btn-block,
+.btn-block + .btns,
+.btns + .btn-block{margin-top:var(--sp-btn-stack,10px)}
+
+.btns.col{flex-direction:column}
+.link{color:var(--pri-text);font-weight:600;font-size:14px;cursor:pointer}
+.link.quiet{color:var(--muted);font-weight:400}
+
+/* ---------- 카드 ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);box-shadow:var(--sh-card)}
+.card-hd{padding:var(--s4) var(--sp-card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
+.card-bd{padding:var(--sp-card)}
+.card-bd.tight{padding:var(--s3) var(--sp-card)}
+.card-bd.flush{padding:0}
+.card-ft{padding:var(--s3) var(--sp-card);border-top:1px solid var(--border);background:var(--bg-soft);border-radius:0 0 var(--r-card) var(--r-card)}
+.card.acc{border-color:var(--accent);border-width:2px}
+.card.pri{border-color:var(--primary)}
+.box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:var(--sp-card)}
+.box.soft{background:var(--bg-soft);box-shadow:none}
+.box.pri{background:var(--pri-06);border-color:var(--pri-10)}
+
+/* 사진 없는 카드 — 좌측에 색 띠 한 줄 (레이아웃 A cardOptions: text) */
+.card.tape{position:relative;overflow:hidden}
+.card.tape::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--primary)}
+.card.tape.acc::before{background:var(--accent)}
+.card.tape.ok::before{background:var(--success)}
+.card.tape.warn::before{background:var(--warning)}
+
+/* ---------- 배지 ---------- */
+.badge{display:inline-flex;align-items:center;gap:3px;height:22px;padding:0 8px;border-radius:var(--r-badge);
+  font-size:12px;font-weight:600;background:var(--bg-soft);color:var(--muted);white-space:nowrap}
+.b-pri{background:var(--pri-10);color:var(--pri-text)}
+.b-acc{background:var(--acc-12);color:var(--acc-text)}
+.b-ok{background:rgba(15,122,82,.12);color:var(--success)}
+.b-warn{background:rgba(180,118,26,.14);color:var(--warn-text)}
+.b-dan{background:rgba(192,57,43,.12);color:var(--danger)}
+.b-mut{background:var(--bg-soft);color:var(--muted)}
+.b-line{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.badge.lg{height:26px;padding:0 10px;font-size:13px}
+/* 인증 배지 — 신뢰 지표라 눈에 띄되 요란하지 않게 */
+.verify{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:var(--r-badge);
+  font-size:12px;font-weight:600;background:rgba(15,122,82,.10);color:var(--success);white-space:nowrap}
+.verify i{font-style:normal}
+.verifies{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- 별점 ---------- */
+.stars{color:var(--star);letter-spacing:1px;font-size:13px}
+.stars.lg{font-size:20px;letter-spacing:2px}
+
+/* ---------- 칩 ---------- */
+.chips{display:flex;gap:var(--sp-btn);flex-wrap:wrap}
+.chip{height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface);
+  color:var(--text);font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.chip:hover{border-color:var(--primary)}
+.chip.on{background:var(--pri-10);border-color:var(--primary);color:var(--primary);font-weight:600}
+.chip .x{opacity:.6;font-size:12px}
+.chip.sm{height:28px;padding:0 11px;font-size:13px}
+
+/* ---------- 탭 ---------- */
+.tabs{display:flex;gap:var(--s6);border-bottom:1px solid var(--border);margin-bottom:var(--sp-block);overflow:auto hidden}
+.tab{background:none;border:0;padding:10px 0;font-size:15px;color:var(--muted);cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.tab.on{color:var(--primary);font-weight:600;border-bottom-color:var(--primary)}
+.tab .cnt{background:var(--bg-soft);border-radius:999px;padding:0 6px;font-size:12px;font-weight:600}
+.tab.on .cnt{background:var(--pri-10);color:var(--primary)}
+.tabs-pill{display:flex;gap:6px;background:var(--bg-soft);border-radius:999px;padding:4px;margin-bottom:var(--sp-block);width:fit-content;max-width:100%;overflow:auto hidden}
+.tabs-pill .tab{border:0;border-radius:999px;padding:6px 16px;margin:0}
+.tabs-pill .tab.on{background:var(--surface);box-shadow:var(--sh-card);color:var(--text)}
+
+/* ---------- 입력 ---------- */
+.field{margin-bottom:var(--sp-block)}
+.field>label,.lb{display:block;font-size:14px;font-weight:600;margin-bottom:var(--s2)}
+.lb .req{color:var(--danger);margin-left:2px}
+.input,select.input,textarea.input{width:100%;height:40px;padding:0 12px;border:1px solid var(--border);
+  border-radius:var(--r-input);font-size:15px;font-family:inherit;color:var(--text);background:var(--surface);outline:0}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+textarea.input{height:auto;min-height:110px;padding:10px 12px;line-height:1.6;resize:vertical}
+select.input{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 16px) 18px,calc(100% - 11px) 18px;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+.input.lg{height:48px;font-size:16px}
+.input.err{border-color:var(--danger)}
+.help{font-size:12px;color:var(--muted);margin-top:5px}
+.help.err{color:var(--danger);font-weight:600}
+.form-narrow{max-width:560px}   /* 가이드 screenGuides: 폼은 1열, 최대 560px */
+.inline{display:flex;gap:var(--s2);align-items:center}
+.inline .input{flex:1;min-width:0}
+
+.check,.radio-in{display:flex;align-items:flex-start;gap:9px;font-size:14px;cursor:pointer;padding:5px 0}
+.check input,.radio-in input{margin:3px 0 0;width:17px;height:17px;accent-color:var(--primary);flex:none}
+.check.box,.radio-in.box{border:1px solid var(--border);border-radius:var(--r-input);padding:12px 14px;background:var(--surface)}
+.check.box.on,.radio-in.box.on{border-color:var(--primary);background:var(--pri-06)}
+
+/* 고르는 카드 — 요청서 객관식 */
+.radio{border:1px solid var(--border);border-radius:var(--r-card);padding:var(--s5);background:var(--surface);cursor:pointer;text-align:left;font-family:inherit;font-size:15px;color:var(--text);display:block;width:100%}
+.radio:hover{border-color:var(--primary)}
+.radio.on{border-color:var(--primary);border-width:2px;padding:calc(var(--s5) - 1px);background:var(--pri-06)}
+.radio b{display:block;font-size:16px;font-weight:600;margin-bottom:3px}
+.radio .d{font-size:13px;color:var(--muted)}
+
+/* 토글 */
+.toggle{width:44px;height:25px;border-radius:999px;border:0;background:var(--border);position:relative;cursor:pointer;flex:none;padding:0}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;transition:left .16s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle.on{background:var(--primary)}
+.toggle.on::after{left:22px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);padding:var(--s3) 0}
+.toggle-row+.toggle-row{border-top:1px solid var(--border)}
+
+/* 슬라이더 자리 */
+.slider{height:4px;border-radius:2px;background:var(--border);position:relative;margin:var(--s5) 0 var(--s3)}
+.slider .fill{position:absolute;left:12%;right:26%;top:0;bottom:0;background:var(--primary);border-radius:2px}
+.slider .kn{position:absolute;top:-7px;width:18px;height:18px;border-radius:50%;background:var(--surface);border:2px solid var(--primary);box-shadow:var(--sh-card)}
+
+/* 파일 올리는 자리 */
+.drop{border:1.5px dashed var(--border);border-radius:var(--r-card);background:var(--bg-soft);padding:var(--s8);text-align:center}
+.drop .ic{font-size:30px;opacity:.5}
+.drop:hover{border-color:var(--primary);background:var(--pri-06)}
+
+/* 인증번호 6칸 */
+.otp{display:flex;gap:var(--s2)}
+.otp span{width:46px;height:56px;border:1px solid var(--border);border-radius:var(--r-input);display:grid;place-items:center;font-size:24px;font-weight:700;background:var(--surface)}
+.otp span.on{border-color:var(--primary);border-width:2px}
+.otp.err span{border-color:var(--danger)}
+
+/* ---------- 이미지 자리 ---------- */
+.ph{background:var(--ph-1);border:1px solid var(--ph-border);border-radius:var(--r-card);
+  display:grid;place-items:center;text-align:center;padding:10px;overflow:hidden}
+.ph.t1{background:var(--ph-1)}.ph.t2{background:var(--ph-2)}.ph.t3{background:var(--ph-3)}
+.ph.t4{background:var(--ph-4)}.ph.t5{background:var(--ph-5)}
+.ph .lb{font-size:12px;color:var(--ph-text);line-height:1.5}
+.ph .lb .sz{opacity:.75}
+.ph-tiny .lb{font-size:11px}
+.ph-fix{flex:none;padding:0}
+.ph-round{border-radius:50%}
+.ph-sq{border-radius:var(--r-btn)}
+
+/* ---------- 고수 행 카드 (카드 모양 = row) ----------
+   왼쪽 정사각 사진, 가운데 정보, 오른쪽 액션. 이 서비스의 기본 카드다. */
+.pro-row{display:flex;gap:var(--s5);align-items:flex-start;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);padding:var(--sp-card);box-shadow:var(--sh-card)}
+.pro-row:hover{border-color:var(--primary)}
+.pro-row .mid{flex:1;min-width:0}
+.pro-row .nm{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.pro-row .one{font-size:14px;color:var(--muted);margin-top:2px}
+.pro-row .met{display:flex;gap:var(--s4);flex-wrap:wrap;margin-top:var(--sp-item);font-size:13px}
+.pro-row .met b{font-weight:600}
+.pro-row .met span.k{color:var(--muted)}
+.pro-row .act{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:var(--sp-btn);text-align:right}
+.pro-row .from .k{font-size:12px;color:var(--muted);display:block}
+.pro-row .from .v{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.pro-list{display:flex;flex-direction:column;gap:var(--sp-cards)}
+
+/* 2열 카드 — 레이아웃 A list 슬롯: 여백을 넓게, 카드 안은 글자 위계로만 */
+.pro-g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--card-gap)}
+.pro-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:var(--sp-card);box-shadow:var(--sh-card);display:flex;gap:var(--s4)}
+.pro-card:hover{border-color:var(--primary)}
+.pro-card .mid{flex:1;min-width:0}
+.pro-card .nm{font-size:16px;font-weight:600}
+.pro-card .one{font-size:13px;color:var(--muted);margin-top:2px}
+.pro-card .met{font-size:13px;margin-top:var(--s2)}
+
+/* 하트 */
+.heart{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);
+  color:var(--muted);font-size:15px;cursor:pointer;display:grid;place-items:center;flex:none}
+.heart.on{color:var(--danger);border-color:var(--danger)}
+
+/* ---------- 하트비트 / 신뢰 지표 카드 ---------- */
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:var(--sp-card);box-shadow:var(--sh-card)}
+.stat .n{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.15}
+.stat .l{font-size:13px;color:var(--muted);margin-top:2px}
+.stat .d{font-size:12px;margin-top:6px}
+.stat.pri{background:var(--pri-06);border-color:var(--pri-10)}
+.stat.pri .n{color:var(--primary)}
+.stat.acc{border-color:var(--accent)}
+.stat.acc .n{color:var(--acc-text)}
+.stat .ic{font-size:20px;opacity:.65;margin-bottom:var(--s2)}
+.stat.sm .n{font-size:24px}
+
+/* ---------- 표 ---------- */
+.table-wrap{border:1px solid var(--border);border-radius:var(--r-card);background:var(--surface);overflow:hidden}
+.table-scroll{overflow:auto hidden}
+.table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
+.table th{background:var(--bg-soft);font-size:13px;font-weight:600;color:var(--muted);text-align:left;
+  padding:11px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+.table td{padding:0 14px;height:var(--sp-row);border-bottom:1px solid var(--border);vertical-align:middle}
+.table tbody tr:last-child td{border-bottom:0}
+.table tbody tr:hover{background:var(--bg-soft)}
+.table tfoot td{background:var(--bg-soft);font-weight:700;border-top:1px solid var(--border);border-bottom:0}
+.table .num{text-align:right;font-variant-numeric:tabular-nums}
+.table-fix{table-layout:fixed}
+.table-fix td{white-space:normal;line-height:1.55;padding-top:10px;padding-bottom:10px;height:auto}
+
+/* 비교 표 — 첫 열 고정 */
+.cmp{min-width:720px}
+.cmp th:first-child,.cmp td:first-child{position:sticky;left:0;background:var(--surface);z-index:2;
+  border-right:1px solid var(--border);font-weight:600;color:var(--muted);font-size:13px;width:150px}
+.cmp thead th:first-child{background:var(--bg-soft)}
+.cmp tbody tr:hover td:first-child{background:var(--bg-soft)}
+.cmp .best{background:var(--pri-06);font-weight:700}
+.cmp .col-hd{text-align:center;padding:var(--s4) 12px;vertical-align:top}
+.cmp .col-hd .nm{font-size:15px;font-weight:600;margin-top:6px}
+
+/* ---------- 정의 목록 ---------- */
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--s3) var(--s6);margin:0;font-size:14px}
+.kv dt{color:var(--muted);white-space:nowrap}
+.kv dd{margin:0;text-align:right}
+.kv.left dd{text-align:left}
+.sum-row{display:flex;justify-content:space-between;gap:var(--s4);padding:7px 0;font-size:14px}
+.sum-row+.sum-row{border-top:1px dashed var(--border)}
+.sum-row.total{border-top:1px solid var(--text);margin-top:var(--s2);padding-top:var(--s3);font-weight:700;font-size:16px}
+.sum-row.total .price{font-size:22px}
+
+/* ---------- 알림 띠 ---------- */
+.banner{display:flex;align-items:flex-start;gap:var(--s3);border-radius:var(--r-card);padding:var(--s4) var(--s5);font-size:14px;border:1px solid transparent}
+.banner .ico{font-size:18px;flex:none;line-height:1.4}
+.banner b{font-weight:600}
+.banner-info{background:var(--pri-06);border-color:var(--pri-10);color:var(--text)}
+.banner-warn{background:rgba(180,118,26,.10);border-color:rgba(180,118,26,.25)}
+.banner-dan{background:rgba(192,57,43,.08);border-color:rgba(192,57,43,.24)}
+.banner-ok{background:rgba(15,122,82,.09);border-color:rgba(15,122,82,.22)}
+.banner-acc{background:var(--acc-12);border-color:rgba(217,119,87,.32)}
+.banner-quiet{background:var(--bg-soft);border-color:var(--border);color:var(--muted);font-size:13px;padding:10px var(--s4)}
+
+/* ---------- 빈 화면 ---------- */
+.empty{text-align:center;padding:var(--s12) var(--s6);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card)}
+.empty .ico{font-size:48px;opacity:.35;margin-bottom:var(--s4)}
+.empty .msg{color:var(--muted);margin-top:var(--s2);font-size:14px}
+.empty .btns{justify-content:center;margin-top:var(--sp-block)}
+
+/* ---------- 진행 표시 ---------- */
+.stepbar{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;font-size:14px;margin-bottom:var(--sp-block)}
+.stepbar .s{display:inline-flex;align-items:center;gap:7px;color:var(--muted)}
+.stepbar .s .n{width:24px;height:24px;border-radius:50%;background:var(--border);color:#3F4E6E;
+  display:grid;place-items:center;font-size:12px;font-weight:700}
+.stepbar .s.on{color:var(--text);font-weight:600}
+.stepbar .s.on .n{background:var(--primary);color:var(--on-pri)}
+.stepbar .s.done .n{background:var(--success);color:#fff}
+.stepbar .sep{color:var(--muted)}
+
+/* 가로 4단계 — 심사·이용 안내 */
+.hsteps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s3);position:relative}
+.hsteps .st{text-align:center;font-size:14px;color:var(--muted)}
+.hsteps .st .dot{width:36px;height:36px;border-radius:50%;background:var(--surface);border:2px solid var(--border);
+  color:var(--muted);display:grid;place-items:center;font-weight:700;margin:0 auto var(--s2)}
+.hsteps .st.on{color:var(--text);font-weight:600}
+.hsteps .st.on .dot{border-color:var(--primary);background:var(--primary);color:var(--on-pri)}
+.hsteps .st.done .dot{border-color:var(--success);background:var(--success);color:#fff}
+
+/* 진행률 막대 */
+.progress{height:8px;border-radius:4px;background:var(--border);overflow:hidden;flex:1;min-width:0}
+.progress .fill{height:100%;background:var(--primary);border-radius:4px}
+.progress .fill.acc{background:var(--accent)}
+.progress .fill.ok{background:var(--success)}
+.progress.sm{height:5px}
+.bar-row{display:flex;align-items:center;gap:var(--s3);font-size:13px;margin-bottom:6px}
+
+/* 세로 타임라인 */
+.timeline{position:relative;padding-left:26px}
+.timeline::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:var(--border)}
+.tl-item{position:relative;padding-bottom:var(--sp-block)}
+.tl-item:last-child{padding-bottom:0}
+.tl-item .dot{position:absolute;left:-26px;top:2px;width:18px;height:18px;border-radius:50%;background:var(--surface);
+  border:2px solid var(--border);display:grid;place-items:center;font-size:10px;color:var(--muted);z-index:1}
+.tl-item.done .dot{background:var(--success);border-color:var(--success);color:#fff}
+.tl-item.on .dot{background:var(--primary);border-color:var(--primary);color:#fff}
+.tl-item b{font-weight:600}
+.tl-item .when{font-size:13px;color:var(--muted)}
+.tl-item.todo b{color:var(--muted);font-weight:400}
+
+/* ---------- 아코디언 ---------- */
+.acc-item{border-bottom:1px solid var(--border)}
+.acc-item:last-child{border-bottom:0}
+.acc-q{width:100%;background:none;border:0;text-align:left;padding:var(--s4) 0;font-size:15px;font-weight:500;
+  color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:var(--s4)}
+/* ⚠ 「＋」는 열릴 때 45° 돈다. 세로로 긴 글자 상자를 돌리면 «폭»이 √2배로 커져
+   단추 밖으로 삐져나온다 — 2026-08-25 에 12개 팩에서 4~6px 넘치는 걸 재서 봤다.
+   네모난 상자로 만들고, 돌았을 때 늘어나는 만큼(한쪽 약 0.21배) 안으로 들여 둔다. */
+.acc-q .mk{color:var(--muted);flex:none;transition:transform .15s;width:1.4em;height:1.4em;line-height:1;display:grid;place-items:center;margin-right:.3em}
+.acc-a{display:none;padding:0 0 var(--s4);color:var(--muted);font-size:14px}
+.acc-item.on .acc-a{display:block}
+.acc-item.on .acc-q{color:var(--primary);font-weight:600}
+.acc-item.on .acc-q .mk{transform:rotate(45deg)}
+
+/* ---------- 후기 ---------- */
+.review{padding:var(--sp-card) 0;border-bottom:1px solid var(--border)}
+.review:last-child{border-bottom:0}
+.review .txt{margin-top:var(--sp-item);font-size:14px;line-height:1.7}
+.reply{margin-top:var(--sp-item);margin-left:var(--s8);background:var(--bg-soft);border-radius:var(--r-card);padding:var(--s4);font-size:14px}
+.reply .who{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:4px}
+.rate{display:flex;gap:var(--s8);align-items:center;flex-wrap:wrap}
+.rate .left{text-align:center;flex:none;min-width:120px}
+.rate .left .n{font-size:44px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.rate-in{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0;border-bottom:1px solid var(--border)}
+.rate-in:last-child{border-bottom:0}
+.rate-in .lb{flex:1;min-width:0;font-size:14px;font-weight:500;margin:0}
+.rate-in .st{display:flex;gap:4px}
+.rate-in .st b{font-size:22px;color:#7C879C;cursor:pointer;font-weight:400}
+.rate-in .st b.on{color:var(--star)}
+.rate-in .v{font-size:13px;color:var(--muted);width:88px;text-align:right;flex:none}
+.rate-in.big .st b{font-size:38px}
+
+/* ---------- 채팅 ---------- */
+.chat{display:flex;flex-direction:column;height:calc(100vh - 210px);min-height:520px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden}
+.chat-hd{padding:var(--s3) var(--s5);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:var(--s3);flex:none}
+.chat-safe{background:rgba(180,118,26,.10);color:var(--warn-text);font-size:13px;padding:8px var(--s5);flex:none;
+  border-bottom:1px solid rgba(180,118,26,.22);display:flex;gap:7px;align-items:flex-start}
+.chat-bd{flex:1;overflow-y:auto;padding:var(--s5);background:var(--bg);display:flex;flex-direction:column;gap:var(--s3)}
+.chat-day{text-align:center;font-size:12px;color:var(--muted);margin:var(--s2) 0}
+.msg{display:flex;gap:var(--s2);align-items:flex-end;max-width:72%}
+.msg .bubble{background:var(--surface);border:1px solid var(--border);border-radius:4px 14px 14px 14px;
+  padding:10px 14px;font-size:14px;line-height:1.6}
+.msg .at{font-size:11px;color:var(--muted);white-space:nowrap;padding-bottom:2px}
+.msg.me{margin-left:auto;flex-direction:row-reverse}
+.msg.me .bubble{background:var(--primary);color:var(--on-pri);border-color:var(--primary);border-radius:14px 4px 14px 14px}
+.msg.me .at{text-align:right}
+.chat-card{background:var(--surface);border:1px solid var(--primary);border-radius:var(--r-card);padding:var(--s4);max-width:340px;box-shadow:var(--sh-card)}
+.chat-card.me{margin-left:auto}
+.chat-typing{font-size:13px;color:var(--muted);padding-left:2px}
+.chat-in{flex:none;border-top:1px solid var(--border);padding:var(--s3) var(--s4);display:flex;gap:var(--s2);align-items:center;background:var(--surface)}
+.chat-in .ico{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);
+  display:grid;place-items:center;cursor:pointer;flex:none;font-size:15px}
+.chat-in input{flex:1;min-width:0;height:40px;border:1px solid var(--border);border-radius:999px;padding:0 16px;font-size:14px;font-family:inherit;outline:0}
+.chat-in input:focus{border-color:var(--primary)}
+
+/* 채팅 목록 줄 */
+.ch-row{display:flex;gap:var(--s3);align-items:center;padding:var(--s4) var(--sp-card);border-bottom:1px solid var(--border)}
+.ch-row:last-child{border-bottom:0}
+.ch-row:hover{background:var(--bg-soft)}
+.ch-row .mid{flex:1;min-width:0}
+.ch-row .last{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-row .of{font-size:12px;color:var(--muted);opacity:.8}
+.ch-row .rt{text-align:right;flex:none;font-size:12px;color:var(--muted)}
+.ch-row .unread{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;
+  background:var(--danger);color:#fff;font-size:11px;font-weight:700;margin-top:4px}
+
+/* ---------- 목록 줄 (일감·요청·정산) ---------- */
+.list-row{display:flex;gap:var(--s4);align-items:center;padding:var(--sp-card);background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-card);box-shadow:var(--sh-card)}
+.list-row:hover{border-color:var(--primary)}
+.list-row .mid{flex:1;min-width:0}
+.list-row .rt{flex:none;text-align:right;display:flex;flex-direction:column;gap:var(--sp-btn);align-items:flex-end}
+.list{display:flex;flex-direction:column;gap:var(--sp-cards)}
+.list-row.hot{border-left:4px solid var(--accent)}
+.list-row.today{border-left:4px solid var(--primary)}
+
+/* ---------- 사이드바 — 고수센터 ---------- */
+.side{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
+  padding:var(--s3);position:sticky;top:var(--s5);box-shadow:var(--sh-card)}
+.side .gl{font-size:12px;font-weight:600;color:var(--muted);padding:var(--s3) var(--s3) 5px;letter-spacing:.02em}
+/* :not(.btn) — 사이드바 안에 놓인 버튼까지 이 규칙이 덮으면 색이 뭉개진다 */
+.side a:not(.btn){display:flex;align-items:center;justify-content:space-between;gap:var(--s2);padding:9px var(--s3);
+  border-radius:var(--r-btn);font-size:14px;color:var(--text)}
+.side a:not(.btn):hover{background:var(--bg-soft)}
+.side a.on{background:var(--pri-10);color:var(--primary);font-weight:600}
+.side a .n{font-size:12px;background:var(--danger);color:#fff;border-radius:9px;padding:0 6px;font-weight:700}
+.side .cr{margin:var(--s3);padding:var(--s4);border-radius:var(--r-btn);background:var(--pri-06);border:1px solid var(--pri-10)}
+.side .cr.low{background:var(--acc-12);border-color:rgba(217,119,87,.3)}
+
+/* ---------- 필터 패널 ---------- */
+.filter{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
+  padding:var(--sp-card);position:sticky;top:var(--s5);box-shadow:var(--sh-card)}
+.filter .fg{padding-bottom:var(--sp-block);margin-bottom:var(--sp-block);border-bottom:1px solid var(--border)}
+.filter .fg:last-child{padding-bottom:0;margin-bottom:0;border-bottom:0}
+.filter h4{font-size:14px;font-weight:600;margin-bottom:var(--sp-item)}
+
+/* ---------- 하단 고정 액션 바 — 레이아웃 A detail 슬롯 ---------- */
+.stick{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--border);
+  box-shadow:0 -4px 16px rgba(17,17,17,.10);z-index:35}
+.stick-in{max-width:var(--wrap);margin:0 auto;padding:var(--s3) var(--sp-wrap);display:flex;align-items:center;
+  justify-content:space-between;gap:var(--s4);flex-wrap:wrap}
+
+/* ---------- 가로 스크롤 줄 — 스크롤바 대신 좌우 화살표 ---------- */
+.car{position:relative}
+.carousel{display:flex;gap:var(--card-gap);overflow:auto hidden;scroll-behavior:smooth;padding-bottom:var(--s1);scrollbar-width:none}
+.carousel::-webkit-scrollbar{display:none}
+.carousel>*{flex:none;width:288px}
+.carousel.wide>*{width:352px}
+.carousel.narrow>*{width:196px}
+.car-nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border);box-shadow:var(--sh-float);cursor:pointer;
+  font-size:19px;color:var(--text);display:grid;place-items:center;z-index:5}
+.car-nav.prev{left:-15px}
+.car-nav.next{right:-15px}
+.car-nav:disabled{opacity:.28;cursor:default}
+
+/* ---------- 티커 ---------- */
+.ticker{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:9px var(--s5);
+  display:flex;align-items:center;gap:var(--s3);font-size:14px;box-shadow:var(--sh-card)}
+.ticker .live{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--danger);flex:none}
+.ticker .live i{width:7px;height:7px;border-radius:50%;background:var(--danger);font-style:normal}
+.ticker .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+
+/* ---------- 카테고리 아이콘 격자 ---------- */
+.cats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--card-gap)}
+.cat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:var(--s5) var(--s3);
+  text-align:center;box-shadow:var(--sh-card)}
+.cat:hover{border-color:var(--primary);background:var(--pri-06)}
+.cat .ic{font-size:26px;margin-bottom:var(--s2)}
+.cat .nm{font-size:14px;font-weight:500}
+.cat .sub{font-size:12px;color:var(--muted);margin-top:2px}
+.cat.on{border-color:var(--primary);border-width:2px;background:var(--pri-06)}
+
+/* ---------- 지도 자리 ---------- */
+.map{position:relative;background:var(--ph-3);border:1px solid var(--ph-border);border-radius:var(--r-card);
+  height:260px;display:grid;place-items:center;color:var(--ph-text);font-size:13px;overflow:hidden}
+.map .pin{position:absolute;width:26px;height:26px;border-radius:50% 50% 50% 2px;transform:rotate(-45deg);
+  background:var(--primary);border:2px solid #fff;box-shadow:var(--sh-card);cursor:pointer}
+.map .pin.on{background:var(--accent);width:32px;height:32px}
+.map .zone{position:absolute;border:2px dashed var(--primary);border-radius:50%;background:var(--pri-10)}
+
+/* ---------- 갤러리 ---------- */
+.gal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--card-gap)}
+.gal .it .cap{margin-top:var(--s2)}
+.gal .it .cap b{font-size:14px;font-weight:600;display:block}
+.lightbox{position:relative;background:#0E1626;border-radius:var(--r-card);padding:var(--s6);color:#fff}
+/* ⚠ 어두운 칸 안에서는 잔글씨를 «올린다» — 밝은 칸과 값이 달라야 한다(H9). */
+.lightbox .t-sub{color:#9AA7C0}
+.lightbox .nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.16);border:0;color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center}
+.lightbox .nav.prev{left:12px}.lightbox .nav.next{right:12px}
+.lightbox .cap{margin-top:var(--s4);font-size:14px;color:rgba(255,255,255,.86)}
+
+/* ---------- 단독 화면(로그인·가입) ---------- */
+.solo{min-height:100vh;display:grid;place-items:center;padding:var(--s12) var(--s5);background:var(--bg)}
+.solo-box{width:100%;max-width:424px;background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:var(--s10) var(--s8);box-shadow:var(--sh-float)}
+.solo-lg .solo-box{max-width:600px}
+.solo-box .logo{justify-content:center}
+.solo-box>h1{text-align:center}
+.divider{display:flex;align-items:center;gap:var(--s3);color:var(--muted);font-size:12px;margin:var(--sp-block) 0}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--border)}
+.sns-btn{display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:var(--r-btn);
+  font-size:15px;font-weight:600;border:1px solid transparent;cursor:pointer;width:100%}
+.sns-btn.kakao{background:#FEE500;color:#191600}
+.sns-btn.naver{background:#03C75A;color:#fff}
+.sns-btn.google{background:#fff;border-color:#DADCE0;color:#3C4043}
+
+/* ---------- 모달·토스트 ---------- */
+.dim{position:fixed;inset:0;background:rgba(15,22,38,.52);display:grid;place-items:center;padding:var(--s5);z-index:60;overflow-y:auto}
+.modal{width:100%;max-width:480px;background:var(--surface);border-radius:16px;box-shadow:var(--sh-pop);overflow:hidden;margin:auto}
+.modal-hd{padding:var(--s5) var(--s6);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
+.modal-bd{padding:var(--s6);max-height:64vh;overflow-y:auto}
+.modal-ft{padding:var(--s4) var(--s6);border-top:1px solid var(--border);display:flex;gap:var(--sp-btn);justify-content:flex-end;flex-wrap:wrap}
+.modal.wide{max-width:640px}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--text);color:#fff;
+  border-radius:var(--r-btn);padding:12px 18px;font-size:14px;display:flex;align-items:center;gap:var(--s5);
+  box-shadow:var(--sh-pop);z-index:80;max-width:calc(100vw - 32px)}
+.toast .act{color:#9CC0FF;font-weight:600;cursor:pointer;white-space:nowrap}
+.toast-ok{background:#0F4D36}
+
+/* ---------- 푸터 ---------- */
+.ft{background:#141F36;color:rgba(255,255,255,.72);margin-top:var(--s12);font-size:13px}
+.ft-in{max-width:var(--wrap);margin:0 auto;padding:var(--s12) var(--sp-wrap) var(--s6)}
+.ft-cols{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.3fr;gap:var(--s8)}
+.ft-cols>*{min-width:0}
+.ft h4{color:#fff;font-size:14px;font-weight:600;margin-bottom:var(--s3)}
+.ft li{margin-bottom:7px}
+.ft a:hover{color:#fff}
+.ft .logo{color:#fff}
+.ft .t-sub{color:rgba(255,255,255,.6)}
+.ft .tel{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.02em}
+.ft .sns{display:flex;gap:var(--s2)}
+.ft .sns span{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center;font-size:11px;font-weight:600}
+.ft-bot{border-top:1px solid rgba(255,255,255,.13);margin-top:var(--s8);padding-top:var(--s5);
+  display:flex;justify-content:space-between;gap:var(--s4);flex-wrap:wrap;font-size:12px;color:rgba(255,255,255,.55)}
+
+/* ---------- 전체 화면 목록(index) ---------- */
+.idx-hero{background:var(--primary);color:var(--on-pri);padding:var(--s12) 0}
+.idx-menu{margin-bottom:var(--s8)}
+.idx-menu h3{font-size:17px;font-weight:700;margin-bottom:var(--s3);display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.idx-menu .code{background:var(--primary);color:var(--on-pri);border-radius:var(--r-badge);padding:2px 8px;font-size:12px;font-weight:700}
+.idx-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:var(--s2)}
+.idx-list a{display:flex;gap:9px;align-items:center;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-btn);padding:11px 13px;font-size:14px}
+.idx-list a:hover{border-color:var(--primary);background:var(--pri-06)}
+.idx-list .pid{font-size:11px;font-weight:700;color:var(--primary);background:var(--pri-10);
+  border-radius:4px;padding:2px 5px;flex:none}
+
+/* ---------- 화면 정보 패널 ---------- */
+.dev{position:fixed;right:16px;bottom:16px;z-index:70;display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.dev-btn,.dev-list{background:var(--text);color:#fff;border:0;border-radius:999px;padding:9px 15px;
+  font-size:12px;font-weight:600;cursor:pointer;box-shadow:var(--sh-float);font-family:inherit}
+.dev-list{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.dev .spec{display:none;width:308px;max-height:56vh;overflow-y:auto;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-card);box-shadow:var(--sh-pop);padding:var(--s4);font-size:12px}
+.dev.on .spec{display:block}
+.dev .spec .id{font-size:11px;font-weight:700;color:var(--primary);background:var(--pri-10);
+  border-radius:4px;padding:2px 6px;display:inline-block}
+.dev .spec .nm{font-size:15px;font-weight:700;margin:6px 0}
+.dev .spec .fd{color:var(--muted);line-height:1.6}
+.dev .spec .lk{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+.dev .spec .lk a{background:var(--bg-soft);border-radius:4px;padding:3px 7px;font-size:11px;color:var(--primary)}
+
+/* ---------- 반응형 ---------- */
+@media (max-width:1080px){
+  .split{grid-template-columns:210px minmax(0,1fr);gap:var(--s6)}
+  .split-r{grid-template-columns:minmax(0,1fr) 296px;gap:var(--s6)}
+  .cats{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .hero-split h1{font-size:36px}
+}
+@media (max-width:860px){
+  :root{--sp-wrap:16px;--sp-sec:28px;--sp-card:16px;--sp-cards:14px;--sp-title:12px;--sp-block:20px}
+  .hero-split{padding:var(--s8) 0}
+  .hero-split .in{grid-template-columns:minmax(0,1fr);gap:var(--s8)}
+  .hero-split h1{font-size:30px}
+  .split,.split-r{grid-template-columns:minmax(0,1fr)}
+  .side,.filter,.sticky{position:static}
+  .g4,.g3,.g5,.g6,.pro-g2,.gal{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .hsteps{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4)}
+  .ft-cols{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .gnb-in{height:58px;gap:var(--s4)}
+  .gnb-nav{display:none}
+  .pro-row{flex-wrap:wrap}
+  .pro-row .act{width:100%;flex-direction:row;justify-content:space-between;align-items:center}
+  .msg{max-width:88%}
+  .car-nav.prev{left:-6px}.car-nav.next{right:-6px}
+}
+@media (max-width:560px){
+  .g2,.g3,.g4,.g5,.g6,.pro-g2,.gal,.cats{grid-template-columns:minmax(0,1fr)}
+  .t-page{font-size:26px}
+  .hero-split h1{font-size:26px}
+  .stat .n{font-size:26px}
+  .rate{gap:var(--s5)}
+  .ft-cols{grid-template-columns:minmax(0,1fr)}
+  .otp span{width:40px;height:50px;font-size:20px}
+}
+
+
+/* GNB 프로필 — 눌러서 계정 화면으로. (.review .ava 와 이름이 겹쳐 따로 뒀다) */
+.gnb-ava{display:inline-flex;border-radius:50%;cursor:pointer}
+.gnb-ava:hover .ph{border-color:var(--primary)}
+
+/* 가로 스크롤 상자는 세로도 같이 잘린다(overflow:auto hidden 면 세로가 visible 로 안 남는다).
+   카드가 hover 로 떠오르면 위쪽 테두리가 잘려 나가므로, 위아래로 숨 쉴 자리를 주고
+   그만큼 바깥 여백에서 뺀다 — 자리는 그대로 두면서 안 잘린다(2026-08-06). */
+.car .carousel{padding-top:5px;padding-bottom:5px;margin-top:-5px;margin-bottom:-5px}
+
+/* 섹션이 카드·박스 바로 뒤에 오면 위쪽 간격이 없다 — .sec 은 아래쪽 간격만 갖고 있어서다.
+   덩어리 사이는 어느 쪽에서 오든 같은 값이어야 한다. */
+.card + .sec, .box + .sec, .table-wrap + .sec{margin-top:var(--sp-sec)}
+
+/* 행·카드 전체가 눌리는 자리 — data-href 로 이동한다.
+   <a> 로 감싸지 않으므로 안에 진짜 버튼을 둘 수 있다. */
+[data-href]{cursor:pointer}
+
+/* ---------- 목록 행 안의 간격 ----------
+   행은 빽빽한 자리다. 줄과 줄이 0으로 붙어 있으면 어디까지가 한 줄인지 안 보이고,
+   덩어리 간격(12px)을 그대로 쓰면 행이 쓸데없이 높아진다.
+   그래서 한 단계 좁은 밀도의 "묶음 안 요소끼리" 값을 쓴다. */
+.list-row .grow > * + *{margin-top:var(--row-item-gap)}
+.list-row .grow > .badges + *{margin-top:6px}
+
+/* 세로로 쌓은 버튼은 폭을 맞춘다 — 글자 수대로 두면 오른쪽 끝이 들쭉날쭉해진다. */
+.list-row .right .btn,
+.right.nowrap .btn{width:100%}
+.list-row .right{display:flex;flex-direction:column;align-items:stretch;gap:var(--sp-btn)}
+
+/* ---------- 세로로 이어 붙인 항목 사이 ----------
+   격자로 나란히 놓을 때(--card-gap)와는 다른 자리다.
+   가로는 옆 카드와 나란히 보이라고 벌리는 것이고,
+   세로는 "한 묶음"으로 읽히게 붙여야 해서 훨씬 좁다(2026-08-06). */
+.list{display:flex;flex-direction:column;gap:var(--stack-gap)}
+.list-row + .list-row{margin-top:var(--stack-gap)}
+.card + .card:not(.mt-sec):not([class*="mt-"]){margin-top:var(--stack-gap)}
+/* ⛔ 2026-08-19 검수 촬영에서 잡은 것 — 세 가지를 한 번에 고친다.
+   ① overflow-x 만 열면 세로축이 딸려 올라와 테두리 1px 때문에 세로 스크롤바가 생긴다.
+   ② 푸터가 바닥에 안 붙어, 짧은 화면에서는 화면 가운데 떠 있었다.
+   ③ 그리드 칸의 자식이 min-width:auto 라 칸보다 넓은 내용이 옆 칸을 덮었다. */
+body{min-height:100dvh;display:flex;flex-direction:column}
+body>*:first-child{flex:1 0 auto;min-height:0}
+/* 푸터가 main 안에 있는 짜임(.app-ed > main > .ft)까지 닿게 한다 */
+.app-ed,.page-wrap{display:flex;flex-direction:column;min-height:100dvh}
+/* .app 은 사이드바형이라 grid 2열이다 — 여기 넣으면 사이드바가 폭을 다 먹는다 */
+/* flex 자식은 shrink-to-fit 이라 폭이 내용만큼 줄어든다 — width:100% 로 되돌린다 */
+.app-ed>main,.app-ed>.edmain,.app>main,.app>.appmain,.page-wrap>main{flex:1 0 auto;display:flex;flex-direction:column;width:100%}
+body>*:first-child{width:100%}
+.ft{margin-top:auto}
+/* 푸터를 품은 main 은 아래 여백을 푸터에 넘긴다 — 안 그러면 푸터 밑에 64px 이 남는다 */
+main:has(>.ft),.edmain:has(>.ft),.appmain:has(>.ft){padding-bottom:0}
+.split-r>*,.split-l>*,.app>*,.edcols>*{min-width:0}
+
+/* [hidden] 은 브라우저 기본값이라 .lrow{display:flex} 같은 규칙에 진다.
+   거르기가 목록을 못 줄이는 사고가 여기서 난다 — 반드시 이겨 두어야 한다. */
+[hidden]{display:none !important}
+
+/* ══ 상단 가로 GNB 를 그대로 쓴다 (레이아웃 A 목록 중심형) ═══════════════
+   ⛔ 2026-09-07 — 여기에 매칭_프리미엄의 «레이아웃 B 대시보드형» 덩어리가 따라와 있었다.
+     base.css 를 그 팩에서 베껴 왔기 때문이다. 그 덩어리는 상단 GNB 를 248px 왼쪽 세로
+     바로 옮긴다. 그런데 이 팩이 파는 것은 «목록 중심형»이고, 팩에 함께 나가는
+     레이아웃_A_목록중심형.json 은 nav 를 「상단 가로 GNB」라고 못 박아 두었다.
+     화면이 가이드와 다른 말을 하고 있었다 — 손님은 그 가이드를 보고 제 화면을 만든다.
+     게다가 손님(:not(.pro))에게 세로 바를, 운영자(.pro)에게 가로 바를 주어 거꾸로였다.
+     운영자 화면은 이미 proNav() 로 제 사이드바를 따로 들고 있다.
+
+   ⛔ 검사기 여덟이 전부 통과시켰다. 「어디에 그려졌나」를 재는 자가 없기 때문이다.
+     실제로 그려 본 것은 캡처뿐이었고, 캡처를 열어 보고서야 찾았다.
+     ⇒ 다음에 base.css 를 다른 팩에서 베껴 올 때는 «레이아웃 덩어리»부터 걷어낸다. */
+
+/* 인증번호 칸이 input 일 때도 span 과 같은 모양이 되게 한다 (2026-08-20 검수 · AU0302).
+   없으면 flex 칸이 제멋대로 늘어나 카드를 뚫고 나간다. */
+.otp .otp-cell{width:46px;height:56px;flex:none;border:1px solid var(--border);border-radius:var(--r-input);
+  text-align:center;font-size:24px;font-weight:700;background:var(--surface);color:var(--text);padding:0}
+.otp .otp-cell:focus{border-color:var(--primary);border-width:2px;outline:none}
+.otp .otp-cell.err{border-color:var(--danger)}
+@media (max-width:480px){.otp .otp-cell{width:40px;height:50px;font-size:20px}}
+
+
+/* ═══ 검수항목 H4 · H5 — 2026-08-20 사장님 지적으로 붙였다 ═══
+
+   H5 «화면이동시 화면의 흔들림»
+     세로 막대는 «생길 때만» 15px 을 먹는다. 그래서 목록이 짧은 화면에서 긴 화면으로
+     옮기면 본문이 통째로 15px 좌우로 튄다. 사장님이 CL0101 에서 「수강중·수강완료에서
+     전체로 이동시 화면 흔들림」이라 짚은 것이 바로 이것이다.
+     scrollbar-gutter 로 «막대 자리»를 늘 비워 두면 생기든 말든 폭이 안 바뀐다.
+
+   H4 «푸터 영역과 콘텐츠 영역의 간격»
+     .ft{margin-top:auto} 는 «자리가 남을 때만» 벌어진다. 내용이 한 화면을 넘기면 0 이 되어
+     푸터 윗선이 버튼에 그대로 맞붙는다 — MY0101 「강사로 전환 신청」 바로 아래가 그랬다.
+     auto 는 그대로 두고(짧은 화면에서 푸터를 바닥에 붙이는 일은 auto 만 할 수 있다),
+     푸터 «바로 앞 덩어리»에 최소 간격을 준다. :has(+.ft) 가 「다음이 푸터인 것」을 집는다. */
+html{scrollbar-gutter:stable}
+:where(main,.edmain,.appmain,.page-wrap)>*:has(+.ft){margin-bottom:var(--s8)}
+
+/* ═══ 검수항목 H9 · H12 · H13 — 2026-08-20 사장님이 짚은 세 가지 ═══
+
+   H12·H9 «배지·버튼 사이즈가 이상함» (공동구매 HO0101)
+     .promo .in 은 flex 세로칸인데 align-items 를 안 줬다. flex 의 기본값은 stretch 라
+     배지도 버튼도 칸 폭 그대로 늘어난다 — 배지가 40px 이어야 할 자리에서 767px 이 됐고
+     버튼도 102px 이어야 할 것이 767px 이 됐다. 한 뿌리에 두 증상이었다.
+     글(b·p)은 넓게 두어야 하니 «배지와 버튼만» 제 몸에 맞게 줄인다.
+
+   H13 «읽지 않는 채팅 개수 배지 위치가 이상함» (매칭 CH-01)
+     .rt 는 «14:31<div class=unread>2</div>» 처럼 시각과 개수를 함께 담는다.
+     그런데 .unread 가 display:inline-grid 라 «시각 옆»에 나란히 붙어 버렸다.
+     margin-top:4px 을 준 걸 보면 원래는 시각 «아래»에 놓을 셈이었다.
+     블록으로 바꾸고 margin-left:auto 로 오른쪽에 맞춘다.
+
+   H9 «찜하기 버튼 모양이 이상함» (매칭 SE-03)
+     .heart 는 34px 동그라미다. 거기에 grow·width:auto 를 얹어 가로로 늘여 타원이 됐다.
+     ⛔ 클래스를 떼면 안 된다 — app.js 가 .heart 로 찜 켜고 끄기를 붙든다.
+     넓게 쓸 때(.grow)만 동그라미를 풀고 옆 버튼과 같은 40px 로 맞춘다. */
+.promo .in>.badge,.promo .in>.btn{align-self:flex-start}
+.ch-row .unread{display:grid;width:max-content;margin:4px 0 0 auto}
+.heart.grow{width:auto;height:40px;padding:0 18px;border-radius:var(--r-btn);
+  font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+
+/* ═══ 검수항목 H10 — 2026-08-20 사장님 지적 ═══
+   「스와이프 또는 좌우 롤링으로 넘어가는 UI에 가로 스크롤이 노출되는가.
+     노출되지 않고, 화살표로 표시해야함.」
+
+   .rail 은 좌우로 밀어 보는 카드 줄이고, app.js 가 이미 «‹ ›» 화살표를 붙여 준다.
+   그런데 막대까지 같이 드러나서 카드 밑에 6px 짜리 회색 띠가 깔렸다.
+   화살표가 있으니 막대는 감춘다 — 넘길 길은 그대로 남는다.
+   ⛔ 표(.table-scroll)에는 손대지 않는다. 거기엔 화살표가 없어서
+      막대를 감추면 «넘길 수 있다는 것»을 알 길이 사라진다. */
+.rail{scrollbar-width:none;-ms-overflow-style:none}
+.rail::-webkit-scrollbar{display:none}
+
+
+/* ═══ 검수항목 D6 — 폰 폭에서 «가로로 밀리는 것» (2026-08-21) ═══
+
+   오래 「기계로는 못 잰다」고 적어 둔 자리였다. 헤드리스 크롬이 467px 밑으로 안 내려가서다.
+   폭 375 짜리 iframe 안에서 재게 하니 열네 팩 중 다섯에서 나왔다 — 4px 부터 78px 까지.
+
+   무엇이 밀었나 — 셋이었다
+     ① 머리띠 오른쪽 묶음(.gnb-util) — 크레딧·알림·버튼·프로필이 한 줄로 늘어서 261px
+     ② 감싸지 않은 표 — .table 은 min-width 520px 인데 그냥 놓여 있었다
+     ③ 고르는 칸(select) — width 150px 이 두 개 나란히 서면 넘친다
+
+   ⚠ 「좌우로 벌리는 줄에 긴 것이 들어오면 내려보낸다」 — 우리가 스펙팩에 적어 둔 규칙이다.
+     정작 우리 팩이 안 지키고 있었다. */
+@media (max-width:560px){
+  /* ① 머리띠 오른쪽은 접히게 두고, 자리를 많이 먹는 글자 버튼은 숨긴다 */
+  .gnb-util,.ednav-util,.gnb-in,.ednav-in{flex-wrap:wrap;min-width:0}
+  .gnb-util>.btn:not(.btn-pri):not(.btn-primary){display:none}
+
+  /* ② 감싸지 않은 표는 «제 상자 안에서만» 넘기게 한다 */
+  .table:not(.table-wrap .table):not(.table-scroll .table){display:block;overflow:auto hidden;max-width:100%}
+
+  /* ③ 고르는 칸·글 넣는 칸이 제 줄을 넘지 않게 */
+  select,input,textarea,.input,.sel{max-width:100%}
+
+  /* ④ 좌우로 벌리는 줄은 접는다 (스펙팩 「좁은 화면에서 넘치지 않게」와 같은 규칙) */
+  .row-b,.btns,.pager,.tabs,.filters,.chips{flex-wrap:wrap}
+}
+
+/* D6 덧붙임 — 첫 판에서 못 잡은 둘 (2026-08-21)
+     ① 옆 기둥(.edcols·.split-l)이 폰에서 안 접혀 200px 짜리 LNB 가 그대로 남았다
+     ② 줄(.row·.row-c)이 안 접혀 width:150px 짜리 고르는 칸 둘이 넘쳤다 */
+@media (max-width:560px){
+  .edcols,.split-l,.split-r,.split{grid-template-columns:minmax(0,1fr)}
+  .edrail,.side,.sticky{position:static;max-width:100%}
+  .row,.row-c,.wrap-row,.field-row{flex-wrap:wrap}
+  [style*="width:150px"],[style*="width: 150px"]{max-width:100%}
+}
+
+
+
+/* D6 마무리 — 남은 넷 (2026-08-21)
+     ① .kv 는 «120px + 1fr» 인데 1fr 은 min-width:auto 라 «내용보다 못 줄어든다».
+        「결제액의 5% (첫 공구는 0%)」 같은 긴 글이 들어가면 칸이 안 줄고 넘친다.
+     ② 달력도 같다 — repeat(7,1fr) 이라 7칸이 내용만큼 버틴다.
+     ③ 「이어보기」처럼 줄 오른쪽에 붙는 버튼이 든 줄이 안 접힌다.
+   ⚠ 1fr 은 «최소 내용 폭»을 지킨다. 줄이려면 minmax(0,1fr) 이라고 적어야 한다 —
+     좁은 화면 넘침의 절반이 여기서 온다. */
+@media (max-width:560px){
+  .kv{grid-template-columns:minmax(0,1fr);gap:var(--s1) 0}
+  .kv dt{margin-top:var(--s2)}
+  .cal-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .cal-d{min-height:44px;padding:6px 0;font-size:13px}
+  .cal-d .p{font-size:9px}
+  /* 줄 오른쪽에 붙는 버튼이 든 줄은 접는다 */
+  .lrow,.crow,.item,.list-row,.ch-row,.card-ft,.hero-cta,.actions,.between{flex-wrap:wrap}
+  /* 1fr 격자는 폰에서 «줄어들 수 있게» */
+  .g2,.g3,.g4,.g5,.g6,.grid,.cards{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ═══ 검수항목 H2 — 섹션이 위에 맞붙는다 (2026-08-21) ═══
+   .sec 은 «아래 여백»만 갖고 있다(.sec{margin-bottom}). 그래서 .sec 앞에 다른 덩어리가
+   오면 위쪽 틈이 0 이 된다. 전에 «.card + .sec» 처럼 앞엣것을 하나씩 적어 두었는데,
+   .ph · .bar · .center · .btns · .result · 이름 없는 div … 끝이 없었다.
+   → 앞엣것을 세지 말고 «첫째가 아니면 위 여백을 준다»로 뒤집는다.
+   ⚠ .sec 끼리 이어질 때는 위아래가 겹쳐 두 배가 되므로 그때만 위를 뺀다. */
+/* ⚠ 팩이 두 세대라 «섹션 간격» 변수 이름이 다르다 — 새 팩은 --sec-gap, 옛 팩은 --sp-sec.
+      CSS 는 없는 변수를 만나면 «그 줄을 통째로 버린다». 처음에 --sec-gap 만 적었더니
+      옛 팩 5벌(매칭 둘 · 인테리어_디럭스 · 장비렌탈 둘)에서 소리 없이 안 먹었다.
+      그래서 var(새, var(옛, 기본값)) 으로 겹쳐 둔다. */
+.sec:not(:first-child){margin-top:var(--sec-gap, var(--sp-sec, 40px))}
+.sec + .sec{margin-top:0}
+
+/* ═══ 검수항목 H2 — 폼의 리듬이 한 줄만 끊긴다 (2026-08-21) ═══
+   .field 는 아래 여백이 있는데 두 칸짜리 .field-row 는 없어서, 공동구매 SE0201 의 폼이
+   20·20·20 으로 가다가 «field-row 다음만 0» 이었다. 같은 줄에 서는 부품이면 같은 여백을
+   가져야 한다. ⚠ 팩마다 .field 가 쓰는 값이 다르다(--s4 · --s5) — 지어내지 말고 읽어서 맞춘다. */
+.field-row{margin-bottom:var(--sp-block)}
+
+/* ═══ 검수항목 H12 — 화살표가 있으면 막대는 지운다 (2026-08-21) ═══
+   사장님이 짚으신 자리: 「카드 줄에 화살표가 있는데 6px 회색 띠가 같이 깔렸다」.
+   두 가지로 넘기게 해 두면 어느 쪽이 진짜인지 헷갈린다 — 넘기는 길은 화살표 하나다.
+   ⚠ 앞에서 ::-webkit-scrollbar{height:6px} 로 «예쁘게 다듬어» 두었던 자리다.
+      다듬는 것과 지우는 것은 다르다. 여기서 뒤에 덮어써서 아예 감춘다.
+   ⚠ 표(.table-wrap)·간트(.gantt)는 건드리지 않는다 — 화살표가 없어서
+      막대가 «넘길 수 있다»는 유일한 신호다. 그쪽은 H13 이 폭으로 맡는다. */
+.carousel,.rail,.catbar-in{scrollbar-width:none;-ms-overflow-style:none}
+.carousel::-webkit-scrollbar,.rail::-webkit-scrollbar,.catbar-in::-webkit-scrollbar{height:0;width:0;display:none}
+
+/* ═══ 검수항목 H4 — 머리말 아래 큰 흰 띠 (2026-08-21) ═══
+   2026-08-19 에 「푸터가 바닥에 안 붙는다」를 고치며 body 를 세로 flex 로 세우고
+   «body>*:first-child{flex:1 0 auto}» 로 첫째를 늘렸다. 그런데 거의 모든 화면의
+   첫째는 <header> 다. 짧은 화면에서는 남는 자리를 «머리말이» 먹어, 인테리어 디럭스
+   OW-02 의 머리말이 키 360px 이 되고 그 밑에 300px 흰 띠가 깔렸다(속은 60px 뿐이었다).
+
+   늘어나야 하는 것은 «본문»이지 머리말이 아니다.
+   ⚠ body>*:first-child 는 (0,1,1) 이라 body>main (0,0,2) 보다 세다.
+      그래서 :first-child 를 붙여 같은 무게로 되돌려 놓고 본문을 늘린다. */
+body>header:first-child,body>.gnb:first-child,body>.ednav:first-child{flex:0 0 auto}
+body>main,body>.main,body>.app,body>.app-ed,body>.page-wrap{flex:1 0 auto;min-height:0}
+
+/* ═══ 검수항목 H13 — 좁은 칸에 든 표가 칸 밖으로 나간다 (2026-08-21) ═══
+   .table 에 min-width:520px 가 걸려 있다. 넓은 표가 짓눌리지 말라고 둔 것인데,
+   매칭 JB0201 의 「취소 시점 / 페널티」 두 칸짜리 표는 286px 짜리 옆칸에 들어가 있어
+   520 - 286 = 236px 이 밖으로 나가고 15px 회색 막대가 깔렸다.
+   → «520px 아니면 칸 너비, 둘 중 작은 쪽». 넓은 자리에서는 그대로 520px 이다. */
+.table{min-width:min(520px, 100%)}
+
+/* ═══ 검수항목 H2 — 덩어리 사이가 통째로 빠진 자리들 (2026-08-21) ═══
+   검사기가 열넷을 짚었다. 하나하나 열어 보니 다 같은 모양이었다 — 위엣것은 «제 여백»을
+   갖고 있는데 뒤엣것이 아무것도 없어, 그 한 자리만 리듬에서 빠져 0px 이 됐다.
+   예) 장비렌탈 PD0301 — 「‹ 목록 8px → 제목 20px → 안내 띠」 로 오다가 안내 띠 다음이 0px.
+       공동구매 HO-03 — 상자 바로 밑에 제목 줄이 붙었다.
+   ⚠ 덩어리 사이 값은 팩마다 이름이 다르다(--sp-block 20·28px, 없으면 --s4 16px).
+      없는 변수를 쓰면 그 줄이 통째로 버려지니 겹쳐 쓴다.
+   ⚠ 여기 적힌 짝만 손댄다. «앞엣것이 무엇이든» 식으로 넓히면 일부러 붙여 둔 자리까지
+      벌어진다 — 이름표와 값, 카드 아랫단의 윗줄 같은 것들이 그렇다. */
+.box + .page-hd,
+.ph + .page-hd,
+/* MY0202 · RQ0203 — 달력 그림(821px) 바로 밑에 「고른 날짜」 칩이 0px 로 맞붙었다.
+   그림은 아래쪽이 테두리로 뚝 끊기는데 칩이 거기 얹혀 한 몸처럼 보인다. (2026-08-25) */
+.ph + .chips,
+.g2 + .field,
+.chips + .mt-item,
+label.check + .row-b,
+.mt3 + .t-sub,
+.t-sub + .table-wrap,
+.result + .center,
+.mt4 + .field,
+.banner + .split-r,
+.banner + .split{margin-top:var(--sp-block, var(--s4, 16px))}
+
+/* 인라인으로 못 박은 «칸 나눔»이 폰에서 안 접힌다 — 2026-08-25
+     화면 파일에 style="grid-template-columns:…" 를 손으로 적어 둔 자리가 있다.
+     인라인은 미디어쿼리보다 세서, 위에 적어 둔 «폰에서는 한 줄로» 규칙이 통째로 진다.
+       · CH-02  옆기둥 300px 이 그대로 남아 본문이 111px 로 찌그러졌다.
+                말풍선 2160px 이 40px 짜리 틈에 갇혔다.
+       · RQ-02  본문이 69px — 달력 한 칸이 19px 이 됐다.
+   ⚠ 달력은 «일곱 칸»이라는 뜻이 있으니 한 줄로 접지 않는다. 내용보다 줄어들게만 한다.
+   ⛔ 인라인을 이기는 길은 !important 뿐이다. 화면 파일의 인라인 값은 데스크톱에서
+      뜻이 있어(옆기둥 300·260px) 지우지 않고, 좁을 때만 덮는다. */
+@media (max-width:860px){
+  .split[style*="grid-template-columns"],
+  .split-l[style*="grid-template-columns"],
+  .split-r[style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr)!important}
+}
+@media (max-width:560px){
+  .cards[style*="grid-template-columns"],
+  .g2[style*="grid-template-columns"],
+  .g3[style*="grid-template-columns"],
+  .g4[style*="grid-template-columns"],
+  .g5[style*="grid-template-columns"],
+  .g6[style*="grid-template-columns"],
+  .gal[style*="grid-template-columns"],
+  .grid[style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr)!important}
+  .cal-grid[style*="grid-template-columns"]{grid-template-columns:repeat(7,minmax(0,1fr))!important}
+}
+
+/* AU-03 — 인증번호 여섯 칸이 폰(375px)에서 22px 밀려났다. (2026-08-25)
+     칸 폭을 46px(폰 40px)로 못 박아 두어 여섯 칸 240px + 칸 사이 40px = 280px 이 된다.
+     그런데 이 칸이 앉는 .solo-box 는 좌우 안여백만 64px 이라, 360px 짜리 화면에서는
+     280 + 64 + 테두리 2 = 346px 이 되어 들어갈 자리가 없다.
+   ⛔ 더 좁은 폭으로 «다시 못 박으면» 더 작은 화면에서 또 밀린다.
+      아예 «남는 만큼 나눠 쓰게» 하고, 넓을 때만 46px 에서 멈추게 한다.
+      max-width 가 있어 데스크톱 생김새는 그대로다. */
+.otp{max-width:100%}
+.otp span{flex:1 1 0;min-width:0;max-width:46px}
+/* ⛔ .solo 는 place-items:center 만 준 grid 라 칸이 «max-content» 로 커진다 —
+     안엣것이 360px 짜리 화면보다 넓으면 칸째로 밀려 나간다(AU-03 이 그랬다).
+     D6 에서 배운 그대로다: 줄이려면 minmax(0,1fr) 이라고 «적어야» 한다.
+     가운데 맞춤은 place-items 가 그대로 해 준다. */
+.solo{grid-template-columns:minmax(0,1fr)}
+
+/* RV0102 — 별점 줄이 폰(375px)에서 27px 밀려났다. (2026-08-25)
+     한 줄이 「이름표 96px + 별 다섯 122px + 점수 88px」인데,
+     점수 칸(.v)이 «5점» 세 글자를 담자고 88px 을 flex:none 으로 붙들고 있었다.
+     360px 화면에서는 그 88px 이 그대로 밖으로 나간다.
+   ⛔ 좁은 폭에서만 놓아 준다 — 데스크톱은 오른쪽 줄맞춤이 살아야 표처럼 읽힌다. */
+@media (max-width:560px){
+  .rate-in .v{width:auto;min-width:34px}
+}
+
+
+
+
+/* ============================================================
+   중고거래 장터 전용 조각
+   ⚠ 새 상자 이름은 base.css 에서 먼저 찾아보고 붙였다.
+     짧은 이름(.in .on .go .sel)은 이미 쓰이고 있어 쓰지 않는다.
+   ⚠ 없는 변수를 쓰면 CSS 는 경고 없이 그 «줄을 통째로 버린다».
+     팩이 두 세대라 이름이 갈리는 값은 var(새, var(옛, 기본값)) 로 겹쳐 쓴다.
+   ============================================================ */
+
+/* ---------- 매물 가로 행 — 이 장터의 기본 카드 ---------- */
+.item-row{display:flex;gap:var(--sp-cards, var(--s5, 20px));align-items:flex-start;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-card);padding:var(--sp-card);box-shadow:var(--sh-card);
+  transition:border-color .12s}
+.item-row:hover{border-color:var(--primary)}
+.item-row.done{opacity:.62}
+/* 썸네일 자리 — position:relative 가 없으면 덮개가 페이지를 통째로 덮는다.
+   2026-08-11 에 매칭 팩이 이걸 빠뜨려 64px 프로필이 화면 전체를 덮었다. */
+.item-row .thumb{position:relative;flex:none;display:block;aspect-ratio:1/1}
+.item-row .thumb .veil{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  border-radius:var(--r-btn);background:rgba(51,34,30,.34)}
+/* 글자는 «불투명한 알약» 안에 — 사진이 밝든 어둡든 늘 읽힌다 (흰 글자 on #4A332E = 11.64) */
+.item-row .thumb .veil::before{content:attr(data-t);background:#4A332E;color:#FFFFFF;
+  font-size:12px;font-weight:700;padding:3px 9px;border-radius:var(--r-badge)}
+.chat-row .thumb .veil::before{font-size:10px;padding:2px 6px}
+.item-row .mid{flex:1;min-width:0;display:block}
+.item-row .nm{font-size:17px;font-weight:700;letter-spacing:-.01em;display:inline}
+.item-row .met{display:flex;gap:var(--s3, 12px);flex-wrap:wrap;margin-top:4px;font-size:13px}
+.item-row .met .k{color:var(--muted)}
+.item-row .price{display:block;margin-top:6px;font-size:20px;font-weight:800;letter-spacing:-.02em}
+.item-row .price.off{text-decoration:line-through;color:var(--muted);font-weight:700}
+.item-row .ways{display:flex;gap:6px;flex-wrap:wrap;margin-top:var(--row-item-gap, 8px)}
+.item-row .act{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:var(--sp-btn);text-align:right}
+.item-row .act .talk{font-size:13px}
+.item-row .act .talk .k{color:var(--muted)}
+.item-row .heart .n{font-size:11px;margin-left:1px}
+
+/* ---------- 매물 작은 카드 — 넷씩 늘어놓는 자리 ---------- */
+.item-card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
+  padding:var(--s3, 12px);box-shadow:var(--sh-card)}
+.item-card:hover{border-color:var(--primary)}
+.item-card .nm{display:block;margin-top:var(--s2, 8px);font-size:14px;font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-card .price{display:block;margin-top:2px;font-size:16px;font-weight:800}
+.item-card .met{display:block;margin-top:2px;font-size:12px}
+.item-card .met .k{color:var(--muted)}
+
+/* ---------- 회원 카드 ---------- */
+.user-card{display:flex;gap:var(--s4, 16px);align-items:flex-start;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-card);padding:var(--sp-card);box-shadow:var(--sh-card)}
+.user-card .mid{flex:1;min-width:0}
+.user-card .nm{font-size:17px;font-weight:700}
+.user-card .met{display:flex;gap:var(--s3, 12px);flex-wrap:wrap;margin-top:4px;font-size:13px}
+.user-card .met .k{color:var(--muted)}
+
+/* ---------- 매너 온도 — 이 장터에서 사람을 재는 자 ----------
+   색은 네 칸으로만 가른다. 온도마다 색이 다르면 무엇이 좋은 값인지 안 읽힌다. */
+.manner{display:inline-flex;align-items:baseline;gap:3px;padding:1px 9px;border-radius:var(--r-badge);
+  font-size:13px;font-weight:700;line-height:1.9}
+.manner i{font-style:normal;font-size:11px}
+.manner .deg{font-size:11px;font-weight:500;opacity:.85}
+.manner.big{font-size:34px;padding:4px 16px;line-height:1.35}
+.manner.big i{font-size:20px}
+.manner.big .deg{font-size:16px}
+.mn-hi{background:var(--pri-10);color:var(--pri-text)}
+.mn-hi b{color:var(--primary)}
+.mn-ok{background:var(--bg-soft);color:var(--text)}
+.mn-mid{background:var(--acc-12);color:var(--acc-text)}
+.mn-low{background:rgba(192,57,43,.10);color:var(--danger)}
+
+/* ---------- 안전결제 4단계 ----------
+   지난 칸·지금 칸·남은 칸이 «눈에» 달라야 한다. 색만으로 가르지 않고 테두리 굵기도 쓴다. */
+.escrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s2, 8px)}
+.escrow .es{border:1px solid var(--border);border-radius:var(--r-btn);padding:var(--s3, 12px);
+  text-align:center;background:var(--surface)}
+.escrow .es .dot{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+  border-radius:50%;font-size:13px;font-weight:700;background:var(--bg-soft);color:var(--muted)}
+.escrow .es .lb{display:block;margin-top:6px;font-size:14px;font-weight:600}
+.escrow .es .when{display:block;margin-top:2px;font-size:12px;color:var(--muted);min-height:1.2em}
+.escrow .es.done{background:var(--pri-06);border-color:var(--pri-10)}
+.escrow .es.done .dot{background:var(--primary);color:var(--on-pri)}
+.escrow .es.on{border-width:2px;border-color:var(--primary);padding:calc(var(--s3, 12px) - 1px)}
+.escrow .es.on .dot{background:var(--primary);color:var(--on-pri)}
+.escrow .es.todo{opacity:.72}
+
+/* 지금 누구 차례인가 — 단계 표시 바로 아래에 «반드시» 있어야 한다 */
+.turn{display:flex;align-items:center;gap:var(--s2, 8px);flex-wrap:wrap;margin-top:var(--s3, 12px);
+  padding:10px var(--s4, 16px);border-radius:var(--r-btn);background:var(--bg-soft);font-size:14px}
+.turn .ico{font-style:normal}
+.turn .left{margin-left:auto;font-size:13px;color:var(--acc-text);font-weight:700}
+
+/* ---------- 좌측 필터 패널 ---------- */
+.side-filter{padding:var(--s4, 16px)}
+.side-filter .fl{padding:var(--s3, 12px) 0;border-top:1px solid var(--border)}
+.side-filter .fl:first-of-type{border-top:0;padding-top:4px}
+.side-filter .fl-hd{font-size:13px;font-weight:700;margin-bottom:var(--s2, 8px)}
+.side-filter .fl-bd{font-size:14px}
+.side-filter .fl-bd label{display:flex;align-items:center;gap:6px;padding:3px 0;cursor:pointer}
+.side-filter .fl-bd .rng{display:flex;align-items:center;gap:6px}
+.side-filter .fl-bd .rng input{width:100%;min-width:0}
+
+/* ---------- 값 내림 표시 ---------- */
+.pd s{color:var(--muted);font-size:13px}
+.pd b{font-size:17px;font-weight:800}
+
+/* ---------- 지도·차트 자리 ----------
+   여기에는 사진이 들어가면 안 된다. 이미지-끼우기.mts 가 이 클래스를 보고 건너뛴다. */
+.ph.ph-map{background:repeating-linear-gradient(45deg,var(--bg-soft) 0 12px,var(--surface) 12px 24px)}
+
+/* ---------- 대화 ---------- */
+.talk-wrap{display:flex;flex-direction:column;gap:var(--s3, 12px);padding:var(--s5, 20px);
+  background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--r-card);min-height:420px}
+.bub{max-width:70%;padding:10px var(--s4, 16px);border-radius:var(--r-card);background:var(--surface);
+  border:1px solid var(--border);font-size:15px;line-height:var(--lh-body, 1.7)}
+.bub.me{margin-left:auto;background:var(--pri-10);border-color:var(--pri-10)}
+.bub .when{display:block;margin-top:4px;font-size:11px;color:var(--muted)}
+.bub.sys{max-width:100%;margin:0 auto;text-align:center;background:transparent;border:0;
+  color:var(--muted);font-size:13px}
+.bub.offer{border-color:var(--primary);border-width:2px;background:var(--surface)}
+.bub.offer .amt{font-size:20px;font-weight:800;display:block;margin-bottom:var(--s2, 8px)}
+.bub.appt{border-color:var(--accent);border-width:2px}
+.day-sep{text-align:center;font-size:12px;color:var(--muted);margin:var(--s2, 8px) 0}
+
+/* ---------- 사진 등록 격자 ---------- */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:var(--s3, 12px)}
+.photo-cell{position:relative;border:1px solid var(--border);border-radius:var(--r-btn);overflow:hidden;background:var(--surface)}
+.photo-cell .tools{display:flex;gap:4px;padding:6px;border-top:1px solid var(--border);background:var(--surface)}
+.photo-cell .rep{position:absolute;top:6px;left:6px;z-index:1}
+.photo-cell .del{position:absolute;top:6px;right:6px;z-index:1;width:24px;height:24px;border-radius:50%;
+  border:0;background:#4A332E;color:#FFFFFF;cursor:pointer;line-height:1}
+.photo-add{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;
+  min-height:120px;border:2px dashed var(--border);border-radius:var(--r-btn);color:var(--muted);
+  background:var(--surface);cursor:pointer;font-size:14px}
+
+/* ---------- 좁은 화면 ---------- */
+@media (max-width:860px){
+  /* ⛔ 2026-09-07: .act 에 width:100% 만 주고 «줄바꿈»을 안 걸어 두었다.
+     그래서 폰 폭에서 92px 썸네일 + 본문 + 360px 액션이 «한 줄에» 놓여 문서가
+     43~153px 씩 옆으로 밀렸다 — 화면 13장이 한꺼번에 걸렸는데 뿌리는 이 한 줄이다.
+     (base.css 위쪽 .pro-row 는 같은 자리에서 이미 flex-wrap:wrap 을 걸어 두고 있었다.) */
+  .item-row{gap:var(--s3, 12px);flex-wrap:wrap}
+  .item-row .mid{flex:1 1 160px}
+  .item-row .act{width:100%;flex-direction:row;justify-content:space-between;align-items:center}
+  .user-card,.pickrow,.chat-row{flex-wrap:wrap}
+  .escrow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bub{max-width:88%}
+}
+
+
+/* 화면 목록 첫 띠 — 코럴 원색 위 흰 글자는 3.14:1 이라 본문·보조 글자가 흐리다.
+   손님이 팩을 열고 가장 먼저 보는 곳이라 여기서 흐리면 안 된다.
+   옅은 코럴을 깔고 글자는 먹색으로 둔다 (2026-09-07). */
+.idx-hero{background:#EEDBD5;color:var(--text);border-bottom:1px solid var(--border)}
+.idx-hero .t-sub{color:var(--muted)}
+
+
+/* ============================================================
+   화면이 실제로 붙이는 이름들
+   ⛔ CSS 에 규칙을 써 놓고 «그 이름을 붙이는지» 확인하지 않으면 조용히 어긋난다.
+     반대로 화면이 붙인 이름에 규칙이 없으면 «아무 모양도 없이» 그려진다.
+     이 묶음은 pages/*.html 에서 실제로 쓰인 이름을 세어서 채운 것이다 (2026-09-07).
+   ⚠ 없는 변수를 쓰면 CSS 는 경고 없이 그 줄을 버린다. var(새, var(옛, 기본값)) 로 겹쳐 쓴다.
+   ============================================================ */
+
+/* ---------- 세로로 이어 붙이는 목록 ---------- */
+.stack{display:flex;flex-direction:column;gap:var(--sp-cards, var(--s3, 12px))}
+.stack-sm{display:flex;flex-direction:column;gap:var(--stack-gap, 8px)}
+
+/* ---------- 입력 묶음 ---------- */
+.fld{margin-bottom:var(--sp-block, 28px)}
+.fld:last-child{margin-bottom:0}
+.fld > .lb{display:block;font-size:14px;font-weight:700;margin-bottom:var(--s2, 8px)}
+/* 딸린 칸 — 위 항목을 고르면 열리는 자리. 들여쓰기와 왼쪽 선으로 «딸린 것»임을 보인다 */
+.sub-fld{border-left:3px solid var(--pri-10);padding-left:var(--s4, 16px);margin-left:2px}
+
+/* ---------- 점 목록 ---------- */
+ul.dots{list-style:disc;padding-left:1.15em;margin:0}
+ul.dots li{margin-top:4px}
+
+/* ---------- 작은 타일 ---------- */
+.tile{display:flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-btn);padding:var(--s3, 12px) var(--s4, 16px)}
+.tile:hover{border-color:var(--primary)}
+.tile .nm{font-size:15px;font-weight:600}
+
+/* ---------- 카테고리 가로 줄 ---------- */
+.cat-row{display:flex;gap:var(--s3, 12px)}
+.cat-tile{flex:none;width:104px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);
+  padding:var(--s4, 16px) var(--s2, 8px);text-align:center}
+.cat-tile:hover{border-color:var(--primary)}
+.cat-tile .ic{font-size:24px;line-height:1.2}
+.cat-tile .nm{font-size:13px;font-weight:600}
+.cat-tile .n{font-size:11px;color:var(--muted)}
+
+/* ---------- 공지 목록 ---------- */
+.notice-list{border-top:1px solid var(--border)}
+.notice-row{display:grid;grid-template-columns:88px minmax(0,1fr) 92px 64px;gap:var(--s3, 12px);
+  align-items:center;padding:var(--s3, 12px);border-bottom:1px solid var(--border)}
+.notice-row:hover{background:var(--bg-soft)}
+.notice-row.imp{background:var(--pri-06)}
+.notice-row.done{opacity:.6}
+.notice-row .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notice-row .at,.notice-row .hit{font-size:13px;color:var(--muted);text-align:right}
+
+/* ---------- 쪽 번호 ---------- */
+.pg{min-width:34px;height:34px;padding:0 8px;border:1px solid var(--border);border-radius:var(--r-btn);
+  background:var(--surface);color:var(--text);font-size:14px;cursor:pointer;font-family:inherit}
+.pg:hover:not(:disabled){border-color:var(--primary)}
+.pg.on{background:var(--primary);color:var(--on-pri);border-color:var(--primary);font-weight:700}
+.pg:disabled{opacity:.4;cursor:default}
+
+/* ---------- 채팅 목록 ---------- */
+.chat-list{border-top:1px solid var(--border)}
+.chat-row{display:flex;gap:var(--s3, 12px);align-items:center;padding:var(--s3, 12px);
+  border-bottom:1px solid var(--border)}
+.chat-row:hover{background:var(--bg-soft)}
+.chat-row.unread{background:var(--pri-06)}
+.chat-row .mid{flex:1;min-width:0}
+.chat-row .nm{font-size:15px;font-weight:700}
+.chat-row .last{display:block;margin-top:2px;font-size:14px;color:var(--muted);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chat-row .right{flex:none;display:flex;align-items:center;gap:var(--s2, 8px)}
+/* ⚠ 덮개를 얹는 자리에는 position:relative 가 반드시 있어야 한다 */
+.chat-row .thumb{position:relative;display:block;aspect-ratio:1/1}
+.chat-row .at{font-size:12px;color:var(--muted);white-space:nowrap}
+.veil.sm{font-size:10px;border-radius:6px}
+.unread-n{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--danger);
+  color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+
+/* ---------- 한 줄짜리 항목 (조건·안전거래존·보낸 문의…) ---------- */
+.cond-row{display:flex;gap:var(--s3, 12px);align-items:center;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-btn);
+  padding:var(--s3, 12px) var(--s4, 16px)}
+a.cond-row:hover{border-color:var(--primary)}
+
+/* ---------- 순위 줄 ---------- */
+.rank-row{display:flex;gap:var(--s3, 12px);align-items:center;padding:9px var(--s3, 12px);
+  border-bottom:1px solid var(--border)}
+.rank-row:hover{background:var(--bg-soft)}
+.rank-row .no{flex:none;width:24px;text-align:center;font-weight:700;color:var(--muted)}
+.rank-row .no.hot{color:var(--primary)}
+.rank-row .w{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-row .d{flex:none;font-size:12px;color:var(--muted)}
+.rank-row .d.up{color:var(--danger)}
+.rank-row .d.down{color:var(--success)}
+.rank-row .d.same{color:var(--muted)}
+
+/* ---------- 자동완성 후보 ---------- */
+.sugg{display:flex;justify-content:space-between;align-items:center;gap:var(--s3, 12px);
+  padding:10px var(--s3, 12px);border-radius:var(--r-btn)}
+.sugg:hover{background:var(--bg-soft)}
+
+/* ---------- 동네 ---------- */
+.town{font-size:14px;white-space:nowrap}
+.town-row{display:flex;gap:var(--s3, 12px);align-items:center;padding:10px var(--s3, 12px);
+  border:1px solid var(--border);border-radius:var(--r-btn);background:var(--surface)}
+.town-row.muted{color:var(--muted);border-style:dashed}
+.town-row .link{margin-left:auto}
+
+/* ---------- 남은 시간 ---------- */
+.deadline{text-align:center;padding:var(--s5, 20px);border-radius:var(--r-card);background:var(--bg-soft)}
+.deadline .big{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.2;color:var(--pri-text)}
+
+/* ---------- 매너 온도계 ---------- */
+.thermo{position:relative;height:12px;border-radius:6px;background:var(--bg-soft);
+  border:1px solid var(--border);overflow:hidden}
+.thermo .fill{height:100%;background:var(--primary);border-radius:6px 0 0 6px}
+.thermo .base{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--muted);opacity:.6}
+
+/* ---------- 막대 목록 ---------- */
+.bars{display:flex;flex-direction:column;gap:var(--s2, 8px)}
+.bars .bar-row{display:flex;align-items:center;gap:var(--s3, 12px)}
+.btn-bar{width:100%;border:0;background:transparent;cursor:pointer;font-family:inherit;
+  padding:2px 0;border-radius:var(--r-btn)}
+.btn-bar:hover{background:var(--bg-soft)}
+
+/* ---------- 시간 고르기 ---------- */
+.timegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:var(--s2, 8px)}
+.tchip{height:38px;border:1px solid var(--border);border-radius:var(--r-btn);background:var(--surface);
+  color:var(--text);font-size:14px;font-family:inherit;cursor:pointer}
+.tchip:hover{border-color:var(--primary)}
+.tchip.ok{border-color:var(--success);background:rgba(15,122,82,.07)}
+.tchip.on{background:var(--primary);color:var(--on-pri);border-color:var(--primary);font-weight:700}
+.dot-ok{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid var(--success);
+  background:rgba(15,122,82,.18);vertical-align:middle;margin-right:2px}
+
+/* ---------- 고르는 줄 (끌올할 글) ---------- */
+.pickrow{display:flex;gap:var(--s3, 12px);align-items:center;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-card);padding:var(--s3, 12px);cursor:pointer}
+.pickrow.on{border-color:var(--primary);border-width:2px;padding:calc(var(--s3, 12px) - 1px)}
+.pickrow .mid{flex:1;min-width:0}
+.pickrow .mid .met{display:flex;gap:var(--s3, 12px);flex-wrap:wrap;margin-top:2px;font-size:13px}
+.pickrow .mid .met .k{color:var(--muted)}
+.pickrow .rank{flex:none;font-size:13px;color:var(--muted);white-space:nowrap}
+
+/* ---------- 상품 고르기 상자 ---------- */
+.planbox{display:flex;flex-direction:column;gap:2px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-card);padding:var(--sp-card);cursor:pointer}
+.planbox.on{border-color:var(--primary);border-width:2px;padding:calc(var(--sp-card) - 1px)}
+.planbox .nm{font-size:15px;font-weight:700}
+.planbox .pr{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.planbox .exp{margin-top:var(--s2, 8px);font-size:12px;color:var(--acc-text)}
+
+/* ---------- 순위가 어떻게 바뀌나 ---------- */
+.rank-move{display:flex;align-items:center;gap:var(--s4, 16px);padding:var(--s4, 16px);
+  border-radius:var(--r-btn);background:var(--bg-soft)}
+.rank-move .arrow{font-size:20px;color:var(--muted)}
+
+/* ---------- 양쪽 주장 나란히 ---------- */
+.split-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4, 16px)}
+.split-2 > *{min-width:0}
+.side-a,.side-b{border:1px solid var(--border);border-radius:var(--r-card);padding:var(--sp-card);
+  background:var(--surface)}
+.side-a{border-left:3px solid var(--primary)}
+.side-b{border-left:3px solid var(--accent)}
+
+/* ---------- 목록 줄 안에 넣는 작은 단계 표시 ---------- */
+.mini-escrow{display:block;margin-top:var(--s2, 8px)}
+.mini-escrow .escrow{gap:4px}
+.mini-escrow .es{padding:5px 4px}
+.mini-escrow .es.on{padding:4px 3px}
+.mini-escrow .es .dot{width:18px;height:18px;font-size:11px}
+.mini-escrow .es .lb{font-size:11px;margin-top:3px}
+.mini-escrow .es .when{display:none}
+
+/* ---------- 사진 넘겨보기 ---------- */
+.gal{position:relative}
+.gal-n{position:absolute;right:10px;top:10px;padding:2px 10px;border-radius:var(--r-badge);
+  background:#4A332E;color:#FFFFFF;font-size:12px;font-weight:600}
+.gal-nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--border);background:rgba(255,255,255,.92);color:var(--text);
+  font-size:18px;cursor:pointer;font-family:inherit}
+.gal-nav.prev{left:10px}
+.gal-nav.next{right:10px}
+
+/* ---------- 올리는 중인 사진 칸 ---------- */
+.photo-cell.up{display:flex;align-items:center;justify-content:center;min-height:120px;background:var(--bg-soft)}
+.photo-cell .up-in{width:80%;text-align:center}
+
+/* ---------- 위험 배지 ---------- */
+.badge.b-danger{background:rgba(192,57,43,.12);color:var(--danger)}
+
+/* ---------- 열 이름을 눌러 정렬하는 표 ---------- */
+.table.sortable th{cursor:pointer}
+.table.sortable th:hover{background:var(--pri-06)}
+.table.sortable th::after{content:' ⇅';color:var(--muted);font-weight:400}
+
+/* ---------- 신고된 말 ---------- */
+.bub.hl{background:var(--hl);border-color:var(--hl)}
+
+/* ---------- 기한 넘긴 표 줄 ---------- */
+.table tr.over td:first-child{box-shadow:inset 3px 0 0 var(--danger)}
+
+/* ---------- 좁은 화면 ---------- */
+@media (max-width:860px){
+  .split-2{grid-template-columns:minmax(0,1fr)}
+  .notice-row{grid-template-columns:72px minmax(0,1fr);row-gap:var(--s1, 4px)}
+  .notice-row .at,.notice-row .hit{text-align:left;grid-column:2}
+  .rank-move{flex-wrap:wrap}
+}
+
+
+
+
+/* 채팅 입력 자리 — 칩 줄과 입력 상자를 «위아래»로 쌓는다.
+   ⚠ 물려받은 .chat-in 은 가로 한 줄이라 여기에 쓰면 폰 폭에서 옆으로 밀린다(2026-09-07). */
+.chat-send{display:block;border-top:1px solid var(--border);padding:var(--s3, 12px) 0}
+.chat-send .searchbar{width:100%}
+
+/* 안내 글 바로 아래 붙는 칩 줄 — 맞붙지 않게 한 칸 띄운다 (검수 H2) */
+p + .chips{margin-top:var(--sp-item, 12px)}
+
+
+
+/* ── 예시 사진 ──────────────────────────────────────────────
+   이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
+   ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
+
+/* ⚠ 자리표를 «우리 손으로» 기준점으로 만든다. 팩 CSS 를 믿지 않는다.
+   2026-08-11: 매칭 팩의 .ph 에는 position:relative 가 없었다(다른 여섯 팩에는 있었다).
+   그래서 아래 position:absolute 가 저 멀리 있는 조상을 기준으로 잡혀,
+   64px 프로필 사진이 **페이지 전체를 덮었다.** 히어로 사진이 아래 카드 위로 흘러내리고,
+   고수 목록은 빈 네모가 되고, 분야 목록은 데스크톱에서 통째로 가려졌다.
+   기준점이 없으면 absolute 는 어디로든 간다 — 여기서 못 박는다. */
+.ph{position:relative}
+.ph > img[data-예시]{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+/* 사진이 들어간 자리에서는 「이미지 영역 (…)」 글자를 감춘다.
+   지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
+.ph > img[data-예시] ~ .lb{display:none}
+/* ── 예시 사진 끝 ── */

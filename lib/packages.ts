@@ -21,6 +21,7 @@ import { MATCHING } from "@/template-data-matching";
 import { RENTAL } from "@/template-data-rental";
 import { INTERIOR } from "@/template-data-interior";
 import { PETCARE } from "@/template-data-petcare";
+import { USED } from "@/template-data-used";
 import { LMS_DEEP } from "@/template-data-lms-deep";
 import { BEAUTY_DEEP } from "@/template-data-beauty-deep";
 import { TRAVEL_DEEP } from "@/template-data-travel-deep";
@@ -29,6 +30,7 @@ import { MATCHING_DEEP } from "@/template-data-matching-deep";
 import { RENTAL_DEEP } from "@/template-data-rental-deep";
 import { INTERIOR_DEEP } from "@/template-data-interior-deep";
 import { PETCARE_DEEP } from "@/template-data-petcare-deep";
+import { USED_DEEP } from "@/template-data-used-deep";
 import type { DeepInput } from "@/template-deep";
 import { SHOWCASE_VIDEO_ID } from "@/lib/site";
 
@@ -857,6 +859,72 @@ export const PACKAGES: PackageDef[] = [
       ],
     },
   },
+  {
+    id: "used",
+    title: "회원끼리 사고파는 중고거래 장터",
+    category: "commerce",
+    industry: "중고거래",
+    // ⚠ 이웃 팩과 말이 겹치지 않게 가른다.
+    //   매칭은 «업체를 이어 주는 곳», 공동구매는 «여럿이 모여 한 상품을 싸게 사는 곳»,
+    //   이 팩은 «회원 누구나 물건을 올리고 회원끼리 사고파는 곳»이다.
+    //   갈라지는 낱말 — 「판매글」 「동네」 「매너 점수」 「안전결제(에스크로)」 「끌올」.
+    tagline:
+      "회원 누구나 쓰던 물건을 올리고 회원끼리 사고파는 동네 장터 AI팩. 판매글 등록, 동네·거리순 찾기, 1:1 채팅 흥정, 안전결제(에스크로), 서로 남기는 후기·매너 점수, 신고 처리 대기열, 끌올까지",
+    /* A 회차(2026-09-07) — 디럭스(2뎁스 40화면)를 코럴 선셋 + 목록 중심형으로 만든다.
+       프리미엄(3뎁스 201화면, 레트로 페이퍼 + 대시보드형)은 B 회차 몫이라 아직 화면이 없다.
+       ⚠ 그래서 이 팩은 아직 LISTED_IDS 에 없다 — 진열은 B 회차가 한다. */
+    plans: makePlans(
+      USED,
+      USED_DEEP,
+      { standard: null, plus: null, deluxe: null, premium: null },
+      { base: 40, deep: 201 },
+    ),
+    data: USED,
+    deep: USED_DEEP,
+    promptSamples: ["sl1", "ch2", "ad1"],
+    presetStyles: ["coral", "mono", "retro"],
+    presetFits: [
+      "동네 이웃끼리 물건을 주고받는 친근한 장터, 20~30대 모바일 이용자가 많은 서비스",
+      "물건 사진이 제각각이라 색을 절제해야 하는 장터, 표와 목록이 주인공인 화면",
+      "빈티지·수집품·리셀처럼 「쓰던 것」의 결 자체가 값인 장터",
+    ],
+    layoutKeys: ["list", "console"],
+    fileLabel: "중고거래",
+    integrations: [
+      { area: "로그인·회원가입", detail: "이메일 가입, 소셜 로그인, 본인인증. 회원 한 사람이 사는 쪽이자 파는 쪽이다" },
+      { area: "위치·동네 인증", detail: "현재 위치로 동네 잡기, 동네 인증, 거리순 정렬과 동네 범위 3단계" },
+      { area: "사진 업로드", detail: "판매글 사진 최대 10장, 순서 바꾸기와 대표 지정, 채팅 사진, 신고 증거 캡처" },
+      { area: "1:1 채팅", detail: "실시간 대화, 읽음 표시, 가격 제안 카드와 약속 카드, 차단·신고" },
+      { area: "안전결제(에스크로)", detail: "결제 대금 보관, 운송장 등록, 구매확정 시 정산, 자동 확정 기한, 분쟁 시 보류" },
+      { area: "알림", detail: "관심 키워드 새 매물, 찜한 물건 값 내림, 채팅, 거래 상태 바뀜, 후기 도착" },
+      { area: "결제(끌올·광고)", detail: "끌올·상단 고정 상품 결제와 포인트, 집행 내역과 환불" },
+    ],
+    audience: [
+      "회원끼리 직접 사고파는 장터(중고거래·리셀·수집품 거래) 사이트를 만들려는 분",
+      "쇼핑몰 솔루션으로는 «회원이 상품을 올리는» 구조를 못 만들어 막힌 분",
+      "안전결제·후기·신고 처리까지 갖춘 거래 플랫폼을 설계해야 하는 분",
+    ],
+    painPoints: [
+      "카페24·아임웹은 「사장님 한 명이 파는 쇼핑몰」이라 상품을 올릴 수 있는 사람이 관리자 하나뿐이다. 회원이 스스로 물건을 올리는 순간 그 도구는 통째로 못 쓴다",
+      "카페24 「오픈마켓」은 내 상품을 11번가·쿠팡으로 내보내는 기능이지, 내 사이트에 판매자를 여럿 두는 것이 아니다",
+      "거래가 화면이 아니라 «대화»로 이뤄진다 — 값 흥정과 약속 잡기가 1:1 채팅 안에서 끝나는데 이 화면 자체가 쇼핑몰 솔루션에는 없다",
+      "돈을 플랫폼이 잠깐 들고 있다가 보내는 안전결제는 「결제하면 끝」인 쇼핑몰 결제와 단계가 다르다 — 발송·수령확인·정산·분쟁이 뒤에 붙는다",
+      "후기를 «양쪽»이 서로 남긴다. 산 사람도 평가받는 구조라 상품 리뷰 모델로는 표현이 안 된다",
+      "회원이 물건을 올리는 순간 사기·금지품목 신고가 따라오고, 운영자 쪽에 신고 처리 대기열이 필요해진다",
+    ],
+    seo: {
+      title: "중고거래 장터 플랫폼 화면설계서 · AI팩",
+      description:
+        "회원끼리 사고파는 중고거래 장터 AI팩(기획 산출물 한 벌)입니다. 판매글 등록, 동네·거리순 찾기, 1:1 채팅, 안전결제, 매너 점수, 신고 처리까지 화면 목록과 기능정의를 미리 확인하세요.",
+      keywords: [
+        "중고거래 사이트 기획서",
+        "회원 판매 장터 화면설계서",
+        "안전결제 에스크로 기능정의서",
+        "중고 플랫폼 신고 처리 설계",
+        "동네 중고거래 앱 기획",
+      ],
+    },
+  },
 ];
 
 /**
@@ -1016,6 +1084,7 @@ const HOME_TABS: Record<string, string> = {
   rental: "렌탈·대여",
   interior: "인테리어 시공",
   petcare: "반려견 유치원",
+  used: "중고거래",
 };
 
 export function homePacks(): HomeIndustry[] {

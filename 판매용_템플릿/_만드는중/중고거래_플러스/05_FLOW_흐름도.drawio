@@ -1,0 +1,221 @@
+<mxfile><diagram name="메뉴 간 이동"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g0_n0" value="홈
+HO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="255" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g0_n1" value="매물 찾기
+SE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g0_n2" value="판매하기
+SL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g0_n3" value="끌올·광고
+BS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g0_n4" value="채팅
+CH" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="300" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g0_n5" value="안전결제
+PA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="345" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g0_n6" value="마이페이지
+MY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="165" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g0_n7" value="운영자
+AD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="390" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g0_n8" value="고객센터
+CS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="480" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g0_e0" value="3개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n0" target="g0_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e1" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n0" target="g0_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e2" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n0" target="g0_n5"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e3" value="2개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n0" target="g0_n8"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e4" value="2개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n1" target="g0_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e5" value="3개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n1" target="g0_n6"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e6" value="2개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n1" target="g0_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e7" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n1" target="g0_n5"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e8" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n2" target="g0_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e9" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n2" target="g0_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e10" value="2개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n2" target="g0_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e11" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n2" target="g0_n6"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e12" value="2개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n3" target="g0_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e13" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n3" target="g0_n8"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e14" value="2개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n4" target="g0_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e15" value="2개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n4" target="g0_n5"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e16" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n4" target="g0_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e17" value="4개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n5" target="g0_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e18" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n5" target="g0_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e19" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n5" target="g0_n6"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e20" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n6" target="g0_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e21" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n6" target="g0_n5"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e22" value="4개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n6" target="g0_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e23" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n7" target="g0_n6"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e24" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n7" target="g0_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e25" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n7" target="g0_n5"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e26" value="2개 이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n8" target="g0_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g0_e27" value="이동" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g0_n8" target="g0_n5"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram>
+<diagram name="HO 홈"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g1_n0" value="홈
+HO0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g1_n1" value="카테고리 전체 보기
+HO0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="610" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g1_n2" value="안전거래·이용안내
+HO0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="900" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g1_n3" value="공지·이벤트 목록
+HO0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g1_e0" value="카테고리 전체 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g1_n0" target="g1_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g1_e1" value="거래 금지 품목 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g1_n1" target="g1_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g1_e2" value="홈으로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g1_n3" target="g1_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram>
+<diagram name="SE 매물 찾기"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g2_n0" value="내 동네 설정
+SE0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g2_n1" value="매물 목록
+SE0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="165" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g2_n2" value="검색
+SE0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g2_n3" value="매물 상세
+SE0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g2_n4" value="결과 없음
+SE0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="300" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g2_e0" value="이 동네 매물 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g2_n0" target="g2_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g2_e1" value="매물 자세히 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g2_n1" target="g2_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g2_e2" value="검색으로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g2_n1" target="g2_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g2_e3" value="결과 없을 때" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g2_n1" target="g2_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g2_e4" value="결과 전체 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g2_n2" target="g2_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g2_e5" value="결과 없을 때" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g2_n2" target="g2_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g2_e6" value="조건 다시 잡기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g2_n4" target="g2_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram>
+<diagram name="SL 판매하기"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g3_n0" value="판매글 작성
+SL0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="1190" y="75" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g3_n1" value="사진 등록·정리
+SL0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g3_n2" value="얼마에 팔까 — 시세 보기
+SL0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g3_n3" value="등록 완료
+SL0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="610" y="75" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g3_n4" value="내 판매글 관리
+SL0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="900" y="75" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g3_e0" value="사진 정리하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g3_n0" target="g3_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g3_e1" value="얼마에 팔까 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g3_n0" target="g3_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g3_e2" value="등록하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g3_n0" target="g3_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g3_e3" value="판매글로 돌아가기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g3_n1" target="g3_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g3_e4" value="등록하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g3_n1" target="g3_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g3_e5" value="판매글로 돌아가기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g3_n2" target="g3_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g3_e6" value="내 판매글 관리" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g3_n3" target="g3_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g3_e7" value="판매글 더 쓰기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g3_n3" target="g3_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g3_e8" value="판매글 쓰기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g3_n4" target="g3_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram>
+<diagram name="BS 끌올·광고"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g4_n0" value="끌올하기
+BS0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="610" y="75" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g4_n1" value="광고 상품·요금 안내
+BS0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g4_n2" value="끌올·광고 내역
+BS0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g4_e0" value="광고 상품 자세히" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g4_n0" target="g4_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g4_e1" value="끌올 내역 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g4_n0" target="g4_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g4_e2" value="끌올하러 가기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g4_n1" target="g4_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g4_e3" value="끌올하러 가기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g4_n2" target="g4_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram>
+<diagram name="CH 채팅"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g5_n0" value="채팅 목록
+CH0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g5_n1" value="채팅방
+CH0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g5_n2" value="거래 약속 잡기
+CH0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g5_n3" value="신고·차단
+CH0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g5_e0" value="대화 열기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g5_n0" target="g5_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g5_e1" value="약속 잡기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g5_n1" target="g5_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g5_e2" value="신고·차단하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g5_n1" target="g5_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g5_e3" value="채팅 목록으로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g5_n1" target="g5_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g5_e4" value="채팅으로 돌아가기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g5_n2" target="g5_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g5_e5" value="채팅으로 돌아가기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g5_n3" target="g5_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram>
+<diagram name="PA 안전결제"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g6_n0" value="안전결제 시작·안내
+PA0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="610" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g6_n1" value="결제
+PA0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="75" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g6_n2" value="발송 등록 (판매자)
+PA0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g6_n3" value="수령 확인·구매확정
+PA0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g6_n4" value="거래 진행 상태
+PA0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="610" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g6_e0" value="결제하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g6_n0" target="g6_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g6_e1" value="거래 진행 상태 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g6_n1" target="g6_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g6_e2" value="안전결제 안내로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g6_n1" target="g6_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g6_e3" value="거래 진행 상태 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g6_n2" target="g6_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g6_e4" value="거래 진행 상태 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g6_n3" target="g6_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g6_e5" value="수령 확인하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g6_n4" target="g6_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g6_e6" value="발송 등록하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g6_n4" target="g6_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram>
+<diagram name="MY 마이페이지"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g7_n0" value="내 프로필·매너 점수
+MY0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="610" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g7_n1" value="구매 내역
+MY0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="75" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g7_n2" value="찜한 물건
+MY0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g7_n3" value="거래 후기 쓰기
+MY0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="165" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g7_n4" value="받은 후기·매너 점수 상세
+MY0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g7_n5" value="관심 키워드·알림 설정
+MY0601" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="210" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g7_e0" value="받은 후기 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n0" target="g7_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g7_e1" value="찜한 물건 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n0" target="g7_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g7_e2" value="알림 설정" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n0" target="g7_n5"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g7_e3" value="후기 쓰기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n1" target="g7_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g7_e4" value="받은 후기 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n3" target="g7_n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g7_e5" value="구매 내역으로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n3" target="g7_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g7_e6" value="후기 쓰기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n4" target="g7_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g7_e7" value="내 프로필로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n4" target="g7_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g7_e8" value="내 프로필로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g7_n5" target="g7_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram>
+<diagram name="AD 운영자"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g8_n0" value="신고 처리 대기열
+AD0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="610" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g8_n1" value="신고 상세·조치
+AD0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g8_n2" value="금지품목·거래규칙 관리
+AD0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g8_n3" value="안전결제 정산·분쟁
+AD0401" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g8_n4" value="운영자 로그인
+AD0501" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="210" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g8_e0" value="신고 자세히 보기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n0" target="g8_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g8_e1" value="금지품목·규칙 관리" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n0" target="g8_n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g8_e2" value="대기열로 돌아가기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n1" target="g8_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g8_e3" value="신고 대기열로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n2" target="g8_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g8_e4" value="신고 대기열로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n3" target="g8_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g8_e5" value="신고 대기열로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n4" target="g8_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g8_e6" value="정산·분쟁으로" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g8_n4" target="g8_n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram>
+<diagram name="CS 고객센터"><mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" math="0" shadow="0"><root>
+<mxCell id="0"/>
+<mxCell id="1" parent="0"/>
+<mxCell id="g9_n0" value="자주 묻는 질문
+CS0101" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="30" y="30" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g9_n1" value="1:1 문의
+CS0201" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E2D3AE;fontColor=#1F2024;" vertex="1" parent="1"><mxGeometry x="320" y="75" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g9_n2" value="공지사항 상세
+CS0301" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BC5918;strokeColor=#BC5918;fontColor=#FFFFFF;" vertex="1" parent="1"><mxGeometry x="30" y="120" width="180" height="60" as="geometry"/></mxCell>
+<mxCell id="g9_e0" value="1:1 문의하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g9_n0" target="g9_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g9_e1" value="자주 묻는 질문" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g9_n1" target="g9_n0"><mxGeometry relative="1" as="geometry"/></mxCell>
+<mxCell id="g9_e2" value="문의하기" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#8B8FA3;" edge="1" parent="1" source="g9_n2" target="g9_n1"><mxGeometry relative="1" as="geometry"/></mxCell>
+</root></mxGraphModel></diagram></mxfile>

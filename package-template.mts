@@ -129,6 +129,14 @@ const INDUSTRIES = [
        ⚠ siteBase·siteDeep 을 «일부러» 비운다. 완성화면을 팩 자기 폴더 안에 만들
          것이라 가리키면 원본과 대상이 같아져 copyFileSync 가 자기 자신을 덮어쓴다.
          비워 두면 「팩에 있던 것을 그대로 둡니다」로 흘러가고 화면 수도 팩에서 센다. */ },
+  { key: "used", label: "중고거래", title: "회원끼리 사고파는 중고거래 장터",
+    base: `${W}/중고거래_회원장터`, deep: `${W}/중고거래_회원장터_상세IA`,
+    /* A 회차(2026-09-07) — 디럭스(코럴 선셋 × 목록 중심형)까지만 만든다.
+       프리미엄(레트로 페이퍼 × 대시보드형, 3뎁스)은 B 회차 몫이라 아직 화면이 없다.
+
+       ⚠ siteBase·siteDeep 을 «일부러» 비운다. 완성화면을 팩 자기 폴더 안에 만들
+         것이라 가리키면 원본과 대상이 같아져 copyFileSync 가 자기 자신을 덮어쓴다.
+         비워 두면 「팩에 있던 것을 그대로 둡니다」로 흘러가고 화면 수도 팩에서 센다. */ },
 ] as const satisfies readonly {
   key: string; label: string; title: string;
   base: string; deep: string; siteBase?: string; siteDeep?: string;

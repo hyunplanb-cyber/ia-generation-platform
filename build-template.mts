@@ -34,6 +34,7 @@ import { INTERIOR } from "./template-data-interior";
 import { MATCHING } from "./template-data-matching";
 import { GROUPBUY } from "./template-data-groupbuy";
 import { PETCARE } from "./template-data-petcare";
+import { USED } from "./template-data-used";
 
 // 어떤 템플릿을 만들지 인자로 받는다: npx tsx build-template.mts lms | beauty
 const TEMPLATES = {
@@ -46,6 +47,7 @@ const TEMPLATES = {
   matching: { data: MATCHING, out: "_작업/동네서비스_매칭플랫폼", title: "동네 서비스 매칭 플랫폼" },
   groupbuy: { data: GROUPBUY, out: "_작업/공동구매_공구플랫폼", title: "공동구매(공구) 플랫폼" },
   petcare: { data: PETCARE, out: "_작업/반려동물케어_유치원예약", title: "반려견 유치원 등원 예약·운영" },
+  used: { data: USED, out: "_작업/중고거래_회원장터", title: "회원끼리 사고파는 중고거래 장터" },
   // 무료 샘플(약식) — 인스타 릴스 리드마그넷용
   creator: { data: CREATOR, out: "판매용_템플릿/_무료샘플_콘텐츠판매사이트", title: "1인 크리에이터 콘텐츠 판매 사이트" },
 };

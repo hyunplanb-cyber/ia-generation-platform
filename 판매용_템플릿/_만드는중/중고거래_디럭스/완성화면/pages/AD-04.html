@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>안전결제 정산·분쟁 · 우리동네장터</title>
+<meta name="description" content="지표 카드 4개(보관 중인 돈·오늘 정산 예정·분쟁 진행·수수료 수입) · 탭(정산 대기·정산 완료·분쟁) · 기간 고르기 · 표(거래번호·매물·구매자·판매자·금액·수수료·정산 예정일·상태) · 정산 보류와 사유 · 분쟁 건 양쪽 주장 나란히 보기 · 증거 사진 대조 ">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="AD-04">
+<header class="gnb pro"><div class="gnb-in">
+    <a class="logo" href="AD-01.html"><span class="mark">장</span>우리동네장터<span class="badge b-pri" style="margin-left:2px">운영자</span></a>
+    <nav class="gnb-nav"><a href="AD-01.html" class="on">신고 처리</a><a href="AD-03.html" class="on">금지품목·규칙</a><a href="AD-04.html" class="on">정산·분쟁</a></nav>
+    <div class="gnb-util"><span class="badge b-warn">대기 3</span>
+       <button class="bell" type="button" data-toast="새 신고가 접수됐어요" aria-label="알림">🔔<span class="dot">3</span></button>
+       <a class="btn btn-ghost btn-sm" href="HO-01.html">손님 화면으로</a><a class="gnb-ava" href="AD-05.html" title="운영자"><div class="ph ph-fix t2 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"><img data-예시 src="../assets/예시/인물 - 6.webp" alt=""></div></a></div>
+  </div></header>
+
+
+
+<main class="main pb-stick "><div class="wrap"><div class="split"><aside class="side">
+    <div class="gl">신고</div><a href="AD-01.html">신고 처리 대기열<span class="n">3</span></a><a href="AD-02.html">신고 상세·조치</a><div class="gl">정책</div><a href="AD-03.html">금지품목·거래규칙</a><div class="gl">돈</div><a href="AD-04.html" class="on">안전결제 정산·분쟁<span class="n">4</span></a>
+    <div class="cr">
+      <div class="t-sub">기한 넘긴 신고</div>
+      <div class="row-b"><b class="big">1</b><a class="btn btn-pri btn-xs" href="AD-01.html">보기</a></div>
+    </div>
+  </aside><div>
+  <div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">안전결제 정산·분쟁</h1><p class="t-sub">남의 돈을 다루는 화면입니다. 숫자가 서로 맞는지 늘 확인하세요</p></div></div>
+
+  <div class="g4">
+    <div class="stat"><div class="n" data-recalc-out="term" data-i="0">525,000원</div>
+      <div class="l">지금 보관 중인 돈</div><div class="d">구매확정 전이라 아직 판매자에게 안 간 돈이에요</div></div>
+    <div class="stat"><div class="n" data-recalc-out="term" data-i="1">231,600원</div>
+      <div class="l">이번 주 정산 예정</div></div>
+    <div class="stat danger"><div class="n" data-recalc-out="term" data-i="2">1건</div>
+      <div class="l">분쟁 진행</div></div>
+    <div class="stat"><div class="n" data-recalc-out="term" data-i="3">33,915원</div>
+      <div class="l">고른 기간 수수료 수입</div></div>
+  </div>
+
+  <div class="mt-block">
+  <div class="tabs"><button class="tab on" type="button" data-pane="st0">정산 대기<span class="cnt">2</span></button><button class="tab" type="button" data-pane="st1">정산 완료<span class="cnt">2</span></button><button class="tab" type="button" data-pane="st2">분쟁<span class="cnt">1</span></button></div>
+
+  <div class="row-c wrap-row mt4 mb3" style="gap:8px">
+    <select class="input" style="width:auto" data-recalc="term"
+      ><option selected data-vals="525,000원|231,600원|1건|33,915원">이번 달</option
+      ><option data-vals="0원|0원|1건|81,396원">지난 달</option
+      ><option data-vals="525,000원|231,600원|1건|115,311원">올해 전체</option></select>
+    <div class="searchbar" style="max-width:280px">
+      <input class="in" type="search" placeholder="거래번호·닉네임으로 찾기">
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="찾은 결과만 보여드릴게요">찾기</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" type="button" style="margin-left:auto" data-toast="정산 내역 파일을 만들었어요">내보내기</button>
+  </div>
+
+  <div>
+    <div data-pane-body="st0"><div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:11%">거래번호</th><th>물건</th><th style="width:10%">구매자</th><th style="width:10%">판매자</th><th style="width:10%">결제액</th><th style="width:9%">수수료</th><th style="width:10%">수령액</th><th style="width:9%">정산일</th><th style="width:10%"></th></tr></thead><tbody><tr class=""><td>T-90412</td><td><div class="row-c" style="gap:8px"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:30px;height:30px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 16.webp" alt=""></div><span>에어팟 프로 2세대</span></div></td><td>하늘이네</td><td>민트초코</td><td>178,000원</td><td>− 6,230원</td><td><b>171,770원</b></td><td>09-12</td><td><button class="btn btn-ghost btn-xs" type="button" data-modal="hold2">정산 보류</button></td></tr><tr class=""><td>T-90408</td><td><div class="row-c" style="gap:8px"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:30px;height:30px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 17.webp" alt=""></div><span>기계식 키보드 (적축)</span></div></td><td>달빛창가</td><td>하늘이네</td><td>62,000원</td><td>− 2,170원</td><td><b>59,830원</b></td><td>09-11</td><td><button class="btn btn-ghost btn-xs" type="button" data-modal="hold2">정산 보류</button></td></tr></tbody><tfoot><tr><td>합계</td><td></td><td></td><td></td><td><b>240,000원</b></td><td><b>− 8,400원</b></td><td><b>231,600원</b></td><td></td><td></td></tr></tfoot></table></div>
+      <div class="banner banner-ok mt3"><span class="ico">🧮</span><div class="grow"><b>합계가 맞습니다</b>
+        <div class="t-sub mt1">결제액 240,000원 − 수수료 8,400원
+        = 수령액 231,600원</div></div></div>
+    </div>
+    <div data-pane-body="st1" hidden><div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:11%">거래번호</th><th>물건</th><th style="width:10%">구매자</th><th style="width:10%">판매자</th><th style="width:10%">결제액</th><th style="width:9%">수수료</th><th style="width:10%">수령액</th><th style="width:9%">정산일</th><th style="width:10%"></th></tr></thead><tbody><tr class=""><td>T-90395</td><td><div class="row-c" style="gap:8px"><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:30px;height:30px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 18.webp" alt=""></div><span>겨울 패딩 (여성 M)</span></div></td><td>해질녘</td><td>하늘이네</td><td>55,000원</td><td>− 1,925원</td><td><b>53,075원</b></td><td>09-05</td><td><button class="btn btn-ghost btn-xs" type="button" data-modal="hold2">정산 보류</button></td></tr><tr class=""><td>T-90360</td><td><div class="row-c" style="gap:8px"><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:30px;height:30px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 1.webp" alt=""></div><span>아이패드 10세대 64G 와이파이</span></div></td><td>초록나무</td><td>민트초코</td><td>389,000원</td><td>− 13,615원</td><td><b>375,385원</b></td><td>09-02</td><td><button class="btn btn-ghost btn-xs" type="button" data-modal="hold2">정산 보류</button></td></tr></tbody><tfoot><tr><td>합계</td><td></td><td></td><td></td><td><b>444,000원</b></td><td><b>− 15,540원</b></td><td><b>428,460원</b></td><td></td><td></td></tr></tfoot></table></div></div>
+    <div data-pane-body="st2" hidden><div class="table-wrap table-scroll"><table class="table "><thead><tr><th style="width:11%">거래번호</th><th>물건</th><th style="width:10%">구매자</th><th style="width:10%">판매자</th><th style="width:10%">결제액</th><th style="width:9%">수수료</th><th style="width:10%">수령액</th><th style="width:9%">정산일</th><th style="width:10%"></th></tr></thead><tbody><tr class=""><td>T-90371</td><td><div class="row-c" style="gap:8px"><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:30px;height:30px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 2.webp" alt=""></div><span>닌텐도 스위치 OLED + 게임 2개</span></div></td><td>바람개비</td><td>달빛창가</td><td>285,000원</td><td>− 9,975원</td><td><b>275,025원</b></td><td>보류</td><td><button class="btn btn-pri btn-xs" type="button" data-toast="아래 분쟁 판단으로 내려갑니다">분쟁 보기</button></td></tr></tbody><tfoot><tr><td>합계</td><td></td><td></td><td></td><td><b>285,000원</b></td><td><b>− 9,975원</b></td><td><b>275,025원</b></td><td></td><td></td></tr></tfoot></table></div></div>
+  </div>
+  </div>
+
+  <div class="mt-block"><section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">분쟁 판단 — T-90371</h2></div>
+  
+  <div class="card ">
+  
+  <div class="card-bd ">
+    <div class="split-2">
+      <div class="side-a">
+        <div class="row-c wrap-row mb2"><span class="badge b-pri">구매자</span><b>바람개비</b>
+          <span class="t-sub">09-05 20:11</span></div>
+        <p>사진에는 조이콘 흠집이 없었는데 받아 보니 오른쪽 조이콘에 긁힘이 있습니다. 게임 칩도 한 개만 왔어요.</p>
+        <div class="row wrap-row mt3" style="gap:8px">
+          <div class="ph ph-fix t3 ph-sq ph-tiny" style="width:88px;height:88px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 6.webp" alt=""><span class="lb">1000×1000</span></div><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:88px;height:88px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 7.webp" alt=""><span class="lb">1000×1000</span></div><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:88px;height:88px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 8.webp" alt=""><span class="lb">1000×1000</span></div>
+        </div>
+      </div>
+      <div class="side-b">
+        <div class="row-c wrap-row mb2"><span class="badge b-acc">판매자</span><b>달빛창가</b>
+          <span class="t-sub">09-06 09:24</span></div>
+        <p>보낼 때 흠집은 없었습니다. 게임 칩은 두 개 다 넣어 보냈고 포장 사진도 있습니다.</p>
+        <div class="row wrap-row mt3" style="gap:8px">
+          <div class="ph ph-fix t5 ph-sq ph-tiny" style="width:88px;height:88px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 9.webp" alt=""><span class="lb">1000×1000</span></div><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:88px;height:88px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"><img data-예시 src="../assets/예시/제품 - 11.webp" alt=""><span class="lb">1000×1000</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-block"><dl class="kv "><dt>물건</dt><dd>닌텐도 스위치 OLED + 게임 2개</dd><dt>결제액</dt><dd>285,000원</dd><dt>수수료</dt><dd>9,975원</dd><dt>판매자 수령 예정</dt><dd>275,025원</dd><dt>상태</dt><dd><span class="badge b-warn">정산 보류 중</span></dd></dl></div>
+
+    <div class="mt-block">
+      <b class="t-card">어떻게 판단할까요</b>
+      <div class="stack-sm mt3">
+        <label class="radio"><input type="radio" name="dj"><b>구매자에게 전액 환불</b>
+          <span class="t-sub">285,000원을 구매자에게 돌려주고 판매자에게는 아무것도 가지 않습니다</span></label>
+        <label class="radio"><input type="radio" name="dj"><b>판매자에게 정산</b>
+          <span class="t-sub">275,025원이 판매자에게 갑니다</span></label>
+        <label class="radio on"><input type="radio" name="dj" checked><b>일부 환불</b>
+          <span class="t-sub">아래에 적은 금액을 구매자에게 돌려주고 나머지를 정산합니다</span></label>
+      </div>
+      <div class="sub-fld mt3">
+        <div class="row-c" style="gap:8px">
+          <input class="input" type="text" inputmode="numeric" value="50,000" style="flex:1">
+          <span class="nowrap">원 환불</span>
+        </div>
+        <p class="t-sub mt2">구매자에게 50,000원 · 판매자에게 225,025원</p>
+      </div>
+      <div class="fld mt4"><label class="lb" for="why2">판단 근거 (반드시 적어 주세요)</label>
+        <textarea class="input" id="why2" rows="3" placeholder="양쪽 사진과 대화를 보고 무엇을 근거로 판단했는지">판매자 포장 사진에 조이콘 흠집이 이미 보임. 게임 칩은 두 개 모두 확인됨. 흠집만 인정해 일부 환불.</textarea></div>
+    </div>
+
+    <div class="mt-block">
+      <b class="t-card">양쪽에 갈 문구</b>
+      <div class="t-sub mt3 mb2">구매자에게</div>
+      <div class="box "><p>양쪽 자료를 확인했습니다. 판매자 포장 사진에서 조이콘 흠집이 이미 확인되어
+        <b>50,000원을 환불</b>합니다. 게임 칩은 두 개 모두 보낸 것으로 확인되었습니다.</p></div>
+      <div class="t-sub mt4 mb2">판매자에게</div>
+      <div class="box "><p>흠집을 판매글에 적지 않으신 점이 확인되어 <b>50,000원을 구매자에게 환불</b>하고,
+        나머지 <b>225,025원</b>을 정산합니다.</p></div>
+    </div>
+  </div>
+  </div></section></div>
+
+  <template id="hold2"><div class="modal">
+  <div class="modal-hd"><h3 class="t-card">정산을 보류할까요?</h3><button class="btn btn-quiet btn-sm" type="button" data-dismiss>✕</button></div>
+  <div class="modal-bd">
+    <div class="fld"><label class="lb" for="hw2">왜 보류하나요</label>
+      <textarea class="input" id="hw2" rows="3" placeholder="판매자에게 그대로 전달됩니다"></textarea></div>
+    <p class="t-sub">보류하면 정산일이 지나도 돈이 나가지 않습니다. 판매자에게 사유가 전달됩니다.</p></div>
+  <div class="modal-ft"><button class="btn btn-ghost" type="button" data-dismiss>취소</button><button class="btn btn-pri" type="button" data-dismiss data-toast="정산을 보류했어요 · 판매자에게 알렸습니다">보류</button></div></div></template>
+
+  </div></div></div></main>
+<div class="stick"><div class="stick-in"><div><span class="t-sub">확정하면 <b>50,000원</b>이 구매자에게, <b>225,025원</b>이 판매자에게 갑니다</span></div><div class="btns"><button class="btn btn-ghost" type="button" data-toast="양쪽에 추가 자료를 요청했어요">더 알아보기</button><button class="btn btn-pri" type="button" data-toast="판단을 확정했어요 · 양쪽에 알렸습니다">판단 확정</button></div></div></div>
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE-02.html">매물 찾기</a></li><li><a href="SE-01.html">내 동네 설정</a></li>
+      <li><a href="MY-03.html">찜한 물건</a></li><li><a href="MY-02.html">구매 내역</a></li>
+      <li><a href="PA-01.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL-01.html">판매글 쓰기</a></li><li><a href="SL-05.html">내 판매글</a></li>
+      <li><a href="SL-03.html">시세 보기</a></li><li><a href="BS-01.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+
+<div class="dev"><div class="spec">
+    <div class="id">AD-04</div><div class="nm">안전결제 정산·분쟁</div>
+    <div class="fd">지표 카드 4개(보관 중인 돈·오늘 정산 예정·분쟁 진행·수수료 수입) · 탭(정산 대기·정산 완료·분쟁) · 기간 고르기 · 표(거래번호·매물·구매자·판매자·금액·수수료·정산 예정일·상태) · 정산 보류와 사유 · 분쟁 건 양쪽 주장 나란히 보기 · 증거 사진 대조 · 분쟁 판단(구매자 환불·판매자 정산·일부 환불)과 근거 기록 · 양쪽에 갈 안내 문구 · 정산 내보내기 · 합계 검산</div>
+    <div class="lk"><a href="AD-01.html">신고 대기열로 ›</a><a href="PA-05.html">거래 진행 상태 보기 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">AD-04 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
