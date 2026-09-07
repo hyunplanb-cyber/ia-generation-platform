@@ -1,0 +1,26 @@
+[
+  {
+    "이름": "영상23_단추누르면어디로",
+    "pose": "긴머리_골똘히",
+    "title": "이 버튼 누르면|어디로 갈까요|화면목록에|다 적혀 있어요",
+    "cap": "- 중고거래 사이트 편 -",
+    "ep": "중고거래 사이트 편",
+    "sheet": "중고거래 디럭스 팩",
+    "rows": "화면,40개,ok|버튼 → 이동화면,101줄,ok|운영자 화면,5개,ok",
+    "음악": "Half Past Nine.mp3",
+    "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상23_단추누르면어디로_916.mp4",
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_영상23_단추누르면어디로_916.mp4"
+  },
+  {
+    "이름": "영상24_앱으로도",
+    "pose": "긴머리_노트북무릎",
+    "title": "만든 사이트를|앱으로도|내려면|무엇부터 할까요",
+    "cap": "- 앱으로 내놓는 법 편 -",
+    "ep": "앱으로 내놓는 법 편",
+    "sheet": "AI팩 전체 다운로드",
+    "rows": "사이트 내놓는 법,들어있음,ok|앱으로 내놓는 법,들어있음,ok|앱 심사,3~4주,ok",
+    "음악": "Rest Awhile Tonight.mp3",
+    "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상24_앱으로도_916.mp4",
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_영상24_앱으로도_916.mp4"
+  }
+]

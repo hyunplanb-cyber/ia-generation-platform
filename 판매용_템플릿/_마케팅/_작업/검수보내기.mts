@@ -379,13 +379,43 @@ for (const 편 of 대본들) {
        *     ① 칸을 지우지 않는다. ord 를 열쇠로 «고쳐 넣는다» — id 가 안 바뀐다.
        *     ② 마지막으로 보낸 뒤에 사장님이 손대신 흔적이 있으면 **멈춘다.**
        *        정말 덮어쓸 것이면 `--덮어쓰기` 를 붙인다. 실수는 멈추고, 뜻한 것은 지나간다. */
-      const [마지막칸] = await db
-        .select({ 때: snsCut.createdAt })
-        .from(snsCut)
-        .where(eq(snsCut.contentId, 있나.id))
-        .orderBy(desc(snsCut.createdAt))
-        .limit(1);
-      const 손댔나 = 마지막칸 ? 있나.updatedAt.getTime() > 마지막칸.때.getTime() + 5000 : false;
+      /* ⚠ 시각(updatedAt)만으로는 못 가른다 — 검수 화면을 «열어 보기만 해도» 움직인다.
+       *   2026-09-07 에 그래서, 사장님이 손대지도 않은 넷을 「고치신 흔적」이라며 막았다.
+       *   「보낸 그대로」가 남아 있으면 그것과 «글»을 맞대 본다. 없을 때만 시각으로 본다. */
+      const 보낸것길 = join(dirname(resolve(대본길)), "_보낸것", `${회차}__${이름}.json`);
+      let 손댔나: boolean;
+      if (existsSync(보낸것길)) {
+        const 지금칸 = await db
+          .select({ 글: snsCut.captionJson, ord: snsCut.ord })
+          .from(snsCut)
+          .where(eq(snsCut.contentId, 있나.id));
+        지금칸.sort((a, b) => a.ord - b.ord);
+        const 벗겨 = (s: string) => s.replace(/<[^>]+>/g, "").replaceAll("|", " ").replace(/\s+/g, " ").trim();
+        const 보낸것 = JSON.parse(readFileSync(보낸것길, "utf8")) as { 세로제목?: string; 칸들?: string[][] };
+        const 보낸칸 = 보낸것.칸들 ?? [];
+        const [지금제목] = await db
+          .select({ 제목: snsContent.verticalTitle })
+          .from(snsContent)
+          .where(eq(snsContent.id, 있나.id));
+        손댔나 =
+          벗겨(보낸것.세로제목 ?? "") !== 벗겨(지금제목?.제목 ?? "") ||
+          보낸칸.length !== 지금칸.length ||
+          지금칸.some((c, i) => {
+            let 줄: unknown = c.글;
+            if (typeof 줄 === "string") { try { 줄 = JSON.parse(줄); } catch { /* 그냥 글자열 */ } }
+            return 벗겨(Array.isArray(줄) ? 줄.join(" ") : String(줄 ?? "")) !== 벗겨((보낸칸[i] ?? []).join(" "));
+          });
+        if (!손댔나) console.log("   ○ 「보낸 그대로」와 같습니다 — 사장님이 손대신 것이 없어 그대로 갑니다.");
+      } else {
+        const [마지막칸] = await db
+          .select({ 때: snsCut.createdAt })
+          .from(snsCut)
+          .where(eq(snsCut.contentId, 있나.id))
+          .orderBy(desc(snsCut.createdAt))
+          .limit(1);
+        손댔나 = 마지막칸 ? 있나.updatedAt.getTime() > 마지막칸.때.getTime() + 5000 : false;
+        if (손댔나) console.log("   ⚠ 「보낸 그대로」가 없어 «시각»으로 봤습니다 — 헛경보일 수 있습니다.");
+      }
       if (손댔나 && !덮어쓰기 && !자막만 && !캡션만) {
         console.log(`   ⛔ 검수 화면에서 고치신 흔적이 있습니다 (${있나.updatedAt.toISOString()}).`);
         console.log("      덮어쓰면 사장님이 쓰신 제목·커버·캡션·자막이 다 사라집니다. 멈춥니다.");
