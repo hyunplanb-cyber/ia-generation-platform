@@ -5,7 +5,7 @@
     "fits": "청소·수리·돌봄처럼 생활에 가까운 분야, 안심이 중요한 서비스"
   },
   "colors": {
-    "primary (주요 액션)": "#15803D",
+    "primary (주요 액션)": "#147A3A",
     "primary-hover": "#116632",
     "accent (강조·배지)": "#508307",
     "accent-text (강조 글자용)": "#166534",
@@ -15,9 +15,9 @@
     "text (본문)": "#1C2B22",
     "text-muted (보조)": "#5B6B60",
     "border (구분선)": "#DBE7DC",
-    "success": "#15803D",
-    "warning": "#A16207",
-    "danger": "#B91C1C",
+    "success": "#14793A",
+    "warning": "#774806",
+    "danger": "#AF1B1B",
     "on-primary (주색 배경 위 글자)": "#FFFFFF",
     "on-accent (강조색 배경 위 글자)": "#FFFFFF"
   },
