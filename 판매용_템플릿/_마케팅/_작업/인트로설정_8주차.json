@@ -1,0 +1,26 @@
+[
+  {
+    "이름": "영상27_규칙을매번",
+    "pose": "긴머리_근무중",
+    "title": "같은 말을|매번 다시|하고 계신가요|적어 두면 돼요",
+    "cap": "- 규칙 파일 편 -",
+    "ep": "규칙 파일 편",
+    "sheet": "CLAUDE.md",
+    "rows": "규칙 파일,82줄 → 111줄,ok|다시 말한 횟수,0회,ok|파일 이름,CLAUDE.md,ok",
+    "음악": "Ordinary Nights.mp3",
+    "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상27_규칙을매번_916.mp4",
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_영상27_규칙을매번_916.mp4"
+  },
+  {
+    "이름": "영상28_다됐냐고묻지마",
+    "pose": "긴머리_발표",
+    "title": "다 됐어?|라고 묻지 마세요|확인할 것을|쥐여 주세요",
+    "cap": "- 확인하는 방법 편 -",
+    "ep": "확인하는 방법 편",
+    "sheet": "AI팩 스펙팩",
+    "rows": "처음 센 반영률,100%,ok|다시 센 반영률,77%,ok|멎어 있던 작업,15초,ok",
+    "음악": "Rest Awhile Tonight.mp3",
+    "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상28_다됐냐고묻지마_916.mp4",
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_영상28_다됐냐고묻지마_916.mp4"
+  }
+]
