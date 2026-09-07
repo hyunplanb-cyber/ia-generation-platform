@@ -11,9 +11,20 @@
  *     ② 아직 검토대기라도 **사장님이 검수기에서 손댄 것** (2026-09-01 사장님 지시)
  *        「영상19 내용 수정했어. 이것도 본보기로 넣어서」
  *
- *   손댄 것을 아는 법은 `검수보내기.mts` 와 같은 신호를 쓴다 —
- *   편의 `updatedAt` 이 마지막 칸의 `createdAt` 보다 5초 넘게 뒤면 사장님이 고치신 것이다.
  *   ⛔ 내가 쓰고 아무도 안 만진 글은 담지 않는다. 그건 본보기가 아니라 내 버릇이다.
+ *
+ *   ⚠ 「손댔나」를 «시각»으로 알아내던 것을 2026-09-07 에 고쳤다.
+ *     전에는 편의 `updatedAt` 이 마지막 칸의 `createdAt` 보다 5초 넘게 뒤면 손댄 것으로 봤는데,
+ *     **검수 화면을 열어 보기만 해도 그 값이 움직인다.** 그래서 내가 쓴 글 넷이
+ *     「사장님 본보기」로 되먹여지고 있었다 — 격자 괄호 같은 내 버릇이 본보기에 실리고,
+ *     다음 회차가 그걸 보고 또 썼다.
+ *
+ *     대본 파일과 맞대는 것으로도 못 가른다. `글가져오기.mts` 가 사장님이 고치신 글을
+ *     대본 파일로 «되가져오기» 때문에 둘이 늘 같아진다.
+ *
+ *     그래서 `검수보내기.mts` 가 보내는 «그 순간»의 자막을
+ *     `_작업/_보낸것/<회차>__<이름>.json` 에 박아 둔다. 아무도 안 고치는 파일이다.
+ *     검수기의 글이 그것과 다르면 사장님이 고치신 것이다.
  *
  * 쓰는 법
  *   npx tsx 말투갱신.mts          # 다시 쓴다
@@ -42,32 +53,24 @@ const 다듬기 = (s: string) =>
     .replace(/<[^>]+>/g, "")
     .trim();
 
-/** 태그·칸막이·빈칸을 걷어낸 «글만» — 형식 차이로 「고쳤다」고 잘못 세지 않으려고. */
+/** 태그·칸막이·빈칸을 걷어낸 «글만» — 형식 차이를 「고쳤다」로 세지 않으려고. */
 const 글만 = (s: string) => s.replace(/<[^>]+>/g, "").replaceAll("|", " ").replace(/\s+/g, " ").trim();
 
-/**
- * 검수기의 자막·제목이 «내가 보낸 대본»과 다른가 = 사장님이 정말 고치셨나.
- * 대본 파일을 못 찾으면 «안 담는다» — 내 글이 본보기로 섞이는 쪽이 훨씬 나쁘다.
- */
-function 정말고쳤나(slug: string, 제목: string, 칸들: { captionJson: string; ord: number }[]): boolean {
-  const 이름 = slug.replace(/^영상\d+_/, "");
-  const 길 = `판매용_템플릿/_마케팅/_작업/대본_${이름}.json`;
-  if (!existsSync(길)) return false;
-  let 편: Record<string, unknown>;
+/** 검수기의 글이 «보낸 그대로»와 다른가 = 사장님이 고치셨나. */
+function 보낸것과다른가(길: string, 제목: string, 칸들: { captionJson: string }[]): boolean {
+  let 보낸것: { 세로제목?: string; 칸들?: string[][] };
   try {
-    const 대본 = JSON.parse(readFileSync(길, "utf8"));
-    편 = (Array.isArray(대본) ? (대본.find((x) => x.이름 === slug) ?? 대본[0]) : 대본) as Record<string, unknown>;
+    보낸것 = JSON.parse(readFileSync(길, "utf8"));
   } catch {
-    return false;
+    return true; /* 못 읽으면 «고친 것»으로 본다 — 사장님 글을 빠뜨리는 쪽이 더 나쁘다 */
   }
-  if (글만(String(편.세로제목 ?? "")) !== 글만(제목 ?? "")) return true;
-  const 내칸 = (편.칸들 ?? []) as { cap?: string[] }[];
+  if (글만(보낸것.세로제목 ?? "") !== 글만(제목 ?? "")) return true;
+  const 보낸칸 = 보낸것.칸들 ?? [];
+  if (보낸칸.length !== 칸들.length) return true;
   for (let i = 0; i < 칸들.length; i++) {
     let 줄: unknown = 칸들[i].captionJson;
     if (typeof 줄 === "string") { try { 줄 = JSON.parse(줄); } catch { /* 그냥 글자열 */ } }
-    const 검수 = 글만(Array.isArray(줄) ? 줄.join(" ") : String(줄 ?? ""));
-    const 내글 = 글만((내칸[i]?.cap ?? []).join(" "));
-    if (내글 && 검수 && 내글 !== 검수) return true;
+    if (글만(Array.isArray(줄) ? 줄.join(" ") : String(줄 ?? "")) !== 글만((보낸칸[i] ?? []).join(" "))) return true;
   }
   return false;
 }
@@ -75,25 +78,42 @@ function 정말고쳤나(slug: string, 제목: string, 칸들: { captionJson: st
 const 모든편 = await db.select().from(snsContent);
 const 편들: typeof 모든편 = [];
 let 손댄편 = 0;
+let 옛방식 = 0;
 for (const p of 모든편) {
   if (p.status === "published") {
     편들.push(p);
     continue;
   }
-  /* ⛔ 시각으로 「손댔나」를 알아내지 않는다 (2026-09-07 사장님 지적).
+  /* ① «보낸 그대로»가 남아 있으면 그것과 맞대 본다 — 이게 가장 정확하다.
    *
-   *   전에는 «편을 고친 시각이 마지막 칸을 넣은 시각보다 5초 넘게 뒤면 손댄 것»으로 봤다.
-   *   그런데 검수 화면을 «열어 보기만 해도» updatedAt 이 움직인다.
-   *   2026-09-07 에 재 보니 검토대기 다섯 편이 전부 「손댄 것」으로 잡혀 있었는데,
-   *   대본 파일과 맞대 보니 **한 글자도 안 달랐다.** 내가 쓴 글이 그대로
-   *   「사장님 본보기」로 되먹임되고 있었다 — 그래서 격자 괄호 같은 내 버릇이
-   *   본보기에 실리고, 다음 회차가 그걸 보고 또 쓴다.
+   *   전에는 시각만 봤다(편의 updatedAt 이 마지막 칸보다 5초 넘게 뒤면 손댄 것).
+   *   그런데 검수 화면을 «열어 보기만 해도» updatedAt 이 움직인다 —
+   *   2026-09-07 에 그래서 내가 쓴 글이 「사장님 본보기」로 되먹여지고 있었다.
    *
-   *   그래서 «글을 맞대 본다». 검수기의 자막이 내가 보낸 대본과 다를 때만 담는다. */
+   *   ⚠ 대본 파일과 맞대는 것으로는 못 가른다. `글가져오기.mts` 가 사장님이 고치신 글을
+   *     대본 파일로 «되가져오기» 때문에 둘이 늘 같아진다. 그래서 검수보내기가
+   *     보내는 순간 `_작업/_보낸것/<회차>__<이름>.json` 에 박아 둔다. 아무도 안 고치는 파일이다. */
+  const 보낸것길 = `판매용_템플릿/_마케팅/_작업/_보낸것/${p.batch}__${p.slug}.json`;
   const 칸들 = await db.select().from(snsCut).where(eq(snsCut.contentId, p.id)).orderBy(asc(snsCut.ord));
-  if (칸들.length && 정말고쳤나(p.slug, p.verticalTitle, 칸들)) {
+  if (existsSync(보낸것길)) {
+    if (칸들.length && 보낸것과다른가(보낸것길, p.verticalTitle, 칸들)) {
+      편들.push(p);
+      손댄편 += 1;
+    }
+    continue;
+  }
+  /* ② 「보낸 그대로」가 없는 옛 편은 하는 수 없이 시각으로 본다.
+   *   과하게 담는 쪽이라, 새로 보내는 편부터는 ①로 갈린다. */
+  const [끝칸] = await db
+    .select({ 때: snsCut.createdAt })
+    .from(snsCut)
+    .where(eq(snsCut.contentId, p.id))
+    .orderBy(desc(snsCut.createdAt))
+    .limit(1);
+  if (끝칸 && p.updatedAt.getTime() > 끝칸.때.getTime() + 5000) {
     편들.push(p);
     손댄편 += 1;
+    옛방식 += 1;
   }
 }
 if (!편들.length) {
@@ -215,7 +235,7 @@ const 옛글 = readFileSync(말투길, "utf8");
 const a = 옛글.indexOf(시작표시);
 const b = 옛글.indexOf(끝표시);
 
-console.log(`사장님 글 ${편들.length}편(올린 것 ${편들.length-손댄편} · 손대신 것 ${손댄편}) · 자막 ${모든줄.length}줄 · 본보기 ${뽑기.length}개`);
+console.log(`사장님 글 ${편들.length}편(올린 것 ${편들.length-손댄편} · 손대신 것 ${손댄편}${옛방식 ? ` — 그중 ${옛방식}편은 「보낸 그대로」가 없어 시각으로 봤습니다` : ""}) · 자막 ${모든줄.length}줄 · 본보기 ${뽑기.length}개`);
 console.log(`한 줄 길이 ${길이[0]}~${길이[길이.length - 1]}(가운데 ${가운데}) · 문어체 접속부사 ${문어체합}회`);
 
 if (보기만) {

@@ -14,7 +14,7 @@
  * ⚠ 굽기 전에 `자막검사.mts` 를 통과해야 한다. 안 통과한 것을 검수로 보내지 않는다 —
  *   기계가 잡을 수 있는 것을 사람 눈에 떠넘기는 셈이 된다.
  */
-import { readFileSync, readdirSync, existsSync, mkdtempSync, rmSync, statSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync, mkdtempSync, rmSync, statSync, mkdirSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join, dirname, resolve } from "node:path";
 import { tmpdir } from "node:os";
@@ -469,6 +469,30 @@ for (const 편 of 대본들) {
       .where(and(eq(snsCut.contentId, contentId), gt(snsCut.ord, 칸들.length)))
       .returning({ ord: snsCut.ord });
     if (지운것.length) console.log(`   칸이 줄어 ${지운것.length}개를 지웠습니다.`);
+
+    /* ⭐ «보낸 그대로»를 따로 남긴다 (2026-09-07 사장님 지적).
+     *
+     *   말투갱신.mts 는 「사장님이 고치신 글」만 본보기로 담아야 한다. 그런데 고쳤는지를
+     *   시각(updatedAt)으로 알아내고 있었다 — 검수 화면을 «열어 보기만 해도» 움직이는 값이라
+     *   내가 쓴 글이 그대로 「사장님 본보기」로 되먹여졌다.
+     *
+     *   대본 파일과 맞대는 것으로는 못 가른다. `글가져오기.mts` 가 사장님이 고치신 글을
+     *   대본 파일로 «되가져오기» 때문에 둘이 늘 같아진다.
+     *
+     *   그래서 보내는 «그 순간»의 자막을 여기에 박아 둔다. 이 파일은 아무도 안 고친다.
+     *   나중에 검수기의 글이 이것과 다르면 «사장님이 고치신 것»이다. */
+    try {
+      const 보낸방 = join(대본길, "..", "_보낸것").replace(/\\/g, "/");
+      mkdirSync(보낸방, { recursive: true });
+      writeFileSync(
+        `${보낸방}/${회차}__${이름}.json`,
+        JSON.stringify({ 회차, 이름, 보낸때: new Date().toISOString(), 세로제목: 편.세로제목 ?? "", 칸들: 칸들.map((k) => k.cap ?? []) }, null, 1),
+        "utf8",
+      );
+    } catch (e) {
+      console.log(`   ⚠ 「보낸 그대로」를 못 남겼습니다 — ${(e as Error).message}`);
+    }
+
     console.log(`   → https://www.caffeinecolor.com/admin/sns (또는 로컬 /admin/sns)`);
   } finally {
     rmSync(임시, { recursive: true, force: true });
