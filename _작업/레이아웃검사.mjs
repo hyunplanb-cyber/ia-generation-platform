@@ -78,6 +78,12 @@ const 잴것 = `
       const r = e.getBoundingClientRect();
       if (r.width < 1) continue;
       if (r.right <= W + 1 && r.left >= -1) continue;
+      /* ⚠ «일부러 화면 밖에 둔 것»은 넘침이 아니다 (2026-09-08).
+         「본문으로 건너뛰기」(a.skip) 같은 도움 링크는 left:-9999px 로 숨겨 두는 것이
+         표준 수법이다. 이걸 안 빼면 41쪽 전부가 걸려서 검사가 쓸모없어진다 —
+         실제로 반려동물케어_플러스를 재니 41/41 이 이것 하나로 걸렸다.
+         «통째로» 왼쪽 밖에 있으면 숨긴 것이고, «걸쳐» 있어야 깨진 것이다. */
+      if (r.right < 0) continue;
       /* ⚠ 부모가 «가둬 주면» 페이지가 안 깨진다. auto·scroll 뿐 아니라 hidden·clip 도 가둔다.
          2026-08-20 에 hidden 을 빼먹어서 .ticker ul(overflow:hidden) 안의 li 를 헛짚었다. */
       let p = e.parentElement, 갇힘 = false;
@@ -173,28 +179,111 @@ const 잴것 = `
       }
     }
 
-    document.title = JSON.stringify({ 창: W, 문서, 넘침: 넘침.slice(0, 4), 딸림: 딸림.slice(0, 4), 푸터틈, 겹침, 점덮음 });
+    /* ⑥ 콘텐츠 폭이 한 쪽 «안에서» 갈리는 것 (2026-09-08 사장님 지적)
+     *
+     *   사장님: 「콘텐츠 영역 엉망, 그리드 하나도 안 맞는 박스들하며」
+     *   반려동물케어_플러스 를 AI도구로 지어 보니 한 쪽에서 1440px 과 760px 이
+     *   여덟 번 번갈아 나왔다 — 왼쪽 끝이 340px 씩 들락날락한다.
+     *
+     *   ⚠ 스펙팩은 «이미» 시켰다: 「콘텐츠 영역 최대 1440px … 화면마다 따로 정하지
+     *     않는다. 화면마다 폭을 새로 정하면 위아래가 어긋납니다.」
+     *     지시가 있어도 AI도구는 어긴다. 글로 적힌 규칙은 안 지켜진다 — 그래서 «잰다».
+     *
+     *   읽기 폭(760px)은 «글이 주인공인 자리»에만 쓰라고 했으니, 갈리는 것 자체가
+     *   아니라 «몇 번 갈리나»를 센다. 두세 번은 뜻이 있고, 여덟 번은 사고다. */
+    const 왼끝들 = [];
+    for (const e of document.querySelectorAll("main .wrap, main .reading, main > section, main > div")) {
+      const r = e.getBoundingClientRect();
+      if (r.height < 24 || r.width < 100) continue;
+      /* 껍데기가 아니라 «내용이 시작하는 자리»를 잰다 — .wrap 안에 .reading 이 있으면 안쪽이 기준 */
+      const 안 = e.querySelector(":scope > .reading") || e;
+      const ir = 안.getBoundingClientRect();
+      const cs = getComputedStyle(안);
+      왼끝들.push(Math.round(ir.left + (parseFloat(cs.paddingLeft) || 0)));
+    }
+    /* ⚠ 좁은 화면에서는 재지 않는다 (2026-09-08 에 헛걸렸다).
+       390px 에서는 --wrap 도 --reading 도 화면 폭에 맞춰 붙으므로 둘이 사실상 같다.
+       그때 남는 16px 차이는 그냥 여백이지 «폭이 갈린 것»이 아니다.
+       두 폭이 실제로 갈라지는 넓은 화면에서만 뜻이 있다. */
+    let 폭갈림 = 0;
+    if (W >= 900) for (let i = 1; i < 왼끝들.length; i++) if (Math.abs(왼끝들[i] - 왼끝들[i - 1]) > 40) 폭갈림 += 1;
+    const 폭종류 = W >= 900 ? [...new Set(왼끝들)].sort((a, b) => a - b) : [];
+
+    /* ⑦ 같은 격자 안 카드들의 «제목 높이»가 안 맞는 것
+     *
+     *   배지가 가운데 카드에만 있으면 그 카드 제목만 아래로 밀린다. 값 세 개가
+     *   층층이 어긋나 보이고, 사람은 그걸 「그리드가 안 맞는다」로 읽는다.
+     *   index.html 에서 실제로 그랬다 — 한 카드에만 badge-row 가 있었다. */
+    /* ⚠ «같은 줄에 나란히 선 카드»끼리만 견준다 (2026-09-08 에 헛걸렸다).
+       좁은 화면에서 격자가 한 줄로 접히면 카드가 세로로 쌓인다. 그때 제목 높이가
+       다른 것은 당연한데, 그걸 「어긋났다」고 세면 390px 에서 7쪽이 헛걸린다.
+       카드 «자기 윗변»이 서로 8px 안에 있는 것끼리 한 줄로 묶는다. */
+    const 격자어긋남 = [];
+    for (const g of document.querySelectorAll(".grid")) {
+      const 칸 = [...g.children]
+        .map((c) => ({ c, r: c.getBoundingClientRect() }))
+        .filter((x) => x.r.height > 20);
+      if (칸.length < 2) continue;
+      const 줄묶음 = new Map();
+      for (const x of 칸) {
+        const 줄키 = Math.round(x.r.top / 8);
+        if (!줄묶음.has(줄키)) 줄묶음.set(줄키, []);
+        줄묶음.get(줄키).push(x);
+      }
+      for (const 한줄 of 줄묶음.values()) {
+        if (한줄.length < 2) continue;   /* 혼자면 견줄 상대가 없다 = 세로로 쌓인 것 */
+        const 윗변 = 한줄.map((x) => {
+          const h = x.c.querySelector("h2, h3, h4, .num");
+          return h ? Math.round(h.getBoundingClientRect().top) : null;
+        }).filter((v) => v !== null);
+        if (윗변.length < 2) continue;
+        const 벌어짐 = Math.max(...윗변) - Math.min(...윗변);
+        if (벌어짐 > 8) 격자어긋남.push(이름(g) + " 제목이 " + 벌어짐 + "px 어긋남");
+      }
+    }
+
+    document.title = JSON.stringify({ 창: W, 문서, 넘침: 넘침.slice(0, 4), 딸림: 딸림.slice(0, 4), 푸터틈, 겹침, 점덮음, 폭갈림, 폭종류: 폭종류.slice(0, 6), 격자어긋남: 격자어긋남.slice(0, 4) });
   }, 300));`;
 
-const 목록 = 팩들.length
-  ? 팩들
-  : readdirSync(팩방, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name);
+/* ⭐ «남의 폴더»도 잰다 — 손님이 우리 스펙팩을 AI도구에 넣어 지은 사이트 (2026-09-08)
+ *
+ *   사장님: 「검수기에서 분명 검수를 하고 만드는 팩인데, 내가 하나하나 또 만들어 보면서
+ *          해야 하는 게 맞나?」
+ *
+ *   맞지 않다. 그런데 여태 이 검사기는 «우리가 손으로 만든 완성화면»만 봤다.
+ *   손님이 겪는 것은 «스펙팩으로 지어진 사이트»인데 그건 아무도 안 봤다.
+ *   그래서 사장님이 직접 지어 보실 때만 흠이 나왔다.
+ *
+ *     node _작업/레이아웃검사.mjs --폴더 "D:/…/site"
+ *
+ *   쪽이 pages/ 안에 있으면 그쪽을, 없으면 폴더 뿌리의 *.html 을 잰다. */
+const 폴더자리 = 인자.indexOf("--폴더");
+const 남의폴더 = 폴더자리 >= 0 ? 인자[폴더자리 + 1] : null;
+
+const 목록 = 남의폴더
+  ? [{ 이름: 남의폴더.split(/[\\/]/).filter(Boolean).slice(-2).join("/"), 뿌리: 남의폴더 }]
+  : (팩들.length
+      ? 팩들
+      : readdirSync(팩방, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name)
+    ).map((p) => ({ 이름: p, 뿌리: join(팩방, p, "완성화면") }));
 
 let 본쪽 = 0, 걸린쪽 = 0;
-for (const 팩 of 목록) {
-  const pages = join(팩방, 팩, "완성화면", "pages");
-  if (!existsSync(pages)) continue;
+for (const { 이름: 팩, 뿌리 } of 목록) {
+  if (!existsSync(뿌리)) continue;
+  /* 쪽이 pages/ 안에 있는 판(우리 팩)과 뿌리에 흩어진 판(AI도구가 지은 사이트)을 다 받는다 */
+  const 속 = existsSync(join(뿌리, "pages")) ? "pages" : ".";
+  const pages = join(뿌리, 속);
   const 쪽들 = readdirSync(pages).filter((f) => f.endsWith(".html") && !f.startsWith("_"));
   if (!쪽들.length) continue;
 
   rmSync(W, { recursive: true, force: true });
   mkdirSync(W, { recursive: true });
-  cpSync(join(팩방, 팩, "완성화면"), W, { recursive: true });
+  cpSync(뿌리, W, { recursive: true });
 
   const 흠 = [];
   for (const f of 쪽들) {
-    const 길 = join(W, "pages", `_잴것_${f}`);
-    writeFileSync(길, readFileSync(join(W, "pages", f), "utf8").replace("</body>", `<script>${잴것}<\/script></body>`), "utf8");
+    const 길 = join(W, 속, `_잴것_${f}`);
+    writeFileSync(길, readFileSync(join(W, 속, f), "utf8").replace("</body>", `<script>${잴것}<\/script></body>`), "utf8");
     let 것;
     try {
       const dom = execFileSync(CHROME, ["--headless=new", "--user-data-dir=" + 크롬찌꺼기,  "--disable-gpu", "--hide-scrollbars",
@@ -210,6 +299,10 @@ for (const 팩 of 목록) {
     if (것.푸터틈) 줄.push(`푸터 아래 ${것.푸터틈}px 빔`);
     if (것.겹침.length) 줄.push(`글자 겹침 — ${것.겹침.join(" · ")}`);
     if (것.점덮음?.length) 줄.push(`CSS 점이 글자를 덮음 — ${것.점덮음.join(" · ")}`);
+    /* 폭 갈림 — 셋부터 걸린다. 한두 번은 「글이 주인공인 자리」라 뜻이 있다.
+       ⚠ 2026-09-08 에 넷으로 뒀더니 사장님이 보내신 바로 그 쪽(ho0201)이 안 걸렸다. */
+    if (것.폭갈림 >= 3) 줄.push(`콘텐츠 폭이 ${것.폭갈림}번 갈림 — 왼쪽 끝 ${것.폭종류?.join("·")}px`);
+    if (것.격자어긋남?.length) 줄.push(`격자 안 카드가 안 맞음 — ${것.격자어긋남.join(" · ")}`);
     if (줄.length) { 걸린쪽 += 1; 흠.push(`    ${f.replace(".html", "").padEnd(8)} ${줄.join(" / ")}`); }
   }
 
