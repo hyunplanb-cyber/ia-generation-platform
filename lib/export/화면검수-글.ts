@@ -302,10 +302,28 @@ export const 화면검수글 = String.raw`(() => {
   }
 
   // ⑨ 나란히 놓인 사진 크기가 같은가 (윗변이 같은 것끼리만 견준다)
+  /* ⛔ 2026-09-08 — 이 검사가 «우리 팩으로 지은 사이트»에서 언제나 조용히 통과하고 있었다.
+     img 태그만 찾았는데, 스펙팩으로 지으면 사진 자리가 아직 안 채워져 있어서
+     <div class="ph">이미지 영역 …</div> 같은 «자리표시자»로 나온다.
+     실측: 반려동물케어_플러스로 지은 41쪽에 img 는 0개, 자리표시자는 121개였다.
+     찾는 것이 하나도 없으니 통과였다. 이름 말고 «생김새»로 본다 — 이 글의 원칙 그대로다. */
+  const 사진같나 = (c) => {
+    if (!c || !c.tagName) return null;
+    if (c.tagName === "IMG" || c.tagName === "PICTURE" || c.tagName === "FIGURE" || c.tagName === "SVG") return c;
+    const 안img = c.querySelector ? c.querySelector("img, picture, figure") : null;
+    if (안img) return 안img;
+    /* 배경그림으로 넣은 것과 «자리표시자»도 사진 칸이다 */
+    const s = getComputedStyle(c);
+    if (s.backgroundImage && s.backgroundImage !== "none") return c;
+    const 이 = typeof c.className === "string" ? c.className : "";
+    if (/(^|[ _-])(ph|img|image|photo|thumb|cover|poster)([ _-]|$)/i.test(이)) return c;
+    if (/이미지 ?영역|사진 ?영역|권장 ?[0-9]+ ?[x×]/.test((c.textContent || "").slice(0, 40))) return c;
+    return null;
+  };
   for (const 부모 of document.querySelectorAll("main *, body > *")) {
     if (!보이나(부모)) continue;
     const 사진 = [...부모.children]
-      .map((c) => (c.tagName === "IMG" ? c : c.querySelector ? c.querySelector("img") : null))
+      .map(사진같나)
       .filter((x) => x && 보이나(x));
     if (사진.length < 3) continue;
     const 틀 = 사진.map((i) => i.getBoundingClientRect());
@@ -314,6 +332,61 @@ export const 화면검수글 = String.raw`(() => {
     const 작 = Math.min.apply(null, 높), 큰 = Math.max.apply(null, 높);
     if (작 > 0 && 큰 - 작 > Math.max(8, 작 * 0.15))
       적기("사진", 이름(부모) + " 안에 나란한 사진 높이가 " + 작 + "~" + 큰 + "px 로 제각각입니다");
+  }
+
+  // ⑩ 한 화면 «안»에서 콘텐츠 폭이 갈리나
+  /* ⛔ 2026-09-08 사장님: 「콘텐츠 영역 엉망, 그리드 하나도 안 맞는 박스들하며」
+     스펙팩은 「콘텐츠 영역 최대 1440px … 화면마다 폭을 새로 정하면 위아래가 어긋납니다」라고
+     이미 시켜 두었다. 그런데 이 검사 글은 콘텐츠폭을 «재기만 하고 견주지 않았다» —
+     숫자를 결과에 실어 보낼 뿐 아무것도 불합격시키지 않았다. 그래서 손님이 이 글을 돌려도
+     폭이 일곱 번 갈리는 화면이 「흠 없음」으로 나왔다.
+     ⚠ 좁은 화면에서는 넓은 폭도 읽기 폭도 화면에 맞춰 붙으므로 갈릴 것이 없다 — 넓을 때만 본다. */
+  if (document.documentElement.clientWidth >= 900) {
+    const 왼끝 = [];
+    /* ⚠ 덩어리«마다» 한 번만 센다. 자식까지 훑으면 같은 덩어리를 여러 번 세어
+       숫자가 부풀고(2026-09-08 에 7번을 15번으로 셌다), 우리 검사기와 값이 어긋난다. */
+    for (const e of 본문.querySelectorAll(":scope > section, :scope > div, :scope > article, :scope > .wrap, :scope > .wrap > .reading")) {
+      if (!보이나(e)) continue;
+      const r = e.getBoundingClientRect();
+      if (r.height < 24 || r.width < 100) continue;
+      const s = getComputedStyle(e);
+      if (s.position === "fixed" || s.position === "absolute") continue;
+      왼끝.push(반(r.left + (parseFloat(s.paddingLeft) || 0)));
+    }
+    let 갈림 = 0;
+    for (let i = 1; i < 왼끝.length; i++) if (Math.abs(왼끝[i] - 왼끝[i - 1]) > 40) 갈림++;
+    if (갈림 >= 3) {
+      const 종류 = [];
+      for (const v of 왼끝) if (종류.indexOf(v) < 0) 종류.push(v);
+      종류.sort((a, b) => a - b);
+      적기("폭", "한 화면 안에서 콘텐츠 왼쪽 끝이 " + 갈림 + "번 움직입니다 — " +
+        종류.slice(0, 5).join("·") + "px. 글이 주인공인 자리 말고는 같은 폭을 쓰세요");
+    }
+  }
+
+  // ⑪ 나란히 선 카드들의 제목 높이가 맞나
+  /* ⛔ 2026-09-08 — 카드 셋 중 «가운데 하나에만» 배지를 붙이면 그 카드 제목만 아래로 밀린다.
+     값 세 개가 층층이 어긋나 보이고, 사람은 그걸 「그리드가 안 맞는다」로 읽는다.
+     실측: 반려동물케어_플러스 홈에서 38px, 시설 소개에서 406px 어긋나 있었다.
+     ⚠ 좁은 화면에서 카드가 «세로로 쌓이면» 제목 높이가 다른 것이 당연하다.
+        그래서 «자기 윗변이 같은 것끼리»(= 한 줄에 나란히 선 것끼리)만 견준다. */
+  for (const 묶음 of document.querySelectorAll("main *, body > *")) {
+    if (!보이나(묶음)) continue;
+    const 칸 = [...묶음.children].filter(보이나).map((c) => ({ c, r: c.getBoundingClientRect() }));
+    if (칸.length < 2) continue;
+    const 줄 = {};
+    for (const x of 칸) { const k = 반(x.r.top / 8); (줄[k] = 줄[k] || []).push(x); }
+    for (const k in 줄) {
+      const 한줄 = 줄[k];
+      if (한줄.length < 2) continue;
+      const 윗변 = [];
+      for (const x of 한줄) { const h = x.c.querySelector("h2, h3, h4, .num, strong, b"); if (h && 보이나(h)) 윗변.push(반(h.getBoundingClientRect().top)); }
+      if (윗변.length < 2) continue;
+      const 벌어짐 = Math.max.apply(null, 윗변) - Math.min.apply(null, 윗변);
+      if (벌어짐 > 8)
+        적기("줄맞춤", 이름(묶음) + " 안에 나란히 선 칸들의 제목이 " + 벌어짐 +
+          "px 어긋납니다 — 한 칸에만 배지가 붙었는지 보세요. 배지 자리는 없는 칸에도 같은 높이로 비워 둡니다");
+    }
   }
 
   return JSON.stringify({
