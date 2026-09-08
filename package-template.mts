@@ -598,6 +598,18 @@ mkdirSync("public/guide", { recursive: true });
    다시 한글 이름으로 넣으므로 보이는 이름은 그대로다. */
 copyFileSync(내놓는법, "public/guide/deploy-guide.html");
 copyFileSync(앱으로내놓는법, "public/guide/app-guide.html");
+/* ⛔ 2026-09-08 — 셋째 안내서(11 내사이트 검수하는 법)를 여기 안 놓고 있었다.
+   `guide-links.ts` 는 손님을 `/guide/verify-guide.html` 로 보내는데 그 파일이
+   «한 번도 만들어진 적이 없어» 404 였다. zip 안에는 들어 있어서 내려받은 손님은
+   볼 수 있었지만, 링크만 눌러 본 사람은 빈손으로 나갔다.
+   09·10 은 _마케팅 에 있는 파일을 복사하는데 11 은 코드가 만들어 내는 것이라
+   복사 줄이 없었고, 그래서 조용히 빠졌다. */
+{
+  /* GUIDES 한 곳에서 가져온다 — 안내서 본문이 갈라질 수 없다. */
+  const 검수안내 = GUIDES.find((g) => g.파일 === "11_내사이트_검수하는_법.html");
+  if (!검수안내?.본문) throw new Error("검수 안내서를 GUIDES 에서 못 찾았습니다");
+  writeFileSync("public/guide/verify-guide.html", 검수안내.본문(), "utf8");
+}
 console.log("패키징 중...");
 const results = [];
 for (const p of Object.values(targets)) results.push(await pack(p));
