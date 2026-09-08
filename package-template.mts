@@ -129,6 +129,14 @@ const INDUSTRIES = [
        ⚠ siteBase·siteDeep 을 «일부러» 비운다. 완성화면을 팩 자기 폴더 안에 만들
          것이라 가리키면 원본과 대상이 같아져 copyFileSync 가 자기 자신을 덮어쓴다.
          비워 두면 「팩에 있던 것을 그대로 둡니다」로 흘러가고 화면 수도 팩에서 센다. */ },
+  { key: "used", label: "중고거래", title: "회원끼리 사고파는 중고거래 장터",
+    base: `${W}/중고거래_회원장터`, deep: `${W}/중고거래_회원장터_상세IA`,
+    /* A 회차(2026-09-07) — 디럭스(코럴 선셋 × 목록 중심형)까지만 만든다.
+       프리미엄(레트로 페이퍼 × 대시보드형, 3뎁스)은 B 회차 몫이라 아직 화면이 없다.
+
+       ⚠ siteBase·siteDeep 을 «일부러» 비운다. 완성화면을 팩 자기 폴더 안에 만들
+         것이라 가리키면 원본과 대상이 같아져 copyFileSync 가 자기 자신을 덮어쓴다.
+         비워 두면 「팩에 있던 것을 그대로 둡니다」로 흘러가고 화면 수도 팩에서 센다. */ },
 ] as const satisfies readonly {
   key: string; label: string; title: string;
   base: string; deep: string; siteBase?: string; siteDeep?: string;
@@ -590,6 +598,18 @@ mkdirSync("public/guide", { recursive: true });
    다시 한글 이름으로 넣으므로 보이는 이름은 그대로다. */
 copyFileSync(내놓는법, "public/guide/deploy-guide.html");
 copyFileSync(앱으로내놓는법, "public/guide/app-guide.html");
+/* ⛔ 2026-09-08 — 셋째 안내서(11 내사이트 검수하는 법)를 여기 안 놓고 있었다.
+   `guide-links.ts` 는 손님을 `/guide/verify-guide.html` 로 보내는데 그 파일이
+   «한 번도 만들어진 적이 없어» 404 였다. zip 안에는 들어 있어서 내려받은 손님은
+   볼 수 있었지만, 링크만 눌러 본 사람은 빈손으로 나갔다.
+   09·10 은 _마케팅 에 있는 파일을 복사하는데 11 은 코드가 만들어 내는 것이라
+   복사 줄이 없었고, 그래서 조용히 빠졌다. */
+{
+  /* GUIDES 한 곳에서 가져온다 — 안내서 본문이 갈라질 수 없다. */
+  const 검수안내 = GUIDES.find((g) => g.파일 === "11_내사이트_검수하는_법.html");
+  if (!검수안내?.본문) throw new Error("검수 안내서를 GUIDES 에서 못 찾았습니다");
+  writeFileSync("public/guide/verify-guide.html", 검수안내.본문(), "utf8");
+}
 console.log("패키징 중...");
 const results = [];
 for (const p of Object.values(targets)) results.push(await pack(p));
