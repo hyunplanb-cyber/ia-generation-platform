@@ -274,7 +274,7 @@ export function SnsReviewForm({
           들어오시는 곳은 목록이 아니라 «이 화면»이다 — 여기가 비어 있으면
           까닭을 볼 길이 없다. */}
       {편.watcherError && (
-        <p className="mt-3 rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-xs leading-relaxed text-rose-900 [word-break:keep-all]">
+        <p className="mt-3 rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 whitespace-pre-line text-xs leading-relaxed text-rose-900 [word-break:keep-all]">
           <b>⛔ 지킴이가 여기서 막혔습니다 — 그래서 다음으로 안 갑니다.</b>
           <br />
           {편.watcherError}
