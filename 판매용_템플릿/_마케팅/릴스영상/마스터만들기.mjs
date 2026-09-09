@@ -70,16 +70,98 @@ if (!회차) {
 }
 
 const 회차방 = path.join(여기, 회차);
-const 촬영본 = [`${회차}.mp4`, `${회차.replace(/^\d+\.\s*/, "")}.mp4`]
-  .map((n) => path.join(촬영방, n)).find(existsSync);
-if (!촬영본) {
-  console.error(`\n⛔ 촬영본을 못 찾았습니다 — ${path.join(촬영방, 회차 + ".mp4")}\n`);
-  process.exit(1);
-}
 if (!existsSync(회차방)) mkdirSync(회차방, { recursive: true });
 
 const ff = (args) => execFileSync("ffmpeg", args, { maxBuffer: 1 << 28 });
 const 재기 = (args) => execFileSync("ffprobe", args, { encoding: "utf8" }).trim();
+const 재보기 = (파일) => {
+  const [w, h] = 재기(["-v", "error", "-select_streams", "v", "-show_entries",
+    "stream=width,height", "-of", "csv=p=0:s=x", 파일]).split("\n")[0].split("x").map(Number);
+  const 초 = Number(재기(["-v", "error", "-show_entries", "format=duration", "-of",
+    "default=noprint_wrappers=1:nokey=1", 파일]));
+  return { w, h, 초 };
+};
+
+/* ═══ 두 파일로 주셨나 — «완성화면»과 «클로드»를 따로 찍으신 경우 (2026-09-09 현님) ═══
+ *
+ *   현님: 「다음 촬영때는 완성화면과 클로드 영역을 아예 따로 찍어볼까해.」
+ *         「이렇게 컷해서 두개로 올려두면 잘 나오겠지?」  — 잘 나온다. 훨씬 낫다.
+ *
+ *   한 파일(2분할)에서 뽑으면 브라우저 칸이 화면의 3분의 1밖에 안 되어, 세로 칸에 채우느라
+ *   가로를 61% 버려야 했다(뷰티샵 41% 만 보임). 따로 찍으면 89% 가 보인다.
+ *   게다가 갈래 재기·분할선 찾기·로고 찾기가 «다 필요 없어진다» — 자리가 이미 정해져 있으니까.
+ *
+ *   찾는 이름:  <회차>_화면영역.mp4   ·   <회차>_클로드영역.mp4
+ *   두는 곳:    _촬영영상/  또는  _새틀견본/ */
+const 견본방 = path.join(여기, "_새틀견본");
+const 짝찾기 = (꼬리) =>
+  [촬영방, 견본방].map((방) => path.join(방, `${회차}_${꼬리}.mp4`)).find(existsSync) ?? null;
+const 화면파일 = 짝찾기("화면영역");
+const 클로드파일 = 짝찾기("클로드영역");
+const 두파일 = Boolean(화면파일 && 클로드파일);
+
+const 촬영본 = 두파일 ? 화면파일 : [`${회차}.mp4`, `${회차.replace(/^\d+\.\s*/, "")}.mp4`]
+  .map((n) => path.join(촬영방, n)).find(existsSync);
+if (!촬영본) {
+  console.error(`\n⛔ 촬영본을 못 찾았습니다.`);
+  console.error(`   한 파일이면  ${path.join(촬영방, 회차 + ".mp4")}`);
+  console.error(`   두 파일이면  ${회차}_화면영역.mp4 · ${회차}_클로드영역.mp4  (_촬영영상 또는 _새틀견본)\n`);
+  process.exit(1);
+}
+
+/* ═══ 두 파일 길 — 갈래도 분할선도 로고도 «찾을 것이 없다» ═══════════════════ */
+if (두파일) {
+  const 화 = 재보기(화면파일), 클 = 재보기(클로드파일);
+  const 목표 = Number(값("--초")) || Math.floor(Math.min(화.초, 클.초 * 1.15) * 10) / 10;
+  console.log(`\n두 파일로 만듭니다 — 갈래·분할선·로고를 안 찾습니다 (자리가 이미 정해져 있습니다)`);
+  console.log(`  화면영역   ${path.basename(화면파일)}  ${화.w}x${화.h} · ${화.초.toFixed(1)}초`);
+  console.log(`  클로드영역 ${path.basename(클로드파일)}  ${클.w}x${클.h} · ${클.초.toFixed(1)}초`);
+  console.log(`  만들 길이  ${목표}초`);
+
+  /* 완성화면 — 현님이 «이미 컷해서» 주신 것이라 다시 안 자른다. 길이만 맞춘다. */
+  const 화배속 = Math.max(0.8, Math.min(2.0, 화.초 / 목표));
+  const 화몸 = `[0:v]setpts=(PTS-STARTPTS)/${화배속.toFixed(5)},format=yuv420p,setsar=1`;
+  const 화길이 = 화.초 / 화배속;
+  console.log(`  완성화면   ${화배속.toFixed(3)}배속 → ${화길이.toFixed(1)}초${화길이 < 목표 - 0.05 ? " (모자라 되돌이로 채웁니다)" : ""}`);
+
+  /* 클로드 — 클로드 칸 비율(2002:904)만큼 «아래쪽»을 잘라 쓴다. 새 글이 아래에서 나온다.
+   * ⛔ 왼쪽 칸을 1080 으로 좁히지 않는다 — 그러면 2160→1080 으로 줄였다가 영상만들기가
+   *   다시 2002 로 키운다. 두 번 다시 그리는 셈이라 글자가 뭉갠다.
+   *   원래 폭 그대로 넘기고 «영상만들기에서 한 번만» 줄인다(2160 → 2002, 배율 0.927). */
+  const 왼폭2 = 짝수(클.w);
+  const 클h = 짝수(Math.min(클.h, Math.round((왼폭2 * g.PiP.h) / g.PiP.w)));
+  const 클배속 = Math.max(0.85, Math.min(2.5, 클.초 / 목표));
+  const 클길이 = 클.초 / 클배속;
+  console.log(`  클로드     아래 ${왼폭2}x${클h} 를 그대로 (줄이지 않습니다) · ${클배속.toFixed(3)}배속 → ${클길이.toFixed(1)}초${클길이 < 목표 - 0.05 ? " (모자라 되돌이로 채웁니다)" : ""}`);
+  console.log(`             영상만들기가 ${왼폭2} → ${g.PiP.w} 로 «한 번만» 줄입니다 (배율 ${(g.PiP.w / 왼폭2).toFixed(3)})`);
+
+  const 채움 = (몸, 잰것, 이름) => 잰것 >= 목표 - 0.05
+    ? `${몸},trim=0:${목표},setpts=PTS-STARTPTS[${이름}]`
+    : `${몸}[${이름}몸];[${이름}몸]loop=loop=${Math.ceil(목표 / 잰것)}:size=${Math.ceil(잰것 * 30)}:start=0,trim=0:${목표},setpts=PTS-STARTPTS[${이름}]`;
+
+  const F2 = [];
+  F2.push(채움(화몸, 화길이, "right"));
+  F2.push(채움(`[1:v]crop=${왼폭2}:${클h}:0:${짝수(클.h - 클h)},setpts=(PTS-STARTPTS)/${클배속.toFixed(5)},pad=${왼폭2}:${화.h}:0:${짝수(화.h - 클h)}:0x141414,format=yuv420p,setsar=1`, 클길이, "left"));
+  F2.push(`[left][right]hstack=inputs=2,format=yuv420p[out]`);
+
+  const 임시2 = path.join(os.tmpdir(), `cc-master2-${process.pid}.txt`);
+  writeFileSync(임시2, F2.join(";\n"), "utf8");
+  const 낼것2 = path.join(회차방, "마스터.mp4");
+  console.log(`\n  굽는 중… → ${path.relative(여기, 낼것2)}`);
+  try {
+    ff(["-v", "error", "-stats", "-i", 화면파일, "-i", 클로드파일, "-filter_complex_script", 임시2,
+      "-map", "[out]", "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+      "-pix_fmt", "yuv420p", "-an", "-y", 낼것2]);
+  } finally { rmSync(임시2, { force: true }); }
+  const 잰2 = 재보기(낼것2);
+  console.log(`\n✔ 마스터 ${잰2.w}x${잰2.h} · ${잰2.초.toFixed(1)}초`);
+  const 보임 = Math.min(1, (규격["9_16"].영상.w / Math.max(규격["9_16"].영상.w / 화.w, 규격["9_16"].영상.h / 화.h)) / 화.w);
+  console.log(`  완성화면 가로 ${(보임 * 100).toFixed(0)}% 가 보입니다` +
+    (보임 > 0.995 ? " — 잘리는 곳이 없습니다" : `  (잘림 0% 로 찍으시려면 가로:세로 ${(규격["9_16"].영상.w / 규격["9_16"].영상.h).toFixed(3)} — 예 2160x3230)`));
+  console.log(`\n다음:  node 자막굽기.mjs "${회차}" --칸초 2.4`);
+  console.log(`       node 영상만들기.mjs "${회차}" --분할선 ${왼폭2}\n`);
+  process.exit(0);
+}
 
 const [W0, H0] = 재기(["-v", "error", "-select_streams", "v", "-show_entries",
   "stream=width,height", "-of", "csv=p=0:s=x", 촬영본]).split("\n")[0].split("x").map(Number);
