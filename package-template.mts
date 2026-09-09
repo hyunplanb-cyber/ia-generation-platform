@@ -23,7 +23,7 @@ import {
 import JSZip from "jszip";
 import { PACKAGES, BUILD_SCOPE, PLAN_NAMES, type PlanId } from "./lib/packages";
 import { CHECK_NOTE_FULL } from "./lib/export/template-verify";
-import { GUIDES, buildGuideCardHtml } from "./lib/guide-links";
+import { GUIDES, buildAllGuidesHtml, GUIDES_FILE } from "./lib/guide-links";
 
 // 파는 것이 놓이는 곳. 여기에는 **팔 물건만** 둔다.
 const T = "판매용_템플릿";
@@ -203,13 +203,9 @@ const 만드는중방 = `${T}/_만드는중`;
 const 만드는중모드 = process.argv.includes("--만드는중");
 const OUT = 만드는중모드 ? 만드는중방 : 판매팩방;
 
-/* 「사이트 내놓는 법」 안내서 — 원본은 한 벌뿐이다(_마케팅/부록_사이트_내놓는_법.html).
-   판매팩에도 들어가고, 손님이 직접 만들어 받는 zip 에도 들어간다.
-   두 곳에 각각 두면 반드시 갈라지므로 여기서 public/ 으로도 한 번 복사한다. */
-const 내놓는법 = `${T}/_마케팅/부록_사이트_내놓는_법.html`;
-/* 「앱으로 내놓는 법」 — 형제 문서. 반응형이라 앱으로도 되겠거니 하고 웹뷰로 감싸면
-   애플 심사 4.2 에서 떨어진다. 그 이야기부터 시작하는 안내서다(2026-08-10). */
-const 앱으로내놓는법 = `${T}/_마케팅/부록_앱으로_내놓는_법.html`;
+/* 안내서 09·10 의 «원본»은 `public/guide/` 에 한 벌뿐이다 (2026-09-10 에 옮겼다).
+   팩에는 본문이 아니라 «링크 안내장»(2.4KB)만 들어간다 — `lib/guide-links.ts` 가 만든다.
+   ⛔ `_마케팅/부록_*.html` 은 없앴다. 그건 깃에 없는 «원본»이었다 — 사본만 깃에 있었다. */
 // 홈페이지가 산 사람에게 내려줄 자리. 저장소에 함께 커밋되는 유일한 판매 파일이다.
 const SITE_PACKS = "packs";
 
@@ -280,9 +276,8 @@ ${검수} 디자인프리셋/
           가이드_01~03          색·글꼴·모서리 3벌 (.md / .json)
           레이아웃_A~B          화면 뼈대 2벌 (.md / .json)
           프리셋_미리보기.html   3벌 × 2벌 한눈에 비교
- 09_사이트_내놓는_법.html   배포·도메인·로그인·결제까지 내놓는 법 (열면 최신 안내서로 이어집니다)
- 10_앱으로_내놓는_법.html   앱 심사·권한·아이콘·스토어 등록 (열면 최신 안내서로 이어집니다)
- 11_내사이트_검수하는_법.html  만든 화면을 «저희가 재는 잣대 그대로» 스스로 재는 법
+ 09_안내서_세_가지.html    한 장에 셋 — 사이트 내놓기 · 앱으로 내놓기 · 내 사이트 검수하기
+                            (누르면 최신 글이 열립니다. 저희가 고치면 손님 것도 같이 새것이 됩니다)
 ${사이트구성}
 ■ 사용법 - 파일 하나, 한 마디면 됩니다
 
@@ -290,7 +285,7 @@ ${사이트구성}
         "이 스펙대로 만들어줘" 라고 하세요. 이게 전부입니다.
         스펙팩 6장 마지막에 «다 만들었으면 스스로 검수하고 고쳐라»가 적혀 있어
         AI 가 알아서 열 가지를 재고 고친 뒤에 끝냈다고 합니다.
-        직접 재 보고 싶으시면 11_내사이트_검수하는_법.html 을 여세요 — 붙여 넣기 한 번입니다.
+        직접 재 보고 싶으시면 09_안내서_세_가지.html 을 여세요 — 붙여 넣기 한 번입니다.
 
         스펙팩 안에 프로젝트 개요, 공통 레이아웃(헤더/내비/푸터),
         화면 ${stats.screens}개의 요건과 프롬프트, 화면 이동이 순서대로 정리되어 있어
@@ -425,7 +420,15 @@ async function pack(p: Product) {
      링크로 두면 언제 여셔도 최신 글이 나온다.
      ⚠ 파일 이름(09_·10_)은 그대로 둔다 — 손님 습관을 바꾸지 않는다.
      ⚠ 인터넷이 없어도 «무엇을 하는 글인지»는 읽히게 요약을 넣는다. */
-  for (const a of GUIDES) writeFileSync(`${outDir}/${a.파일}`, buildGuideCardHtml(a), "utf8");
+  /* 안내서 셋을 «한 장»에 담는다 (2026-09-10 현님 지시). 전에는 파일 셋이었다.
+     ⛔ 옛 파일을 «치운다». 팩 폴더는 통째로 비우고 다시 만드는 것이 아니라,
+       안 치우면 옛 09·10·11 이 그대로 남아 손님이 «넷»을 받는다.
+       2026-09-10 에 뷰티샵을 구워 보고 알았다 — 10·11 이 남아 있었다. */
+  for (const 옛것 of GUIDES.map((g) => g.파일)) {
+    const 길 = `${outDir}/${옛것}`;
+    if (옛것 !== GUIDES_FILE && existsSync(길)) rmSync(길);
+  }
+  writeFileSync(`${outDir}/${GUIDES_FILE}`, buildAllGuidesHtml(), "utf8");
 
   const packSite = `${outDir}/완성화면`;
   if (!p.sitePath && existsSync(packSite)) {
@@ -591,13 +594,24 @@ mkdirSync(OUT, { recursive: true });
 
 /* 손님이 직접 만들어 받는 zip 에도 같은 안내서를 넣는다.
    브라우저에서 만드는 zip 이라 public/ 에 있어야 가져다 쓸 수 있다.
-   원본은 한 벌(_마케팅) — 여기서 복사해 오므로 갈라지지 않는다. */
+
+   ⛔ 2026-09-10 — «원본»을 여기로 옮겼다 (현님: 「그럼 파일은 하나씩만 있어도 되잖아」)
+     여태 원본이 `_마케팅/부록_*.html`, 사본이 `public/guide/*.html` 이었다. 그런데
+     `판매용_템플릿/` 은 .gitignore 라 **원본이 깃에 없고 사본만 깃에 있었다** — 거꾸로였다.
+     원본이 날아가면 되살릴 데가 없고, 실제로 나가는 것은 사본 쪽이다.
+     그리고 팩에는 09·10 이 «링크 안내장»으로만 들어가서(2.4KB) 원본을 팩에 넣을 일도 없다.
+     → `public/guide/*.html` 하나만 둔다. 고칠 때도 그 파일을 고친다.
+   ⚠ 파일 이름을 영문으로 둔다. 한글 이름은 주소로 만들 때 인코딩이 어긋나
+     404 가 난다(2026-08-10 에 실제로 났다). 손님이 받는 zip 안에서는
+     다시 한글 이름으로 넣으므로 보이는 이름은 그대로다. */
 mkdirSync("public/guide", { recursive: true });
-/* ⚠ 파일 이름을 영문으로 둔다. 한글 이름은 주소로 만들 때 인코딩이 어긋나
-   404 가 난다(2026-08-10 에 실제로 났다). 손님이 받는 zip 안에서는
-   다시 한글 이름으로 넣으므로 보이는 이름은 그대로다. */
-copyFileSync(내놓는법, "public/guide/deploy-guide.html");
-copyFileSync(앱으로내놓는법, "public/guide/app-guide.html");
+for (const 있어야할것 of ["public/guide/deploy-guide.html", "public/guide/app-guide.html"]) {
+  if (!existsSync(있어야할것)) {
+    console.error(`\n⛔ ${있어야할것} 이 없습니다 — 안내서 원본입니다.`);
+    console.error(`   깃에 들어 있으니 되살리세요:  git checkout -- ${있어야할것}\n`);
+    process.exit(1);
+  }
+}
 /* ⛔ 2026-09-08 — 셋째 안내서(11 내사이트 검수하는 법)를 여기 안 놓고 있었다.
    `guide-links.ts` 는 손님을 `/guide/verify-guide.html` 로 보내는데 그 파일이
    «한 번도 만들어진 적이 없어» 404 였다. zip 안에는 들어 있어서 내려받은 손님은

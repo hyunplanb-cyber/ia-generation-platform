@@ -455,8 +455,9 @@ export function ZipAllButton({
            배포 화면이 바뀌거나 앱 심사 기준이 바뀌어도 손님 파일은 옛날 글로 남는다.
            지금은 한 장짜리 안내장만 넣고 본문은 웹에 둔다 — 언제 여셔도 최신이다.
          ⚠ 판매팩과 «같은 곳»(lib/guide-links)에서 나온다. 두 곳에 적으면 갈린다. */
-      const { GUIDES, buildGuideCardHtml } = await import("@/lib/guide-links");
-      for (const a of GUIDES) zip.file(a.파일, buildGuideCardHtml(a));
+      /* 안내서 셋을 «한 장»에 담는다 (2026-09-10 현님 지시). 전에는 파일 셋이었다. */
+      const { buildAllGuidesHtml, GUIDES_FILE } = await import("@/lib/guide-links");
+      zip.file(GUIDES_FILE, buildAllGuidesHtml());
 
       const blob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(blob);
