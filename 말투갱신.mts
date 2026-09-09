@@ -124,9 +124,17 @@ if (!편들.length) {
 type 칸 = { 편: string; 줄: string[] };
 const 모든칸: 칸[] = [];
 const 제목들: string[] = [];
+/* ⭐ 2026-09-10 — 캡션도 여기서 담는다 (현님: 「카페인 컬러 말투에도 자막이 있고
+ *   본보기 자막에도 자막이 있는데 헷갈리지 않겠어?」)
+ *   맞는 말이다. `본보기모으기.mts` 가 같은 우물에서 긷고 있었다 — 자막이 두 곳에 있었다.
+ *   그쪽에만 있던 것이 «캡션 앞 3~5줄»뿐이라, 그것을 이리 옮기고 그 도구를 없앴다.
+ *   ⚠ 아래 고정 덩어리(📍부터)는 편마다 똑같아서 본보기가 안 된다. 앞머리만 담는다. */
+const 캡션들: string[] = [];
 
 for (const p of 편들) {
   제목들.push(다듬기(p.verticalTitle).replace(/\|/g, " ").replace(/\s+/g, " ").trim());
+  const 머리 = String(p.captionYoutube ?? "").split("📍")[0].trim();
+  if (머리) 캡션들.push(머리);
   const 칸들 = await db.select().from(snsCut).where(eq(snsCut.contentId, p.id)).orderBy(asc(snsCut.ord));
   칸들.forEach((c, i) => {
     let 줄: string[] = [];
@@ -209,6 +217,16 @@ for (const k of 뽑기) {
 줄들.push("");
 for (const t of 제목들) 줄들.push("> " + t);
 줄들.push("");
+if (캡션들.length) {
+  줄들.push("### 캡션 — 위 3~5줄");
+  줄들.push("");
+  줄들.push("영상 «밖»에 붙는 글이다. 자막을 받아쓰지 않고, 그 편에서 실제로 나온 숫자와 장면으로 쓴다.");
+  줄들.push("");
+  for (const c of 캡션들) {
+    for (const l of c.split("\n").filter(Boolean)) 줄들.push("> " + l);
+    줄들.push("");
+  }
+}
 줄들.push("## 위 글을 세어서 나온 값 — 감이 아니라 잰 것이다");
 줄들.push("");
 줄들.push(`자막 ${모든줄.length}줄 · 제목 ${제목들.length}개를 센 결과다.`);
