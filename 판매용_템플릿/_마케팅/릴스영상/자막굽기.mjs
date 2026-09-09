@@ -299,6 +299,25 @@ if (칸.length === 0) {
   process.exit(1);
 }
 
+/* ⭐ 2026-09-09 현님: 「자막 1~2줄」 — 한 칸이 화면에서 몇 줄이 되는지 «세어서» 알린다.
+ *   손으로 나눈 | 하나가 화면에서 두 줄로 접히면 한 칸이 3줄이 된다. 그걸 잡는다.
+ *   ⚠ 멈추지는 않는다 — 마무리 CTA 는 원래 3줄로 정해져 있다. 어느 칸인지만 알려 준다. */
+{
+  const 넘는칸 = [];
+  for (const k of 칸) {
+    const 줄수 = k.글.split("|").reduce((합, 줄) => {
+      const 순 = 줄.replace(/\*/g, "");
+      return 합 + Math.max(1, Math.ceil([...순].length / 17));   // 17칸이 한 줄에 들어가는 한계
+    }, 0);
+    if (줄수 > 2) 넘는칸.push({ t: cs(k.시작), 줄수, 글: k.글.split("|")[0].slice(0, 14) });
+  }
+  if (넘는칸.length) {
+    console.log(`  ⚠ 세 줄이 되는 칸 ${넘는칸.length}개 — 현님 지시는 «1~2줄»입니다`);
+    for (const n of 넘는칸.slice(0, 6)) console.log(`      ${n.t}  ${n.줄수}줄  「${n.글}…」`);
+    if (넘는칸.length > 6) console.log(`      … 그 밖에 ${넘는칸.length - 6}개`);
+  } else console.log(`  ✅ 모든 칸이 1~2줄입니다`);
+}
+
 // 너무 긴 줄은 미리 알린다 — 자동으로 나뉘긴 하지만 나뉘는 자리가 예쁘지 않다
 for (const k of 칸) {
   for (const 줄 of k.글.split("|")) {

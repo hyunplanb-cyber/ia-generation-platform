@@ -212,11 +212,25 @@ for (const t of 목록) {
      그래서 넉넉히 찍고 정확히 1080×1920 으로 잘라낸다(2026-08-12 재서 알았다). */
   const 넉넉 = `${W}/bg_raw.png`;
   const 바탕 = `${W}/bg.png`;
-  sh(CHROME, ["--headless=new", "--user-data-dir=" + 크롬찌꺼기,  "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
+  /* ⭐ 2026-09-09 — 본편 크기에 «맞춰» 굽는다.
+   *   새 릴스 틀은 2160x3840 인데 표지는 늘 1080x1920 으로 구웠다. 이으려면 크기가 같아야 한다
+   *   (concat 디먹서 + -c copy 는 크기가 다르면 못 잇는다).
+   *   ⚠ 창 크기(CSS 픽셀)는 그대로 두고 «화소 배율»만 올린다. 글자 자리는 하나도 안 움직이고
+   *     화소만 촘촘해진다. 늘려서 키우는 것이 아니라 «처음부터 크게» 그리는 것이다. */
+  const 본 = (() => {
+    try {
+      const [w, h] = execFileSync("ffprobe", ["-v", "error", "-select_streams", "v", "-show_entries",
+        "stream=width,height", "-of", "csv=p=0:s=x", t.영상]).toString().trim().split("\n")[0].split("x").map(Number);
+      return { w, h };
+    } catch { return { w: 1080, h: 1920 }; }
+  })();
+  const 배 = Math.max(1, Math.round((본.w / 1080) * 100) / 100);
+  if (배 !== 1) console.log(`  표지를 본편에 맞춰 ${본.w}x${본.h} 로 굽습니다 (화소 배율 ${배})`);
+  sh(CHROME, ["--headless=new", "--user-data-dir=" + 크롬찌꺼기,  "--disable-gpu", "--hide-scrollbars", `--force-device-scale-factor=${배}`,
     "--window-size=1080,2060", `--screenshot=${넉넉}`, "--virtual-time-budget=5000",
     `file:///${W}/cover.html?${주소(공통)}`]);
   if (!existsSync(넉넉)) throw new Error("인트로 바탕을 못 구웠습니다 (경로에 한글이 있나?)");
-  ff(["-i", 넉넉, "-vf", "crop=1080:1920:0:0", 바탕]);
+  ff(["-i", 넉넉, "-vf", `crop=${본.w}:${본.h}:0:0`, 바탕]);
 
   /* ② 틀에게 «제대로 그려졌는지» 묻는다. 그림은 이미 ①에서 한 벌로 나왔고, 여기서는 재기만 한다. */
   const 자 = 고양이자리(주소(공통));
@@ -253,7 +267,15 @@ for (const t of 목록) {
    *   이음표(concat 디먹서) + -c copy 는 정확히 1194프레임을 낸다. 다시 굽지 않아 빠르기도 하다. */
   const 이은것 = `${W}/joined_${t.이름}.mp4`;
   const 이음표 = `${W}/이음_${t.이름}.txt`;
-  writeFileSync(이음표, [인트로, t.영상].map((p) => `file '${p}'`).join("\n"), "utf8");
+  /* ⛔ 2026-09-09 — 본편에 «소리가 있으면» 이 이음이 깨진다.
+   *   인트로는 -an 으로 굽는데(소리 없음), 본편에 소리가 있으면 concat 디먹서가
+   *   두 파일의 흐름 수가 달라 앞 2초만 내놓는다. 실제로 영상25에서 2.00초가 나왔다.
+   *   (길이 검사가 잡았다 — 2026-08-12 에 심어 둔 그 검사다.)
+   *   ⭐ 소리는 어차피 ④에서 «처음부터 끝까지» 다시 깐다. 그러니 여기서는 떼고 잇는다.
+   *     ⚠ -c copy 라 다시 굽지 않는다. 화질은 그대로다. */
+  const 본편무음 = `${W}/mute_${t.이름}.mp4`;
+  ff(["-i", t.영상, "-c", "copy", "-an", 본편무음]);
+  writeFileSync(이음표, [인트로, 본편무음].map((p) => `file '${p}'`).join("\n"), "utf8");
   ff(["-f", "concat", "-safe", "0", "-i", 이음표, "-c", "copy", 이은것]);
 
   /* 이었으면 «재본다». 붙였다고 믿지 않는다 — 위 버그가 정확히 그 틈으로 들어왔다. */

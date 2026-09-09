@@ -67,6 +67,16 @@ export function 못쓰는경로면멈춘다(경로들) {
   process.exit(1);
 }
 
+/* ⭐ 2026-09-09 현님: 「커버에 있는 제목은 현재와 동일, 상단 띠 부분은 포인트 컬러 노랑」
+ *   #F0C810 은 현님이 주신 견본에서 «잰» 값이다 (자막굽기.mjs 와 같은 색).
+ *   ⚠ ASS 는 &HAABBGGRR 이라 거꾸로 적는다.
+ *   쓰는 법은 자막과 같다 — «*낱말*» 로 감싼다.  예)  *채팅*은 기본|구매 후 매너온도까지 */
+const 흰색 = "&H00FFFFFF";
+const 노랑 = "&H0010C8F0";
+export const 별표빼기 = (s) => String(s).split("*").join("");
+const 별표칠하기 = (줄) =>
+  String(줄).split("*").map((조각, i) => (i % 2 ? `{\\c${노랑}}${조각}{\\c${흰색}}` : 조각)).join("");
+
 /** 제목 .ass 한 벌을 쓴다. 나올 자리는 «회차 폴더»다(임시 폴더가 아니다). */
 export function 제목ass(g, 줄들, 나올길) {
   writeFileSync(나올길, [
@@ -78,7 +88,7 @@ export function 제목ass(g, 줄들, 나올길) {
     `Style: 제목,Paperlogy 8 ExtraBold,${g.제목.size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,${g.제목.outline},0,${g.제목.align},${g.제목.marginL},${g.제목.marginR},${g.제목.marginV},1`, "",
     "[Events]",
     "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
-    `Dialogue: 0,0:00:00.00,9:00:00.00,제목,,0,0,0,,${줄들.join("\\N")}`,
+    `Dialogue: 0,0:00:00.00,9:00:00.00,제목,,0,0,0,,${줄들.map(별표칠하기).join("\\N")}`,
   ].join("\n") + "\n", "utf8");
   return 나올길;
 }
