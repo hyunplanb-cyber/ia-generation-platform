@@ -21,7 +21,7 @@ import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { eq, and, gt, desc, sql } from "drizzle-orm";
 import { config } from "dotenv";
-import { checkScript, type 대본 } from "@/lib/sns-caption-rules";
+import { checkScript, checkCaption, type 대본 } from "@/lib/sns-caption-rules";
 
 config({ path: ".env.local" });
 /* db/client 는 DATABASE_URL 을 «불러올 때» 읽는다 — dotenv 뒤에 들여야 한다. */
@@ -206,7 +206,10 @@ function 인트로설정(이름: string): { title?: string; cap?: string; 낼길
 for (const 편 of 대본들) {
   const 이름 = 편.이름!;
   const 칸들 = 편.칸들 ?? [];
-  const 칸초 = 편.칸초 ?? 1.8;
+  /* 2026-09-10 현님 결정: 자막 한 칸 «2.5초». 여기 기본값이 1.8 로 남아 있어
+     `sns-caption-rules.ts` 의 2.5 와 갈려 있었다 — 칸초를 안 적은 대본은 두 곳이 다른 길이를
+     냈다. 값은 한 곳에서만 정한다. */
+  const 칸초 = 편.칸초 ?? 2.5;
 
   /* ⛔ 검사를 통과하지 못한 것은 보내지 않는다. */
   const 전부 = checkScript(편, 별명);
@@ -337,6 +340,23 @@ for (const 편 of 대본들) {
      *     (캡션_공통.md) + 해시태그 줄까지 이어 붙인 뒤의 길이다. 조각을 따로 세지 않는다.
      *   ⚠ 참고로 인스타그램이 실제로 받는 길이는 2,200자다. 지금 우리 것은 800자 안팎이라
      *     둘 다 넉넉히 지난다. 막는 값은 사장님이 정하신 500,000자다. */
+    /* ⛔ 캡션도 검사한다 (2026-09-10).
+     *   여태 이 관문은 checkScript(자막·제목)만 돌리고 checkCaption 은 «한 번도» 안 불렀다.
+     *   부르는 곳이 셋 있었는데(/admin/sns · 캡션보기.mts · _검사갱신.mts) 전부
+     *   «보낸 뒤»에 보는 화면이었다. 그래서 금지어가 든 캡션이 그대로 검수기까지 갔다.
+     *   ⚠ checkCaption 은 checkScript 와 규칙이 «일부러» 다르다 — 경력(18년차)은
+     *     자막에서 막고 캡션에서 푼다. 자리가 다르면 규칙도 다르다(rules.ts 주석). */
+    const 캡션걸림 = [
+      ...checkCaption(값.captionYoutube, "유튜브 설명"),
+      ...checkCaption(값.captionInstagram, "인스타 캡션"),
+    ].filter((x) => !x.넘어감);
+    if (캡션걸림.length) {
+      console.error(`
+❌ ${이름}: 캡션검사에 ${캡션걸림.length}건 걸려 있습니다. 고친 뒤에 보냅니다.`);
+      for (const g of 캡션걸림) console.error(`   [${g.어디}] ${g.무엇} → ${g.대신}`);
+      process.exit(1);
+    }
+
     const 인스타한도 = 500000;
     if (값.captionInstagram.length > 인스타한도) {
       console.error(`\n❌ ${이름}: 인스타 캡션이 ${값.captionInstagram.length}자입니다 — ${인스타한도}자 이하여야 합니다.`);
