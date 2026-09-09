@@ -124,10 +124,29 @@ const 방들 = readdirSync(뿌리, { withFileTypes: true })
     return (parseInt(a) || 999) - (parseInt(b) || 999);
   });
 
+/* ⭐ 2026-09-10 — 「2. 완성화면」이 «세트 폴더»가 되었다 (현님 지시로 폴더를 갈랐다).
+ *     _촬영영상/2. 완성화면_인테리어_프리미엄/
+ *         화면영역.mp4 · 클로드영역.mp4 · _통짜.mp4
+ *   여태 이 도구는 «한 단»만 봐서, 옮기고 나면 완성화면 아홉 개가 목록에서 통째로 사라진다.
+ *   → 폴더 안에 영상이 있으면 그 폴더를 «한 줄»로 친다. 분류는 «폴더 이름»의 맨 앞 숫자다.
+ *     대표는 화면영역 > _통짜 > 아무거나 순으로 고른다 (길이·크기를 그것으로 적는다). */
+function 세트들(방길) {
+  const 나온것 = [];
+  for (const e of readdirSync(방길, { withFileTypes: true })) {
+    if (!e.isDirectory() || e.name.startsWith(".")) continue;
+    const 안 = readdirSync(join(방길, e.name)).filter(영상인가);
+    if (!안.length) continue;
+    const 대표 = 안.find((f) => f.startsWith("화면영역")) ?? 안.find((f) => f.startsWith("_통짜")) ?? 안[0];
+    나온것.push({ 폴더: e.name, 안, 대표 });
+  }
+  return 나온것;
+}
+
 for (const 방 of 방들) {
   const 방길 = join(뿌리, 방);
   const 것들 = readdirSync(방길).filter(영상인가);
-  if (!것들.length) continue;
+  const 세트 = 방 === "_촬영영상" ? 세트들(방길) : [];
+  if (!것들.length && !세트.length) continue;
 
   const 메모 = 메모읽기(방길);
   let 방초 = 0;
@@ -149,8 +168,23 @@ for (const 방 of 방들) {
       for (const l of 제것) 줄.push(`          ✎ ${l.trim()}`);
     }
   }
-  합초 += 방초; 합개 += 것들.length;
-  console.log(`\n  ${방}  —  ${것들.length}개 · ${시분(방초)}`);
+  /* 세트 폴더 — 한 줄로 친다 */
+  for (const s of 세트) {
+    const 길 = join(방길, s.폴더, s.대표);
+    const m = 재기(길);
+    const 메가 = Math.round(s.안.reduce((a, f) => a + statSync(join(방길, s.폴더, f)).size, 0) / 1e6);
+    방초 += m?.초 ?? 0;
+    const 갈래 = 분류(s.폴더);
+    const 짜임 = s.안.some((f) => f.startsWith("화면영역")) && s.안.some((f) => f.startsWith("클로드영역"))
+      ? "세트(화면영역+클로드영역)" : "통짜만";
+    줄.push(`      ${갈래 ? `[${갈래}] ` : ""}${s.폴더}/  ${짜임}  ${m ? `${Math.round(m.초)}초 · ${m.w}×${m.h} · 비율 ${(m.w / m.h).toFixed(2)}` : "(못 읽음)"} · ${메가}MB`);
+    줄.push(`          · ${s.안.join(" · ")}`);
+    const 제것 = 메모?.의도.get(s.폴더.toLowerCase());
+    if (제것?.length) { 의도붙은것 += 1; for (const l of 제것) 줄.push(`          ✎ ${l.trim()}`); }
+  }
+
+  합초 += 방초; 합개 += 것들.length + 세트.length;
+  console.log(`\n  ${방}  —  ${것들.length + 세트.length}개 · ${시분(방초)}`);
   if (메모?.머리?.length) for (const l of 메모.머리) console.log(`      ▣ ${l}`);
   console.log(줄.join("\n"));
 }
