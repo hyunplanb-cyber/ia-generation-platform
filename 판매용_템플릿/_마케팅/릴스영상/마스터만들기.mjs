@@ -126,6 +126,29 @@ console.log(`        분할선 ${분할선 ?? "(이분할 구간 없음)"}`);
 
 /* ═══ ② 완성화면 재료 · 클로드 재료가 몇 초인지 ══════════════════════════════
    완성화면은 S(오른쪽 칸) + B(전체) 에서, 클로드는 C(가운데 글 기둥) + S(왼쪽 칸) 에서 온다. */
+/* ⭐ 클로드 «풀» 구간의 글 기둥을 잰다 (2026-09-09 현님 지적으로 더함)
+ *   전에는 이 구간을 «화면 폭 그대로» 잘라 넣었다. 그러면 3156 → 1080 이라 배율 0.34 —
+ *   이분할 구간(1074 → 1080, 배율 1.006)의 «3분의 1 크기»가 되어 글이 안 읽힌다.
+ *   클로드 풀 화면은 글이 가운데 기둥에만 있다(뷰티샵 x 826~2311, 폭 1486).
+ *   그 기둥만 자르면 배율 0.73 — 이분할 구간과 견줄 만해진다. */
+let 글기둥 = null;
+{
+  const C초 = 갈래.map((k, i) => (k === "C" ? i : -1)).filter((i) => i >= 0);
+  if (C초.length) {
+    const t = C초[Math.floor(C초.length * 0.6)];
+    const buf = ff(["-v", "error", "-ss", String(t + 0.5), "-i", 촬영본, "-frames:v", "1",
+      "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
+    const 줄 = []; for (let y = 200; y < H0 - 260; y += 5) 줄.push(y);
+    const 칸 = new Int32Array(W0);
+    for (const y of 줄) for (let x = 0; x < W0; x++) if (buf[y * W0 + x] > 110) 칸[x]++;
+    const 문턱 = 줄.length * 0.01;
+    let 왼 = W0, 오른 = 0;
+    for (let x = 0; x < W0; x++) if (칸[x] > 문턱) { if (x < 왼) 왼 = x; 오른 = x; }
+    if (오른 > 왼 + W0 * 0.15) 글기둥 = { x: 짝수(왼), w: 짝수(오른 - 왼 + 1) };
+  }
+}
+if (글기둥) console.log(`        클로드 풀의 글 기둥  x ${글기둥.x} ~ ${글기둥.x + 글기둥.w - 1} (폭 ${글기둥.w})`);
+
 const 완성초 = 갈래.map((k, i) => (k === "S" || k === "B" ? i : -1)).filter((i) => i >= 0);
 const 클초 = 갈래.map((k, i) => (k === "C" || k === "S" ? i : -1)).filter((i) => i >= 0);
 console.log(`  재료  완성화면 ${완성초.length}초 · 클로드 ${클초.length}초   (만들 길이 ${목표초}초)`);
@@ -184,8 +207,17 @@ for (const c of 쓸것) console.log(`            ${String(c.시작).padStart(3)}
 const F = [];
 F.push(`[0:v]split=2[srcR][srcL]`);
 // 완성화면
-F.push(`[srcR]crop=${오른폭}:${H0}:${Math.min(분할선 ?? 0, W0 - 오른폭)}:0,split=${고른.length}${고른.map((_, i) => `[r${i}]`).join("")}`);
-고른.forEach((c, i) => F.push(`[r${i}]trim=${c.t.toFixed(3)}:${(c.t + 컷초).toFixed(3)},setpts=(PTS-STARTPTS)/${배속},format=yuv420p,setsar=1[rr${i}]`));
+/* ⛔ 2026-09-09 현님: 「뒤에 완성 화면도 중간에 포커스가 중간으로 바뀌는데?」
+ *   맞다. 자르는 자리를 «한 자리»로 굳혀 두었던 것이 흠이었다.
+ *     이분할(S) 구간 — 브라우저는 분할선 «오른쪽»에 있다  → x = 분할선
+ *     완성화면 풀(B) — 브라우저가 화면을 «통째로» 쓴다     → x = 0
+ *   B 구간을 분할선부터 자르면 «로고와 메뉴가 통째로» 날아간다(뷰티샵에서 왼쪽 1074px).
+ *   폭은 둘 다 같게 두어 배율이 안 흔들리게 한다 — 컷마다 확대율이 바뀌면 눈에 띈다. */
+F.push(`[srcR]split=${고른.length}${고른.map((_, i) => `[r${i}]`).join("")}`);
+고른.forEach((c, i) => {
+  const 자리 = 갈래[Math.floor(c.t)] === "S" ? Math.min(분할선 ?? 0, W0 - 오른폭) : 0;
+  F.push(`[r${i}]trim=${c.t.toFixed(3)}:${(c.t + 컷초).toFixed(3)},setpts=(PTS-STARTPTS)/${배속},crop=${오른폭}:${H0}:${자리}:0,format=yuv420p,setsar=1[rr${i}]`);
+});
 F.push(`${고른.map((_, i) => `[rr${i}]`).join("")}concat=n=${고른.length}:v=1:a=0,trim=0:${목표초},setpts=PTS-STARTPTS[right]`);
 // 클로드 — 토막마다 자리가 다르다
 const 가운데w = 짝수(Math.min(W0, Math.round(H0 * 클비)));
@@ -198,9 +230,12 @@ F.push(`[srcL]split=${쓸것.length}${쓸것.map((_, i) => `[l${i}]`).join("")}`
     const h = 짝수(Math.min(H0, Math.round(x / 클비)));
     F.push(`${앞},crop=${x}:${h}:0:${H0 - h},scale=${왼폭}:${띠높이}:flags=lanczos,format=yuv420p,setsar=1[ll${i}]`);
   } else {
-    // 클로드 풀 — 화면 «가운데» 글 기둥의 아래쪽
-    const h = 짝수(Math.round(가운데w / 클비));
-    F.push(`${앞},crop=${가운데w}:${h}:${짝수(Math.round((W0 - 가운데w) / 2))}:${짝수(H0 - h - Math.round(H0 * 0.06))},scale=${왼폭}:${띠높이}:flags=lanczos,format=yuv420p,setsar=1[ll${i}]`);
+    /* 클로드 풀 — «글 기둥»의 아래쪽. 화면 폭 그대로 자르면 배율이 0.34 로 떨어져
+       이분할 구간(1.006)의 3분의 1 크기가 된다. 기둥을 재서 자르면 0.7 대까지 올라온다. */
+    const w = 짝수(Math.min(W0, 글기둥 ? 글기둥.w : 가운데w));
+    const x = 짝수(글기둥 ? Math.min(글기둥.x, W0 - w) : Math.round((W0 - w) / 2));
+    const h = 짝수(Math.min(H0, Math.round(w / 클비)));
+    F.push(`${앞},crop=${w}:${h}:${x}:${짝수(Math.max(0, H0 - h - Math.round(H0 * 0.06)))},scale=${왼폭}:${띠높이}:flags=lanczos,format=yuv420p,setsar=1[ll${i}]`);
   }
 });
 F.push(`${쓸것.map((_, i) => `[ll${i}]`).join("")}concat=n=${쓸것.length}:v=1:a=0[클몸]`);
