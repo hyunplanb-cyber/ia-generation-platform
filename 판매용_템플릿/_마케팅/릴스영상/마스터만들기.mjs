@@ -149,6 +149,36 @@ let 글기둥 = null;
 }
 if (글기둥) console.log(`        클로드 풀의 글 기둥  x ${글기둥.x} ~ ${글기둥.x + 글기둥.w - 1} (폭 ${글기둥.w})`);
 
+/* ⭐ 사이트 «로고»가 어디 있나 (2026-09-09 현님: 「좌측으로 너무 맞추다 보니 좌측에 빈공간이 너무 많이 남네」)
+ *
+ *   현님 지시는 처음부터 「완성화면의 «로고 기준»으로 좌상단에 기준하여」였는데,
+ *   내가 «브라우저 칸의 왼쪽 끝» 기준으로 잘랐다. 둘이 다르다 —
+ *     이분할 구간   로고가 칸 왼끝에서 54px  → 거의 같다 (그래서 안 보였다)
+ *     완성화면 풀   로고가 화면 왼끝에서 431px → 431px 이 통째로 «빈 여백»으로 들어왔다
+ *   사이트가 제 여백을 갖고 가운데 정렬돼 있어서 그렇다.
+ *
+ *   → 머리띠(브라우저 크롬 아래 첫 띠)에서 «내용이 처음 나오는 자리»를 찾아 로고로 삼는다.
+ *     26칸 넘게 «이어서» 바탕이 아닌 곳을 찾는다 — 창 테두리 한 줄에 속지 않으려고. */
+const 크롬 = 220;                                   // 탭줄·주소창. 영상만들기.mjs 도 이만큼 자른다
+const 로고여백 = 60;                                 // 로고 앞에 남길 숨. 견본이 그만큼이다
+function 로고찾기(t, 시작x) {
+  const buf = ff(["-v", "error", "-ss", String(t + 0.5), "-i", 촬영본, "-frames:v", "1",
+    "-pix_fmt", "rgb24", "-f", "rawvideo", "-"]);
+  const 줄 = []; for (let y = 크롬 + 25; y < 크롬 + 110; y += 3) 줄.push(y);
+  const 배경 = (r, g, b) => r > 232 && g > 222 && b > 218;
+  const 칸 = new Int32Array(W0);
+  for (const y of 줄) for (let x = 0; x < W0; x++) {
+    const i = (y * W0 + x) * 3;
+    if (!배경(buf[i], buf[i + 1], buf[i + 2])) 칸[x]++;
+  }
+  const 문턱 = 줄.length * 0.25;
+  for (let x = 시작x + 12; x < W0 - 30; x++) {
+    let 이어 = 0; while (이어 < 26 && 칸[x + 이어] > 문턱) 이어++;
+    if (이어 >= 26) return x;
+  }
+  return null;
+}
+
 const 완성초 = 갈래.map((k, i) => (k === "S" || k === "B" ? i : -1)).filter((i) => i >= 0);
 const 클초 = 갈래.map((k, i) => (k === "C" || k === "S" ? i : -1)).filter((i) => i >= 0);
 console.log(`  재료  완성화면 ${완성초.length}초 · 클로드 ${클초.length}초   (만들 길이 ${목표초}초)`);
@@ -213,10 +243,20 @@ F.push(`[0:v]split=2[srcR][srcL]`);
  *     완성화면 풀(B) — 브라우저가 화면을 «통째로» 쓴다     → x = 0
  *   B 구간을 분할선부터 자르면 «로고와 메뉴가 통째로» 날아간다(뷰티샵에서 왼쪽 1074px).
  *   폭은 둘 다 같게 두어 배율이 안 흔들리게 한다 — 컷마다 확대율이 바뀌면 눈에 띈다. */
+/* 토막마다 로고를 찾아 «거기서» 자른다. 못 찾으면 칸 왼끝으로 되돌아간다. */
+const 자리표 = {};
+for (const 갈 of ["S", "B"]) {
+  const 초들 = 갈래.map((k, i) => (k === 갈 ? i : -1)).filter((i) => i >= 0);
+  const 기본 = 갈 === "S" ? Math.min(분할선 ?? 0, W0 - 오른폭) : 0;
+  if (!초들.length) { 자리표[갈] = 기본; continue; }
+  const 로고 = 로고찾기(초들[Math.floor(초들.length * 0.5)], 갈 === "S" ? (분할선 ?? 0) : 0);
+  자리표[갈] = 로고 === null ? 기본 : Math.max(0, Math.min(로고 - 로고여백, W0 - 오른폭));
+  console.log(`            ${갈 === "S" ? "이분할     " : "완성화면 풀"}  로고 x=${로고 ?? "못 찾음"} → 자를 자리 ${자리표[갈]}${로고 === null ? " (칸 왼끝으로 되돌아감)" : ""}`);
+}
 F.push(`[srcR]split=${고른.length}${고른.map((_, i) => `[r${i}]`).join("")}`);
 고른.forEach((c, i) => {
-  const 자리 = 갈래[Math.floor(c.t)] === "S" ? Math.min(분할선 ?? 0, W0 - 오른폭) : 0;
-  F.push(`[r${i}]trim=${c.t.toFixed(3)}:${(c.t + 컷초).toFixed(3)},setpts=(PTS-STARTPTS)/${배속},crop=${오른폭}:${H0}:${자리}:0,format=yuv420p,setsar=1[rr${i}]`);
+  const 자리 = 자리표[갈래[Math.floor(c.t)]] ?? 0;
+  F.push(`[r${i}]trim=${c.t.toFixed(3)}:${(c.t + 컷초).toFixed(3)},setpts=(PTS-STARTPTS)/${배속},crop=${오른폭}:${H0}:${짝수(자리)}:0,format=yuv420p,setsar=1[rr${i}]`);
 });
 F.push(`${고른.map((_, i) => `[rr${i}]`).join("")}concat=n=${고른.length}:v=1:a=0,trim=0:${목표초},setpts=PTS-STARTPTS[right]`);
 // 클로드 — 토막마다 자리가 다르다
