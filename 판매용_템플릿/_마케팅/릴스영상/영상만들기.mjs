@@ -157,16 +157,24 @@ function 긴구간(arr, 문턱) {
  * ⚠ «맨 바깥 화소로 테두리를 잡는» 방식은 못 쓴다 — 마스코트·제목 글자의 안티에일리어싱에
  *   우연히 같은 회색이 섞여 나와 자리가 통째로 어긋난다(2026-09-04 에 밟았다).
  *   그래서 «줄마다·칸마다 세어» 충분히 찬 구간만 본다. 안쪽에 PiP 가 뚫려 있어도 견딘다. */
-function 색네모(buf, W, H, [r, g, b], tol = 3) {
+function 색네모(buf, W, H, [r, g, b], tol = 3, 구멍 = null) {
   const 맞나 = (i) =>
     Math.abs(buf[i] - r) <= tol && Math.abs(buf[i + 1] - g) <= tol && Math.abs(buf[i + 2] - b) <= tol;
+  /* ⛔ 2026-09-09 — 클로드 칸이 «가로 93%»가 되면서 이 검사가 무너졌다.
+   *   PiP 를 지나는 줄은 46,46,46 이 158/2160 = 7% 뿐이라 «30% 문턱»에 걸려 끊긴다.
+   *   그래서 브라우저 칸이 y610~2142(1532px)로 잘리고, PiP 아래 795px 이 통째로 사라졌다.
+   *   실제로 그렇게 구워져서 클로드 칸이 «회색 빈 상자»로 나왔다.
+   *   → PiP 는 «뚫린 구멍»이지 남의 땅이 아니다. 구멍 안은 찬 것으로 세고 이어 붙인다.
+   *   ⚠ 옛 PiP(1360/2160 = 63%)일 때는 37% 가 남아 문턱을 겨우 넘겨 안 걸렸다. 운이었다. */
+  const 구멍안 = (x, y) =>
+    구멍 !== null && x >= 구멍.x && x < 구멍.x + 구멍.w && y >= 구멍.y && y < 구멍.y + 구멍.h;
 
   const 줄 = new Int32Array(H);
   let 모두 = 0;
   for (let y = 0; y < H; y++) {
     const row = y * W * 3;
     let c = 0;
-    for (let x = 0; x < W; x++) if (맞나(row + x * 3)) c++;
+    for (let x = 0; x < W; x++) if (구멍안(x, y) || 맞나(row + x * 3)) c++;
     줄[y] = c; 모두 += c;
   }
   if (모두 < W * H * 0.01) return null;                 // 자잘한 티끌은 무시
@@ -177,7 +185,7 @@ function 색네모(buf, W, H, [r, g, b], tol = 3) {
   const 칸수 = new Int32Array(W);
   for (let y = 띠.a; y <= 띠.b; y++) {
     const row = y * W * 3;
-    for (let x = 0; x < W; x++) if (맞나(row + x * 3)) 칸수[x]++;
+    for (let x = 0; x < W; x++) if (구멍안(x, y) || 맞나(row + x * 3)) 칸수[x]++;
   }
   const 칸 = 긴구간(칸수, (띠.b - 띠.a + 1) * 0.30);
   if (!칸 || 칸.b - 칸.a < W * 0.05) return null;
@@ -241,8 +249,10 @@ function 틀읽기(png) {
     process.exit(1);
   }
 
-  let 영상 = 색네모(buf, W, H, 브라우저RGB);
+  /* ⭐ PiP 를 «먼저» 찾는다 — 브라우저 칸을 찾을 때 그 자리를 «뚫린 구멍»으로 알려 주려고.
+   *   순서를 되돌리면 2026-09-09 의 흠(브라우저 칸이 PiP 위에서 잘림)이 되살아난다. */
   let pip = 색네모(buf, W, H, PiPRGB);
+  let 영상 = 색네모(buf, W, H, 브라우저RGB, 3, pip);
   let 옛틀 = false;
   if (!영상) { 영상 = 옛네모(buf, W, H); pip = null; 옛틀 = true; }
   if (영상 && !(영상.w >= 2 && 영상.h >= 2 && Number.isFinite(영상.x) && Number.isFinite(영상.y))) {
@@ -814,6 +824,11 @@ function 만들기({ 판, 출력W, 출력H, 파일명, 틀경로, t, k, 띠가�
   if (구간쓰나) {
     const gs = 구간.구간, W0 = 구간.W, H0 = 구간.H;
     const 채우기 = `scale=${S.w}:${S.h}:force_original_aspect_ratio=increase:flags=lanczos,crop=${S.w}:${S.h}`;
+    /* ⭐ 2026-09-09 현님: 「완성화면의 로고 기준으로 «좌상단에 기준하여» 확대 및 크롭」
+     *   가운데를 자르면 로고가 있는 왼쪽이 통째로 날아간다 — 뷰티샵에서 좌우 650px 씩이었다.
+     *   그래서 «브라우저 칸»만 0:0 에 붙인다. 통째로 앉히는 길은 가운데 그대로 둔다
+     *   (거긴 원본에 클로드 칸이 섞여 있어 왼쪽에 붙이면 클로드가 나온다). */
+    const 왼위채우기 = `scale=${S.w}:${S.h}:force_original_aspect_ratio=increase:flags=lanczos,crop=${S.w}:${S.h}:0:0`;
     사슬.push(`[1:v]split=${gs.length}${gs.map((_, i) => `[g${i}]`).join("")}`);
 
     /* 브라우저 크롬(탭줄·주소창)은 «브라우저가 있는 구간»에서만 잘라낸다.
@@ -829,7 +844,7 @@ function 만들기({ 판, 출력W, 출력H, 파일명, 틀경로, t, k, 띠가�
         const 브w = 짝수(W0 - 쪼갠x);
         const 코h = 짝수(Math.min(H0, Math.round((쪼갠x * P.h) / P.w)));
         사슬.push(`${앞},split=2[m${i}][k${i}]`);
-        사슬.push(`[m${i}]crop=${브w}:${H0 - 위}:${쪼갠x}:${위},${채우기}[mm${i}]`);
+        사슬.push(`[m${i}]crop=${브w}:${H0 - 위}:${쪼갠x}:${위},${왼위채우기}[mm${i}]`);
         // 코드창은 «아래쪽»만 쓴다 — 크롬과 무관하다
         사슬.push(`[k${i}]crop=${쪼갠x}:${코h}:0:${H0 - 코h},scale=${P.w}:${P.h}:flags=lanczos[kk${i}]`);
         사슬.push(`[mm${i}][kk${i}]overlay=${P.x - S.x}:${P.y - S.y}:format=auto,setsar=1[p${i}]`);
@@ -858,7 +873,8 @@ function 만들기({ 판, 출력W, 출력H, 파일명, 틀경로, t, k, 띠가�
     const 코h = 짝수(Math.min(분할.H, Math.round((분할.x * P.h) / P.w)));
     const 위 = 짝수(크롬.px);                          // 브라우저 크롬. 세로판(P 있음)에서만 온다
     사슬.push(`[1:v]split=2[a][b]`);
-    사슬.push(`[a]crop=${브w}:${분할.H - 위}:${분할.x}:${위},scale=${S.w}:${S.h}:force_original_aspect_ratio=increase:flags=lanczos,crop=${S.w}:${S.h}[main]`);
+    /* 로고 기준 «좌상단» — 2026-09-09 현님 지시. crop 끝의 0:0 이 그것이다 (기본은 가운데) */
+    사슬.push(`[a]crop=${브w}:${분할.H - 위}:${분할.x}:${위},scale=${S.w}:${S.h}:force_original_aspect_ratio=increase:flags=lanczos,crop=${S.w}:${S.h}:0:0[main]`);
     사슬.push(`[b]crop=${짝수(분할.x)}:${코h}:0:${분할.H - 코h},scale=${P.w}:${P.h}:flags=lanczos[pip]`);
     사슬.push(`${바탕}[main]overlay=${S.x}:${S.y}:format=auto[t1]`);
     사슬.push(`[t1][pip]overlay=${P.x}:${P.y}:format=auto[c]`);
