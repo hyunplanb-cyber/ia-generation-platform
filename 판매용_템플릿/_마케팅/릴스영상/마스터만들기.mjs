@@ -30,7 +30,7 @@
 // ⛔ 이 도구는 «소리»를 담지 않는다. 음악은 영상만들기.mjs 가 얹는다.
 
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
@@ -178,17 +178,29 @@ const 재보기 = (파일) => {
  *   세트가 되는 건 2번뿐이라 1·3·4·기타는 파일 그대로 둔다.
  *   ⚠ 옛 자리(«<회차>_화면영역.mp4»)도 계속 본다 — _새틀견본에 두고 시험하실 수 있다. */
 const 견본방 = path.join(여기, "_새틀견본");
-const 세트방 = path.join(촬영방, 회차);
+
+/* ⭐ 2026-09-10 저녁 — 현님이 «갈래 폴더»를 한 층 더 두셨다 (「앞으로 영상이 계속 늘어날 것」).
+ *     _촬영영상/2. 완성화면/<회차>/{화면영역, 클로드영역, _통짜}.mp4
+ *   갈래 이름을 코드에 박지 않는다 — 갈래가 늘어도 여기를 안 고치게 «한 층을 통째로» 뒤진다.
+ *   뿌리도 함께 본다: 옮기다 만 것이나 _새틀견본에 두고 시험하시는 것이 있어도 못 찾는 일이 없게. */
+const 촬영터들 = [촬영방, ...(existsSync(촬영방)
+  ? readdirSync(촬영방, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && !e.name.startsWith("."))
+      .map((e) => path.join(촬영방, e.name))
+  : [])];
+const 세트방 = 촬영터들.map((터) => path.join(터, 회차)).find(existsSync)
+  ?? path.join(촬영방, "2. 완성화면", 회차);
 const 짝찾기 = (꼬리) =>
   [path.join(세트방, `${꼬리}.mp4`),
-   ...[촬영방, 견본방].map((방) => path.join(방, `${회차}_${꼬리}.mp4`))].find(existsSync) ?? null;
+   ...[...촬영터들, 견본방].map((방) => path.join(방, `${회차}_${꼬리}.mp4`))].find(existsSync) ?? null;
 const 화면파일 = 짝찾기("화면영역");
 const 클로드파일 = 짝찾기("클로드영역");
 const 두파일 = Boolean(화면파일 && 클로드파일);
 
 const 촬영본 = 두파일 ? 화면파일 : [
   path.join(세트방, "_통짜.mp4"),                                  // 세트 폴더 안의 옛 1개짜리
-  ...[`${회차}.mp4`, `${회차.replace(/^\d+\.\s*/, "")}.mp4`].map((n) => path.join(촬영방, n)),
+  ...촬영터들.flatMap((터) =>
+    [`${회차}.mp4`, `${회차.replace(/^\d+\.\s*/, "")}.mp4`].map((n) => path.join(터, n))),
 ].find(existsSync);
 if (!촬영본) {
   console.error(`\n⛔ 촬영본을 못 찾았습니다.`);
