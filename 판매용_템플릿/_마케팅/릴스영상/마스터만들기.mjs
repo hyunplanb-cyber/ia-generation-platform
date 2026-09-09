@@ -72,6 +72,85 @@ if (!회차) {
 const 회차방 = path.join(여기, 회차);
 if (!existsSync(회차방)) mkdirSync(회차방, { recursive: true });
 
+/* ═══ 길이를 맞추는 법 — «한 배속으로 통째로»가 아니라 «내용에 따라» ══════════════
+ *
+ *   2026-09-09 현님: 「완성화면과 클로드 영역 화면의 시간이 좀 다르면,
+ *                      내용에 따라 속도를 조절해서 맞춰줘.」
+ *
+ *   통째로 0.944배속을 걸면 «일이 벌어지는 대목»까지 같이 느려진다. 반대로 1.6배를 걸면
+ *   읽어야 할 대목이 휙 지나간다. 그래서 1초마다 «얼마나 움직이나»를 재고,
+ *   조용한 곳은 빠르게 · 바쁜 곳은 제 속도로 가게 나눠 준다.
+ *
+ *   ⚠ 이것은 «컷»이 아니다. 토막을 원본 차례 그대로 이어 붙이므로 그림은 안 끊긴다.
+ *     빨라졌다 느려질 뿐이다.
+ *
+ *   ⛔ «바쁜 곳»을 건드리지 않는다 — 한 번 거꾸로 짰다가 되돌렸다.
+ *     처음엔 공통 배수를 곱했더니 «바쁜 대목이 0.64배속»으로 늘어졌다. 읽을 대목이 늘어지고
+ *     조용한 대목이 상대적으로 빨라진 셈이라, 고치려던 것을 그대로 다시 만든 꼴이었다.
+ *
+ *   속도를 어떻게 정하나
+ *     ① 1초 토막마다 움직임을 잰다 → 0(조용) ~ 1(바쁨) 로 줄 세운다
+ *     ② 속도 = 1 + k × (1 − 바쁨).  바쁜 곳(1)은 «언제나 1.0배» — 손대지 않는다
+ *     ③ k 를 이분법으로 찾는다. 재료가 길면 k>0(조용한 곳을 빠르게),
+ *        짧으면 k<0(조용한 곳을 늘려) — 차이는 «조용한 곳이 흡수»한다
+ *     ④ 이웃끼리 튀지 않게 ±2초 평균으로 고른다
+ */
+function 속도나누기(움직임, 토막초, 목표) {
+  const n = 움직임.length;
+  if (!n) return [];
+  const 줄선 = [...움직임].sort((a, b) => a - b);
+  const 자리 = (v) => {                                        // 0(조용) ~ 1(바쁨)
+    let a = 0, b = 줄선.length;
+    while (a < b) { const m = (a + b) >> 1; if (줄선[m] < v) a = m + 1; else b = m; }
+    return 줄선.length > 1 ? a / (줄선.length - 1) : 0.5;
+  };
+  const 바쁨 = 움직임.map(자리);
+  const 고른바쁨 = 바쁨.map((_, i) => {
+    let s = 0, c = 0;
+    for (let k = Math.max(0, i - 2); k <= Math.min(n - 1, i + 2); k++) { s += 바쁨[k]; c++; }
+    return s / c;
+  });
+  const 속도 = (k) => 고른바쁨.map((b) => Math.max(0.4, Math.min(5, 1 + k * (1 - b))));
+  const 걸린시간 = (k) => 속도(k).reduce((a, v) => a + 토막초 / v, 0);
+  let 낮 = -0.95, 높 = 8;
+  for (let i = 0; i < 60; i++) { const 가 = (낮 + 높) / 2; if (걸린시간(가) > 목표) 낮 = 가; else 높 = 가; }
+  return 속도((낮 + 높) / 2);
+}
+
+/** 1초마다 «얼마나 움직이나». 아래 몫(입력칸·상태줄)은 빼고 잰다. */
+function 초마다움직임(파일, 아래뺄몫 = 0) {
+  const w = 96, h = 96;
+  const buf = ff(["-v", "error", "-i", 파일, "-vf", `fps=4,scale=${w}:${h}`,
+    "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
+  const 장 = Math.floor(buf.length / (w * h));
+  const 볼줄 = Math.max(4, Math.round(h * (1 - 아래뺄몫)));
+  const 한장차 = [];
+  for (let i = 1; i < 장; i++) {
+    let s = 0, n = 0;
+    for (let y = 0; y < 볼줄; y++) for (let x = 0; x < w; x++) {
+      s += Math.abs(buf[i * w * h + y * w + x] - buf[(i - 1) * w * h + y * w + x]); n++;
+    }
+    한장차.push(s / n);
+  }
+  const 초별 = [];
+  for (let i = 0; i + 4 <= 한장차.length; i += 4) {
+    let s = 0; for (let k = 0; k < 4; k++) s += 한장차[i + k];
+    초별.push(s / 4);
+  }
+  return 초별;
+}
+
+/** 토막마다 속도를 달리 걸어 이어 붙인다. ⚠ 원본 차례 그대로라 그림은 «안 끊긴다». */
+function 토막필터(입력, 앞, 속도들, 토막초, 이름, 뒤) {
+  const 줄 = [], n = 속도들.length;
+  줄.push(`${입력}${앞}split=${n}${속도들.map((_, i) => `[${이름}a${i}]`).join("")}`);
+  속도들.forEach((v, i) => 줄.push(
+    `[${이름}a${i}]trim=${(i * 토막초).toFixed(3)}:${((i + 1) * 토막초).toFixed(3)},` +
+    `setpts=(PTS-STARTPTS)/${v.toFixed(4)},format=yuv420p,setsar=1[${이름}b${i}]`));
+  줄.push(`${속도들.map((_, i) => `[${이름}b${i}]`).join("")}concat=n=${n}:v=1:a=0${뒤}[${이름}속]`);
+  return 줄;
+}
+
 const ff = (args) => execFileSync("ffmpeg", args, { maxBuffer: 1 << 28 });
 const 재기 = (args) => execFileSync("ffprobe", args, { encoding: "utf8" }).trim();
 const 재보기 = (파일) => {
@@ -119,10 +198,10 @@ if (두파일) {
   console.log(`  만들 길이  ${목표}초`);
 
   /* 완성화면 — 현님이 «이미 컷해서» 주신 것이라 다시 안 자른다. 길이만 맞춘다. */
-  const 화배속 = Math.max(0.8, Math.min(2.0, 화.초 / 목표));
-  const 화몸 = `[0:v]setpts=(PTS-STARTPTS)/${화배속.toFixed(5)},format=yuv420p,setsar=1`;
-  const 화길이 = 화.초 / 화배속;
-  console.log(`  완성화면   ${화배속.toFixed(3)}배속 → ${화길이.toFixed(1)}초${화길이 < 목표 - 0.05 ? " (모자라 되돌이로 채웁니다)" : ""}`);
+  const 화움직임 = 초마다움직임(화면파일, 0);
+  const 화속도 = 속도나누기(화움직임, 1.0, 목표);
+  const 화길이 = 화속도.reduce((a, v) => a + 1 / v, 0);
+  console.log(`  완성화면   ${화속도.length}초를 «내용에 따라» ${Math.min(...화속도).toFixed(2)}~${Math.max(...화속도).toFixed(2)}배속 → ${화길이.toFixed(1)}초`);
 
   /* 클로드 — 클로드 칸 비율(2002:904)만큼 «아래쪽»을 잘라 쓴다. 새 글이 아래에서 나온다.
    * ⛔ 왼쪽 칸을 1080 으로 좁히지 않는다 — 그러면 2160→1080 으로 줄였다가 영상만들기가
@@ -189,7 +268,8 @@ if (두파일) {
     : `${몸}[${이름}몸];[${이름}몸]loop=loop=${Math.ceil(목표 / 잰것)}:size=${Math.ceil(잰것 * 30)}:start=0,trim=0:${목표},setpts=PTS-STARTPTS[${이름}]`;
 
   const F2 = [];
-  F2.push(채움(화몸, 화길이, "right"));
+  F2.push(...토막필터("[0:v]", "", 화속도, 1.0, "화", ""));
+  F2.push(채움("[화속]null", 화길이, "right"));
   /* 자리를 시간에 따라 «먹인다» — sendcmd 가 crop 의 y 를 0.25초마다 바꾼다.
      ⚠ 값이 그대로면 안 적는다. 파일이 쓸데없이 길어지고 ffmpeg 가 느려진다. */
   const 명령 = [];
@@ -204,13 +284,14 @@ if (두파일) {
   const 명령경로 = 명령길.split("\\").join("/").replace(":", "\\:");
   console.log(`             자리 바뀌는 곳 ${명령.length}군데`);
 
-  const 클배속 = Math.max(0.85, Math.min(2.5, 클.초 / 목표));
-  const 클길이 = 클.초 / 클배속;
-  console.log(`             ${클배속.toFixed(3)}배속 → ${클길이.toFixed(1)}초${클길이 < 목표 - 0.05 ? " (모자라 되돌이로 채웁니다)" : ""}`);
-  F2.push(채움(
-    `[1:v]sendcmd=f='${명령경로}',crop=${왼폭2}:${클h}:0:${원y[0]},` +
-    `setpts=(PTS-STARTPTS)/${클배속.toFixed(5)},pad=${왼폭2}:${화.h}:0:${짝수(화.h - 클h)}:0x141414,format=yuv420p,setsar=1`,
-    클길이, "left"));
+  const 클움직임 = 초마다움직임(클로드파일, 0.12);          // 입력칸·상태줄은 빼고 잰다
+  const 클속도 = 속도나누기(클움직임, 1.0, 목표);
+  const 클길이 = 클속도.reduce((a, v) => a + 1 / v, 0);
+  console.log(`             ${클속도.length}초를 «내용에 따라» ${Math.min(...클속도).toFixed(2)}~${Math.max(...클속도).toFixed(2)}배속 → ${클길이.toFixed(1)}초`);
+
+  F2.push(...토막필터("[1:v]", `sendcmd=f='${명령경로}',crop=${왼폭2}:${클h}:0:${원y[0]},`,
+    클속도, 1.0, "클", `,pad=${왼폭2}:${화.h}:0:${짝수(화.h - 클h)}:0x141414`));
+  F2.push(채움("[클속]null", 클길이, "left"));
   F2.push(`[left][right]hstack=inputs=2,format=yuv420p[out]`);
 
   const 임시2 = path.join(os.tmpdir(), `cc-master2-${process.pid}.txt`);
