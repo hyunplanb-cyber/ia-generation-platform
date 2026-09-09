@@ -130,72 +130,59 @@ if (두파일) {
    *   원래 폭 그대로 넘기고 «영상만들기에서 한 번만» 줄인다(2160 → 2002, 배율 0.927). */
   const 왼폭2 = 짝수(클.w);
   const 클h = 짝수(Math.min(클.h, Math.round((왼폭2 * g.PiP.h) / g.PiP.w)));
-  const 클y = 짝수(클.h - 클h);
-  console.log(`  클로드     ${왼폭2}x${클h} 를 그대로 (줄이지 않습니다) · 자를 «높이»는 컷마다 찾습니다`);
+  console.log(`  클로드     ${왼폭2}x${클h} 를 그대로 (줄이지 않습니다) · 자를 «높이»는 흐름을 따라갑니다`);
   console.log(`             영상만들기가 ${왼폭2} → ${g.PiP.w} 로 «한 번만» 줄입니다 (배율 ${(g.PiP.w / 왼폭2).toFixed(3)})`);
 
-  /* ⭐ 바쁜 구간만 고른다 (2026-09-09 현님: 「클로드 바쁜 구간만 고르게 해줘」)
+  /* ⭐ 컷으로 자르지 않는다 — «글이 쓰이는 자리»를 따라 내려간다 (2026-09-09 현님)
    *
-   *   클로드는 글이 쏟아지다 한참 조용하다 한다. 조용한 대목이 그대로 들어가면
-   *   상자가 «휑하게» 보인다 — 현님이 처음부터 「빈 공간처럼 보이지 않게」라 하신 그 자리다.
+   *   현님: 「바쁜 쪽이 글씨가 많은 곳을 말하는게 아니고, 영상을 컷컷으로 짜르지말고.」
+   *         + `_클로드영역_가이드.mp4` 를 주셨다.
    *
-   *   ⛔ 잴 때 «아래 4분의 1»은 뺀다 — 입력칸과 상태줄(초·토큰·돌아가는 표)이 늘 깜빡여서
-   *     그대로 재면 어디나 「바쁘다」로 나온다. 글이 흐르는 «윗쪽»만 본다. */
-  const 클컷초 = Number(값("--클로드컷")) || 3.0;
-  const 잼w = 120, 잼H = 짝수(Math.max(32, Math.round((잼w * 클.h) / 클.w)));   // ⭐ 화면 «전체»를 훑는다
+   *   가이드를 보니 화면이 «지금 쓰이고 있는 줄»을 따라 부드럽게 내려간다. 끊기지 않는다.
+   *   ⛔ 내가 두 번 틀렸다 — ① 「아래쪽」으로 못 박았고 ② 「움직임 큰 3초 조각」들을 이어 붙였다.
+   *      ①은 자리를 고정했고 ②는 흐름을 끊었다. 둘 다 가이드와 다르다.
+   *
+   *   그래서 이렇게 한다.
+   *     ① 0.25초마다 «글이 있는 가장 아랫줄»을 찾는다
+   *     ② 그 줄이 띠의 80% 자리에 오도록 띠를 놓는다 (아래로 조금 숨을 남긴다)
+   *     ③ 흔들리지 않게 고르고(±1초 평균), 초당 움직임에 고삐를 채운다
+   *     ④ `sendcmd` 로 그 자리를 시간에 따라 먹인다 — 한 줄기로 «이어서» 흐른다
+   *
+   *   ⛔ 맨 아랫줄을 찾을 때 아래 12% 는 안 본다 — 입력칸과 상태줄은 «늘» 거기 있다.
+   *     그것까지 글로 세면 띠가 영영 맨 아래에 붙는다. 덮는 것은 막지 않고, 찾을 때만 뺀다. */
+  const 잼w = 120, 잼H = 짝수(Math.max(32, Math.round((잼w * 클.h) / 클.w)));
   const 클잼 = ff(["-v", "error", "-i", 클로드파일, "-vf",
     `fps=4,scale=${잼w}:${잼H}`, "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
   const 클장 = Math.floor(클잼.length / (잼w * 잼H));
-  /* 한 장 한 장, 줄마다 얼마나 바뀌었나. 이걸 쌓아 두면 창을 어디에 놓을지 고를 수 있다. */
-  const 줄차 = [];
-  for (let i = 1; i < 클장; i++) {
-    const 줄 = new Float32Array(잼H);
-    for (let y = 0; y < 잼H; y++) {
-      let s = 0;
-      for (let x = 0; x < 잼w; x++) s += Math.abs(클잼[i * 잼w * 잼H + y * 잼w + x] - 클잼[(i - 1) * 잼w * 잼H + y * 잼w + x]);
-      줄[y] = s / 잼w;
+  const 안볼줄 = Math.max(1, Math.round(잼H * 0.12));          // 입력칸·상태줄
+  const 맨아래 = [];
+  for (let i = 0; i < 클장; i++) {
+    let 찾음 = null;
+    for (let y = 잼H - 안볼줄 - 1; y >= 0; y--) {
+      let 밝은칸 = 0;
+      for (let x = 0; x < 잼w; x++) if (클잼[i * 잼w * 잼H + y * 잼w + x] > 110) 밝은칸++;
+      if (밝은칸 >= 2) { 찾음 = y; break; }
     }
-    줄차.push(줄);
+    맨아래.push(찾음 === null ? (맨아래.at(-1) ?? 잼H - 안볼줄 - 1) : 찾음);
   }
-  /* ⛔ 아래 12% 는 «0» 으로 둔다 — 입력칸과 상태줄(초·토큰·돌아가는 표)이 늘 깜빡인다.
-   *   빼지 않으면 창이 늘 맨 아래로 끌려간다. 그건 내가 「아래만 쓴다」고 잘못 못 박았던 자리다.
-   *   ⚠ 창이 그 자리를 «덮는» 것은 막지 않는다 — 세지 않을 뿐이다. */
-  const 죽일줄 = Math.max(1, Math.round(잼H * 0.12));
-  for (const 줄 of 줄차) for (let y = 잼H - 죽일줄; y < 잼H; y++) 줄[y] = 0;
-
-  const 밴드 = Math.max(2, Math.round((클h / 클.h) * 잼H));    // 잘라 낼 띠의 높이 (줄인 자)
-  const 클창 = Math.round(클컷초 * 4);
-  /* 창마다 «어느 높이»에 놓아야 제일 바쁜지까지 같이 고른다 (2026-09-09 현님 지적) */
-  const 클후보 = [];
-  for (let i = 0; i + 클창 <= 줄차.length; i++) {
-    const 합 = new Float64Array(잼H);
-    for (let k = 0; k < 클창; k++) { const 줄 = 줄차[i + k]; for (let y = 0; y < 잼H; y++) 합[y] += 줄[y]; }
-    let 달림 = 0; for (let y = 0; y < 밴드 && y < 잼H; y++) 달림 += 합[y];
-    let 최고 = 달림, 최고y = 0;
-    for (let y = 1; y + 밴드 <= 잼H; y++) {
-      달림 += 합[y + 밴드 - 1] - 합[y - 1];
-      if (달림 > 최고) { 최고 = 달림; 최고y = y; }
-    }
-    클후보.push({ t: i / 4, 값: 최고 / (클창 * 밴드), y: Math.round((최고y / 잼H) * 클.h) });
+  /* 띠의 80% 자리에 그 줄이 오게 */
+  const 띠줄 = Math.max(2, Math.round((클h / 클.h) * 잼H));
+  const 바람 = 맨아래.map((y) => Math.max(0, Math.min(y - Math.round(띠줄 * 0.80), 잼H - 띠줄)));
+  /* ±1초 평균으로 고르고, 초당 220px(원본 자) 로 고삐를 채운다 */
+  const 고름 = 바람.map((_, i) => {
+    let s = 0, n = 0;
+    for (let k = Math.max(0, i - 4); k <= Math.min(바람.length - 1, i + 4); k++) { s += 바람[k]; n++; }
+    return s / n;
+  });
+  const 한걸음 = (220 / 4) * (잼H / 클.h);                     // 0.25초에 갈 수 있는 줄
+  const 자리y = [];
+  for (let i = 0; i < 고름.length; i++) {
+    const 앞 = i ? 자리y[i - 1] : 고름[0];
+    자리y.push(Math.max(앞 - 한걸음, Math.min(앞 + 한걸음, 고름[i])));
   }
-  const 클필요 = Math.ceil(목표 / 클컷초);
-  클후보.sort((a, b) => b.값 - a.값);
-  let 클고른 = [], 클간격 = 클컷초;
-  for (const 배 of [1, 0.7, 0.5, 0.35]) {
-    클간격 = 클컷초 * 배; 클고른 = [];
-    for (const c of 클후보) { if (클고른.every((x) => Math.abs(x.t - c.t) >= 클간격)) 클고른.push(c); if (클고른.length >= 클필요) break; }
-    if (클고른.length >= 클필요) break;
-  }
-  클고른.sort((a, b) => a.t - b.t);                            // 시간 차례로 — 작업이 앞으로 나아가 보이게
-  const 온평균 = 클후보.reduce((a, c) => a + c.값, 0) / Math.max(1, 클후보.length);
-  const 고른평균 = 클고른.reduce((a, c) => a + c.값, 0) / Math.max(1, 클고른.length);
-  {
-    const ys = 클고른.map((c) => Math.max(0, Math.min(c.y, 클.h - 클h)));
-    if (ys.length) console.log(`             자를 높이 y ${Math.min(...ys)}~${Math.max(...ys)}  (${new Set(ys).size}가지 · 아래 끝은 ${클.h - 클h})`);
-  }
-  console.log(`             바쁜 구간 ${클고른.length}개 × ${클컷초}초 = ${(클고른.length * 클컷초).toFixed(1)}초 ` +
-    `· 움직임 ${온평균.toFixed(2)} → ${고른평균.toFixed(2)} (${(고른평균 / Math.max(0.01, 온평균)).toFixed(1)}배)` +
-    (클간격 < 클컷초 - 0.01 ? `  ⚠ 간격을 ${클간격.toFixed(1)}초로 좁혔습니다` : ""));
+  const 원y = 자리y.map((v) => 짝수(Math.max(0, Math.min(Math.round((v / 잼H) * 클.h), 클.h - 클h))));
+  console.log(`             자를 높이 y ${Math.min(...원y)} ~ ${Math.max(...원y)}  (아래 끝은 ${클.h - 클h} · ${new Set(원y).size}자리를 지나갑니다)`);
+  console.log(`             컷 없이 «한 줄기»로 흐릅니다 — 0.25초마다 자리를 먹입니다`);
 
   const 채움 = (몸, 잰것, 이름) => 잰것 >= 목표 - 0.05
     ? `${몸},trim=0:${목표},setpts=PTS-STARTPTS[${이름}]`
@@ -203,21 +190,27 @@ if (두파일) {
 
   const F2 = [];
   F2.push(채움(화몸, 화길이, "right"));
-  /* 고른 구간을 잘라 이어 붙인다. 못 고르면(재료가 아주 짧으면) 통째로 쓴다. */
-  const 클몸통 = [];
-  if (클고른.length) {
-    클몸통.push(`[1:v]split=${클고른.length}${클고른.map((_, i) => `[k${i}]`).join("")}`);
-    /* 컷마다 «자를 높이»가 다르다 — 글이 흐르는 자리를 따라간다 */
-    클고른.forEach((c, i) => 클몸통.push(
-      `[k${i}]trim=${c.t.toFixed(3)}:${(c.t + 클컷초).toFixed(3)},setpts=PTS-STARTPTS,` +
-      `crop=${왼폭2}:${클h}:0:${짝수(Math.max(0, Math.min(c.y, 클.h - 클h)))},format=yuv420p,setsar=1[kk${i}]`));
-    클몸통.push(`${클고른.map((_, i) => `[kk${i}]`).join("")}concat=n=${클고른.length}:v=1:a=0[클속]`);
-  } else {
-    클몸통.push(`[1:v]crop=${왼폭2}:${클h}:0:${클y},format=yuv420p,setsar=1[클속]`);
-  }
-  const 클길이 = 클고른.length ? 클고른.length * 클컷초 : 클.초;
-  F2.push(...클몸통);
-  F2.push(채움(`[클속]pad=${왼폭2}:${화.h}:0:${짝수(화.h - 클h)}:0x141414`, 클길이, "left"));
+  /* 자리를 시간에 따라 «먹인다» — sendcmd 가 crop 의 y 를 0.25초마다 바꾼다.
+     ⚠ 값이 그대로면 안 적는다. 파일이 쓸데없이 길어지고 ffmpeg 가 느려진다. */
+  const 명령 = [];
+  let 앞값 = null;
+  원y.forEach((y, i) => {
+    if (앞값 !== null && Math.abs(y - 앞값) < 4) return;
+    명령.push(`${(i / 4).toFixed(3)} crop y ${y};`);
+    앞값 = y;
+  });
+  const 명령길 = path.join(os.tmpdir(), `cc-clcam-${process.pid}.txt`);
+  writeFileSync(명령길, 명령.join("\n") + "\n", "utf8");
+  const 명령경로 = 명령길.split("\\").join("/").replace(":", "\\:");
+  console.log(`             자리 바뀌는 곳 ${명령.length}군데`);
+
+  const 클배속 = Math.max(0.85, Math.min(2.5, 클.초 / 목표));
+  const 클길이 = 클.초 / 클배속;
+  console.log(`             ${클배속.toFixed(3)}배속 → ${클길이.toFixed(1)}초${클길이 < 목표 - 0.05 ? " (모자라 되돌이로 채웁니다)" : ""}`);
+  F2.push(채움(
+    `[1:v]sendcmd=f='${명령경로}',crop=${왼폭2}:${클h}:0:${원y[0]},` +
+    `setpts=(PTS-STARTPTS)/${클배속.toFixed(5)},pad=${왼폭2}:${화.h}:0:${짝수(화.h - 클h)}:0x141414,format=yuv420p,setsar=1`,
+    클길이, "left"));
   F2.push(`[left][right]hstack=inputs=2,format=yuv420p[out]`);
 
   const 임시2 = path.join(os.tmpdir(), `cc-master2-${process.pid}.txt`);
