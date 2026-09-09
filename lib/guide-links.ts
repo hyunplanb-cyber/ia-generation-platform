@@ -72,43 +72,73 @@ const 안내서들: 안내[] = [
   },
 ];
 
-/** 팩에 넣을 안내장 한 장. 인터넷이 없어도 무엇을 하는 글인지는 읽힌다. */
-function 안내장HTML(a: 안내): string {
-  if (a.본문) return a.본문();
+/* ⛔ 2026-09-10 현님: 「11도 링크로 바꿔주고 한 화면에서 3개 링크를 모두 보이도록 해줘」
+ *
+ *   여태 팩에 «파일 셋»이 들어갔다 — 09·10 은 링크 안내장(2.4KB), 11 만 본문 통째로(41KB).
+ *   11 을 통째로 넣던 까닭은 「붙여 넣을 코드가 있어 링크만 주면 한 걸음이 는다」였는데,
+ *   2026-09-09 에 `/guide/verify-guide.html` 404 를 고쳐 이제 웹에서 열린다. 그 까닭이 없어졌다.
+ *   → 셋 다 링크로 하고, «한 장»에 모아 담는다. 손님이 파일 셋을 여닫을 일이 없다.
+ *   ⚠ `본문` 은 지우지 않는다 — `public/guide/verify-guide.html` 을 만들 때 쓰는 원본이다.
+ *     다만 «팩에 넣는 글»로는 더 이상 쓰지 않는다. */
+
+const 바탕꾸밈 = `
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Paperlogy,Pretendard,"Malgun Gothic",sans-serif;background:#F0EFEB;color:#22201D;
+       padding:32px 24px 56px;line-height:1.7}
+  .wrap{max-width:720px;margin:0 auto}
+  .head{margin:8px 0 26px}
+  .lab{font-size:13px;font-weight:700;color:#DE6F26;letter-spacing:.02em}
+  .head h1{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:10px 0 10px;word-break:keep-all}
+  .head p{font-size:16px;color:#6B655C;word-break:keep-all}
+  .card{background:#FFFDF8;border:1px solid #E3DED2;border-radius:20px;
+        padding:34px 32px;box-shadow:0 2px 16px rgba(0,0,0,.05);margin-bottom:18px}
+  .card h2{font-size:23px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px;word-break:keep-all}
+  .sub{font-size:15px;color:#6B655C;margin-bottom:20px;word-break:keep-all}
+  .btn{display:inline-block;background:#DE6F26;color:#fff;text-decoration:none;font-weight:700;
+       font-size:16px;padding:13px 26px;border-radius:12px}
+  .btn:hover{background:#C25D1B}
+  ul{margin:16px 0 0 18px;font-size:15px;color:#3B372F}
+  li{margin-bottom:6px}
+  .url{margin-top:14px;font-size:13px;color:#8A8377;word-break:break-all}
+  .why{margin-top:10px;padding:22px 24px;border:1px dashed #DDD6C8;border-radius:14px;
+       font-size:14px;color:#6B655C;word-break:keep-all;background:#FAF8F2}
+`;
+
+const 왜링크 = `<p class="why"><b>왜 파일이 아니라 링크인가요?</b><br>
+    배포 서비스 화면도, 앱 심사 기준도 자주 바뀝니다. 파일로 드리면 사신 날 그대로 굳어
+    버려서, 저희가 고쳐도 손님 파일은 옛날 글로 남습니다.
+    <b>링크로 두면 언제 여셔도 최신 글</b>이 나옵니다.</p>`;
+
+const 한칸 = (a: 안내) => `  <div class="card">
+    <h2>${a.제목}</h2>
+    <p class="sub">${a.한줄}</p>
+    <a class="btn" href="${a.주소}">안내서 열기 →</a>
+    <ul>${a.담긴것.map((x) => `<li>${x}</li>`).join("")}</ul>
+    <p class="url">${a.주소}</p>
+  </div>`;
+
+/** 팩에 넣을 안내장 — «한 장»에 셋을 다 담는다. 인터넷이 없어도 무엇이 있는지는 읽힌다. */
+function 안내장모음HTML(들: 안내[] = 안내서들): string {
   return `<!doctype html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${a.제목} — 카페인컬러</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:Paperlogy,Pretendard,"Malgun Gothic",sans-serif;background:#F0EFEB;color:#22201D;
-       display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;line-height:1.7}
-  .card{background:#FFFDF8;border:1px solid #E3DED2;border-radius:20px;max-width:640px;width:100%;
-        padding:44px 40px;box-shadow:0 2px 16px rgba(0,0,0,.05)}
-  .lab{font-size:13px;font-weight:700;color:#DE6F26;letter-spacing:.02em}
-  h1{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:10px 0 12px;word-break:keep-all}
-  .sub{font-size:16px;color:#6B655C;margin-bottom:26px;word-break:keep-all}
-  .btn{display:inline-block;background:#DE6F26;color:#fff;text-decoration:none;font-weight:700;
-       font-size:17px;padding:15px 30px;border-radius:12px}
-  .btn:hover{background:#C25D1B}
-  .why{margin-top:30px;padding-top:24px;border-top:1px solid #EDE8DE;font-size:14px;color:#6B655C;word-break:keep-all}
-  ul{margin:14px 0 0 18px;font-size:15px;color:#3B372F}
-  li{margin-bottom:7px}
-  .url{margin-top:18px;font-size:13px;color:#8A8377;word-break:break-all}
-</style></head>
-<body><div class="card">
-  <p class="lab">카페인컬러 안내서</p>
-  <h1>${a.제목}</h1>
-  <p class="sub">${a.한줄}</p>
-  <a class="btn" href="${a.주소}">안내서 열기 →</a>
-  <ul>${a.담긴것.map((x) => `<li>${x}</li>`).join("")}</ul>
-  <p class="why"><b>왜 파일이 아니라 링크인가요?</b><br>
-    배포 서비스 화면도, 앱 심사 기준도 자주 바뀝니다. 파일로 드리면 사신 날 그대로 굳어
-    버려서, 저희가 고쳐도 손님 파일은 옛날 글로 남습니다.
-    <b>링크로 두면 언제 여셔도 최신 글</b>이 나옵니다.</p>
-  <p class="url">${a.주소}</p>
+<title>카페인컬러 안내서 — ${들.length}가지</title>
+<style>${바탕꾸밈}</style></head>
+<body><div class="wrap">
+  <div class="head">
+    <p class="lab">카페인컬러 안내서</p>
+    <h1>만들고 나서 할 일, ${들.length}가지</h1>
+    <p>화면을 다 만드셨다면 여기부터 보세요. 누르면 최신 글이 열립니다.</p>
+  </div>
+${들.map(한칸).join("\n")}
+  ${왜링크}
 </div></body></html>
 `;
+}
+
+/** 한 안내서만 한 장으로. (남겨 둔다 — 낱장으로 쓸 자리가 생기면 쓴다) */
+function 안내장HTML(a: 안내): string {
+  return 안내장모음HTML([a]);
 }
 
 /* 내보내는 이름은 «영문»으로 둔다.
@@ -116,5 +146,14 @@ function 안내장HTML(a: 안내): string {
    부르는 쪽에서 「그런 export 가 없다」로 죽는다. 2026-08-14 에 실제로 그랬다.
    이 저장소의 다른 lib(design-presets · preset-pack)도 모두 영문으로 내보낸다.
    안쪽 이름과 주석은 한글 그대로 둔다. */
-export { 안내서들 as GUIDES, 안내장HTML as buildGuideCardHtml, 사이트주소 as SITE_URL };
+/** 팩·zip 에 들어가는 «한 장»의 파일 이름. 셋을 여기 다 담는다. */
+const 모음파일 = "09_안내서_세_가지.html";
+
+export {
+  안내서들 as GUIDES,
+  안내장HTML as buildGuideCardHtml,
+  안내장모음HTML as buildAllGuidesHtml,
+  모음파일 as GUIDES_FILE,
+  사이트주소 as SITE_URL,
+};
 export type { 안내 as Guide };

@@ -23,7 +23,7 @@ import {
 import JSZip from "jszip";
 import { PACKAGES, BUILD_SCOPE, PLAN_NAMES, type PlanId } from "./lib/packages";
 import { CHECK_NOTE_FULL } from "./lib/export/template-verify";
-import { GUIDES, buildGuideCardHtml } from "./lib/guide-links";
+import { GUIDES, buildAllGuidesHtml, GUIDES_FILE } from "./lib/guide-links";
 
 // 파는 것이 놓이는 곳. 여기에는 **팔 물건만** 둔다.
 const T = "판매용_템플릿";
@@ -276,9 +276,8 @@ ${검수} 디자인프리셋/
           가이드_01~03          색·글꼴·모서리 3벌 (.md / .json)
           레이아웃_A~B          화면 뼈대 2벌 (.md / .json)
           프리셋_미리보기.html   3벌 × 2벌 한눈에 비교
- 09_사이트_내놓는_법.html   배포·도메인·로그인·결제까지 내놓는 법 (열면 최신 안내서로 이어집니다)
- 10_앱으로_내놓는_법.html   앱 심사·권한·아이콘·스토어 등록 (열면 최신 안내서로 이어집니다)
- 11_내사이트_검수하는_법.html  만든 화면을 «저희가 재는 잣대 그대로» 스스로 재는 법
+ 09_안내서_세_가지.html    한 장에 셋 — 사이트 내놓기 · 앱으로 내놓기 · 내 사이트 검수하기
+                            (누르면 최신 글이 열립니다. 저희가 고치면 손님 것도 같이 새것이 됩니다)
 ${사이트구성}
 ■ 사용법 - 파일 하나, 한 마디면 됩니다
 
@@ -286,7 +285,7 @@ ${사이트구성}
         "이 스펙대로 만들어줘" 라고 하세요. 이게 전부입니다.
         스펙팩 6장 마지막에 «다 만들었으면 스스로 검수하고 고쳐라»가 적혀 있어
         AI 가 알아서 열 가지를 재고 고친 뒤에 끝냈다고 합니다.
-        직접 재 보고 싶으시면 11_내사이트_검수하는_법.html 을 여세요 — 붙여 넣기 한 번입니다.
+        직접 재 보고 싶으시면 09_안내서_세_가지.html 을 여세요 — 붙여 넣기 한 번입니다.
 
         스펙팩 안에 프로젝트 개요, 공통 레이아웃(헤더/내비/푸터),
         화면 ${stats.screens}개의 요건과 프롬프트, 화면 이동이 순서대로 정리되어 있어
@@ -421,7 +420,15 @@ async function pack(p: Product) {
      링크로 두면 언제 여셔도 최신 글이 나온다.
      ⚠ 파일 이름(09_·10_)은 그대로 둔다 — 손님 습관을 바꾸지 않는다.
      ⚠ 인터넷이 없어도 «무엇을 하는 글인지»는 읽히게 요약을 넣는다. */
-  for (const a of GUIDES) writeFileSync(`${outDir}/${a.파일}`, buildGuideCardHtml(a), "utf8");
+  /* 안내서 셋을 «한 장»에 담는다 (2026-09-10 현님 지시). 전에는 파일 셋이었다.
+     ⛔ 옛 파일을 «치운다». 팩 폴더는 통째로 비우고 다시 만드는 것이 아니라,
+       안 치우면 옛 09·10·11 이 그대로 남아 손님이 «넷»을 받는다.
+       2026-09-10 에 뷰티샵을 구워 보고 알았다 — 10·11 이 남아 있었다. */
+  for (const 옛것 of GUIDES.map((g) => g.파일)) {
+    const 길 = `${outDir}/${옛것}`;
+    if (옛것 !== GUIDES_FILE && existsSync(길)) rmSync(길);
+  }
+  writeFileSync(`${outDir}/${GUIDES_FILE}`, buildAllGuidesHtml(), "utf8");
 
   const packSite = `${outDir}/완성화면`;
   if (!p.sitePath && existsSync(packSite)) {
