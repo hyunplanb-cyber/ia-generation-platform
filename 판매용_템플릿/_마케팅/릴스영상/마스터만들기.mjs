@@ -130,10 +130,51 @@ if (두파일) {
    *   원래 폭 그대로 넘기고 «영상만들기에서 한 번만» 줄인다(2160 → 2002, 배율 0.927). */
   const 왼폭2 = 짝수(클.w);
   const 클h = 짝수(Math.min(클.h, Math.round((왼폭2 * g.PiP.h) / g.PiP.w)));
-  const 클배속 = Math.max(0.85, Math.min(2.5, 클.초 / 목표));
-  const 클길이 = 클.초 / 클배속;
-  console.log(`  클로드     아래 ${왼폭2}x${클h} 를 그대로 (줄이지 않습니다) · ${클배속.toFixed(3)}배속 → ${클길이.toFixed(1)}초${클길이 < 목표 - 0.05 ? " (모자라 되돌이로 채웁니다)" : ""}`);
+  const 클y = 짝수(클.h - 클h);
+  console.log(`  클로드     아래 ${왼폭2}x${클h} 를 그대로 (줄이지 않습니다)`);
   console.log(`             영상만들기가 ${왼폭2} → ${g.PiP.w} 로 «한 번만» 줄입니다 (배율 ${(g.PiP.w / 왼폭2).toFixed(3)})`);
+
+  /* ⭐ 바쁜 구간만 고른다 (2026-09-09 현님: 「클로드 바쁜 구간만 고르게 해줘」)
+   *
+   *   클로드는 글이 쏟아지다 한참 조용하다 한다. 조용한 대목이 그대로 들어가면
+   *   상자가 «휑하게» 보인다 — 현님이 처음부터 「빈 공간처럼 보이지 않게」라 하신 그 자리다.
+   *
+   *   ⛔ 잴 때 «아래 4분의 1»은 뺀다 — 입력칸과 상태줄(초·토큰·돌아가는 표)이 늘 깜빡여서
+   *     그대로 재면 어디나 「바쁘다」로 나온다. 글이 흐르는 «윗쪽»만 본다. */
+  const 클컷초 = Number(값("--클로드컷")) || 3.0;
+  const 잼w = 104, 잼h = 짝수(Math.max(24, Math.round((잼w * 클h) / 왼폭2)));
+  const 클잼 = ff(["-v", "error", "-i", 클로드파일, "-vf",
+    `crop=${왼폭2}:${클h}:0:${클y},fps=4,scale=${잼w}:${잼h}`, "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
+  const 클장 = Math.floor(클잼.length / (잼w * 잼h));
+  const 볼줄 = Math.max(1, Math.round(잼h * 0.75));           // 위 4분의 3만 본다
+  const 클차 = [];
+  for (let i = 1; i < 클장; i++) {
+    let s = 0, n = 0;
+    for (let y = 0; y < 볼줄; y++) for (let x = 0; x < 잼w; x++) {
+      s += Math.abs(클잼[i * 잼w * 잼h + y * 잼w + x] - 클잼[(i - 1) * 잼w * 잼h + y * 잼w + x]); n++;
+    }
+    클차.push(s / n);
+  }
+  const 클창 = Math.round(클컷초 * 4);
+  const 클후보 = [];
+  for (let i = 0; i + 클창 <= 클차.length; i++) {
+    let s = 0; for (let k = 0; k < 클창; k++) s += 클차[i + k];
+    클후보.push({ t: i / 4, 값: s / 클창 });
+  }
+  const 클필요 = Math.ceil(목표 / 클컷초);
+  클후보.sort((a, b) => b.값 - a.값);
+  let 클고른 = [], 클간격 = 클컷초;
+  for (const 배 of [1, 0.7, 0.5, 0.35]) {
+    클간격 = 클컷초 * 배; 클고른 = [];
+    for (const c of 클후보) { if (클고른.every((x) => Math.abs(x.t - c.t) >= 클간격)) 클고른.push(c); if (클고른.length >= 클필요) break; }
+    if (클고른.length >= 클필요) break;
+  }
+  클고른.sort((a, b) => a.t - b.t);                            // 시간 차례로 — 작업이 앞으로 나아가 보이게
+  const 온평균 = 클차.reduce((a, c) => a + c, 0) / 클차.length;
+  const 고른평균 = 클고른.reduce((a, c) => a + c.값, 0) / Math.max(1, 클고른.length);
+  console.log(`             바쁜 구간 ${클고른.length}개 × ${클컷초}초 = ${(클고른.length * 클컷초).toFixed(1)}초 ` +
+    `· 움직임 ${온평균.toFixed(2)} → ${고른평균.toFixed(2)} (${(고른평균 / Math.max(0.01, 온평균)).toFixed(1)}배)` +
+    (클간격 < 클컷초 - 0.01 ? `  ⚠ 간격을 ${클간격.toFixed(1)}초로 좁혔습니다` : ""));
 
   const 채움 = (몸, 잰것, 이름) => 잰것 >= 목표 - 0.05
     ? `${몸},trim=0:${목표},setpts=PTS-STARTPTS[${이름}]`
@@ -141,7 +182,18 @@ if (두파일) {
 
   const F2 = [];
   F2.push(채움(화몸, 화길이, "right"));
-  F2.push(채움(`[1:v]crop=${왼폭2}:${클h}:0:${짝수(클.h - 클h)},setpts=(PTS-STARTPTS)/${클배속.toFixed(5)},pad=${왼폭2}:${화.h}:0:${짝수(화.h - 클h)}:0x141414,format=yuv420p,setsar=1`, 클길이, "left"));
+  /* 고른 구간을 잘라 이어 붙인다. 못 고르면(재료가 아주 짧으면) 통째로 쓴다. */
+  const 클몸통 = [];
+  if (클고른.length) {
+    클몸통.push(`[1:v]crop=${왼폭2}:${클h}:0:${클y},split=${클고른.length}${클고른.map((_, i) => `[k${i}]`).join("")}`);
+    클고른.forEach((c, i) => 클몸통.push(`[k${i}]trim=${c.t.toFixed(3)}:${(c.t + 클컷초).toFixed(3)},setpts=PTS-STARTPTS,format=yuv420p,setsar=1[kk${i}]`));
+    클몸통.push(`${클고른.map((_, i) => `[kk${i}]`).join("")}concat=n=${클고른.length}:v=1:a=0[클속]`);
+  } else {
+    클몸통.push(`[1:v]crop=${왼폭2}:${클h}:0:${클y},format=yuv420p,setsar=1[클속]`);
+  }
+  const 클길이 = 클고른.length ? 클고른.length * 클컷초 : 클.초;
+  F2.push(...클몸통);
+  F2.push(채움(`[클속]pad=${왼폭2}:${화.h}:0:${짝수(화.h - 클h)}:0x141414`, 클길이, "left"));
   F2.push(`[left][right]hstack=inputs=2,format=yuv420p[out]`);
 
   const 임시2 = path.join(os.tmpdir(), `cc-master2-${process.pid}.txt`);
