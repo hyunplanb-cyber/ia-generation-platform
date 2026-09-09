@@ -198,10 +198,14 @@ if (두파일) {
   console.log(`  만들 길이  ${목표}초`);
 
   /* 완성화면 — 현님이 «이미 컷해서» 주신 것이라 다시 안 자른다. 길이만 맞춘다. */
-  const 화움직임 = 초마다움직임(화면파일, 0);
-  const 화속도 = 속도나누기(화움직임, 1.0, 목표);
-  const 화길이 = 화속도.reduce((a, v) => a + 1 / v, 0);
-  console.log(`  완성화면   ${화속도.length}초를 «내용에 따라» ${Math.min(...화속도).toFixed(2)}~${Math.max(...화속도).toFixed(2)}배속 → ${화길이.toFixed(1)}초`);
+  /* ⛔ 2026-09-09 현님: 「부분부분 영상 속도를 조절하기 보단 1배속 짜리 영상을 만들고
+   *   전체 배속을 조절하는 편이 나을꺼야. 우리 릴스나 쇼츠는 거의 1분 내외일꺼고,
+   *   내가 영상을 거의 1분 내외로 만들어 줄꺼니까.」
+   *   → 토막마다 속도를 달리 걸던 것을 걷어낸다. «한 배속»만 쓴다.
+   *     현님이 길이를 맞춰 주시니 배속도 1.0 언저리로 아주 조금만 움직인다. */
+  const 화배속 = Math.max(0.8, Math.min(2.0, 화.초 / 목표));
+  const 화길이 = 화.초 / 화배속;
+  console.log(`  완성화면   ${화배속.toFixed(3)}배속 → ${화길이.toFixed(1)}초  (한 배속으로 갑니다)`);
 
   /* 클로드 — 클로드 칸 비율(2002:904)만큼 «아래쪽»을 잘라 쓴다. 새 글이 아래에서 나온다.
    * ⛔ 왼쪽 칸을 1080 으로 좁히지 않는다 — 그러면 2160→1080 으로 줄였다가 영상만들기가
@@ -227,40 +231,71 @@ if (두파일) {
    *     ③ 흔들리지 않게 고르고(±1초 평균), 초당 움직임에 고삐를 채운다
    *     ④ `sendcmd` 로 그 자리를 시간에 따라 먹인다 — 한 줄기로 «이어서» 흐른다
    *
-   *   ⛔ 맨 아랫줄을 찾을 때 아래 12% 는 안 본다 — 입력칸과 상태줄은 «늘» 거기 있다.
-   *     그것까지 글로 세면 띠가 영영 맨 아래에 붙는다. 덮는 것은 막지 않고, 찾을 때만 뺀다. */
+   *   ⛔ 2026-09-09 두 번째 되돌림 — 「아래 12% 는 안 본다」가 «빈화면»의 범인이었다.
+   *     현님: 「영상이 빈화면으로 나오는 곳도 많고… 처음에 파일을 넣는 씬인데
+   *            입력 영역이 짤리면 안돼.」
+   *     원본을 보니 세 자리가 다 다르다 —
+   *       t=2  글이 «없고» 입력칸만 맨 아래에 있다   ← 여기서 12% 를 빼니 찾을 것이 없어 빈화면
+   *       t=20 글이 70% 에서 끝나고 아래는 비어 있다
+   *       t=45 글이 꽉 차고 맨 아래에 입력칸이 있다
+   *     → 입력칸도 «내용»이다. 빼지 않는다. 맨 아래 내용을 찾아 띠의 «아래»에 붙인다. */
   const 잼w = 120, 잼H = 짝수(Math.max(32, Math.round((잼w * 클.h) / 클.w)));
   const 클잼 = ff(["-v", "error", "-i", 클로드파일, "-vf",
     `fps=4,scale=${잼w}:${잼H}`, "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
   const 클장 = Math.floor(클잼.length / (잼w * 잼H));
-  const 안볼줄 = Math.max(1, Math.round(잼H * 0.12));          // 입력칸·상태줄
-  const 맨아래 = [];
+  /* ⛔ 「밝기 110 넘으면 글」로 잡으면 안 된다 — 2026-09-09 에 이것 때문에 첫 장면이 통째로 비었다.
+   *   시작 화면의 «입력칸»은 바탕보다 조금 밝을 뿐이라 110 을 못 넘는다. 그래서 맨 위의 작은
+   *   그림만 잡히고 띠가 위로 올라가 «빈 화면»이 나갔다.
+   *   → 한 장마다 «그 화면의 바탕»을 재고, 거기서 한 뼘(22) 넘게 밝으면 내용으로 본다. */
+  const 맨아래 = [], 줄내용 = [];
   for (let i = 0; i < 클장; i++) {
-    let 찾음 = null;
-    for (let y = 잼H - 안볼줄 - 1; y >= 0; y--) {
-      let 밝은칸 = 0;
-      for (let x = 0; x < 잼w; x++) if (클잼[i * 잼w * 잼H + y * 잼w + x] > 110) 밝은칸++;
-      if (밝은칸 >= 2) { 찾음 = y; break; }
+    const 낱 = 클잼.subarray(i * 잼w * 잼H, (i + 1) * 잼w * 잼H);
+    const 줄선 = Array.from(낱).sort((a, b) => a - b);
+    const 바탕 = 줄선[Math.floor(줄선.length * 0.5)];          // 가운뎃값 = 그 화면의 바탕
+    const 문턱 = 바탕 + 22;
+    const 있나 = new Uint8Array(잼H);
+    for (let y = 0; y < 잼H; y++) {
+      let 센것 = 0;
+      for (let x = 0; x < 잼w; x++) if (낱[y * 잼w + x] > 문턱) 센것++;
+      있나[y] = 센것 >= 3 ? 1 : 0;
     }
-    맨아래.push(찾음 === null ? (맨아래.at(-1) ?? 잼H - 안볼줄 - 1) : 찾음);
+    줄내용.push(있나);
+    let 찾음 = null;
+    for (let y = 잼H - 1; y >= 0; y--) if (있나[y]) { 찾음 = y; break; }   // ⭐ 맨 밑까지 (입력칸 포함)
+    맨아래.push(찾음 === null ? (맨아래.at(-1) ?? 잼H - 1) : 찾음);
   }
-  /* 띠의 80% 자리에 그 줄이 오게 */
+  /* 맨 아래 내용이 띠 «아래끝에서 숨 한 뼘» 위에 오게 — 그래야 입력칸이 안 잘린다 */
   const 띠줄 = Math.max(2, Math.round((클h / 클.h) * 잼H));
-  const 바람 = 맨아래.map((y) => Math.max(0, Math.min(y - Math.round(띠줄 * 0.80), 잼H - 띠줄)));
+  const 숨 = Math.max(1, Math.round((60 / 클.h) * 잼H));
+  const 바람 = 맨아래.map((y) => Math.max(0, Math.min(y - 띠줄 + 숨, 잼H - 띠줄)));
   /* ±1초 평균으로 고르고, 초당 220px(원본 자) 로 고삐를 채운다 */
   const 고름 = 바람.map((_, i) => {
     let s = 0, n = 0;
     for (let k = Math.max(0, i - 4); k <= Math.min(바람.length - 1, i + 4); k++) { s += 바람[k]; n++; }
     return s / n;
   });
-  const 한걸음 = (220 / 4) * (잼H / 클.h);                     // 0.25초에 갈 수 있는 줄
+  /* ⛔ 2026-09-09 — 초당 220px 은 «너무 느렸다». 글이 맨 위에만 있는 대목(t=11)에서
+   *   카메라가 빈 가운데를 몇 초씩 지나가 그동안 화면이 통째로 비었다.
+   *   → ① 걸음을 초당 700px 로 넓히고
+   *     ② 그래도 띠 안에 «내용이 하나도 없으면» 고삐를 풀고 바로 붙인다.
+   *   잠깐 튀는 것이 몇 초 비는 것보다 낫다. 현님이 「빈화면으로 나오는 곳도 많다」고 하셨다. */
+  const 한걸음 = (700 / 4) * (잼H / 클.h);                     // 0.25초에 갈 수 있는 줄
+  const 내용있나 = (i, y) => {
+    const 있나 = 줄내용[Math.min(i, 줄내용.length - 1)];
+    const a = Math.max(0, Math.round(y)), b = Math.min(잼H, Math.round(y) + 띠줄);
+    for (let k = a; k < b; k++) if (있나[k]) return true;
+    return false;
+  };
   const 자리y = [];
   for (let i = 0; i < 고름.length; i++) {
     const 앞 = i ? 자리y[i - 1] : 고름[0];
-    자리y.push(Math.max(앞 - 한걸음, Math.min(앞 + 한걸음, 고름[i])));
+    let v = Math.max(앞 - 한걸음, Math.min(앞 + 한걸음, 고름[i]));
+    if (!내용있나(i, v)) v = 고름[i];                          // 비면 바로 붙인다
+    자리y.push(v);
   }
   const 원y = 자리y.map((v) => 짝수(Math.max(0, Math.min(Math.round((v / 잼H) * 클.h), 클.h - 클h))));
   console.log(`             자를 높이 y ${Math.min(...원y)} ~ ${Math.max(...원y)}  (아래 끝은 ${클.h - 클h} · ${new Set(원y).size}자리를 지나갑니다)`);
+  console.log(`             처음 3초: ${원y.slice(0, 12).filter((_, i) => i % 4 === 0).join(" → ")}  (입력칸이 보이려면 아래끝 언저리여야 합니다)`);
   console.log(`             컷 없이 «한 줄기»로 흐릅니다 — 0.25초마다 자리를 먹입니다`);
 
   const 채움 = (몸, 잰것, 이름) => 잰것 >= 목표 - 0.05
@@ -268,8 +303,7 @@ if (두파일) {
     : `${몸}[${이름}몸];[${이름}몸]loop=loop=${Math.ceil(목표 / 잰것)}:size=${Math.ceil(잰것 * 30)}:start=0,trim=0:${목표},setpts=PTS-STARTPTS[${이름}]`;
 
   const F2 = [];
-  F2.push(...토막필터("[0:v]", "", 화속도, 1.0, "화", ""));
-  F2.push(채움("[화속]null", 화길이, "right"));
+  F2.push(채움(`[0:v]setpts=(PTS-STARTPTS)/${화배속.toFixed(5)},format=yuv420p,setsar=1`, 화길이, "right"));
   /* 자리를 시간에 따라 «먹인다» — sendcmd 가 crop 의 y 를 0.25초마다 바꾼다.
      ⚠ 값이 그대로면 안 적는다. 파일이 쓸데없이 길어지고 ffmpeg 가 느려진다. */
   const 명령 = [];
@@ -284,14 +318,14 @@ if (두파일) {
   const 명령경로 = 명령길.split("\\").join("/").replace(":", "\\:");
   console.log(`             자리 바뀌는 곳 ${명령.length}군데`);
 
-  const 클움직임 = 초마다움직임(클로드파일, 0.12);          // 입력칸·상태줄은 빼고 잰다
-  const 클속도 = 속도나누기(클움직임, 1.0, 목표);
-  const 클길이 = 클속도.reduce((a, v) => a + 1 / v, 0);
-  console.log(`             ${클속도.length}초를 «내용에 따라» ${Math.min(...클속도).toFixed(2)}~${Math.max(...클속도).toFixed(2)}배속 → ${클길이.toFixed(1)}초`);
+  const 클배속 = Math.max(0.8, Math.min(2.5, 클.초 / 목표));
+  const 클길이 = 클.초 / 클배속;
+  console.log(`             ${클배속.toFixed(3)}배속 → ${클길이.toFixed(1)}초  (한 배속으로 갑니다)`);
 
-  F2.push(...토막필터("[1:v]", `sendcmd=f='${명령경로}',crop=${왼폭2}:${클h}:0:${원y[0]},`,
-    클속도, 1.0, "클", `,pad=${왼폭2}:${화.h}:0:${짝수(화.h - 클h)}:0x141414`));
-  F2.push(채움("[클속]null", 클길이, "left"));
+  F2.push(채움(
+    `[1:v]sendcmd=f='${명령경로}',crop=${왼폭2}:${클h}:0:${원y[0]},` +
+    `setpts=(PTS-STARTPTS)/${클배속.toFixed(5)},pad=${왼폭2}:${화.h}:0:${짝수(화.h - 클h)}:0x141414,format=yuv420p,setsar=1`,
+    클길이, "left"));
   F2.push(`[left][right]hstack=inputs=2,format=yuv420p[out]`);
 
   const 임시2 = path.join(os.tmpdir(), `cc-master2-${process.pid}.txt`);
