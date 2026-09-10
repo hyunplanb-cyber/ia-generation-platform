@@ -56,8 +56,11 @@ const 언제나 = [
   "01_메뉴구조.xlsx", "02_IA_화면목록.xlsx", "03_기능정의서.xlsx", "04_WBS.xlsx",
   "05_FLOW_흐름도.drawio", "05_FLOW_흐름도.html",
   "06_메뉴구조.pptx", "07_AI빌드_스펙팩.json", "07_AI빌드_스펙팩.md",
-  "09_사이트_내놓는_법.html", "10_앱으로_내놓는_법.html",
-  "11_내사이트_검수하는_법.html", "README.txt",
+  /* ⭐ 2026-09-09 — 안내서 셋(09·10·11)을 «한 장»으로 합쳤다(lib/guide-links.ts).
+     팩에는 링크 안내장 한 장만 들어가고 본문은 웹(public/guide/)에 산다.
+     ⛔ 2026-09-10 — 그날 이 목록을 안 고쳐서 32칸이 «전부» 96건으로 걸렸다.
+       팩을 고친 것이 아니라 검사기가 옛 이름을 찾고 있었다. */
+  "09_안내서_세_가지.html", "README.txt",
 ];
 /** 완성화면이 들어가는 등급에만 있는 것. */
 const 완성화면있으면 = ["08_검수시나리오.xlsx"];
@@ -92,8 +95,12 @@ async function 굽힌글맞나(
     ["07_AI빌드_스펙팩.md", 검수글("화면검수글")],
     ["07_AI빌드_스펙팩.md", 검수글("파일검수글")],
     ["07_AI빌드_스펙팩.md", 검수글("모두검수글")],
-    ["11_내사이트_검수하는_법.html", 검수글("화면검수글")],
   ];
+
+  /* ⛔ 검수 글은 이제 «팩 안»에 없다 — 09·10·11 을 한 장으로 합치면서 링크만 넣기로 했다.
+     그래서 그 글이 성한지는 «웹에 놓인 본문»에서 잰다. 여기서 안 보면 아무도 안 본다:
+     `public/guide/verify-guide.html` 은 package-template.mts:633 이 쓰고, 손님이
+     팩 안 안내장을 눌러 그리로 간다. 옛것이 놓여 있으면 손님은 옛 검수 글을 읽는다. */
   const 담긴것 = new Map<string, string | null>();
   for (const [파일, 글] of 볼것) {
     if (!담긴것.has(파일)) 담긴것.set(파일, await 열기(파일));
@@ -242,6 +249,28 @@ for (const { pkg, plan } of packageProducts()) {
   const 있어야 = `${pkg.id}-${plan.id}.zip`;
   if (!existsSync(join(방, 있어야))) {
     못됨("진열", `${pkg.fileLabel} ${plan.name} — ${있어야} 가 없습니다. 사도 못 받습니다`);
+  }
+}
+
+/* ⭐ 2026-09-10 — 검수 글이 «웹»에 있는지 본다.
+ *
+ *   09·10·11 을 한 장으로 합치면서 검수 안내서 «본문»이 팩 밖으로 나갔다.
+ *   손님은 팩 안 링크를 눌러 `public/guide/verify-guide.html` 로 간다.
+ *   전에는 팩 안 11 번을 견주어 「지금 코드의 검수 글인가」를 봤는데, 그 파일이 없어졌다.
+ *   여기서 안 보면 «아무도 안 본다» — 옛 글이 놓여 있어도 조용하다.
+ *
+ *   ⚠ 이 파일은 `package-template.mts:633` 이 쓴다. 다르면 팩을 다시 구우면 된다. */
+{
+  const 길 = "public/guide/verify-guide.html";
+  if (!existsSync(길)) {
+    못됨("웹 안내서", `${길} 가 없습니다 — 팩 안 링크가 404 로 갑니다 (package-template.mts --zip)`);
+  } else {
+    const 속 = readFileSync(길, "utf8");
+    const 잴것 = 검수글("화면검수글")
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    if (!속.includes(잴것)) {
+      못됨("웹 안내서", `${길} 의 검수 글이 지금 코드와 다릅니다 — 다시 구우세요 (package-template.mts --zip)`);
+    }
   }
 }
 
