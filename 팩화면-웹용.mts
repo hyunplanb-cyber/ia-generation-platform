@@ -55,6 +55,7 @@ const 폴더들 = readdirSync(캡처방, { withFileTypes: true })
   .sort();
 
 let 만든장 = 0;
+const 빠진팩: string[] = [];
 for (const 폴더 of 폴더들) {
   const 가로 = join(캡처방, 폴더, "가로");
   if (!existsSync(가로)) continue;
@@ -69,6 +70,18 @@ for (const 폴더 of 폴더들) {
     continue;
   }
 
+  /* ⛔ 2026-09-10 — «아직 안 만든 팩»에서 통째로 죽고 있었다.
+   *   중고거래는 `_만드는중` 이라 `07_AI빌드_스펙팩.json` 이 없다. 그 한 칸에서 예외가 나면
+   *   115줄의 «목록 쓰기»까지 못 가서, 앞의 열여섯 칸이 다 만들어졌는데도
+   *   `lib/pack-screens.json` 이 2026-08-14 판 그대로 남았다.
+   *   → 그림은 있는데 «화면이 못 본다». 반려동물케어·인테리어가 그래서 빈칸이었다.
+   *   막지 말고 «건너뛰고 소리를 낸다». 조용히 넘기면 안 뽑힌 줄 모른다. */
+  const 스펙길 = join("판매용_템플릿/_판매팩", 폴더.replace(/_[^_]+$/, ""), "07_AI빌드_스펙팩.json");
+  if (!existsSync(스펙길)) {
+    빠진팩.push(`${폴더} — ${스펙길} 이 없습니다 (아직 안 만든 팩이면 그래서 맞습니다)`);
+    continue;
+  }
+
   const 키 = `${팩.id}-${등급.id}`;
   const 갈곳 = join(낼방, 키);
   mkdirSync(갈곳, { recursive: true });
@@ -77,7 +90,7 @@ for (const 폴더 of 폴더들) {
      파일명은 띄어쓰기를 지운 것이라 「예약1단계-시술선택」처럼 붙어 나온다.
      손님이 받는 스펙팩에 제대로 된 이름이 있으니 거기서 읽는다 —
      페이지 쪽 화면 목록의 ref 는 `ho1` 같은 내부 꼴이라 `HO-01` 과 안 맞는다(2026-08-11). */
-  const 스펙 = JSON.parse(readFileSync(join("판매용_템플릿/_판매팩", 폴더.replace(/_[^_]+$/, ""), "07_AI빌드_스펙팩.json"), "utf8"));
+  const 스펙 = JSON.parse(readFileSync(스펙길, "utf8"));
   const 이름표 = new Map<string, string>(
     (스펙.menus ?? []).flatMap((m: { screens?: { pageId: string; pageName: string }[] }) =>
       (m.screens ?? []).map((s) => [s.pageId.toUpperCase(), s.pageName] as [string, string]),
@@ -115,4 +128,8 @@ writeFileSync(목록파일, `${JSON.stringify(모음, null, 2)}\n`, "utf8");
 
 const 잰것 = Object.values(모음).flat().length;
 console.log(`\n끝났습니다 — ${Object.keys(모음).length}개 팩 · ${만든장}장 → ${낼방}`);
+if (빠진팩.length) {
+  console.log(`\n⚠ 건너뛴 칸 ${빠진팩.length}개 — 이 팩은 상세 화면에 그림이 «안 뜹니다»`);
+  for (const 줄 of 빠진팩) console.log(`   · ${줄}`);
+}
 console.log(`목록: ${목록파일} (${잰것}줄)`);

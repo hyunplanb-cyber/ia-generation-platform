@@ -9,8 +9,10 @@
  *   완성화면/00_자동넘김.html                   4초마다 넘어간다 — 녹화만 눌러도 영상이 된다
  *   _마케팅/릴스영상/_화면캡처/{폴더}/*.png      1440×1800 세로 — 영상 재료
  *   _마케팅/릴스영상/_화면캡처/{폴더}/가로/*.png  1440×1100 위쪽만 — 카드뉴스 그림
- *   _마케팅/릴스영상/{n}. {업종}/{등급}_16x9.mp4  1920×1080 — 유튜브·홈페이지
- *   _마케팅/릴스영상/{n}. {업종}/{등급}_4x5.mp4   1080×1350 — 인스타 피드·릴스
+ *
+ *   ⛔ 「넘어가는 영상」(16x9 · 4x5) 은 2026-09-10 에 없앴다 — 아래 절 참고.
+ *   손님이 실제로 보는 그림은 여기서 찍은 캡처를 `팩화면-웹용.mts` 가 줄인 것이고,
+ *   `build-all.mts` 7번이 이어서 돌린다.
  *
  * 어느 화면을 찍나 — «메뉴마다 첫 화면» 한 장씩.
  *   골라 적으면 팩마다 손이 가고, 전부 찍으면 3뎁스 팩에서 161장이 된다.
@@ -64,7 +66,6 @@ const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
    (검수·zip·진열은 _판매팩 만 본다. 그것이 폴더를 가른 까닭이다 — 2026-08-11) */
 const 팩방들 = ["판매용_템플릿/_판매팩", "판매용_템플릿/_만드는중"];
 const 캡처방 = "판매용_템플릿/_마케팅/릴스영상/_화면캡처";
-const 영상방 = "판매용_템플릿/_마케팅/릴스영상";
 
 /* 찍는 크기.
  *
@@ -73,8 +74,6 @@ const 영상방 = "판매용_템플릿/_마케팅/릴스영상";
  * 찍는다 — 손님이 처음 보는 만큼이고, 어느 화면이든 꽉 찬다.
  * 카드뉴스용 가로는 위쪽을 잘라 쓴다. 두 번 찍으면 두 벌이 되고, 둘이 어긋난다. */
 const W = 1440, H = 1150, 가로H = 1000;
-/** 한 장에 몇 초 머무나. 폰에서 스치듯 보는 화면이라 짧으면 못 읽는다. */
-const 초 = 2.6;
 
 /* --캡처만 : 그림만 찍고, 완성화면과 영상은 «건드리지 않는다».
  *
@@ -242,27 +241,6 @@ function 모든화면(pages: string, 스펙: string) {
   return 고른것;
 }
 
-/** ffmpeg 로 잇는다. 화면은 비율 그대로 넣고 남는 자리는 그 팩의 배경색으로 채운다. */
-function 영상만들기(장들: string[], 나갈길: string, w: number, h: number, bg: string) {
-  const 목록: string[] = [];
-  for (const p of 장들) 목록.push(`file '${p.replace(/\\/g, "/")}'`, `duration ${초.toFixed(3)}`);
-  목록.push(`file '${장들[장들.length - 1].replace(/\\/g, "/")}'`);   // concat 은 마지막 장을 한 번 더 적어야 끝까지 나온다
-  const list = `${WORK}/frames_${w}x${h}.txt`;
-  writeFileSync(list, 목록.join("\n"), "utf8");
-  const tmp = `${WORK}/out_${w}x${h}.mp4`;
-  execFileSync("ffmpeg", [
-    "-y", "-v", "error",
-    "-f", "concat", "-safe", "0", "-i", list,
-    "-vf", `scale=${w}:${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:${bg}`,
-    "-fps_mode", "cfr", "-r", "30",
-    "-c:v", "libx264", "-pix_fmt", "yuv420p",
-    "-an", "-movflags", "+faststart",
-    tmp,
-  ]);
-  mkdirSync(join(나갈길, ".."), { recursive: true });
-  copyFileSync(tmp, 나갈길);
-}
-
 /** 자동으로 넘어가는 페이지 — 녹화만 누르면 그대로 영상 재료가 된다. */
 function 자동넘김쓰기(완성화면: string, 장들: { 파일: string; 이름: string }[], bg: string, ink: string, 꼬리: string) {
   writeFileSync(join(완성화면, "00_자동넘김.html"), `<!doctype html>
@@ -290,7 +268,7 @@ setInterval(() => {
 }
 
 /* ── 팩마다 한 바퀴 ──────────────────────────────────────────── */
-let 만든장 = 0, 만든영상 = 0;
+let 만든장 = 0;
 for (const 팩 of 대상) {
   const 완성화면 = join(팩방, 팩, "완성화면");
   const index = readFileSync(join(완성화면, "index.html"), "utf8");
@@ -352,20 +330,20 @@ a[href="../index.html"]{display:none!important}
   });
   console.log(`  캡처 ${장들.length}장 → ${낼방}          `);
 
-  if (캡처만) continue;   // 그림만 필요했다. 완성화면도 릴스 폴더도 그대로 둔다.
-
-  /* 릴스 폴더는 「n. 업종」 꼴로 이미 쓰고 있다. 있으면 그 자리에, 없으면 다음 번호로 만든다. */
-  const 있는것 = readdirSync(영상방, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && /^\d+\.\s/.test(e.name));
-  const 이미 = 있는것.find((e) => e.name.endsWith(` ${업종}`));
-  const 다음번호 = Math.max(0, ...있는것.map((e) => parseInt(e.name, 10) || 0)) + 1;
-  const 회차방 = join(영상방, 이미?.name ?? `${다음번호}. ${업종}`);
-  mkdirSync(회차방, { recursive: true });
-
-  영상만들기(세로장, join(회차방, `${등급}_16x9.mp4`), 1920, 1080, bg);
-  영상만들기(세로장, join(회차방, `${등급}_4x5.mp4`), 1080, 1350, bg);
-  만든영상 += 2;
-  console.log(`  영상 2편 → ${회차방}`);
+  /* ⛔ 2026-09-10 현님 지시로 «넘어가는 영상»(16x9 · 4x5) 만들기를 걷어냈다.
+   *
+   *   만들어 놓고 «한 번도 안 썼다». 살아 있는 인용이 문서 두 줄뿐이었고
+   *   (판매팩_자동화_지시서.md · 루틴 SKILL.md 의 「재료가 여기 있다」 표),
+   *   팩 zip 에도 안 들어가고 홈페이지도 안 내주고 SNS 에도 안 나갔다.
+   *   업종 아홉 중 셋(LMS·인테리어·중고거래)만 있었던 것도 그래서다.
+   *
+   *   ⚠ 게다가 자리를 세는 방식이 «회차 폴더»까지 같이 세고 있었다 —
+   *     릴스영상 아래 「2. 완성화면_…」·「9. 새틀시험」이 번호를 먹어서
+   *     새 업종에 11번이 붙고, 「공동구매」를 부르면 2분할 회차 폴더 안에 쏟아부었다.
+   *
+   *   손님에게 실제로 나가는 그림은 «이 도구가 찍는 캡처»를 `팩화면-웹용.mts` 가
+   *   webp 로 줄인 것이다. 그쪽은 살아 있고, 이제 build-all 이 이어서 돌린다.
+   */
 }
 
-console.log(`\n끝났습니다 — 캡처 ${만든장}장 · 영상 ${만든영상}편`);
+console.log(`\n끝났습니다 — 캡처 ${만든장}장`);
