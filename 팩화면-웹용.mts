@@ -57,71 +57,80 @@ const 폴더들 = readdirSync(캡처방, { withFileTypes: true })
 let 만든장 = 0;
 const 빠진팩: string[] = [];
 for (const 폴더 of 폴더들) {
-  const 가로 = join(캡처방, 폴더, "가로");
-  if (!existsSync(가로)) continue;
+  /* ⛔ 2026-09-10 현님: 「중고거래 때문에 막히면 안되지. 중고거래는 만드는 중이고 … 그거랑 아무 상관이 없잖아」
+   *   맞는 말이라 «구조»로 막는다. 스펙팩이 없는 것만 미리 걸러도 오늘 것은 넘어가지만,
+   *   깨진 JSON·상한 png 로도 같은 일이 또 난다 — 한 칸이 터지면 맨 끝의 «목록 쓰기»까지 못 가고,
+   *   그러면 «다 만들어 놓고도» 화면이 옛 목록을 본다. 그게 이번 빈칸의 원인이었다.
+   *   한 칸의 사고가 나머지 열다섯 칸을 막지 않게 여기서 잡는다. 대신 반드시 소리를 낸다. */
+  try {
+    const 가로 = join(캡처방, 폴더, "가로");
+    if (!existsSync(가로)) continue;
 
-  /* 긴 이름부터 맞춰 본다 — 「장비렌탈」이 「장비」보다 먼저 걸려야 한다. */
-  const 팩 = [...PACKAGES]
-    .sort((a, b) => b.fileLabel.length - a.fileLabel.length)
-    .find((p) => 폴더.startsWith(`${p.fileLabel}_`));
-  const 등급 = 등급표.find((t) => 폴더.startsWith(`${팩?.fileLabel}_${t.name}_`));
-  if (!팩 || !등급) {
-    console.log(`  건너뜁니다 — 어느 팩·등급인지 모르겠습니다: ${폴더}`);
-    continue;
+    /* 긴 이름부터 맞춰 본다 — 「장비렌탈」이 「장비」보다 먼저 걸려야 한다. */
+    const 팩 = [...PACKAGES]
+      .sort((a, b) => b.fileLabel.length - a.fileLabel.length)
+      .find((p) => 폴더.startsWith(`${p.fileLabel}_`));
+    const 등급 = 등급표.find((t) => 폴더.startsWith(`${팩?.fileLabel}_${t.name}_`));
+    if (!팩 || !등급) {
+      console.log(`  건너뜁니다 — 어느 팩·등급인지 모르겠습니다: ${폴더}`);
+      continue;
+    }
+
+    /* ⛔ 2026-09-10 — «아직 안 만든 팩»에서 통째로 죽고 있었다.
+     *   중고거래는 `_만드는중` 이라 `07_AI빌드_스펙팩.json` 이 없다. 그 한 칸에서 예외가 나면
+     *   115줄의 «목록 쓰기»까지 못 가서, 앞의 열여섯 칸이 다 만들어졌는데도
+     *   `lib/pack-screens.json` 이 2026-08-14 판 그대로 남았다.
+     *   → 그림은 있는데 «화면이 못 본다». 반려동물케어·인테리어가 그래서 빈칸이었다.
+     *   막지 말고 «건너뛰고 소리를 낸다». 조용히 넘기면 안 뽑힌 줄 모른다. */
+    const 스펙길 = join("판매용_템플릿/_판매팩", 폴더.replace(/_[^_]+$/, ""), "07_AI빌드_스펙팩.json");
+    if (!existsSync(스펙길)) {
+      빠진팩.push(`${폴더} — ${스펙길} 이 없습니다 (아직 안 만든 팩이면 그래서 맞습니다)`);
+      continue;
+    }
+
+    const 키 = `${팩.id}-${등급.id}`;
+    const 갈곳 = join(낼방, 키);
+    mkdirSync(갈곳, { recursive: true });
+
+    /* 화면 «이름»은 파일명에서 되살리지 않는다.
+       파일명은 띄어쓰기를 지운 것이라 「예약1단계-시술선택」처럼 붙어 나온다.
+       손님이 받는 스펙팩에 제대로 된 이름이 있으니 거기서 읽는다 —
+       페이지 쪽 화면 목록의 ref 는 `ho1` 같은 내부 꼴이라 `HO-01` 과 안 맞는다(2026-08-11). */
+    const 스펙 = JSON.parse(readFileSync(스펙길, "utf8"));
+    const 이름표 = new Map<string, string>(
+      (스펙.menus ?? []).flatMap((m: { screens?: { pageId: string; pageName: string }[] }) =>
+        (m.screens ?? []).map((s) => [s.pageId.toUpperCase(), s.pageName] as [string, string]),
+      ),
+    );
+
+    const 장들 = readdirSync(가로).filter((f) => f.endsWith(".png")).sort();
+    const 적을것: 한장[] = [];
+
+    for (const f of 장들) {
+      // 「01_HO-01_홈-비로그인.png」 → 번호 · 화면ID · (붙어 버린) 이름
+      const m = /^(\d+)_([A-Za-z]{2}-?\d{2,4})_(.+)\.png$/.exec(f);
+      if (!m) { console.log(`  이름 꼴이 달라 건너뜁니다: ${f}`); continue; }
+      const [, nn, id, 붙은이름] = m;
+      const 이름 = 이름표.get(id.toUpperCase()) ?? 붙은이름;
+      if (!이름표.has(id.toUpperCase())) console.log(`  ⚠ 스펙팩에 ${id} 가 없어 파일명을 씁니다`);
+
+      /* 주요 화면인지 «실패·예외» 화면인지 표시해 둔다 (2026-08-13 사장님 지시).
+         상세에서 배지 색을 갈라 보여 준다 — 우리가 파는 깊이가 예외 화면에 있어서다.
+         판단은 «화면 이름»으로 한다. 「취소규정」처럼 규정 안내는 실패가 아니라 「취소」는 뺐다. */
+      const 예외말 = /없음|없어|실패|품절|마감|오류|만료|비어|초과|거절|중단|불가|지연|미달|반려|정지|차단|잠김|한도|종료/;
+      const 갈래 = 예외말.test(이름) ? "edge" : "main";
+
+      const 낼이름 = `${nn}.webp`;
+      await sharp(join(가로, f)).resize({ width: 폭 }).webp({ quality: 78 }).toFile(join(갈곳, 낼이름));
+      적을것.push({ file: `/pack-screens/${키}/${낼이름}`, id: id.toUpperCase(), name: 이름, kind: 갈래 });
+      만든장 += 1;
+    }
+
+    모음[키] = 적을것;
+    console.log(`${키}  ${적을것.length}장`);
+  } catch (e) {
+    빠진팩.push(`${폴더} — ${e instanceof Error ? e.message : String(e)}`);
   }
-
-  /* ⛔ 2026-09-10 — «아직 안 만든 팩»에서 통째로 죽고 있었다.
-   *   중고거래는 `_만드는중` 이라 `07_AI빌드_스펙팩.json` 이 없다. 그 한 칸에서 예외가 나면
-   *   115줄의 «목록 쓰기»까지 못 가서, 앞의 열여섯 칸이 다 만들어졌는데도
-   *   `lib/pack-screens.json` 이 2026-08-14 판 그대로 남았다.
-   *   → 그림은 있는데 «화면이 못 본다». 반려동물케어·인테리어가 그래서 빈칸이었다.
-   *   막지 말고 «건너뛰고 소리를 낸다». 조용히 넘기면 안 뽑힌 줄 모른다. */
-  const 스펙길 = join("판매용_템플릿/_판매팩", 폴더.replace(/_[^_]+$/, ""), "07_AI빌드_스펙팩.json");
-  if (!existsSync(스펙길)) {
-    빠진팩.push(`${폴더} — ${스펙길} 이 없습니다 (아직 안 만든 팩이면 그래서 맞습니다)`);
-    continue;
-  }
-
-  const 키 = `${팩.id}-${등급.id}`;
-  const 갈곳 = join(낼방, 키);
-  mkdirSync(갈곳, { recursive: true });
-
-  /* 화면 «이름»은 파일명에서 되살리지 않는다.
-     파일명은 띄어쓰기를 지운 것이라 「예약1단계-시술선택」처럼 붙어 나온다.
-     손님이 받는 스펙팩에 제대로 된 이름이 있으니 거기서 읽는다 —
-     페이지 쪽 화면 목록의 ref 는 `ho1` 같은 내부 꼴이라 `HO-01` 과 안 맞는다(2026-08-11). */
-  const 스펙 = JSON.parse(readFileSync(스펙길, "utf8"));
-  const 이름표 = new Map<string, string>(
-    (스펙.menus ?? []).flatMap((m: { screens?: { pageId: string; pageName: string }[] }) =>
-      (m.screens ?? []).map((s) => [s.pageId.toUpperCase(), s.pageName] as [string, string]),
-    ),
-  );
-
-  const 장들 = readdirSync(가로).filter((f) => f.endsWith(".png")).sort();
-  const 적을것: 한장[] = [];
-
-  for (const f of 장들) {
-    // 「01_HO-01_홈-비로그인.png」 → 번호 · 화면ID · (붙어 버린) 이름
-    const m = /^(\d+)_([A-Za-z]{2}-?\d{2,4})_(.+)\.png$/.exec(f);
-    if (!m) { console.log(`  이름 꼴이 달라 건너뜁니다: ${f}`); continue; }
-    const [, nn, id, 붙은이름] = m;
-    const 이름 = 이름표.get(id.toUpperCase()) ?? 붙은이름;
-    if (!이름표.has(id.toUpperCase())) console.log(`  ⚠ 스펙팩에 ${id} 가 없어 파일명을 씁니다`);
-
-    /* 주요 화면인지 «실패·예외» 화면인지 표시해 둔다 (2026-08-13 사장님 지시).
-       상세에서 배지 색을 갈라 보여 준다 — 우리가 파는 깊이가 예외 화면에 있어서다.
-       판단은 «화면 이름»으로 한다. 「취소규정」처럼 규정 안내는 실패가 아니라 「취소」는 뺐다. */
-    const 예외말 = /없음|없어|실패|품절|마감|오류|만료|비어|초과|거절|중단|불가|지연|미달|반려|정지|차단|잠김|한도|종료/;
-    const 갈래 = 예외말.test(이름) ? "edge" : "main";
-
-    const 낼이름 = `${nn}.webp`;
-    await sharp(join(가로, f)).resize({ width: 폭 }).webp({ quality: 78 }).toFile(join(갈곳, 낼이름));
-    적을것.push({ file: `/pack-screens/${키}/${낼이름}`, id: id.toUpperCase(), name: 이름, kind: 갈래 });
-    만든장 += 1;
-  }
-
-  모음[키] = 적을것;
-  console.log(`${키}  ${적을것.length}장`);
 }
 
 writeFileSync(목록파일, `${JSON.stringify(모음, null, 2)}\n`, "utf8");
