@@ -1,0 +1,38 @@
+[
+  {
+    "이름": "영상30_다됐다는말믿지않기",
+    "pose": "긴머리_골똘히",
+    "title": "다 됐다는 말|하나씩|눌러 봤어요",
+    "cap": "- 온라인 강의 사이트 편 -",
+    "ep": "검수 편",
+    "sheet": "카페인컬러 AI팩",
+    "rows": "전체 화면,132개,ok|눌렀을 때 동작,116개,ok|뒤로가기 붙은 화면,121개,ok",
+    "음악": "Half Past Nine.mp3",
+    "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상30_다됐다는말믿지않기_916.mp4",
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_영상30_다됐다는말믿지않기_916.mp4"
+  },
+  {
+    "이름": "영상31_고수화면이없었다",
+    "pose": "긴머리_놀람",
+    "title": "한 줄로 시켰더니|고수 화면이|없었어요",
+    "cap": "- 매칭 사이트 편 -",
+    "ep": "매칭 사이트 고수 화면 편",
+    "sheet": "카페인컬러 AI팩",
+    "rows": "한 줄 프롬프트 고수 메뉴,5개,ok|AI팩 고수 화면,12개,ok|AI팩 전체 화면,43개,ok",
+    "음악": "Rest Awhile Tonight.mp3",
+    "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상31_고수화면이없었다_916.mp4",
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_영상31_고수화면이없었다_916.mp4"
+  },
+  {
+    "이름": "영상32_기능하나더",
+    "pose": "긴머리_키보드",
+    "title": "기능 하나 더|스펙팩|어디를 고치나요",
+    "cap": "- 인테리어 시공 편 -",
+    "ep": "인테리어 프리미엄 팩 편",
+    "sheet": "카페인컬러 AI팩",
+    "rows": "화면,207개,ok|기준 화면,40개,ok|세부 상태,167개,ok",
+    "음악": "Ordinary Nights.mp3",
+    "영상": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/영상32_기능하나더_916.mp4",
+    "낼길": "C:/Users/glim0/AppData/Local/Temp/cc-vid-w2/인트로_영상32_기능하나더_916.mp4"
+  }
+]
