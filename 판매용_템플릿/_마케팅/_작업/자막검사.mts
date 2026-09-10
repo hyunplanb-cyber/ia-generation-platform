@@ -18,10 +18,10 @@
  * ⚠ 검사기가 못 잡는 것이 하나 있다 — **자막이 «그 프레임에 실제로 보이는지».**
  *   그건 사람만 볼 수 있다. `/admin/sns` 에서 칸마다 프레임과 자막을 나란히 놓고 본다.
  */
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { checkScript, countLetters, type 대본 } from "@/lib/sns-caption-rules";
+import { checkScript, countLetters, type 대본, type 걸린것 } from "@/lib/sns-caption-rules";
 
 const 여기 = dirname(fileURLToPath(import.meta.url));
 const 고양이방 = resolve(여기, "../../_이미지/마스코트/낱장");
@@ -59,10 +59,62 @@ for (const 편 of 대본들) {
 console.log(`\n자막 검사 — ${대본길}`);
 console.log(`대본 ${대본들.length}편${인트로들.length ? ` · 인트로설정 ${인트로들.length}건` : ""}\n`);
 
+/* ⛔ 2026-09-10 현님 지시 — «회차 작업 폴더를 남의 재료로 쓰지 마라».
+ *
+ *   현님: 「그 영상을 어딘가에 또 엮이게 사용하지는 말아줘. 예를들어 30번 영상을
+ *         만드는데 21번 자료를 쓴다거나. 그러지 말아줘. 이것도 계속 생기는 거라
+ *         어느 순간엔 지워야 할수도 있어.」
+ *
+ *   회차 폴더(`릴스영상/<회차>/` — 앞으로는 `릴스영상/_회차/<회차>/`)는 «작업대»다.
+ *   틀그리기가 만들고 영상만들기가 채우는 자리이고, 계속 늘어나니 언젠가 통째로 지운다.
+ *   그런데 한 편이라도 «남의 회차 산출물»을 clip 으로 물면 그 폴더가 못 지우는 것이 된다.
+ *
+ *   실제로 한 번 났다 — `대본_단추누르면어디로`(영상23)가 `10. 중고거래/디럭스_4x5.mp4` 를
+ *   물고 있었다. 2026-09-10 에 그 폴더를 지우면서 대본이 통째로 깨졌고, 깃 밖 파일이라
+ *   되돌릴 그물도 없었다(임시 자리에 남아 있어 겨우 되살렸다).
+ *
+ *   글로 적어 두면 또 난다. 그래서 «굽기 전 관문»이 센다.
+ *   ⭐ 재료는 «촬영본»(`_촬영영상/…`)에서 가져온다. 구운 것에서 가져오지 않는다. */
+const 회차방들 = (() => {
+  const 뿌리 = "판매용_템플릿/_마케팅/릴스영상";
+  const 모음: string[] = [];
+  const 담기 = (터: string, 앞: string) => {
+    let 것들; try { 것들 = readdirSync(터, { withFileTypes: true }); } catch { return; }
+    for (const e of 것들) {
+      if (!e.isDirectory() || !/^\d+\.\s/.test(e.name)) continue;
+      모음.push(앞 ? `${앞}/${e.name}` : e.name);
+    }
+  };
+  담기(뿌리, "");
+  담기(`${뿌리}/_회차`, "_회차");   // 앞으로 모아 둘 자리
+  return 모음;
+})();
+
+function 남의회차를쓰나(편: 대본): 걸린것[] {
+  const 걸린: 걸린것[] = [];
+  (편.칸들 ?? []).forEach((k, i) => {
+    for (const s of k.shots ?? []) {
+      const c = String(s.clip ?? "");
+      if (!c) continue;
+      const 문 = 회차방들.find((n) => c.startsWith(`${n}/`) || c.includes(`릴스영상/${n}/`));
+      if (!문) continue;
+      걸린.push({
+        어디: "남의 회차 재료",
+        무엇: `${i + 1}번 칸이 «${문}» 의 산출물을 물고 있습니다 — ${c}`,
+        대신: "촬영본에서 가져옵니다 — `_촬영영상/…`",
+        왜: "회차 폴더는 «작업대»라 언젠가 통째로 지운다. 물고 있으면 그때 이 편이 깨진다 (9/10 현님)",
+        칸: i + 1,
+      });
+    }
+  });
+  return 걸린;
+}
+
 let 탈락 = 0;
 for (const 편 of 대본들) {
   const 이름 = 편.이름 ?? "(이름 없음)";
   let 걸림 = checkScript(편, 별명);
+  걸림 = [...걸림, ...남의회차를쓰나(편)];
   const 칸수 = (편.칸들 ?? []).length;
   const 길이 = (칸수 * (편.칸초 ?? 2.5)).toFixed(1);
   console.log(`— ${이름}: ${칸수}칸 · ${길이}초 · 공백 제외 ${countLetters(편.칸들 ?? [])}자`);
