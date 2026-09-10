@@ -252,7 +252,7 @@ export function checkScript(편: 대본, 별명: Map<string, string> = new Map()
   const 긴줄: { 칸: number; 자: number }[] = [];
   칸들.forEach((k, i) => {
     for (const 줄 of (k.cap ?? []).flatMap((c) => String(c).split("|"))) {
-      const 자 = 벗기기(줄).replace(/s/g, "").length;
+      const 자 = 벗기기(줄).replace(/\s/g, "").length;
       if (자 > 22) 긴줄.push({ 칸: i + 1, 자 });
     }
   });
