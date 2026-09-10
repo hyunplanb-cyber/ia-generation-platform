@@ -503,15 +503,23 @@ async function pack(p: Product) {
     };
     put(outDir, "");
     const buf = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
-    writeFileSync(`${OUT}/${p.zipName}.zip`, buf);
     kb = Math.round(buf.length / 1024);
 
     // 홈페이지가 실제로 파는 칸이면, 사이트가 내려줄 자리에도 같이 둔다.
     // 이름을 영문으로 바꾸는 이유는 adapters/storage/fs-pack-storage.ts 주석 참고.
+    /* ⛔ 2026-09-10 — zip 을 «한 곳»에만 둔다 (현님 지시)
+     *   전에는 같은 buf 를 `_판매팩/<이름>.zip` 과 `packs/<pkgId>-<tier>.zip` 두 곳에 썼다.
+     *   32벌이 바이트까지 같은 사본이라 86MB 를 그냥 안고 있었다.
+     *   손님이 받는 것은 packs/ 쪽이고, 검수기 서른넷은 «압축 안 된 폴더»를 본다 —
+     *   `_판매팩` 쪽 zip 은 굽는 이 파일과 check-zip날짜 말고 아무도 안 읽었다.
+     *   ⚠ 파는 칸이 아닌 등급은 packs/ 에 안 들어가므로 그때만 `_판매팩` 에 둔다.
+     *     그래야 어느 등급도 zip 이 «아예 없는» 일이 안 생긴다. */
     const sellable = PACKAGES.find((x) => x.id === p.pkgId)?.plans.some((pl) => pl.id === p.tier);
     if (sellable) {
       mkdirSync(SITE_PACKS, { recursive: true });
       writeFileSync(`${SITE_PACKS}/${p.pkgId}-${p.tier}.zip`, buf);
+    } else {
+      writeFileSync(`${OUT}/${p.zipName}.zip`, buf);
     }
   }
 
