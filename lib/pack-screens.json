@@ -53,36 +53,6 @@
       "id": "AU-01",
       "name": "로그인",
       "kind": "main"
-    },
-    {
-      "file": "/pack-screens/lms-deluxe/10.webp",
-      "id": "HO-02",
-      "name": "홈 - 수강생 로그인",
-      "kind": "main"
-    },
-    {
-      "file": "/pack-screens/lms-deluxe/11.webp",
-      "id": "CO-02",
-      "name": "강의 목록 - 검색 결과 없음",
-      "kind": "edge"
-    },
-    {
-      "file": "/pack-screens/lms-deluxe/12.webp",
-      "id": "CL-02",
-      "name": "내 강의실 - 비어 있음",
-      "kind": "edge"
-    },
-    {
-      "file": "/pack-screens/lms-deluxe/13.webp",
-      "id": "CU-05",
-      "name": "영상 업로드 - 실패",
-      "kind": "edge"
-    },
-    {
-      "file": "/pack-screens/lms-deluxe/14.webp",
-      "id": "ST-02",
-      "name": "수강생 목록 - 검색 결과 없음",
-      "kind": "edge"
     }
   ],
   "lms-premium": [
@@ -509,6 +479,118 @@
       "kind": "edge"
     }
   ],
+  "petcare-deluxe": [
+    {
+      "file": "/pack-screens/petcare-deluxe/01.webp",
+      "id": "HO-01",
+      "name": "홈",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-deluxe/02.webp",
+      "id": "PL-01",
+      "name": "반려견 등록",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/petcare-deluxe/03.webp",
+      "id": "RE-02",
+      "name": "정기 등원 요일 선택",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-deluxe/04.webp",
+      "id": "MY-02",
+      "name": "회차권 현황",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-deluxe/05.webp",
+      "id": "AT-01",
+      "name": "오늘 등원 현황판",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-deluxe/06.webp",
+      "id": "NW-01",
+      "name": "알림장 작성",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-deluxe/07.webp",
+      "id": "HL-01",
+      "name": "백신 만료 대시보드",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/petcare-deluxe/08.webp",
+      "id": "MG-01",
+      "name": "정원·요금 설정",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-deluxe/09.webp",
+      "id": "CS-01",
+      "name": "자주 묻는 질문",
+      "kind": "main"
+    }
+  ],
+  "petcare-premium": [
+    {
+      "file": "/pack-screens/petcare-premium/01.webp",
+      "id": "HO0101",
+      "name": "홈",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-premium/02.webp",
+      "id": "PL0101",
+      "name": "반려견 등록",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/petcare-premium/03.webp",
+      "id": "RE0201",
+      "name": "정기 등원 요일 선택",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-premium/04.webp",
+      "id": "MY0201",
+      "name": "회차권 현황",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-premium/05.webp",
+      "id": "AT0101",
+      "name": "오늘 등원 현황판",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-premium/06.webp",
+      "id": "NW0101",
+      "name": "알림장 작성",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-premium/07.webp",
+      "id": "HL0101",
+      "name": "백신 만료 대시보드",
+      "kind": "edge"
+    },
+    {
+      "file": "/pack-screens/petcare-premium/08.webp",
+      "id": "MG0101",
+      "name": "정원·요금 설정",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/petcare-premium/09.webp",
+      "id": "CS0101",
+      "name": "자주 묻는 질문",
+      "kind": "main"
+    }
+  ],
   "beauty-deluxe": [
     {
       "file": "/pack-screens/beauty-deluxe/01.webp",
@@ -851,6 +933,118 @@
       "id": "PR0601",
       "name": "예약 마감·품절",
       "kind": "edge"
+    }
+  ],
+  "interior-deluxe": [
+    {
+      "file": "/pack-screens/interior-deluxe/01.webp",
+      "id": "HO-01",
+      "name": "홈",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-deluxe/02.webp",
+      "id": "CS-01",
+      "name": "시공사례 목록",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-deluxe/03.webp",
+      "id": "ES-01",
+      "name": "견적 조건 입력 - 단계별",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-deluxe/04.webp",
+      "id": "VS-01",
+      "name": "방문 실측 예약",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-deluxe/05.webp",
+      "id": "CT-01",
+      "name": "계약서 확인·서명",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-deluxe/06.webp",
+      "id": "PR-01",
+      "name": "공정표",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-deluxe/07.webp",
+      "id": "AS-01",
+      "name": "하자보수 접수",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-deluxe/08.webp",
+      "id": "OW-01",
+      "name": "현장 대시보드",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-deluxe/09.webp",
+      "id": "AU-01",
+      "name": "로그인",
+      "kind": "main"
+    }
+  ],
+  "interior-premium": [
+    {
+      "file": "/pack-screens/interior-premium/01.webp",
+      "id": "HO0101",
+      "name": "홈",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-premium/02.webp",
+      "id": "CS0101",
+      "name": "시공사례 목록",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-premium/03.webp",
+      "id": "ES0101",
+      "name": "견적 조건 입력 - 단계별",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-premium/04.webp",
+      "id": "VS0101",
+      "name": "방문 실측 예약",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-premium/05.webp",
+      "id": "CT0101",
+      "name": "계약서 확인·서명",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-premium/06.webp",
+      "id": "PR0101",
+      "name": "공정표",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-premium/07.webp",
+      "id": "AS0101",
+      "name": "하자보수 접수",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-premium/08.webp",
+      "id": "OW0101",
+      "name": "현장 대시보드",
+      "kind": "main"
+    },
+    {
+      "file": "/pack-screens/interior-premium/09.webp",
+      "id": "AU0101",
+      "name": "로그인",
+      "kind": "main"
     }
   ],
   "rental-deluxe": [
