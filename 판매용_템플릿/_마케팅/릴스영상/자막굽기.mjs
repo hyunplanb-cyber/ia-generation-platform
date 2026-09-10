@@ -37,7 +37,8 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { q as qq, 폰트방, 못쓰는경로면멈춘다 } from "./_제목.mjs";   // ⛔ _제목.mjs 는 최상위에서 아무것도 안 돌린다
-import { 규격 } from "./_규격.mjs";                                  // ⛔ 좌표는 여기서만 나온다 (신4①)
+import { 규격 } from "./_규격.mjs";
+import { 회차방길 } from "./_회차방.mjs";                                  // ⛔ 좌표는 여기서만 나온다 (신4①)
 
 const 여기 = path.dirname(fileURLToPath(import.meta.url));
 
@@ -46,8 +47,8 @@ if (!회차) { console.error('쓰는 법: node 자막굽기.mjs "5. 프로젝트
 const argOf = (f) => { const i = process.argv.indexOf(f); return i >= 0 ? process.argv[i + 1] : null; };
 const 칸초 = Number(argOf("--칸초")) || 2.5;
 
-// cwd 가 어디든 회차 폴더를 찾는다 (틀그리기.mjs · 영상만들기.mjs 와 같은 규칙)
-const DIR = [path.resolve(회차), path.resolve(여기, 회차)].find((p) => existsSync(p)) || path.resolve(회차);
+// cwd 가 어디든 회차 폴더를 찾는다 — 규칙은 `_회차방.mjs` 한 곳에 있다
+const DIR = 회차방길(여기, 회차);
 
 /* ── ⛔ ' 가 든 경로는 여기서도 멈춘다 (2026-09-04 밤 · E4-b) ─────────────────
  *  ⚠ 예전엔 자막굽기가 «태연히 성공»했다 — 잴 용 .ass 를 os.tmpdir() 에 쓰는 덕이었다.

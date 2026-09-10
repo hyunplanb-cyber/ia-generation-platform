@@ -31,6 +31,7 @@
 
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { 회차방길 } from "./_회차방.mjs";
 import path from "node:path";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
@@ -69,7 +70,7 @@ if (!회차) {
   process.exit(2);
 }
 
-const 회차방 = path.join(여기, 회차);
+const 회차방 = 회차방길(여기, 회차);
 if (!existsSync(회차방)) mkdirSync(회차방, { recursive: true });
 
 /* ═══ 길이를 맞추는 법 — «한 배속으로 통째로»가 아니라 «내용에 따라» ══════════════

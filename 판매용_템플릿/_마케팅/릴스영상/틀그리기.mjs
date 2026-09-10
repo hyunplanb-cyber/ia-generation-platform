@@ -29,6 +29,7 @@
 
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, renameSync, rmSync } from "node:fs";
+import { 회차방찾기, 회차방길 } from "./_회차방.mjs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -49,9 +50,8 @@ const argOf = (f) => { const i = process.argv.indexOf(f); return i >= 0 ? proces
  *  ⭐ 2026-09-04 밤: 없으면 죽고 그 뒤에 mkdirSync 가 있었다 — 닿지 않는 죽은 줄이었다.
  *     이제 «릴스영상 폴더 아래»에 만들고, 무엇을 넣어야 하는지 알린다.
  * ──────────────────────────────────────────────────────────────────────── */
-const 후보 = [path.resolve(회차), path.resolve(여기, 회차)];
-const 있는데 = 후보.find((p) => existsSync(p));
-const DIR = 있는데 || (path.isAbsolute(회차) ? path.resolve(회차) : path.resolve(여기, 회차));
+const 있는데 = 회차방찾기(여기, 회차);
+const DIR = 회차방길(여기, 회차);
 const 새로만듦 = !있는데;   // ⚠ 아직 만들지 않는다 — 아래 ' 검사를 통과한 뒤에 만든다
 
 /* ── ⛔ ' 가 든 경로는 여기서 멈춘다 (ffmpeg 필터가 ' 를 삼킨다) ────────────

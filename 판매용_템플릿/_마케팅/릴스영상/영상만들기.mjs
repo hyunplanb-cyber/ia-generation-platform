@@ -62,6 +62,7 @@ import { 규격, 최소틈, 브라우저색, PiP색, 색세개 } from "./_규격
 import { 잉크재기, 폰트방, 못쓰는경로면멈춘다 } from "./_제목.mjs";
 import { 자리찾기, 띠자르기, 창자르기, 왕복만들기, 실측, 자리표흠 } from "./_마스코트.mjs";
 import { 마스코트고르기, 후보인가 } from "./고르기.mjs";
+import { 회차방길 } from "./_회차방.mjs";
 import { 구간찾기, 구간말하기, 크롬재기 } from "./_구간.mjs";
 
 const 여기 = path.dirname(fileURLToPath(import.meta.url));
@@ -87,7 +88,8 @@ const 한수 = process.argv.includes("--한수");        // 구간을 안 나누
 const 크롬남김 = process.argv.includes("--크롬남김"); // 브라우저 탭줄·주소창을 안 자르고 그대로 둔다
 
 // ⛔ cwd 에 기대지 않는다 — 다른 폴더에서 부르면 조용히 마스코트·글꼴이 빠졌다
-const DIR = [path.resolve(회차), path.resolve(여기, 회차)].find((p) => existsSync(p)) || path.resolve(회차);
+// 찾는 규칙은 `_회차방.mjs` 한 곳에 있다 (네 도구가 같은 줄을 네 벌 갖고 있으면 어긋난다)
+const DIR = 회차방길(여기, 회차);
 const 음악폴더 = path.join(여기, "_음악");
 const 마스터 = path.join(DIR, "마스터.mp4");
 
