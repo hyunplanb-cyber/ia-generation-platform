@@ -128,7 +128,9 @@ export type 대본칸 = {
   cap?: string[];
   cat?: string;
   pose?: string;
-  shots?: { clip?: string; page?: string; ss?: number; zoom?: number; cx?: number; cy?: number; 당김?: boolean }[];
+  /* ⚠ 배속은 `영상굽기.mjs:500` 이 실제로 읽는 값인데 여태 이 타입에 없었다 (2026-09-10).
+     대본 26개가 쓰고 있었는데 타입만 몰랐다 — 재는 쪽이 모르면 못 잰다. */
+  shots?: { clip?: string; page?: string; ss?: number; zoom?: number; cx?: number; cy?: number; 당김?: boolean; 배속?: number }[];
 };
 
 export type 대본 = {

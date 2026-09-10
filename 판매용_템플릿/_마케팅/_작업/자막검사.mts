@@ -19,6 +19,7 @@
  *   그건 사람만 볼 수 있다. `/admin/sns` 에서 칸마다 프레임과 자막을 나란히 놓고 본다.
  */
 import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkScript, countLetters, type 대본, type 걸린것 } from "@/lib/sns-caption-rules";
@@ -110,11 +111,89 @@ function 남의회차를쓰나(편: 대본): 걸린것[] {
   return 걸린;
 }
 
+/* ⛔ 그림이 모자란 칸 — 2026-09-10 에 실제로 났다.
+ *
+ *   `대본_terminal` 이 57.6초짜리 녹화본에 `ss: 57` 을 세 칸, `ss: 56` 을 한 칸 적었다.
+ *   한 칸은 2.5초인데 남은 그림이 0.57초·1.57초뿐이라, 네 칸(10초 자리)에 그림 6.3초가
+ *   비어 있었다. 그중 하나는 마무리 CTA 칸이었다.
+ *
+ *   ⚠ 그런데 이 검사기가 «통과»시켰다. ss 가 원본 길이를 넘는지 아무도 안 봤기 때문이다.
+ *   `lib/sns-caption-rules.ts` 는 파일을 못 열어서(웹에서도 도는 코드다) 여기서 센다.
+ *   ffprobe 로 길이를 재고, 못 재면 «조용히 넘기지 않고» 그렇다고 말한다.
+ *
+ *   ⭐ 오늘 배운 것과 같다 — 세지 않는 값은 없는 값과 같다. 글로 적어 두면 또 난다. */
+const 길이잰것 = new Map<string, number | null>();
+function 녹화본길이(길: string): number | null {
+  if (길이잰것.has(길)) return 길이잰것.get(길)!;
+  let 초: number | null = null;
+  try {
+    const 값 = execFileSync("ffprobe", [
+      "-v", "error", "-show_entries", "format=duration",
+      "-of", "default=noprint_wrappers=1:nokey=1", 길,
+    ], { encoding: "utf8", timeout: 20000 }).trim();
+    const n = Number(값);
+    초 = Number.isFinite(n) && n > 0 ? n : null;
+  } catch { 초 = null; }
+  길이잰것.set(길, 초);
+  return 초;
+}
+
+function 그림이모자라나(편: 대본): 걸린것[] {
+  const 걸린: 걸린것[] = [];
+  const 칸초 = 편.칸초 ?? 2.5;
+  const 릴스 = "판매용_템플릿/_마케팅/릴스영상";
+  (편.칸들 ?? []).forEach((k, i) => {
+    const 컷들 = k.shots ?? [];
+    if (!컷들.length) return;
+    /* 한 칸에 컷이 여럿이면 칸초를 나눠 쓴다 */
+    const 컷초 = 칸초 / 컷들.length;
+    for (const s of 컷들) {
+      const c = String(s.clip ?? "");
+      if (!c) continue;
+      const 길 = join(릴스, c);
+      if (!existsSync(길)) {
+        걸린.push({
+          어디: "녹화본이 없다",
+          무엇: `${i + 1}번 칸이 부르는 ${c} 가 없습니다`,
+          대신: "`node _작업/녹화본목록.mjs` 로 있는 것을 세어 고릅니다",
+          왜: "굽는 쪽이 그 자리에서 죽는다",
+          칸: i + 1,
+        });
+        continue;
+      }
+      const 총 = 녹화본길이(길);
+      if (총 == null) {
+        걸린.push({
+          어디: "길이를 못 쟀다",
+          무엇: `${i + 1}번 칸의 ${c} 길이를 ffprobe 로 못 쟀습니다`,
+          대신: "ffprobe 가 도는지 보고 다시 돌립니다",
+          왜: "못 재면 «그림이 모자란 칸»을 못 잡는다 — 조용히 넘기지 않는다",
+          칸: i + 1,
+        });
+        continue;
+      }
+      /* 굽는 쪽과 «같은 눈금»으로 조인다 — 영상굽기.mjs:500 */
+      const 배속 = Math.min(8, Math.max(0.2, Number(s.배속) || 1));
+      const 쓸것 = 컷초 * 배속;              /* 원본에서 실제로 읽어 가는 길이 */
+      const 남은것 = 총 - (Number(s.ss) || 0);
+      if (남은것 + 0.05 >= 쓸것) continue;   /* 프레임 반올림만큼은 봐준다 */
+      걸린.push({
+        어디: "그림이 모자란다",
+        무엇: `${i + 1}번 칸 — ${c} 는 ${총.toFixed(1)}초인데 ss ${s.ss} 라 ${남은것.toFixed(2)}초만 남습니다 (${쓸것.toFixed(2)}초 필요)`,
+        대신: `ss 를 ${Math.max(0, 총 - 쓸것).toFixed(1)} 이하로 내리거나 다른 구간을 고릅니다`,
+        왜: "모자란 만큼 그 칸이 «빈 그림»으로 나간다 (2026-09-10 에 네 칸 6.3초가 비었다)",
+        칸: i + 1,
+      });
+    }
+  });
+  return 걸린;
+}
+
 let 탈락 = 0;
 for (const 편 of 대본들) {
   const 이름 = 편.이름 ?? "(이름 없음)";
   let 걸림 = checkScript(편, 별명);
-  걸림 = [...걸림, ...남의회차를쓰나(편)];
+  걸림 = [...걸림, ...남의회차를쓰나(편), ...그림이모자라나(편)];
   const 칸수 = (편.칸들 ?? []).length;
   const 길이 = (칸수 * (편.칸초 ?? 2.5)).toFixed(1);
   console.log(`— ${이름}: ${칸수}칸 · ${길이}초 · 공백 제외 ${countLetters(편.칸들 ?? [])}자`);
