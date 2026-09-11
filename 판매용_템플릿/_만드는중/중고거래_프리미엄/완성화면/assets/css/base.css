@@ -1649,6 +1649,20 @@ p + .chips{margin-top:var(--sp-item, 12px)}
 
 
 
+
+
+/* ⚠ `.tab` 은 한 줄짜리라 white-space:nowrap 이 맞다. 그런데 `.planbox` 는 «여러 줄 카드»다 —
+   이름 · 값 · 기간 · 설명이 세로로 쌓인다. nowrap 이 딸려 오면 설명 줄이 카드를 뚫고 나가
+   폰 폭에서 쪽을 통째로 넓힌다 (2026-09-11 `check-눈으로` D6: BS0101 이 360 창에 363 문서).
+   카드 쪽에서만 풀어 준다. */
+.tab.planbox{white-space:normal}
+.tab.planbox > span{white-space:normal;overflow-wrap:anywhere}
+
+/* ⚠ 「조건에 맞는 것이 없어요」 칸이 표 바로 밑에 맞붙어 한 덩어리로 보였다
+   (2026-09-11 `check-눈으로` H2: SE0205 에서 틈 0px).
+   이 칸은 표가 비었을 때 «대신» 뜨는 것이라, 표와 떨어져 보여야 한다. */
+[data-filter-empty]{margin-top:var(--s4, 16px)}
+
 /* ── 예시 사진 ──────────────────────────────────────────────
    이미지-끼우기.mts 가 붙인다. --빼기 로 이 덩어리째 지운다.
    ⚠ object-fit:cover 가 핵심이다 — 자리 비율이 제각각인데 사진은 가로 한 벌뿐이다. */
@@ -1668,15 +1682,3 @@ p + .chips{margin-top:var(--sp-item, 12px)}
    지우지 않고 감추기만 한다 — 빼면 도로 보인다. */
 .ph > img[data-예시] ~ .lb{display:none}
 /* ── 예시 사진 끝 ── */
-
-/* ⚠ `.tab` 은 한 줄짜리라 white-space:nowrap 이 맞다. 그런데 `.planbox` 는 «여러 줄 카드»다 —
-   이름 · 값 · 기간 · 설명이 세로로 쌓인다. nowrap 이 딸려 오면 설명 줄이 카드를 뚫고 나가
-   폰 폭에서 쪽을 통째로 넓힌다 (2026-09-11 `check-눈으로` D6: BS0101 이 360 창에 363 문서).
-   카드 쪽에서만 풀어 준다. */
-.tab.planbox{white-space:normal}
-.tab.planbox > span{white-space:normal;overflow-wrap:anywhere}
-
-/* ⚠ 「조건에 맞는 것이 없어요」 칸이 표 바로 밑에 맞붙어 한 덩어리로 보였다
-   (2026-09-11 `check-눈으로` H2: SE0205 에서 틈 0px).
-   이 칸은 표가 비었을 때 «대신» 뜨는 것이라, 표와 떨어져 보여야 한다. */
-[data-filter-empty]{margin-top:var(--s4, 16px)}

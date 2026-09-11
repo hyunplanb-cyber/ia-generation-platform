@@ -203,3 +203,20 @@ if (missing.length) console.log('⛔ 빌더 없음:', missing.join(', '));
 if (끊김.length) console.log('⛔ 끊어진 링크:', 끊김.join(', '));
 if (외톨이.length) console.log('⛔ 아무도 안 가리키는 쪽:', 외톨이.join(', '));
 if (!missing.length && !끊김.length && !외톨이.length) console.log('✓ 끊어진 링크 0 · 외톨이 쪽 0');
+
+/* ⛔ 굽는 차례는 «굽기 → 사진 끼우기»다. 거꾸로 하면 사진이 날아간다 (2026-09-11).
+     이 생성기는 pages/*.html 을 통째로 다시 쓴다. `이미지-끼우기.mts` 가 넣어 둔 <img> 는
+     그 안에 없으므로, 다시 구울 때마다 794자리가 «조용히» 지워진다.
+     글로만 적어 두면 또 밟는다 — 그래서 세어서 알려 준다. */
+const 예시방 = path.resolve(ROOT, 'assets/예시');
+if (fs.existsSync(예시방) && fs.readdirSync(예시방).length) {
+  const 든장 = fs.readdirSync(OUT).filter((f) => f.endsWith('.html'))
+    .filter((f) => fs.readFileSync(path.join(OUT, f), 'utf8').includes('assets/예시/')).length;
+  if (!든장) {
+    const 팩이름 = path.basename(path.resolve(ROOT, '..'));
+    console.log('');
+    console.log('⛔ 예시 사진이 ' + fs.readdirSync(예시방).length + '장 있는데 화면에는 한 장도 안 들어 있습니다.');
+    console.log('   다시 구우면서 지워진 것입니다. 이어서 돌리세요:');
+    console.log('     npx tsx 이미지-끼우기.mts ' + 팩이름);
+  }
+}
