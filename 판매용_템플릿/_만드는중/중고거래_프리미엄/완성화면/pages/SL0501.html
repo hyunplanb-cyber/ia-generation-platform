@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내 판매글 관리 · 우리동네장터</title>
+<meta name="description" content="상태 탭(판매중·예약중·거래완료·숨김)과 건수 배지 · 내가 올린 글 가로 행 목록 · 행마다 조회·찜·채팅 수 · 상태 바꾸기 드롭다운 · 끌올 버튼과 남은 시간 · 가격 내리기 · 수정·삭제 · 거래완료로 바꿀 때 구매자 고르기 · 후기 쓰기 유도 · 오래된 글 자">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="SL0501">
+<div class="app">
+<aside class="gnav">
+    <a class="logo" href="HO0101.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnav-nav"><div class="gl">사고팔기</div><a href="HO0101.html">홈</a><a href="SE0201.html">매물 목록</a><a href="SE0101.html">내 동네 설정</a><a href="SL0101.html">판매글 쓰기</a><a href="SL0501.html" class="on" aria-current="page">내 판매글</a><div class="gl">거래</div><a href="CH0101.html">채팅<span class="n">2</span></a><a href="PA0501.html">거래 진행</a><a href="PA0101.html">안전결제 안내</a><div class="gl">내 활동</div><a href="MY0101.html">마이페이지</a><a href="MY0301.html">찜한 물건</a><a href="MY0501.html">받은 후기</a><a href="BS0101.html">끌올·광고</a><div class="gl">안내</div><a href="HO0401.html">공지·이벤트</a><a href="HO0301.html">안전거래 안내</a><a href="CS0101.html">고객센터</a></nav>
+    <div class="gnav-ft"><a href="AD0101.html">↪ 운영자 화면으로</a><a href="../index.html">🗂 전체 화면 목록</a></div>
+  </aside>
+<div class="appcol">
+<header class="topbar"><span class="sp"></span>
+        <a class="town" href="SE0101.html">📍 역삼동</a>
+        <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+        <a class="who" href="MY0101.html"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"></div><span class="nm">하늘이네님</span></a>
+      </header>
+<div class="backbar"><div class="in">
+        <a class="back" href="SL0101.html">‹ 판매글 작성</a>
+        <span class="crumb">판매하기 <i>›</i> 내 판매글 관리</span>
+      </div></div>
+
+
+<main class="main appmain  "><div class="wrap">
+<div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">내 판매글</h1><p class="t-sub">모두 7개 · 상태를 바꾸면 탭 건수도 함께 움직여요</p></div><div class="btns"><a class="btn btn-ghost" href="BS0101.html">끌올·광고 보기</a><a class="btn btn-pri" href="SL0101.html">판매글 쓰기</a></div></div>
+
+<div class="kpis"><div class="kpi "><span class="l">판매중</span>
+    <span class="v">5<small>건</small></span>
+    <span class="d">모두 7개 올려 두셨어요</span></div><div class="kpi k-acc"><span class="l">예약중</span>
+    <span class="v">1<small>건</small></span>
+    <span class="d">약속을 잡은 물건</span></div><div class="kpi k-ok"><span class="l">모두 받은 조회</span>
+    <span class="v">1,382<small>회</small></span>
+    <span class="d">찜 71 · 채팅 24</span></div><a class="kpi k-warn" href="BS0101.html"><span class="l">지금 끌올 가능</span>
+    <span class="v">2<small>건</small></span>
+    <span class="d">무료 끌올은 24시간마다</span><span class="go">›</span></a></div>
+
+<div class="table-bar" data-pick-bar hidden>
+  <div class="grow"><b><span data-pick-n>0</span>개</b> <span class="t-sub">골랐어요</span></div>
+  <div class="row-c">
+    <button class="btn btn-ghost btn-sm" type="button" data-toast="고른 글을 한꺼번에 숨겼어요">한꺼번에 숨기기</button>
+    <button class="btn btn-ghost btn-sm" type="button" data-toast="고른 글을 한꺼번에 끌올했어요">한꺼번에 끌올</button>
+    <button class="btn btn-danger btn-sm" type="button" data-toast="고른 글을 지웠어요" data-toast-act="되돌리기">한꺼번에 삭제</button>
+  </div>
+</div>
+
+<div>
+  <div class="tabs"><button class="tab on" type="button" data-pane="my0">판매중<span class="cnt">5</span></button><button class="tab" type="button" data-pane="my1">예약중<span class="cnt">1</span></button><button class="tab" type="button" data-pane="my2">거래완료<span class="cnt">1</span></button><button class="tab" type="button" data-pane="my3">숨김<span class="cnt">0</span></button></div>
+  <div class="mt4"><div data-pane-body="my0">
+        <div class="table-bar"><div class="grow"><b>5건</b> <span class="t-sub">· 체크하면 여러 개를 한꺼번에 다룰 수 있어요</span></div><div class="row-c"><a class="btn btn-pri btn-sm" href="SL0101.html">판매글 쓰기</a></div></div>
+           <div style="max-height:460px" class="table-wrap table-stick table-stick-in table-scroll"><table class="table table-dash "><thead><tr><th style="width:40px"></th><th>물건</th><th style="width:110px">값</th><th style="width:96px">올린 날</th><th style="width:176px">반응</th><th style="width:80px">상태</th><th style="width:104px">끌올</th><th style="width:210px">상태 바꾸기</th></tr></thead><tbody data-filter-list="my0"><tr class="" data-st="판매중" data-i="i1"><td><label class="check none"><input type="checkbox" data-pick aria-label="다이슨 무선청소기 V11 팝니다 고르기"></label></td><td><span class="row-c"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:40px;height:40px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div><span>
+        <a class="strong" href="SE0401.html">다이슨 무선청소기 V11 팝니다</a>
+        <span class="row-c" style="gap:4px;margin-top:2px"><span class="badge b-acc" title="유료로 목록 위에 올린 글입니다">끌올</span><span class="badge b-mut">거의 새것</span></span>
+      </span></span></td><td><b class="nowrap">320,000원</b></td><td><span class="t-sub nowrap">9월 5일</span></td><td><span class="t-sub nowrap">조회 124 · 찜 8 · 채팅 3</span></td><td><span class="badge b-pri" data-badge-of>판매중</span></td><td><span class="badge b-acc">끌올 진행중</span></td><td><div class="row-c" style="gap:6px;flex-wrap:nowrap">
+            <select class="input" style="width:100px;height:32px;font-size:13px;padding:0 8px" data-row-badge aria-label="상태 바꾸기">
+              <option selected>판매중</option><option>예약중</option><option>거래완료</option><option>숨김</option></select>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="done">거래완료</button>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="more" aria-label="더 보기">⋯</button>
+          </div></td></tr><tr class="" data-st="판매중" data-i="i5"><td><label class="check none"><input type="checkbox" data-pick aria-label="닌텐도 스위치 OLED + 게임 2개 고르기"></label></td><td><span class="row-c"><div class="ph ph-fix t4 ph-sq ph-tiny" style="width:40px;height:40px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div><span>
+        <a class="strong" href="SE0401.html">닌텐도 스위치 OLED + 게임 2개</a>
+        <span class="row-c" style="gap:4px;margin-top:2px"><span class="badge b-mut">거의 새것</span></span>
+      </span></span></td><td><b class="nowrap">285,000원</b></td><td><span class="t-sub nowrap">9월 4일</span></td><td><span class="t-sub nowrap">조회 671 · 찜 33 · 채팅 12</span></td><td><span class="badge b-pri" data-badge-of>판매중</span></td><td><button class="btn btn-ghost btn-xs" type="button" disabled>무료 끌올</button>
+      <div class="t-sub nowrap" style="margin-top:2px">7시간 12분 뒤</div></td><td><div class="row-c" style="gap:6px;flex-wrap:nowrap">
+            <select class="input" style="width:100px;height:32px;font-size:13px;padding:0 8px" data-row-badge aria-label="상태 바꾸기">
+              <option selected>판매중</option><option>예약중</option><option>거래완료</option><option>숨김</option></select>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="done">거래완료</button>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="more" aria-label="더 보기">⋯</button>
+          </div></td></tr><tr class="" data-st="판매중" data-i="i7"><td><label class="check none"><input type="checkbox" data-pick aria-label="삼성 27인치 모니터 QHD 고르기"></label></td><td><span class="row-c"><div class="ph ph-fix t1 ph-sq ph-tiny" style="width:40px;height:40px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div><span>
+        <a class="strong" href="SE0401.html">삼성 27인치 모니터 QHD</a>
+        <span class="row-c" style="gap:4px;margin-top:2px"><span class="badge b-mut">사용감 있음</span></span>
+      </span></span></td><td><b class="nowrap">145,000원</b></td><td><span class="t-sub nowrap">9월 2일</span></td><td><span class="t-sub nowrap">조회 156 · 찜 9 · 채팅 3</span></td><td><span class="badge b-pri" data-badge-of>판매중</span></td><td><a class="btn btn-pri btn-xs" href="BS0101.html">무료 끌올</a></td><td><div class="row-c" style="gap:6px;flex-wrap:nowrap">
+            <select class="input" style="width:100px;height:32px;font-size:13px;padding:0 8px" data-row-badge aria-label="상태 바꾸기">
+              <option selected>판매중</option><option>예약중</option><option>거래완료</option><option>숨김</option></select>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="done">거래완료</button>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="more" aria-label="더 보기">⋯</button>
+          </div></td></tr><tr class="" data-st="판매중" data-i="i14"><td><label class="check none"><input type="checkbox" data-pick aria-label="기계식 키보드 (적축) 고르기"></label></td><td><span class="row-c"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:40px;height:40px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div><span>
+        <a class="strong" href="SE0401.html">기계식 키보드 (적축)</a>
+        <span class="row-c" style="gap:4px;margin-top:2px"><span class="badge b-mut">거의 새것</span></span>
+      </span></span></td><td><b class="nowrap">62,000원</b></td><td><span class="t-sub nowrap">8월 30일</span></td><td><span class="t-sub nowrap">조회 241 · 찜 12 · 채팅 4</span></td><td><span class="badge b-pri" data-badge-of>판매중</span></td><td><button class="btn btn-ghost btn-xs" type="button" disabled>무료 끌올</button>
+      <div class="t-sub nowrap" style="margin-top:2px">19시간 40분 뒤</div></td><td><div class="row-c" style="gap:6px;flex-wrap:nowrap">
+            <select class="input" style="width:100px;height:32px;font-size:13px;padding:0 8px" data-row-badge aria-label="상태 바꾸기">
+              <option selected>판매중</option><option>예약중</option><option>거래완료</option><option>숨김</option></select>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="done">거래완료</button>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="more" aria-label="더 보기">⋯</button>
+          </div></td></tr><tr class="" data-st="판매중" data-i="s1"><td><label class="check none"><input type="checkbox" data-pick aria-label="스탠드 선풍기 (리모컨 있음) 고르기"></label></td><td><span class="row-c"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:40px;height:40px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div><span>
+        <a class="strong" href="SE0401.html">스탠드 선풍기 (리모컨 있음)</a>
+        <span class="row-c" style="gap:4px;margin-top:2px"><span class="badge b-mut">사용감 있음</span><span class="badge b-warn">목록에서 내려감</span></span>
+      </span></span></td><td><b class="nowrap">18,000원</b></td><td><span class="t-sub nowrap">7월 28일</span></td><td><span class="t-sub nowrap">조회 41 · 찜 2 · 채팅 0</span></td><td><span class="badge b-pri" data-badge-of>판매중</span></td><td><a class="btn btn-pri btn-xs" href="BS0101.html">무료 끌올</a></td><td><div class="row-c" style="gap:6px;flex-wrap:nowrap">
+            <select class="input" style="width:100px;height:32px;font-size:13px;padding:0 8px" data-row-badge aria-label="상태 바꾸기">
+              <option selected>판매중</option><option>예약중</option><option>거래완료</option><option>숨김</option></select>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="done">거래완료</button>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="more" aria-label="더 보기">⋯</button>
+          </div></td></tr></tbody></table></div>
+      </div><div data-pane-body="my1" hidden>
+        <div class="table-bar"><div class="grow"><b>1건</b> <span class="t-sub">· 체크하면 여러 개를 한꺼번에 다룰 수 있어요</span></div><div class="row-c"><a class="btn btn-pri btn-sm" href="SL0101.html">판매글 쓰기</a></div></div>
+           <div style="max-height:460px" class="table-wrap table-stick table-stick-in table-scroll"><table class="table table-dash "><thead><tr><th style="width:40px"></th><th>물건</th><th style="width:110px">값</th><th style="width:96px">올린 날</th><th style="width:176px">반응</th><th style="width:80px">상태</th><th style="width:104px">끌올</th><th style="width:210px">상태 바꾸기</th></tr></thead><tbody data-filter-list="my1"><tr class="" data-st="예약중" data-i="i3"><td><label class="check none"><input type="checkbox" data-pick aria-label="원목 책상 1200x600 (직거래만) 고르기"></label></td><td><span class="row-c"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:40px;height:40px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div><span>
+        <a class="strong" href="SE0401.html">원목 책상 1200x600 (직거래만)</a>
+        <span class="row-c" style="gap:4px;margin-top:2px"><span class="badge b-mut">사용감 있음</span></span>
+      </span></span></td><td><b class="nowrap">65,000원</b></td><td><span class="t-sub nowrap">9월 1일</span></td><td><span class="t-sub nowrap">조회 88 · 찜 4 · 채팅 2</span></td><td><span class="badge b-acc" data-badge-of>예약중</span></td><td><button class="btn btn-ghost btn-xs" type="button" disabled>무료 끌올</button>
+      <div class="t-sub nowrap" style="margin-top:2px">3시간 5분 뒤</div></td><td><div class="row-c" style="gap:6px;flex-wrap:nowrap">
+            <select class="input" style="width:100px;height:32px;font-size:13px;padding:0 8px" data-row-badge aria-label="상태 바꾸기">
+              <option>판매중</option><option selected>예약중</option><option>거래완료</option><option>숨김</option></select>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="done">거래완료</button>
+            <button class="btn btn-quiet btn-xs" type="button" data-modal="more" aria-label="더 보기">⋯</button>
+          </div></td></tr></tbody></table></div>
+      </div><div data-pane-body="my2" hidden>
+        <div class="table-bar"><div class="grow"><b>1건</b> <span class="t-sub">· 체크하면 여러 개를 한꺼번에 다룰 수 있어요</span></div><div class="row-c"><a class="btn btn-pri btn-sm" href="SL0101.html">판매글 쓰기</a></div></div>
+           <div style="max-height:460px" class="table-wrap table-stick table-stick-in table-scroll"><table class="table table-dash "><thead><tr><th style="width:40px"></th><th>물건</th><th style="width:110px">값</th><th style="width:96px">올린 날</th><th style="width:176px">반응</th><th style="width:80px">상태</th><th style="width:104px">끌올</th><th style="width:210px">상태 바꾸기</th></tr></thead><tbody data-filter-list="my2"><tr class="" data-st="거래완료" data-i="i8"><td><label class="check none"><input type="checkbox" data-pick aria-label="아이 자전거 16인치 (보조바퀴 포함) 고르기"></label></td><td><span class="row-c"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:40px;height:40px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div><span>
+        <a class="strong" href="SE0401.html">아이 자전거 16인치 (보조바퀴 포함)</a>
+        <span class="row-c" style="gap:4px;margin-top:2px"><span class="badge b-mut">사용감 있음</span></span>
+      </span></span></td><td><b class="nowrap">48,000원</b></td><td><span class="t-sub nowrap">8월 20일</span></td><td><span class="t-sub nowrap">조회 61 · 찜 3 · 채팅 0</span></td><td><span class="badge b-mut" data-badge-of>거래완료</span></td><td><span class="t-sub">—</span></td><td><div class="row-c" style="gap:6px;flex-wrap:wrap">
+            <a class="btn btn-pri btn-xs" href="MY0401.html">후기 쓰기</a>
+            <a class="btn btn-quiet btn-xs" href="SL0101.html">다시 올리기</a>
+          </div></td></tr></tbody></table></div>
+      </div><div data-pane-body="my3" hidden>
+        <div class="empty">
+  <div class="ico">📦</div><h3 class="t-sec">숨김인 글이 아직 없어요</h3>
+  <p class="msg">숨긴 글은 목록에서 보이지 않지만 지워지지는 않아요. 언제든 다시 올릴 수 있습니다.</p><div class="btns"><a class="btn btn-pri" href="SL0101.html">판매글 쓰기</a></div></div>
+      </div></div>
+</div>
+
+<div class="banner banner-warn "><span class="ico">⏳</span><div class="grow"><b>30일이 지나 목록에서 내려간 글이 1개 있어요</b>
+  <div class="t-sub mt1">글은 그대로 있지만 매물 목록에는 보이지 않아요. 끌올하면 다시 올라옵니다.</div></div><a class="btn btn-ghost btn-sm" href="SL0506.html">내려간 글 보기</a></div>
+
+<section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">상태를 바꾸면</h2></div>
+  
+  <div class="table-wrap table-stick table-scroll"><table class="table table-dash "><thead><tr><th style="width:130px">무엇으로</th><th>이럴 때</th><th>그러면</th><th style="width:150px"></th></tr></thead><tbody><tr class=""><td><span class="badge b-acc">예약중</span></td><td>약속을 잡았을 때</td><td>목록에 「예약중」 딱지가 붙고 다른 분이 헛걸음하지 않아요</td><td><a class="btn btn-ghost btn-xs" href="SL0502.html">바꿔 보기</a></td></tr><tr class=""><td><span class="badge b-mut">거래완료</span></td><td>물건을 넘겼을 때</td><td>누구와 거래했는지 고르고 후기 쓰기로 이어집니다</td><td><a class="btn btn-ghost btn-xs" href="SL0503.html">구매자 고르기</a></td></tr><tr class=""><td><span class="badge b-mut">숨김</span></td><td>잠깐 내려 두고 싶을 때</td><td>목록에서 사라지지만 글은 남아 있어요</td><td><a class="btn btn-ghost btn-xs" href="SL0502.html">바꿔 보기</a></td></tr></tbody></table></div></section>
+
+
+<template id="more"><div class="modal">
+  <div class="modal-hd"><h3 class="t-card">이 글 다루기</h3><button class="btn btn-quiet btn-sm" type="button" data-dismiss>✕</button></div>
+  <div class="modal-bd">
+  <div class="stack-sm">
+    <a class="tile" href="SL0101.html"><span class="nm">✎ 수정하기</span><span class="t-sub">제목 · 사진 · 값 · 설명을 고칩니다</span></a>
+    <a class="tile" href="SL0505.html"><span class="nm">↓ 가격 내리기</span><span class="t-sub">찜한 이웃에게 알림이 갑니다</span></a>
+    <a class="tile" href="BS0101.html"><span class="nm">↑ 끌올하기</span><span class="t-sub">목록 맨 위로 올립니다</span></a>
+    <button class="tile" type="button" style="text-align:left" data-dismiss data-toast="숨겼어요 · 목록에서 보이지 않아요" data-toast-act="되돌리기">
+      <span class="nm">🙈 숨기기</span><span class="t-sub">목록에서 내려가지만 글은 남아 있어요</span></button>
+    <button class="tile" type="button" style="text-align:left" data-dismiss data-toast="글을 지웠어요" data-toast-act="되돌리기">
+      <span class="nm danger">🗑 삭제하기</span><span class="t-sub">되돌릴 수 있는 시간은 30초예요</span></button>
+  </div></div>
+  <div class="modal-ft"><button class="btn btn-ghost" type="button" data-dismiss>닫기</button></div></div></template>
+
+<template id="done"><div class="modal">
+  <div class="modal-hd"><h3 class="t-card">누구와 거래하셨나요?</h3><button class="btn btn-quiet btn-sm" type="button" data-dismiss>✕</button></div>
+  <div class="modal-bd">
+  <p class="t-sub mb3">이 물건으로 이야기한 이웃 3명이에요. 고르시면 그분에게 후기를 남길 수 있어요 — 후기는 <b>서로</b> 남깁니다.</p>
+  <div class="stack-sm">
+    <label class="radio-in box on">
+      <input type="radio" name="buyer" checked>
+      <span class="grow">
+        <span class="row-b"><b>초록나무</b><span class="manner mn-hi" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>45.2</b><span class="deg">도</span></span></span>
+        <span class="t-sub" style="display:block">「내일 저녁 7시에 역삼역에서 뵐게요」 · 어제</span>
+      </span></label><label class="radio-in box">
+      <input type="radio" name="buyer">
+      <span class="grow">
+        <span class="row-b"><b>민트초코</b><span class="manner mn-ok" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>39.8</b><span class="deg">도</span></span></span>
+        <span class="t-sub" style="display:block">「혹시 아직 있나요?」 · 3일 전</span>
+      </span></label><label class="radio-in box">
+      <input type="radio" name="buyer">
+      <span class="grow">
+        <span class="row-b"><b>달빛창가</b><span class="manner mn-mid" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>36.5</b><span class="deg">도</span></span></span>
+        <span class="t-sub" style="display:block">「네고 조금만 가능할까요?」 · 5일 전</span>
+      </span></label>
+    <label class="radio-in box"><input type="radio" name="buyer">
+      <span><b>채팅 밖에서 거래했어요</b><span class="t-sub" style="display:block">이웃을 고르지 않고 거래완료로만 바꿉니다 — 후기는 남길 수 없어요</span></span></label>
+  </div>
+  <p class="help mt3">고른 이웃 <b>1명</b> · 아무도 고르지 않으면 아래 단추가 잠깁니다.</p></div>
+  <div class="modal-ft"><button class="btn btn-ghost" type="button" data-dismiss>취소</button><a class="btn btn-pri" href="MY0401.html">거래완료로 바꾸고 후기 쓰기</a></div></div></template>
+
+<section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">이 화면의 다른 상태</h2></div>
+  <p class="t-sub" style="margin-top:calc(-1 * var(--sp-item));margin-bottom:var(--sp-title)">같은 화면이 형편에 따라 어떻게 달라지는지 볼 수 있어요.</p>
+  <div class="btns wrap-row"><a class="btn btn-ghost btn-sm" href="SL0502.html">상태 바꾸기</a><a class="btn btn-ghost btn-sm" href="SL0503.html">구매자 고르기</a><a class="btn btn-ghost btn-sm" href="SL0504.html">끌올 잠김</a><a class="btn btn-ghost btn-sm" href="SL0505.html">가격 내리기</a><a class="btn btn-ghost btn-sm" href="SL0506.html">오래된 글 자동 내림</a></div></section></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE0201.html">매물 찾기</a></li><li><a href="SE0101.html">내 동네 설정</a></li>
+      <li><a href="MY0301.html">찜한 물건</a></li><li><a href="MY0201.html">구매 내역</a></li>
+      <li><a href="PA0101.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL0101.html">판매글 쓰기</a></li><li><a href="SL0501.html">내 판매글</a></li>
+      <li><a href="SL0301.html">시세 보기</a></li><li><a href="BS0101.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+</div>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">SL0501</div><div class="nm">내 판매글 관리</div>
+    <div class="fd">상태 탭(판매중·예약중·거래완료·숨김)과 건수 배지 · 내가 올린 글 가로 행 목록 · 행마다 조회·찜·채팅 수 · 상태 바꾸기 드롭다운 · 끌올 버튼과 남은 시간 · 가격 내리기 · 수정·삭제 · 거래완료로 바꿀 때 구매자 고르기 · 후기 쓰기 유도 · 오래된 글 자동 숨김 안내 · 여러 개 골라 한꺼번에 처리</div>
+    <div class="lk"><a href="BS0101.html">끌올·광고 보기 ›</a><a href="MY0401.html">후기 쓰기 ›</a><a href="SL0101.html">판매글 쓰기 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">SL0501 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

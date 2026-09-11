@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>발송 등록 (판매자) &gt; 택배사·운송장 입력 · 우리동네장터</title>
+<meta name="description" content="택배사에 따라 자릿수 안내 교체 · 형식이 안 맞으면 붉은 안내 · 등록하면 배송 조회가 붙음">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="PA0303">
+<div class="app">
+<aside class="gnav">
+    <a class="logo" href="HO0101.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnav-nav"><div class="gl">사고팔기</div><a href="HO0101.html">홈</a><a href="SE0201.html">매물 목록</a><a href="SE0101.html">내 동네 설정</a><a href="SL0101.html">판매글 쓰기</a><a href="SL0501.html">내 판매글</a><div class="gl">거래</div><a href="CH0101.html">채팅<span class="n">2</span></a><a href="PA0501.html" class="on" aria-current="page">거래 진행</a><a href="PA0101.html">안전결제 안내</a><div class="gl">내 활동</div><a href="MY0101.html">마이페이지</a><a href="MY0301.html">찜한 물건</a><a href="MY0501.html">받은 후기</a><a href="BS0101.html">끌올·광고</a><div class="gl">안내</div><a href="HO0401.html">공지·이벤트</a><a href="HO0301.html">안전거래 안내</a><a href="CS0101.html">고객센터</a></nav>
+    <div class="gnav-ft"><a href="AD0101.html">↪ 운영자 화면으로</a><a href="../index.html">🗂 전체 화면 목록</a></div>
+  </aside>
+<div class="appcol">
+<header class="topbar"><span class="sp"></span>
+        <a class="town" href="SE0101.html">📍 역삼동</a>
+        <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+        <a class="who" href="MY0101.html"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"></div><span class="nm">하늘이네님</span></a>
+      </header>
+<div class="backbar"><div class="in">
+        <a class="back" href="PA0301.html">‹ 발송 등록 (판매자)</a>
+        <span class="crumb">안전결제 <i>›</i> 발송 등록 (판매자) &gt; 택배사·운송장 입력</span>
+      </div></div>
+<div class="state-bar"><div class="in"><span class="tag">상태</span><b>운송장 자릿수가 맞지 않는 상태</b>
+    <span class="muted">택배사에 따라 자릿수 안내 교체 · 형식이 안 맞으면 붉은 안내 · 등록하면 배송 조회가 붙음</span></div></div>
+
+<main class="main appmain  "><div class="wrap">
+<div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">택배사·운송장 입력</h1><p class="t-sub">택배사를 고르면 자릿수 안내가 바뀌고, 형식이 안 맞으면 붉게 알려 줍니다</p></div></div>
+<div class="kpis"><div class="kpi "><span class="l">고른 택배사</span>
+    <span class="v">우체국택배</span>
+    <span class="d">13자리 · 영문이 섞일 수 있어요</span></div><div class="kpi k-danger"><span class="l">적은 자릿수</span>
+    <span class="v">5<small>자리</small></span>
+    <span class="d">13자리가 필요해요</span></div><div class="kpi k-warn"><span class="l">등록 단추</span>
+    <span class="v">잠김</span>
+    <span class="d">자릿수가 맞으면 열립니다</span></div><div class="kpi k-mut"><span class="l">택배사 수</span>
+    <span class="v">5<small>곳</small></span>
+    <span class="d">자릿수가 저마다 다릅니다</span></div></div>
+<div class="split-r"><div>
+<div class="card ">
+  <div class="card-hd"><h3 class="t-card">택배사와 운송장</h3></div>
+  <div class="card-bd ">
+  <div class="fld"><label class="lb" for="cr2">택배사 — 고르면 아래 안내가 바뀝니다</label>
+    <select class="input" id="cr2" data-sel-text="carrier2">
+      <option>고르기</option><option>CJ대한통운</option><option>한진택배</option><option>롯데택배</option><option selected>우체국택배</option><option>로젠택배</option></select></div>
+  <div class="fld"><label class="lb" for="tr2">운송장 번호</label>
+    <input class="input" id="tr2" type="text" value="12345" style="border-color:var(--danger)">
+    <p class="t-sub mt1" style="color:var(--danger)"><b>자릿수가 맞지 않아요.</b> 적으신 것은 5자리입니다.</p>
+    <p class="t-sub mt1" data-sel-out="carrier2" data-sel-map='{"고르기":"택배사를 먼저 골라 주세요.","CJ대한통운":"CJ대한통운은 <b>12자리 숫자</b>예요.","한진택배":"한진택배는 <b>10자리 또는 12자리 숫자</b>예요.","롯데택배":"롯데택배는 <b>12자리 숫자</b>예요.","우체국택배":"우체국택배는 <b>13자리 · 영문이 섞일 수 있어요</b>예요.","로젠택배":"로젠택배는 <b>11자리 숫자</b>예요."}'>우체국택배는 <b>13자리 · 영문이 섞일 수 있어요</b>예요.</p></div></div>
+  </div>
+
+<div class="mt-block"><section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">택배사별 운송장 자릿수</h2></div>
+  <p class="t-sub" style="margin-top:calc(-1 * var(--sp-item));margin-bottom:var(--sp-title)">택배사를 바꾸면 위 입력칸 아래 안내도 함께 바뀝니다.</p>
+  <div class="table-wrap table-stick table-scroll"><table class="table table-dash "><thead><tr><th style="width:148px">택배사</th><th>자릿수</th><th style="width:190px">보기</th></tr></thead><tbody><tr class=""><td><b>CJ대한통운</b></td><td>12자리 숫자</td><td><span class="muted">1234 5678 9012</span></td></tr><tr class=""><td><b>한진택배</b></td><td>10자리 또는 12자리 숫자</td><td><span class="muted">12 3456 7890</span></td></tr><tr class=""><td><b>롯데택배</b></td><td>12자리 숫자</td><td><span class="muted">1234 5678 9012</span></td></tr><tr class="on"><td><b>우체국택배</b></td><td>13자리 · 영문이 섞일 수 있어요</td><td><span class="muted">1234567890123</span></td></tr><tr class=""><td><b>로젠택배</b></td><td>11자리 숫자</td><td><span class="muted">12345678901</span></td></tr></tbody></table></div></section></div>
+
+<div class="mt-block"><section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">형식 검사는 이렇게 합니다</h2></div>
+  
+  <div class="table-wrap table-stick table-scroll"><table class="table table-dash "><thead><tr><th style="width:34%">적은 것</th><th>어떻게 되나</th></tr></thead><tbody><tr class=""><td><span class="muted">12345</span></td><td><b style="color:var(--danger)">자릿수가 모자랍니다.</b> 등록할 수 없어요.</td></tr><tr class=""><td><span class="muted">1234-5678-9012</span></td><td>가운데 줄표는 지우고 숫자만 셉니다. 12자리로 봅니다.</td></tr><tr class=""><td><span class="muted">EE123456789KR</span></td><td>우체국택배는 영문이 섞일 수 있어 그대로 받습니다.</td></tr><tr class=""><td><b>6712339044 18</b></td><td><b style="color:var(--pri-text,var(--primary))">맞습니다.</b> 등록하면 배송 조회가 붙습니다.</td></tr></tbody></table></div></section></div>
+
+<div class="mt-block"><div class="banner banner-info "><span class="ico">🚚</span><div class="grow"><b>등록하면 배송 조회가 붙습니다.</b>
+  <div class="t-sub mt1">구매자 화면에 이동 기록이 그대로 보이고, 도착하면 「받았어요」 단추가 열립니다.</div></div><a class="btn btn-ghost btn-sm" href="PA0503.html">배송 조회 화면</a></div></div>
+</div><div class="sticky"><div class="act-panel ">
+  <div class="ap-hd"><h3 class="t-card">지금 어디까지</h3><span class="badge b-pri">진행중</span></div>
+  <div class="ap-bd"><div class="escrow">
+  <div class="es done">
+    <span class="dot">✓</span>
+    <span class="lb">결제</span>
+    <span class="when">9/3 10:02</span>
+  </div>
+  <div class="es on">
+    <span class="dot">2</span>
+    <span class="lb">발송</span>
+    <span class="when"></span>
+  </div>
+  <div class="es todo">
+    <span class="dot">3</span>
+    <span class="lb">수령 확인</span>
+    <span class="when"></span>
+  </div>
+  <div class="es todo">
+    <span class="dot">4</span>
+    <span class="lb">정산</span>
+    <span class="when"></span>
+  </div></div>
+  <div class="turn"><span class="ico">⏳</span><b>운송장을 올릴 차례예요</b><span class="left">1일 8시간 남음</span></div></div>
+  </div><div class="act-panel ">
+  
+  <div class="ap-bd"><p class="t-sub">자릿수가 맞아야 등록됩니다. 지금은 5자리라 잠겨 있어요.</p></div>
+  <div class="ap-ft">
+  <button class="btn btn-pri btn-lg" id="ship-locked" type="button" disabled>발송 등록하기</button>
+  <a class="btn btn-ghost" href="PA0301.html">발송 등록 화면으로</a>
+  <a class="btn btn-ghost" href="PA0304.html">직접 전달로 바꾸기</a></div></div></div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE0201.html">매물 찾기</a></li><li><a href="SE0101.html">내 동네 설정</a></li>
+      <li><a href="MY0301.html">찜한 물건</a></li><li><a href="MY0201.html">구매 내역</a></li>
+      <li><a href="PA0101.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL0101.html">판매글 쓰기</a></li><li><a href="SL0501.html">내 판매글</a></li>
+      <li><a href="SL0301.html">시세 보기</a></li><li><a href="BS0101.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+</div>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">PA0303</div><div class="nm">발송 등록 (판매자) &gt; 택배사·운송장 입력</div>
+    <div class="fd">택배사에 따라 자릿수 안내 교체 · 형식이 안 맞으면 붉은 안내 · 등록하면 배송 조회가 붙음</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">PA0303 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

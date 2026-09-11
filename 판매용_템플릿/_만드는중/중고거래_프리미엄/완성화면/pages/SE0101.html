@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내 동네 설정 · 우리동네장터</title>
+<meta name="description" content="현재 위치로 찾기 버튼 · 동네 이름 직접 검색 · 지도 위 선택한 동네 표시 · 범위 슬라이더(내 동네·가까운 동네·조금 먼 동네) · 그 범위에 잡히는 동네 이름 목록 · 범위별 매물 수 미리보기 · 동네 인증(그 자리에서 위치 확인) 안내 · 동네는 2개까지 등록">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="SE0101">
+<div class="app">
+<aside class="gnav">
+    <a class="logo" href="HO0101.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnav-nav"><div class="gl">사고팔기</div><a href="HO0101.html">홈</a><a href="SE0201.html">매물 목록</a><a href="SE0101.html" class="on" aria-current="page">내 동네 설정</a><a href="SL0101.html">판매글 쓰기</a><a href="SL0501.html">내 판매글</a><div class="gl">거래</div><a href="CH0101.html">채팅<span class="n">2</span></a><a href="PA0501.html">거래 진행</a><a href="PA0101.html">안전결제 안내</a><div class="gl">내 활동</div><a href="MY0101.html">마이페이지</a><a href="MY0301.html">찜한 물건</a><a href="MY0501.html">받은 후기</a><a href="BS0101.html">끌올·광고</a><div class="gl">안내</div><a href="HO0401.html">공지·이벤트</a><a href="HO0301.html">안전거래 안내</a><a href="CS0101.html">고객센터</a></nav>
+    <div class="gnav-ft"><a href="AD0101.html">↪ 운영자 화면으로</a><a href="../index.html">🗂 전체 화면 목록</a></div>
+  </aside>
+<div class="appcol">
+<header class="topbar"><span class="sp"></span>
+        <a class="town" href="SE0101.html">📍 역삼동</a>
+        <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+        <a class="who" href="MY0101.html"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"></div><span class="nm">하늘이네님</span></a>
+      </header>
+
+
+
+<main class="main appmain  "><div class="wrap">
+<div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">내 동네 설정</h1><p class="t-sub">동네를 정하면 가까운 이웃의 물건부터 보여드려요</p></div><div class="btns"><a class="btn btn-ghost" href="HO0101.html">홈으로</a><a class="btn btn-pri" href="SE0201.html">이 동네 매물 보기</a></div></div>
+
+<div class="kpis"><a class="kpi " href="SE0201.html"><span class="l">내 동네 매물</span>
+    <span class="v">1,284<small>건</small></span>
+    <span class="d">역삼동</span><span class="go">›</span></a><a class="kpi k-acc" href="SE0201.html"><span class="l">가까운 동네까지</span>
+    <span class="v">3,420<small>건</small></span>
+    <span class="d">역삼동 + 3곳</span><span class="go">›</span></a><a class="kpi k-mut" href="SE0201.html"><span class="l">조금 먼 동네까지</span>
+    <span class="v">7,188<small>건</small></span>
+    <span class="d">역삼동 + 8곳</span><span class="go">›</span></a><div class="kpi k-ok"><span class="l">등록한 동네</span>
+    <span class="v">1<small>곳</small></span>
+    <span class="d">2곳까지 등록할 수 있어요</span></div></div>
+
+<div class="split-r"><div>
+  <div class="card ">
+  <div class="card-hd"><h3 class="t-card">어디에 계신가요</h3></div>
+  <div class="card-bd ">
+    <div class="btns mb4">
+      <button class="btn btn-pri btn-lg" type="button" data-toast="현재 위치를 확인했어요 · 역삼동" data-toast-kind="ok">📍 현재 위치로 찾기</button>
+      <a class="btn btn-ghost btn-lg" href="SE0102.html">위치를 못 쓰면</a>
+    </div>
+    <div class="searchbar mb3"><span class="ic">🔍</span>
+      <input type="search" placeholder="동네 이름으로 찾기 (예: 역삼동)" aria-label="동네 검색">
+      <button class="btn btn-pri" type="button" data-toast="후보 동네를 좁혔어요">찾기</button>
+    </div>
+    <div class="stack-sm">
+      <label class="radio-in box on">
+        <input type="radio" name="town" checked>
+        <span class="grow"><b>역삼동</b> <span class="t-sub">서울 강남구</span></span>
+        <span class="t-sub nowrap">매물 1,284</span></label><label class="radio-in box">
+        <input type="radio" name="town">
+        <span class="grow"><b>역삼1동</b> <span class="t-sub">서울 강남구</span></span>
+        <span class="t-sub nowrap">매물 742</span></label><label class="radio-in box">
+        <input type="radio" name="town">
+        <span class="grow"><b>역삼2동</b> <span class="t-sub">서울 강남구</span></span>
+        <span class="t-sub nowrap">매물 531</span></label>
+    </div>
+    <p class="t-sub mt3">이름이 같은 동네가 여럿 나오면 <a class="link" href="SE0103.html">행정구역까지 보고</a> 고르세요.</p></div>
+  </div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">지도에서 본 내 동네</h3></div>
+  <div class="card-bd "><div class="map">
+    <span class="zone" style="width:130px;height:130px;left:50%;top:50%;transform:translate(-50%,-50%)"></span>
+    <span class="pin on" style="left:50%;top:50%" data-name="역삼동" title="역삼동"></span><span class="pin" style="left:30%;top:32%" data-name="논현동" title="논현동"></span><span class="pin" style="left:72%;top:36%" data-name="삼성동" title="삼성동"></span><span class="pin" style="left:66%;top:72%" data-name="대치동" title="대치동"></span><span class="pin" style="left:34%;top:70%" data-name="도곡동" title="도곡동"></span>
+    <span style="position:absolute;left:12px;bottom:10px;font-size:12px">지도 자리 — 실제 지도는 서버가 연결되면 들어갑니다</span>
+  </div>
+  <div class="row-b mt3" data-map-preview>
+    <span class="t-sub">고른 동네 <b data-map-name>역삼동</b> · 원 안이 지금 보는 범위예요</span>
+    <span class="t-sub">내 동네 · 매물 1,284개</span>
+  </div></div>
+  </div></div>
+
+  <div class="mt-block"><div class="card ">
+  <div class="card-hd"><h3 class="t-card">어디까지 볼까요</h3></div>
+  <div class="card-bd ">
+    <div class="slider">
+  <div class="fill" style="left:0;right:92%"></div>
+  <div class="kn" style="left:calc(0% - 9px)"></div>
+</div>
+<div class="row-b t-sub"><span style="color:var(--pri-text);font-weight:700">내 동네</span><span>가까운 동네</span><span>조금 먼 동네</span></div>
+<p class="t-sub mt3">손잡이는 세 자리에만 멈춥니다 — 사이 값은 없어요.</p>
+    <div class="mt4">
+      <div class="t-sub mb2">이 범위에 들어오는 동네</div>
+      <div class="chips"><button class="chip" type="button" >역삼동</button></div>
+    </div>
+    <div class="mt4"><div class="table-wrap table-stick table-scroll"><table class="table table-dash "><thead><tr><th>범위</th><th style="width:46%">포함 동네</th><th style="width:110px">매물 수</th><th style="width:92px"></th></tr></thead><tbody><tr class="over"><td><b>내 동네</b> <span class="badge b-pri">지금 이 범위</span></td><td><span class="t-sub">역삼동</span></td><td><b>1,284</b></td><td><span class="t-sub">고른 범위</span></td></tr><tr class=""><td><b>가까운 동네</b></td><td><span class="t-sub">역삼동 · 논현동 · 삼성동 · 대치동</span></td><td><b>3,420</b></td><td><button class="btn btn-ghost btn-xs" type="button" data-toast="가까운 동네 범위로 바꿨어요 · 매물 3,420개">이 범위로</button></td></tr><tr class=""><td><b>조금 먼 동네</b></td><td><span class="t-sub">역삼동 · 논현동 · 삼성동 · 대치동 · 청담동 · 신사동 · 도곡동 · 개포동 · 수서동</span></td><td><b>7,188</b></td><td><button class="btn btn-ghost btn-xs" type="button" data-toast="조금 먼 동네 범위로 바꿨어요 · 매물 7,188개">이 범위로</button></td></tr></tbody></table></div></div>
+    <p class="t-sub mt3">범위를 옮기면 지도 원 크기와 매물 수가 함께 바뀝니다 —
+      <a class="link" href="SE0104.html">옮겼을 때 화면</a></p></div>
+  </div></div>
+
+  <div class="mt-block"><section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">동네 인증</h2></div>
+  
+  
+    <div class="banner banner-info "><span class="ico">✅</span><div class="grow"><b>동네 인증을 하면 글쓰기와 채팅이 열려요</b>
+  <div class="t-sub mt1">그 동네에서 한 번 위치를 확인하면 됩니다. 확인한 자리는 저장하지 않아요.</div></div><a class="btn btn-ghost btn-sm" href="SE0105.html">인증 안내 보기</a></div>
+    <div class="mt4"><div class="table-wrap table-stick table-scroll"><table class="table table-dash "><thead><tr><th>할 수 있는 것 · 인증 없이</th><th>인증해야 열리는 것</th></tr></thead><tbody><tr class=""><td>✓ 매물 목록 보기</td><td>🔒 판매글 쓰기</td></tr><tr class=""><td>✓ 검색하기</td><td>🔒 채팅 보내기</td></tr><tr class=""><td>✓ 찜하기</td><td>🔒 가격 제안 보내기</td></tr><tr class=""><td>✓ 공지·안내 보기</td><td>🔒 후기 남기기</td></tr></tbody></table></div></div>
+    <p class="t-sub mt3">인증은 30일마다 다시 합니다. 이사하면 동네를 바꿔 다시 인증하세요.</p></section></div>
+</div><div class="sticky">
+  <div class="act-panel ">
+  <div class="ap-hd"><h3 class="t-card">등록한 동네</h3></div>
+  <div class="ap-bd"><div class="stack-sm">
+  <div class="town-row"><b>역삼동</b><span class="badge b-ok">인증 완료</span>
+    <button class="link quiet" type="button" data-toast="역삼동을 지웠어요" data-toast-act="되돌리기">지우기</button></div>
+  <div class="town-row muted">두 번째 동네 자리 — 비어 있음
+    <button class="link" type="button" data-toast="동네 검색에서 하나를 더 고르면 여기에 들어와요">＋ 추가</button></div>
+</div>
+<p class="t-sub mt3">동네는 <b>2개까지</b> 등록할 수 있어요. 새로 등록하려면 하나를 지우세요.</p></div>
+  </div>
+  <div class="act-panel ">
+  <div class="ap-hd"><h3 class="t-card">지금 고른 설정</h3></div>
+  <div class="ap-bd"><dl class="kv "><dt>동네</dt><dd>역삼동</dd><dt>범위</dt><dd>내 동네</dd><dt>포함 동네</dt><dd>1곳</dd><dt>잡히는 매물</dt><dd>1,284개</dd><dt>동네 인증</dt><dd><span class="badge b-ok">완료</span></dd></dl></div>
+  <div class="ap-ft">
+    <a class="btn btn-pri btn-lg" href="SE0201.html">이 동네로 정하고 매물 보기</a>
+    <a class="btn btn-ghost" href="SE0105.html">동네 인증 안내</a>
+    <a class="btn btn-quiet" href="HO0101.html">홈으로</a></div></div>
+  <div class="act-panel ">
+  
+  <div class="ap-bd"><p class="t-sub">동네는 언제든 다시 바꿀 수 있어요. 바꿔도 찜한 물건과 채팅은 그대로입니다.</p></div>
+  </div>
+</div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE0201.html">매물 찾기</a></li><li><a href="SE0101.html">내 동네 설정</a></li>
+      <li><a href="MY0301.html">찜한 물건</a></li><li><a href="MY0201.html">구매 내역</a></li>
+      <li><a href="PA0101.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL0101.html">판매글 쓰기</a></li><li><a href="SL0501.html">내 판매글</a></li>
+      <li><a href="SL0301.html">시세 보기</a></li><li><a href="BS0101.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+</div>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">SE0101</div><div class="nm">내 동네 설정</div>
+    <div class="fd">현재 위치로 찾기 버튼 · 동네 이름 직접 검색 · 지도 위 선택한 동네 표시 · 범위 슬라이더(내 동네·가까운 동네·조금 먼 동네) · 그 범위에 잡히는 동네 이름 목록 · 범위별 매물 수 미리보기 · 동네 인증(그 자리에서 위치 확인) 안내 · 동네는 2개까지 등록 가능 · 인증 없이 쓸 때의 제한 안내</div>
+    <div class="lk"><a href="SE0201.html">이 동네 매물 보기 ›</a><a href="HO0101.html">홈으로 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">SE0101 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>채팅 목록 · 우리동네장터</title>
+<meta name="description" content="탭(전체·구매·판매·안 읽음)과 건수 배지 · 대화방 목록(상대 닉네임·매물 썸네일·마지막 말·시각·안 읽음 수) · 거래 상태 배지(이야기중·예약중·거래완료) · 상대 매너 점수 작게 · 검색 · 알림 끈 방 표시 · 나간 방 안내 · 안 읽음만 보기 · 목록이 비었">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="CH0101">
+<div class="app">
+<aside class="gnav">
+    <a class="logo" href="HO0101.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnav-nav"><div class="gl">사고팔기</div><a href="HO0101.html">홈</a><a href="SE0201.html">매물 목록</a><a href="SE0101.html">내 동네 설정</a><a href="SL0101.html">판매글 쓰기</a><a href="SL0501.html">내 판매글</a><div class="gl">거래</div><a href="CH0101.html" class="on" aria-current="page">채팅<span class="n">2</span></a><a href="PA0501.html">거래 진행</a><a href="PA0101.html">안전결제 안내</a><div class="gl">내 활동</div><a href="MY0101.html">마이페이지</a><a href="MY0301.html">찜한 물건</a><a href="MY0501.html">받은 후기</a><a href="BS0101.html">끌올·광고</a><div class="gl">안내</div><a href="HO0401.html">공지·이벤트</a><a href="HO0301.html">안전거래 안내</a><a href="CS0101.html">고객센터</a></nav>
+    <div class="gnav-ft"><a href="AD0101.html">↪ 운영자 화면으로</a><a href="../index.html">🗂 전체 화면 목록</a></div>
+  </aside>
+<div class="appcol">
+<header class="topbar"><span class="sp"></span>
+        <a class="town" href="SE0101.html">📍 역삼동</a>
+        <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+        <a class="who" href="MY0101.html"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"></div><span class="nm">하늘이네님</span></a>
+      </header>
+
+
+
+<main class="main appmain  "><div class="wrap">
+<div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">채팅</h1><p class="t-sub">대화 6개 · 안 읽은 말 3건 · 알림 끈 방 1개</p></div><div class="btns"><a class="btn btn-ghost" href="SE0201.html">매물 보러 가기</a><a class="btn btn-pri" href="CH0201.html">대화 열기</a></div></div>
+
+<div class="kpis"><div class="kpi "><span class="l">대화 전체</span>
+    <span class="v">6<small>개</small></span>
+    <span class="d">구매 3 · 판매 3</span></div><a class="kpi k-warn" href="CH0102.html"><span class="l">안 읽은 대화</span>
+    <span class="v">2<small>개</small></span>
+    <span class="d">안 읽은 말 3건</span><span class="go">›</span></a><a class="kpi k-acc" href="PA0501.html"><span class="l">약속 잡힌 거래</span>
+    <span class="v">2<small>건</small></span>
+    <span class="d">예약중으로 바뀐 대화</span><span class="go">›</span></a><a class="kpi k-mut" href="MY0401.html"><span class="l">마무리된 거래</span>
+    <span class="v">1<small>건</small></span>
+    <span class="d">후기를 남길 수 있어요</span><span class="go">›</span></a></div>
+
+<section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">대화 찾기</h2></div>
+  <p class="t-sub" style="margin-top:calc(-1 * var(--sp-item));margin-bottom:var(--sp-title)">적은 말이 든 대화만 남습니다. 없으면 「검색 결과가 없습니다」와 다시 찾는 길을 보여드려요.</p>
+  <div class="searchbar"><span class="ic">🔍</span>
+  <input type="search" placeholder="상대 닉네임이나 물건 이름으로 찾기" aria-label="대화 검색">
+  <a class="btn btn-pri" href="CH0103.html">찾기</a></div></section>
+
+<section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">대화 목록</h2></div>
+  <p class="t-sub" style="margin-top:calc(-1 * var(--sp-item));margin-bottom:var(--sp-title)">탭을 옮겨도 화면 주소는 그대로예요 — 뒤로가기가 탭에 끼어들지 않습니다.</p>
+  <div>
+  <div class="tabs"><button class="tab on" type="button" data-pane="ch0">전체<span class="cnt">6</span></button><button class="tab" type="button" data-pane="ch1">구매<span class="cnt">3</span></button><button class="tab" type="button" data-pane="ch2">판매<span class="cnt">3</span></button><button class="tab" type="button" data-pane="ch3">안 읽음<span class="cnt">2</span></button></div>
+  <div data-pane-body="ch0">
+    
+<div class="table-bar"><div class="grow"><b>6개</b> <span class="t-sub">· 최근에 말이 오간 차례입니다</span></div><div class="row-c"><a class="btn btn-ghost btn-sm" href="CH0102.html">안 읽음만 보기</a><a class="btn btn-ghost btn-sm" href="SE0201.html">매물 보러 가기</a></div></div>
+<div style="max-height:430px" class="table-wrap table-stick table-stick-in table-scroll"><table class="table table-dash "><thead><tr><th style="width:210px">상대</th><th style="width:74px">구분</th><th style="width:226px">매물</th><th>마지막 말</th><th style="width:84px">시각</th><th style="width:80px">안 읽음</th><th style="width:92px">거래 상태</th><th style="width:58px"></th></tr></thead><tbody data-filter-list="chat0"><tr class="" data-side="구매" data-st="이야기중" data-unread="2"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0201.html"><div class="ph ph-fix t2 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">초록나무</span><span class="manner mn-hi" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>45.2</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-pri">구매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">다이슨 무선청소기 V11 팝니다</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">네고 조금만 가능할까요?</span></td><td><span class="t-sub nowrap">방금</span></td><td><span class="unread-n">2</span></td><td><span class="badge b-mut">이야기중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="구매" data-st="예약중" data-unread="0"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0201.html"><div class="ph ph-fix t3 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">민트초코</span><span class="manner mn-ok" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>39.8</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-pri">구매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">에어팟 프로 2세대</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">내일 저녁 7시에 역삼역 어떠세요?</span></td><td><span class="t-sub nowrap">12분 전</span></td><td><span class="t-sub">—</span></td><td><span class="badge b-acc">예약중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="판매" data-st="이야기중" data-unread="1"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0205.html"><div class="ph ph-fix t5 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">달빛창가</span><span class="manner mn-mid" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>36.5</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-acc">판매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">기계식 키보드 (적축)</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">안전결제로 하겠습니다</span></td><td><span class="t-sub nowrap">1시간 전</span></td><td><span class="unread-n">1</span></td><td><span class="badge b-mut">이야기중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="구매" data-st="예약중" data-unread="0"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0201.html"><div class="ph ph-fix t4 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">해질녘</span><span class="manner mn-ok" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>41.0</b><span class="deg">도</span></span>
+        <span title="알림을 끈 방" aria-label="알림 꺼짐">🔕</span></a></td><td><span class="badge b-pri">구매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">원목 책상 1200x600 (직거래만)</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">내일 오후에 가지러 갈게요</span></td><td><span class="t-sub nowrap">3시간 전</span></td><td><span class="t-sub">—</span></td><td><span class="badge b-acc">예약중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="판매" data-st="거래완료" data-unread="0"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0206.html"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">바람개비</span><span class="manner mn-mid" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>34.2</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-acc">판매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">아이 자전거 16인치 (보조바퀴 포함)</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">상대가 채팅방을 나갔어요</span></td><td><span class="t-sub nowrap">어제</span></td><td><span class="t-sub">—</span></td><td><span class="badge b-mut">거래완료</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="판매" data-st="이야기중" data-unread="0"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0205.html"><div class="ph ph-fix t3 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">민트초코</span><span class="manner mn-ok" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>39.8</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-acc">판매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">캠핑 의자 2개 세트</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">사진 몇 장만 더 볼 수 있을까요?</span></td><td><span class="t-sub nowrap">2일 전</span></td><td><span class="t-sub">—</span></td><td><span class="badge b-mut">이야기중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr></tbody></table></div>
+  </div><div data-pane-body="ch1" hidden>
+    
+<div class="table-bar"><div class="grow"><b>3개</b> <span class="t-sub">· 최근에 말이 오간 차례입니다</span></div><div class="row-c"><a class="btn btn-ghost btn-sm" href="CH0102.html">안 읽음만 보기</a><a class="btn btn-ghost btn-sm" href="SE0201.html">매물 보러 가기</a></div></div>
+<div style="max-height:430px" class="table-wrap table-stick table-stick-in table-scroll"><table class="table table-dash "><thead><tr><th style="width:210px">상대</th><th style="width:74px">구분</th><th style="width:226px">매물</th><th>마지막 말</th><th style="width:84px">시각</th><th style="width:80px">안 읽음</th><th style="width:92px">거래 상태</th><th style="width:58px"></th></tr></thead><tbody data-filter-list="chat1"><tr class="" data-side="구매" data-st="이야기중" data-unread="2"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0201.html"><div class="ph ph-fix t2 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">초록나무</span><span class="manner mn-hi" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>45.2</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-pri">구매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">다이슨 무선청소기 V11 팝니다</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">네고 조금만 가능할까요?</span></td><td><span class="t-sub nowrap">방금</span></td><td><span class="unread-n">2</span></td><td><span class="badge b-mut">이야기중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="구매" data-st="예약중" data-unread="0"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0201.html"><div class="ph ph-fix t3 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">민트초코</span><span class="manner mn-ok" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>39.8</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-pri">구매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t3 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">에어팟 프로 2세대</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">내일 저녁 7시에 역삼역 어떠세요?</span></td><td><span class="t-sub nowrap">12분 전</span></td><td><span class="t-sub">—</span></td><td><span class="badge b-acc">예약중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="구매" data-st="예약중" data-unread="0"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0201.html"><div class="ph ph-fix t4 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">해질녘</span><span class="manner mn-ok" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>41.0</b><span class="deg">도</span></span>
+        <span title="알림을 끈 방" aria-label="알림 꺼짐">🔕</span></a></td><td><span class="badge b-pri">구매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">원목 책상 1200x600 (직거래만)</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">내일 오후에 가지러 갈게요</span></td><td><span class="t-sub nowrap">3시간 전</span></td><td><span class="t-sub">—</span></td><td><span class="badge b-acc">예약중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr></tbody></table></div>
+  </div><div data-pane-body="ch2" hidden>
+    
+<div class="table-bar"><div class="grow"><b>3개</b> <span class="t-sub">· 최근에 말이 오간 차례입니다</span></div><div class="row-c"><a class="btn btn-ghost btn-sm" href="CH0102.html">안 읽음만 보기</a><a class="btn btn-ghost btn-sm" href="SE0201.html">매물 보러 가기</a></div></div>
+<div style="max-height:430px" class="table-wrap table-stick table-stick-in table-scroll"><table class="table table-dash "><thead><tr><th style="width:210px">상대</th><th style="width:74px">구분</th><th style="width:226px">매물</th><th>마지막 말</th><th style="width:84px">시각</th><th style="width:80px">안 읽음</th><th style="width:92px">거래 상태</th><th style="width:58px"></th></tr></thead><tbody data-filter-list="chat2"><tr class="" data-side="판매" data-st="이야기중" data-unread="1"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0205.html"><div class="ph ph-fix t5 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">달빛창가</span><span class="manner mn-mid" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>36.5</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-acc">판매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">기계식 키보드 (적축)</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">안전결제로 하겠습니다</span></td><td><span class="t-sub nowrap">1시간 전</span></td><td><span class="unread-n">1</span></td><td><span class="badge b-mut">이야기중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="판매" data-st="거래완료" data-unread="0"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0206.html"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">바람개비</span><span class="manner mn-mid" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>34.2</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-acc">판매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">아이 자전거 16인치 (보조바퀴 포함)</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">상대가 채팅방을 나갔어요</span></td><td><span class="t-sub nowrap">어제</span></td><td><span class="t-sub">—</span></td><td><span class="badge b-mut">거래완료</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="판매" data-st="이야기중" data-unread="0"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0205.html"><div class="ph ph-fix t3 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">민트초코</span><span class="manner mn-ok" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>39.8</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-acc">판매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">캠핑 의자 2개 세트</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">사진 몇 장만 더 볼 수 있을까요?</span></td><td><span class="t-sub nowrap">2일 전</span></td><td><span class="t-sub">—</span></td><td><span class="badge b-mut">이야기중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr></tbody></table></div>
+  </div><div data-pane-body="ch3" hidden>
+    
+<div class="table-bar"><div class="grow"><b>2개</b> <span class="t-sub">· 읽으면 이 탭에서 빠집니다</span></div><div class="row-c"><a class="btn btn-ghost btn-sm" href="CH0102.html">안 읽음만 보기</a><a class="btn btn-ghost btn-sm" href="SE0201.html">매물 보러 가기</a></div></div>
+<div style="max-height:430px" class="table-wrap table-stick table-stick-in table-scroll"><table class="table table-dash "><thead><tr><th style="width:210px">상대</th><th style="width:74px">구분</th><th style="width:226px">매물</th><th>마지막 말</th><th style="width:84px">시각</th><th style="width:80px">안 읽음</th><th style="width:92px">거래 상태</th><th style="width:58px"></th></tr></thead><tbody data-filter-list="chat3"><tr class="" data-side="구매" data-st="이야기중" data-unread="2"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0201.html"><div class="ph ph-fix t2 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">초록나무</span><span class="manner mn-hi" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>45.2</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-pri">구매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t5 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">다이슨 무선청소기 V11 팝니다</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">네고 조금만 가능할까요?</span></td><td><span class="t-sub nowrap">방금</span></td><td><span class="unread-n">2</span></td><td><span class="badge b-mut">이야기중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr><tr class="" data-side="판매" data-st="이야기중" data-unread="1"><td><a class="row-c" style="gap:8px;min-width:0" href="CH0205.html"><div class="ph ph-fix t5 ph-round ph-tiny" style="width:28px;height:28px" title="이미지 영역 (프로필 · 권장 400×400)"></div>
+        <span class="strong">달빛창가</span><span class="manner mn-mid" title="매너 온도 (36.5에서 시작)">
+  <i>🌡</i><b>36.5</b><span class="deg">도</span></span>
+        </a></td><td><span class="badge b-acc">판매</span></td><td><span class="row-c" style="gap:8px;min-width:0"><div class="ph ph-fix t2 ph-sq ph-tiny" style="width:26px;height:26px" title="이미지 영역 (물건 사진 · 권장 1000×1000)"></div>
+        <a href="SE0401.html" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">기계식 키보드 (적축)</a></span></td><td><span class="t-sub" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">안전결제로 하겠습니다</span></td><td><span class="t-sub nowrap">1시간 전</span></td><td><span class="unread-n">1</span></td><td><span class="badge b-mut">이야기중</span></td><td><a class="btn btn-quiet btn-xs" href="CH0104.html" title="방 메뉴 (알림 끄기·나가기·차단)" aria-label="방 메뉴">⋯</a></td></tr></tbody></table></div>
+  </div>
+</div></section>
+
+<section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">채팅에서 조심할 것</h2></div>
+  
+  <div class="box "><b class="t-card">이런 말이 나오면 멈추세요</b>
+  <ul class="dots t-sub mt2">
+    <li>돈을 <b>먼저</b> 보내 달라는 말 — 안전결제를 쓰자고 하세요</li>
+    <li>바깥 링크로 결제하라는 말 — 안전결제는 채팅 안 단추로만 시작합니다</li>
+    <li>다른 앱으로 옮겨 이야기하자는 말 — 기록이 남지 않아 신고가 어려워집니다</li>
+  </ul>
+  <p class="t-sub mt3">🔕 가 붙은 방은 <b>알림을 끈 방</b>이라 새 말이 와도 소리가 나지 않아요.
+  상대가 나간 방은 마지막 말 자리에 그렇게 적힙니다.
+  아직 대화가 하나도 없는 분께는 <a class="link" href="CH0105.html">이런 안내</a>가 보여요.</p>
+  <div class="btns mt3"><a class="btn btn-ghost btn-sm" href="HO0301.html">안전거래 안내</a><a class="btn btn-ghost btn-sm" href="CS0101.html">고객센터</a></div></div></section>
+</div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE0201.html">매물 찾기</a></li><li><a href="SE0101.html">내 동네 설정</a></li>
+      <li><a href="MY0301.html">찜한 물건</a></li><li><a href="MY0201.html">구매 내역</a></li>
+      <li><a href="PA0101.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL0101.html">판매글 쓰기</a></li><li><a href="SL0501.html">내 판매글</a></li>
+      <li><a href="SL0301.html">시세 보기</a></li><li><a href="BS0101.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+</div>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">CH0101</div><div class="nm">채팅 목록</div>
+    <div class="fd">탭(전체·구매·판매·안 읽음)과 건수 배지 · 대화방 목록(상대 닉네임·매물 썸네일·마지막 말·시각·안 읽음 수) · 거래 상태 배지(이야기중·예약중·거래완료) · 상대 매너 점수 작게 · 검색 · 알림 끈 방 표시 · 나간 방 안내 · 안 읽음만 보기 · 목록이 비었을 때 안내</div>
+    <div class="lk"><a href="CH0201.html">대화 열기 ›</a><a href="SE0201.html">매물 보러 가기 ›</a></div>
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">CH0101 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

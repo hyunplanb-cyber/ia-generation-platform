@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>안전결제 시작·안내 &gt; 수수료 계산기 · 우리동네장터</title>
+<meta name="description" content="물건 값 입력 시 수수료와 판매자 수령액 즉시 재계산 · 누가 수수료를 내는지 규칙 표시 · 세 숫자의 합이 맞게">
+<link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body data-page="PA0103">
+<div class="app">
+<aside class="gnav">
+    <a class="logo" href="HO0101.html"><span class="mark">장</span>우리동네장터</a>
+    <nav class="gnav-nav"><div class="gl">사고팔기</div><a href="HO0101.html">홈</a><a href="SE0201.html">매물 목록</a><a href="SE0101.html">내 동네 설정</a><a href="SL0101.html">판매글 쓰기</a><a href="SL0501.html">내 판매글</a><div class="gl">거래</div><a href="CH0101.html">채팅<span class="n">2</span></a><a href="PA0501.html">거래 진행</a><a href="PA0101.html" class="on" aria-current="page">안전결제 안내</a><div class="gl">내 활동</div><a href="MY0101.html">마이페이지</a><a href="MY0301.html">찜한 물건</a><a href="MY0501.html">받은 후기</a><a href="BS0101.html">끌올·광고</a><div class="gl">안내</div><a href="HO0401.html">공지·이벤트</a><a href="HO0301.html">안전거래 안내</a><a href="CS0101.html">고객센터</a></nav>
+    <div class="gnav-ft"><a href="AD0101.html">↪ 운영자 화면으로</a><a href="../index.html">🗂 전체 화면 목록</a></div>
+  </aside>
+<div class="appcol">
+<header class="topbar"><span class="sp"></span>
+        <a class="town" href="SE0101.html">📍 역삼동</a>
+        <button class="bell" type="button" data-toast="새 알림이 있어요" aria-label="알림">🔔<span class="dot">3</span></button>
+        <a class="who" href="MY0101.html"><div class="ph ph-fix t1 ph-round ph-tiny" style="width:30px;height:30px" title="이미지 영역 (프로필 · 권장 400×400)"></div><span class="nm">하늘이네님</span></a>
+      </header>
+<div class="backbar"><div class="in">
+        <a class="back" href="PA0101.html">‹ 안전결제 시작·안내</a>
+        <span class="crumb">안전결제 <i>›</i> 안전결제 시작·안내 &gt; 수수료 계산기</span>
+      </div></div>
+<div class="state-bar"><div class="in"><span class="tag">상태</span><b>수수료 계산기를 편 상태</b>
+    <span class="muted">물건 값 입력 시 수수료와 판매자 수령액 즉시 재계산 · 누가 수수료를 내는지 규칙 표시 · 세 숫자의 합이 맞게</span></div></div>
+
+<main class="main appmain  "><div class="wrap">
+<div class="page-hd row-b wrap-row"><div>
+  <h1 class="t-page">수수료 계산기</h1><p class="t-sub">물건 값을 고르면 수수료와 판매자 수령액이 그 자리에서 다시 셈됩니다</p></div></div>
+<div class="kpis"><div class="kpi "><span class="l">수수료율</span>
+    <span class="v">3.5%</span>
+    <span class="d">물건 값 기준 · 배송비 제외</span></div><div class="kpi k-acc"><span class="l">누가 내나</span>
+    <span class="v">파는 쪽</span>
+    <span class="d">사는 쪽은 물건 값과 배송비만</span></div><div class="kpi k-warn"><span class="l">이 거래 수수료</span>
+    <span class="v">6,230<small>원</small></span>
+    <span class="d">에어팟 프로 2세대</span></div><div class="kpi k-ok"><span class="l">판매자 수령액</span>
+    <span class="v">171,770<small>원</small></span>
+    <span class="d">178,000원 − 6,230원</span></div></div>
+<div class="split-r"><div>
+<section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">물건 값을 넣으면 바로 셉니다</h2></div>
+  <p class="t-sub" style="margin-top:calc(-1 * var(--sp-item));margin-bottom:var(--sp-title)">수수료는 물건 값의 3.5%입니다. 배송비에는 수수료가 붙지 않아요.</p>
+  
+  <div class="card ">
+  
+  <div class="card-bd ">
+  <div class="fld"><label class="lb" for="fee-price">물건 값 — 고르면 그 자리에서 다시 셉니다</label>
+    <select class="input" id="fee-price" data-recalc="fee"><option value="50000" data-vals="50,000원|− 1,750원|48,250원|50,000원 − 1,750원 = 48,250원">50,000원</option><option value="100000" data-vals="100,000원|− 3,500원|96,500원|100,000원 − 3,500원 = 96,500원">100,000원</option><option value="178000" data-vals="178,000원|− 6,230원|171,770원|178,000원 − 6,230원 = 171,770원">178,000원</option><option value="300000" data-vals="300,000원|− 10,500원|289,500원|300,000원 − 10,500원 = 289,500원" selected>300,000원</option><option value="500000" data-vals="500,000원|− 17,500원|482,500원|500,000원 − 17,500원 = 482,500원">500,000원</option><option value="1000000" data-vals="1,000,000원|− 35,000원|965,000원|1,000,000원 − 35,000원 = 965,000원">1,000,000원</option></select></div>
+  <div class="mt3">
+    <div class="sum-row"><span class="muted">물건 값</span><span data-recalc-out="fee" data-i="0">300,000원</span></div>
+    <div class="sum-row"><span class="muted">수수료 3.5% <span class="t-sub">(파는 쪽이 냅니다)</span></span><span data-recalc-out="fee" data-i="1">− 10,500원</span></div>
+    <div class="sum-row total"><span>판매자가 받는 돈</span><span class="price" data-recalc-out="fee" data-i="2">289,500원</span></div>
+  </div>
+  <p class="t-sub mt3">셈이 맞는지 한 줄로 — <b data-recalc-out="fee" data-i="3">300,000원 − 10,500원 = 289,500원</b></p></div>
+  </div>
+  <div class="banner banner-info mt4"><span class="ico">🧮</span><div class="grow"><b>세 숫자는 늘 아귀가 맞습니다.</b>
+    <div class="t-sub mt1">물건 값 − 수수료 = 판매자가 받는 돈. 이 식이 깨지지 않게 한 곳에서 셉니다.</div></div></div></section>
+
+<div class="mt-block"><section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">누가 수수료를 내나요</h2></div>
+  
+  <div class="card ">
+  
+  <div class="card-bd ">
+  <div class="stack-sm">
+    <label class="radio on"><input type="radio" name="feeby" checked>
+      <b>파는 쪽이 냅니다</b><span class="d">이 장터의 규칙입니다. 정산할 때 물건 값에서 3.5%가 빠집니다.</span></label>
+    <label class="radio is-off"><input type="radio" name="feeby" disabled>
+      <b>사는 쪽이 냅니다</b><span class="d">이 장터에서는 고를 수 없어요. 사는 쪽은 물건 값과 배송비만 냅니다.</span></label>
+  </div>
+  <p class="t-sub mt3">그래서 사는 쪽이 낼 돈은 <b>178,000원 + 배송비 3,000원</b>가 전부입니다.</p></div>
+  </div></section></div>
+
+<div class="mt-block"><section class="sec">
+  <div class="sec-hd"><h2 class="t-sec">값대로 미리 본 표</h2></div>
+  <p class="t-sub" style="margin-top:calc(-1 * var(--sp-item));margin-bottom:var(--sp-title)">사는 쪽이 낼 돈에는 수수료가 들어 있지 않습니다.</p>
+  <div style="max-height:320px" class="table-wrap table-stick table-stick-in table-scroll"><table class="table table-dash "><thead><tr><th>물건 값</th><th>수수료 3.5%</th><th>판매자가 받는 돈</th><th>사는 쪽이 낼 돈</th></tr></thead><tbody><tr class=""><td><b>50,000원</b></td><td><span class="muted">− 1,750원</span></td><td><b>48,250원</b></td><td><span class="muted">50,000원 + 배송비</span></td></tr><tr class=""><td><b>100,000원</b></td><td><span class="muted">− 3,500원</span></td><td><b>96,500원</b></td><td><span class="muted">100,000원 + 배송비</span></td></tr><tr class=""><td><b>178,000원</b></td><td><span class="muted">− 6,230원</span></td><td><b>171,770원</b></td><td><span class="muted">178,000원 + 배송비</span></td></tr><tr class=""><td><b>300,000원</b></td><td><span class="muted">− 10,500원</span></td><td><b>289,500원</b></td><td><span class="muted">300,000원 + 배송비</span></td></tr><tr class=""><td><b>500,000원</b></td><td><span class="muted">− 17,500원</span></td><td><b>482,500원</b></td><td><span class="muted">500,000원 + 배송비</span></td></tr><tr class=""><td><b>1,000,000원</b></td><td><span class="muted">− 35,000원</span></td><td><b>965,000원</b></td><td><span class="muted">1,000,000원 + 배송비</span></td></tr></tbody></table></div></section></div>
+</div><div class="sticky"><div class="act-panel ">
+  <div class="ap-hd"><h3 class="t-card">이 거래에 맞춰 보면</h3></div>
+  <div class="ap-bd"><div class="sum-row "><span class="muted">물건 값</span><span>178,000원</span></div><div class="sum-row "><span class="muted">수수료 3.5%</span><span>− 6,230원</span></div>
+  <div class="sum-row total"><span>판매자가 받는 돈</span><span class="price">171,770원</span></div><p class="t-sub mt3">에어팟 프로 2세대 기준입니다.</p></div>
+  <div class="ap-ft">
+  <a class="btn btn-pri btn-lg" href="PA0201.html">결제하기</a>
+  <a class="btn btn-ghost" href="PA0101.html">안내 화면으로</a></div></div><div class="act-panel ">
+  
+  <div class="ap-bd"><div class="banner banner-quiet "><span class="ico">📌</span><div class="grow">수수료는 <b>정산할 때</b> 빠집니다. 판매자가 미리 낼 돈은 없어요.</div></div></div>
+  </div></div></div></div></main>
+
+<footer class="ft"><div class="ft-in">
+  <div class="ft-cols">
+    <div>
+      <div class="logo mb3"><span class="mark">장</span>우리동네장터</div>
+      <p class="t-sub">(주)우리동네장터  대표 김하늘  서울시 강남구 테헤란로 152<br>사업자등록 123-45-67890  통신판매중개업 2026-서울강남-01234</p>
+      <p class="t-sub mt3">당사는 통신판매중개자로서 거래 당사자가 아니며, 회원 간 거래에 관한 책임은 거래 당사자에게 있습니다.</p>
+    </div>
+    <div><h4>사기</h4><ul>
+      <li><a href="SE0201.html">매물 찾기</a></li><li><a href="SE0101.html">내 동네 설정</a></li>
+      <li><a href="MY0301.html">찜한 물건</a></li><li><a href="MY0201.html">구매 내역</a></li>
+      <li><a href="PA0101.html">안전결제</a></li></ul></div>
+    <div><h4>팔기</h4><ul>
+      <li><a href="SL0101.html">판매글 쓰기</a></li><li><a href="SL0501.html">내 판매글</a></li>
+      <li><a href="SL0301.html">시세 보기</a></li><li><a href="BS0101.html">끌올하기</a></li>
+      <li><a href="../index.html">전체 화면 목록</a></li></ul></div>
+    <div><h4>고객센터</h4>
+      <div class="tel">1544-0000</div>
+      <p class="t-sub">평일 09:00–18:00 (점심 12:00–13:00) · 주말·공휴일 휴무</p>
+      <div class="btns mt3"><button class="btn btn-ghost btn-sm" type="button" data-toast="카카오톡 상담은 서버가 연결되면 열립니다">💬 카카오톡 상담</button><button class="btn btn-ghost btn-sm" type="button" data-toast="앱 내려받기는 서버가 연결되면 열립니다">📱 앱 다운로드</button></div>
+      <div class="sns mt4"><span>IG</span><span>YT</span><span>BL</span><span>FB</span></div>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>© 2026 우리동네장터. 이 사이트는 기획 검토용 프로토타입입니다.</span>
+    <span>이용약관 · 개인정보처리방침 · 안전거래 정책 · 금지 품목</span>
+  </div></div></footer>
+</div>
+</div>
+
+<div class="dev"><div class="spec">
+    <div class="id">PA0103</div><div class="nm">안전결제 시작·안내 &gt; 수수료 계산기</div>
+    <div class="fd">물건 값 입력 시 수수료와 판매자 수령액 즉시 재계산 · 누가 수수료를 내는지 규칙 표시 · 세 숫자의 합이 맞게</div>
+    
+    <div class="lk"><a href="../index.html">전체 화면 목록</a></div>
+  </div>
+  <a class="dev-list" href="../index.html">☰ 화면 목록</a>
+  <button class="dev-btn" type="button">PA0103 화면 정보</button></div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
