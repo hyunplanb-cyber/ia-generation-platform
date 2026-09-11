@@ -88,9 +88,21 @@ const 눌러보는글 = `
   document.head.appendChild(굴림끄기);
 
   const 죽은것 = [];
+  /* ⭐ 한 쪽에 «같은 손잡이»를 가진 것이 둘 이상일 때 (2026-09-11).
+     이 검사기는 한 번 연 쪽에서 끝까지 눌러 나가고 사이에 쪽을 다시 열지 않는다.
+     그래서 앞엣것이 이미 상태를 풀어 놓으면 뒤엣것은 «할 일이 없어» 화면이 안 바뀐다.
+     SE0202 에서 「전체 해제」 셋 중 셋째가 그렇게 헛짚혔다 — 누를 때 켜진 거르개가 0개였다.
+     손잡이가 이미 «한 번 살아 있음을 보였으면» 그 배선은 성한 것이다. 그때는 안 센다. */
+  const 살아난손잡이 = new Set();
+  const 손잡이서명 = (el) => {
+    const d = el.dataset || {};
+    const ks = Object.keys(d).sort();
+    return ks.length ? el.tagName + '|' + ks.map((k) => k + '=' + d[k]).join('&') : '';
+  };
   const 값만 = [];
   const 종류 = {};
   let 눌러본수 = 0;
+  let 형제가증명 = 0;
 
   /* 누를 만한 것들. <a href> 는 «넘어가는 것»이 곧 반응이라 빼고,
      글자를 치는 칸도 뺀다(누르는 것이 아니다). 꺼진 것도 뺀다. */
@@ -177,7 +189,13 @@ const 눌러보는글 = `
       || (el.checked === undefined ? el.className : String(el.checked)) !== 전켜짐
       || 굴린자리() !== 전굴림;
 
+    const 이서명 = 손잡이서명(el);
+    if (바뀜 && 이서명) 살아난손잡이.add(이서명);
+
     if (!바뀜) {
+      /* 형제가 이미 같은 손잡이로 살아 있음을 보였으면, 이번에 안 바뀐 것은
+         «배선이 죽어서»가 아니라 «앞엣것이 이미 풀어 놓아서»다. 위 주석 참고. */
+      if (이서명 && 살아난손잡이.has(이서명)) { 형제가증명++; continue; }
       /* ⚠ <select> 는 고른 값이 «닫힌 칸에 그대로 보인다» — 그것만으로도 손님 눈에는
          반응한 것이다. 그래서 죽었다고 못 박지 않고 «값만 바뀜»으로 따로 센다.
          다만 그 select 가 목록을 거르거나 숫자를 다시 세라고 둔 것이면 반쪽짜리다 —
@@ -191,10 +209,10 @@ const 눌러보는글 = `
     }
   }
 
-  return JSON.stringify({ 눌러본수, 죽은수: 죽은것.length, 죽은것: 죽은것.slice(0, 6), 종류, 값만수: 값만.length });
+  return JSON.stringify({ 눌러본수, 죽은수: 죽은것.length, 죽은것: 죽은것.slice(0, 6), 종류, 값만수: 값만.length, 형제가증명 });
 })()`;
 
-type 결과 = { 화면: string; 눌러본수: number; 죽은수: number; 죽은것: string[]; 종류: Record<string, number>; 값만수: number };
+type 결과 = { 화면: string; 눌러본수: number; 죽은수: number; 죽은것: string[]; 종류: Record<string, number>; 값만수: number; 형제가증명: number };
 
 function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]; 못잰장: string[] } | null {
   const 완성화면 = join(팩길(팩), "완성화면");
@@ -237,7 +255,7 @@ function 팩보기(팩: string): { 팩: string; 잰장: number; 결과: 결과[]
     try { 값 = JSON.parse(m[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")); } catch { continue; }
     if (!값 || 값.죽은수 === undefined) continue;
 
-    결과.push({ 화면: f.replace(".html", ""), 눌러본수: 값.눌러본수, 죽은수: 값.죽은수, 죽은것: 값.죽은것 || [], 종류: 값.종류 || {}, 값만수: 값.값만수 || 0 });
+    결과.push({ 화면: f.replace(".html", ""), 눌러본수: 값.눌러본수, 죽은수: 값.죽은수, 죽은것: 값.죽은것 || [], 종류: 값.종류 || {}, 값만수: 값.값만수 || 0 , 형제가증명: 값.형제가증명 || 0 });
   }
 
   rmSync(임시, { recursive: true, force: true });
@@ -270,6 +288,7 @@ for (const 팩 of 팩들) {
   const 총죽음 = r.결과.reduce((n, x) => n + x.죽은수, 0);
 
   const 총값만 = r.결과.reduce((n, x) => n + x.값만수, 0);
+  const 총형제 = r.결과.reduce((n, x) => n + (x.형제가증명 || 0), 0);
   console.log(`  ${팩} — ${r.잰장}장에서 ${총누름}개를 눌러 봤습니다`);
   if (r.못잰장.length) {
     WARN += r.못잰장.length;
@@ -278,6 +297,11 @@ for (const 팩 of 팩들) {
   if (총값만 > 0) {
     WARN += 총값만;
     console.log(`    △ 고른 값만 바뀌고 옆이 그대로인 select ${총값만}개 — 거르라고 둔 것이면 반쪽입니다.`);
+  }
+  if (총형제) {
+    /* 조용히 넘기지 않는다 — 몇 개를 봐줬는지 드러낸다 (2026-09-11) */
+    console.log(`    · 형제가 이미 증명한 손잡이 ${총형제}개는 안 셌습니다 — 같은 손잡이를 앞엣것이`);
+    console.log(`      먼저 눌러 «살아 있음»을 보였고, 그 바람에 뒤엣것은 풀 것이 남지 않은 자리입니다.`);
     console.log("      스펙팩 acts 에 「고르면 …가 바뀐다」고 적혀 있는지 견줘 보세요.");
   }
   if (총죽음 === 0) {
