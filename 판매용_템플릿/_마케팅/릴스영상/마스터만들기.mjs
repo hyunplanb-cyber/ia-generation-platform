@@ -61,12 +61,46 @@ const 컷초 = Number(값("--컷")) || 2.0;
 const 배속 = Number(값("--배속")) || 1.5;
 const 재기만 = 인자.includes("--재기만");
 
+/* ⭐ 촬영본 «한 벌»에서 여러 편을 뽑는다 (2026-09-11 현님)
+ *
+ *   현님: 「영상 썼더라도 주제를 바꿔서 활용해 줘야지.. sns 하나에 영상 하나씩
+ *          찍을꺼면.. 내가 그냥 편집하지..」
+ *
+ *   옛 코드는 촬영본을 «늘 통째로» 먹었다. 그래서 한 촬영본 = 한 편이었다.
+ *   게다가 촬영본을 «회차 폴더 이름»으로 찾아서, 같은 재료로 회차를 둘 만들 수도
+ *   없었다 — 이름이 부딪힌다.
+ *
+ *     --재료 "<세트이름>"   회차 이름과 «다른» 촬영본을 쓴다
+ *     --부터 N --까지 M     그 촬영본의 «한 구간»만 쓴다 (초)
+ *
+ *   예)  69초짜리 공구 촬영본 하나 → 두 편
+ *     node 마스터만들기.mjs "공구_앞편" --재료 "2. 완성화면_공구_디럭스_1" --까지 35
+ *     node 마스터만들기.mjs "공구_뒤편" --재료 "2. 완성화면_공구_디럭스_1" --부터 35
+ *
+ *   ⚠ 구간은 «촬영본을 읽는 모든 자리»에 똑같이 걸어야 한다. 한 곳이라도 빠지면
+ *     갈래는 통째로 재고 화면은 잘라 굽는 꼴이 되어 조용히 어긋난다.
+ *     그래서 아래 `자름` 을 -i 앞마다 끼우고, 낱장을 뜨는 자리는 `부터` 를 더한다. */
+const 재료이름 = 값("--재료") || 회차;
+const 부터 = Math.max(0, Number(값("--부터")) || 0);
+const 까지 = Number(값("--까지")) || 0;              // 0 = 끝까지
+if (까지 && 까지 <= 부터) {
+  console.error(`\n⛔ --까지 ${까지} 가 --부터 ${부터} 보다 앞섭니다.\n`);
+  process.exit(2);
+}
+const 자름 = 부터 || 까지
+  ? ["-ss", 부터.toFixed(3), ...(까지 ? ["-t", (까지 - 부터).toFixed(3)] : [])]
+  : [];
+/** 원본 길이 → 이 구간의 길이. */
+const 구간초 = (원) => Math.max(0, (까지 ? Math.min(까지, 원) : 원) - 부터);
+
 if (!회차) {
   console.error(`\n쓰는 법:  node 마스터만들기.mjs "2. 완성화면_뷰티샵_프리미엄"\n`);
   console.error(`  --초 48     만들 길이 (기본 48)`);
   console.error(`  --컷 2.0    완성화면 한 컷이 쓰는 «원본» 초 (기본 2.0)`);
   console.error(`  --배속 1.5  완성화면 배속 (기본 1.5) → 화면에서 한 컷은 ${(2.0 / 1.5).toFixed(2)}초`);
-  console.error(`  --재기만    갈래만 찍고 안 굽는다\n`);
+  console.error(`  --재기만    갈래만 찍고 안 굽는다`);
+  console.error(`  --재료 "<세트이름>"  회차와 «다른» 촬영본을 쓴다 (한 촬영본으로 여러 편)`);
+  console.error(`  --부터 0 --까지 35   그 촬영본의 «한 구간»만 쓴다 (초)\n`);
   process.exit(2);
 }
 
@@ -189,11 +223,11 @@ const 촬영터들 = [촬영방, ...(existsSync(촬영방)
       .filter((e) => e.isDirectory() && !e.name.startsWith("."))
       .map((e) => path.join(촬영방, e.name))
   : [])];
-const 세트방 = 촬영터들.map((터) => path.join(터, 회차)).find(existsSync)
-  ?? path.join(촬영방, "2. 완성화면", 회차);
+const 세트방 = 촬영터들.map((터) => path.join(터, 재료이름)).find(existsSync)
+  ?? path.join(촬영방, "2. 완성화면", 재료이름);
 const 짝찾기 = (꼬리) =>
   [path.join(세트방, `${꼬리}.mp4`),
-   ...[...촬영터들, 견본방].map((방) => path.join(방, `${회차}_${꼬리}.mp4`))].find(existsSync) ?? null;
+   ...[...촬영터들, 견본방].map((방) => path.join(방, `${재료이름}_${꼬리}.mp4`))].find(existsSync) ?? null;
 const 화면파일 = 짝찾기("화면영역");
 const 클로드파일 = 짝찾기("클로드영역");
 const 두파일 = Boolean(화면파일 && 클로드파일);
@@ -201,7 +235,7 @@ const 두파일 = Boolean(화면파일 && 클로드파일);
 const 촬영본 = 두파일 ? 화면파일 : [
   path.join(세트방, "_통짜.mp4"),                                  // 세트 폴더 안의 옛 1개짜리
   ...촬영터들.flatMap((터) =>
-    [`${회차}.mp4`, `${회차.replace(/^\d+\.\s*/, "")}.mp4`].map((n) => path.join(터, n))),
+    [`${재료이름}.mp4`, `${재료이름.replace(/^\d+\.\s*/, "")}.mp4`].map((n) => path.join(터, n))),
 ].find(existsSync);
 if (!촬영본) {
   console.error(`\n⛔ 촬영본을 못 찾았습니다.`);
@@ -212,7 +246,13 @@ if (!촬영본) {
 
 /* ═══ 두 파일 길 — 갈래도 분할선도 로고도 «찾을 것이 없다» ═══════════════════ */
 if (두파일) {
-  const 화 = 재보기(화면파일), 클 = 재보기(클로드파일);
+  const 화0 = 재보기(화면파일), 클0 = 재보기(클로드파일);
+  const 화 = { ...화0, 초: 구간초(화0.초) }, 클 = { ...클0, 초: 구간초(클0.초) };
+  if (!화.초 || !클.초) {
+    console.error(`\n⛔ 구간 ${부터}~${까지 || "끝"} 에 재료가 없습니다 ` +
+      `(화면영역 ${화0.초.toFixed(1)}초 · 클로드영역 ${클0.초.toFixed(1)}초)\n`);
+    process.exit(1);
+  }
   const 목표 = Number(값("--초")) || Math.floor(Math.min(화.초, 클.초 * 1.15) * 10) / 10;
   console.log(`\n두 파일로 만듭니다 — 갈래·분할선·로고를 안 찾습니다 (자리가 이미 정해져 있습니다)`);
   console.log(`  화면영역   ${path.basename(화면파일)}  ${화.w}x${화.h} · ${화.초.toFixed(1)}초`);
@@ -262,7 +302,7 @@ if (두파일) {
    *       t=45 글이 꽉 차고 맨 아래에 입력칸이 있다
    *     → 입력칸도 «내용»이다. 빼지 않는다. 맨 아래 내용을 찾아 띠의 «아래»에 붙인다. */
   const 잼w = 120, 잼H = 짝수(Math.max(32, Math.round((잼w * 클.h) / 클.w)));
-  const 클잼 = ff(["-v", "error", "-i", 클로드파일, "-vf",
+  const 클잼 = ff(["-v", "error", ...자름, "-i", 클로드파일, "-vf",
     `fps=4,scale=${잼w}:${잼H}`, "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
   const 클장 = Math.floor(클잼.length / (잼w * 잼H));
   /* ⛔ 「밝기 110 넘으면 글」로 잡으면 안 된다 — 2026-09-09 에 이것 때문에 첫 장면이 통째로 비었다.
@@ -381,7 +421,7 @@ if (두파일) {
   const 낼것2 = path.join(회차방, "마스터.mp4");
   console.log(`\n  굽는 중… → ${path.relative(여기, 낼것2)}`);
   try {
-    ff(["-v", "error", "-stats", "-i", 화면파일, "-i", 클로드파일, "-filter_complex_script", 임시2,
+    ff(["-v", "error", "-stats", ...자름, "-i", 화면파일, ...자름, "-i", 클로드파일, "-filter_complex_script", 임시2,
       "-map", "[out]", "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
       "-pix_fmt", "yuv420p", "-an", "-y", 낼것2]);
   } finally { rmSync(임시2, { force: true }); }
@@ -397,8 +437,12 @@ if (두파일) {
 
 const [W0, H0] = 재기(["-v", "error", "-select_streams", "v", "-show_entries",
   "stream=width,height", "-of", "csv=p=0:s=x", 촬영본]).split("\n")[0].split("x").map(Number);
-const 길이 = Number(재기(["-v", "error", "-show_entries", "format=duration", "-of",
-  "default=noprint_wrappers=1:nokey=1", 촬영본]));
+const 길이 = 구간초(Number(재기(["-v", "error", "-show_entries", "format=duration", "-of",
+  "default=noprint_wrappers=1:nokey=1", 촬영본])));
+if (!길이) {
+  console.error(`\n⛔ 구간 ${부터}~${까지 || "끝"} 에 재료가 없습니다.\n`);
+  process.exit(1);
+}
 
 /* ⭐ 완성화면 트랙 폭 — «영상만들기가 실제로 쓰는 만큼»만 자른다 (2026-09-09)
  *
@@ -408,13 +452,15 @@ const 길이 = Number(재기(["-v", "error", "-show_entries", "format=duration",
  *   폭 = (원본높이 − 크롬) × (영상칸 가로/세로).  뷰티샵: (2160−220) × 0.6687 = 1297 */
 let 오른폭 = 0;                                    // 크롬을 잰 «뒤에» 정한다 (아래 ①·② 다음)
 
-console.log(`\n촬영본  ${path.basename(촬영본)}   ${W0}x${H0} · ${길이.toFixed(1)}초`);
+console.log(`\n촬영본  ${path.basename(촬영본)}   ${W0}x${H0} · ${길이.toFixed(1)}초` +
+  (자름.length ? `   ⟵ 구간 ${부터}~${까지 || "끝"}초만 씁니다` : ""));
+if (재료이름 !== 회차) console.log(`  재료  ${재료이름}  (회차 「${회차}」와 이름이 다릅니다)`);
 
 /* ═══ ① 1초마다 갈래를 잰다 — C(클로드 풀) · S(이분할) · B(완성화면 풀) ═══════════
    왼쪽 어둡고 오른쪽 밝으면 이분할, 둘 다 어두우면 클로드 풀, 둘 다 밝으면 완성화면 풀.
    ⚠ 「순서가 C→S→B 다」를 믿지 않는다 — 인테리어는 중간에 오가고 펫유치원은 거꾸로다. */
 const 잼W = 316, 잼H = 216;
-const 잼 = ff(["-v", "error", "-i", 촬영본, "-vf", `fps=1,scale=${잼W}:${잼H}`,
+const 잼 = ff(["-v", "error", ...자름, "-i", 촬영본, "-vf", `fps=1,scale=${잼W}:${잼H}`,
   "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
 const 장 = Math.floor(잼.length / (잼W * 잼H));
 const 밝 = (i, x0, x1) => {
@@ -438,7 +484,7 @@ const S초 = 갈래.map((k, i) => (k === "S" ? i : -1)).filter((i) => i >= 0);
 if (S초.length) {
   const 후보 = [];
   for (const t of [S초[Math.floor(S초.length * 0.25)], S초[Math.floor(S초.length * 0.5)], S초[Math.floor(S초.length * 0.75)]]) {
-    const buf = ff(["-v", "error", "-ss", String(t + 0.5), "-i", 촬영본, "-frames:v", "1",
+    const buf = ff(["-v", "error", "-ss", String(부터 + t + 0.5), "-i", 촬영본, "-frames:v", "1",
       "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
     const 줄 = [];
     for (let y = 300; y < H0 - 200; y += 37) 줄.push(y);
@@ -477,7 +523,7 @@ let 글기둥 = null;
   const C초 = 갈래.map((k, i) => (k === "C" ? i : -1)).filter((i) => i >= 0);
   if (C초.length) {
     const t = C초[Math.floor(C초.length * 0.6)];
-    const buf = ff(["-v", "error", "-ss", String(t + 0.5), "-i", 촬영본, "-frames:v", "1",
+    const buf = ff(["-v", "error", "-ss", String(부터 + t + 0.5), "-i", 촬영본, "-frames:v", "1",
       "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
     const 줄 = []; for (let y = 200; y < H0 - 260; y += 5) 줄.push(y);
     const 칸 = new Int32Array(W0);
@@ -507,7 +553,7 @@ if (글기둥) console.log(`        클로드 풀의 글 기둥  x ${글기둥.x
  *     26칸 넘게 «이어서» 바탕이 아닌 곳을 찾는다 — 창 테두리 한 줄에 속지 않으려고. */
 const 로고여백 = 60;                                 // 로고 앞에 남길 숨. 견본이 그만큼이다
 function 로고찾기(t, 시작x) {
-  const buf = ff(["-v", "error", "-ss", String(t + 0.5), "-i", 촬영본, "-frames:v", "1",
+  const buf = ff(["-v", "error", "-ss", String(부터 + t + 0.5), "-i", 촬영본, "-frames:v", "1",
     "-pix_fmt", "rgb24", "-f", "rawvideo", "-"]);
   const 줄 = []; for (let y = 크롬 + 25; y < 크롬 + 110; y += 3) 줄.push(y);
   const 배경 = (r, g, b) => r > 232 && g > 222 && b > 218;
@@ -539,7 +585,7 @@ if (재기만) process.exit(0);
    ⛔ 배속만 올리는 것은 안 통한다(작업흐름.md 「두 번 틀린 것」). 멈춘 화면은 두 배로 빨려도
       멈춰 있다. 그래서 «움직임을 재서» 큰 창부터 집는다. */
 const 잼2W = 104, 잼2H = 108;
-const 브잼 = ff(["-v", "error", "-i", 촬영본, "-vf",
+const 브잼 = ff(["-v", "error", ...자름, "-i", 촬영본, "-vf",
   `fps=4,crop=w=${오른폭}:h=${H0}:x=${Math.min(분할선 ?? 0, W0 - 오른폭)}:y=0,scale=${잼2W}:${잼2H}`,
   "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
 const 브장 = Math.floor(브잼.length / (잼2W * 잼2H)), 브N = 잼2W * 잼2H;
@@ -619,7 +665,7 @@ for (const 갈 of ["S", "B"]) {
  *   ⛔ 다만 로고 자리보다 왼쪽으로는 안 간다 — 그쪽은 사이트 제 여백이라 늘 비어 있다.
  *      현님 지시(「로고 기준 좌상단」)를 지키면서 오른쪽으로만 따라가는 셈이다. */
 const 잼3W = 316, 잼3H = 216;
-const 자잼 = ff(["-v", "error", "-i", 촬영본, "-vf", `fps=2,scale=${잼3W}:${잼3H}`,
+const 자잼 = ff(["-v", "error", ...자름, "-i", 촬영본, "-vf", `fps=2,scale=${잼3W}:${잼3H}`,
   "-pix_fmt", "gray", "-f", "rawvideo", "-"]);
 const 자장 = Math.floor(자잼.length / (잼3W * 잼3H));
 /* ⛔ «무게중심»으로 잡으면 안 된다 — 한 번 그렇게 짰다가 되돌렸다.
@@ -705,7 +751,7 @@ writeFileSync(임시, F.join(";\n"), "utf8");
 const 낼것 = path.join(회차방, "마스터.mp4");
 console.log(`\n  굽는 중… → ${path.relative(여기, 낼것)}`);
 try {
-  ff(["-v", "error", "-stats", "-i", 촬영본, "-filter_complex_script", 임시, "-map", "[out]",
+  ff(["-v", "error", "-stats", ...자름, "-i", 촬영본, "-filter_complex_script", 임시, "-map", "[out]",
     "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p", "-an", "-y", 낼것]);
 } finally { rmSync(임시, { force: true }); }
 
